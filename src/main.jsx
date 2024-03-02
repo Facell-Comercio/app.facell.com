@@ -1,47 +1,46 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { Toaster } from "@/components/ui/sonner";
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate
-} from 'react-router-dom';
+import App from "./App.jsx";
+import "./index.css";
 
-import Home from './routes/Home.jsx';
-import Perfil from './routes/Perfil.jsx';
-import ErrorPage from './routes/ErrorPage.jsx';
-import Colab from './routes/Colaborador.jsx';
-import Login from './routes/Login.jsx';
+import { BrowserRouter as Router, RouterProvider, Navigate, Routes, Route } from "react-router-dom";
 
-const router = createBrowserRouter([
-  {
-    path: '/login', element: <Login/>
-  },
-  {
-    path: '/', element: <App/>,
-    errorElement: <ErrorPage/>,
-    children: [
-      {
-        path: '/', element: <Home/>
-      },
-      {
-        path: 'perfil', element: <Perfil/>
-      },
-      {
-        path: '/colab/:id', element: <Colab/>
-      },
-      {
-        path: 'oldpage', element: <Navigate to='/perfil'/>
-      }
-    ] 
-  }
-])
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "./context/authProvider";
 
+const queryClient = new QueryClient();
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+import Home from "./routes/Home.jsx";
+import Perfil from "./routes/Perfil.jsx";
+import ErrorPage from "./routes/ErrorPage.jsx";
+import Colab from "./routes/Colaborador.jsx";
+import Login from "./routes/Login.jsx";
+import PrivateRoutes from "./routes/PrivateRoutes.jsx";
+import { ThemeProvider } from "./context/themeProvider.jsx";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
-  </React.StrictMode>,
-)
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <AuthProvider>
+          <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+
+            <Routes>
+              <Route element={<PrivateRoutes />}>
+                <Route element={<Home />} path="/" exact />
+                <Route element={<Perfil />} path="/pagamentos" />
+              </Route>
+
+              <Route element={<Login />} path="/login" />
+
+            </Routes>
+
+            <Toaster />
+          </ThemeProvider>
+        </AuthProvider>
+      </Router>
+    </QueryClientProvider>
+  </React.StrictMode>
+);
