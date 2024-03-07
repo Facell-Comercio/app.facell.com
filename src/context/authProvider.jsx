@@ -9,12 +9,10 @@ export default authContext;
 export const AuthProvider = ({ children }) => {
   const api = useApi();
 
-  localStorage.getItem("token");
-
   const navigate = useNavigate();
 
-  const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(prev=>JSON.parse(localStorage.getItem("token")) || null);
+  const [user, setUser] = useState(prev=>JSON.parse(localStorage.getItem("user")) || null);
 
   const login = async ({ email, senha }) => {
     const data = await api.login({ email, senha });
@@ -25,8 +23,10 @@ export const AuthProvider = ({ children }) => {
 
     if (data?.user && data?.token) {
       setToken(data.token);
+      console.log(data.user)
       setUser(data.user);
       localStorage.setItem("token", JSON.stringify(data.token));
+      localStorage.setItem("user", JSON.stringify(data.user));
       navigate("/");
     }
   };
@@ -35,10 +35,12 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     localStorage.setItem("token", "");
+    localStorage.setItem("user", "");
   };
 
   const contextData = {
     login,
+    logout,
     user,
   };
 

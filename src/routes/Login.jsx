@@ -10,7 +10,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import iconFacell from "@/assets/images/facell-192x192.png";
 import { useContext, useEffect, useState } from "react";
 import authContext from "@/context/authProvider";
-import ErrorAlert from "@/components/ui/errorAlert";
+import ErrorAlert from "@/components/ui/error-alert";
 
 const formSchema = z.object({
   email: z.string(),

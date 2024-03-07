@@ -4,9 +4,9 @@ import { useContext } from "react";
 const Home = () => {
     const {user} = useContext(authContext);
 
-    return ( <div>
-        <h1>Home</h1>
-        <p>Hello, {user?.email}</p>
+    return ( <div className="p-5">
+        <h1>Em breve...</h1>
+        
     </div> );
 }
  

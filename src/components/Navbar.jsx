@@ -1,14 +1,47 @@
-import {Link} from 'react-router-dom'
-import { ToggleTheme } from './ui/toogle-theme';
+import { Link } from "react-router-dom";
+import { ToggleTheme } from "./ui/toogle-theme";
+import { Button } from "./ui/button";
+import { ArrowLeftFromLine, Bell, DoorOpen, MessageSquare } from "lucide-react";
+import { useContext } from "react";
+import authContext from "@/context/authProvider";
+import { Badge } from "./ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 const Navbar = () => {
-    return ( <nav className='flex gap-3'>
-        <Link to='/'>Home</Link>
-        <Link to='/perfil'>Perfil</Link>
+  const { user, logout } = useContext(authContext);
+  return (
+    <nav className="flex gap-3 p-3 border justify-end sticky top-0 backdrop-blur">
+      <Button size={"icon"} variant="outline" className="relative">
+        <Bell size={20} />
+        <Badge variant="destructive" className={"absolute -top-2 -right-2"}>
+          3
+        </Badge>
+      </Button>
+      <Button size={"icon"} variant="outline" className="relative">
+        <MessageSquare size={20} />
+        <Badge variant="destructive" className={"absolute -top-2 -right-2"}>
+          3
+        </Badge>
+      </Button>
 
-        <ToggleTheme/>
+      <ToggleTheme />
 
-    </nav> );
-}
- 
+      <DropdownMenu>
+        <DropdownMenuTrigger variant="outline" size="icon" className="overflow-hidden">
+            <img src={user.img_url} className="w-10 h-10 rounded-sm"/>
+            <span className="sr-only">User</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem variant="outline" className="w-full justify-start gap-2 cursor-pointer" onClick={()=>logout()}>
+           
+              <DoorOpen size={20}/>
+              <span>Sair</span>
+           
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </nav>
+  );
+};
+
 export default Navbar;
