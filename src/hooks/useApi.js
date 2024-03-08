@@ -7,7 +7,7 @@ const api = axios.create({
 // Crie um interceptor de requisição
 api.interceptors.request.use((config) => {
   // Obtenha o token do localStorage
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = JSON.parse(localStorage.getItem("token") || null);
   // Se o token existir, adicione-o ao cabeçalho "Authorization"
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
@@ -27,11 +27,13 @@ export const useApi = () => ({
   },
   login: async ({ email, senha }) => {
     try {
+      console.log('Logando..')
       const response = await api.post("/auth/login", { email, senha });
-      console.log(response.data)
+      console.log(response)
       return response.data;
 
     } catch (error) {
+      console.log(error)
       return {error: error.message};
     }
   },
