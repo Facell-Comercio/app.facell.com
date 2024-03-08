@@ -26,4 +26,5 @@ jobs:
           cd /var/www/app.facell.com/
           git pull origin main
           git status
-          npm install --only=prod
+          npm install
+          npm run build
