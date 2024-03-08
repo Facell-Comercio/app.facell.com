@@ -11,8 +11,8 @@ export const AuthProvider = ({ children }) => {
 
   const navigate = useNavigate();
 
-  const [token, setToken] = useState(prev=>JSON.parse(localStorage.getItem("token")) || null);
-  const [user, setUser] = useState(prev=>JSON.parse(localStorage.getItem("user")) || null);
+  const [token, setToken] = useState(prev=>prev = JSON.parse(localStorage.getItem("token") || null));
+  const [user, setUser] = useState(prev=>prev = JSON.parse(localStorage.getItem("user") || null));
 
   const login = async ({ email, senha }) => {
     const data = await api.login({ email, senha });
