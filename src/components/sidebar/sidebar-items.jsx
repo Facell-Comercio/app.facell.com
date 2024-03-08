@@ -14,14 +14,14 @@ export const sidebarItems = [
     name: "Chat",
     type: "link",
     icon: <BsFillChatLeftDotsFill/>,
-    uri: "chat/",
+    uri: "/chat",
     visible: true,
   },
   {
     name: "Dashboard",
     type: "link",
     icon: <BsFillBarChartFill/>,
-    uri: "dashboard/",
+    uri: "/dashboard",
     visible: true,
   },
   {
