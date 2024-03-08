@@ -11,13 +11,13 @@ const Navbar = () => {
   const { user, logout } = useContext(authContext);
   return (
     <nav className="flex w-full gap-3 p-3 border justify-end sticky top-0 backdrop-blur">
-      <Button size={"icon"} variant="outline" className="relative">
+      <Button size={"icon"} variant="outline" className="invisible relative">
         <Bell size={20} />
         <Badge variant="destructive" className={"absolute -top-2 -right-2"}>
           3
         </Badge>
       </Button>
-      <Button size={"icon"} variant="outline" className="relative">
+      <Button size={"icon"} variant="outline" className="invisible relative">
         <MessageSquare size={20} />
         <Badge variant="destructive" className={"absolute -top-2 -right-2"}>
           3
