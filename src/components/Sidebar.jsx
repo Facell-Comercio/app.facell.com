@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Link } from "react-router-dom";
 import { sidebarItems } from "./sidebar/sidebar-items";
 import { BsChevronDown, BsDot } from "react-icons/bs";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 const SidebarContext = createContext();
 
 export function Sidebar() {
@@ -91,7 +91,6 @@ export function Sidebar() {
                         ${itemActive?.parentIndex === itemIndex && itemActive?.sub === true && itemActive?.index === subitemIndex && " bg-blue-800 text-white"}
                         `}
                           onClick={() => {
-                            console.log(itemActive)
                             setItemActive((prev) => (prev = { sub: true, index: subitemIndex, parentIndex: itemIndex }));
                           }}
                         >

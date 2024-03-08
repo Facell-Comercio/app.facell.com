@@ -6,11 +6,13 @@ import { Sidebar } from "./components/Sidebar";
 
 function App() {
   return (
-    <div className="app flex h-screen w-screen overflow-hidden">
+    <div className="app">
       <Sidebar/>
-      <div className="flex flex-col flex-1 overflow-auto">
+      <div className="root-content">
         <Navbar />
-        <Outlet />
+        <div className="root-outlet">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
