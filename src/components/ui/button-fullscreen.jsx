@@ -3,7 +3,7 @@ import { Button } from './button';
 import { ExpandIcon, Maximize, Maximize2, Minimize2 } from 'lucide-react';
 
 
-const ButtonFullScreen = () => {
+const ButtonFullScreen = (props) => {
     const [fullscreen, setFullscreen] = useState(false)
 
     const handleFullscreen = () => {
@@ -41,7 +41,7 @@ const ButtonFullScreen = () => {
     };
 
       return (
-        <Button variant='outline' onClick={handleFullscreen}>{fullscreen ? <Minimize2/> : <Maximize2/>}</Button>
+        <Button {...props} onClick={handleFullscreen}>{fullscreen ? <Minimize2 size={20}/> : <Maximize2 size={20}/>}</Button>
       );
 }
  

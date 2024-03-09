@@ -25,7 +25,7 @@ const Navbar = () => {
         </Badge>
       </Button>
 
-     <ButtonFullScreen/>
+     <ButtonFullScreen size="icon" variant='outline' className='shrink-0'  />
 
       <ToggleTheme className={'shrink-0'}/>
 
