@@ -1,46 +1,81 @@
-import React, { useMemo, useState, HTMLAttributes, HTMLProps } from "react";
+import React, { useMemo, useState, HTMLAttributes, HTMLProps, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useQuery } from "@tanstack/react-query";
 import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DatePickerWithRange } from "@/components/ui/date-range";
+import { Button } from "@/components/ui/button";
+import { EraserIcon, FilePlus2, Filter, FilterIcon } from "lucide-react";
+import SelectGrupoEconomico from "@/components/ui/select-grupo-economico";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const TitulosPagar = () => {
   const [isAllSelected, setIsAllSelected] = useState(false);
+  const [rowSelection, setRowSelection] = useState({});
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 15 });
+  const initialFilters = {
+    id: null,
+    id_grupo_economico: null,
+    id_status: null,
+    tipo_data: 'data_vencimento',
+    range_data: {from: undefined, to: undefined},
+    descricao: '',
+    nome_user: null,
+  }
+  const [filters, setFilters] = useState(initialFilters);
+
+  useEffect(()=>{
+    console.log(filters)
+  }, [filters])
+
+  const handleClickFilter = ()=> refetch()
+  const handleResetFilter = async ()=> {
+    await new Promise(resolve=>resolve(setFilters(initialFilters)))
+    refetch()
+  }
+
   const {
     financeiro: {
       contasPagar: { fetchTitulos },
     },
   } = useApi();
-  const { data, error, isLoading, isError } = useQuery({ queryKey: ["fin_cp_titulos", pagination], queryFn: () => fetchTitulos(pagination), retry: false });
+  const { data, error, isLoading, isError, refetch  } = useQuery({ queryKey: ["fin_cp_titulos", pagination], queryFn: () => fetchTitulos({ pagination, filters }), retry: false });
 
   const columns = useMemo(
     () => [
-        {
-            id: "select",
-            header: ({table})=>(
-            <Checkbox 
-            {...{
+      {
+        id: "select",
+        header: ({ table }) => (
+          <div className="px-1">
+            <input
+              type="checkbox"
+              {...{
                 checked: table.getIsAllRowsSelected(),
+                indeterminate: table.getIsSomeRowsSelected(),
                 onChange: table.getToggleAllRowsSelectedHandler(),
               }}
             />
-            ),
-            cell: ({ row }) => (
-            <div className="px-1">
-              <Checkbox
-                {...{
-                  checked: row.getIsSelected(),
-                  disabled: !row.getCanSelect(),
-                  onChange: row.getToggleSelectedHandler(),
-                }}
-              />
-            </div>
-          ),
-        },
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className="px-1">
+            <input
+              type="checkbox"
+              {...{
+                checked: row.getIsSelected(),
+                disabled: !row.getCanSelect(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler(),
+              }}
+            />
+          </div>
+        ),
+      },
       {
         accessorKey: "id",
-        header: "Num",
+        header: "ID",
         cell: (info) => info.getValue(),
       },
       {
@@ -86,7 +121,11 @@ const TitulosPagar = () => {
         accessorKey: "descricao",
         cell: (info) => {
           let label = info.getValue();
-          return <div title={label} className="block truncate max-w-96">{label}</div>;
+          return (
+            <div title={label} className="block truncate max-w-96">
+              {label}
+            </div>
+          );
         },
         header: "Descrição",
         enableResizing: true,
@@ -96,17 +135,25 @@ const TitulosPagar = () => {
         header: "Fornecedor",
         accessorKey: "fornecedor",
         cell: (info) => {
-            let label = info.getValue();
-            return <div title={label} className="block truncate max-w-96">{label}</div>;
-          },
+          let label = info.getValue();
+          return (
+            <div title={label} className="block truncate max-w-96">
+              {label}
+            </div>
+          );
+        },
       },
       {
         header: "solicitante",
         accessorKey: "solicitante",
         cell: (info) => {
-            let label = info.getValue();
-            return <div title={label} className="block truncate max-w-96">{label}</div>;
-          },
+          let label = info.getValue();
+          return (
+            <div title={label} className="block truncate max-w-96">
+              {label}
+            </div>
+          );
+        },
       },
     ],
     []
@@ -118,7 +165,10 @@ const TitulosPagar = () => {
     columns,
     state: {
       pagination,
+      rowSelection,
     },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
@@ -135,9 +185,65 @@ const TitulosPagar = () => {
 
   return (
     <div className="block w-full overflow-auto">
-      <table
-        className="w-auto rounded-lg"
-      >
+      {/* Ações */}
+      <div className="mb-2 flex gap-3">
+        <Button><FilePlus2 size={16} className="me-2"/> Nova solicitação</Button>
+      </div>
+
+      {/* Filtros */}
+      <Accordion type="single" collapsible className="p-2 bg-slate-200 dark:bg-slate-950 mb-2 rounded-lg">
+        <AccordionItem value="item-1">
+          <AccordionTrigger className="py-1 hover:no-underline">Filtros</AccordionTrigger>
+          <AccordionContent>
+            <ScrollArea  className="w-fill whitespace-nowrap rounded-md border">
+              <div className="flex w-max space-x-4 p-4">
+              <Button onClick={handleClickFilter}>Filtrar <FilterIcon size={12} className="ms-2"/></Button>
+              <Button onClick={handleResetFilter} variant='destructive'>Limpar <EraserIcon size={12} className="ms-2"/></Button>
+
+              <Input type="number" placeholder="ID" className='w-[80px]' value={filters.id}  onChange={(e)=>{setFilters(prev=>({...prev, id: e.target.value}))}}/>
+              
+              <SelectGrupoEconomico showAll value={filters.id_grupo_economico} onChange={(id_grupo_economico)=>{setFilters(prev=>({...prev, id_grupo_economico: id_grupo_economico}))}}/>
+
+              <Select value={filters.id_status}  onValueChange={(id_status)=>{setFilters(prev=>({...prev, id_status: id_status}))}}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Status"  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={null}>Todos status</SelectItem>
+                  <SelectItem value="1">Solicitado</SelectItem>
+                  <SelectItem value="2">Negado</SelectItem>
+                  <SelectItem value="3">Aprovado</SelectItem>
+                  <SelectItem value="4">Pago</SelectItem>
+                  <SelectItem value="5">Cancelado</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={filters.tipo_data}  onValueChange={(tipo_data)=>{setFilters(prev=>({...prev, tipo_data: tipo_data}))}}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Tipo de data"/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="created_at">Criação</SelectItem>
+                  <SelectItem value="data_emissao">Emissão</SelectItem>
+                  <SelectItem value="data_vencimento">Vencimento</SelectItem>
+                  <SelectItem value="data_pagamento">Pagamento</SelectItem>
+                  <SelectItem value="data_provisao">Provisão</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <DatePickerWithRange date={filters.range_data} setDate={(date)=>{setFilters(prev=>({...prev, range_data: date}))}} />
+
+                <Input className='max-w-[200px]' value={filters.descricao} onChange={(e)=>setFilters(prev=>({...prev, descricao: e.target.value}))} placeholder='Descrição...'/>
+
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
+      {/* Tabela */}
+      <table className="w-auto rounded-lg">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -165,7 +271,6 @@ const TitulosPagar = () => {
             return (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
-                    
                   return (
                     <td
                       {...{

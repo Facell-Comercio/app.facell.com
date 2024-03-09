@@ -89,9 +89,9 @@ export function Sidebar() {
                   <Link
                     to={(item.type === "link" && item.uri) || "#"}
                     className={`${!sidebarOpen && "justify-center"}  ${
-                      item.type === "title" ? "text-primary" : "dark:text-white light:text-gray-300"
+                      item.type === "title" ? "text-primary" : " light:text-slate-300"
                     } text-base flex items-center gap-x-4  rounded-md ${item.spacing ? "mt-6" : "mt-1"} ${item.type !== "title" && "hover:bg-blue-200 dark:hover:bg-blue-800 cursor-pointer"}
-              ${(itemActive?.parentIndex === itemIndex || (itemActive?.index === itemIndex && itemActive.sub === false)) && "text-white bg-blue-800 duration-300"}
+              ${(itemActive?.parentIndex === itemIndex || (itemActive?.index === itemIndex && itemActive.sub === false)) && "text-white  bg-blue-800 duration-300"}
               `}
                   >
                     <div
@@ -126,7 +126,7 @@ export function Sidebar() {
                           <Link key={subitemIndex} to={(subitem.type === "link" && subitem.uri) || "#"}>
                             <li
                               className={`
-                        group flex ml-3 mt-1 px-2 py-1 rounded cursor-pointer text-slate-500 hover:text-white hover:bg-blue-800
+                        group flex ml-3 mt-1 px-2 py-2 rounded cursor-pointer text-slate-500 hover:text-white hover:bg-blue-800
                         ${sidebarOpen ? "" : "justify-center"}
                         ${itemActive?.parentIndex === itemIndex && itemActive?.sub === true && itemActive?.index === subitemIndex && " bg-blue-800 text-white"}
                         `}

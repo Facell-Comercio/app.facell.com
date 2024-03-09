@@ -40,11 +40,17 @@ export const useApi = () => ({
   logout: async () => {},
   financeiro: {
     contasPagar: {
-      fetchTitulos: async (pagination)=>{
-          const response = await api.get("/financeiro/contas-a-pagar/titulos", {params: {...pagination}});
+      fetchTitulos: async ({pagination, filters})=>{
+          const response = await api.get("/financeiro/contas-a-pagar/titulos", {params: {...pagination, filters}});
           return response.data;
        
       }
+    }
+  },
+  grupo_economico: {
+    get: async (id)=>{
+      const response = await api.get("/grupo_economico", {params: {id}});
+      return response.data;
     }
   }
 });
