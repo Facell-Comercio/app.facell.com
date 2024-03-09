@@ -54,9 +54,9 @@ const Login = () => {
   }
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex h-screen items-center justify-center">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 flex flex-col items-center gap-4 backdrop-brightness-125 shadow-xl rounded-xl p-7 min-w-96">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 flex flex-col items-center gap-4 backdrop-brightness-125 shadow-xl rounded-xl p-7 min-w-[400px]">
           <div className="flex w-full justify-start items-center font-medium">
             <img src={iconFacell} className="size-14" />
             <span>Facell</span>
@@ -66,7 +66,7 @@ const Login = () => {
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem className="text-left">
+              <FormItem className="text-left w-60">
                 <FormLabel>E-mail</FormLabel>
                 <FormControl>
                   <Input type='email' placeholder="Seu email facell" {...field} />
@@ -80,7 +80,7 @@ const Login = () => {
             control={form.control}
             name="senha"
             render={({ field }) => (
-              <FormItem className="text-left">
+              <FormItem className="text-left w-60">
                 <FormLabel>Senha</FormLabel>
                 <FormControl>
                   <Input type='password' {...field} />

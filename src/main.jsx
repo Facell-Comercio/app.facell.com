@@ -12,16 +12,14 @@ import { AuthProvider } from "./context/authProvider";
 
 const queryClient = new QueryClient();
 
-import Home from "./routes/Home.jsx";
-import Perfil from "./routes/Perfil.jsx";
-import ErrorPage from "./routes/NotFound.jsx";
-import Colab from "./routes/Colaborador.jsx";
-import Login from "./routes/Login.jsx";
-import PrivateRoutes from "./routes/PrivateRoutes.jsx";
+import Home from "./pages/Home.jsx";
+import Perfil from "./pages/Perfil.jsx";
+import Login from "./pages/Login.jsx";
+import PrivateRoutes from "./pages/PrivateRoutes.jsx";
 import { ThemeProvider } from "./context/themeProvider.jsx";
-import ContasPagarPage from "./routes/financeiro/contas-pagar/ContasPagar.jsx";
-import ContasReceberPage from "./routes/financeiro/contas-receber/ContasReceber.jsx";
-import PageNotFound from "./routes/NotFound.jsx";
+import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.jsx";
+import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.jsx";
+import PageNotFound from "./pages/NotFound.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
