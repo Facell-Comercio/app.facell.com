@@ -6,11 +6,12 @@ import { useContext } from "react";
 import authContext from "@/context/authProvider";
 import { Badge } from "./ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import ButtonFullScreen from "./ui/button-fullscreen";
 
 const Navbar = () => {
   const { user, logout } = useContext(authContext);
   return (
-    <nav className="flex w-full gap-3 p-3 border justify-end sticky top-0 backdrop-blur">
+    <nav className=" flex w-full gap-3 p-3 border justify-end sticky top-0 backdrop-blur">
       <Button size={"icon"} variant="outline" className="invisible relative">
         <Bell size={20} />
         <Badge variant="destructive" className={"absolute -top-2 -right-2"}>
@@ -24,11 +25,13 @@ const Navbar = () => {
         </Badge>
       </Button>
 
-      <ToggleTheme />
+     <ButtonFullScreen/>
+
+      <ToggleTheme className={'shrink-0'}/>
 
       <DropdownMenu>
-        <DropdownMenuTrigger variant="outline" size="icon" className="overflow-hidden">
-            <img src={user.img_url} className="w-10 h-10 rounded-sm"/>
+        <DropdownMenuTrigger variant="outline" size="icon" className="shrink-0 overflow-hidden">
+            <img src={user.img_url} className=" w-10 h-10 rounded-sm"/>
             <span className="sr-only">User</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

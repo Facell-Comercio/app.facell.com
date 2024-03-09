@@ -6,11 +6,11 @@ import { Sidebar } from "./components/Sidebar";
 
 function App() {
   return (
-    <div className="app">
+    <div className="app flex h-full w-full overflow-hidden">
       <Sidebar/>
-      <div className="root-content">
+      <div className="h-full w-full flex flex-col overflow-auto">
         <Navbar />
-        <div className="root-outlet">
+        <div className="flex-1 w-full overflow-auto">
           <Outlet />
         </div>
       </div>

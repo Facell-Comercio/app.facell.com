@@ -53,9 +53,13 @@ export function Sidebar() {
     }
   }, []);
   
+const handleToggleSidebar = ()=>{
+  console.log('Clicou')
+  setSidebarOpen((curr) => !curr)
+}
 
   return (
-    <aside className={`h-screen ${sidebarOpen ? "w-full sm:w-64" : "w-0 sm:w-20"} relative`}>
+    <aside className={`h-full shrink-0 ${sidebarOpen ? "w-full sm:w-72" : "w-0 sm:w-20"} relative`}>
       <nav className="h-full flex flex-col border-r shadow-lg ">
         <div className="p-4 pb-2 flex justify-between items-center ">
           <Link to="/" className="flex gap-2 items-center">
@@ -64,8 +68,8 @@ export function Sidebar() {
           </Link>
 
           <button
-            onClick={() => setSidebarOpen((curr) => !curr)}
-            className={`flex items-center p-1.5 z-10 absolute border ${
+            onClick={handleToggleSidebar}
+            className={`z-30 flex items-center p-1.5 absolute ${
               sidebarOpen ? "right-2" : "right-30"
             } sm:-right-4 bottom-12 sm:bottom-auto sm:top-12 rounded-full shadow-lg bg-blue-100 hover:bg-blue-100 dark:bg-blue-700 dark:hover:bg-blue-800 `}
           >

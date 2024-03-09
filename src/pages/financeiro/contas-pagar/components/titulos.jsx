@@ -177,11 +177,11 @@ const TitulosPagar = () => {
   });
 
   if (isError) {
-    return <h1>Ocorreu o seguinte erro {error.message}</h1>;
+    return <h1>Ops, não consegui obter os títulos. Vamos tentar novamente.</h1>;
   }
-  if (isLoading) {
-    return <h1>Buscando as solicitações...</h1>;
-  }
+  // if (isLoading) {
+  //   return <h1>Buscando as solicitações...</h1>;
+  // }
 
   return (
     <div className="block w-full overflow-auto">
