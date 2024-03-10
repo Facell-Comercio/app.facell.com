@@ -1,4 +1,4 @@
-import authContext from "@/context/authProvider";
+import authContext from "@/context/auth-provider";
 import ilustration from '@/assets/ilustrations/undraw_building_websites.svg';
 import { useContext } from "react";
 

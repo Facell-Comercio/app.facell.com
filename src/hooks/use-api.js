@@ -41,10 +41,13 @@ export const useApi = () => ({
   financeiro: {
     contasPagar: {
       fetchTitulos: async ({pagination, filters})=>{
-          const response = await api.get("/financeiro/contas-a-pagar/titulos", {params: {...pagination, filters}});
+          const response = await api.get("/financeiro/contas-a-pagar/titulo/", {params: {...pagination, filters}});
           return response.data;
-       
-      }
+      },
+      fetchTitulo: async ({id})=>{
+        const response = await api.get(`/financeiro/contas-a-pagar/titulo/${id}`);
+        return response.data;
+    }
     }
   },
   grupo_economico: {

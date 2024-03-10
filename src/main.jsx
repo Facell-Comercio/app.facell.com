@@ -8,7 +8,7 @@ import "./index.css";
 import { BrowserRouter as Router, RouterProvider, Navigate, Routes, Route } from "react-router-dom";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "./context/authProvider";
+import { AuthProvider } from "./context/auth-provider.jsx";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +16,7 @@ import Home from "./pages/Home.jsx";
 import Perfil from "./pages/Perfil.jsx";
 import Login from "./pages/Login.jsx";
 import PrivateRoutes from "./pages/PrivateRoutes.jsx";
-import { ThemeProvider } from "./context/themeProvider.jsx";
+import { ThemeProvider } from "./context/theme-provider.jsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.jsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.jsx";
 import PageNotFound from "./pages/NotFound.jsx";

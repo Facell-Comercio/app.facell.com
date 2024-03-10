@@ -3,7 +3,7 @@ import { ToggleTheme } from "./ui/toogle-theme";
 import { Button } from "./ui/button";
 import { ArrowLeftFromLine, Bell, DoorOpen, MessageSquare } from "lucide-react";
 import { useContext } from "react";
-import authContext from "@/context/authProvider";
+import authContext from "@/context/auth-provider";
 import { Badge } from "./ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import ButtonFullScreen from "./ui/button-fullscreen";

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'; // Assuming these are custom components
 import { useQuery } from '@tanstack/react-query';
-import { useApi } from '@/hooks/useApi';
+import { useApi } from '@/hooks/use-api';
 
 const SelectGrupoEconomico = ({ value, onChange, showAll = false }) => {
   // Use a single state variable for fetching and storing data

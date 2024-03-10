@@ -1,4 +1,4 @@
-import authContext from "@/context/authProvider";
+import authContext from "@/context/auth-provider";
 
 import { useContext, createContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -71,7 +71,7 @@ const handleToggleSidebar = ()=>{
             onClick={handleToggleSidebar}
             className={`z-30 flex items-center p-1.5 absolute ${
               sidebarOpen ? "right-2" : "right-30"
-            } sm:-right-4 bottom-12 sm:bottom-auto sm:top-12 rounded-full shadow-lg bg-blue-100 hover:bg-blue-100 dark:bg-blue-700 dark:hover:bg-blue-800 `}
+            } sm:-right-4 bottom-8 sm:bottom-auto sm:top-12 rounded-full shadow-lg bg-blue-100 hover:bg-blue-100 dark:bg-blue-700 dark:hover:bg-blue-800 `}
           >
             {sidebarOpen ? <ChevronLeft /> : <ChevronRight />}
             <span className="sm:hidden text-sm">Menu</span>

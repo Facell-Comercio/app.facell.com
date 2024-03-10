@@ -1,5 +1,5 @@
 import React, { useMemo, useState, HTMLAttributes, HTMLProps, useEffect } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useApi } from "@/hooks/use-api";
 import { useQuery } from "@tanstack/react-query";
 import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -10,8 +10,11 @@ import { Button } from "@/components/ui/button";
 import { EraserIcon, FilePlus2, Filter, FilterIcon } from "lucide-react";
 import SelectGrupoEconomico from "@/components/ui/select-grupo-economico";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import ModalTitulo from "./modal-titulo-pagar";
+import ModalTituloPagar from "./modal-titulo-pagar";
 
 const TitulosPagar = () => {
+  const [titulo, setTitulo] = useState(null)
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 15 });
@@ -76,7 +79,7 @@ const TitulosPagar = () => {
       {
         accessorKey: "id",
         header: "ID",
-        cell: (info) => info.getValue(),
+        cell: (info) => (<span className='font-semibold cursor-pointer' onClick={()=>setTitulo(info.getValue())}>{info.getValue()}</span>),
       },
       {
         header: "Status",
@@ -185,6 +188,7 @@ const TitulosPagar = () => {
 
   return (
     <div className="block w-full overflow-auto">
+      <ModalTituloPagar titulo={titulo} setTitulo={setTitulo}></ModalTituloPagar>
       {/* Ações */}
       <div className="mb-2 flex gap-3">
         <Button><FilePlus2 size={16} className="me-2"/> Nova solicitação</Button>
