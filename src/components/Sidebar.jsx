@@ -53,17 +53,17 @@ export function Sidebar() {
       });
     }
 
-    const mediaQuery = window.matchMedia('(max-width: 768px)'); // Define a consulta de mídia para uma largura máxima de 768px (tamanho de tela de dispositivos móveis)
-    
+    // Lida com o tamanho da tela e define se é mobile ou não
     const handleResize = () => {
-      if (mediaQuery.matches) {
-        // Se a consulta de mídia corresponder (ou seja, o tamanho da tela for menor que 768px), execute a função apenas em dispositivos móveis
+      var  windowWidth = window.innerWidth; // Define a consulta de mídia para uma largura máxima de 768px (tamanho de tela de dispositivos móveis)
+      if (windowWidth <= 768) {
         setMobile(true); // Chame sua função aqui
       }else{
         setMobile(false)
       }
     };
-
+    handleResize()
+    
     // Adiciona um ouvinte de evento de redimensionamento da janela
     window.addEventListener('resize', handleResize);
 
@@ -74,7 +74,6 @@ export function Sidebar() {
   }, []);
   
 const handleToggleSidebar = ()=>{
-  console.log('Clicou')
   setSidebarOpen((curr) => !curr)
 }
 
