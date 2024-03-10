@@ -6,13 +6,12 @@ import { sidebarItems } from "./sidebar/sidebar-items";
 import { BsChevronDown, BsDot } from "react-icons/bs";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import logoFacell from "@/assets/images/facell-192x192.png";
+import { useSidebar } from "@/context/sidebar-store";
 
 const SidebarContext = createContext();
 
 export function Sidebar() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [itemActive, setItemActive] = useState({ sub: false, index: null, parentIndex: null });
-  const [mobile, setMobile] = useState(false);
+  const {sidebarOpen, toggleSidebar, openSidebar, closeSidebar, itemActive, mobile, setMobile, setItemActive} = useSidebar()
 
   useEffect(() => {
     const currentURI = window.location.pathname;
@@ -56,14 +55,13 @@ export function Sidebar() {
     // Lida com o tamanho da tela e define se é mobile ou não
     const handleResize = () => {
       var  windowWidth = window.innerWidth; // Define a consulta de mídia para uma largura máxima de 768px (tamanho de tela de dispositivos móveis)
-      if (windowWidth <= 768) {
+      if (windowWidth <= 640) {
         setMobile(true); // Chame sua função aqui
       }else{
         setMobile(false)
       }
     };
-    handleResize()
-    
+
     // Adiciona um ouvinte de evento de redimensionamento da janela
     window.addEventListener('resize', handleResize);
 
@@ -71,10 +69,11 @@ export function Sidebar() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    
   }, []);
   
 const handleToggleSidebar = ()=>{
-  setSidebarOpen((curr) => !curr)
+  toggleSidebar()
 }
 
   return (
@@ -112,7 +111,7 @@ const handleToggleSidebar = ()=>{
                   <Link
                     onClick={()=>{
                       if (mobile && sidebarOpen && item.type === "link") {
-                        setSidebarOpen(prev=>!prev)
+                        closeSidebar()
                       }
                     }}
                     to={(item.type === "link" && item.uri) || "#"}
@@ -126,7 +125,7 @@ const handleToggleSidebar = ()=>{
                       className={`${sidebarOpen ? "justify-between" : "justify-center"} group flex gap-3  w-full items-center p-2`}
                       onClick={() => {
                         if (item.type !== "title") {
-                          setItemActive((prev) => (prev = { sub: false, index: itemIndex, parentIndex: itemIndex }));
+                          setItemActive({ sub: false, index: itemIndex, parentIndex: itemIndex });
                         }
                       }}
                     >
@@ -153,7 +152,7 @@ const handleToggleSidebar = ()=>{
                         .map((subitem, subitemIndex) => (
                           <Link onClick={()=>{
                             if (mobile && sidebarOpen && subitem.type === "link") {
-                              setSidebarOpen(prev=>!prev)
+                              closeSidebar()
                             }
                           }} key={subitemIndex} to={(subitem.type === "link" && subitem.uri) || "#"}>
                             <li
@@ -163,7 +162,7 @@ const handleToggleSidebar = ()=>{
                         ${itemActive?.parentIndex === itemIndex && itemActive?.sub === true && itemActive?.index === subitemIndex && " bg-blue-800 text-white"}
                         `}
                               onClick={() => {
-                                setItemActive((prev) => (prev = { sub: true, index: subitemIndex, parentIndex: itemIndex }));
+                                setItemActive({ sub: true, index: subitemIndex, parentIndex: itemIndex });
                               }}
                             >
                               <span className="text-base font-semibold ">{sidebarOpen ? subitem.name : subitem.shortName}</span>

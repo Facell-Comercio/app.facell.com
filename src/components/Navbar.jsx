@@ -7,11 +7,19 @@ import authContext from "@/context/auth-provider";
 import { Badge } from "./ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import ButtonFullScreen from "./ui/button-fullscreen";
+import LogoFacell from "./ui/logo-facell";
+import { useSidebar } from "@/context/sidebar-store";
 
 const Navbar = () => {
   const { user, logout } = useContext(authContext);
+  const [sidebarOpen, mobile] = useSidebar((state)=>([state.sidebarOpen, state.mobile]))
+
   return (
-    <nav className=" flex w-full gap-3 p-3 border justify-end sticky top-0 backdrop-blur">
+    <nav className=" flex w-full gap-3 p-3 items-center border justify-end sticky top-0 backdrop-blur">
+      {!sidebarOpen && mobile && (<LogoFacell size='20' className='me-auto' />)}
+
+      <div className="flex gap-3 items-center">
+
       <Button size={"icon"} variant="outline" className="invisible relative">
         <Bell size={20} />
         <Badge variant="destructive" className={"absolute -top-2 -right-2"}>
@@ -43,6 +51,7 @@ const Navbar = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </nav>
   );
 };
