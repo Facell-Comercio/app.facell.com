@@ -12,6 +12,7 @@ const SidebarContext = createContext();
 export function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [itemActive, setItemActive] = useState({ sub: false, index: null, parentIndex: null });
+  const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
     const currentURI = window.location.pathname;
@@ -51,6 +52,25 @@ export function Sidebar() {
         parentIndex: null,
       });
     }
+
+    const mediaQuery = window.matchMedia('(max-width: 768px)'); // Define a consulta de mídia para uma largura máxima de 768px (tamanho de tela de dispositivos móveis)
+    
+    const handleResize = () => {
+      if (mediaQuery.matches) {
+        // Se a consulta de mídia corresponder (ou seja, o tamanho da tela for menor que 768px), execute a função apenas em dispositivos móveis
+        setMobile(true); // Chame sua função aqui
+      }else{
+        setMobile(false)
+      }
+    };
+
+    // Adiciona um ouvinte de evento de redimensionamento da janela
+    window.addEventListener('resize', handleResize);
+
+    // Remove o ouvinte de evento quando o componente é desmontado
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
   
 const handleToggleSidebar = ()=>{
@@ -92,8 +112,8 @@ const handleToggleSidebar = ()=>{
                 <li key={itemIndex}>
                   <Link
                     onClick={()=>{
-                      if (item.type !== "link") {
-                        setSidebarOpen(false)
+                      if (mobile && sidebarOpen && item.type === "link") {
+                        setSidebarOpen(prev=>!prev)
                       }
                     }}
                     to={(item.type === "link" && item.uri) || "#"}
@@ -133,8 +153,8 @@ const handleToggleSidebar = ()=>{
                         .filter((subitem) => subitem.visible !== false)
                         .map((subitem, subitemIndex) => (
                           <Link onClick={()=>{
-                            if (subitem.type !== "link") {
-                              setSidebarOpen(false)
+                            if (mobile && sidebarOpen && subitem.type === "link") {
+                              setSidebarOpen(prev=>!prev)
                             }
                           }} key={subitemIndex} to={(subitem.type === "link" && subitem.uri) || "#"}>
                             <li
