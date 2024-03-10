@@ -91,6 +91,7 @@ const handleToggleSidebar = ()=>{
               .map((item, itemIndex) => (
                 <li key={itemIndex}>
                   <Link
+                    onClick={setSidebarOpen(false)}
                     to={(item.type === "link" && item.uri) || "#"}
                     className={`${!sidebarOpen && "justify-center"}  ${
                       item.type === "title" ? "text-primary" : " light:text-slate-300"
@@ -127,7 +128,7 @@ const handleToggleSidebar = ()=>{
                       {item.children
                         .filter((subitem) => subitem.visible !== false)
                         .map((subitem, subitemIndex) => (
-                          <Link key={subitemIndex} to={(subitem.type === "link" && subitem.uri) || "#"}>
+                          <Link onClick={setSidebarOpen(false)} key={subitemIndex} to={(subitem.type === "link" && subitem.uri) || "#"}>
                             <li
                               className={`
                         group flex ml-3 mt-1 px-2 py-2 rounded cursor-pointer text-slate-500 hover:text-white hover:bg-blue-800
