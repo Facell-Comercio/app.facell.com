@@ -9,12 +9,12 @@ import {
 import { useApi } from "@/hooks/use-api";
 import { useQuery } from "@tanstack/react-query";
 
-const ModalTituloPagar = ({titulo, setTitulo}) => {
+const ModalTituloPagar = ({idTitulo, setIdTitulo}) => {
 
     
-    if(!titulo) return null;
-    if(titulo === 'new'){
-        return ( <Dialog open={true}>
+    if(!idTitulo) return null;
+    if(idTitulo === 'new'){
+        return ( <Dialog open={true}  onOpenChange={()=>setIdTitulo(null)} >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Novo titulo</DialogTitle>
@@ -24,12 +24,12 @@ const ModalTituloPagar = ({titulo, setTitulo}) => {
       </Dialog>
        );
     }
-    const {data, isLoading} = useQuery({queryKey: [`titulo:${titulo}`], queryFn: ()=>useApi().financeiro.contasPagar.fetchTitulo({id: titulo})})
+    const {data, isLoading} = useQuery({queryKey: [`titulo:${idTitulo}`], queryFn: ()=>useApi().financeiro.contasPagar.fetchTitulo({id: idTitulo})})
 
-    return ( <Dialog open={titulo}  onOpenChange={()=>setTitulo(null)} modal='true'>
+    return ( <Dialog open={idTitulo}  onOpenChange={()=>setIdTitulo(null)} modal='true'>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{titulo === 'new' ? 'Novo titulo' : `Titulo: ${titulo}`}</DialogTitle>
+            <DialogTitle>{idTitulo === 'new' ? 'Novo titulo' : `Titulo: ${idTitulo}`}</DialogTitle>
             <div className='d-flex gap-3 p-2'>
                 {isLoading && 'Carregando...'}
                 {data && (

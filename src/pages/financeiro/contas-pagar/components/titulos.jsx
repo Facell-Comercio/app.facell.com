@@ -14,12 +14,12 @@ import ModalTitulo from "./modal-titulo-pagar";
 import ModalTituloPagar from "./modal-titulo-pagar";
 
 const TitulosPagar = () => {
-  const [titulo, setTitulo] = useState(null)
+  const [idTitulo, setIdTitulo] = useState(null)
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 15 });
   const initialFilters = {
-    id: null,
+    id: '',
     id_grupo_economico: null,
     id_status: null,
     tipo_data: 'data_vencimento',
@@ -56,7 +56,7 @@ const TitulosPagar = () => {
               type="checkbox"
               {...{
                 checked: table.getIsAllRowsSelected(),
-                indeterminate: table.getIsSomeRowsSelected(),
+                indeterminate: table.getIsSomeRowsSelected().toString(),
                 onChange: table.getToggleAllRowsSelectedHandler(),
               }}
             />
@@ -69,7 +69,7 @@ const TitulosPagar = () => {
               {...{
                 checked: row.getIsSelected(),
                 disabled: !row.getCanSelect(),
-                indeterminate: row.getIsSomeSelected(),
+                indeterminate: row.getIsSomeSelected().toString(),
                 onChange: row.getToggleSelectedHandler(),
               }}
             />
@@ -79,7 +79,7 @@ const TitulosPagar = () => {
       {
         accessorKey: "id",
         header: "ID",
-        cell: (info) => (<span className='font-semibold cursor-pointer' onClick={()=>setTitulo(info.getValue())}>{info.getValue()}</span>),
+        cell: (info) => (<span className='font-semibold cursor-pointer' onClick={()=>setIdTitulo(info.getValue())}>{info.getValue()}</span>),
       },
       {
         header: "Status",
@@ -188,10 +188,10 @@ const TitulosPagar = () => {
 
   return (
     <div className="block w-full overflow-auto">
-      <ModalTituloPagar titulo={titulo} setTitulo={setTitulo}></ModalTituloPagar>
+      <ModalTituloPagar idTitulo={idTitulo} setIdTitulo={setIdTitulo}></ModalTituloPagar>
       {/* Ações */}
       <div className="mb-2 flex gap-3">
-        <Button><FilePlus2 size={16} className="me-2"/> Nova solicitação</Button>
+        <Button onClick={()=>{setIdTitulo('new')}}><FilePlus2 size={16} className="me-2"/> Nova solicitação</Button>
       </div>
 
       {/* Filtros */}

@@ -2,6 +2,7 @@ import "./App.css";
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { Sidebar } from "./components/Sidebar";
+import { Toaster } from "./components/ui/toaster";
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Outlet />
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }

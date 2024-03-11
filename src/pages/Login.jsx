@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 import iconFacell from "@/assets/images/facell-192x192.png";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import authContext from "@/context/auth-provider";
 import ErrorAlert from "@/components/ui/error-alert";
 

@@ -38,7 +38,6 @@ export function Sidebar() {
     const matchingItemIndexes = findMatchingItem(sidebarItems.filter(item=>item.visible));
   
     if (matchingItemIndexes) {
-      console.log(matchingItemIndexes)
       setItemActive({
         sub: !!matchingItemIndexes.parentIndex,
         index: matchingItemIndexes.index,
