@@ -11,7 +11,7 @@ import FormSelect from "@/components/ui/form-select";
 import { toast } from "@/components/ui/use-toast";
 import { Contact, Divide, DollarSign, FileIcon, FileText, HandCoins, Save } from "lucide-react";
 import { useState } from "react";
-import { create } from "zustand";
+import { useRateio } from "./store-titulo-pagar";
 
 const schema = z
   .object({
@@ -30,34 +30,6 @@ const schema = z
       });
     }
   });
-
-const useRateio = create((set, get) => ({
-  valorRateio: 1000,
-  itensRateio: [
-    {filial: '01 TIM MIDWAY', percentual: 0.3, valor: 333.00},
-    {filial: '02 TIM NATAL SHOPPING', percentual: 0.3, valor: 333.00},
-  ],
-  updateItemRateio: () => {
-    set((state) => ({ valorRateio: novoValor }));
-    get().calcularRateio();
-  },
-  setValorRateio: (novoValor) => {
-    set((state) => ({ valorRateio: novoValor }));
-    get().calcularRateio();
-  },
-  addItemRateio: (novoItemRateio) => {
-    set((state) => ({ itensRateio: [...state.itensRateio, novoItemRateio] }));
-    get().calcularRateio();
-  },
-  removeItemRateio: (index) => {
-    set((state) => ({ itensRateio: state.itensRateio.filter((item, itemIndex) => itemIndex !== index) }));
-    get().calcularRateio();
-  },
-  calcularRateio: () => {
-
-    console.log("itens aqui", get().itensRateio);
-  },
-}));
 
 const FormTituloPagar = (props) => {
   const { itensRateio, removeItemRateio, addItemRateio, limparRateio } = useRateio();
@@ -202,18 +174,33 @@ const FormTituloPagar = (props) => {
                       { value: "5", label: "R07 - RATEIO REGIONAL RN/CE" },
                     ]}
                   />
-                  <Button type="button" onClick={addNovoItemRateio}>
-                    Add
+                </div>
+
+                <div className="flex justify-between items-baseline border mt-3">
+                  <FormLabel>Itens do rateio</FormLabel>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      addNovoItemRateio();
+                    }}
+                  >
+                    Novo item
                   </Button>
                 </div>
-                <div className="flex flex-col gap-3">
-                  {itensRateio.map((itemRateio, index) => (
+                <div className="flex flex-col gap-3 mt-3">
+                  {itensRateio?.map((itemRateio, index) => (
                     <div key={index} className="flex gap-3 items-center">
-                      <span className="text-sm text-nowrap me-auto">{itemRateio.filial}</span> 
+                      <Input  readOnly={true} value={itemRateio.filial}/>
 
-                      <Input className='w-60' type="number" value={itemRateio.percentual} /> 
-                      <Input className='w-60' type="number" value={itemRateio.valor} />
-                      <Button type='button' variant='destructive' onClick={removeItemRateio(index)}>Remover</Button>
+                      <Input className="w-60" type="number" value={itemRateio.percentual} />
+                      <Input className="w-60" type="number" value={itemRateio.valor} />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={()=>{removeItemRateio(index)}}
+                      >
+                        Remover
+                      </Button>
                     </div>
                   ))}
                 </div>

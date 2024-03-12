@@ -1,8 +1,8 @@
-import FormTituloPagar from "../contas-pagar/components/table-titulos/form-titulo-pagar";
+import FormTituloPagar from "../contas-pagar/components/form-titulo-pagar";
 
 const ContasReceberPage = () => {
-    return ( <div>
-        <h1>Contas a receber</h1>
+    return ( <div className="p-5">
+        <h1 className="text-lg font-bold">Contas a receber</h1>
 
         <FormTituloPagar></FormTituloPagar>
     </div> );
