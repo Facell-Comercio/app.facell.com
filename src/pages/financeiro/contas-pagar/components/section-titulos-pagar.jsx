@@ -9,6 +9,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import TituloPagarModal from "./titulo/modal-titulo";
 import { useStoreTablePagar } from "./table-titulos/store-table";
 import FiltersLancamentosPagar from "./filters-titulos-pagar";
+import { useTituloStore } from "./titulo/store-titulo";
 const {
   financeiro: {
     contasPagar: { fetchTitulos },
@@ -16,6 +17,47 @@ const {
 } = useApi();
 
 const TitulosPagar = () => {
+
+  const {
+    titulos,
+    rowCount,
+    setDataTitulos,
+    pagination,
+    setPagination,
+    filters,
+    sorting, 
+    setSorting,
+    rowSelection,
+    setRowSelection,
+    isAllSelected,
+  } = useStoreTablePagar(state=>({
+    titulos: state.titulos,
+    rowCount: state.rowCount,
+    setDataTitulos: state.setDataTitulos,
+    filters: state.filters,
+    pagination: state.pagination,
+    setPagination: state.setPagination,
+    sorting: state.sorting,
+    setSorting: state.setSorting,
+    rowSelection: state.rowSelection,
+    setRowSelection: state.setRowSelection,
+    isAllSelected: state.isAllSelected
+  }))
+
+  const {setModalTituloOpen} = useTituloStore(state=>({
+    setModalTituloOpen: state.setModalTituloOpen
+  }))
+
+  const { data, error, isError, refetch  } = 
+  useQuery({ 
+    queryKey: ["fin_cp_titulos", pagination], 
+    queryFn: () => fetchTitulos({ pagination, filters}),
+    placeholderData: keepPreviousData,
+  });
+
+  useEffect(()=>{
+    setDataTitulos(data)
+  }, [data])
 
   const columnsTitulos = useMemo(
     () => [
@@ -50,7 +92,7 @@ const TitulosPagar = () => {
       {
         accessorKey: "id",
         header: "ID",
-        cell: (info) => (<span className='font-semibold cursor-pointer text-blue-500' onClick={()=>setIdTitulo(info.getValue())}>{info.getValue()}</span>),
+        cell: (info) => (<span className='font-semibold cursor-pointer text-blue-500' onClick={()=>setModalTituloOpen({open: true, id_titulo: info.getValue()})}>{info.getValue()}</span>),
         sortDescFirst: true,
       },
       {
@@ -134,42 +176,6 @@ const TitulosPagar = () => {
     []
   );
 
-  const {
-    titulos,
-    rowCount,
-    setDataTitulos,
-    pagination,
-    setPagination,
-    filters,
-    sorting, 
-    setSorting,
-    rowSelection,
-    setRowSelection,
-    isAllSelected,
-  } = useStoreTablePagar(state=>({
-    titulos: state.titulos,
-    rowCount: state.rowCount,
-    setDataTitulos: state.setDataTitulos,
-    filters: state.filters,
-    pagination: state.pagination,
-    setPagination: state.setPagination,
-    sorting: state.sorting,
-    setSorting: state.setSorting,
-    rowSelection: state.rowSelection,
-    setRowSelection: state.setRowSelection,
-    isAllSelected: state.isAllSelected
-  }))
-
-  const { data, error, isError, refetch  } = 
-  useQuery({ 
-    queryKey: ["fin_cp_titulos", pagination], 
-    queryFn: () => fetchTitulos({ pagination, filters}),
-    placeholderData: keepPreviousData,
-  });
-
-  useEffect(()=>{
-    setDataTitulos(data)
-  }, [data])
 
   const defaultData = React.useMemo(() => [], [])
 
@@ -194,7 +200,6 @@ const TitulosPagar = () => {
       setPagination(result)
     },
     onSortingChange: (callback)=>{
-      console.log(callback)
       const result = callback(sorting)
       setSorting(result)
     },
@@ -211,11 +216,11 @@ const TitulosPagar = () => {
   
   return (
     <div className="block w-full overflow-auto">
-      <TituloPagarModal idTitulo={null} setIdTitulo={()=>{}}></TituloPagarModal>
+      <TituloPagarModal />
 
       {/* Ações */}
       <div className="mb-2 flex gap-3">
-        <Button onClick={()=>{{/*setIdTitulo('new')*/}}}><FilePlus2 size={16} className="me-2"/> Nova solicitação</Button>
+        <Button onClick={()=>{setModalTituloOpen({open: true, id_titulo: 'Novo'})}}><FilePlus2 size={16} className="me-2"/> Nova solicitação</Button>
       </div>
 
       {/* Filtros */}

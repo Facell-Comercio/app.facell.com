@@ -20,11 +20,11 @@ const handleResetFilter = async ()=> {
 }
 
   return (
-    <Accordion type="single" collapsible className="p-2 bg-slate-200 dark:bg-slate-950 mb-2 rounded-lg">
+    <Accordion type="single" collapsible className="p-2 bg-slate-100 dark:bg-slate-950 mb-2 rounded-lg">
       <AccordionItem value="item-1">
         <AccordionTrigger className="py-1 hover:no-underline">Filtros</AccordionTrigger>
         <AccordionContent>
-          <ScrollArea className="w-fill whitespace-nowrap rounded-md border">
+          <ScrollArea className="w-fill whitespace-nowrap rounded-md">
             <div className="flex w-max space-x-4 p-4">
               <Button onClick={handleClickFilter}>
                 Filtrar <FilterIcon size={12} className="ms-2" />

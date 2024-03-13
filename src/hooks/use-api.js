@@ -56,5 +56,11 @@ export const useApi = () => ({
       const response = await api.get("/grupo_economico", {params: {id}});
       return response.data;
     }
-  }
+  },
+  filial: {
+    get: async (id)=>{
+      const response = await api.get("/filial", {params: {id}});
+      return response.data;
+    }
+  },
 });

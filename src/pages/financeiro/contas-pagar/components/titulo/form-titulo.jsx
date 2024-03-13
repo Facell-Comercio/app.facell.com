@@ -11,7 +11,7 @@ import FormSelect from "@/components/ui/form-select";
 import { toast } from "@/components/ui/use-toast";
 import { Contact, Divide, DollarSign, FileIcon, FileText, HandCoins, Save } from "lucide-react";
 import { useState } from "react";
-import { useRateio } from "./store-titulo";
+import { useRateioStore } from "./store-titulo";
 
 const schema = z
   .object({
@@ -32,7 +32,7 @@ const schema = z
   });
 
 const FormTituloPagar = (props) => {
-  const { itensRateio, removeItemRateio, addItemRateio, limparRateio } = useRateio();
+  const { itensRateio, removeItemRateio, addItemRateio, limparRateio } = useRateioStore();
 
   const form = useForm({
     defaultValues: {
@@ -59,17 +59,18 @@ const FormTituloPagar = (props) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="max-w-full max-h-[90vh] overflow-x-hidden">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="w-full flex gap-5 p-5">
+          <div className="max-w-full flex flex-wrap gap-5">
+            {/* Primeira coluna */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
                   <Contact /> <span className="text-lg font-bold ">Fornecedor</span>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <FormInput className="w-64" name="cpf_cnpj" readOnly={true} label="CPF/CNPJ" control={form.control} />
                   <FormInput className="max-w-[500px]" name="nome" readOnly={true} label="Nome do fornecedor" control={form.control} />
                 </div>
@@ -86,7 +87,7 @@ const FormTituloPagar = (props) => {
                     label={"Tipo de solicitação"}
                     options={[
                       { value: "1", label: "Com nota fiscal" },
-                      { value: "2", label: "Antecipado com nota fiscal" },
+                      { value: "2", label: "Antecipado / Nota fiscal futura" },
                       { value: "3", label: "Sem nota fiscal" },
                     ]}
                   />
@@ -190,14 +191,16 @@ const FormTituloPagar = (props) => {
                 <div className="flex flex-col gap-3 mt-3">
                   {itensRateio?.map((itemRateio, index) => (
                     <div key={index} className="flex gap-3 items-center">
-                      <Input  readOnly={true} value={itemRateio.filial}/>
+                      <Input readOnly={true} value={itemRateio.filial} />
 
                       <Input className="w-60" type="number" value={itemRateio.percentual} />
                       <Input className="w-60" type="number" value={itemRateio.valor} />
                       <Button
                         type="button"
                         variant="destructive"
-                        onClick={()=>{removeItemRateio(index)}}
+                        onClick={() => {
+                          removeItemRateio(index);
+                        }}
                       >
                         Remover
                       </Button>
@@ -216,7 +219,8 @@ const FormTituloPagar = (props) => {
               {/* Fim da primeira coluna */}
             </div>
 
-            <div className="flex flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
+            {/* Segunda coluna */}
+            <div className="flex shrink-0 flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
               <div className="flex gap-2 font-bold mb-3">
                 <FileIcon /> <span>Anexos</span>
               </div>
@@ -229,12 +233,7 @@ const FormTituloPagar = (props) => {
               <FormInput name="txt" type="file" label="TXT Remessa" control={form.control} />
             </div>
           </div>
-          <div className="flex justify-end p-5">
-            <Button type="submit" size="lg">
-              <Save className="me-2" />
-              Salvar
-            </Button>
-          </div>
+          
         </form>
       </Form>
     </div>
