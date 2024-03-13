@@ -1,8 +1,16 @@
+import {create} from 'zustand';
 
-import { create } from "zustand";
+
 
 export const useRateio = create((set, get, store) => ({
+    
     valorRateio: 1000,
+    tipoRateio: {
+        nome: 'R08 - RATEIO MANNUAL',
+        manual: 1,
+
+        
+    },
     itensRateio: [
         {filial: '01 TIM MIDWAY', valor: 50.00, percentual: 0.3},
         {filial: '02 TIM NATAL SHOPPING', valor: 50.00, percentual: 0.3},

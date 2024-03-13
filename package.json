@@ -24,6 +24,7 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-toggle": "^1.0.3",
     "@tanstack/react-query": "^5.24.1",
+    "@tanstack/react-query-devtools": "^5.27.8",
     "@tanstack/react-table": "^8.13.2",
     "axios": "^1.6.7",
     "class-variance-authority": "^0.7.0",
@@ -53,6 +54,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.35",
+    "simple-zustand-devtools": "^1.1.0",
     "tailwindcss": "^3.4.1",
     "vite": "^5.1.4"
   }

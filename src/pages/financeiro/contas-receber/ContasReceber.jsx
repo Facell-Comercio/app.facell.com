@@ -1,4 +1,4 @@
-import FormTituloPagar from "../contas-pagar/components/form-titulo-pagar";
+import FormTituloPagar from "../contas-pagar/components/titulo/form-titulo";
 
 const ContasReceberPage = () => {
     return ( <div className="p-5">

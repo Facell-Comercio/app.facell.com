@@ -1,52 +1,23 @@
 import React, { useMemo, useState, HTMLAttributes, HTMLProps, useEffect } from "react";
 import { useApi } from "@/hooks/use-api";
-import { useQuery } from "@tanstack/react-query";
-import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DatePickerWithRange } from "@/components/ui/date-range";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useReactTable, getCoreRowModel,  getSortedRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { EraserIcon, FilePlus2, Filter, FilterIcon } from "lucide-react";
 import SelectGrupoEconomico from "@/components/ui/select-grupo-economico";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import ModalTitulo from "./modal-titulo-pagar";
-import ModalTituloPagar from "./modal-titulo-pagar";
+import TituloPagarModal from "./titulo/modal-titulo";
+import { useStoreTablePagar } from "./table-titulos/store-table";
+import FiltersLancamentosPagar from "./filters-titulos-pagar";
+const {
+  financeiro: {
+    contasPagar: { fetchTitulos },
+  },
+} = useApi();
 
 const TitulosPagar = () => {
-  const [idTitulo, setIdTitulo] = useState(null)
-  const [isAllSelected, setIsAllSelected] = useState(false);
-  const [rowSelection, setRowSelection] = useState({});
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 15 });
-  const initialFilters = {
-    id: '',
-    id_grupo_economico: null,
-    id_status: null,
-    tipo_data: 'data_vencimento',
-    range_data: {from: undefined, to: undefined},
-    descricao: '',
-    nome_user: null,
-  }
-  const [filters, setFilters] = useState(initialFilters);
 
-  useEffect(()=>{
-    console.log(filters)
-  }, [filters])
-
-  const handleClickFilter = ()=> refetch()
-  const handleResetFilter = async ()=> {
-    await new Promise(resolve=>resolve(setFilters(initialFilters)))
-    refetch()
-  }
-
-  const {
-    financeiro: {
-      contasPagar: { fetchTitulos },
-    },
-  } = useApi();
-  const { data, error, isLoading, isError, refetch  } = useQuery({ queryKey: ["fin_cp_titulos", pagination], queryFn: () => fetchTitulos({ pagination, filters }), retry: false });
-
-  const columns = useMemo(
+  const columnsTitulos = useMemo(
     () => [
       {
         id: "select",
@@ -79,7 +50,8 @@ const TitulosPagar = () => {
       {
         accessorKey: "id",
         header: "ID",
-        cell: (info) => (<span className='font-semibold cursor-pointer' onClick={()=>setIdTitulo(info.getValue())}>{info.getValue()}</span>),
+        cell: (info) => (<span className='font-semibold cursor-pointer text-blue-500' onClick={()=>setIdTitulo(info.getValue())}>{info.getValue()}</span>),
+        sortDescFirst: true,
       },
       {
         header: "Status",
@@ -162,89 +134,92 @@ const TitulosPagar = () => {
     []
   );
 
+  const {
+    titulos,
+    rowCount,
+    setDataTitulos,
+    pagination,
+    setPagination,
+    filters,
+    sorting, 
+    setSorting,
+    rowSelection,
+    setRowSelection,
+    isAllSelected,
+  } = useStoreTablePagar(state=>({
+    titulos: state.titulos,
+    rowCount: state.rowCount,
+    setDataTitulos: state.setDataTitulos,
+    filters: state.filters,
+    pagination: state.pagination,
+    setPagination: state.setPagination,
+    sorting: state.sorting,
+    setSorting: state.setSorting,
+    rowSelection: state.rowSelection,
+    setRowSelection: state.setRowSelection,
+    isAllSelected: state.isAllSelected
+  }))
+
+  const { data, error, isError, refetch  } = 
+  useQuery({ 
+    queryKey: ["fin_cp_titulos", pagination], 
+    queryFn: () => fetchTitulos({ pagination, filters}),
+    placeholderData: keepPreviousData,
+  });
+
+  useEffect(()=>{
+    setDataTitulos(data)
+  }, [data])
+
+  const defaultData = React.useMemo(() => [], [])
+
   const table = useReactTable({
-    data: data?.rows ?? [],
-    rowCount: data?.rowCount,
-    columns,
+    data: titulos ?? defaultData,
+    rowCount: rowCount || 0,
+    columns: columnsTitulos,
     state: {
+      isAllSelected,
       pagination,
       rowSelection,
+      sorting,
     },
     enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
+    onRowSelectionChange: (callback)=>{
+      console.log(rowSelection)
+      const result = callback(rowSelection)
+      setRowSelection(result)
+    },
+    onPaginationChange: (callback)=>{
+      const result = callback(pagination)
+      setPagination(result)
+    },
+    onSortingChange: (callback)=>{
+      console.log(callback)
+      const result = callback(sorting)
+      setSorting(result)
+    },
+    getSortedRowModel: getSortedRowModel(),
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    debugTable: true,
+    // debugTable: true,
+    // debugAll: true
+    
   });
 
-  if (isError) {
-    return <h1>Ops, não consegui obter os títulos. Vamos tentar novamente.</h1>;
-  }
-  // if (isLoading) {
-  //   return <h1>Buscando as solicitações...</h1>;
-  // }
 
+  
   return (
     <div className="block w-full overflow-auto">
-      <ModalTituloPagar idTitulo={idTitulo} setIdTitulo={setIdTitulo}></ModalTituloPagar>
+      <TituloPagarModal idTitulo={null} setIdTitulo={()=>{}}></TituloPagarModal>
+
       {/* Ações */}
       <div className="mb-2 flex gap-3">
-        <Button onClick={()=>{setIdTitulo('new')}}><FilePlus2 size={16} className="me-2"/> Nova solicitação</Button>
+        <Button onClick={()=>{{/*setIdTitulo('new')*/}}}><FilePlus2 size={16} className="me-2"/> Nova solicitação</Button>
       </div>
 
       {/* Filtros */}
-      <Accordion type="single" collapsible className="p-2 bg-slate-200 dark:bg-slate-950 mb-2 rounded-lg">
-        <AccordionItem value="item-1">
-          <AccordionTrigger className="py-1 hover:no-underline">Filtros</AccordionTrigger>
-          <AccordionContent>
-            <ScrollArea  className="w-fill whitespace-nowrap rounded-md border">
-              <div className="flex w-max space-x-4 p-4">
-              <Button onClick={handleClickFilter}>Filtrar <FilterIcon size={12} className="ms-2"/></Button>
-              <Button onClick={handleResetFilter} variant='destructive'>Limpar <EraserIcon size={12} className="ms-2"/></Button>
-
-              <Input type="number" placeholder="ID" className='w-[80px]' value={filters.id}  onChange={(e)=>{setFilters(prev=>({...prev, id: e.target.value}))}}/>
-              
-              <SelectGrupoEconomico showAll value={filters.id_grupo_economico} onChange={(id_grupo_economico)=>{setFilters(prev=>({...prev, id_grupo_economico: id_grupo_economico}))}}/>
-
-              <Select value={filters.id_status}  onValueChange={(id_status)=>{setFilters(prev=>({...prev, id_status: id_status}))}}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Status"  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={null}>Todos status</SelectItem>
-                  <SelectItem value="1">Solicitado</SelectItem>
-                  <SelectItem value="2">Negado</SelectItem>
-                  <SelectItem value="3">Aprovado</SelectItem>
-                  <SelectItem value="4">Pago</SelectItem>
-                  <SelectItem value="5">Cancelado</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={filters.tipo_data}  onValueChange={(tipo_data)=>{setFilters(prev=>({...prev, tipo_data: tipo_data}))}}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Tipo de data"/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="created_at">Criação</SelectItem>
-                  <SelectItem value="data_emissao">Emissão</SelectItem>
-                  <SelectItem value="data_vencimento">Vencimento</SelectItem>
-                  <SelectItem value="data_pagamento">Pagamento</SelectItem>
-                  <SelectItem value="data_provisao">Provisão</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <DatePickerWithRange date={filters.range_data} setDate={(date)=>{setFilters(prev=>({...prev, range_data: date}))}} />
-
-                <Input className='max-w-[200px]' value={filters.descricao} onChange={(e)=>setFilters(prev=>({...prev, descricao: e.target.value}))} placeholder='Descrição...'/>
-
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      <FiltersLancamentosPagar refetch={refetch}/>
 
       {/* Tabela */}
       <table className="w-auto rounded-lg">
@@ -260,10 +235,30 @@ const TitulosPagar = () => {
                       style: {
                         width: header.width,
                       },
-                      className: "border text-left p-1 text-sm bg-gray-100 dark:bg-slate-700 uppercase",
+                      className: `${
+                        header.column.getCanSort()
+                          ? 'cursor-pointer select-none'
+                          : ''
+                      } border text-left p-1 text-sm bg-gray-100 dark:bg-slate-700 uppercase`,
                     }}
+
+                    onClick={header.column.getToggleSortingHandler()}
+                        title={
+                          header.column.getCanSort()
+                            ? header.column.getNextSortingOrder() === 'asc'
+                              ? 'Classificar Ascendente'
+                              : header.column.getNextSortingOrder() === 'desc'
+                                ? 'Classificar Descendente'
+                                : 'Limpar classificação'
+                            : undefined
+                        }
                   >
-                    {header.isPlaceholder ? null : <div>{flexRender(header.column.columnDef.header, header.getContext())}</div>}
+                    {header.isPlaceholder ? null : <div>{flexRender(header.column.columnDef.header, header.getContext())}
+                    {{
+                          asc: ' 🔼',
+                          desc: ' 🔽',
+                        }[header.column.getIsSorted()] ?? null}
+                    </div>}
                   </th>
                 );
               })}

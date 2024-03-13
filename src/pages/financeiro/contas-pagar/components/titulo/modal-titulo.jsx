@@ -9,7 +9,7 @@ import {
 import { useApi } from "@/hooks/use-api";
 import { useQuery } from "@tanstack/react-query";
 
-const ModalTituloPagar = ({idTitulo, setIdTitulo}) => {
+const TituloPagarModal = ({idTitulo, setIdTitulo}) => {
 
     
     if(!idTitulo) return null;
@@ -42,4 +42,4 @@ const ModalTituloPagar = ({idTitulo, setIdTitulo}) => {
        );
 }
  
-export default ModalTituloPagar;
+export default TituloPagarModal;

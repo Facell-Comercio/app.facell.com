@@ -76,7 +76,7 @@ const handleToggleSidebar = ()=>{
 }
 
   return (
-    <aside className={`h-full shrink-0 ${sidebarOpen ? "w-full sm:w-72" : "w-0 sm:w-20"} relative`}>
+    <aside className={`h-full shrink-0 ${sidebarOpen ? "w-full sm:w-64" : "w-0 sm:w-20"} relative`}>
       <nav className="h-full flex flex-col border-r shadow-lg ">
         <div className="p-4 pb-2 flex justify-between items-center ">
           <Link to="/" className="flex gap-2 items-center">

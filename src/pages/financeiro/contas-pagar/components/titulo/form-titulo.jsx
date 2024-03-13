@@ -11,7 +11,7 @@ import FormSelect from "@/components/ui/form-select";
 import { toast } from "@/components/ui/use-toast";
 import { Contact, Divide, DollarSign, FileIcon, FileText, HandCoins, Save } from "lucide-react";
 import { useState } from "react";
-import { useRateio } from "./store-titulo-pagar";
+import { useRateio } from "./store-titulo";
 
 const schema = z
   .object({
@@ -216,7 +216,7 @@ const FormTituloPagar = (props) => {
               {/* Fim da primeira coluna */}
             </div>
 
-            <div className="bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
+            <div className="flex flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
               <div className="flex gap-2 font-bold mb-3">
                 <FileIcon /> <span>Anexos</span>
               </div>

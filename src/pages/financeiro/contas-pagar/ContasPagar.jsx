@@ -1,8 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Titulo from "./components/titulo";
 import { useContext } from "react";
 import authContext from "@/context/auth-provider";
-import TitulosPagar from "./components/titulos";
+import TitulosPagar from "./components/section-titulos-pagar";
 
 const ContasPagarPage = () => {
   const {user} = useContext(authContext)

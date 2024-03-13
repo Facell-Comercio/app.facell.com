@@ -42,6 +42,7 @@ export const useApi = () => ({
     contasPagar: {
       fetchTitulos: async ({pagination, filters})=>{
           const response = await api.get("/financeiro/contas-a-pagar/titulo/", {params: {...pagination, filters}});
+          console.log(response)
           return response.data;
       },
       fetchTitulo: async ({id})=>{
