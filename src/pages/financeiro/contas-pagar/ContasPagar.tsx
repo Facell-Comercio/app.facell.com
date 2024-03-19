@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import TitulosPagar from "./components/section-titulos-pagar";
+import TitulosPagar from "./components/SectionTitulosPagar";
 
 import { useAuthStore } from "@/context/auth-store";
 

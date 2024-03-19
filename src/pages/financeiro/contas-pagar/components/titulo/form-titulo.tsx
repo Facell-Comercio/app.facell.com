@@ -136,7 +136,7 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: number | null }) => {
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
-                  <Contact /> <span className="text-lg font-bold ">Fornecedor</span> <Button onClick={showModalFornecedor} size={'sm'}>Procurar</Button>
+                  <Contact /> <span className="text-lg font-bold ">Fornecedor</span> <Button type="button" onClick={showModalFornecedor} size={'sm'}>Procurar</Button>
                 </div>
 
                 <div className="flex flex-wrap gap-3 items-end">

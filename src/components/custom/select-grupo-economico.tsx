@@ -2,9 +2,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useGrupoEconomico } from "@/hooks/use-grupo-economico";
 
 type TSelectGrupoEconomico = {
-   value: string | undefined, 
-   onChange: ()=>void, 
-   showAll?: boolean
+  value: string | undefined,
+  onChange: (id_grupo_economico?: string) => void,
+  showAll?: boolean
 }
 
 type GrupoEconomico = {

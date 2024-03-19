@@ -8,16 +8,16 @@ import SelectGrupoEconomico from "@/components/custom/select-grupo-economico";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useStoreTablePagar } from "./table-titulos/store-table";
 
-const FiltersLancamentosPagar = ({refetch}) => {
-const filters = useStoreTablePagar(state=>state.filters)
-const setFilters = useStoreTablePagar(state=>state.setFilters)
-const resetFilters = useStoreTablePagar(state=>state.resetFilters)
+const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
+  const filters = useStoreTablePagar(state => state.filters)
+  const setFilters = useStoreTablePagar(state => state.setFilters)
+  const resetFilters = useStoreTablePagar(state => state.resetFilters)
 
-const handleClickFilter = ()=> refetch()
-const handleResetFilter = async ()=> {
-  await new Promise(resolve=>resolve(resetFilters()))
-  refetch()
-}
+  const handleClickFilter = () => refetch()
+  const handleResetFilter = async () => {
+    await new Promise(resolve => resolve(resetFilters()))
+    refetch()
+  }
 
   return (
     <Accordion type="single" collapsible className="p-2 bg-slate-100 dark:bg-slate-950 mb-2 rounded-lg">
@@ -61,7 +61,7 @@ const handleResetFilter = async ()=> {
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={null}>Todos status</SelectItem>
+                  <SelectItem value="">Todos status</SelectItem>
                   <SelectItem value="1">Solicitado</SelectItem>
                   <SelectItem value="2">Negado</SelectItem>
                   <SelectItem value="3">Aprovado</SelectItem>
@@ -105,4 +105,4 @@ const handleResetFilter = async ()=> {
   );
 };
 
-export default FiltersLancamentosPagar;
+export default FiltersTitulosPagar;
