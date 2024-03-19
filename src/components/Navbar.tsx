@@ -1,6 +1,6 @@
 import { ToggleTheme } from "./ui/toogle-theme";
 import { Button } from "./ui/button";
-import { Bell, DoorOpen, MessageSquare } from "lucide-react";
+import { Bell, DoorOpen, MessageSquare, User } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import ButtonFullScreen from "./custom/button-fullscreen";
@@ -39,7 +39,7 @@ const Navbar = () => {
 
       <DropdownMenu>
         <DropdownMenuTrigger className="shrink-0 overflow-hidden">
-            {user?.img_url && <img src={user.img_url} className=" w-10 h-10 rounded-sm"/>}
+            {user?.img_url ? <img src={user.img_url} className=" w-10 h-10 rounded-sm"/> : <User />}
             <span className="sr-only">User</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
