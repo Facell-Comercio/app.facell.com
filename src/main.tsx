@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Toaster } from "@/components/ui/sonner";
 
 import "./index.css";
 
@@ -17,10 +16,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProviderComponent>
       <Router>
-          <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-            <AppRoutes/>
-            <Toaster />
-          </ThemeProvider>
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+          <AppRoutes />
+        </ThemeProvider>
       </Router>
       <ReactQueryDevtools initialIsOpen={true} />
     </QueryClientProviderComponent>
