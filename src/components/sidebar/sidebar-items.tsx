@@ -1,25 +1,37 @@
-import { FaSackDollar, FaUsers,FaBullhorn, FaTruckRampBox } from 'react-icons/fa6';
+import { FaSackDollar, FaUsers, FaBullhorn, FaTruckRampBox } from 'react-icons/fa6';
 import { BsFillBarChartFill, BsFillClipboardCheckFill, BsPersonVideo3, BsFillChatLeftDotsFill, BsFillSendFill } from "react-icons/bs";
+import { ReactNode } from 'react';
 
-export const sidebarItems = [
+export type SidebarItem = {
+  name: string,
+  type: string,
+  icon?: ReactNode,
+  uri?: string,
+  visible: boolean,
+  children?: SidebarItem[],
+  shortName?: string,
+  spacing?: boolean
+}
+
+export const sidebarItems: SidebarItem[] = [
   {
     name: "Feed",
     type: "link",
-    icon: <BsFillSendFill/>,
+    icon: <BsFillSendFill />,
     uri: "/",
     visible: true,
   },
   {
     name: "Chat",
     type: "link",
-    icon: <BsFillChatLeftDotsFill/>,
+    icon: <BsFillChatLeftDotsFill />,
     uri: "/chat",
     visible: true,
   },
   {
     name: "Dashboard",
     type: "link",
-    icon: <BsFillBarChartFill/>,
+    icon: <BsFillBarChartFill />,
     uri: "/dashboard",
     visible: true,
   },
@@ -32,7 +44,7 @@ export const sidebarItems = [
   {
     name: "Pessoal",
     type: "label",
-    icon: <FaUsers/>,
+    icon: <FaUsers />,
     uri: "pessoal",
     visible: false,
     children: [
@@ -62,7 +74,7 @@ export const sidebarItems = [
   {
     name: "Treinamento",
     type: "label",
-    icon: <BsPersonVideo3/>,
+    icon: <BsPersonVideo3 />,
     uri: "treinamento",
     visible: false,
     children: [
@@ -78,7 +90,7 @@ export const sidebarItems = [
   {
     name: "Logística",
     type: "label",
-    icon: <FaTruckRampBox/>,
+    icon: <FaTruckRampBox />,
     uri: "logistica",
     visible: false,
     children: [
@@ -122,7 +134,7 @@ export const sidebarItems = [
   {
     name: "Qualidade",
     type: "label",
-    icon: <BsFillClipboardCheckFill/>,
+    icon: <BsFillClipboardCheckFill />,
     uri: "qualidade",
     visible: false,
     children: [
@@ -135,11 +147,11 @@ export const sidebarItems = [
       },
     ],
   },
-  
+
   {
     name: "Financeiro",
     type: "label",
-    icon: <FaSackDollar/>,
+    icon: <FaSackDollar />,
     uri: "financeiro",
     visible: true,
     children: [
@@ -169,7 +181,7 @@ export const sidebarItems = [
   {
     name: "Marketing",
     type: "label",
-    icon: <FaBullhorn/>,
+    icon: <FaBullhorn />,
     uri: "marketing",
     visible: false,
     children: [

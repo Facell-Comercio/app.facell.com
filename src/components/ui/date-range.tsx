@@ -13,9 +13,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string;
+}
+
 export function DatePickerWithRange({
   className,
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: DatePickerWithRangeProps) {
   const [date, setDate] = React.useState<DateRange | undefined>()
 
   return (
