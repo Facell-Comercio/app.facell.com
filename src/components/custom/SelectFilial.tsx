@@ -1,6 +1,6 @@
 import { useFilial } from "@/hooks/use-filial";
 import { Control } from "react-hook-form";
-import FormSelect from "./form-select";
+import FormSelect from "./FormSelect";
 
 type Filial = {
     id: number,
@@ -23,7 +23,7 @@ const SelectFilial = (props: TSelectFilial) => {
     if (isError) return <span>Erro ao carregar filiais</span>; // Handle errors
 
     return (
-        <FormSelect {...props} options={data?.data?.map((filial: Filial)=>({value: filial.id.toString(), label: filial.nome})) || []}/>
+        <FormSelect {...props} options={data?.data?.map((filial: Filial) => ({ value: filial.id.toString(), label: filial.nome })) || []} />
     );
 };
 

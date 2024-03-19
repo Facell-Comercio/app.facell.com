@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { DateRange } from "react-day-picker";
+import { OnChangeFn, SortingState } from "@tanstack/react-table";
 
 export interface Pagination {
   pageIndex: number
@@ -31,7 +32,7 @@ const initialFilters: Filters = {
   id_grupo_economico: "",
   id_status: null,
   tipo_data: 'data_vencimento',
-  range_data: {from: undefined, to: undefined},
+  range_data: { from: undefined, to: undefined },
   descricao: '',
   nome_user: null,
 }
@@ -52,14 +53,14 @@ export interface SortingItem {
 }
 
 export interface Actions {
-  setFilters: (filters: Filters)=>void,
-  resetFilters: ()=>void,
-  setSorting: (sorting: SortingItem[])=>void,
-  setPagination: (pagination: Pagination)=>void,
-  setRowSelection: (rowSelection: RowSelection)=>void,
+  setFilters: (filters: Filters) => void,
+  resetFilters: () => void,
+  setSorting: OnChangeFn<SortingState>,
+  setPagination: (pagination: Pagination) => void,
+  setRowSelection: (rowSelection: RowSelection) => void,
 }
 
-export const useStoreTablePagar = create<State & Actions>(set=>({
+export const useStoreTablePagar = create<State & Actions>(set => ({
   // Table
   rowCount: 0,
   sorting: [],
@@ -69,13 +70,13 @@ export const useStoreTablePagar = create<State & Actions>(set=>({
 
   // Filters
   filters: initialFilters,
-  setFilters: (novoFiltro)=>set(state=>({...state, filters: {...state.filters, ...novoFiltro}})),
-  resetFilters: ()=>{set(({ filters: initialFilters}))},
-  
-  setSorting: (sorting)=>set(({sorting})),
-  setPagination: (pagination)=>set(({pagination})),
+  setFilters: (novoFiltro) => set(state => ({ ...state, filters: { ...state.filters, ...novoFiltro } })),
+  resetFilters: () => { set(({ filters: initialFilters })) },
+
+  setSorting: (sorting) => set(({ sorting })),
+  setPagination: (pagination) => set(({ pagination })),
   // @ts-ignore
-  setRowSelection: (rowSelection)=>set(({rowSelection}))
+  setRowSelection: (rowSelection) => set(({ rowSelection }))
 }))
 
 

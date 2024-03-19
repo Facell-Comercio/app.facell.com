@@ -3,8 +3,8 @@ import { Button } from "./ui/button";
 import { Bell, DoorOpen, MessageSquare, User } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import ButtonFullScreen from "./custom/button-fullscreen";
-import LogoFacell from "./custom/logo-facell";
+import ButtonFullScreen from "./custom/ButtonFullScreen";
+import LogoFacell from "./custom/LogoFacell";
 import { useSidebar } from "@/context/sidebar-store";
 import { useAuthStore } from "@/context/auth-store";
 

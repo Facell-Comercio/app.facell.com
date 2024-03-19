@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DatePickerWithRange } from "@/components/ui/date-range";
 import { Button } from "@/components/ui/button";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import SelectGrupoEconomico from "@/components/custom/select-grupo-economico";
+import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useStoreTablePagar } from "./table-titulos/store-table";
 
@@ -61,7 +61,7 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos status</SelectItem>
+                  <SelectItem value="0">Todos status</SelectItem>
                   <SelectItem value="1">Solicitado</SelectItem>
                   <SelectItem value="2">Negado</SelectItem>
                   <SelectItem value="3">Aprovado</SelectItem>

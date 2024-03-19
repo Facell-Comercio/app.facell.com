@@ -28,7 +28,7 @@ const SelectGrupoEconomico = ({ value, onChange, showAll = false }: TSelectGrupo
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Grupo econômico" />
+        <SelectValue placeholder="Selecione o grupo" />
       </SelectTrigger>
       <SelectContent>
         {showAll && <SelectItem value={''}>Todos grupos</SelectItem>}

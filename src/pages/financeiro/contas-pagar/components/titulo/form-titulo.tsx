@@ -4,13 +4,13 @@ import { Form, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import FormInput from "@/components/custom/form-input";
-import FormSelect from "@/components/custom/form-select";
+import FormInput from "@/components/custom/FormInput";
+import FormSelect from "@/components/custom/FormSelect";
 import { toast } from "@/components/ui/use-toast";
 import { Contact, Divide, DollarSign, FileIcon, FileText } from "lucide-react";
 import { TituloPagar, initialPropsTitulo, useStoreRateio } from "./store-titulo";
 import { useTituloPagar } from "@/hooks/use-titulo-pagar";
-import SelectFilial from "@/components/custom/select-filial";
+import SelectFilial from "@/components/custom/SelectFilial";
 import { useState } from "react";
 import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
 import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedor";
@@ -140,15 +140,15 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: number | null }) => {
                 </div>
 
                 <div className="flex flex-wrap gap-3 items-end">
-                <FormInput
+                  <FormInput
                     type="hidden"
                     name="id_filial"
                     control={form.control}
                   />
                   <FormInput className="w-64" name="cnpj_fornecedor" readOnly={true} label="CPF/CNPJ" control={form.control} />
                   <FormInput className="max-w-[500px]" name="nome_fornecedor" readOnly={true} label="Nome do fornecedor" control={form.control} />
-                  
-                  <ModalFornecedores open={modalFornecedorOpen} handleSelecion={handleSelectionFornecedor} onOpenChange={() => setModalFornecedorOpen(prev => !prev)}/>
+
+                  <ModalFornecedores open={modalFornecedorOpen} handleSelecion={handleSelectionFornecedor} onOpenChange={() => setModalFornecedorOpen(prev => !prev)} />
                 </div>
               </div>
 
@@ -174,7 +174,7 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: number | null }) => {
                     control={form.control}
                   />
 
-{/* Plano contas */}
+                  {/* Plano contas */}
                   <FormInput
                     type="hidden"
                     name="id_plano_contas"
