@@ -1,6 +1,7 @@
 
 import { create } from "zustand";
 import { mountStoreDevtool } from 'simple-zustand-devtools';
+import { DateRange } from "react-day-picker";
 
 export interface Pagination {
   pageIndex: number
@@ -9,24 +10,25 @@ export interface Pagination {
 
 type RowSelection = Record<number, boolean>
 
-export interface RangeData {
-  from?: string,
-  to?: string,
-}
+// ^ Conferir
+// export interface RangeData {
+//   from?: string,
+//   to?: string,
+// }
 
 export interface Filters {
   id?: string
-  id_grupo_economico?: any
-  id_status?: any
+  id_grupo_economico?: number
+  id_status?: number
   tipo_data?: string
-  range_data?: RangeData
+  range_data?: DateRange
   descricao?: string
-  nome_user?: any
+  nome_user?: string
 }
 
 const initialFilters: Filters = {
   id: '',
-  id_grupo_economico: null,
+  id_grupo_economico: "",
   id_status: null,
   tipo_data: 'data_vencimento',
   range_data: {from: undefined, to: undefined},

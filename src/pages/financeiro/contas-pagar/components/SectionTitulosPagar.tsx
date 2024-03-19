@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { useReactTable, getCoreRowModel,  getSortedRowModel, flexRender } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, getSortedRowModel, flexRender } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import FiltersLancamentosPagar from "./filters-titulos-pagar";
+import FiltersLancamentosPagar from "./FiltersTitulosPagar";
 
 import { useStoreTablePagar } from "./table-titulos/store-table";
 import { useStoreTitulo } from "./titulo/store-titulo";
@@ -9,20 +9,20 @@ import { useTituloPagar } from "@/hooks/use-titulo-pagar";
 import { FilePlus2 } from "lucide-react";
 
 
-const TitulosPagar = () => {
+const SectionTitulosPagar = () => {
   console.log('RENDER - Section-Titulos')
-  
+
   const {
     rowCount,
     pagination,
     setPagination,
     filters,
-    sorting, 
+    sorting,
     setSorting,
     rowSelection,
     setRowSelection,
     isAllSelected,
-  } = useStoreTablePagar(state=>({
+  } = useStoreTablePagar(state => ({
     rowCount: state.rowCount,
     filters: state.filters,
     pagination: state.pagination,
@@ -34,13 +34,13 @@ const TitulosPagar = () => {
     isAllSelected: state.isAllSelected
   }))
 
-  const {setModalTituloOpen} = useStoreTitulo(state=>({
+  const { setModalTituloOpen } = useStoreTitulo(state => ({
     setModalTituloOpen: state.setModalTituloOpen
   }))
 
 
-  const { data, refetch } = useTituloPagar().getAll({pagination, filters}) 
-  
+  const { data, refetch } = useTituloPagar().getAll({ pagination, filters })
+
 
   const columnsTitulos = useMemo(
     () => [
@@ -76,7 +76,7 @@ const TitulosPagar = () => {
         accessorKey: "id",
         header: "ID",
         cell: (info) => (
-        <span className='font-semibold cursor-pointer text-blue-500' onClick={()=>setModalTituloOpen({open: true, id_titulo: info.getValue()})}>{info.getValue()}</span>
+          <span className='font-semibold cursor-pointer text-blue-500' onClick={() => setModalTituloOpen({ open: true, id_titulo: info.getValue() })}>{info.getValue()}</span>
         ),
         sortDescFirst: true,
       },
@@ -175,15 +175,15 @@ const TitulosPagar = () => {
       sorting,
     },
     enableRowSelection: true,
-    onRowSelectionChange: (callback)=>{
+    onRowSelectionChange: (callback) => {
       const result = callback(rowSelection)
       setRowSelection(result)
     },
-    onPaginationChange: (callback)=>{
+    onPaginationChange: (callback) => {
       const result = callback(pagination)
       setPagination(result)
     },
-    onSortingChange: (callback)=>{
+    onSortingChange: (callback) => {
       const result = callback(sorting)
       setSorting(result)
     },
@@ -193,21 +193,21 @@ const TitulosPagar = () => {
     manualPagination: true,
     // debugTable: true,
     // debugAll: true
-    
+
   });
 
 
-  
+
   return (
     <div className="block w-full overflow-auto">
 
       {/* Ações */}
       <div className="mb-2 flex gap-3">
-        <Button onClick={()=>{setModalTituloOpen({open: true, id_titulo: null})}}><FilePlus2 size={16} className="me-2"/> Nova solicitação</Button>
+        <Button onClick={() => { setModalTituloOpen({ open: true, id_titulo: null }) }}><FilePlus2 size={16} className="me-2" /> Nova solicitação</Button>
       </div>
 
       {/* Filtros */}
-      <FiltersLancamentosPagar refetch={refetch}/>
+      <FiltersLancamentosPagar refetch={refetch} />
 
       {/* Tabela */}
       <table className="w-auto rounded-lg">
@@ -220,29 +220,28 @@ const TitulosPagar = () => {
                     {...{
                       key: header.id,
                       colSpan: header.colSpan,
-                      className: `${
-                        header.column.getCanSort()
+                      className: `${header.column.getCanSort()
                           ? 'cursor-pointer select-none'
                           : ''
-                      } border text-left p-1 text-sm bg-gray-100 dark:bg-slate-700 uppercase`,
+                        } border text-left p-1 text-sm bg-gray-100 dark:bg-slate-700 uppercase`,
                     }}
 
                     onClick={header.column.getToggleSortingHandler()}
-                        title={
-                          header.column.getCanSort()
-                            ? header.column.getNextSortingOrder() === 'asc'
-                              ? 'Classificar Ascendente'
-                              : header.column.getNextSortingOrder() === 'desc'
-                                ? 'Classificar Descendente'
-                                : 'Limpar classificação'
-                            : undefined
-                        }
+                    title={
+                      header.column.getCanSort()
+                        ? header.column.getNextSortingOrder() === 'asc'
+                          ? 'Classificar Ascendente'
+                          : header.column.getNextSortingOrder() === 'desc'
+                            ? 'Classificar Descendente'
+                            : 'Limpar classificação'
+                        : undefined
+                    }
                   >
                     {header.isPlaceholder ? null : <div>{flexRender(header.column.columnDef.header, header.getContext())}
-                    {{
-                          asc: ' 🔼',
-                          desc: ' 🔽',
-                        }[header.column.getIsSorted()] ?? null}
+                      {{
+                        asc: ' 🔼',
+                        desc: ' 🔽',
+                      }[header.column.getIsSorted()] ?? null}
                     </div>}
                   </th>
                 );
@@ -327,4 +326,4 @@ const TitulosPagar = () => {
   );
 };
 
-export default TitulosPagar;
+export default SectionTitulosPagar;
