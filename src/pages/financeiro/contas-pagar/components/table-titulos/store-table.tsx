@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { DateRange } from "react-day-picker";
+import { OnChangeFn, SortingState } from "@tanstack/react-table";
 
 export interface Pagination {
   pageIndex: number
@@ -18,8 +19,8 @@ type RowSelection = Record<number, boolean>
 
 export interface Filters {
   id?: string
-  id_grupo_economico?: number
-  id_status?: number
+  id_grupo_economico?: string
+  id_status?: string
   tipo_data?: string
   range_data?: DateRange
   descricao?: string
@@ -28,17 +29,17 @@ export interface Filters {
 
 const initialFilters: Filters = {
   id: '',
-  id_grupo_economico: "",
-  id_status: null,
+  id_grupo_economico: '',
+  id_status: '',
   tipo_data: 'data_vencimento',
-  range_data: {from: undefined, to: undefined},
+  range_data: { from: undefined, to: undefined },
   descricao: '',
-  nome_user: null,
+  nome_user: undefined,
 }
 
 export interface State {
   rowCount: number
-  sorting: any[]
+  sorting: SortingItem[]
   pagination: Pagination
   isAllSelected: boolean
   rowSelection: RowSelection
@@ -52,14 +53,14 @@ export interface SortingItem {
 }
 
 export interface Actions {
-  setFilters: (filters: Filters)=>void,
-  resetFilters: ()=>void,
-  setSorting: (sorting: SortingItem[])=>void,
-  setPagination: (pagination: Pagination)=>void,
-  setRowSelection: (rowSelection: RowSelection)=>void,
+  setFilters: (filters: Filters) => void,
+  resetFilters: () => void,
+  setSorting: OnChangeFn<SortingState>,
+  setPagination: (pagination: Pagination) => void,
+  setRowSelection: (rowSelection: RowSelection) => void,
 }
 
-export const useStoreTablePagar = create<State & Actions>(set=>({
+export const useStoreTablePagar = create<State & Actions>(set => ({
   // Table
   rowCount: 0,
   sorting: [],
@@ -69,13 +70,12 @@ export const useStoreTablePagar = create<State & Actions>(set=>({
 
   // Filters
   filters: initialFilters,
-  setFilters: (novoFiltro)=>set(state=>({...state, filters: {...state.filters, ...novoFiltro}})),
-  resetFilters: ()=>{set(({ filters: initialFilters}))},
-  
-  setSorting: (sorting)=>set(({sorting})),
-  setPagination: (pagination)=>set(({pagination})),
-  // @ts-ignore
-  setRowSelection: (rowSelection)=>set(({rowSelection}))
+  setFilters: (novoFiltro) => set(state => ({ ...state, filters: { ...state.filters, ...novoFiltro } })),
+  resetFilters: () => { set(({ filters: initialFilters })) },
+
+  setSorting: (sorting) => set(({ sorting })),
+  setPagination: (pagination) => set(({ pagination })),
+  setRowSelection: (rowSelection) => set(({ rowSelection }))
 }))
 
 

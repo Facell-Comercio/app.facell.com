@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface IModalFornecedores {
     open: boolean,
@@ -19,7 +19,7 @@ interface IModalFornecedores {
 }
 
 export type ItemFornecedor = {
-    id: number,
+    id: string,
     cnpj: string,
     razao: string,
     nome: string,
