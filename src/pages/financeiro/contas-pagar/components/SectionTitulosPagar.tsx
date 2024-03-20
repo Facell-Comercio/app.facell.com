@@ -1,9 +1,10 @@
 import { useStoreTablePagar } from "./table-titulos/store-table";
 // import { useStoreTitulo } from "./titulo/store-titulo";
-import { useTituloPagar } from "@/hooks/use-titulo-pagar";
+import { useTituloPagar } from "@/hooks/useTituloPagar";
+import FiltersLancamentosPagar from "./FiltersTitulosPagar";
 import { TableTitulos } from "./table-titulos/TableTitulos";
 import { columnsTableTitulos } from "./table-titulos/columns-table";
-
+import ModalTituloPagar from "./titulo/ModalTituloPagar";
 
 const SectionTitulosPagar = () => {
   console.log('RENDER - Section-Titulos')
@@ -23,12 +24,14 @@ const SectionTitulosPagar = () => {
     isAllSelected: state.isAllSelected
   }))
 
-  const { data } = useTituloPagar().getAll({ pagination, filters })
+  const { data, refetch } = useTituloPagar().useGetAll({ pagination, filters })
 
   return (
     <div>
-      {/* @ts-ignore */}
-      <TableTitulos columns={columnsTableTitulos} data={data?.data?.rows || []} />
+      <FiltersLancamentosPagar refetch={refetch} />
+      {/* @ts-expect-error rows doestn't exists*/}
+      <TableTitulos columns={columnsTableTitulos} data={data?.data?.rows || []} rowCount={data?.data?.rowCount} />
+      <ModalTituloPagar />
     </div>
   );
 };

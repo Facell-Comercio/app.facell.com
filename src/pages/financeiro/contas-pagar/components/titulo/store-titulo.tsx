@@ -13,9 +13,9 @@ export interface ItemRateioTitulo {
 export interface TituloPagar {
   id_tipo_solicitacao: string
   id_status: string
-  id_centro_custo?: number | null
-  id_forma_pagamento?: number | null
-  id_plano_contas?: number | null
+  id_centro_custo?: string
+  id_forma_pagamento?: string
+  id_plano_contas?: string
   plano_contas?: string | null
 
   valor: number
@@ -34,11 +34,11 @@ export interface TituloPagar {
   id_solicitante?: string | null
   nome_solicitante?: string | null
 
-  id_fornecedor?: number | null
+  id_fornecedor?: string | null
   nome_fornecedor?: string | null
   cnpj_fornecedor?: string | null
 
-  id_rateio?: number | null
+  id_rateio?: string | null
   itens_rateio: ItemRateioTitulo[]
 
   url_xml_nota?: string | null
@@ -52,8 +52,8 @@ export interface TituloPagar {
 export const initialPropsTitulo: TituloPagar = {
   id_tipo_solicitacao: '1',
   id_status: '1',
-  id_centro_custo: null,
-  id_forma_pagamento: null,
+  id_centro_custo: '',
+  id_forma_pagamento: '',
 
   valor: 0,
   data_emissao: '',
@@ -93,12 +93,12 @@ export const initialPropsTitulo: TituloPagar = {
 }
 
 interface UseStoreTitulo {
-  id_titulo: number | null,
+  id_titulo: string | null,
   titulo: TituloPagar,
   modalTituloOpen: boolean,
 
-  setModalTituloOpen: ({open, id_titulo}: {open: boolean, id_titulo: number | null})=>void,
-  resetTitulo: ()=>void
+  setModalTituloOpen: ({ open, id_titulo }: { open: boolean, id_titulo: string | null }) => void,
+  resetTitulo: () => void
 }
 
 export const useStoreTitulo = create<UseStoreTitulo>((set) => ({
@@ -131,17 +131,17 @@ export interface UseStoreRateio {
   tipoRateio: TipoRateio,
   itensRateio: ItemRateio[]
 
-  addItemRateio: (novoItemRateio: ItemRateio)=>void,
-  removeItemRateio: (index: number)=>void,
+  addItemRateio: (novoItemRateio: ItemRateio) => void,
+  removeItemRateio: (index: number) => void,
 }
 
 export const useStoreRateio = create<UseStoreRateio>((set) => ({
   valorRateio: 0,
   tipoRateio: {},
   itensRateio: [],
-  
+
   setValorRateio: (novoValor: number) => {
-    set({valorRateio: novoValor })
+    set({ valorRateio: novoValor })
   },
   addItemRateio: (novoItemRateio: ItemRateio) => {
     set(state => ({ ...state, itensRateio: [...state.itensRateio, novoItemRateio] }))

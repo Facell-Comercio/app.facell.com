@@ -1,5 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"; // Assuming these are custom components
-import { useGrupoEconomico } from "@/hooks/use-grupo-economico";
+import { useGrupoEconomico } from "@/hooks/useGrupoEconomico";
 
 type TSelectGrupoEconomico = {
   value: string | undefined,
@@ -14,7 +14,8 @@ type GrupoEconomico = {
   ativo: boolean,
 }
 
-const SelectGrupoEconomico = ({ value, onChange, showAll = false }: TSelectGrupoEconomico) => {
+const SelectGrupoEconomico = ({ value, onChange }: TSelectGrupoEconomico) => {
+  // const SelectGrupoEconomico = ({ value, onChange, showAll = false }: TSelectGrupoEconomico) => {
   // Use a single state variable for fetching and storing data
 
   const { data, isError, isLoading } = useGrupoEconomico().getAll()
@@ -31,7 +32,7 @@ const SelectGrupoEconomico = ({ value, onChange, showAll = false }: TSelectGrupo
         <SelectValue placeholder="Selecione o grupo" />
       </SelectTrigger>
       <SelectContent>
-        {showAll && <SelectItem value={''}>Todos grupos</SelectItem>}
+        {/* {showAll && <SelectItem >Todos grupos</SelectItem>} */}
         {gruposEconomicos?.map((item: GrupoEconomico) => (
           <SelectItem className="text-left" key={item.id} value={item.id.toString()}>
             {item.nome}

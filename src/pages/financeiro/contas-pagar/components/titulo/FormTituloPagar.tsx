@@ -8,21 +8,24 @@ import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
 import { toast } from "@/components/ui/use-toast";
 import { Contact, Divide, DollarSign, FileIcon, FileText } from "lucide-react";
-import { TituloPagar, initialPropsTitulo, useStoreRateio } from "./store-titulo";
-import { useTituloPagar } from "@/hooks/use-titulo-pagar";
+import { TituloPagar, initialPropsTitulo } from "./store-titulo";
 import SelectFilial from "@/components/custom/SelectFilial";
 import { useState } from "react";
 import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
 import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedor";
+import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { Skeleton } from "@/components/ui/skeleton";
+import FormDateInput from "@/components/custom/FormDate";
+// import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaTitulo = z
   .object({
     // IDs
-    id_fornecedor: z.number(),
-    id_filial: z.coerce.number(),
-    id_plano_contas: z.coerce.number(),
-    id_tipo_solicitacao: z.coerce.number().min(1),
-    id_centro_custo: z.coerce.number(),
+    id_fornecedor: z.string(),
+    id_filial: z.string(),
+    id_plano_contas: z.string(),
+    id_tipo_solicitacao: z.string().min(1),
+    id_centro_custo: z.string(),
 
     // Outros
     data_emissao: z.date(),
@@ -60,17 +63,17 @@ const schemaTitulo = z
     url_txt: z.string().optional(),
   });
 
-
-const FormTituloPagar = ({ id_titulo }: { id_titulo: number | null }) => {
+const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
   console.log('RENDER - Form, titulo:', id_titulo)
+  const { data, isLoading } = useTituloPagar().useGetOne(id_titulo)
+  console.log(data);
 
-  const { data } = useTituloPagar().getOne(id_titulo)
 
   const form = useForm<TituloPagar>({
-    defaultValues: initialPropsTitulo,
+    defaultValues: data?.data || initialPropsTitulo,
     resolver: zodResolver(schemaTitulo),
   });
-  const { setValue } = form;
+  const { setValue, watch } = form;
 
   const [modalFornecedorOpen, setModalFornecedorOpen] = useState(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
@@ -98,8 +101,10 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: number | null }) => {
     setValue("plano_contas", item.codigo + ' - ' + item.descricao)
     setModalPlanoContasOpen(false)
   }
-  const { watch } = form;
   const watchIdFilial = watch('id_filial')
+  const watchDataEmissao = watch('data_emissao')
+  console.log("Data emissão -> ", typeof watchDataEmissao);
+
 
   // Controle de rateio
   const { fields: itensRateio, append: addFieldArray, remove: removeFieldArray } = useFieldArray({
@@ -127,11 +132,18 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: number | null }) => {
     });
   };
 
+  if (isLoading) {
+    return <div className="w-full p-2 flex flex-col gap-3">
+      <Skeleton className="w-72 h-16" />
+      <Skeleton className="w-72 h-24" />
+    </div>
+  }
+
   return (
     <div className="max-w-full max-h-[90vh] overflow-x-hidden">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="max-w-full flex flex-wrap gap-5">
+          <div className="max-w-full flex flex-col lg:flex-row gap-5">
             {/* Primeira coluna */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
@@ -139,14 +151,14 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: number | null }) => {
                   <Contact /> <span className="text-lg font-bold ">Fornecedor</span> <Button type="button" onClick={showModalFornecedor} size={'sm'}>Procurar</Button>
                 </div>
 
-                <div className="flex flex-wrap gap-3 items-end">
+                <div className="flex flex-wrap gap-3">
                   <FormInput
                     type="hidden"
                     name="id_filial"
                     control={form.control}
                   />
                   <FormInput className="w-64" name="cnpj_fornecedor" readOnly={true} label="CPF/CNPJ" control={form.control} />
-                  <FormInput className="max-w-[500px]" name="nome_fornecedor" readOnly={true} label="Nome do fornecedor" control={form.control} />
+                  <FormInput className="min-w-[50ch] shrink-0" name="nome_fornecedor" readOnly={true} label="Nome do fornecedor" control={form.control} />
 
                   <ModalFornecedores open={modalFornecedorOpen} handleSelecion={handleSelectionFornecedor} onOpenChange={() => setModalFornecedorOpen(prev => !prev)} />
                 </div>
@@ -218,8 +230,9 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: number | null }) => {
                   />
 
                   <FormInput name="parcelas" type={"number"} label="Número de parcelas" control={form.control} />
-                  <FormInput name="data_emissao" type={"date"} label="Data de emissão" control={form.control} />
-                  <FormInput name="data_vencimento" type={"date"} label="Data de vencimento" control={form.control} />
+
+                  <FormDateInput name="data_emissao" label="Data de emissão" control={form.control} />
+                  <FormDateInput name="data_vencimento" label="Data de vencimento" control={form.control} />
 
                   <FormInput name="valor" type={"number"} label="Valor do título" control={form.control} />
 

@@ -1,7 +1,7 @@
 
 import { api } from "@/lib/axios";
 import { RowTitulo } from "@/pages/financeiro/contas-pagar/components/table-titulos/columns-table";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 
 export interface GetTitulosPagarProps {
     pagination?: {
@@ -13,13 +13,14 @@ export interface GetTitulosPagarProps {
 
 export const useTituloPagar = () => {
 
-    const getAll = ({ pagination, filters }: GetTitulosPagarProps) => useQuery({
+    const useGetAll = ({ pagination, filters }: GetTitulosPagarProps) => useQuery({
         queryKey: ['fin_cp_titulos', pagination],
         queryFn: async () => { return await api.get<RowTitulo[] | Error>(`/financeiro/contas-a-pagar/titulo`, { params: { pagination, filters } }) },
+        placeholderData: keepPreviousData
     })
 
-    const getOne = (id: number | null) => useQuery({
-        enabled: id !== null,
+    const useGetOne = (id: string | null) => useQuery({
+        enabled: !!id,
         queryKey: ['fin_cp_titulo', id],
         queryFn: async () => {
             console.log(`Buscando título com base no ID: ${id}`)
@@ -28,7 +29,7 @@ export const useTituloPagar = () => {
     })
 
     return {
-        getAll,
-        getOne,
+        useGetAll,
+        useGetOne,
     }
 }

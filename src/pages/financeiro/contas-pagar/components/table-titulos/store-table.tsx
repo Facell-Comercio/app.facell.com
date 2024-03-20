@@ -19,8 +19,8 @@ type RowSelection = Record<number, boolean>
 
 export interface Filters {
   id?: string
-  id_grupo_economico?: number
-  id_status?: number
+  id_grupo_economico?: string
+  id_status?: string
   tipo_data?: string
   range_data?: DateRange
   descricao?: string
@@ -29,17 +29,17 @@ export interface Filters {
 
 const initialFilters: Filters = {
   id: '',
-  id_grupo_economico: "",
-  id_status: null,
+  id_grupo_economico: '',
+  id_status: '',
   tipo_data: 'data_vencimento',
   range_data: { from: undefined, to: undefined },
   descricao: '',
-  nome_user: null,
+  nome_user: undefined,
 }
 
 export interface State {
   rowCount: number
-  sorting: any[]
+  sorting: SortingItem[]
   pagination: Pagination
   isAllSelected: boolean
   rowSelection: RowSelection
@@ -75,7 +75,6 @@ export const useStoreTablePagar = create<State & Actions>(set => ({
 
   setSorting: (sorting) => set(({ sorting })),
   setPagination: (pagination) => set(({ pagination })),
-  // @ts-ignore
   setRowSelection: (rowSelection) => set(({ rowSelection }))
 }))
 

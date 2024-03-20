@@ -20,12 +20,12 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
   }
 
   return (
-    <Accordion type="single" collapsible className="p-2 bg-slate-100 dark:bg-slate-950 mb-2 rounded-lg">
-      <AccordionItem value="item-1">
+    <Accordion type="single" collapsible className="p-2 border-2 dark:border-slate-800 mb-2 rounded-lg ">
+      <AccordionItem value="item-1" className="border-0">
         <AccordionTrigger className="py-1 hover:no-underline">Filtros</AccordionTrigger>
-        <AccordionContent>
-          <ScrollArea className="w-fill whitespace-nowrap rounded-md">
-            <div className="flex w-max space-x-4 p-4">
+        <AccordionContent className="p-0">
+          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
+            <div className="flex w-max space-x-4">
               <Button onClick={handleClickFilter}>
                 Filtrar <FilterIcon size={12} className="ms-2" />
               </Button>

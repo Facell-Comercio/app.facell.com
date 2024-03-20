@@ -4,8 +4,6 @@ import {
   getCoreRowModel,
   useReactTable,
   getSortedRowModel,
-  SortingState,
-  OnChangeFn,
 } from "@tanstack/react-table"
 
 import {
@@ -17,22 +15,26 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useStoreTablePagar } from "./store-table"
-import { Updater } from "@tanstack/react-query"
+import { PaginationTableTitulos } from "./PaginationTable"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  rowCount: number
 }
 
 export function TableTitulos<TData, TValue>({
   columns,
   data,
+  rowCount
 }: DataTableProps<TData, TValue>) {
 
   const [sorting, setSorting] = useStoreTablePagar(state => [state.sorting, state.setSorting])
+  const [pagination, setPagination] = useStoreTablePagar(state => [state.pagination, state.setPagination])
 
   const table = useReactTable({
     data,
+    rowCount: rowCount || 0,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: (callback) => {
@@ -43,7 +45,14 @@ export function TableTitulos<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,
+      pagination
     },
+    onPaginationChange: (callback) => {
+      // @ts-expect-error ignorado
+      const result = callback(pagination)
+      setPagination(result)
+    },
+    manualPagination: true,
   })
 
   return (
@@ -53,6 +62,7 @@ export function TableTitulos<TData, TValue>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
+
                 return (
                   <TableHead key={header.id}
                     onClick={() => header.column.toggleSorting()}
@@ -61,8 +71,9 @@ export function TableTitulos<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : <div>{flexRender(header.column.columnDef.header, header.getContext())}
-                        {header.column.getIsSorted() === 'asc' && ' 🔼'}
-                        {header.column.getIsSorted() === 'desc' && ' 🔽'}
+                        {/* Se for do tipo id não reenderiza os ícones */}
+                        {!(header.id === "select") && header.column.getIsSorted() === 'asc' && ' 🔼'}
+                        {!(header.id === "select") && header.column.getIsSorted() === 'desc' && ' 🔽'}
 
                       </div>}
                   </TableHead>
@@ -94,6 +105,7 @@ export function TableTitulos<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      <PaginationTableTitulos table={table} />
     </div>
   )
 }

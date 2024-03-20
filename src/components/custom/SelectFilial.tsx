@@ -1,6 +1,7 @@
-import { useFilial } from "@/hooks/use-filial";
+import { useFilial } from "@/hooks/useFilial";
 import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
+import { Register } from "@tanstack/react-query";
 
 type Filial = {
     id: number,
@@ -10,7 +11,8 @@ type TSelectFilial = {
     showAll?: boolean,
     name: string,
     label?: string,
-    control: Control<any>;
+    control: Control<any>
+    register?: Register
 }
 
 const SelectFilial = (props: TSelectFilial) => {
