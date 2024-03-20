@@ -20,5 +20,6 @@ module.exports = {
       { allowConstantExport: true },
     ],
     'react/prop-types': ['warn', { skipUndeclared: true }],
+    '@typescript-eslint/no-explicit-any': 'warn',
   },
 };
