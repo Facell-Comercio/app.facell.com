@@ -1,5 +1,6 @@
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
+import { ptBR } from 'date-fns/locale';
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -39,14 +40,14 @@ const FormDateInput = ({ name, control, label, description }: FormDateProps) => 
               <Button
                 variant={"outline"}
                 className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
+                  "w-[180px] pl-3 text-left font-normal",
                   !field.value && "text-muted-foreground"
                 )}
               >
                 {field.value ? (
                   format(field.value, "dd/MM/yyyy")
                 ) : (
-                  <span>Pick a date</span>
+                  <span>Selecione a data</span>
                 )}
                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
               </Button>
@@ -57,6 +58,7 @@ const FormDateInput = ({ name, control, label, description }: FormDateProps) => 
               mode="single"
               selected={field.value}
               onSelect={field.onChange}
+              locale={ptBR}
               disabled={(date) =>
                 date > new Date() || date < new Date("1900-01-01")
               }

@@ -103,8 +103,6 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
   }
   const watchIdFilial = watch('id_filial')
   const watchDataEmissao = watch('data_emissao')
-  console.log("Data emissão -> ", typeof watchDataEmissao);
-
 
   // Controle de rateio
   const { fields: itensRateio, append: addFieldArray, remove: removeFieldArray } = useFieldArray({
@@ -119,7 +117,6 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
   function removeItemRateio(index: number) {
     removeFieldArray(index)
   }
-
 
   const onSubmit = (data: TituloPagar) => {
     toast({
@@ -160,7 +157,11 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
                   <FormInput className="w-64" name="cnpj_fornecedor" readOnly={true} label="CPF/CNPJ" control={form.control} />
                   <FormInput className="min-w-[50ch] shrink-0" name="nome_fornecedor" readOnly={true} label="Nome do fornecedor" control={form.control} />
 
-                  <ModalFornecedores open={modalFornecedorOpen} handleSelecion={handleSelectionFornecedor} onOpenChange={() => setModalFornecedorOpen(prev => !prev)} />
+                  <ModalFornecedores 
+                    open={modalFornecedorOpen} 
+                    handleSelecion={handleSelectionFornecedor} 
+                    onOpenChange={() => setModalFornecedorOpen(prev => !prev)} 
+                  />
                 </div>
               </div>
 
@@ -196,9 +197,13 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
                     <FormLabel>Plano de contas</FormLabel>
                     <Input className="w-[50ch]" readOnly {...form.register('plano_contas')} placeholder="Selecione um plano de contas" onClick={showModalPlanoContas} />
                   </FormItem>
-                  <ModalPlanoContas id_filial={watchIdFilial} onOpenChange={() => setModalPlanoContasOpen(prev => !prev)} open={modalPlanoContasOpen} handleSelecion={handleSelectionPlanoContas} />
-
-
+                  
+                  <ModalPlanoContas 
+                    open={modalPlanoContasOpen} 
+                    id_filial={watchIdFilial} 
+                    onOpenChange={() => setModalPlanoContasOpen(prev => !prev)}  
+                    handleSelecion={handleSelectionPlanoContas} 
+                  />
 
                   <FormSelect
                     name="centro_custo"
@@ -271,7 +276,7 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
                 <div className="flex flex-col gap-3 mt-3">
                   {itensRateio?.map((itemRateio, index) => (
                     <div key={index} className="flex gap-3 items-center">
-                      <SelectFilial name={`itens_rateio.${index}.id_filial`} register={form.register} />
+                      <SelectFilial name={`itens_rateio.${index}.id_filial`} control={form.control} />
 
                       <Input className="w-60" type="number" value={itemRateio.percentual} />
                       <Input className="w-60" type="number" value={itemRateio.valor} />
