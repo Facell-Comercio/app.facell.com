@@ -54,7 +54,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     accessorKey: "id",
     header: "ID",
     cell: (info) => (
-      <span className='font-semibold cursor-pointer text-blue-500' onClick={() => setModalTituloOpen({ open: true, id_titulo: info.getValue<number>() })}>{info.getValue<number>()}</span>
+      <span className='font-semibold cursor-pointer text-blue-500' onClick={() => setModalTituloOpen({ open: true, id_titulo: info.getValue<string>() })}>{info.getValue<number>()}</span>
     ),
     sortDescFirst: true,
   },
@@ -75,7 +75,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     },
   },
   {
-    header: "solicitação",
+    header: "Solicitação",
     accessorKey: "created_at",
     cell: (info) => {
       const data = info.getValue<Date>();
@@ -83,7 +83,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     },
   },
   {
-    header: "vencimento",
+    header: "Vencimento",
     accessorKey: "data_vencimento",
     cell: (info) => {
       const data = info.getValue<Date>();
@@ -93,7 +93,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
   {
     header: "Valor",
     accessorKey: "valor",
-    cell: (info) => <span className="block text-right">{parseFloat(info.getValue<string>()).toLocaleString("pt-BR", { useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+    cell: (info) => <span className="block text-right text-nowrap">R$ {parseFloat(info.getValue<string>()).toLocaleString("pt-BR", { useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
   },
   {
     accessorFn: (row) => row.descricao,
@@ -122,7 +122,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     },
   },
   {
-    header: "solicitante",
+    header: "Solicitante",
     accessorKey: "solicitante",
     cell: (info) => {
       const label = info.getValue<string>();
