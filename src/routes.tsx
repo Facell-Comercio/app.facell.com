@@ -1,13 +1,14 @@
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import App from "./App.tsx";
 import Home from "./pages/Home.tsx";
-import Perfil from "./pages/Perfil.tsx";
 import Login from "./pages/Login.tsx";
+import PageNotFound from "./pages/NotFound.tsx";
+import Perfil from "./pages/Perfil.tsx";
 import PrivateRoutes from "./pages/PrivateRoutes.tsx";
+import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.tsx";
-import PageNotFound from "./pages/NotFound.tsx";
 
 const AppRoutes = () => {
     return ( <Routes>
@@ -31,6 +32,7 @@ const AppRoutes = () => {
             <Route path="/financeiro/">
               <Route element={<ContasPagarPage />} path="contas-a-pagar" />
               <Route element={<ContasReceberPage />} path="contas-a-receber" />
+              <Route element={<CadastrosPage />} path="cadastros" />
             </Route>
             {/* Administração */}
 

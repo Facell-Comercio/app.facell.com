@@ -1,6 +1,6 @@
-import { FaSackDollar, FaUsers, FaBullhorn, FaTruckRampBox } from 'react-icons/fa6';
-import { BsFillBarChartFill, BsFillClipboardCheckFill, BsPersonVideo3, BsFillChatLeftDotsFill, BsFillSendFill } from "react-icons/bs";
 import { ReactNode } from 'react';
+import { BsFillBarChartFill, BsFillChatLeftDotsFill, BsFillClipboardCheckFill, BsFillSendFill, BsPersonVideo3 } from "react-icons/bs";
+import { FaBullhorn, FaSackDollar, FaTruckRampBox, FaUsers } from 'react-icons/fa6';
 
 export type SidebarItem = {
   name: string,
@@ -167,6 +167,13 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CR",
         uri: "/financeiro/contas-a-receber",
+        visible: true,
+      },
+      {
+        name: "Cadastros",
+        type: "link",
+        shortName: "C",
+        uri: "/financeiro/cadastros",
         visible: true,
       },
       {
