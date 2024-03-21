@@ -311,7 +311,6 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
               <FormInput name="txt" type="file" label="TXT Remessa" control={form.control} />
             </div>
           </div>
-
         </form>
       </Form>
     </div>

@@ -3,14 +3,26 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination"
+
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface IModalFornecedores {
     open: boolean,
@@ -25,23 +37,52 @@ export type ItemFornecedor = {
     nome: string,
 }
 
+type PaginationProps = {
+    pageLength: number,
+    pageIndex: number
+}
+
 const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornecedores) => {
-    
-    const { data, isLoading, isError } = useQuery({
+    const [search, setSearch] = useState<string>("")
+    const [pagination, setPagination] = useState<PaginationProps>({ pageLength: 15, pageIndex: 4 })
+
+    const { data, isLoading, isError, refetch: fetchFornecedores } = useQuery({
         queryKey: ['fornecedores'],
-        queryFn: async () => await api.get('financeiro/fornecedores/', {params: {filter: {termo}}}),
+        queryFn: async () => await api.get('financeiro/fornecedores/', { params: { filters: { termo: search }, pagination } }),
         enabled: open,
     })
-    console.log(data)
 
-    function handleSearch(text: string) {
-        setSearch(text)
+    const pages = [...Array(Math.ceil((data?.data?.qtdeTotal || 15) / pagination.pageLength)).keys()].map(page => page + 1);
+    const arrayPages = pages.filter(i => {
+        if (i === 1 || i === pages.length) {
+            return true
+        } else if (i >= pagination.pageIndex - 2 && i <= pagination.pageIndex + 2) {
+            return true
+        }
+        return false
+    })
+    console.log(arrayPages, pages);
+
+
+    async function handleSearch(text: string) {
+        await new Promise((resolve) => {
+            setSearch(text)
+            resolve(true)
+        })
+        fetchFornecedores()
     }
     function handleSelection(item: ItemFornecedor) {
         handleSelecion(item)
     }
+    async function handlePaginationChange(index: number) {
+        await new Promise((resolve) => {
+            setPagination(prev => ({ ...prev, pageIndex: index }))
+            resolve(true)
+        })
+        fetchFornecedores()
+    }
 
-    const [search, setSearch] = useState('')
+    const searchRef = useRef<HTMLInputElement | null>(null)
 
     if (isLoading) return null;
     if (isError) return null;
@@ -56,13 +97,13 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
                     </DialogDescription>
 
                     <div className="flex gap-3">
-                        <Input value={search} type='search' placeholder="Buscar..." />
-                        <Button onClick={handleSearch}>Procurar</Button>
+                        <Input type='search' placeholder="Buscar..." ref={searchRef} />
+                        <Button onClick={() => handleSearch(searchRef.current?.value || "")}>Procurar</Button>
                     </div>
                 </DialogHeader>
 
                 <ScrollArea className="h-72 w-full rounded-md border p-3">
-                    {data?.data
+                    {data?.data?.rows
                         .map((item: ItemFornecedor) => (
                             <div key={'forn:' + item.id} className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2">
                                 <span>{item.cnpj} - {item.nome} - {item.razao}</span>
@@ -70,7 +111,35 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
                             </div>
                         ))}
                 </ScrollArea>
+                <DialogFooter>
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <Button variant={"outline"}>
+                                    <ChevronLeft className="h-4 w-4" />
+                                </Button>
+                            </PaginationItem>
+                            {
+                                arrayPages.map((i) => {
+                                    return (
+                                        <PaginationItem key={i}>
+                                            <Button variant={i === pagination.pageIndex ? "default" : "ghost"} onClick={() => handlePaginationChange(i)}>{i}</Button>
+                                        </PaginationItem>
+                                    )
+                                })
+                            }
+                            <PaginationItem>
+                                <Button variant={"outline"}>
+                                    <ChevronRight className="h-4 w-4" />
+                                </Button>
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
+
+                    {/* <PaginationEllipsis /> */}
+                </DialogFooter>
             </DialogContent>
+
         </Dialog>
     );
 }
