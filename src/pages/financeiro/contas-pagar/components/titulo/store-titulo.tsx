@@ -66,21 +66,21 @@ export const initialPropsTitulo: TituloPagar = {
   parcela: 1,
 
   // Filial
-  id_filial: '1',
+  id_filial: '',
   nome_filial: '',
   cnpj_filial: '',
 
   // Solicitante
-  id_solicitante: null,
+  id_solicitante: '',
   nome_solicitante: '',
 
   // Fornecedor
-  id_fornecedor: 1,
+  id_fornecedor: '',
   nome_fornecedor: '',
   cnpj_fornecedor: '',
 
   // rateio
-  id_rateio: null,
+  id_rateio: '',
   itens_rateio: [],
 
   // anexos
@@ -97,17 +97,17 @@ interface UseStoreTitulo {
   titulo: TituloPagar,
   modalTituloOpen: boolean,
 
-  setModalTituloOpen: ({ open, id_titulo }: { open: boolean, id_titulo: string | null }) => void,
-  resetTitulo: () => void
+  openModalTitulo: (id_titulo: string) => void,
+  closeModalTitulo: () => void,
 }
 
 export const useStoreTitulo = create<UseStoreTitulo>((set) => ({
   id_titulo: null,
   titulo: initialPropsTitulo,
   modalTituloOpen: false,
-  setModalTituloOpen: ({ open, id_titulo }) => set(({ modalTituloOpen: open, id_titulo })),
-  resetTitulo: () => set({ titulo: initialPropsTitulo, id_titulo: null }),
 
+  openModalTitulo: (id_titulo: string)=>set({modalTituloOpen: true, id_titulo: id_titulo}),
+  closeModalTitulo: () => set(({ modalTituloOpen: false })),
 }))
 
 export interface TipoRateio {

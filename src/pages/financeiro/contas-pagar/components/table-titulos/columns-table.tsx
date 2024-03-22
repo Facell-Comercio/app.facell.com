@@ -19,7 +19,7 @@ export type RowTitulo = {
   solicitante: string
 }
 
-const setModalTituloOpen = useStoreTitulo.getState().setModalTituloOpen
+const openModalTitulo = useStoreTitulo.getState().openModalTitulo
 
 export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
   {
@@ -54,7 +54,10 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     accessorKey: "id",
     header: "ID",
     cell: (info) => (
-      <span className='font-semibold cursor-pointer text-blue-500' onClick={() => setModalTituloOpen({ open: true, id_titulo: info.getValue<string>() })}>{info.getValue<number>()}</span>
+      <span 
+        className='font-semibold cursor-pointer text-blue-500' 
+        onClick={() => openModalTitulo(info.getValue<string>())}>{info.getValue<string>()}
+        </span>
     ),
     sortDescFirst: true,
   },

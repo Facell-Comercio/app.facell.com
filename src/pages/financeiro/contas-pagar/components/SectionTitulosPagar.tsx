@@ -5,6 +5,7 @@ import FiltersLancamentosPagar from "./FiltersTitulosPagar";
 import { TableTitulos } from "./table-titulos/TableTitulos";
 import { columnsTableTitulos } from "./table-titulos/columns-table";
 import ModalTituloPagar from "./titulo/ModalTituloPagar";
+import ButtonNewTitulo from "./ButtonNewTitulo";
 
 const SectionTitulosPagar = () => {
   console.log('RENDER - Section-Titulos')
@@ -27,7 +28,10 @@ const SectionTitulosPagar = () => {
   const { data, refetch } = useTituloPagar().useGetAll({ pagination, filters })
 
   return (
-    <div>
+    <div className="flex flex-col gap-3">
+      <div>
+      <ButtonNewTitulo/>
+      </div>
       <FiltersLancamentosPagar refetch={refetch} />
       {/* @ts-expect-error rows doestn't exists*/}
       <TableTitulos columns={columnsTableTitulos} data={data?.data?.rows || []} rowCount={data?.data?.rowCount} />
