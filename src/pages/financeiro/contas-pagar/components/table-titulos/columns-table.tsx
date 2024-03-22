@@ -1,22 +1,18 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
 import { ReactNode } from "react"
 import { useStoreTitulo } from "../titulo/store-titulo"
-import { Checkbox } from "@/components/ui/checkbox"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type RowTitulo = {
   select: ReactNode
   id: string
-  status: "Solicitado" | "Negado" | "Aprovado" | "Pago" | "Cancelado"
-  created_at: Date
-  data_vencimento: Date
-  valor: number
-  descricao: string
-  fornecedor: string
-  solicitante: string
+  cnpj: string
+  nome: string
+  razao: string
 }
 
 const openModalTitulo = useStoreTitulo.getState().openModalTitulo
