@@ -10,11 +10,7 @@ import {
 import {
     Pagination,
     PaginationContent,
-    PaginationEllipsis,
     PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
 } from "@/components/ui/pagination"
 
 import { Input } from "@/components/ui/input";
@@ -67,6 +63,7 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
     async function handleSearch(text: string) {
         await new Promise((resolve) => {
             setSearch(text)
+            setPagination(prev=>({...prev, pageIndex: 1}))
             resolve(true)
         })
         fetchFornecedores()
@@ -77,6 +74,23 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
     async function handlePaginationChange(index: number) {
         await new Promise((resolve) => {
             setPagination(prev => ({ ...prev, pageIndex: index }))
+            resolve(true)
+        })
+        fetchFornecedores()
+    }
+    async function handlePaginationUp() {
+        await new Promise((resolve) => {
+            const newPage = ++pagination.pageIndex;
+            console.log(newPage)
+            setPagination(prev => ({ ...prev, pageIndex: newPage }))
+            resolve(true)
+        })
+        fetchFornecedores()
+    }
+    async function handlePaginationDown() {
+        await new Promise((resolve) => {
+            const newPage = --pagination.pageIndex;
+            setPagination(prev => ({ ...prev, pageIndex: newPage <= 0 ? 1 : newPage }))
             resolve(true)
         })
         fetchFornecedores()
@@ -115,7 +129,7 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
                     <Pagination>
                         <PaginationContent>
                             <PaginationItem>
-                                <Button variant={"outline"}>
+                                <Button variant={"outline"} disabled={pagination.pageIndex === 1} onClick={handlePaginationDown}>
                                     <ChevronLeft className="h-4 w-4" />
                                 </Button>
                             </PaginationItem>
@@ -129,7 +143,7 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
                                 })
                             }
                             <PaginationItem>
-                                <Button variant={"outline"}>
+                                <Button variant={"outline"} disabled={pagination.pageIndex === pages.length} onClick={handlePaginationUp}>
                                     <ChevronRight className="h-4 w-4" />
                                 </Button>
                             </PaginationItem>
