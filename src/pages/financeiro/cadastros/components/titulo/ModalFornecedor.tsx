@@ -6,9 +6,9 @@ import { FaRegCircleXmark } from "react-icons/fa6";
 import { GrCircleAlert } from "react-icons/gr";
 
 import { useState } from "react";
-import FormFornecedores from "./FormFornecedores";
+import FormFornecedor from "./FormFornecedor";
 import { useStoreFornecedor } from "./store-fornecedor";
-const ModalFornecedores = () => {
+const ModalFornecedor = () => {
   const [isModalEditing, setIsModalEditing] = useState(false)
   const modalFornecedorIsOpen = useStoreFornecedor().modalFornecedorIsOpen
   const id_titulo = useStoreFornecedor().id_titulo
@@ -35,7 +35,7 @@ const ModalFornecedores = () => {
           <DialogTitle>{id_titulo ? `Titulo: ${id_titulo}` : "Novo titulo"}</DialogTitle>
         </DialogHeader>
 
-        <FormFornecedores id_titulo={id_titulo} />
+        <FormFornecedor id_titulo={id_titulo} />
         <DialogFooter>
           {!id_titulo && (<>
             <Button type="submit" size="lg" variant={"secondary"} onClick={handleClickCancel}>
@@ -76,4 +76,4 @@ const ModalFornecedores = () => {
   );
 };
 
-export default ModalFornecedores;
+export default ModalFornecedor;

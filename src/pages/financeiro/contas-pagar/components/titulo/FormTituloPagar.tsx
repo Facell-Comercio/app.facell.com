@@ -1,21 +1,21 @@
-import { useForm, useFieldArray } from "react-hook-form";
-import { z } from "zod";
-import { Form, FormItem, FormLabel } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
+import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
-import { toast } from "@/components/ui/use-toast";
-import { Contact, Divide, DollarSign, FileIcon, FileText } from "lucide-react";
-import { TituloPagar, initialPropsTitulo } from "./store-titulo";
 import SelectFilial from "@/components/custom/SelectFilial";
-import { useState } from "react";
-import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
-import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedor";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { Button } from "@/components/ui/button";
+import { Form, FormItem, FormLabel } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import FormDateInput from "@/components/custom/FormDate";
+import { toast } from "@/components/ui/use-toast";
+import { useTituloPagar } from "@/hooks/useTituloPagar";
+import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
+import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Contact, Divide, DollarSign, FileIcon, FileText } from "lucide-react";
+import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
+import { TituloPagar, initialPropsTitulo } from "./store-titulo";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaTitulo = z

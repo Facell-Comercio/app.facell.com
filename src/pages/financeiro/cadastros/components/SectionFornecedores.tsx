@@ -5,7 +5,7 @@ import { useFornecedores } from "@/hooks/useFornecedores";
 import FilterFornecedores from "./FilterFornecedores";
 import { TableFornecedores } from "./table-titulos/TableFornecedores";
 import { columnsTableTitulos } from "./table-titulos/columns-table";
-import ModalFornecedores from "./titulo/ModalFornecedores";
+import ModalFornecedor from "./titulo/ModalFornecedor";
 import { useStoreFornecedor } from "./titulo/store-fornecedor";
 
 const SectionFornecedores = () => {
@@ -28,7 +28,7 @@ const SectionFornecedores = () => {
 
   const setModalFornecedorIsOpen = useStoreFornecedor().setModalFornecedorIsOpen
 
-  const { data } = useFornecedores().useGetAll({ pagination, filters })
+  const { data, refetch } = useFornecedores().useGetAll({ pagination, filters })
 
   return (
     <div className="flex flex-col gap-3">
@@ -36,10 +36,10 @@ const SectionFornecedores = () => {
         <h2 className="text-3xl font-medium">Fornecedores</h2>
         <Button variant={"secondary"} onClick={() => setModalFornecedorIsOpen({ open: true, id_titulo: "" })}>Novo Fornecedor</Button>
       </div>
-      <FilterFornecedores/>
+      <FilterFornecedores refetch={refetch}/>
       {/* @ts-expect-error rows doestn't exists*/}
       <TableFornecedores columns={columnsTableTitulos} data={data?.data?.rows || []} rowCount={data?.data?.rowCount} />
-      <ModalFornecedores />
+      <ModalFornecedor />
     </div>
   );
 };

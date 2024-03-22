@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
-import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedor";
+import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
 import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Contact, Divide, DollarSign, FileIcon, FileText } from "lucide-react";
@@ -63,7 +63,7 @@ const schemaTitulo = z
     url_txt: z.string().optional(),
   });
 
-const FormFornecedores = ({ id_titulo }: { id_titulo: string | null }) => {
+const FormFornecedor = ({ id_titulo }: { id_titulo: string | null }) => {
   console.log('RENDER - Form, titulo:', id_titulo)
   const { data, isLoading } = useTituloPagar().useGetOne(id_titulo)
   console.log(data);
@@ -317,4 +317,4 @@ const FormFornecedores = ({ id_titulo }: { id_titulo: string | null }) => {
   );
 };
 
-export default FormFornecedores;
+export default FormFornecedor;
