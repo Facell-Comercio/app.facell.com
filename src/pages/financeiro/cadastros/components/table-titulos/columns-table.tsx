@@ -10,13 +10,9 @@ import { useStoreFornecedor } from "../titulo/store-fornecedor"
 export type RowTitulo = {
   select: ReactNode
   id: string
-  status: "Solicitado" | "Negado" | "Aprovado" | "Pago" | "Cancelado"
-  created_at: Date
-  data_vencimento: Date
-  valor: number
-  descricao: string
-  fornecedor: string
-  solicitante: string
+  cnpj: string
+  nome: string
+  razao: string
 }
 
 const setModalFornecedorIsOpen = useStoreFornecedor.getState().setModalFornecedorIsOpen
@@ -59,78 +55,27 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     sortDescFirst: true,
   },
   {
-    header: "Status",
-    accessorKey: "status",
+    header: "CNPJ",
+    accessorKey: "cnpj",
     cell: (info) => {
-      const status = info.getValue<string>();
-      let color = "";
-      if (status === "Aprovado") {
-        color = "text-green-500";
-      } else if (status === "Pago") {
-        color = "text-blue-500";
-      } else if (status === "Negado") {
-        color = "text-red-500";
-      }
-      return <span className={`${color}`}>{status}</span>;
+      const cnpj = info.getValue<string>();
+      return <span>{cnpj}</span>;
     },
   },
   {
-    header: "solicitação",
-    accessorKey: "created_at",
+    header: "NOME FANTASIA",
+    accessorKey: "nome",
     cell: (info) => {
-      const data = info.getValue<Date>();
-      return new Date(data).toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit" });
+      const nome = info.getValue<string>();
+      return <span>{nome}</span>;
     },
   },
   {
-    header: "vencimento",
-    accessorKey: "data_vencimento",
+    header: "RAZÃO SOCIAL",
+    accessorKey: "razao",
     cell: (info) => {
-      const data = info.getValue<Date>();
-      return new Date(data).toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit" });
+      const razao = info.getValue<string>();
+      return <span>{razao}</span>;
     },
-  },
-  {
-    header: "Valor",
-    accessorKey: "valor",
-    cell: (info) => <span className="block text-right">{parseFloat(info.getValue<string>()).toLocaleString("pt-BR", { useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
-  },
-  {
-    accessorFn: (row) => row.descricao,
-    id: "descricao",
-    accessorKey: "descricao",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <div title={label} className="block truncate max-w-96">
-          {label}
-        </div>
-      );
-    },
-    header: "Descrição",
-  },
-  {
-    header: "Fornecedor",
-    accessorKey: "fornecedor",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <div title={label} className="block truncate max-w-96">
-          {label}
-        </div>
-      );
-    },
-  },
-  {
-    header: "solicitante",
-    accessorKey: "solicitante",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <div title={label} className="block truncate max-w-96">
-          {label}
-        </div>
-      );
-    },
-  },
+  }
 ]

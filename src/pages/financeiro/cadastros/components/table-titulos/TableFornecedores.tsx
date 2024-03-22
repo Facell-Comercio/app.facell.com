@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { PaginationTableTitulos } from "./PaginationTable"
-import { useStoreTablePagar } from "./store-table"
+import { useStoreTableFornecedor } from "./store-table"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -29,8 +29,8 @@ export function TableFornecedores<TData, TValue>({
   rowCount
 }: DataTableProps<TData, TValue>) {
 
-  const [sorting, setSorting] = useStoreTablePagar(state => [state.sorting, state.setSorting])
-  const [pagination, setPagination] = useStoreTablePagar(state => [state.pagination, state.setPagination])
+  const [sorting, setSorting] = useStoreTableFornecedor(state => [state.sorting, state.setSorting])
+  const [pagination, setPagination] = useStoreTableFornecedor(state => [state.pagination, state.setPagination])
 
   const table = useReactTable({
     data,

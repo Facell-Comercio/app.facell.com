@@ -16,7 +16,17 @@ const ModalFornecedores = () => {
 
   function handleClickSave(){
     setIsModalEditing(false);
+    setModalFornecedorIsOpen({ open: false, id_titulo: "" });
   }
+  function handleClickCancel(){
+    setIsModalEditing(false);
+    setModalFornecedorIsOpen({ open: false, id_titulo: "" });
+  }
+  function handleClickInative(){
+    setIsModalEditing(false);
+    setModalFornecedorIsOpen({ open: false, id_titulo: "" });
+  }
+  
 
   return (
     <Dialog open={modalFornecedorIsOpen} onOpenChange={() => setModalFornecedorIsOpen({ open: false, id_titulo: "" })}>
@@ -28,19 +38,19 @@ const ModalFornecedores = () => {
         <FormFornecedores id_titulo={id_titulo} />
         <DialogFooter>
           {!id_titulo && (<>
-            <Button type="submit" size="lg" variant={"secondary"}>
-              <FaRegCircleXmark className="me-2 text-xl" onClick={handleClickSave}/>
+            <Button type="submit" size="lg" variant={"secondary"} onClick={handleClickCancel}>
+              <FaRegCircleXmark className="me-2 text-xl" />
               Cancelar
             </Button>
-            <Button type="submit" size="lg"><Save className="me-2" onClick={handleClickSave}/>Salvar</Button>
+            <Button type="submit" size="lg"  onClick={handleClickSave}><Save className="me-2"/>Salvar</Button>
           </>)}
           {id_titulo && isModalEditing && (<>
             
-          <Button type="submit" size="lg" variant={"destructive"}>
-            <GrCircleAlert className="me-2" onClick={handleClickSave}/>
+          <Button type="submit" size="lg" variant={"destructive"} onClick={handleClickInative}>
+            <GrCircleAlert className="me-2"/>
             Inativar
           </Button>
-          <Button type="submit" size="lg" variant={"secondary"} onClick={handleClickSave}>
+          <Button type="submit" size="lg" variant={"secondary"} onClick={handleClickCancel}>
               <FaRegCircleXmark className="me-2 text-xl"/>
               Cancelar
             </Button>
@@ -50,8 +60,8 @@ const ModalFornecedores = () => {
           </Button>
           </>)}
           {id_titulo && !isModalEditing && (<>
-          <Button type="submit" size="lg" variant={"destructive"}>
-            <GrCircleAlert className="me-2 text-xl" onClick={handleClickSave}/>
+          <Button type="submit" size="lg" variant={"destructive"} onClick={handleClickInative}>
+            <GrCircleAlert className="me-2 text-xl" />
             
             Inativar
           </Button>

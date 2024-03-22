@@ -1,8 +1,7 @@
 
-import { create } from "zustand";
-import { mountStoreDevtool } from 'simple-zustand-devtools';
-import { DateRange } from "react-day-picker";
 import { OnChangeFn, SortingState } from "@tanstack/react-table";
+import { mountStoreDevtool } from 'simple-zustand-devtools';
+import { create } from "zustand";
 
 export interface Pagination {
   pageIndex: number
@@ -18,23 +17,11 @@ type RowSelection = Record<number, boolean>
 // }
 
 export interface Filters {
-  id?: string
-  id_grupo_economico?: string
-  id_status?: string
-  tipo_data?: string
-  range_data?: DateRange
-  descricao?: string
-  nome_user?: string
+  termo?: string
 }
 
 const initialFilters: Filters = {
-  id: '',
-  id_grupo_economico: '',
-  id_status: '',
-  tipo_data: 'data_vencimento',
-  range_data: { from: undefined, to: undefined },
-  descricao: '',
-  nome_user: undefined,
+  termo: '',
 }
 
 export interface State {
@@ -60,7 +47,7 @@ export interface Actions {
   setRowSelection: (rowSelection: RowSelection) => void,
 }
 
-export const useStoreTablePagar = create<State & Actions>(set => ({
+export const useStoreTableFornecedor = create<State & Actions>(set => ({
   // Table
   rowCount: 0,
   sorting: [],
@@ -79,4 +66,4 @@ export const useStoreTablePagar = create<State & Actions>(set => ({
 }))
 
 
-mountStoreDevtool('useStoreTablePagar', useStoreTablePagar);
+mountStoreDevtool('useStoreTableFornecedor', useStoreTableFornecedor);
