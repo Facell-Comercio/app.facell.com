@@ -1,12 +1,12 @@
-import { ToggleTheme } from "./ui/toogle-theme";
-import { Button } from "./ui/button";
+import { useAuthStore } from "@/context/auth-store";
+import { useSidebar } from "@/context/sidebar-store";
 import { Bell, DoorOpen, MessageSquare, User } from "lucide-react";
-import { Badge } from "./ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import ButtonFullScreen from "./custom/ButtonFullScreen";
 import LogoFacell from "./custom/LogoFacell";
-import { useSidebar } from "@/context/sidebar-store";
-import { useAuthStore } from "@/context/auth-store";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { ToggleTheme } from "./ui/toogle-theme";
 
 const Navbar = () => {
   const user = useAuthStore(state => state.user);
@@ -15,7 +15,7 @@ const Navbar = () => {
   const [sidebarOpen, mobile] = useSidebar((state) => ([state.sidebarOpen, state.mobile]))
 
   return (
-    <nav className=" flex w-full gap-3 p-3 items-center border-2 justify-end sticky top-0 backdrop-blur-sm">
+    <nav className=" flex w-full gap-3 p-3 items-center border-y-2 justify-end sticky top-0 backdrop-blur-sm ">
       {!sidebarOpen && mobile && (<LogoFacell className='me-auto' />)}
 
       <div className="flex gap-3 items-center">

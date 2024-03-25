@@ -12,7 +12,7 @@ const ModalTituloPagar = () => {
 
   return (
     <Dialog open={modalTituloOpen} onOpenChange={() => setModalTituloOpen({ open: false, id_titulo: "" })}>
-      <DialogContent className="min-w-[80vw] sm:w-full p-2 sm:p-5 h-[95vh] overflow-hidden backdrop-blur-sm">
+      <DialogContent className="min-w-[80vw] sm:w-full p-2 sm:p-5 h-[95vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>{id_titulo ? `Titulo: ${id_titulo}` : "Novo titulo"}</DialogTitle>
         </DialogHeader>

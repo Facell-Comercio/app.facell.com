@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { sidebarItems } from "./sidebar-items";
-import { BsChevronDown } from "react-icons/bs";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import logoFacell from "@/assets/images/facell-192x192.png";
 import { useSidebar } from "@/context/sidebar-store";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
+import { BsChevronDown } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import { sidebarItems } from "./sidebar-items";
 
 
 export function Sidebar() {
@@ -97,7 +97,7 @@ export function Sidebar() {
           </div>
         )} */}
 
-        <ul className={`${sidebarOpen ? "flex" : "hidden"} sm:flex flex-col flex-1 mt-3 px-5 overflow-visible z-20`}>
+        <ul className={`${sidebarOpen ? "flex" : "hidden"} sm:flex flex-col flex-1 mt-3 px-5 overflow-visible z-50`}>
           {sidebarItems
             .filter((item) => item.visible)
             .map((item, itemIndex) => (
