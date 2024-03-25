@@ -26,7 +26,7 @@ const SectionFornecedores = () => {
     isAllSelected: state.isAllSelected
   }))
 
-  const setModalFornecedorIsOpen = useStoreFornecedor().setModalFornecedorIsOpen
+  const openModal = useStoreFornecedor().openModal
 
   const { data, refetch } = useFornecedores().useGetAll({ pagination, filters })
 
@@ -34,7 +34,7 @@ const SectionFornecedores = () => {
     <div className="flex flex-col gap-3">
       <div className="flex justify-between">
         <h2 className="text-3xl font-medium">Fornecedores</h2>
-        <Button variant={"secondary"} onClick={() => setModalFornecedorIsOpen({ open: true, id_titulo: "" })}>Novo Fornecedor</Button>
+        <Button variant={"secondary"} onClick={() => openModal("")}>Novo Fornecedor</Button>
       </div>
       <FilterFornecedores refetch={refetch}/>
       {/* @ts-expect-error rows doestn't exists*/}

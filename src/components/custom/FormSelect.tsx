@@ -1,5 +1,5 @@
+import { Control } from 'react-hook-form';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Control } from 'react-hook-form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 type Toption = {
@@ -8,6 +8,7 @@ type Toption = {
 }
 interface IFormSelect { 
   name: string, 
+  type?: string, 
   control: Control<any>, 
   label?: string, 
   description?: string, 
@@ -20,13 +21,13 @@ interface IFormSelect {
 }
 
 
-const FormSelect = ({ name, options, control, label, description, className, showAll, defaultValue }: IFormSelect) => {
+const FormSelect = ({ name, type, options, control, label, description, className, showAll, defaultValue }: IFormSelect) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={`${type === "hidden" && "hidden"}`}>
           {label && <FormLabel>{label}</FormLabel>}
           <Select  onValueChange={field.onChange} defaultValue={defaultValue || field.value}>
             <FormControl>

@@ -1,4 +1,4 @@
-export const normalizePhoneNumber = (value: String | undefined) => {
+export const normalizePhoneNumber = (value: string | undefined) => {
     if (!value) return ''
 
     return value.replace(/[\D]/g, '')
@@ -7,7 +7,7 @@ export const normalizePhoneNumber = (value: String | undefined) => {
         .replace(/(-\d{4})(\d+?)/, '$1')
 }
 
-export const normalizeCnpjNumber = (value: String | undefined) => {
+export const normalizeCnpjNumber = (value: string | undefined) => {
     if (!value) return ''
     const pureValue = value.replace(/[\D]/g, '')
     if (pureValue.length <= 11) {
@@ -25,7 +25,7 @@ export const normalizeCnpjNumber = (value: String | undefined) => {
             .replace(/(-\d{2})\d+?$/, '$1')
 }
 
-export const normalizeCepNumber = (value: String | undefined) => {
+export const normalizeCepNumber = (value: string | undefined) => {
     if (!value) return ''
     return value.replace(/\D/g, "")
         .replace(/^(\d{5})(\d{3})+?$/, "$1-$2")

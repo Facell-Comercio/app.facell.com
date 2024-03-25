@@ -15,7 +15,7 @@ export type RowTitulo = {
   razao: string
 }
 
-const setModalFornecedorIsOpen = useStoreFornecedor.getState().setModalFornecedorIsOpen
+const openModal = useStoreFornecedor.getState().openModal
 
 export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
   {
@@ -50,7 +50,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     accessorKey: "id",
     header: "ID",
     cell: (info) => (
-      <span className='font-semibold cursor-pointer text-blue-500' onClick={() => setModalFornecedorIsOpen({ open: true, id_titulo: info.getValue<number>().toString() })}>{info.getValue<number>()}</span>
+      <span className='font-semibold cursor-pointer text-blue-500' onClick={() => openModal(info.getValue<number>().toString() )}>{info.getValue<number>()}</span>
     ),
     sortDescFirst: true,
   },
