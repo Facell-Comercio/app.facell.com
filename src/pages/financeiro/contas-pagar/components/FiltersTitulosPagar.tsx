@@ -20,7 +20,7 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
   }
 
   return (
-    <Accordion type="single" collapsible className="p-2 border-2 dark:border-slate-800 mb-2 rounded-lg ">
+    <Accordion type="single" collapsible className="p-2 border-2 dark:border-slate-800 rounded-lg ">
       <AccordionItem value="item-1" className="border-0">
         <AccordionTrigger className="py-1 hover:no-underline">Filtros</AccordionTrigger>
         <AccordionContent className="p-0">

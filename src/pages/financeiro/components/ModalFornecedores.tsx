@@ -19,6 +19,7 @@ import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { normalizeCnpjNumber } from "@/helpers/mask";
 
 interface IModalFornecedores {
     open: boolean,
@@ -57,8 +58,6 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
         }
         return false
     })
-    console.log(arrayPages, pages);
-
 
     async function handleSearch(text: string) {
         await new Promise((resolve) => {
@@ -100,6 +99,7 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
 
     if (isLoading) return null;
     if (isError) return null;
+    if(!open) return null;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -120,7 +120,7 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
                     {data?.data?.rows
                         .map((item: ItemFornecedor) => (
                             <div key={'forn:' + item.id} className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2">
-                                <span>{item.cnpj} - {item.nome} - {item.razao}</span>
+                                <span>{normalizeCnpjNumber(item.cnpj)} - {item.nome} {item.razao && ' - ' + item.razao}</span>
                                 <Button size={"sm"} onClick={() => { handleSelection(item) }}>Selecionar</Button>
                             </div>
                         ))}

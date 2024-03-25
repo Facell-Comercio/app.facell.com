@@ -16,10 +16,11 @@ interface IFormSelect {
   className?: string, 
   options: Toption[],
   showAll?: boolean,
+  defaultValue?: string,
 }
 
 
-const FormSelect = ({ name, options, control, label, description, className, showAll }: IFormSelect) => {
+const FormSelect = ({ name, options, control, label, description, className, showAll, defaultValue }: IFormSelect) => {
   return (
     <FormField
       control={control}
@@ -27,7 +28,7 @@ const FormSelect = ({ name, options, control, label, description, className, sho
       render={({ field }) => (
         <FormItem>
           {label && <FormLabel>{label}</FormLabel>}
-          <Select  onValueChange={field.onChange} defaultValue={field.value}>
+          <Select  onValueChange={field.onChange} defaultValue={defaultValue || field.value}>
             <FormControl>
               <SelectTrigger className={className}>
                 <SelectValue placeholder={'Selecione'} />

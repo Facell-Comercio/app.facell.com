@@ -1,19 +1,21 @@
 import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
+import FormInputUncontrolled from "@/components/custom/FormInputUncontrolled";
 import FormSelect from "@/components/custom/FormSelect";
 import SelectFilial from "@/components/custom/SelectFilial";
-import { Button } from "@/components/ui/button";
 import { Form, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
+import { useAuthStore } from "@/context/auth-store";
+import { normalizeCnpjNumber } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
 import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
 import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Contact, Divide, DollarSign, FileIcon, FileText } from "lucide-react";
-import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Contact, Divide, DollarSign, FileIcon, FileText, Save } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { TituloPagar, initialPropsTitulo } from "./store-titulo";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
@@ -21,25 +23,25 @@ import { TituloPagar, initialPropsTitulo } from "./store-titulo";
 const schemaTitulo = z
   .object({
     // IDs
-    id_fornecedor: z.string(),
-    id_filial: z.string(),
-    id_plano_contas: z.string(),
-    id_tipo_solicitacao: z.string().min(1),
-    id_centro_custo: z.string(),
+    id_fornecedor: z.coerce.number(),
+    id_filial: z.coerce.number(),
+    id_plano_contas: z.coerce.number(),
+    id_tipo_solicitacao: z.coerce.number(),
+    id_centro_custo: z.coerce.number(),
 
     // Outros
     data_emissao: z.date(),
     data_vencimento: z.date(),
     num_parcelas: z.coerce.number().min(1),
     parcela: z.number().min(1),
-    valor: z.coerce.number(),
+    valor: z.number().min(0),
     descricao: z.string().min(10, { message: "Precisa conter mais que 10 caracteres" }),
 
     // Rateio:
     id_rateio: z.coerce.number(),
     itens_rateio: z.array(z.object({
       id_filial: z.coerce.number(),
-      valor: z.number(),
+      valor: z.number().min(0),
       percentual: z.number(),
     })),
 
@@ -62,21 +64,36 @@ const schemaTitulo = z
     anexo_txt: z.instanceof(FileList).optional(),
     url_txt: z.string().optional(),
   });
+  
+  const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
+  const user = useAuthStore(state=>state.user)
 
-const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
   console.log('RENDER - Form, titulo:', id_titulo)
   const { data, isLoading } = useTituloPagar().useGetOne(id_titulo)
-  console.log(data);
-
+  const titulo  = data?.data ?? initialPropsTitulo
 
   const form = useForm<TituloPagar>({
-    defaultValues: data?.data || initialPropsTitulo,
     resolver: zodResolver(schemaTitulo),
   });
-  const { setValue, watch } = form;
+
+  const { setValue, register } = form;
+
+  useEffect(()=>{
+    Object.entries(titulo).forEach(([key, value]) => {
+      console.log(key, value?.toString() || '')
+      // @ts-expect-error ignored
+      setValue(key, value?.toString() || '');
+  });
+  }, [data])
 
   const [modalFornecedorOpen, setModalFornecedorOpen] = useState(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
+
+  
+  // Vamos setar a filial = user.id_filial caso novo titulo
+  if(!id_titulo){
+    setValue('id_filial', user.id_filial)
+  }
 
   // Controle de fornecedor
   function showModalFornecedor() {
@@ -85,7 +102,7 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
 
   function handleSelectionFornecedor(item: ItemFornecedor) {
     setValue('id_fornecedor', item.id)
-    setValue("cnpj_fornecedor", item.cnpj)
+    setValue("cnpj_fornecedor", normalizeCnpjNumber(item.cnpj))
     setValue("nome_fornecedor", item.nome)
     setModalFornecedorOpen(false)
   }
@@ -101,8 +118,8 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
     setValue("plano_contas", item.codigo + ' - ' + item.descricao)
     setModalPlanoContasOpen(false)
   }
-  const watchIdFilial = watch('id_filial')
-  const watchDataEmissao = watch('data_emissao')
+  const watchIdFilial = useWatch({name:'id_filial', control: form.control})
+  const watchDataEmissao = useWatch({name:'data_emissao', control: form.control})
 
   // Controle de rateio
   const { fields: itensRateio, append: addFieldArray, remove: removeFieldArray } = useFieldArray({
@@ -129,7 +146,7 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
     });
   };
 
-  if (isLoading) {
+  if (isLoading || (id_titulo && !data?.data?.id_filial)) {
     return <div className="w-full p-2 flex flex-col gap-3">
       <Skeleton className="w-72 h-16" />
       <Skeleton className="w-72 h-24" />
@@ -154,7 +171,7 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
                     name="id_filial"
                     control={form.control}
                   />
-                  <FormInput className="w-64" name="cnpj_fornecedor" readOnly={true} label="CPF/CNPJ" control={form.control} />
+                  <FormInputUncontrolled className="min-w-[18ch]" name="cnpj_fornecedor" readOnly={true} label="CPF/CNPJ" register={register} />
                   <FormInput className="min-w-[50ch] shrink-0" name="nome_fornecedor" readOnly={true} label="Nome do fornecedor" control={form.control} />
 
                   <ModalFornecedores 
@@ -174,6 +191,7 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
                     name="tipo_solicitacao"
                     control={form.control}
                     label={"Tipo de solicitação"}
+                    defaultValue={'1'}
                     options={[
                       { value: "1", label: "Com nota fiscal" },
                       { value: "2", label: "Antecipado / Nota fiscal futura" },
@@ -234,12 +252,13 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
                     ]}
                   />
 
-                  <FormInput name="parcelas" type={"number"} label="Número de parcelas" control={form.control} />
+                  <FormInput name="num_parcelas" type={"number"} label="Número de parcelas" control={form.control} />
+                  <FormInput name="parcela" type={"number"} label="Parcela" control={form.control} />
 
                   <FormDateInput name="data_emissao" label="Data de emissão" control={form.control} />
                   <FormDateInput name="data_vencimento" label="Data de vencimento" control={form.control} />
 
-                  <FormInput name="valor" type={"number"} label="Valor do título" control={form.control} />
+                  <FormInputUncontrolled className="max-w-[20ch]" name="valor" register={register} type={"number"} label="Valor do título" />
 
                   <FormInput className="min-w-[400px]" name="descricao" label="Descrição do pagamento" control={form.control} />
                 </div>
@@ -316,6 +335,11 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
               <FormInput name="txt" type="file" label="TXT Remessa" control={form.control} />
             </div>
           </div>
+
+          <Button type="submit" size="lg">
+            <Save className="me-2" />
+            Salvar
+          </Button>
         </form>
       </Form>
     </div>
