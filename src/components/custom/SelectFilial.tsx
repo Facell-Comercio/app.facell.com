@@ -1,4 +1,5 @@
 import { useFilial } from "@/hooks/useFilial";
+import { Control, UseFormRegister } from "react-hook-form";
 import FormSelect from "./FormSelect";
 
 type Filial = {
@@ -9,8 +10,8 @@ type TSelectFilial = {
     showAll?: boolean,
     name: string,
     label?: string,
-    control?: any
-    register?: any
+    control?: Control<any>
+    register?: UseFormRegister<any>
     defaultValue?: string
     disabled?: boolean
 }
@@ -18,11 +19,7 @@ type TSelectFilial = {
 const SelectFilial = ({ showAll, name, label, control, register, defaultValue, disabled }: TSelectFilial) => {
     // Use a single state variable for fetching and storing data
 
-    const { data, isError, isLoading } = useFilial().getAll()
-
-    if (isLoading) return <span>Carregando filiais...</span>; // Provide loading UI
-
-    if (isError) return <span>Erro ao carregar filiais</span>; // Handle errors
+    const { data} = useFilial().getAll()
 
     return (
         <FormSelect 

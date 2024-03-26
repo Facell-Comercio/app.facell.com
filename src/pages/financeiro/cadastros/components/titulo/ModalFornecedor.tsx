@@ -5,46 +5,47 @@ import { PenLine, Save } from "lucide-react";
 import { FaRegCircleXmark } from "react-icons/fa6";
 import { GrCircleAlert } from "react-icons/gr";
 
-import { useState } from "react";
-import FormFornecedores from "./FormFornecedores";
+import FormFornecedor from "./FormFornecedor";
 import { useStoreFornecedor } from "./store-fornecedor";
-const ModalFornecedores = () => {
-  const [isModalEditing, setIsModalEditing] = useState(false)
-  const modalFornecedorIsOpen = useStoreFornecedor().modalFornecedorIsOpen
-  const id_titulo = useStoreFornecedor().id_titulo
-  const setModalFornecedorIsOpen = useStoreFornecedor().setModalFornecedorIsOpen
+const ModalFornecedor = () => {
+  const modalOpen = useStoreFornecedor().modalOpen
+  const closeModal = useStoreFornecedor().closeModal
+  const modalEditing = useStoreFornecedor().modalEditing
+  const editModal = useStoreFornecedor().editModal
+  const id = useStoreFornecedor().id
 
   function handleClickSave(){
-    setIsModalEditing(false);
-    setModalFornecedorIsOpen({ open: false, id_titulo: "" });
+    editModal(false);
+    closeModal();
   }
   function handleClickCancel(){
-    setIsModalEditing(false);
-    setModalFornecedorIsOpen({ open: false, id_titulo: "" });
+    editModal(false);
+    closeModal();
   }
   function handleClickInative(){
-    setIsModalEditing(false);
-    setModalFornecedorIsOpen({ open: false, id_titulo: "" });
+    editModal(false);
+    closeModal();
   }
   
 
   return (
-    <Dialog open={modalFornecedorIsOpen} onOpenChange={() => setModalFornecedorIsOpen({ open: false, id_titulo: "" })}>
-      <DialogContent className="min-w-[80vw] sm:w-full p-2 sm:p-5 h-[95vh] overflow-hidden backdrop-blur-sm">
+    <Dialog open={modalOpen} onOpenChange={() => closeModal()}>
+      <DialogContent className="min-w-[80vw] sm:w-[95vw] p-2 sm:p-5 h-[95vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle>{id_titulo ? `Titulo: ${id_titulo}` : "Novo titulo"}</DialogTitle>
+          <DialogTitle>{id ? `Fornecedor: ${id}` : "Novo fornecedor"}</DialogTitle>
         </DialogHeader>
 
-        <FormFornecedores id_titulo={id_titulo} />
+        <FormFornecedor id={id}/>
         <DialogFooter>
-          {!id_titulo && (<>
+          {!id && (<div className="flex gap-2 justify-end flex-wrap">
             <Button type="submit" size="lg" variant={"secondary"} onClick={handleClickCancel}>
               <FaRegCircleXmark className="me-2 text-xl" />
               Cancelar
             </Button>
             <Button type="submit" size="lg"  onClick={handleClickSave}><Save className="me-2"/>Salvar</Button>
-          </>)}
-          {id_titulo && isModalEditing && (<>
+          </div>)
+          }
+          {id && modalEditing && (<div className="flex gap-2 justify-end flex-wrap">
             
           <Button type="submit" size="lg" variant={"destructive"} onClick={handleClickInative}>
             <GrCircleAlert className="me-2"/>
@@ -58,22 +59,23 @@ const ModalFornecedores = () => {
             <Save className="me-2" />
             Salvar
           </Button>
-          </>)}
-          {id_titulo && !isModalEditing && (<>
+          </div>)
+          }
+          {id && !modalEditing && (<div className="flex gap-2 justify-end flex-wrap">
           <Button type="submit" size="lg" variant={"destructive"} onClick={handleClickInative}>
             <GrCircleAlert className="me-2 text-xl" />
-            
             Inativar
           </Button>
-          <Button type="submit" size="lg" onClick={()=>setIsModalEditing(true)}>
+          <Button type="submit" size="lg" onClick={()=>editModal(true)}>
             <PenLine className="me-2" />
             Editar
           </Button>
-          </>)}
+          </div>)
+          }
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ModalFornecedores;
+export default ModalFornecedor;

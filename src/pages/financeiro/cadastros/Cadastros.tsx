@@ -8,17 +8,17 @@ const CadastrosPage = () => {
   
   return (
     <div className='flex p-4'>
-        <Tabs defaultValue="titulos" className="w-full" >
-        <TabsList className='w-full justify-start flex gap-1'>
-            <TabsTrigger value="titulos">Fornecedores</TabsTrigger>
-            <TabsTrigger value="titulos">Plano de Contas</TabsTrigger>
-            <TabsTrigger value="titulos">Centro de Custo</TabsTrigger>
+        <Tabs defaultValue="fornecedores" className="w-full" >
+        <TabsList className='w-full justify-start flex'>
+            <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
+            <TabsTrigger value="plano-contas">Plano de Contas</TabsTrigger>
+            <TabsTrigger value="centro-custos">Centro de Custo</TabsTrigger>
         </TabsList>
-        <TabsContent value="titulos">
+        <TabsContent value="fornecedores">
           <SectionFornecedores/>
         </TabsContent>
-        <TabsContent value="borderos"></TabsContent>
-        <TabsContent value="conciliacoes"></TabsContent>
+        <TabsContent value="plano-contas"></TabsContent>
+        <TabsContent value="centro-custos"></TabsContent>
         </Tabs>
     </div>
   );

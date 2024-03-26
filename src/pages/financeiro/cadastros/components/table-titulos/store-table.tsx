@@ -57,7 +57,7 @@ export const useStoreTableFornecedor = create<State & Actions>(set => ({
 
   // Filters
   filters: initialFilters,
-  setFilters: (novoFiltro) => set(state => ({ ...state, filters: { ...state.filters, ...novoFiltro } })),
+  setFilters: (novoFiltro) => set(({ filters: novoFiltro })),
   resetFilters: () => { set(({ filters: initialFilters })) },
 
   setSorting: (sorting) => set(({ sorting })),
