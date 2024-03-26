@@ -85,7 +85,10 @@ const ModalFornecedor = () => {
         </div>
         )}
         <DialogFooter>
-          {!id && (<div className="flex gap-2 justify-end flex-wrap">
+          <>
+          
+          {!id && (
+          <div className="flex gap-2 justify-end flex-wrap">
             <Button type="submit" size="lg" variant={"secondary"} onClick={handleClickCancel}>
               <FaRegCircleXmark className="me-2 text-xl" />
               Cancelar
@@ -93,23 +96,27 @@ const ModalFornecedor = () => {
             <Button type="submit" size="lg"  onClick={handleClickSave}><Save className="me-2"/>Salvar</Button>
           </div>)
           }
-          {id && modalEditing && (<div className="flex gap-2 justify-end flex-wrap">
+          {id && modalEditing && (
+          <div className="flex gap-2 justify-end flex-wrap">
             
           <Button type="submit" size="lg" variant={"destructive"} onClick={handleClickInative}>
             <GrCircleAlert className="me-2"/>
             Inativar
           </Button>
+
           <Button type="submit" size="lg" variant={"secondary"} onClick={handleClickCancel}>
               <FaRegCircleXmark className="me-2 text-xl"/>
               Cancelar
             </Button>
+
           <Button type="submit" size="lg" onClick={handleClickSave}>
             <Save className="me-2" />
             Salvar
           </Button>
           </div>)
           }
-          {id && !modalEditing && (<div className="flex gap-2 justify-end flex-wrap">
+          {id && !modalEditing && (
+          <div className="flex gap-2 justify-end flex-wrap">
           <Button type="submit" size="lg" variant={"destructive"} onClick={handleClickInative}>
             <GrCircleAlert className="me-2 text-xl" />
             Inativar
@@ -120,6 +127,7 @@ const ModalFornecedor = () => {
           </Button>
           </div>)
           }
+          </>
         </DialogFooter>
       </DialogContent>
     </Dialog>

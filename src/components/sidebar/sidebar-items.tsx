@@ -1,3 +1,4 @@
+import { Bolt, BoltIcon, Settings } from 'lucide-react';
 import { ReactNode } from 'react';
 import { BsFillBarChartFill, BsFillChatLeftDotsFill, BsFillClipboardCheckFill, BsFillSendFill, BsPersonVideo3 } from "react-icons/bs";
 import { FaBullhorn, FaSackDollar, FaTruckRampBox, FaUsers } from 'react-icons/fa6';
@@ -215,5 +216,13 @@ export const sidebarItems: SidebarItem[] = [
       },
     ],
   },
+
+  {
+    name: "Administração",
+    type: "link",
+    icon: <Settings />,
+    uri: "/administracao",
+    visible: true,
+  }
 
 ];
