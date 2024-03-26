@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/context/auth-store"
+import { useAuthStore } from "@/context/auth-store";
 
 export const checkUserPermission = (permission:string | number)=>{
     const user = useAuthStore().user

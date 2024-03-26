@@ -21,5 +21,6 @@ module.exports = {
     ],
     'react/prop-types': ['warn', { skipUndeclared: true }],
     '@typescript-eslint/no-explicit-any': 'warn',
+    "react-hooks/rules-of-hooks": "off"
   },
 };

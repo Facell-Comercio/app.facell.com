@@ -3,11 +3,12 @@ import FormInput from "@/components/custom/FormInput";
 import FormInputUncontrolled from "@/components/custom/FormInputUncontrolled";
 import FormSelect from "@/components/custom/FormSelect";
 import SelectFilial from "@/components/custom/SelectFilial";
+import { Button } from "@/components/ui/button";
 import { Form, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
-import { useAuthStore } from "@/context/auth-store";
 import { normalizeCnpjNumber } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
 import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
@@ -15,12 +16,9 @@ import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Contact, Divide, DollarSign, FileIcon, FileText, Save } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "react-day-picker";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
-import { TituloPagar, initialPropsTitulo } from "./store-titulo";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
+import { ItemRateioTitulo, TituloPagar, initialPropsTitulo } from "./store-titulo";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaTitulo = z
@@ -69,8 +67,6 @@ const schemaTitulo = z
   });
 
 const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
-  const user = useAuthStore(state => state.user)
-
   console.log('RENDER - Form, titulo:', id_titulo)
   const { data, isLoading } = useTituloPagar().useGetOne(id_titulo)
   const { titulo, itens_rateio: itensRateioTitulo } = data?.data ?? { titulo: initialPropsTitulo, itens_rateio: [] }
@@ -109,12 +105,6 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
   const [modalFornecedorOpen, setModalFornecedorOpen] = useState(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
 
-
-  // Vamos setar a filial = user.id_filial caso novo titulo
-  if (!id_titulo) {
-    setValue('id_filial', user.id_filial)
-  }
-
   // Controle de fornecedor
   function showModalFornecedor() {
     setModalFornecedorOpen(true)
@@ -139,7 +129,6 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
     setModalPlanoContasOpen(false)
   }
   const watchIdFilial = useWatch({ name: 'id_filial', control: form.control })
-  const watchDataEmissao = useWatch({ name: 'data_emissao', control: form.control })
 
   // Controle de rateio
   const { fields: itensRateio, append: addFieldArray, remove: removeFieldArray } = useFieldArray({
@@ -148,7 +137,7 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
   })
 
   function addItemRateio() {
-    addFieldArray({ id_filial: 1, valor: 0, percentual: 0 })
+    addFieldArray({ id_filial: "1", valor: 0, percentual: "0" })
   }
 
   function removeItemRateio(index: number) {
