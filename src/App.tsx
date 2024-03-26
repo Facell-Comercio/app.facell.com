@@ -11,7 +11,7 @@ function App() {
       <Sidebar/>
       <div className="h-full w-full flex flex-col overflow-auto">
         <Navbar />
-        <div className="flex-1 w-full overflow-auto">
+        <div className="flex-1 w-full">
           <Outlet />
         </div>
       </div>

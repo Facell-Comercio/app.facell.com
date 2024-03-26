@@ -35,13 +35,13 @@ export type ItemFornecedor = {
 }
 
 type PaginationProps = {
-    pageLength: number,
+    pageSize: number,
     pageIndex: number
 }
 
 const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornecedores) => {
     const [search, setSearch] = useState<string>("")
-    const [pagination, setPagination] = useState<PaginationProps>({ pageLength: 15, pageIndex: 4 })
+    const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 4 })
 
     const { data, isLoading, isError, refetch: fetchFornecedores } = useQuery({
         queryKey: ['fornecedores'],
@@ -49,7 +49,7 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
         enabled: open,
     })
 
-    const pages = [...Array(Math.ceil((data?.data?.qtdeTotal || 15) / pagination.pageLength)).keys()].map(page => page + 1);
+    const pages = [...Array(data?.data?.pageCount).keys()].map(page => page + 1);
     const arrayPages = pages.filter(i => {
         if (i === 1 || i === pages.length) {
             return true
@@ -80,7 +80,6 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
     async function handlePaginationUp() {
         await new Promise((resolve) => {
             const newPage = ++pagination.pageIndex;
-            console.log(newPage)
             setPagination(prev => ({ ...prev, pageIndex: newPage }))
             resolve(true)
         })

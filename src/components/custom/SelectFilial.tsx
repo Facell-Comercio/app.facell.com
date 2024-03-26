@@ -1,7 +1,5 @@
 import { useFilial } from "@/hooks/useFilial";
-import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
-import { Register } from "@tanstack/react-query";
 
 type Filial = {
     id: number,
@@ -11,11 +9,13 @@ type TSelectFilial = {
     showAll?: boolean,
     name: string,
     label?: string,
-    control: Control<any>
-    register?: Register
+    control?: any
+    register?: any
+    defaultValue?: string
+    disabled?: boolean
 }
 
-const SelectFilial = (props: TSelectFilial) => {
+const SelectFilial = ({ showAll, name, label, control, register, defaultValue, disabled }: TSelectFilial) => {
     // Use a single state variable for fetching and storing data
 
     const { data, isError, isLoading } = useFilial().getAll()
@@ -25,7 +25,15 @@ const SelectFilial = (props: TSelectFilial) => {
     if (isError) return <span>Erro ao carregar filiais</span>; // Handle errors
 
     return (
-        <FormSelect {...props} options={data?.data?.map((filial: Filial) => ({ value: filial.id.toString(), label: filial.nome })) || []} />
+        <FormSelect 
+            name={name}
+            label={label}
+            control={control} 
+            register={register} 
+            disabled={disabled}
+            defaultValue={defaultValue}
+            options={data?.data?.map((filial: Filial) => ({ value: filial.id.toString(), label: filial.nome })) || []} 
+        />
     );
 };
 

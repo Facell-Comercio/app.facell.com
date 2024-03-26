@@ -6,7 +6,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 export interface GetFornecedoresProps {
     pagination?: {
         pageIndex?: number;
-        pageLength?: number;
+        pageSize?: number;
     };
     filters: any;
 }

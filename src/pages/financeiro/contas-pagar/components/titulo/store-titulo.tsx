@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 
 export interface ItemRateioTitulo {
-  id?: number | null,
-  id_rateio?: number,
-  id_filial: number,
+  id?: string,
+  id_rateio?: string,
+  id_filial: string,
   filial?: string,
-  percentual: number,
+  percentual: string,
   valor: number,
-  ordem?: number,
+  ordem?: string,
 }
 
 export interface TituloPagar {

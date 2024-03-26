@@ -8,17 +8,18 @@ import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
 import { toast } from "@/components/ui/use-toast";
 import { Contact, Divide, DollarSign, FileIcon, FileText, Save } from "lucide-react";
-import { TituloPagar, initialPropsTitulo } from "./store-titulo";
+import { ItemRateio, ItemRateioTitulo, TituloPagar, initialPropsTitulo } from "./store-titulo";
 import SelectFilial from "@/components/custom/SelectFilial";
 import { useEffect, useState } from "react";
 import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
-import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedor";
+import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
 import { Skeleton } from "@/components/ui/skeleton";
 import FormDateInput from "@/components/custom/FormDate";
 import { useAuthStore } from "@/context/auth-store";
 import { normalizeCnpjNumber } from "@/helpers/mask";
 import FormInputUncontrolled from "@/components/custom/FormInputUncontrolled";
+import { ScrollArea } from "@/components/ui/scroll-area";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaTitulo = z
@@ -65,34 +66,51 @@ const schemaTitulo = z
     anexo_txt: z.instanceof(FileList).optional(),
     url_txt: z.string().optional(),
   });
-  
-  const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
-  const user = useAuthStore(state=>state.user)
+
+const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
+  const user = useAuthStore(state => state.user)
 
   console.log('RENDER - Form, titulo:', id_titulo)
   const { data, isLoading } = useTituloPagar().useGetOne(id_titulo)
-  const titulo  = data?.data ?? initialPropsTitulo
+  const { titulo, itens_rateio: itensRateioTitulo } = data?.data ?? { titulo: initialPropsTitulo, itens_rateio: [] }
+
+  console.log(itensRateioTitulo)
+  const itens_rateio: ItemRateioTitulo[] = []
+  itensRateioTitulo?.forEach((item_rateio: ItemRateioTitulo) => {
+    const item = {
+      id: item_rateio.id?.toString() || '',
+      id_filial: item_rateio.id_filial?.toString() || '',
+      percentual: item_rateio.percentual?.toString() || '',
+      valor: item_rateio.valor || 0
+    }
+    itens_rateio.push(item)
+  });
+
 
   const form = useForm<TituloPagar>({
     resolver: zodResolver(schemaTitulo),
+    defaultValues: {
+      itens_rateio: itens_rateio
+    }
   });
 
   const { setValue, register } = form;
 
-  useEffect(()=>{
+  useEffect(() => {
     Object.entries(titulo).forEach(([key, value]) => {
-      console.log(key, value?.toString() || '')
       // @ts-expect-error ignored
       setValue(key, value?.toString() || '');
-  });
+    });
+
+
   }, [data])
 
   const [modalFornecedorOpen, setModalFornecedorOpen] = useState(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
 
-  
+
   // Vamos setar a filial = user.id_filial caso novo titulo
-  if(!id_titulo){
+  if (!id_titulo) {
     setValue('id_filial', user.id_filial)
   }
 
@@ -119,13 +137,13 @@ const schemaTitulo = z
     setValue("plano_contas", item.codigo + ' - ' + item.descricao)
     setModalPlanoContasOpen(false)
   }
-  const watchIdFilial = useWatch({name:'id_filial', control: form.control})
-  const watchDataEmissao = useWatch({name:'data_emissao', control: form.control})
+  const watchIdFilial = useWatch({ name: 'id_filial', control: form.control })
+  const watchDataEmissao = useWatch({ name: 'data_emissao', control: form.control })
 
   // Controle de rateio
   const { fields: itensRateio, append: addFieldArray, remove: removeFieldArray } = useFieldArray({
     control: form.control,
-    name: 'itens_rateio',
+    name: 'itens_rateio'
   })
 
   function addItemRateio() {
@@ -147,11 +165,34 @@ const schemaTitulo = z
     });
   };
 
-  if (isLoading || (id_titulo && !data?.data?.id_filial)) {
-    return <div className="w-full p-2 flex flex-col gap-3">
-      <Skeleton className="w-72 h-16" />
-      <Skeleton className="w-72 h-24" />
-    </div>
+  const rateioManual = titulo.id_rateio == '6'
+
+  if (isLoading || (id_titulo && !titulo?.id_filial)) {
+    return (
+
+      <ScrollArea>
+        <div className="flex gap-3 w-full h-full">
+
+          <div className="flex-1 flex flex-col gap-3">
+            <Skeleton className="h-16" />
+            <Skeleton className="h-72" />
+            <Skeleton className="h-72" />
+            <Skeleton className="h-24" />
+          </div>
+
+          <div className="w-72 flex flex-col gap-3">
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
+
+
+            <Skeleton className="self-end mt-auto justify-self-end w-44 h-16" />
+          </div>
+        </div>
+      </ScrollArea>
+    )
   }
 
   return (
@@ -175,10 +216,10 @@ const schemaTitulo = z
                   <FormInputUncontrolled className="min-w-[18ch]" name="cnpj_fornecedor" readOnly={true} label="CPF/CNPJ" register={register} />
                   <FormInput className="min-w-[50ch] shrink-0" name="nome_fornecedor" readOnly={true} label="Nome do fornecedor" control={form.control} />
 
-                  <ModalFornecedores 
-                    open={modalFornecedorOpen} 
-                    handleSelecion={handleSelectionFornecedor} 
-                    onOpenChange={() => setModalFornecedorOpen(prev => !prev)} 
+                  <ModalFornecedores
+                    open={modalFornecedorOpen}
+                    handleSelecion={handleSelectionFornecedor}
+                    onOpenChange={() => setModalFornecedorOpen(prev => !prev)}
                   />
                 </div>
               </div>
@@ -192,7 +233,7 @@ const schemaTitulo = z
                     name="tipo_solicitacao"
                     control={form.control}
                     label={"Tipo de solicitação"}
-                    defaultValue={'1'}
+                    defaultValue={titulo.id_tipo_solicitacao.toString()}
                     options={[
                       { value: "1", label: "Com nota fiscal" },
                       { value: "2", label: "Antecipado / Nota fiscal futura" },
@@ -203,7 +244,8 @@ const schemaTitulo = z
                   <SelectFilial
                     name="id_filial"
                     label="Filial"
-                    control={form.control}
+                    register={register}
+                    defaultValue={titulo.id_filial.toString()}
                   />
 
                   {/* Plano contas */}
@@ -216,12 +258,12 @@ const schemaTitulo = z
                     <FormLabel>Plano de contas</FormLabel>
                     <Input className="w-[50ch]" readOnly {...form.register('plano_contas')} placeholder="Selecione um plano de contas" onClick={showModalPlanoContas} />
                   </FormItem>
-                  
-                  <ModalPlanoContas 
-                    open={modalPlanoContasOpen} 
-                    id_filial={watchIdFilial} 
-                    onOpenChange={() => setModalPlanoContasOpen(prev => !prev)}  
-                    handleSelecion={handleSelectionPlanoContas} 
+
+                  <ModalPlanoContas
+                    open={modalPlanoContasOpen}
+                    id_filial={watchIdFilial}
+                    onOpenChange={() => setModalPlanoContasOpen(prev => !prev)}
+                    handleSelecion={handleSelectionPlanoContas}
                   />
 
                   <FormSelect
@@ -241,6 +283,7 @@ const schemaTitulo = z
                     control={form.control}
                     label={"Forma de pagamento"}
                     className={"min-w-[30ch]"}
+                    defaultValue={titulo.id_forma_pagamento.toString()}
                     options={[
                       { value: "1", label: "Boleto" },
                       { value: "2", label: "Débito em conta" },
@@ -276,6 +319,7 @@ const schemaTitulo = z
                     control={form.control}
                     label={"Tipo de rateio"}
                     className={"min-w-[30ch]"}
+                    defaultValue={titulo.id_rateio?.toString()}
                     options={[
                       { value: "6", label: "R08 - RATEIO MANUAL" },
                       { value: "1", label: "R01 - RATEIO REGIONAL RN" },
@@ -289,30 +333,53 @@ const schemaTitulo = z
 
                 <div className="flex justify-between items-baseline border mt-3">
                   <FormLabel>Itens do rateio</FormLabel>
-                  <Button type="button" onClick={addItemRateio}>
+                  {rateioManual && (<Button type="button" onClick={addItemRateio}>
                     Novo item
-                  </Button>
+                  </Button>)}
                 </div>
                 <div className="flex flex-col gap-3 mt-3">
-                  {itensRateio?.map((itemRateio, index) => (
-                    <div key={index} className="flex gap-3 items-center">
-                      <SelectFilial name={`itens_rateio.${index}.id_filial`} control={form.control} />
+                  <table >
+                    <thead>
+                      <th>Filial</th>
+                      <th>Percentual</th>
+                      <th>Valor</th>
+                      {rateioManual && <th>Ação</th>}
+                    </thead>
+                    <tbody>
 
-                      <Input className="w-60" type="number" value={itemRateio.percentual} />
-                      <Input className="w-60" type="number" value={itemRateio.valor} />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        onClick={() => { removeItemRateio(index) }}
-                      >
-                        Remover
-                      </Button>
-                    </div>
-                  ))}
+
+                      {itensRateio?.map((itemRateio, index) => (
+                        <tr key={index}>
+                          <td className='p-1'>
+
+                            <SelectFilial name={`itens_rateio.${index}.id_filial`} disabled={!rateioManual} control={form.control} />
+                          </td>
+                          <td className='p-1'>
+
+                            <Input className="" readOnly={!rateioManual} type="number" value={(parseFloat(itemRateio.percentual) * 100).toFixed(2)} />
+                          </td>
+                          <td className='p-1'>
+
+                            <Input className="" readOnly={!rateioManual} type="number" value={itemRateio.valor} />
+                          </td>
+                          {rateioManual && (<td className='p-1'>
+
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              onClick={() => { removeItemRateio(index) }}
+                            >
+                              Remover
+                            </Button>
+                          </td>)}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+              <div className="hidden p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
                   <DollarSign /> <span className="text-lg font-bold ">Dados do pagamento</span>
                 </div>
@@ -337,7 +404,7 @@ const schemaTitulo = z
             </div>
           </div>
 
-          <Button type="submit" size="lg">
+          <Button type="submit" size="lg" className="mt-5">
             <Save className="me-2" />
             Salvar
           </Button>
