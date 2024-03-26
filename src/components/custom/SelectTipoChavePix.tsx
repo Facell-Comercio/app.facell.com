@@ -12,6 +12,7 @@ type TSelectTipoChavePix = {
     label?: string,
     control: Control<any>
     register?: Register
+    disabled?: boolean
 }
 
 const SelectTipoChavePix = (props: TSelectTipoChavePix) => {

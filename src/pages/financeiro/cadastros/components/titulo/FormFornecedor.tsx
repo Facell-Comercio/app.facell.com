@@ -3,18 +3,16 @@ import FormSelect from "@/components/custom/FormSelect";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import { Form } from "@/components/ui/form";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { normalizeCnpjNumber, normalizePhoneNumber } from "@/helpers/mask";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Contact, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
+import { FornecedorSchema } from "./ModalFornecedor";
 import { useStoreFornecedor } from "./store-fornecedor";
-// import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaFornecedor = z
   .object({
@@ -46,15 +44,15 @@ const schemaFornecedor = z
   favorecido: z.string(),
   });
 
-const FormFornecedor = ({ id,  }: { id: string | null }) => {
+const FormFornecedor = ({ id,data  }: { id: string | null | undefined, data:FornecedorSchema }) => {
   console.log('RENDER - Fornecedor:', id)
+  const modalEditing = useStoreFornecedor().modalEditing
   const [cnpj, setCnpj] = useState<number>();
-
+  
   async function axiosGetCnpjData(){
     const response = await axios.get(`https://receitaws.com.br/v1/cnpj/${cnpj}`)
     console.log(response.data)
   }
-
   useEffect(()=>{
     if(cnpj)
       axiosGetCnpjData()
@@ -70,13 +68,8 @@ const FormFornecedor = ({ id,  }: { id: string | null }) => {
 
 
 
-  const modalEditing = useStoreFornecedor().modalEditing
-  const { data, isLoading } = useTituloPagar().useGetOne(id)
-  console.log(data);
-
-  type fornecedorSchema = z.infer<typeof schemaFornecedor> 
-
-  const initialPropsFornecedor: fornecedorSchema = {
+  
+  const initialPropsFornecedor: FornecedorSchema = {
     // Dados Fornecedor
     id: "",
     cnpj: "",
@@ -105,15 +98,15 @@ const FormFornecedor = ({ id,  }: { id: string | null }) => {
     favorecido: "",
  }
 
-  const form = useForm<fornecedorSchema>({
+  const form = useForm<FornecedorSchema>({
     resolver: zodResolver(schemaFornecedor),
-    defaultValues: data?.data || initialPropsFornecedor
+    defaultValues: data||initialPropsFornecedor,
+    values: data
   });
 
   const watchFormaPagamento = useWatch({control: form.control, name: "id_forma_pagamento"});
-  // setFormaPagamento(watchFormaPagamento);
-  console.log(watchFormaPagamento);
   
+  // setFormaPagamento(watchFormaPagamento);  
 
   // function handleSelectionPlanoContas(item: ItemPlanoContas) {
   //   setValue('id_plano_contas', item.id)
@@ -125,7 +118,7 @@ const FormFornecedor = ({ id,  }: { id: string | null }) => {
   // console.log("Data emissão -> ", typeof watchDataEmissao);
 
 
-  const onSubmit = (data: fornecedorSchema) => {
+  const onSubmit = (data: FornecedorSchema) => {
     toast({
       title: "You submitted the following values:",
       description: (
@@ -135,13 +128,6 @@ const FormFornecedor = ({ id,  }: { id: string | null }) => {
       ),
     });
   };
-
-  if (isLoading) {
-    return <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
-      <Skeleton className="w-full row-span-1" />
-      <Skeleton className="w-full row-span-3" />
-    </div>
-  }
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-x-hidden">
@@ -176,31 +162,30 @@ const FormFornecedor = ({ id,  }: { id: string | null }) => {
                 </div>
                 <div className="flex gap-3 flex-wrap items-center">
                     
-                  <SelectFormaPagamento name="id_forma_pagamento" label="Forma de pagamento" control={form.control}/>
+                  <SelectFormaPagamento name="id_forma_pagamento" disabled={!modalEditing} label="Forma de pagamento" control={form.control}/>
                   
-                  {watchFormaPagamento === "4" && <SelectTipoChavePix name="id_tipo_chave_pix" label="Tipo de chave" control={form.control}/>}
-                  <FormInput type={watchFormaPagamento !== "4"?"hidden":""} className="w-64" name="chave_pix" label="Chave PIX" control={form.control} />
-                  <FormInput name="cnpj_favorecido" label="CPF/CNPJ Favorecido" control={form.control} />
-                  <FormInput name="favorecido" label="Favorecido" control={form.control} />
+                  {watchFormaPagamento === "4" && <SelectTipoChavePix name="id_tipo_chave_pix" disabled={!modalEditing} label="Tipo de chave" control={form.control}/>}
+                  <FormInput readOnly={!modalEditing} type={watchFormaPagamento !== "4"?"hidden":""} className="w-64" name="chave_pix" label="Chave PIX" control={form.control} />
+                  <FormInput readOnly={!modalEditing} name="cnpj_favorecido" label="CPF/CNPJ Favorecido" control={form.control} />
+                  <FormInput readOnly={!modalEditing} name="favorecido" label="Favorecido" control={form.control} />
 
-                  <FormInput className="w-[20ch]" name="agencia" label="AG" control={form.control} />
-                  <FormInput className="w-[10ch]" name="dv_agencia" label="DvAg" control={form.control} />
+                  <FormInput className="w-[20ch]" readOnly={!modalEditing} name="agencia" label="AG" control={form.control} />
+                  <FormInput className="w-[10ch]" readOnly={!modalEditing} name="dv_agencia" label="DvAg" control={form.control} />
                   <FormSelect
                     name="tipo_conta"
+                    disabled={!modalEditing}
                     control={form.control}
                     label={"Tipo de conta"}
                     className={"min-w-[20ch]"}
                     options={[
-                      { value: "1", label: "CORRENTE" },
-                      { value: "2", label: "POUPANÇA" },
+                      { value: "CORRENTE", label: "CORRENTE" },
+                      { value: "POUPANÇA", label: "POUPANÇA" },
                     ]}
                   />
-                  <FormInput className="w-[20ch]" name="conta" label="Conta" control={form.control} />
-                  <FormInput className="w-[10ch]" name="dv_conta" label="DvCt" control={form.control} />
+                  <FormInput className="w-[20ch]" readOnly={!modalEditing} name="conta" label="Conta" control={form.control} />
+                  <FormInput className="w-[10ch]" readOnly={!modalEditing} name="dv_conta" label="DvCt" control={form.control} />
                 </div>
               </div>
-
-              {/* Fim da primeira coluna */}
             </div>
           </div>
         </form>

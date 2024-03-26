@@ -15,6 +15,7 @@ import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Contact, Divide, DollarSign, FileIcon, FileText, Save } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "react-day-picker";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { TituloPagar, initialPropsTitulo } from "./store-titulo";

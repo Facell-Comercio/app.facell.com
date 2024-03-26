@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 interface useStoreFornecedor {
-  id: string | undefined,
+  id?: string | null,
   modalEditing: boolean,
   modalOpen: boolean,
 
@@ -12,7 +12,7 @@ interface useStoreFornecedor {
 }
 
 export const useStoreFornecedor = create<useStoreFornecedor>((set) => ({
-  id: undefined,
+  id: null,
   modalEditing: false,
   modalOpen: false,
 

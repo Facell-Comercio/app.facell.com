@@ -19,7 +19,7 @@ export const useFornecedores = () => {
         placeholderData: keepPreviousData
     })
 
-    const useGetOne = (id: string | null) => useQuery({
+    const useGetOne = (id: string | null | undefined) => useQuery({
         enabled: !!id,
         queryKey: ['fin_fornecedores', id],
         queryFn: async () => {

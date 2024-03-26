@@ -13,6 +13,7 @@ type TSelectFormaPagamento = {
     label?: string,
     control: Control<any>
     register?: Register
+    disabled?:boolean
 }
 
 const SelectFormaPagamento = (props: TSelectFormaPagamento) => {
