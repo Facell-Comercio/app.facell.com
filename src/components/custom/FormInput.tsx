@@ -24,7 +24,7 @@ const FormInput = ({ name, type, control, label, placeholder, description, readO
         <FormItem className={`${type === "hidden" && "hidden"} ${className} max-w-full`}>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
-            <Input type={type || 'text'} readOnly={readOnly} disabled={typeof disabled==="undefined"?field.disabled:disabled} placeholder={placeholder} onBlur={typeof onBlur === "undefined"?field.onBlur:()=> onBlur} onChange={field.onChange} value={field.value} name={field.name} ref={field.ref} />;
+            <Input type={type || 'text'} readOnly={readOnly} disabled={typeof disabled==="undefined"?field.disabled:disabled} placeholder={placeholder} onBlur={typeof onBlur === "undefined"?field.onBlur:()=> onBlur} onChange={field.onChange} value={field.value} name={field.name} ref={field.ref} />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />

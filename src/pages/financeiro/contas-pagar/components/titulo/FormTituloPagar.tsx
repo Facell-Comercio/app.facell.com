@@ -18,6 +18,8 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { TituloPagar, initialPropsTitulo } from "./store-titulo";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaTitulo = z

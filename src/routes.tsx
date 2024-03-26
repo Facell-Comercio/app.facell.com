@@ -9,6 +9,9 @@ import PrivateRoutes from "./pages/PrivateRoutes.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.tsx";
+import AdminPage from "./pages/admin/Page.tsx";
+import NotAuthorizedPage from "./pages/NotAuthorized.tsx";
+import { checkUserPermission } from "./helpers/checkAuthorization.ts";
 
 const AppRoutes = () => {
     return ( <Routes>
@@ -34,7 +37,9 @@ const AppRoutes = () => {
               <Route element={<ContasReceberPage />} path="contas-a-receber" />
               <Route element={<CadastrosPage />} path="cadastros" />
             </Route>
+
             {/* Administração */}
+            <Route element={checkUserPermission('MASTER') ? <AdminPage /> : <NotAuthorizedPage/>} path="administracao" />
 
             <Route element={<PageNotFound />} path="*" />
           </Route>

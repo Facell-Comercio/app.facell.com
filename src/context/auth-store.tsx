@@ -1,9 +1,36 @@
-import { IUser } from '@/api/auth';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware'
 
+export interface User {
+    ativo: boolean
+    departamentos: DepartamentoUser[]
+    email: string
+    filiais: FilialUser[]
+    id: string
+    img_url?: string
+    nome: string
+    permissoes: PermissaoUser[]
+  }
+  
+export interface DepartamentoUser {
+    id: number
+    nome: string
+    gestor: number
+}
+
+export interface FilialUser {
+    id: number
+    nome: string
+    gestor: number
+}
+
+export interface PermissaoUser {
+    id: number
+    nome: string
+}
+
 interface IAuthStore {
-    user: IUser | null,
+    user: User | null,
     token: string | null,
     isAuthenticate: boolean
     login: ({ user, token }: ILogin) => void,
@@ -11,7 +38,7 @@ interface IAuthStore {
 }
 
 interface ILogin {
-    user: IUser,
+    user: User,
     token: string
 }
 

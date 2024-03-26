@@ -1,17 +1,16 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TitulosPagar from "./components/SectionTitulosPagar";
-
-import { useAuthStore } from "@/context/auth-store";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 
 const ContasPagarPage = () => {
-  const user = useAuthStore(state=>state.user)
-  
+  console.log(checkUserDepartments('FINANCEIRO'))
+
   return (
     <div className='flex p-4'>
         <Tabs defaultValue="titulos" className="w-full" >
         <TabsList className='w-full justify-start'>
             <TabsTrigger value="titulos">Solicitações</TabsTrigger>
-            {user?.perfil === 'Master' || user?.perfil === 'Financeiro' && (
+            {(checkUserPermission('MASTER') || checkUserDepartments('FINANCEIRO')) && (
               <>
               <TabsTrigger value="borderos">Borderôs</TabsTrigger>
               <TabsTrigger value="conciliacoes">Conciliação</TabsTrigger>
