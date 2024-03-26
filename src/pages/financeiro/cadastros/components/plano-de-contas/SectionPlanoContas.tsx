@@ -1,20 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { useStoreTableFornecedor } from "./table-titulos/store-table";
-// import { useStoreTitulo } from "./titulo/store-titulo";
 import { useFornecedores } from "@/hooks/useFornecedores";
-import FilterFornecedores from "./FilterFornecedores";
-import { TableFornecedores } from "./table-titulos/TableFornecedores";
-import { columnsTableTitulos } from "./table-titulos/columns-table";
-import ModalFornecedor from "./titulo/ModalFornecedor";
-import { useStoreFornecedor } from "./titulo/store-fornecedor";
+import FilterFornecedores from "../fornecedores/FilterFornecedores";
+import ModalFornecedor from "../fornecedores/fornecedor/ModalFornecedor";
+import { TableFornecedores } from "../fornecedores/table-fornecedores/TableFornecedores";
+import { columnsTableTitulos } from "../fornecedores/table-fornecedores/columns-table";
+import { useStorePlanoContas } from "./plano-conta/store-plano-contas";
+import { useStoreTablePlanoContas } from "./table-plano-contas/store-table";
 
-const SectionFornecedores = () => {
+const SectionPlanoContas = () => {
   console.log('RENDER - Section-Titulos')
 
   const {
     pagination,
     filters,
-  } = useStoreTableFornecedor(state => ({
+  } = useStoreTablePlanoContas(state => ({
     rowCount: state.rowCount,
     filters: state.filters,
     pagination: state.pagination,
@@ -26,7 +25,7 @@ const SectionFornecedores = () => {
     isAllSelected: state.isAllSelected
   }))
 
-  const openModal = useStoreFornecedor().openModal
+  const openModal = useStorePlanoContas().openModal
 
   const { data, refetch } = useFornecedores().useGetAll({ pagination, filters })
 
@@ -44,4 +43,4 @@ const SectionFornecedores = () => {
   );
 };
 
-export default SectionFornecedores;
+export default SectionPlanoContas;

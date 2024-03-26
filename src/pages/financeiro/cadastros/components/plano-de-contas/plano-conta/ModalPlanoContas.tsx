@@ -7,10 +7,10 @@ import { GrCircleAlert } from "react-icons/gr";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFornecedores } from "@/hooks/useFornecedores";
-import FormFornecedor from "./FormFornecedor";
-import { useStoreFornecedor } from "./store-fornecedor";
+import FormFornecedor from "./FormPlanoContas";
+import { useStorePlanoContas } from "./store-plano-contas";
 
-export type FornecedorSchema = {
+export type PlanoContasSchema = {
   id: string;
   cnpj: string;
   nome: string;
@@ -36,15 +36,15 @@ export type FornecedorSchema = {
   favorecido: string;
 }
 
-const ModalFornecedor = () => {
-  const modalOpen = useStoreFornecedor().modalOpen
-  const closeModal = useStoreFornecedor().closeModal
-  const modalEditing = useStoreFornecedor().modalEditing
-  const editModal = useStoreFornecedor().editModal
-  const id = useStoreFornecedor().id
+const ModalPlanoContas = () => {
+  const modalOpen = useStorePlanoContas().modalOpen
+  const closeModal = useStorePlanoContas().closeModal
+  const modalEditing = useStorePlanoContas().modalEditing
+  const editModal = useStorePlanoContas().editModal
+  const id = useStorePlanoContas().id
 
   const { data, isLoading } = useFornecedores().useGetOne(id)
-  const newData: FornecedorSchema & Record<string, any> = {} as FornecedorSchema & Record<string, any>;
+  const newData: PlanoContasSchema & Record<string, any> = {} as PlanoContasSchema & Record<string, any>;
   
   for (const key in data?.data) {
     if (typeof data?.data[key] === 'number') {
@@ -73,7 +73,7 @@ const ModalFornecedor = () => {
   
 
   return (
-    <Dialog open={modalOpen} onOpenChange={() => closeModal()}>
+    <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent className="min-w-[80vw] sm:w-[95vw] p-2 sm:p-5 h-[95vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>{id ? `Fornecedor: ${id}` : "Novo fornecedor"}</DialogTitle>
@@ -134,4 +134,4 @@ const ModalFornecedor = () => {
   );
 };
 
-export default ModalFornecedor;
+export default ModalPlanoContas;

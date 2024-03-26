@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { PaginationTableTitulos } from "./PaginationTable"
+import { PaginationTableFornecedores } from "./PaginationTable"
 import { useStoreTableFornecedor } from "./store-table"
 
 interface DataTableProps<TData, TValue> {
@@ -105,7 +105,7 @@ export function TableFornecedores<TData, TValue>({
           )}
         </TableBody>
       </Table>
-      <PaginationTableTitulos table={table} />
+      <PaginationTableFornecedores table={table} />
     </div>
   )
 }

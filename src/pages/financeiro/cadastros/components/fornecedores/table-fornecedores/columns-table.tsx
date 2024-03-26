@@ -3,7 +3,7 @@
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
 import { ReactNode } from "react"
-import { useStoreFornecedor } from "../titulo/store-fornecedor"
+import { useStoreFornecedor } from "../fornecedor/store-fornecedor"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.

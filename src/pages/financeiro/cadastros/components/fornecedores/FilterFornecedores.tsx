@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRef } from "react";
-import { useStoreTableFornecedor } from "./table-titulos/store-table";
+import { useStoreTableFornecedor } from "./table-fornecedores/store-table";
 
 const FilterFornecedores = ({ refetch }: { refetch: () => void }) => {
  

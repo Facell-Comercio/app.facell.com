@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import SectionFornecedores from "./components/SectionFornecedores";
+import SectionFornecedores from "./components/fornecedores/SectionFornecedores";
+import SectionPlanoContas from "./components/plano-de-contas/SectionPlanoContas";
 
 // import { useAuthStore } from "@/context/auth-store";
 
@@ -17,7 +18,9 @@ const CadastrosPage = () => {
         <TabsContent value="fornecedores">
           <SectionFornecedores/>
         </TabsContent>
-        <TabsContent value="plano-contas"></TabsContent>
+        <TabsContent value="plano-contas">
+          <SectionPlanoContas/>
+        </TabsContent>
         <TabsContent value="centro-custos"></TabsContent>
         </Tabs>
     </div>
