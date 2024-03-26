@@ -8,7 +8,9 @@ import { toast } from "@/components/ui/use-toast";
 import { normalizeCnpjNumber, normalizePhoneNumber } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { Contact, DollarSign } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { useStoreFornecedor } from "./store-fornecedor";
@@ -46,7 +48,27 @@ const schemaFornecedor = z
 
 const FormFornecedor = ({ id,  }: { id: string | null }) => {
   console.log('RENDER - Fornecedor:', id)
-  // const [formaPagamento, setFormaPagamento] = useState("");
+  const [cnpj, setCnpj] = useState<number>();
+
+  async function axiosGetCnpjData(){
+    const response = await axios.get(`https://receitaws.com.br/v1/cnpj/${cnpj}`)
+    console.log(response.data)
+  }
+
+  useEffect(()=>{
+    if(cnpj)
+      axiosGetCnpjData()
+  },[cnpj])
+
+  function onBlurCnpj(cnpj: string){
+    const cnpjTratado = cnpj.replace(/\D/g, '');
+    console.log(cnpjTratado);
+    if(modalEditing && cnpjTratado.length === 14){
+      setCnpj(+cnpjTratado)
+    }
+  }
+
+
 
   const modalEditing = useStoreFornecedor().modalEditing
   const { data, isLoading } = useTituloPagar().useGetOne(id)
@@ -135,7 +157,7 @@ const FormFornecedor = ({ id,  }: { id: string | null }) => {
 
                 <div className="flex flex-wrap gap-3 items-center">
                   <FormInput className="w-64" name="cnpj" readOnly={!modalEditing} label="CPF/CNPJ" control={form.control} />
-                  <FormInput className="w-[50ch] shrink-0" name="nome" readOnly={!modalEditing} label="Nome fantasia" control={form.control} />
+                  <FormInput className="w-[50ch] shrink-0" name="nome" readOnly={!modalEditing} label="Nome fantasia" control={form.control} onBlur={(e)=>onBlurCnpj(e.target.value)}/>
                   <FormInput className="w-64" name="telefone" readOnly={!modalEditing} label="Telefone" control={form.control} />
                   <FormInput className="w-[30ch]" name="razao" readOnly={!modalEditing} label="Razão social" control={form.control} />
                   <FormInput className="w-[50ch]" name="email" readOnly={!modalEditing} label="Email" control={form.control} />
@@ -144,16 +166,7 @@ const FormFornecedor = ({ id,  }: { id: string | null }) => {
                   <FormInput className="w-[10ch]" name="numero" readOnly={!modalEditing} label="Número" control={form.control} />
                   <FormInput className="w-[50ch]" name="bairro" readOnly={!modalEditing} label="Bairro" control={form.control} />
                   <FormInput className="w-[50ch]" name="cidade" readOnly={!modalEditing} label="Cidade" control={form.control} />
-                  <FormSelect
-                    name="uf"
-                    control={form.control}
-                    label={"UF"}
-                    options={[
-                      { value: "1", label: "RN" },
-                      { value: "2", label: "CE" },
-                      { value: "3", label: "BA" },
-                    ]}
-                  />
+                  <FormInput className="w-[10ch]" name="uf" readOnly={!modalEditing} label="UF" control={form.control} />
                 </div>
               </div>
 
