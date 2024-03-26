@@ -15,7 +15,7 @@ const Navbar = () => {
   const [sidebarOpen, mobile] = useSidebar((state) => ([state.sidebarOpen, state.mobile]))
 
   return (
-    <nav className=" flex w-full gap-3 p-3 items-center border justify-end sticky top-0 backdrop-blur-sm z-2">
+    <nav className=" flex w-full gap-3 p-3 items-center border justify-end sticky top-0 backdrop-blur-sm z-10">
       {!sidebarOpen && mobile && (<LogoFacell className='me-auto' />)}
 
       <div className="flex gap-3 items-center">
