@@ -19,7 +19,7 @@ interface PaginationDataTableProps<TData> {
   table: Table<TData>
 }
 
-export default function PaginationDataTable<TData>({
+function PaginationDataTable<TData>({
   table,
 }: PaginationDataTableProps<TData>) {
   return (
@@ -32,7 +32,7 @@ export default function PaginationDataTable<TData>({
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Linhas por página</p>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
+            value={`${table.getState().pagination.pageSize?.toString() || ''}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value))
             }}
@@ -41,7 +41,7 @@ export default function PaginationDataTable<TData>({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
+              {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
@@ -95,3 +95,5 @@ export default function PaginationDataTable<TData>({
     </div>
   )
 }
+
+export default PaginationDataTable;

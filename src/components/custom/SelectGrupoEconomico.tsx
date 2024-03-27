@@ -15,16 +15,9 @@ type GrupoEconomico = {
 }
 
 const SelectGrupoEconomico = ({ value, onChange }: TSelectGrupoEconomico) => {
-  // const SelectGrupoEconomico = ({ value, onChange, showAll = false }: TSelectGrupoEconomico) => {
-  // Use a single state variable for fetching and storing data
 
-  const { data, isError, isLoading } = useGrupoEconomico().getAll()
-  const gruposEconomicos = data?.data
-  console.log(gruposEconomicos)
-
-  if (isLoading) return <div>Carregando grupos econômicos...</div>; // Provide loading UI
-
-  if (isError) return <div>Erro ao carregar grupos econômicos</div>; // Handle errors
+  const { data } = useGrupoEconomico().getAll()
+  const gruposEconomicos = data?.data || []
 
   return (
     <Select value={value} onValueChange={onChange}>

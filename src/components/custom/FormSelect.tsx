@@ -9,7 +9,7 @@ type Toption = {
 interface IFormSelect { 
   name: string, 
   type?: string, 
-  control: Control<any>, 
+  control?: Control<any>, 
   label?: string, 
   description?: string, 
   readOnly?: boolean, 
