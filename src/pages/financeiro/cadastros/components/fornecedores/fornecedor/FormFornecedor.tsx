@@ -1,5 +1,6 @@
 import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
+import FormSwitch from "@/components/custom/FormSwitch";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import { Form } from "@/components/ui/form";
@@ -18,6 +19,7 @@ const schemaFornecedor = z
   .object({
     // Dados Fornecedor
   id: z.string().optional(),
+  ativo: z.string(),
   cnpj: z.string().refine(v=>v.trim() !=="", {message: "Número de telefone inválido"}).transform(v=>normalizeCnpjNumber(v)),
   nome: z.string(),
   razao: z.string(),
@@ -72,6 +74,7 @@ const FormFornecedor = ({ id,data  }: { id: string | null | undefined, data:Forn
   const initialPropsFornecedor: FornecedorSchema = {
     // Dados Fornecedor
     id: "",
+    ativo: "1",
     cnpj: "",
     nome: "",
     razao: "",
@@ -137,8 +140,11 @@ const FormFornecedor = ({ id,data  }: { id: string | null | undefined, data:Forn
             {/* Primeira coluna */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                <div className="flex gap-2 mb-3">
-                  <Contact /> <span className="text-lg font-bold ">Dados do Fornecedor</span> 
+              <div className="flex justify-between items-center mb-3">
+                  <div className="flex gap-2">
+                    <Contact /> <span className="text-lg font-bold ">Dados do Fornecedor</span> 
+                  </div>
+                  <FormSwitch name="ativo" disabled={!modalEditing} label="Ativo" control={form.control}/>
                 </div>
 
                 <div className="flex flex-wrap gap-3 items-center">

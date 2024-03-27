@@ -19,7 +19,7 @@ export const usePlanoContas = () => {
         placeholderData: keepPreviousData
     })
 
-    const useGetOne = (id: string | null) => useQuery({
+    const useGetOne = (id: string | null | undefined) => useQuery({
         enabled: !!id,
         queryKey: ['fin_plano_contas', id],
         queryFn: async () => {

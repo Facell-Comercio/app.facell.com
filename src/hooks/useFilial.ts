@@ -6,11 +6,11 @@ type getAllParams = {
         pageIndex: number,
         pageSize: number,
     },
-    filters: any
+    filters?: any
 }
 
 export const useFilial = ()=>({
-    getAll: (params: getAllParams)=> useQuery({ 
+    getAll: (params?: getAllParams)=> useQuery({ 
         queryKey: ['filial', params], 
         queryFn: async()=> await api.get('/filial', {params: params}), 
         staleTime: Infinity, 

@@ -24,7 +24,7 @@ type GrupoEconomico = {
 
 const FormSelectGrupoEconomico = ({ name, type, control, label, description, className, defaultValue, disabled }: IFormSelectGrupoEconomico) => {
   const { data, isError, isLoading } = useGrupoEconomico().getAll()
-  const gruposEconomicos = data?.data
+  const gruposEconomicos = data?.data?.rows
 
   if (isLoading) return <div>Carregando grupos econômicos...</div>; // Provide loading UI
 

@@ -4,7 +4,6 @@ import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomi
 import FormSwitch from "@/components/custom/FormSwitch";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-import { normalizeCnpjNumber, normalizePhoneNumber } from "@/helpers/mask";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Fingerprint, Info } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -14,65 +13,41 @@ import { useStorePlanoContas } from "./store-plano-contas";
 
 const schemaPlanoContas = z
   .object({
-    // Dados Fornecedor
+  // Identificador do plano de contas
   id: z.string().optional(),
-  cnpj: z.string().refine(v=>v.trim() !=="", {message: "Número de telefone inválido"}).transform(v=>normalizeCnpjNumber(v)),
-  nome: z.string(),
-  razao: z.string(),
-  cep: z.string(),
-  logradouro: z.string(),
-  numero: z.string(),
-  complemento: z.string(),
-  bairro: z.string(),
-  municipio: z.string(),
-  uf: z.string(),
-  email: z.string(),
-  telefone: z.string().refine(v=>v.trim() !=="", {message: "Número de telefone inválido"}).transform(v=>normalizePhoneNumber(v)),
+  codigo: z.string(),
+  ativo: z.string(),
+  descricao: z.string(),
+  codigo_pai: z.string().optional(),
+  descricao_pai: z.string().optional(),
 
-  // Dados Bancários
-  id_forma_pagamento: z.string(),
-  id_tipo_chave_pix: z.string(),
-  id_banco: z.string(),
-  chave_pix: z.string(),
-  agencia: z.string(),
-  dv_agencia: z.string(),
-  conta: z.string(),
-  dv_conta: z.string(),
-  cnpj_favorecido: z.string(),
-  favorecido: z.string(),
+  // Parâmetros
+  nivel: z.string().optional(),
+  tipo: z.string(),
+  grupo_economico: z.string(),
+  codigo_contra_estorno: z.string().optional(),
   });
 
 const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:PlanoContasSchema }) => {
   console.log('RENDER - PlanoContas:', id)
+  console.log(data);
+  
   const modalEditing = useStorePlanoContas().modalEditing
   
   const initialPropsPlanoContas: PlanoContasSchema = {
-    // Dados PlanoContas
+    // Identificador do plano de contas
     id: "",
-    cnpj: "",
-    nome: "",
-    razao: "",
-    cep: "",
-    logradouro: "",
-    numero: "",
-    complemento: "",
-    bairro: "",
-    municipio: "",
-    uf: "",
-    email: "",
-    telefone: "",
-  
-    // Dados Bancários
-    id_forma_pagamento: "",
-    id_tipo_chave_pix: "",
-    id_banco: "",
-    chave_pix: "",
-    agencia: "",
-    dv_agencia: "",
-    conta: "",
-    dv_conta: "",
-    cnpj_favorecido: "",
-    favorecido: "",
+    codigo: "",
+    ativo: true,
+    descricao: "",
+    codigo_pai: "",
+    descricao_pai: "",
+
+    // Parâmetros
+    nivel: "",
+    tipo: "",
+    grupo_economico: "",
+    codigo_contra_estorno: "",
  }
 
   const form = useForm<PlanoContasSchema>({
@@ -80,6 +55,7 @@ const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:Pla
     defaultValues: data||initialPropsPlanoContas,
     values: data
   });
+  
   
   // setFormaPagamento(watchFormaPagamento);  
 
@@ -140,8 +116,8 @@ const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:Pla
                     label={"Tipo"}
                     className={"flex-1 min-w-[20ch]"}
                     options={[
-                      { value: "RECEITA", label: "RECEITA" },
-                      { value: "DESPESA", label: "DESPESA" },
+                      { value: "Receita", label: "RECEITA" },
+                      { value: "Despesa", label: "DESPESA" },
                     ]}
                   />
                   <FormSelectGrupoEconomico className="min-w-32" name="id_grupo_economico" disabled={!modalEditing} label="Grupo Econômico" control={form.control}/>

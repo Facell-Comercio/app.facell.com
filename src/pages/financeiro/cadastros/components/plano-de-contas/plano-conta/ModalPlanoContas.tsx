@@ -3,34 +3,23 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 
 import ModalButtons from "@/components/custom/ModalButtons";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useFornecedores } from "@/hooks/useFornecedores";
+import { usePlanoContas } from "@/hooks/usePlanoConta";
 import FormPlanoContas from "./FormPlanoContas";
 import { useStorePlanoContas } from "./store-plano-contas";
 
 export type PlanoContasSchema = {
-  id: string;
-  cnpj: string;
-  nome: string;
-  razao: string;
-  cep: string;
-  logradouro: string;
-  numero: string;
-  complemento: string | null;
-  bairro: string;
-  municipio: string;
-  uf: string;
-  email: string;
-  telefone: string;
-  id_forma_pagamento: string;
-  id_tipo_chave_pix: string;
-  chave_pix: string;
-  id_banco: string;
-  agencia: string;
-  dv_agencia: string | null;
-  conta: string;
-  dv_conta: string;
-  cnpj_favorecido: string;
-  favorecido: string;
+  id: string,
+  codigo: string,
+  ativo: string|boolean,
+  descricao: string,
+  codigo_pai: string,
+  descricao_pai: string,
+
+  // Parâmetros
+  nivel: string,
+  tipo: string,
+  grupo_economico: string,
+  codigo_contra_estorno: string,
 }
 
 const ModalPlanoContas = () => {
@@ -40,7 +29,7 @@ const ModalPlanoContas = () => {
   const editModal = useStorePlanoContas().editModal
   const id = useStorePlanoContas().id
 
-  const { data, isLoading } = useFornecedores().useGetOne(id)
+  const { data, isLoading } = usePlanoContas().useGetOne(id)
   const newData: PlanoContasSchema & Record<string, any> = {} as PlanoContasSchema & Record<string, any>;
   
   for (const key in data?.data) {
@@ -63,15 +52,11 @@ const ModalPlanoContas = () => {
     editModal(false);
     closeModal();
   }
-  function handleClickInative(){
-    editModal(false);
-    closeModal();
-  }
   
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
-      <DialogContent className="min-w-[80vw] sm:w-[95vw] p-2 sm:p-5 max-h-[95vh] overflow-hidden">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Plano de Contas: ${id}` : "Novo Plano de Contas"}</DialogTitle>
         </DialogHeader>
@@ -82,7 +67,7 @@ const ModalPlanoContas = () => {
         </div>
         )}
         <DialogFooter>
-          <ModalButtons id={id} modalEditing={modalEditing} save={handleClickSave} inative={handleClickInative} edit={()=>editModal(true)} cancel={handleClickCancel}/>
+          <ModalButtons id={id} modalEditing={modalEditing} save={handleClickSave} edit={()=>editModal(true)} cancel={handleClickCancel}/>
         </DialogFooter>
       </DialogContent>
     </Dialog>

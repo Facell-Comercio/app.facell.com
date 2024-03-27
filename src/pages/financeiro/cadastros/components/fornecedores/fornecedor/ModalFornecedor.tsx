@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 // import { useStoreTitulo } from "./store-titulo";
 
 import ModalButtons from "@/components/custom/ModalButtons";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFornecedores } from "@/hooks/useFornecedores";
 import FormFornecedor from "./FormFornecedor";
@@ -9,6 +10,7 @@ import { useStoreFornecedor } from "./store-fornecedor";
 
 export type FornecedorSchema = {
   id: string;
+  ativo?: string;
   cnpj: string;
   nome: string;
   razao: string;
@@ -61,26 +63,25 @@ const ModalFornecedor = () => {
     editModal(false);
     closeModal();
   }
-  function handleClickInative(){
-    editModal(false);
-    closeModal();
-  }
   
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
-      <DialogContent className="min-w-[80vw] sm:w-[95vw] p-2 sm:p-5 max-h-[95vh] overflow-hidden">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Fornecedor: ${id}` : "Novo fornecedor"}</DialogTitle>
         </DialogHeader>
-        {modalOpen&&!isLoading?<FormFornecedor id={id} data={newData}/>:(
-          <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
-          <Skeleton className="w-full row-span-1" />
-          <Skeleton className="w-full row-span-3" />
-        </div>
-        )}
+        <ScrollArea>
+          {modalOpen&&!isLoading?<FormFornecedor id={id} data={newData}/>:(
+            <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
+            <Skeleton className="w-full row-span-1" />
+            <Skeleton className="w-full row-span-3" />
+          </div>
+          )}
+        </ScrollArea>
+        
         <DialogFooter>
-          <ModalButtons id={id} modalEditing={modalEditing} save={handleClickSave} inative={handleClickInative} edit={()=>editModal(true)} cancel={handleClickCancel}/>
+          <ModalButtons id={id} modalEditing={modalEditing} save={handleClickSave} edit={()=>editModal(true)} cancel={handleClickCancel}/>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -22,10 +22,9 @@ const FormSwitch = ({ name, control, label, className, disabled }: IFormSwitch) 
                   {label && <FormLabel >{label}</FormLabel>}
                   <FormControl>
                     <Switch
-                      checked={field.value}
+                      checked={!!+field.value}
                       onCheckedChange={field.onChange}
                       disabled={disabled}
-                      defaultChecked={true}
                       className='mt-0'
                     />
                   </FormControl>

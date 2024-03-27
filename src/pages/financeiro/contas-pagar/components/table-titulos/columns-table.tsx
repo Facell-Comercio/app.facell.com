@@ -24,7 +24,6 @@ const openModal = useStoreTitulo.getState().openModal
 export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
   {
     id: "select",
-    enableSorting: false,
     header: ({ table }) => (
       <div className="px-1">
         <Checkbox
