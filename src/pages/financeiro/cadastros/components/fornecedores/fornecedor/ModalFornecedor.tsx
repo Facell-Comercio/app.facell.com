@@ -69,7 +69,7 @@ const ModalFornecedor = () => {
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
-      <DialogContent className="min-w-[80vw] sm:w-[95vw] p-2 sm:p-5 h-[95vh] overflow-hidden">
+      <DialogContent className="min-w-[80vw] sm:w-[95vw] p-2 sm:p-5 max-h-[95vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>{id ? `Fornecedor: ${id}` : "Novo fornecedor"}</DialogTitle>
         </DialogHeader>

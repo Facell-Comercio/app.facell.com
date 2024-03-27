@@ -18,13 +18,15 @@ const FormSwitch = ({ name, control, label, className, disabled }: IFormSwitch) 
               control={control}
               name={name}
               render={({ field }) => (
-                <FormItem className={`flex gap-2 justify-between items-center w-full ${className}`}>
-                  {label && <FormLabel>{label}</FormLabel>}
+                <FormItem className={`flex gap-2 items-center justify-center ${className}`}>
+                  {label && <FormLabel >{label}</FormLabel>}
                   <FormControl>
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      disabled={!disabled}
+                      disabled={disabled}
+                      defaultChecked={true}
+                      className='mt-0'
                     />
                   </FormControl>
                 </FormItem>
