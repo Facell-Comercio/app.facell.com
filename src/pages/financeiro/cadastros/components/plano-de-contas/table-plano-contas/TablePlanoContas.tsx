@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 
+import PaginationDataTable from "@/components/custom/PaginationDataTable"
 import {
   Table,
   TableBody,
@@ -14,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { PaginationTableTitulos } from "./PaginationTable"
 import { useStoreTablePlanoContas } from "./store-table"
 
 interface DataTableProps<TData, TValue> {
@@ -72,8 +72,8 @@ export function TablePlanoContas<TData, TValue>({
                       ? null
                       : <div>{flexRender(header.column.columnDef.header, header.getContext())}
                         {/* Se for do tipo id não reenderiza os ícones */}
-                        {!(header.id === "select") && header.column.getIsSorted() === 'asc' && ' 🔼'}
-                        {!(header.id === "select") && header.column.getIsSorted() === 'desc' && ' 🔽'}
+                        {header.column.getCanSort() && header.column.getIsSorted() === 'asc' && ' 🔼'}
+                        {header.column.getCanSort() && header.column.getIsSorted() === 'desc' && ' 🔽'}
 
                       </div>}
                   </TableHead>
@@ -105,7 +105,7 @@ export function TablePlanoContas<TData, TValue>({
           )}
         </TableBody>
       </Table>
-      <PaginationTableTitulos table={table} />
+      <PaginationDataTable table={table} />
     </div>
   )
 }

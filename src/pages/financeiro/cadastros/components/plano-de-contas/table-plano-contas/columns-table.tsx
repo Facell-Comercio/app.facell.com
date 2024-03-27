@@ -2,22 +2,25 @@
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
+import { FileSearch2 } from "lucide-react"
 import { ReactNode } from "react"
-import { useStoreFornecedor } from "../../fornecedores/fornecedor/store-fornecedor"
+import { useStorePlanoContas } from "../plano-conta/store-plano-contas"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type RowTitulo = {
+export type RowPlanoConta = {
   select: ReactNode
   id: string
-  cnpj: string
-  nome: string
-  razao: string
+  codigo: string
+  descricao: string
+  tipo: string
+  grupo_economico: string
+  ativo: string
 }
 
-const openModal = useStoreFornecedor.getState().openModal
+const openModal = useStorePlanoContas.getState().openModal
 
-export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
+export const columnsTablePlanoContas: ColumnDef<RowPlanoConta>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -32,6 +35,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
         />
       </div>
     ),
+    enableSorting: false,
     cell: ({ row }) => (
       <div className="px-1">
         <input
@@ -47,35 +51,63 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     ),
   },
   {
+    header: "AÇÃO",
     accessorKey: "id",
-    header: "ID",
     cell: (info) => (
-      <span className='font-semibold cursor-pointer text-blue-500' onClick={() => openModal(info.getValue<number>().toString() )}>{info.getValue<number>()}</span>
+      <FileSearch2 className="text-blue-500" onClick={() => openModal(info.getValue<number>().toString() )}/>
     ),
-    sortDescFirst: true,
+    enableSorting: false,
   },
   {
-    header: "CNPJ",
-    accessorKey: "cnpj",
+    header: "CÓDIGO",
+    accessorKey: "codigo",
     cell: (info) => {
-      const cnpj = info.getValue<string>();
-      return <span>{cnpj}</span>;
+      const codigo = info.getValue<string>();
+      return <span>{codigo}</span>;
     },
   },
   {
-    header: "NOME FANTASIA",
-    accessorKey: "nome",
+    header: "DESCRIÇÃO",
+    accessorKey: "descricao",
     cell: (info) => {
-      const nome = info.getValue<string>();
-      return <span>{nome}</span>;
+      const descricao = info.getValue<string>();
+      return <span>{descricao}</span>;
     },
   },
   {
-    header: "RAZÃO SOCIAL",
-    accessorKey: "razao",
+    header: "TIPO",
+    accessorKey: "tipo",
     cell: (info) => {
-      const razao = info.getValue<string>();
-      return <span>{razao}</span>;
+      const tipo = info.getValue<string>();
+      let color = "";
+      if (tipo === "Receita") {
+        color = "text-green-500";
+      } else if (tipo === "Despesa") {
+        color = "text-red-500";
+      }
+      return <span className={`${color}`}>{tipo}</span>;
+    },
+  },
+  {
+    header: "GRUPO ECONÔMICO",
+    accessorKey: "grupo_economico",
+    cell: (info) => {
+      const grupo_economico = info.getValue<string>();
+      return <span>{grupo_economico}</span>;
+    },
+  },
+  {
+    header: "STATUS",
+    accessorKey: "ativo",
+    cell: (info) => {
+      const ativo = info.getValue();
+      let color = "";
+      if (ativo == 1) {
+        color = "text-green-500";
+      } else if (ativo == 0) {
+        color = "text-red-500";
+      }
+      return <span className={`${color}`}>{ativo?"Ativo":"Inativo"}</span>;
     },
   }
 ]

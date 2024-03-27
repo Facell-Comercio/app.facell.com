@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { useStoreTableFornecedor } from "./table-fornecedores/store-table";
-// import { useStoreTitulo } from "./titulo/store-titulo";
 import { useFornecedores } from "@/hooks/useFornecedores";
 import FilterFornecedores from "./FilterFornecedores";
 import ModalFornecedor from "./fornecedor/ModalFornecedor";
 import { useStoreFornecedor } from "./fornecedor/store-fornecedor";
 import { TableFornecedores } from "./table-fornecedores/TableFornecedores";
-import { columnsTableTitulos } from "./table-fornecedores/columns-table";
+import { columnsTableFornecedores } from "./table-fornecedores/columns-table";
+import { useStoreTableFornecedor } from "./table-fornecedores/store-table";
 
 const SectionFornecedores = () => {
   console.log('RENDER - Section-Titulos')
@@ -27,6 +26,12 @@ const SectionFornecedores = () => {
   }))
 
   const openModal = useStoreFornecedor().openModal
+  const editModal = useStoreFornecedor().editModal
+  function handleClickNewFornecedor(){
+    openModal("")
+    editModal(true)
+  }
+
 
   const { data, refetch } = useFornecedores().useGetAll({ pagination, filters })
 
@@ -34,11 +39,11 @@ const SectionFornecedores = () => {
     <div className="flex flex-col gap-3">
       <div className="flex justify-between">
         <h2 className="text-3xl font-medium">Fornecedores</h2>
-        <Button variant={"secondary"} onClick={() => openModal("")}>Novo Fornecedor</Button>
+        <Button variant={"secondary"} onClick={handleClickNewFornecedor}>Novo Fornecedor</Button>
       </div>
       <FilterFornecedores refetch={refetch}/>
       {/* @ts-expect-error rows doestn't exists*/}
-      <TableFornecedores columns={columnsTableTitulos} data={data?.data?.rows || []} rowCount={data?.data?.rowCount} />
+      <TableFornecedores columns={columnsTableFornecedores} data={data?.data?.rows || []} rowCount={data?.data?.rowCount} />
       <ModalFornecedor />
     </div>
   );

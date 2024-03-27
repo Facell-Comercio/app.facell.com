@@ -1,24 +1,27 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import FormTituloPagar from "./FormTituloPagar";
-// import { useStoreTitulo } from "./store-titulo";
 import { useStoreTitulo } from "./store-titulo";
 
 const ModalTituloPagar = () => {
-  const modalTituloOpen = useStoreTitulo().modalTituloOpen
-  const id_titulo = useStoreTitulo().id_titulo
-  const closeModalTitulo = useStoreTitulo().closeModalTitulo
-  const handleClose = ()=>{
-    closeModalTitulo()
+  const modalOpen = useStoreTitulo().modalOpen
+  const closeModal = useStoreTitulo().closeModal
+  // const modalEditing = useStoreTitulo().modalEditing
+  const editModal = useStoreTitulo().editModal
+  const id = useStoreTitulo().id
+
+  function handleClickCancel(){
+    editModal(false);
+    closeModal();
   }
 
   return (
-    <Dialog open={modalTituloOpen} onOpenChange={handleClose}>
-      <DialogContent className="min-w-[80vw] sm:w-full p-2 sm:p-5 h-[95vh] overflow-hidden backdrop-blur-sm">
+    <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
+      <DialogContent className="min-w-[80vw] sm:w-full p-2 sm:p-5 h-[95vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle>{id_titulo ? `Titulo: ${id_titulo}` : "Novo titulo"}</DialogTitle>
+          <DialogTitle>{id ? `Titulo: ${id}` : "Novo titulo"}</DialogTitle>
         </DialogHeader>
 
-        {modalTituloOpen && <FormTituloPagar id_titulo={id_titulo} />}
+        {modalOpen && <FormTituloPagar id={id} />}
       </DialogContent>
     </Dialog>
   );

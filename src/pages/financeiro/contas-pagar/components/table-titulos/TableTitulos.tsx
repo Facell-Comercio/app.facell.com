@@ -2,10 +2,11 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  useReactTable,
   getSortedRowModel,
+  useReactTable,
 } from "@tanstack/react-table"
 
+import PaginationDataTable from "@/components/custom/PaginationDataTable"
 import {
   Table,
   TableBody,
@@ -15,7 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useStoreTablePagar } from "./store-table"
-import { PaginationTableTitulos } from "./PaginationTable"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -72,8 +72,8 @@ export function TableTitulos<TData, TValue>({
                       ? null
                       : <div>{flexRender(header.column.columnDef.header, header.getContext())}
                         {/* Se for do tipo id não reenderiza os ícones */}
-                        {!(header.id === "select") && header.column.getIsSorted() === 'asc' && ' 🔼'}
-                        {!(header.id === "select") && header.column.getIsSorted() === 'desc' && ' 🔽'}
+                        {header.column.getCanSort() && header.column.getIsSorted() === 'asc' && ' 🔼'}
+                        {header.column.getCanSort() && header.column.getIsSorted() === 'desc' && ' 🔽'}
 
                       </div>}
                   </TableHead>
@@ -105,7 +105,7 @@ export function TableTitulos<TData, TValue>({
           )}
         </TableBody>
       </Table>
-      <PaginationTableTitulos table={table} />
+      <PaginationDataTable table={table} />
     </div>
   )
 }

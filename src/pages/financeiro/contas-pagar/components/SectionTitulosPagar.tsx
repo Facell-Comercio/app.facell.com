@@ -1,11 +1,12 @@
 import { useStoreTablePagar } from "./table-titulos/store-table";
 // import { useStoreTitulo } from "./titulo/store-titulo";
+import { Button } from "@/components/ui/button";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
 import FiltersLancamentosPagar from "./FiltersTitulosPagar";
 import { TableTitulos } from "./table-titulos/TableTitulos";
 import { columnsTableTitulos } from "./table-titulos/columns-table";
 import ModalTituloPagar from "./titulo/ModalTituloPagar";
-import ButtonNewTitulo from "./ButtonNewTitulo";
+import { useStoreTitulo } from "./titulo/store-titulo";
 
 const SectionTitulosPagar = () => {
   console.log('RENDER - Section-Titulos')
@@ -25,12 +26,15 @@ const SectionTitulosPagar = () => {
     isAllSelected: state.isAllSelected
   }))
 
+  const openModal = useStoreTitulo().openModal
+
   const { data, refetch } = useTituloPagar().useGetAll({ pagination, filters })
 
   return (
     <div className="flex flex-col gap-3">
-      <div>
-      <ButtonNewTitulo/>
+      <div className="flex justify-between">
+        <h2 className="text-3xl font-medium">Títulos</h2>
+        <Button variant={"secondary"} onClick={() => openModal("")}>Novo Título</Button>
       </div>
       <FiltersLancamentosPagar refetch={refetch} />
       {/* @ts-expect-error rows doestn't exists*/}

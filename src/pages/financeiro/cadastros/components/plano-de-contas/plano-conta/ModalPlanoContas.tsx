@@ -1,13 +1,10 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 // import { useStoreTitulo } from "./store-titulo";
-import { Button } from "@/components/ui/button";
-import { PenLine, Save } from "lucide-react";
-import { FaRegCircleXmark } from "react-icons/fa6";
-import { GrCircleAlert } from "react-icons/gr";
 
+import ModalButtons from "@/components/custom/ModalButtons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFornecedores } from "@/hooks/useFornecedores";
-import FormFornecedor from "./FormPlanoContas";
+import FormPlanoContas from "./FormPlanoContas";
 import { useStorePlanoContas } from "./store-plano-contas";
 
 export type PlanoContasSchema = {
@@ -76,58 +73,16 @@ const ModalPlanoContas = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent className="min-w-[80vw] sm:w-[95vw] p-2 sm:p-5 h-[95vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle>{id ? `Fornecedor: ${id}` : "Novo fornecedor"}</DialogTitle>
+          <DialogTitle>{id ? `Plano de Contas: ${id}` : "Novo Plano de Contas"}</DialogTitle>
         </DialogHeader>
-        {modalOpen&&!isLoading?<FormFornecedor id={id} data={newData}/>:(
+        {modalOpen&&!isLoading?<FormPlanoContas id={id} data={newData}/>:(
           <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
           <Skeleton className="w-full row-span-1" />
           <Skeleton className="w-full row-span-3" />
         </div>
         )}
         <DialogFooter>
-          <>
-          
-          {!id && (
-          <div className="flex gap-2 justify-end flex-wrap">
-            <Button type="submit" size="lg" variant={"secondary"} onClick={handleClickCancel}>
-              <FaRegCircleXmark className="me-2 text-xl" />
-              Cancelar
-            </Button>
-            <Button type="submit" size="lg"  onClick={handleClickSave}><Save className="me-2"/>Salvar</Button>
-          </div>)
-          }
-          {id && modalEditing && (
-          <div className="flex gap-2 justify-end flex-wrap">
-            
-          <Button type="submit" size="lg" variant={"destructive"} onClick={handleClickInative}>
-            <GrCircleAlert className="me-2"/>
-            Inativar
-          </Button>
-
-          <Button type="submit" size="lg" variant={"secondary"} onClick={handleClickCancel}>
-              <FaRegCircleXmark className="me-2 text-xl"/>
-              Cancelar
-            </Button>
-
-          <Button type="submit" size="lg" onClick={handleClickSave}>
-            <Save className="me-2" />
-            Salvar
-          </Button>
-          </div>)
-          }
-          {id && !modalEditing && (
-          <div className="flex gap-2 justify-end flex-wrap">
-          <Button type="submit" size="lg" variant={"destructive"} onClick={handleClickInative}>
-            <GrCircleAlert className="me-2 text-xl" />
-            Inativar
-          </Button>
-          <Button type="submit" size="lg" onClick={()=>editModal(true)}>
-            <PenLine className="me-2" />
-            Editar
-          </Button>
-          </div>)
-          }
-          </>
+          <ModalButtons id={id} modalEditing={modalEditing} save={handleClickSave} inative={handleClickInative} edit={()=>editModal(true)} cancel={handleClickCancel}/>
         </DialogFooter>
       </DialogContent>
     </Dialog>

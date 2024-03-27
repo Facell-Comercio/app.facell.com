@@ -10,18 +10,24 @@ export interface Pagination {
 
 type RowSelection = Record<number, boolean>
 
-// ^ Conferir
-// export interface RangeData {
-//   from?: string,
-//   to?: string,
-// }
-
 export interface Filters {
-  termo?: string
+  codigo?: string
+  nivel?: string
+  descricao?: string
+  tipo?: string
+  id_grupo_economico?: string
+  descricao_pai?: string
+  ativo?: string
 }
 
 const initialFilters: Filters = {
-  termo: '',
+  codigo: "",
+  nivel: "",
+  descricao: "",
+  tipo: "",
+  id_grupo_economico: "",
+  descricao_pai: "",
+  ativo: "",
 }
 
 export interface State {
