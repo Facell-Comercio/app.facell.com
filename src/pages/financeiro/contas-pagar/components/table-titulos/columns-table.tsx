@@ -20,6 +20,7 @@ const openModalTitulo = useStoreTitulo.getState().openModalTitulo
 export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
   {
     id: "select",
+    enableSorting: false,
     header: ({ table }) => (
       <div className="px-1">
         <Checkbox
@@ -95,7 +96,6 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     cell: (info) => <span className="block text-right text-nowrap">R$ {parseFloat(info.getValue<string>()).toLocaleString("pt-BR", { useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
   },
   {
-    accessorFn: (row) => row.descricao,
     id: "descricao",
     accessorKey: "descricao",
     cell: (info) => {

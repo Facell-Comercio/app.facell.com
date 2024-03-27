@@ -15,13 +15,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-interface PaginationTableTitulosProps<TData> {
+interface PaginationDataTableProps<TData> {
   table: Table<TData>
 }
 
-export function PaginationTableTitulos<TData>({
+function PaginationDataTable<TData>({
   table,
-}: PaginationTableTitulosProps<TData>) {
+}: PaginationDataTableProps<TData>) {
   return (
     <div className="flex items-center justify-between py-2 px-3">
       <div className="flex-1 text-sm text-muted-foreground">
@@ -32,7 +32,7 @@ export function PaginationTableTitulos<TData>({
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Linhas por página</p>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
+            value={`${table.getState().pagination.pageSize?.toString() || ''}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value))
             }}
@@ -41,7 +41,7 @@ export function PaginationTableTitulos<TData>({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
+              {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
@@ -95,3 +95,5 @@ export function PaginationTableTitulos<TData>({
     </div>
   )
 }
+
+export default PaginationDataTable;
