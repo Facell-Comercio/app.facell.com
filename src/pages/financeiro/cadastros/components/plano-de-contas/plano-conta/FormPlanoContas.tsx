@@ -1,15 +1,12 @@
 import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
-import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
-import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
+import FormSwitch from "@/components/custom/FormSwitch";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { normalizeCnpjNumber, normalizePhoneNumber } from "@/helpers/mask";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { Contact, DollarSign } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { Fingerprint, Info } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { PlanoContasSchema } from "./ModalPlanoContas";
 import { useStorePlanoContas } from "./store-plano-contas";
@@ -47,27 +44,6 @@ const schemaPlanoContas = z
 const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:PlanoContasSchema }) => {
   console.log('RENDER - PlanoContas:', id)
   const modalEditing = useStorePlanoContas().modalEditing
-  const [cnpj, setCnpj] = useState<number>();
-  
-  async function axiosGetCnpjData(){
-    const response = await axios.get(`https://receitaws.com.br/v1/cnpj/${cnpj}`)
-    console.log(response.data)
-  }
-  useEffect(()=>{
-    if(cnpj)
-      axiosGetCnpjData()
-  },[cnpj])
-
-  function onBlurCnpj(cnpj: string){
-    const cnpjTratado = cnpj.replace(/\D/g, '');
-    console.log(cnpjTratado);
-    if(modalEditing && cnpjTratado.length === 14){
-      setCnpj(+cnpjTratado)
-    }
-  }
-
-
-
   
   const initialPropsPlanoContas: PlanoContasSchema = {
     // Dados PlanoContas
@@ -103,8 +79,6 @@ const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:Pla
     defaultValues: data||initialPropsPlanoContas,
     values: data
   });
-
-  const watchFormaPagamento = useWatch({control: form.control, name: "id_forma_pagamento"});
   
   // setFormaPagamento(watchFormaPagamento);  
 
@@ -138,52 +112,38 @@ const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:Pla
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
-                  <Contact /> <span className="text-lg font-bold ">Dados do PlanoContas</span> 
+                  <Fingerprint /> <span className="text-lg font-bold ">Identificação do Plano Contas</span> 
                 </div>
 
                 <div className="flex flex-wrap gap-3 items-center">
-                  <FormInput className="w-64" name="cnpj" readOnly={!modalEditing} label="CPF/CNPJ" control={form.control} />
-                  <FormInput className="w-[50ch] shrink-0" name="nome" readOnly={!modalEditing} label="Nome fantasia" control={form.control} onBlur={(e)=>onBlurCnpj(e.target.value)}/>
-                  <FormInput className="w-64" name="telefone" readOnly={!modalEditing} label="Telefone" control={form.control} />
-                  <FormInput className="w-[30ch]" name="razao" readOnly={!modalEditing} label="Razão social" control={form.control} />
-                  <FormInput className="w-[50ch]" name="email" readOnly={!modalEditing} label="Email" control={form.control} />
-                  <FormInput name="cep" readOnly={!modalEditing} label="CEP" control={form.control} />
-                  <FormInput className="w-[70ch]" name="logradouro" readOnly={!modalEditing} label="Logradouro" control={form.control} />
-                  <FormInput className="w-[10ch]" name="numero" readOnly={!modalEditing} label="Número" control={form.control} />
-                  <FormInput className="w-[50ch]" name="bairro" readOnly={!modalEditing} label="Bairro" control={form.control} />
-                  <FormInput className="w-[50ch]" name="cidade" readOnly={!modalEditing} label="Cidade" control={form.control} />
-                  <FormInput className="w-[10ch]" name="uf" readOnly={!modalEditing} label="UF" control={form.control} />
+                  <FormInput className="flex-1 min-w-32" name="descricao" readOnly={!modalEditing} label="Descrição" control={form.control} />
+                  <FormInput className="flex-1 min-w-32" name="codigo" readOnly={!modalEditing} label="Código" control={form.control} />
+                  <FormInput className="flex-1 min-w-32" name="codigo_pai" readOnly={!modalEditing} label="Código Pai" control={form.control} />
                 </div>
               </div>
 
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
-                <DollarSign /> <span className="text-lg font-bold ">Dados Bancários</span>
+                <Info /> <span className="text-lg font-bold ">Parâmetros</span>
                 </div>
                 <div className="flex gap-3 flex-wrap items-center">
-                    
-                  <SelectFormaPagamento name="id_forma_pagamento" disabled={!modalEditing} label="Forma de pagamento" control={form.control}/>
-                  
-                  {watchFormaPagamento === "4" && <SelectTipoChavePix name="id_tipo_chave_pix" disabled={!modalEditing} label="Tipo de chave" control={form.control}/>}
-                  <FormInput readOnly={!modalEditing} type={watchFormaPagamento !== "4"?"hidden":""} className="w-64" name="chave_pix" label="Chave PIX" control={form.control} />
-                  <FormInput readOnly={!modalEditing} name="cnpj_favorecido" label="CPF/CNPJ Favorecido" control={form.control} />
-                  <FormInput readOnly={!modalEditing} name="favorecido" label="Favorecido" control={form.control} />
-
-                  <FormInput className="w-[20ch]" readOnly={!modalEditing} name="agencia" label="AG" control={form.control} />
-                  <FormInput className="w-[10ch]" readOnly={!modalEditing} name="dv_agencia" label="DvAg" control={form.control} />
+                  <FormSwitch name="ativo" disabled={!modalEditing} label="Conta ativa para uso" control={form.control}/>
+                  <FormInput readOnly={!modalEditing} name="nivel" label="Nível de Controle" control={form.control} />
                   <FormSelect
-                    name="tipo_conta"
+                    name="tipo"
                     disabled={!modalEditing}
                     control={form.control}
-                    label={"Tipo de conta"}
+                    label={"Tipo"}
                     className={"min-w-[20ch]"}
                     options={[
-                      { value: "CORRENTE", label: "CORRENTE" },
-                      { value: "POUPANÇA", label: "POUPANÇA" },
+                      { value: "RECEITA", label: "RECEITA" },
+                      { value: "DESPESA", label: "DESPESA" },
                     ]}
                   />
-                  <FormInput className="w-[20ch]" readOnly={!modalEditing} name="conta" label="Conta" control={form.control} />
-                  <FormInput className="w-[10ch]" readOnly={!modalEditing} name="dv_conta" label="DvCt" control={form.control} />
+                  {/* <SelectGrupoEconomico name="id_grupo_economico" disabled={!modalEditing} label="Forma de pagamento" control={form.control}/> */}
+                  <FormInput className="w-44" readOnly={!modalEditing} name="codigo_contra_estorno" label="Código Contra Estorno" control={form.control} />
+                  <FormInput className="w-[50ch]" readOnly={!modalEditing} name="descricao_pai" label="Descrição Pai" control={form.control} />
+
                 </div>
               </div>
             </div>

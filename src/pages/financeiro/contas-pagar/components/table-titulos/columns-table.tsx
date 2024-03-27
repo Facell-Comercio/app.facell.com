@@ -10,12 +10,16 @@ import { useStoreTitulo } from "../titulo/store-titulo"
 export type RowTitulo = {
   select: ReactNode
   id: string
-  cnpj: string
-  nome: string
-  razao: string
+  status: string
+  created_at: Date
+  updated_at: Date
+  valor: string
+  descricao: string
+  fornecedor: string
+  solicitante: string
 }
 
-const openModalTitulo = useStoreTitulo.getState().openModalTitulo
+const openModal = useStoreTitulo.getState().openModal
 
 export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
   {
@@ -32,6 +36,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
         />
       </div>
     ),
+    enableSorting: false,
     cell: ({ row }) => (
       <div className="px-1">
         <input
@@ -52,10 +57,10 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     cell: (info) => (
       <span 
         className='font-semibold cursor-pointer text-blue-500' 
-        onClick={() => openModalTitulo(info.getValue<string>())}>{info.getValue<string>()}
+        onClick={() => openModal(info.getValue<string>())}>{info.getValue<string>()}
         </span>
     ),
-    sortDescFirst: true,
+    enableSorting: false,
   },
   {
     header: "Status",
@@ -95,7 +100,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     cell: (info) => <span className="block text-right text-nowrap">R$ {parseFloat(info.getValue<string>()).toLocaleString("pt-BR", { useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
   },
   {
-    accessorFn: (row) => row.descricao,
+    // accessorFn: (row) => row.descricao,
     id: "descricao",
     accessorKey: "descricao",
     cell: (info) => {

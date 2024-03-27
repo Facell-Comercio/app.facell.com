@@ -7,7 +7,7 @@ import { useStoreFornecedor } from "../fornecedor/store-fornecedor"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type RowTitulo = {
+export type RowFornecedor = {
   select: ReactNode
   id: string
   cnpj: string
@@ -17,7 +17,7 @@ export type RowTitulo = {
 
 const openModal = useStoreFornecedor.getState().openModal
 
-export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
+export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -32,6 +32,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
         />
       </div>
     ),
+    enableSorting: false,
     cell: ({ row }) => (
       <div className="px-1">
         <input

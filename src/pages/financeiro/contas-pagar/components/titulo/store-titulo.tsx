@@ -92,23 +92,49 @@ export const initialPropsTitulo: TituloPagar = {
   url_txt: '',
 }
 
-interface UseStoreTitulo {
-  id_titulo: string | null,
+interface useStoreTitulo {
+  id: string | null,
   titulo: TituloPagar,
-  modalTituloOpen: boolean,
+  modalEditing: boolean,
+  modalOpen: boolean,
 
-  openModalTitulo: (id_titulo: string) => void,
-  closeModalTitulo: () => void,
+  openModal: (id: string) => void,
+  closeModal: () => void,
+  editModal: (bool: boolean) => void,
 }
 
-export const useStoreTitulo = create<UseStoreTitulo>((set) => ({
-  id_titulo: null,
+export const useStoreTitulo = create<useStoreTitulo>((set) => ({
+  id: null,
   titulo: initialPropsTitulo,
-  modalTituloOpen: false,
-
-  openModalTitulo: (id_titulo: string)=>set({modalTituloOpen: true, id_titulo: id_titulo}),
-  closeModalTitulo: () => set(({ modalTituloOpen: false })),
+  modalEditing: false,
+  modalOpen: false,
+  
+  openModal: (id: string)=>set({modalOpen: true, id: id}),
+  closeModal: () => set(({ modalOpen: false })),
+  editModal:(bool) => set(({ modalEditing: bool})),
 }))
+
+
+// interface useStoreTitulo {
+//   id: string | null,
+//   modalEditing: boolean,
+//   modalOpen: boolean,
+
+//   openModal: (id: string) => void,
+//   closeModal: () => void,
+//   editModal: (bool: boolean) => void,
+
+// }
+
+// export const useStoreTitulo = create<useStoreTitulo>((set) => ({
+//   id: null,
+//   modalEditing: false,
+//   modalOpen: false,
+
+//   openModal: (id: string)=>set({modalOpen: true, id: id}),
+//   closeModal: () => set(({ modalOpen: false })),
+//   editModal:(bool) => set(({ modalEditing: bool})),
+// }))
 
 export interface TipoRateio {
   id?: number,

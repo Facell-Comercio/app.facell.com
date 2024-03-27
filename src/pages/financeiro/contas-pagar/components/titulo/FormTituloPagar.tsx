@@ -66,9 +66,9 @@ const schemaTitulo = z
     url_txt: z.string().optional(),
   });
 
-const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
-  console.log('RENDER - Form, titulo:', id_titulo)
-  const { data, isLoading } = useTituloPagar().useGetOne(id_titulo)
+const FormTituloPagar = ({ id }: { id: string | null }) => {
+  console.log('RENDER - Form, titulo:', id)
+  const { data, isLoading } = useTituloPagar().useGetOne(id)
   const { titulo, itens_rateio: itensRateioTitulo } = data?.data ?? { titulo: initialPropsTitulo, itens_rateio: [] }
 
   console.log(itensRateioTitulo)
@@ -157,7 +157,7 @@ const FormTituloPagar = ({ id_titulo }: { id_titulo: string | null }) => {
 
   const rateioManual = titulo.id_rateio == '6'
 
-  if (isLoading || (id_titulo && !titulo?.id_filial)) {
+  if (isLoading || (id && !titulo?.id_filial)) {
     return (
 
       <ScrollArea>
