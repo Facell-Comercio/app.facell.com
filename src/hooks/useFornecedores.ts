@@ -28,8 +28,11 @@ export const useFornecedores = () => {
         },
     })
 
+    const useConsultaCnpj = async(cnpj:string|undefined) => await api.get(`/financeiro/fornecedores/consulta-cnpj/${cnpj}`)
+
     return {
         useGetAll,
         useGetOne,
+        useConsultaCnpj,
     }
 }

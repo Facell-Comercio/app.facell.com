@@ -3,92 +3,42 @@ import FormSelect from "@/components/custom/FormSelect";
 import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
 import FormSwitch from "@/components/custom/FormSwitch";
 import { Form } from "@/components/ui/form";
-import { toast } from "@/components/ui/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { usePlanoContas } from "@/hooks/usePlanoConta";
 import { Fingerprint, Info } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { PlanoContasSchema } from "./ModalPlanoContas";
+import { useFormPlanoContaData } from "./form-plano-contas-data";
 import { useStorePlanoContas } from "./store-plano-contas";
+    
+  const FormPlanoContas = ({ id, data, formRef  }: { id: string | null | undefined, data:PlanoContasSchema, formRef: React.MutableRefObject<HTMLFormElement | null>}) => {
+    console.log('RENDER - PlanoContas:', id)
+    const {mutate:insertOne} = usePlanoContas().useInsertOne()
+    const {mutate:update} = usePlanoContas().useUpdate()
+    const modalEditing = useStorePlanoContas().modalEditing
+    const editModal = useStorePlanoContas().editModal
+    const closeModal = useStorePlanoContas().closeModal
 
-const schemaPlanoContas = z
-  .object({
-  // Identificador do plano de contas
-  id: z.string().optional(),
-  codigo: z.string(),
-  ativo: z.string(),
-  descricao: z.string(),
-  codigo_pai: z.string().optional(),
-  descricao_pai: z.string().optional(),
-
-  // Parâmetros
-  nivel: z.string().optional(),
-  tipo: z.string(),
-  grupo_economico: z.string(),
-  codigo_contra_estorno: z.string().optional(),
-  });
-
-const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:PlanoContasSchema }) => {
-  console.log('RENDER - PlanoContas:', id)
-  console.log(data);
   
-  const modalEditing = useStorePlanoContas().modalEditing
-  
-  const initialPropsPlanoContas: PlanoContasSchema = {
-    // Identificador do plano de contas
-    id: "",
-    codigo: "",
-    ativo: true,
-    descricao: "",
-    codigo_pai: "",
-    descricao_pai: "",
+  const onSubmitData = (data:PlanoContasSchema) => {
+    if(id)
+      update(data)
+    if(!id)
+      insertOne(data)
 
-    // Parâmetros
-    nivel: "",
-    tipo: "",
-    grupo_economico: "",
-    codigo_contra_estorno: "",
- }
-
-  const form = useForm<PlanoContasSchema>({
-    resolver: zodResolver(schemaPlanoContas),
-    defaultValues: data||initialPropsPlanoContas,
-    values: data
-  });
-  
-  
-  // setFormaPagamento(watchFormaPagamento);  
-
-  // function handleSelectionPlanoContas(item: ItemPlanoContas) {
-  //   setValue('id_plano_contas', item.id)
-  //   setValue("plano_contas", item.codigo + ' - ' + item.descricao)
-  //   setModalPlanoContasOpen(false)
-  // }
-  // const watchIdFilial = watch('id_filial')
-  // const watchDataEmissao = watch('data_emissao')
-  // console.log("Data emissão -> ", typeof watchDataEmissao);
-
-
-  const onSubmit = (data: PlanoContasSchema) => {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    editModal(false);
+    closeModal();
   };
-
+  
+  const {form} = useFormPlanoContaData(data)
+  
   return (
     <div className="max-w-full max-h-[90vh] overflow-x-hidden">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
             {/* Primeira coluna */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                <div className="flex justify-between items-center mb-3">
+                <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
                     <Fingerprint /> <span className="text-lg font-bold ">Identificação do Plano Contas</span>
                   </div> 
@@ -96,6 +46,7 @@ const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:Pla
                 </div>
 
                 <div className="flex flex-wrap gap-3 items-center">
+                  <FormInput name="id" type="hidden" label="ID" control={form.control} />
                   <FormInput className="flex-1 min-w-40" name="codigo" readOnly={!modalEditing} label="Código" control={form.control} />
                   <FormInput className="flex-1 min-w-[40ch]" name="descricao" readOnly={!modalEditing} label="Descrição" control={form.control} />
                   <FormInput className="flex-1 min-w-40" name="codigo_pai" readOnly={!modalEditing} label="Código Pai" control={form.control} />
@@ -104,10 +55,10 @@ const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:Pla
               </div>
 
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                <div className="flex gap-2 mb-3">
-                <Info /> <span className="text-lg font-bold ">Parâmetros</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <Info /> <span className="text-lg font-bold ">Parâmetros</span>
                 </div>
-                <div className="flex gap-3 flex-wrap items-center">
+                <div className="flex gap-3 flex-wrap">
                   <FormInput className="flex-1 min-w-32" readOnly={!modalEditing} name="nivel" label="Nível de Controle" control={form.control} />
                   <FormSelect
                     name="tipo"
@@ -121,7 +72,7 @@ const FormPlanoContas = ({ id,data  }: { id: string | null | undefined, data:Pla
                     ]}
                   />
                   <FormSelectGrupoEconomico className="min-w-32" name="id_grupo_economico" disabled={!modalEditing} label="Grupo Econômico" control={form.control}/>
-                  <FormInput className="flex-1 min-w-44" readOnly={!modalEditing} name="codigo_contra_estorno" label="Código Contra Estorno" control={form.control} />
+                  <FormInput className="flex-1 min-w-44" readOnly={!modalEditing} name="codigo_conta_estorno" label="Código Contra Estorno" control={form.control} />
                 </div>
               </div>
             </div>

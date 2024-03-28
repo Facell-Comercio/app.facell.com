@@ -26,6 +26,7 @@ const FormSwitch = ({ name, control, label, className, disabled }: IFormSwitch) 
                       onCheckedChange={field.onChange}
                       disabled={disabled}
                       className='mt-0'
+                      defaultChecked={true}
                     />
                   </FormControl>
                 </FormItem>

@@ -5,123 +5,46 @@ import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-import { normalizeCnpjNumber, normalizePhoneNumber } from "@/helpers/mask";
-import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import { useFornecedores } from "@/hooks/useFornecedores";
 import { Contact, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { z } from "zod";
+import { useWatch } from "react-hook-form";
 import { FornecedorSchema } from "./ModalFornecedor";
+import { useFormFornecedorData } from "./form-fornecedor-data";
 import { useStoreFornecedor } from "./store-fornecedor";
 
-const schemaFornecedor = z
-  .object({
-    // Dados Fornecedor
-  id: z.string().optional(),
-  ativo: z.string(),
-  cnpj: z.string().refine(v=>v.trim() !=="", {message: "Número de telefone inválido"}).transform(v=>normalizeCnpjNumber(v)),
-  nome: z.string(),
-  razao: z.string(),
-  cep: z.string(),
-  logradouro: z.string(),
-  numero: z.string(),
-  complemento: z.string(),
-  bairro: z.string(),
-  municipio: z.string(),
-  uf: z.string(),
-  email: z.string(),
-  telefone: z.string().refine(v=>v.trim() !=="", {message: "Número de telefone inválido"}).transform(v=>normalizePhoneNumber(v)),
-
-  // Dados Bancários
-  id_forma_pagamento: z.string(),
-  id_tipo_chave_pix: z.string(),
-  id_banco: z.string(),
-  chave_pix: z.string(),
-  agencia: z.string(),
-  dv_agencia: z.string(),
-  conta: z.string(),
-  dv_conta: z.string(),
-  cnpj_favorecido: z.string(),
-  favorecido: z.string(),
-  });
-
-const FormFornecedor = ({ id,data  }: { id: string | null | undefined, data:FornecedorSchema }) => {
+const FormFornecedor = ({ id, data, formRef  }: { id: string | null | undefined, data:FornecedorSchema, formRef: React.MutableRefObject<HTMLFormElement | null> }) => {
   console.log('RENDER - Fornecedor:', id)
   const modalEditing = useStoreFornecedor().modalEditing
-  const [cnpj, setCnpj] = useState<number>();
+  const [cnpj, setCnpj] = useState<string>();
+  
+  //todo setar os valores do getCnpj no form
   
   async function axiosGetCnpjData(){
-    const response = await axios.get(`https://receitaws.com.br/v1/cnpj/${cnpj}`)
-    console.log(response.data)
+
+    const response = await useFornecedores().useConsultaCnpj(cnpj)
+    console.log(response)
   }
+
   useEffect(()=>{
     if(cnpj)
       axiosGetCnpjData()
   },[cnpj])
 
   function onBlurCnpj(cnpj: string){
+    console.log("FUNCIONOUUUUU");
+    
     const cnpjTratado = cnpj.replace(/\D/g, '');
-    console.log(cnpjTratado);
+    console.log(cnpjTratado.length);
     if(modalEditing && cnpjTratado.length === 14){
-      setCnpj(+cnpjTratado)
+      setCnpj(cnpjTratado)
     }
   }
 
-
-
   
-  const initialPropsFornecedor: FornecedorSchema = {
-    // Dados Fornecedor
-    id: "",
-    ativo: "1",
-    cnpj: "",
-    nome: "",
-    razao: "",
-    cep: "",
-    logradouro: "",
-    numero: "",
-    complemento: "",
-    bairro: "",
-    municipio: "",
-    uf: "",
-    email: "",
-    telefone: "",
-  
-    // Dados Bancários
-    id_forma_pagamento: "",
-    id_tipo_chave_pix: "",
-    id_banco: "",
-    chave_pix: "",
-    agencia: "",
-    dv_agencia: "",
-    conta: "",
-    dv_conta: "",
-    cnpj_favorecido: "",
-    favorecido: "",
- }
-
-  const form = useForm<FornecedorSchema>({
-    resolver: zodResolver(schemaFornecedor),
-    defaultValues: data||initialPropsFornecedor,
-    values: data
-  });
-
-  const watchFormaPagamento = useWatch({control: form.control, name: "id_forma_pagamento"});
-  
-  // setFormaPagamento(watchFormaPagamento);  
-
-  // function handleSelectionPlanoContas(item: ItemPlanoContas) {
-  //   setValue('id_plano_contas', item.id)
-  //   setValue("plano_contas", item.codigo + ' - ' + item.descricao)
-  //   setModalPlanoContasOpen(false)
-  // }
-  // const watchIdFilial = watch('id_filial')
-  // const watchDataEmissao = watch('data_emissao')
-  // console.log("Data emissão -> ", typeof watchDataEmissao);
-
-
-  const onSubmit = (data: FornecedorSchema) => {
+  const onSubmitData = (data: FornecedorSchema) => {
+    console.log(data);
+    
     toast({
       title: "You submitted the following values:",
       description: (
@@ -131,11 +54,14 @@ const FormFornecedor = ({ id,data  }: { id: string | null | undefined, data:Forn
       ),
     });
   };
+  
+  const {form} = useFormFornecedorData(data)
+  const watchFormaPagamento = useWatch({control: form.control, name: "id_forma_pagamento"});
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-x-hidden">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
             {/* Primeira coluna */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
@@ -148,8 +74,8 @@ const FormFornecedor = ({ id,data  }: { id: string | null | undefined, data:Forn
                 </div>
 
                 <div className="flex flex-wrap gap-3 items-center">
-                  <FormInput className="w-64" name="cnpj" readOnly={!modalEditing} label="CPF/CNPJ" control={form.control} />
-                  <FormInput className="w-[50ch] shrink-0" name="nome" readOnly={!modalEditing} label="Nome fantasia" control={form.control} onBlur={(e)=>onBlurCnpj(e.target.value)}/>
+                  <FormInput className="w-64" name="cnpj" readOnly={!modalEditing} label="CPF/CNPJ" control={form.control} onBlur={(e)=>onBlurCnpj(e.target.value)}/>
+                  <FormInput className="w-[50ch] shrink-0" name="nome" readOnly={!modalEditing} label="Nome fantasia" control={form.control}/>
                   <FormInput className="w-64" name="telefone" readOnly={!modalEditing} label="Telefone" control={form.control} />
                   <FormInput className="w-[30ch]" name="razao" readOnly={!modalEditing} label="Razão social" control={form.control} />
                   <FormInput className="w-[50ch]" name="email" readOnly={!modalEditing} label="Email" control={form.control} />

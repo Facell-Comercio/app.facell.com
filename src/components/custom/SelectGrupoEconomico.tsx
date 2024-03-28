@@ -1,5 +1,5 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"; // Assuming these are custom components
 import { useGrupoEconomico } from "@/hooks/useGrupoEconomico";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"; // Assuming these are custom components
 
 type TSelectGrupoEconomico = {
   value: string | undefined,
@@ -17,7 +17,7 @@ type GrupoEconomico = {
 const SelectGrupoEconomico = ({ value, onChange }: TSelectGrupoEconomico) => {
 
   const { data } = useGrupoEconomico().getAll()
-  const gruposEconomicos = data?.data || []
+  const gruposEconomicos = data?.data?.rows || []
 
   return (
     <Select value={value} onValueChange={onChange}>
