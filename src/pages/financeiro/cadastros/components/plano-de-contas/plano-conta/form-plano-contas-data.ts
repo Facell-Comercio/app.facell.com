@@ -7,8 +7,8 @@ const schemaPlanoContas = z
   .object({
   // Identificador do plano de contas
   id: z.string().trim().optional(),
-  codigo: z.string().trim().min(1, "Por favor coloque o código"),
-  ativo: z.boolean(),
+  codigo: z.string().trim().min(1, "Coloque o código"),
+  ativo: z.coerce.boolean(),
   descricao: z.string().trim().min(3, "A descrição deve ter no mínimo 3 caracteres").toUpperCase(),
   codigo_pai: z.string().trim().optional(),
   descricao_pai: z.string().trim().toUpperCase().optional(),

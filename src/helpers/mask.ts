@@ -15,7 +15,7 @@ export const normalizeCnpjNumber = (value: string | undefined) => {
                 .replace(/(\d{3})(\d)/, '$1.$2')
                 .replace(/(\d{3})(\d)/, '$1.$2')
                 .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-                .replace(/(-\d{2})\d+?$/, '$1');
+                .replace(/(-\d{2})\d+?$/, '$1')
     }
     return pureValue
             .replace(/(\d{2})(\d)/, '$1.$2')
@@ -28,6 +28,7 @@ export const normalizeCnpjNumber = (value: string | undefined) => {
 export const normalizeCepNumber = (value: string | undefined) => {
     if (!value) return ''
     return value.replace(/\D/g, "")
-        .replace(/^(\d{5})(\d{3})+?$/, "$1-$2")
+        .replace(/^(\d{5})(\d{3})/, "$1-$2")
         .replace(/(-\d{3})(\d+?)/, '$1')
+        .substring(0, 9)
 }

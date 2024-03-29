@@ -14,6 +14,7 @@ type TSelectFormaPagamento = {
     control: Control<any>
     register?: Register
     disabled?:boolean
+    className?:string
 }
 
 const SelectFormaPagamento = (props: TSelectFormaPagamento) => {

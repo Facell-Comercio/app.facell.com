@@ -1,59 +1,53 @@
-
 import { OnChangeFn, SortingState } from "@tanstack/react-table";
-import { mountStoreDevtool } from 'simple-zustand-devtools';
+import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 
 export interface Pagination {
-  pageIndex: number
-  pageSize: number
+  pageIndex: number;
+  pageSize: number;
 }
 
-type RowSelection = Record<number, boolean>
+type RowSelection = Record<number, boolean>;
 
 export interface Filters {
-  codigo?: string
-  nivel?: string
-  descricao?: string
-  tipo?: string
-  id_grupo_economico?: string
-  descricao_pai?: string
-  ativo?: string
+  codigo?: string;
+  descricao?: string;
+  tipo?: string;
+  id_grupo_economico?: string;
+  ativo?: string;
 }
 
 const initialFilters: Filters = {
   codigo: "",
-  nivel: "",
   descricao: "",
   tipo: "",
   id_grupo_economico: "",
-  descricao_pai: "",
   ativo: "",
-}
+};
 
 export interface State {
-  rowCount: number
-  sorting: SortingItem[]
-  pagination: Pagination
-  isAllSelected: boolean
-  rowSelection: RowSelection
-  filters: Filters
-
+  rowCount: number;
+  sorting: SortingItem[];
+  pagination: Pagination;
+  isAllSelected: boolean;
+  rowSelection: RowSelection;
+  filters: Filters;
 }
 
 export interface SortingItem {
-  id: string,
-  desc: boolean,
+  id: string;
+  desc: boolean;
 }
 
 export interface Actions {
-  setFilters: (filters: Filters) => void,
-  resetFilters: () => void,
-  setSorting: OnChangeFn<SortingState>,
-  setPagination: (pagination: Pagination) => void,
-  setRowSelection: (rowSelection: RowSelection) => void,
+  setFilters: (filters: Filters) => void;
+  resetFilters: () => void;
+  setSorting: OnChangeFn<SortingState>;
+  setPagination: (pagination: Pagination) => void;
+  setRowSelection: (rowSelection: RowSelection) => void;
 }
 
-export const useStoreTablePlanoContas = create<State & Actions>(set => ({
+export const useStoreTablePlanoContas = create<State & Actions>((set) => ({
   // Table
   rowCount: 0,
   sorting: [],
@@ -63,13 +57,17 @@ export const useStoreTablePlanoContas = create<State & Actions>(set => ({
 
   // Filters
   filters: initialFilters,
-  setFilters: (novoFiltro) => set(({ filters: novoFiltro })),
-  resetFilters: () => { set(({ filters: initialFilters })) },
+  setFilters: (novoFiltro) =>
+    set((state) => ({
+      filters: { ...state.filters, ...novoFiltro },
+    })),
+  resetFilters: () => {
+    set({ filters: initialFilters });
+  },
 
-  setSorting: (sorting) => set(({ sorting })),
-  setPagination: (pagination) => set(({ pagination })),
-  setRowSelection: (rowSelection) => set(({ rowSelection }))
-}))
+  setSorting: (sorting) => set({ sorting }),
+  setPagination: (pagination) => set({ pagination }),
+  setRowSelection: (rowSelection) => set({ rowSelection }),
+}));
 
-
-mountStoreDevtool('useStoreTablePlanoContas', useStoreTablePlanoContas);
+mountStoreDevtool("useStoreTablePlanoContas", useStoreTablePlanoContas);

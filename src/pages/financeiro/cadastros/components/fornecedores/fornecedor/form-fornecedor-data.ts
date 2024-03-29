@@ -1,4 +1,4 @@
-import { normalizeCnpjNumber, normalizePhoneNumber } from "@/helpers/mask";
+import { normalizeCepNumber, normalizeCnpjNumber, normalizePhoneNumber } from "@/helpers/mask";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -12,7 +12,7 @@ const schemaFornecedor = z
   cnpj: z.string().refine(v=>v.trim() !=="", {message: "Número de telefone inválido"}).transform(v=>normalizeCnpjNumber(v)),
   nome: z.string(),
   razao: z.string(),
-  cep: z.string(),
+  cep: z.string().refine(v=>v.trim() !=="", {message: "Número de cep inválido"}).transform(v=>normalizeCepNumber(v)),
   logradouro: z.string(),
   numero: z.string(),
   complemento: z.string(),
