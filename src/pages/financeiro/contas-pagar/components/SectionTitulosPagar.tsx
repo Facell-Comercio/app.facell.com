@@ -15,15 +15,8 @@ const SectionTitulosPagar = () => {
     pagination,
     filters,
   } = useStoreTablePagar(state => ({
-    rowCount: state.rowCount,
     filters: state.filters,
     pagination: state.pagination,
-    setPagination: state.setPagination,
-    sorting: state.sorting,
-    setSorting: state.setSorting,
-    rowSelection: state.rowSelection,
-    setRowSelection: state.setRowSelection,
-    isAllSelected: state.isAllSelected
   }))
 
   const openModal = useStoreTitulo().openModal

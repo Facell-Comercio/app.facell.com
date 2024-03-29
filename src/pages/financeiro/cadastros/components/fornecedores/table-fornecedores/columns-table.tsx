@@ -13,6 +13,7 @@ export type RowFornecedor = {
   cnpj: string
   nome: string
   razao: string
+  ativo: string
 }
 
 const openModal = useStoreFornecedor.getState().openModal
@@ -77,6 +78,21 @@ export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
     cell: (info) => {
       const razao = info.getValue<string>();
       return <span>{razao}</span>;
+    },
+  },
+  {
+    header: "STATUS",
+    accessorKey: "ativo",
+    
+    cell: (info) => {
+      const ativo = info.getValue();
+      let color = "";
+      if (ativo == 1) {
+        color = "text-green-500";
+      } else if (ativo == 0) {
+        color = "text-red-500";
+      }
+      return <span className={`${color}`}>{ativo?"Ativo":"Inativo"}</span>;
     },
   }
 ]

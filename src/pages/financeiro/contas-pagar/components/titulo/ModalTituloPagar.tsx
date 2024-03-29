@@ -1,4 +1,7 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Save } from "lucide-react";
 import FormTituloPagar from "./FormTituloPagar";
 import { useStoreTitulo } from "./store-titulo";
 
@@ -16,12 +19,19 @@ const ModalTituloPagar = () => {
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
-      <DialogContent className="min-w-[80vw] sm:w-full p-2 sm:p-5 h-[95vh] overflow-hidden">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Titulo: ${id}` : "Novo titulo"}</DialogTitle>
         </DialogHeader>
-
-        {modalOpen && <FormTituloPagar id={id} />}
+        <ScrollArea className="h-[70vh]">
+          {modalOpen && <FormTituloPagar id={id} />}
+        </ScrollArea>
+        <DialogFooter>
+          <Button type="submit" size="lg">
+            <Save className="me-2" />
+            Salvar
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

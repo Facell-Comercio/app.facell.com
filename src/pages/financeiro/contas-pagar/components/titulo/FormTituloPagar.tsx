@@ -14,7 +14,7 @@ import { useTituloPagar } from "@/hooks/useTituloPagar";
 import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
 import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Contact, Divide, DollarSign, FileIcon, FileText, Save } from "lucide-react";
+import { Contact, Divide, DollarSign, FileIcon, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
@@ -234,7 +234,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                   <SelectFilial
                     name="id_filial"
                     label="Filial"
-                    register={register}
+                    control={form.control}
                     defaultValue={titulo.id_filial.toString()}
                   />
 
@@ -393,11 +393,6 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
               <FormInput name="txt" type="file" label="TXT Remessa" control={form.control} />
             </div>
           </div>
-
-          <Button type="submit" size="lg" className="mt-5">
-            <Save className="me-2" />
-            Salvar
-          </Button>
         </form>
       </Form>
     </div>

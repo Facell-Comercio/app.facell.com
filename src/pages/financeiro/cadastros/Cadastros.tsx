@@ -9,7 +9,7 @@ const CadastrosPage = () => {
   
   return (
     <div className='flex p-4'>
-        <Tabs defaultValue="plano-contas" className="w-full" >
+        <Tabs defaultValue="fornecedores" className="w-full" >
         <TabsList className='w-full justify-start flex'>
             <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
             <TabsTrigger value="plano-contas">Plano de Contas</TabsTrigger>

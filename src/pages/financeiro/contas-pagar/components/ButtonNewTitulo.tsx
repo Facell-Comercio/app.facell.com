@@ -2,12 +2,14 @@ import { Button } from "@/components/ui/button";
 import { useStoreTitulo } from "./titulo/store-titulo";
 
 const ButtonNewTitulo = () => {
-    const modalTituloOpen = useStoreTitulo().modalTituloOpen
-    const openModalTitulo = useStoreTitulo().openModalTitulo
+    const modalOpen = useStoreTitulo().modalOpen
+    // const openModalTitulo = useStoreTitulo().openModalTitulo
     function handleClick(){
-        openModalTitulo('')
+        // openModalTitulo('')
+        console.log("Deu certo");
+        
     }
-    return ( <Button disabled={modalTituloOpen} onClick={handleClick}>Novo título</Button> );
+    return ( <Button disabled={modalOpen} onClick={handleClick}>Novo título</Button> );
 }
  
 export default ButtonNewTitulo;
