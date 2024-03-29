@@ -17,7 +17,7 @@ type GrupoEconomico = {
 const SelectGrupoEconomico = ({ value, onChange }: TSelectGrupoEconomico) => {
 
   const { data } = useGrupoEconomico().getAll()
-  const gruposEconomicos = data?.data || []
+  const gruposEconomicos = data?.data?.rows || []
 
   return (
     <Select value={value} onValueChange={onChange}>

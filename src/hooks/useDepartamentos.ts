@@ -9,17 +9,17 @@ type getAllParams = {
     filters: any
 }
 
-export const useFilial = ()=>({
+export const useDepartamentos = ()=>({
     getAll: (params: undefined | getAllParams)=> useQuery({ 
-        queryKey: ['filial', params], 
-        queryFn: async()=> await api.get('/filial', {params: params}), 
+        queryKey: ['departamento', params], 
+        queryFn: async()=> await api.get('/departamento', {params: params}), 
         staleTime: Infinity, 
         refetchOnMount: false
     }),
     
     getOne: (id: number)=> useQuery({ 
-        queryKey: ['filial', id], 
-        queryFn: async()=> await api.get(`/filial:${id}`), 
+        queryKey: ['departamento', id], 
+        queryFn: async()=> await api.get(`/departamento:${id}`), 
         staleTime: Infinity, 
         refetchOnMount: false
     }),

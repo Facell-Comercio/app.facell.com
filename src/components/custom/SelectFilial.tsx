@@ -18,7 +18,7 @@ type TSelectFilial = {
 const SelectFilial = ({ name, label, control, defaultValue, disabled }: TSelectFilial) => {
     // Use a single state variable for fetching and storing data
 
-    const { data } = useFilial().getAll()
+    const { data } = useFilial().getAll(undefined)
     const rows = data?.data?.rows || []
 
     return (

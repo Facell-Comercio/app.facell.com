@@ -37,7 +37,6 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
         />
       </div>
     ),
-    enableSorting: false,
     cell: ({ row }) => (
       <div className="px-1">
         <input
