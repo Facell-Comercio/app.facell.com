@@ -12,11 +12,15 @@ import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.t
 import AdminPage from "./pages/admin/Page.tsx";
 import NotAuthorizedPage from "./pages/NotAuthorized.tsx";
 import { checkUserPermission } from "./helpers/checkAuthorization.ts";
+import TestPage from "./pages/Test.tsx";
 
 const AppRoutes = () => {
     return ( <Routes>
         <Route element={<PrivateRoutes />}>
           <Route path="/" element={<App />}>
+            {/* Testes */}
+            <Route path="/test" element={<TestPage/>}/>
+
             {/* Páginas protegidas isoladas */}
             <Route element={<Home />} path="/" />
             <Route element={<Perfil />} path="/perfil" />
