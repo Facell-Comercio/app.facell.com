@@ -11,8 +11,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { normalizeCnpjNumber } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
-import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
-import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
+import ModalFornecedores, {
+  ItemFornecedor,
+} from "@/pages/financeiro/components/ModalFornecedores";
+import ModalPlanoContas, {
+  ItemPlanoContas,
+} from "@/pages/financeiro/components/ModalPlanoContas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Contact, Divide, DollarSign, FileIcon, FileText, Save } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -24,55 +28,61 @@ import { checkUserDepartments } from "@/helpers/checkAuthorization";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
 
-const schemaTitulo = z
-  .object({
-    // IDs
-    id_fornecedor: z.coerce.number(),
-    id_filial: z.coerce.number(),
-    id_plano_contas: z.coerce.number(),
-    id_tipo_solicitacao: z.coerce.number(),
-    id_centro_custo: z.coerce.number(),
+const schemaTitulo = z.object({
+  // IDs
+  id_fornecedor: z.coerce.number(),
+  id_filial: z.coerce.number(),
+  id_plano_contas: z.coerce.number(),
+  id_tipo_solicitacao: z.coerce.number(),
+  id_centro_custo: z.coerce.number(),
 
-    // Outros
-    data_emissao: z.date(),
-    data_vencimento: z.date(),
-    num_parcelas: z.coerce.number().min(1),
-    parcela: z.number().min(1),
-    valor: z.number().min(0),
-    descricao: z.string().min(10, { message: "Precisa conter mais que 10 caracteres" }),
+  // Outros
+  data_emissao: z.date(),
+  data_vencimento: z.date(),
+  num_parcelas: z.coerce.number().min(1),
+  parcela: z.number().min(1),
+  valor: z.number().min(0),
+  descricao: z
+    .string()
+    .min(10, { message: "Precisa conter mais que 10 caracteres" }),
 
-    // Rateio:
-    id_rateio: z.coerce.number(),
-    itens_rateio: z.array(z.object({
+  // Rateio:
+  id_rateio: z.coerce.number(),
+  itens_rateio: z.array(
+    z.object({
       id_filial: z.coerce.number(),
       valor: z.number().min(0),
       percentual: z.number(),
-    })),
+    })
+  ),
 
-    // Anexos:
-    anexo_nota_fiscal: z.instanceof(FileList).optional(),
-    url_nota_fiscal: z.string().optional(),
+  // Anexos:
+  anexo_nota_fiscal: z.instanceof(FileList).optional(),
+  url_nota_fiscal: z.string().optional(),
 
-    anexo_xml_nota: z.instanceof(FileList).optional(),
-    url_xml_nota: z.string().optional(),
+  anexo_xml_nota: z.instanceof(FileList).optional(),
+  url_xml_nota: z.string().optional(),
 
-    anexo_boleto: z.instanceof(FileList).optional(),
-    url_boleto: z.string().optional(),
+  anexo_boleto: z.instanceof(FileList).optional(),
+  url_boleto: z.string().optional(),
 
-    anexo_contrato: z.instanceof(FileList).optional(),
-    url_contrato: z.string().optional(),
+  anexo_contrato: z.instanceof(FileList).optional(),
+  url_contrato: z.string().optional(),
 
-    anexo_planilha: z.instanceof(FileList).optional(),
-    url_planilha: z.string().optional(),
+  anexo_planilha: z.instanceof(FileList).optional(),
+  url_planilha: z.string().optional(),
 
-    anexo_txt: z.instanceof(FileList).optional(),
-    url_txt: z.string().optional(),
-  });
+  anexo_txt: z.instanceof(FileList).optional(),
+  url_txt: z.string().optional(),
+});
 
 const FormTituloPagar = ({ id }: { id: string | null }) => {
-  console.log('RENDER - Form, titulo:', id)
-  const { data, isLoading } = useTituloPagar().useGetOne(id)
-  const { titulo, itens_rateio: itensRateioTitulo } = data?.data ?? { titulo: initialPropsTitulo, itens_rateio: [] }
+  console.log("RENDER - Form, titulo:", id);
+  const { data, isLoading } = useTituloPagar().useGetOne(id);
+  const { titulo, itens_rateio: itensRateioTitulo } = data?.data ?? {
+    titulo: initialPropsTitulo,
+    itens_rateio: [],
+  };
 
   const canEdit = titulo?.status === 'Solicitado' || (
     checkUserDepartments('FINANCEIRO') 
@@ -85,20 +95,19 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   const itens_rateio: ItemRateioTitulo[] = []
   itensRateioTitulo?.forEach((item_rateio: ItemRateioTitulo) => {
     const item = {
-      id: item_rateio.id?.toString() || '',
-      id_filial: item_rateio.id_filial?.toString() || '',
-      percentual: item_rateio.percentual?.toString() || '',
-      valor: item_rateio.valor || 0
-    }
-    itens_rateio.push(item)
+      id: item_rateio.id?.toString() || "",
+      id_filial: item_rateio.id_filial?.toString() || "",
+      percentual: item_rateio.percentual?.toString() || "",
+      valor: item_rateio.valor || 0,
+    };
+    itens_rateio.push(item);
   });
-
 
   const form = useForm<TituloPagar>({
     resolver: zodResolver(schemaTitulo),
     defaultValues: {
-      itens_rateio: itens_rateio
-    }
+      itens_rateio: itens_rateio,
+    },
   });
 
   const { setValue, register } = form;
@@ -106,25 +115,23 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   useEffect(() => {
     Object.entries(titulo).forEach(([key, value]) => {
       // @ts-expect-error ignored
-      setValue(key, value?.toString() || '');
+      setValue(key, value?.toString() || "");
     });
-
-
-  }, [data])
+  }, [data]);
 
   const [modalFornecedorOpen, setModalFornecedorOpen] = useState(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
 
   // Controle de fornecedor
   function showModalFornecedor() {
-    setModalFornecedorOpen(true)
+    setModalFornecedorOpen(true);
   }
 
   function handleSelectionFornecedor(item: ItemFornecedor) {
-    setValue('id_fornecedor', item.id)
-    setValue("cnpj_fornecedor", normalizeCnpjNumber(item.cnpj))
-    setValue("nome_fornecedor", item.nome)
-    setModalFornecedorOpen(false)
+    setValue("id_fornecedor", item.id);
+    setValue("cnpj_fornecedor", normalizeCnpjNumber(item.cnpj));
+    setValue("nome_fornecedor", item.nome);
+    setModalFornecedorOpen(false);
   }
 
   // Controle de plano de contas
@@ -135,24 +142,28 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   }
 
   function handleSelectionPlanoContas(item: ItemPlanoContas) {
-    setValue('id_plano_contas', item.id)
-    setValue("plano_contas", item.codigo + ' - ' + item.descricao)
-    setModalPlanoContasOpen(false)
+    setValue("id_plano_contas", item.id);
+    setValue("plano_contas", item.codigo + " - " + item.descricao);
+    setModalPlanoContasOpen(false);
   }
-  const watchIdFilial = useWatch({ name: 'id_filial', control: form.control })
+  const watchIdFilial = useWatch({ name: "id_filial", control: form.control });
 
   // Controle de rateio
-  const { fields: itensRateio, append: addFieldArray, remove: removeFieldArray } = useFieldArray({
+  const {
+    fields: itensRateio,
+    append: addFieldArray,
+    remove: removeFieldArray,
+  } = useFieldArray({
     control: form.control,
-    name: 'itens_rateio'
-  })
+    name: "itens_rateio",
+  });
 
   function addItemRateio() {
-    addFieldArray({ id_filial: "1", valor: 0, percentual: "0" })
+    addFieldArray({ id_filial: "1", valor: 0, percentual: "0" });
   }
 
   function removeItemRateio(index: number) {
-    removeFieldArray(index)
+    removeFieldArray(index);
   }
 
   const onSubmit = (data: TituloPagar) => {
@@ -166,14 +177,12 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
     });
   };
 
-  const rateioManual = titulo.id_rateio == '6'
+  const rateioManual = titulo.id_rateio == "6";
 
   if (isLoading || (id && !titulo?.id_filial)) {
     return (
-
       <ScrollArea>
         <div className="flex gap-3 w-full h-full">
-
           <div className="flex-1 flex flex-col gap-3">
             <Skeleton className="h-16" />
             <Skeleton className="h-72" />
@@ -188,12 +197,11 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
             <Skeleton className="h-16" />
             <Skeleton className="h-16" />
 
-
             <Skeleton className="self-end mt-auto justify-self-end w-44 h-16" />
           </div>
         </div>
       </ScrollArea>
-    )
+    );
   }
 
   return (
@@ -218,20 +226,33 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     name="id_filial"
                     control={form.control}
                   />
-                  <FormInputUncontrolled className="min-w-[18ch]" name="cnpj_fornecedor" readOnly={true} label="CPF/CNPJ" register={register} />
-                  <FormInput className="min-w-[50ch] shrink-0" name="nome_fornecedor" readOnly={true} label="Nome do fornecedor" control={form.control} />
+                  <FormInputUncontrolled
+                    className="min-w-[18ch]"
+                    name="cnpj_fornecedor"
+                    readOnly={true}
+                    label="CPF/CNPJ"
+                    register={register}
+                  />
+                  <FormInput
+                    className="min-w-[50ch] shrink-0"
+                    name="nome_fornecedor"
+                    readOnly={true}
+                    label="Nome do fornecedor"
+                    control={form.control}
+                  />
 
                   <ModalFornecedores
                     open={canEdit && modalFornecedorOpen}
                     handleSelecion={handleSelectionFornecedor}
-                    onOpenChange={() => setModalFornecedorOpen(prev => !prev)}
+                    onOpenChange={() => setModalFornecedorOpen((prev) => !prev)}
                   />
                 </div>
               </div>
 
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
-                  <FileText /> <span className="text-lg font-bold ">Dados do título</span>
+                  <FileText />{" "}
+                  <span className="text-lg font-bold ">Dados do título</span>
                 </div>
                 <div className="flex gap-3 flex-wrap">
                   <FormSelect
@@ -263,13 +284,21 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                   />
                   <FormItem>
                     <FormLabel>Plano de contas</FormLabel>
-                    <Input className="w-[50ch]" readOnly {...form.register('plano_contas')} placeholder="Selecione um plano de contas" onClick={showModalPlanoContas} />
+                    <Input
+                      className="w-[50ch]"
+                      readOnly
+                      {...form.register("plano_contas")}
+                      placeholder="Selecione um plano de contas"
+                      onClick={showModalPlanoContas}
+                    />
                   </FormItem>
 
                   <ModalPlanoContas
                     open={canEdit && modalPlanoContasOpen}
                     id_filial={watchIdFilial}
-                    onOpenChange={() => setModalPlanoContasOpen(prev => !prev)}
+                    onOpenChange={() =>
+                      setModalPlanoContasOpen((prev) => !prev)
+                    }
                     handleSelecion={handleSelectionPlanoContas}
                   />
 
@@ -305,21 +334,51 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     ]}
                   />
 
-                  <FormInput name="num_parcelas" type={"number"} label="Número de parcelas" control={form.control} />
-                  <FormInput name="parcela" type={"number"} label="Parcela" control={form.control} />
+                  <FormInput
+                    name="num_parcelas"
+                    type={"number"}
+                    label="Número de parcelas"
+                    control={form.control}
+                  />
+                  <FormInput
+                    name="parcela"
+                    type={"number"}
+                    label="Parcela"
+                    control={form.control}
+                  />
 
-                  <FormDateInput name="data_emissao" label="Data de emissão" control={form.control} />
-                  <FormDateInput name="data_vencimento" label="Data de vencimento" control={form.control} />
+                  <FormDateInput
+                    name="data_emissao"
+                    label="Data de emissão"
+                    control={form.control}
+                  />
+                  <FormDateInput
+                    name="data_vencimento"
+                    label="Data de vencimento"
+                    control={form.control}
+                  />
 
-                  <FormInputUncontrolled className="max-w-[20ch]" name="valor" register={register} type={"number"} label="Valor do título" />
+                  <FormInputUncontrolled
+                    className="max-w-[20ch]"
+                    name="valor"
+                    register={register}
+                    type={"number"}
+                    label="Valor do título"
+                  />
 
-                  <FormInput className="min-w-[400px]" name="descricao" label="Descrição do pagamento" control={form.control} />
+                  <FormInput
+                    className="min-w-[400px]"
+                    name="descricao"
+                    label="Descrição do pagamento"
+                    control={form.control}
+                  />
                 </div>
               </div>
 
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
-                  <Divide /> <span className="text-lg font-bold ">Dados do rateio</span>
+                  <Divide />{" "}
+                  <span className="text-lg font-bold ">Dados do rateio</span>
                 </div>
 
                 <div className="flex gap-3">
@@ -342,12 +401,14 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
                 <div className="flex justify-between items-baseline border mt-3">
                   <FormLabel>Itens do rateio</FormLabel>
-                  {rateioManual && (<Button type="button" onClick={addItemRateio}>
-                    Novo item
-                  </Button>)}
+                  {rateioManual && (
+                    <Button type="button" onClick={addItemRateio}>
+                      Novo item
+                    </Button>
+                  )}
                 </div>
                 <div className="flex flex-col gap-3 mt-3">
-                  <table >
+                  <table>
                     <thead>
                       <th>Filial</th>
                       <th>Percentual</th>
@@ -355,32 +416,46 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       {rateioManual && <th>Ação</th>}
                     </thead>
                     <tbody>
-
-
                       {itensRateio?.map((itemRateio, index) => (
                         <tr key={index}>
-                          <td className='p-1'>
-
-                            <SelectFilial name={`itens_rateio.${index}.id_filial`} disabled={!rateioManual} control={form.control} />
+                          <td className="p-1">
+                            <SelectFilial
+                              name={`itens_rateio.${index}.id_filial`}
+                              disabled={!rateioManual}
+                              control={form.control}
+                            />
                           </td>
-                          <td className='p-1'>
-
-                            <Input className="" readOnly={!rateioManual} type="number" value={(parseFloat(itemRateio.percentual) * 100).toFixed(2)} />
+                          <td className="p-1">
+                            <Input
+                              className=""
+                              readOnly={!rateioManual}
+                              type="number"
+                              value={(
+                                parseFloat(itemRateio.percentual) * 100
+                              ).toFixed(2)}
+                            />
                           </td>
-                          <td className='p-1'>
-
-                            <Input className="" readOnly={!rateioManual} type="number" value={itemRateio.valor} />
+                          <td className="p-1">
+                            <Input
+                              className=""
+                              readOnly={!rateioManual}
+                              type="number"
+                              value={itemRateio.valor}
+                            />
                           </td>
-                          {rateioManual && (<td className='p-1'>
-
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              onClick={() => { removeItemRateio(index) }}
-                            >
-                              Remover
-                            </Button>
-                          </td>)}
+                          {rateioManual && (
+                            <td className="p-1">
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                onClick={() => {
+                                  removeItemRateio(index);
+                                }}
+                              >
+                                Remover
+                              </Button>
+                            </td>
+                          )}
                         </tr>
                       ))}
                     </tbody>
@@ -390,7 +465,8 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
               <div className="hidden p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
-                  <DollarSign /> <span className="text-lg font-bold ">Dados do pagamento</span>
+                  <DollarSign />{" "}
+                  <span className="text-lg font-bold ">Dados do pagamento</span>
                 </div>
                 <div className="flex gap-3">pagamento aqui</div>
               </div>

@@ -1,27 +1,44 @@
 import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useStoreTablePlanoContas } from "./table-plano-contas/store-table";
 
 const FiltersPlanoContas = ({ refetch }: { refetch: () => void }) => {
-  const filters = useStoreTablePlanoContas(state => state.filters)
-  const setFilters = useStoreTablePlanoContas(state => state.setFilters)
-  const resetFilters = useStoreTablePlanoContas(state => state.resetFilters)
+  const filters = useStoreTablePlanoContas((state) => state.filters);
+  const setFilters = useStoreTablePlanoContas((state) => state.setFilters);
+  const resetFilters = useStoreTablePlanoContas((state) => state.resetFilters);
 
-  const handleClickFilter = () => refetch()
+  const handleClickFilter = () => refetch();
   const handleResetFilter = async () => {
-    await new Promise(resolve => resolve(resetFilters()))
-    refetch()
-  }
+    await new Promise((resolve) => resolve(resetFilters()));
+    refetch();
+  };
 
   return (
-    <Accordion type="single" collapsible className="p-2 border-2 dark:border-slate-800 rounded-lg ">
+    <Accordion
+      type="single"
+      collapsible
+      className="p-2 border-2 dark:border-slate-800 rounded-lg "
+    >
       <AccordionItem value="item-1" className="border-0">
-        <AccordionTrigger className="py-1 hover:no-underline">Filtros</AccordionTrigger>
+        <AccordionTrigger className="py-1 hover:no-underline">
+          Filtros
+        </AccordionTrigger>
         <AccordionContent className="p-0">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
             <div className="flex w-max space-x-4">
@@ -43,9 +60,9 @@ const FiltersPlanoContas = ({ refetch }: { refetch: () => void }) => {
               <Input
                 placeholder="Descrição"
                 className="max-w-[200px]"
-                value={filters.nivel}
+                value={filters.descricao}
                 onChange={(e) => {
-                  setFilters({ nivel: e.target.value });
+                  setFilters({ descricao: e.target.value });
                 }}
               />
               <Select

@@ -13,6 +13,7 @@ interface IFormInput {
   disabled?: boolean,
   className?: string
   onBlur?: (e:React.FocusEvent<HTMLInputElement>) => void
+  onChange?: (e:React.ChangeEvent<HTMLInputElement>) => void
 }
 
 import * as React from "react";
@@ -40,7 +41,7 @@ Input.displayName = "Input"
 
 export { Input };
 
-const FormInput = ({ name, type, control, label, placeholder, description, readOnly, disabled, className, onBlur }: IFormInput) => {
+const FormInput = ({ name, type, control, label, placeholder, description, readOnly, disabled, className, onBlur, onChange }: IFormInput) => {
   return (
     <FormField
       control={control}
@@ -49,7 +50,7 @@ const FormInput = ({ name, type, control, label, placeholder, description, readO
         <FormItem className={`${type === "hidden" && "hidden"} ${className} max-w-full`}>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
-            <Input type={type || 'text'} readOnly={readOnly} disabled={typeof disabled==="undefined"?field.disabled:disabled} placeholder={placeholder} onBlur={typeof onBlur == "undefined"?field.onBlur:onBlur} onChange={field.onChange} value={field.value} name={field.name} ref={field.ref} />
+            <Input type={type || 'text'} readOnly={readOnly} disabled={typeof disabled==="undefined"?field.disabled:disabled} placeholder={placeholder} onBlur={typeof onBlur == "undefined"?field.onBlur:onBlur} onChange={typeof onChange == "undefined" ? field.onChange : onChange} value={field.value} name={field.name} ref={field.ref} />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
