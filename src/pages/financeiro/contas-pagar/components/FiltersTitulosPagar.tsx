@@ -44,7 +44,7 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
               />
 
               <SelectGrupoEconomico
-                showAll
+                showAll={true}
                 value={filters.id_grupo_economico}
                 onChange={(id_grupo_economico) => {
                   setFilters({ id_grupo_economico: id_grupo_economico });
@@ -58,10 +58,10 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 }}
               >
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Status" />
+                  <SelectValue placeholder="Status"/>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="0">Todos status</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
                   <SelectItem value="1">Solicitado</SelectItem>
                   <SelectItem value="2">Negado</SelectItem>
                   <SelectItem value="3">Aprovado</SelectItem>

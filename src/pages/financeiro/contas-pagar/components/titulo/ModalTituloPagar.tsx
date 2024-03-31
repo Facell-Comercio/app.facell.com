@@ -26,12 +26,6 @@ const ModalTituloPagar = () => {
         <ScrollArea className="h-[70vh]">
           {modalOpen && <FormTituloPagar id={id} />}
         </ScrollArea>
-        <DialogFooter>
-          <Button type="submit" size="lg">
-            <Save className="me-2" />
-            Salvar
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

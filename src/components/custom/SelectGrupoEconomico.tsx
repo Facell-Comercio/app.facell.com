@@ -14,7 +14,7 @@ type GrupoEconomico = {
   ativo: boolean,
 }
 
-const SelectGrupoEconomico = ({ value, onChange }: TSelectGrupoEconomico) => {
+const SelectGrupoEconomico = ({ value, onChange, showAll }: TSelectGrupoEconomico) => {
 
   const { data } = useGrupoEconomico().getAll()
   const gruposEconomicos = data?.data?.rows || []
@@ -25,7 +25,7 @@ const SelectGrupoEconomico = ({ value, onChange }: TSelectGrupoEconomico) => {
         <SelectValue placeholder="Selecione o grupo" />
       </SelectTrigger>
       <SelectContent>
-        {/* {showAll && <SelectItem >Todos grupos</SelectItem>} */}
+        {showAll && <SelectItem value="all">TODOS</SelectItem>}
         {gruposEconomicos?.map((item: GrupoEconomico) => (
           <SelectItem className="text-left" key={item.id} value={item.id.toString()}>
             {item.nome}

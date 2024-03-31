@@ -14,11 +14,14 @@ import { useTituloPagar } from "@/hooks/useTituloPagar";
 import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
 import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Contact, Divide, DollarSign, FileIcon, FileText } from "lucide-react";
+import { Contact, Divide, DollarSign, FileIcon, FileText, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { ItemRateioTitulo, TituloPagar, initialPropsTitulo } from "./store-titulo";
+import FormFileUpload from "@/components/custom/FormFileUpload";
+import { checkUserDepartments } from "@/helpers/checkAuthorization";
+import { generateStatusColor } from "@/helpers/generateColorStatus";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaTitulo = z
@@ -71,6 +74,13 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   const { data, isLoading } = useTituloPagar().useGetOne(id)
   const { titulo, itens_rateio: itensRateioTitulo } = data?.data ?? { titulo: initialPropsTitulo, itens_rateio: [] }
 
+  const canEdit = titulo?.status === 'Solicitado' || (
+    checkUserDepartments('FINANCEIRO') 
+    && titulo?.status !== 'Aprovado' 
+    && titulo?.status !== 'Negado' 
+    && titulo?.status !== 'Pago'
+    )
+
   console.log(itensRateioTitulo)
   const itens_rateio: ItemRateioTitulo[] = []
   itensRateioTitulo?.forEach((item_rateio: ItemRateioTitulo) => {
@@ -119,6 +129,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
   // Controle de plano de contas
   function showModalPlanoContas() {
+    if(!canEdit) return;
     console.log('Abrir modal plano contas')
     setModalPlanoContasOpen(true)
   }
@@ -186,15 +197,19 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   }
 
   return (
-    <div className="max-w-full max-h-[90vh] overflow-x-hidden">
+    <div className="max-w-full max-h-[90vh] overflow-hidden">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
             {/* Primeira coluna */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
+
+              {titulo?.status && <span className={`p-2 my-2 w-fit text-md font-bold rounded-sm ${generateStatusColor({status: titulo?.status || '', bg: true, text: true})}`}>{titulo.status}</span>}
+
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
-                  <Contact /> <span className="text-lg font-bold ">Fornecedor</span> <Button type="button" onClick={showModalFornecedor} size={'sm'}>Procurar</Button>
+                  <Contact /> <span className="text-lg font-bold ">Fornecedor</span> 
+                  <Button disabled={!canEdit} type="button" onClick={showModalFornecedor} size={'sm'}>Procurar</Button>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
@@ -207,7 +222,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                   <FormInput className="min-w-[50ch] shrink-0" name="nome_fornecedor" readOnly={true} label="Nome do fornecedor" control={form.control} />
 
                   <ModalFornecedores
-                    open={modalFornecedorOpen}
+                    open={canEdit && modalFornecedorOpen}
                     handleSelecion={handleSelectionFornecedor}
                     onOpenChange={() => setModalFornecedorOpen(prev => !prev)}
                   />
@@ -220,6 +235,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                 </div>
                 <div className="flex gap-3 flex-wrap">
                   <FormSelect
+                    disabled={!canEdit}
                     name="tipo_solicitacao"
                     control={form.control}
                     label={"Tipo de solicitação"}
@@ -232,6 +248,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                   />
 
                   <SelectFilial
+                    disabled={!canEdit}
                     name="id_filial"
                     label="Filial"
                     control={form.control}
@@ -250,13 +267,14 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                   </FormItem>
 
                   <ModalPlanoContas
-                    open={modalPlanoContasOpen}
+                    open={canEdit && modalPlanoContasOpen}
                     id_filial={watchIdFilial}
                     onOpenChange={() => setModalPlanoContasOpen(prev => !prev)}
                     handleSelecion={handleSelectionPlanoContas}
                   />
 
                   <FormSelect
+                    disabled={!canEdit}
                     name="centro_custo"
                     control={form.control}
                     label={"Centro de custo"}
@@ -269,6 +287,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                   />
 
                   <FormSelect
+                  disabled={!canEdit}
                     name="forma_pagamento"
                     control={form.control}
                     label={"Forma de pagamento"}
@@ -385,13 +404,21 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                 <FileIcon /> <span>Anexos</span>
               </div>
 
-              <FormInput name="xml" type="file" label="XML Nota fiscal" control={form.control} />
-              <FormInput name="nota_fiscal" type="file" label="Nota fiscal" control={form.control} />
-              <FormInput name="boleto" type="file" label="Boleto" control={form.control} />
-              <FormInput name="contrato" type="file" label="Contrato/Ordem de compra" control={form.control} />
-              <FormInput name="planilha" type="file" label="Planilha" control={form.control} />
-              <FormInput name="txt" type="file" label="TXT Remessa" control={form.control} />
+              <FormFileUpload className='max-w-[400px]' disabled={!canEdit} label='XML Nota fiscal' name="url_xml" mediaType="xml" control={form.control} />
+              <FormFileUpload className='max-w-[400px]' disabled={!canEdit} label='Nota fiscal' name="url_nota_fiscal" mediaType="pdf" control={form.control} />
+              <FormFileUpload className='max-w-[400px]' disabled={!canEdit} label='Boleto' name="url_boleto" mediaType="pdf" control={form.control} />
+              <FormFileUpload className='max-w-[400px]' disabled={!canEdit} label='Contrato/Autorização' name="url_contrato" mediaType="etc" control={form.control} />
+              <FormFileUpload className='max-w-[400px]' disabled={!canEdit} label='Planilha' name="url_planilha" mediaType="excel" control={form.control} />
+              <FormFileUpload className='max-w-[400px]' disabled={!canEdit} label='Arquivo remessa' name="url_txt" mediaType="txt" control={form.control} />
+
             </div>
+          </div>
+          <div className="my-2 flex justify-end">
+
+          <Button type="submit" size="lg">
+            <Save className="me-2" />
+            Salvar
+          </Button>
           </div>
         </form>
       </Form>
