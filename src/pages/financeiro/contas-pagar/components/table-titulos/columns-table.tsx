@@ -1,9 +1,8 @@
-"use client"
-
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
 import { ReactNode } from "react"
 import { useStoreTitulo } from "../titulo/store-titulo"
+import { generateStatusColor } from "@/helpers/generateColorStatus"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -36,7 +35,6 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
         />
       </div>
     ),
-    enableSorting: false,
     cell: ({ row }) => (
       <div className="px-1">
         <input
@@ -67,14 +65,7 @@ export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
     accessorKey: "status",
     cell: (info) => {
       const status = info.getValue<string>();
-      let color = "";
-      if (status === "Aprovado") {
-        color = "text-green-500";
-      } else if (status === "Pago") {
-        color = "text-blue-500";
-      } else if (status === "Negado") {
-        color = "text-red-500";
-      }
+      let color = generateStatusColor({status: status, text: true});
       return <span className={`${color}`}>{status}</span>;
     },
   },

@@ -1,17 +1,19 @@
 
-import DataTable from "./table/DataTable";
 import Filters from "./table/Filters";
-import { useDepartamentos } from "./table/fetch-departamentos";
 import { columnsTableDepartamentos } from "./table/departamentos-columns";
+import { DataTable } from "@/components/custom/DataTable";
+import { useStoreDepartamentos } from "./table/store-table";
+import { useDepartamentos } from "@/hooks/useDepartamentos";
 
 const Departamentos = () => {
-    const { data, refetch} =  useDepartamentos().getAll()
+    const [pagination, setPagination, filters] = useStoreDepartamentos(state=>[state.pagination, state.setPagination, state.filters])
+    const { data, refetch} =  useDepartamentos().getAll({pagination, filters})
     const rows = data?.data?.rows || []
     const rowCount = data?.data?.rowCount || 0
 
     return ( <div>
         <Filters refetch={refetch}/>
-        <DataTable data={rows} rowCount={rowCount} columns={columnsTableDepartamentos}/>
+        <DataTable  pagination={pagination} setPagination={setPagination} data={rows} rowCount={rowCount} columns={columnsTableDepartamentos}/>
     </div> );
 }
  

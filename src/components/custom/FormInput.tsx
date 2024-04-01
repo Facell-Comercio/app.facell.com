@@ -12,15 +12,15 @@ interface IFormInput {
   readOnly?: boolean,
   disabled?: boolean,
   className?: string
-  onBlur?: (e:React.FocusEvent<HTMLInputElement>) => void
-  onChange?: (e:React.ChangeEvent<HTMLInputElement>) => void
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 import * as React from "react";
 
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+  extends React.InputHTMLAttributes<HTMLInputElement> { }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
@@ -47,10 +47,20 @@ const FormInput = ({ name, type, control, label, placeholder, description, readO
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className={`${type === "hidden" && "hidden"} ${className} max-w-full`}>
-          {label && <FormLabel>{label}</FormLabel>}
+        <FormItem className={`${type === "hidden" && "hidden"} ${className} flex-1`}>
+          {label && <FormLabel className='text-nowrap'>{label}</FormLabel>}
           <FormControl>
-            <Input type={type || 'text'} readOnly={readOnly} disabled={typeof disabled==="undefined"?field.disabled:disabled} placeholder={placeholder} onBlur={typeof onBlur == "undefined"?field.onBlur:onBlur} onChange={typeof onChange == "undefined" ? field.onChange : onChange} value={field.value} name={field.name} ref={field.ref} />
+            <Input
+              ref={field.ref}
+              type={type || 'text'}
+              name={field.name}
+              value={field.value}
+              placeholder={placeholder}
+              readOnly={readOnly}
+              disabled={typeof disabled === "undefined" ? field.disabled : disabled}
+              onBlur={typeof onBlur == "undefined" ? field.onBlur : onBlur}
+              onChange={typeof onChange == "undefined" ? field.onChange : onChange}
+            />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />

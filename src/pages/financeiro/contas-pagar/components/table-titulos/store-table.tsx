@@ -2,7 +2,6 @@
 import { create } from "zustand";
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { DateRange } from "react-day-picker";
-import { OnChangeFn, SortingState } from "@tanstack/react-table";
 
 export interface Pagination {
   pageIndex: number
@@ -10,12 +9,6 @@ export interface Pagination {
 }
 
 type RowSelection = Record<number, boolean>
-
-// ^ Conferir
-// export interface RangeData {
-//   from?: string,
-//   to?: string,
-// }
 
 export interface Filters {
   id?: string
@@ -39,7 +32,6 @@ const initialFilters: Filters = {
 
 export interface State {
   rowCount: number
-  sorting: SortingItem[]
   pagination: Pagination
   isAllSelected: boolean
   rowSelection: RowSelection
@@ -47,15 +39,9 @@ export interface State {
 
 }
 
-export interface SortingItem {
-  id: string,
-  desc: boolean,
-}
-
 export interface Actions {
   setFilters: (filters: Filters) => void,
   resetFilters: () => void,
-  setSorting: OnChangeFn<SortingState>,
   setPagination: (pagination: Pagination) => void,
   setRowSelection: (rowSelection: RowSelection) => void,
 }
@@ -73,7 +59,6 @@ export const useStoreTablePagar = create<State & Actions>(set => ({
   setFilters: (novoFiltro) => set(state => ({ ...state, filters: { ...state.filters, ...novoFiltro } })),
   resetFilters: () => { set(({ filters: initialFilters })) },
 
-  setSorting: (sorting) => set(({ sorting })),
   setPagination: (pagination) => set(({ pagination })),
   setRowSelection: (rowSelection) => set(({ rowSelection }))
 }))

@@ -21,12 +21,11 @@ const SectionTitulosPagar = () => {
 
   const openModal = useStoreTitulo().openModal
 
-  const { data, refetch } = useTituloPagar().useGetAll({ pagination, filters })
+  const { data, refetch } = useTituloPagar().getAll({ pagination, filters })
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex justify-between">
-        <h2 className="text-3xl font-medium">Títulos</h2>
+      <div className="flex justify-end">
         <Button variant={"secondary"} onClick={() => openModal("")}>Novo Título</Button>
       </div>
       <FiltersLancamentosPagar refetch={refetch} />

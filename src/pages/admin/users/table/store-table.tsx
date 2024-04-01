@@ -1,5 +1,4 @@
 
-import { SortingState } from "@tanstack/react-table";
 import { create } from "zustand";
 
 export interface Pagination {
@@ -24,7 +23,6 @@ export interface SortingItem {
 
 export interface State {
   rowCount: number
-  sorting?: SortingState
   pagination: Pagination
   isAllSelected: boolean
   rowSelection: RowSelection
@@ -38,10 +36,7 @@ export interface State {
 export interface Actions {
   setFilters: (filters: Filters) => void,
   resetFilters: () => void,
-  setSorting: (sorting: SortingState)=>void,
   setPagination: (pagination: Pagination) => void,
-  setRowSelection: (rowSelection: RowSelection) => void,
-
   openModal: (id: string)=>void
   closeModal: ()=>void
 }
@@ -54,7 +49,7 @@ export const useStoreUsers = create<State & Actions>(set => ({
 
   // Table
   rowCount: 0,
-  sorting: [],
+
   pagination: { pageIndex: 0, pageSize: 5 },
   isAllSelected: false,
   rowSelection: {},
@@ -63,11 +58,7 @@ export const useStoreUsers = create<State & Actions>(set => ({
   filters: initialFilters,
   setFilters: (novoFiltro) => set(({ filters: novoFiltro })),
   resetFilters: () => { set(({ filters: initialFilters })) },
-
-  setSorting: (sorting) => set(({ sorting })),
   setPagination: (pagination) => set(({ pagination })),
-  setRowSelection: (rowSelection) => set(({ rowSelection })),
-
   openModal: (id_user)=>set({id_user, modalOpen: true}),
   closeModal: ()=>set({modalOpen: false})
 }))

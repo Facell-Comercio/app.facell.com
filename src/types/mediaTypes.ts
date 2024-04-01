@@ -1,0 +1,1 @@
+export type MediaType = 'img' | 'pdf' | 'video' | 'audio' | 'excel' | 'txt' | 'csv' | 'xml' | 'etc'
