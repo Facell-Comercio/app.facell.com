@@ -21,7 +21,7 @@ const SectionTitulosPagar = () => {
 
   const openModal = useStoreTitulo().openModal
 
-  const { data, refetch } = useTituloPagar().useGetAll({ pagination, filters })
+  const { data, refetch } = useTituloPagar().getAll({ pagination, filters })
 
   return (
     <div className="flex flex-col gap-3">

@@ -25,22 +25,24 @@ type FormDateProps = {
   control: Control<any>,
   label?: string
   description?: string
+  disabled?: boolean
 }
 
-const FormDateInput = ({ name, control, label, description }: FormDateProps) => {
+const FormDateInput = ({ name, control, label, description, disabled }: FormDateProps) => {
   return <FormField
     control={control}
     name={name}
     render={({ field }) => (
-      <FormItem className="flex flex-col">
+      <FormItem className="flex flex-col flex-1">
         {label && <FormLabel>{label}</FormLabel>}
         <Popover>
           <PopoverTrigger asChild>
             <FormControl>
               <Button
+                disabled={disabled}
                 variant={"outline"}
                 className={cn(
-                  "w-[180px] pl-3 text-left font-normal",
+                  "pl-3 text-left font-normal",
                   !field.value && "text-muted-foreground"
                 )}
               >
@@ -53,6 +55,7 @@ const FormDateInput = ({ name, control, label, description }: FormDateProps) => 
               </Button>
             </FormControl>
           </PopoverTrigger>
+          
           <PopoverContent className="w-auto p-0" align="start">
             <Calendar
               mode="single"

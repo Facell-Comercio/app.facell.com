@@ -1,7 +1,7 @@
 export const generateStatusColor = ({ status, bg, text }: {
     status?: string, bg?: boolean, text?: boolean
 }) => {
-    if (!status) return '';
+    if (!status) return ' ';
     var bgColor = 'bg-gray-300 dark:bg-gray-800'
     var textColor = 'text-slate-300'
 
@@ -30,10 +30,10 @@ export const generateStatusColor = ({ status, bg, text }: {
         return ` ${bgColor} dark:text-white`
     }
     if(bg){
-        return bgColor
+        return ` ${bgColor} `
     }
     if(text){
-        return textColor
+        return ` ${textColor} `
     }
     return `${bgColor} ${textColor}`
 }
