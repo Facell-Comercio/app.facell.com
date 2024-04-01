@@ -14,7 +14,7 @@ export interface GetPlanoContasProps {
 type PlanoContasSchema = {
     id: string,
     codigo: string,
-    ativo: boolean,
+    active: boolean,
     descricao: string,
     codigo_pai: string,
     descricao_pai: string,

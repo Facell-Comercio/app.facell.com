@@ -18,7 +18,7 @@ import { useStorePlanoContas } from "./store-plano-contas";
 export type PlanoContasSchema = {
   id: string;
   codigo: string;
-  ativo: boolean;
+  active: boolean;
   descricao: string;
   codigo_pai: string;
   descricao_pai: string;
@@ -34,7 +34,7 @@ const initialPropsPlanoContas: PlanoContasSchema = {
   // Identificador do plano de contas
   id: "",
   codigo: "",
-  ativo: true,
+  active: true,
   descricao: "",
   codigo_pai: "",
   descricao_pai: "",

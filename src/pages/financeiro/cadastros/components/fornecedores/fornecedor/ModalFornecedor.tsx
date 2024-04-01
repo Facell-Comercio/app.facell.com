@@ -17,7 +17,7 @@ import { useStoreFornecedor } from "./store-fornecedor";
 
 export type FornecedorSchema = {
   id: string;
-  ativo?: number | boolean;
+  active?: number | boolean;
   cnpj: string;
   nome: string;
   razao: string;
@@ -45,7 +45,7 @@ export type FornecedorSchema = {
 const initialPropsFornecedor: FornecedorSchema = {
   // Dados Fornecedor
   id: "",
-  ativo: 1,
+  active: 1,
   cnpj: "",
   nome: "",
   razao: "",

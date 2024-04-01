@@ -53,7 +53,7 @@ const FormPlanoContas = ({
                     </span>
                   </div>
                   <FormSwitch
-                    name="ativo"
+                    name="active"
                     disabled={!modalEditing}
                     label="Ativo"
                     control={form.control}

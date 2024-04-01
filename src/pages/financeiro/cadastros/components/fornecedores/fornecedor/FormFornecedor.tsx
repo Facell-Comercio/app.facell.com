@@ -37,8 +37,6 @@ const FormFornecedor = ({
     name: "id_forma_pagamento",
   });
 
-  //todo setar os valores do getCnpj no form
-
   async function axiosGetCnpjData() {
     const { data: cnpjData } = await useFornecedores().useConsultaCnpj(cnpj);
     form.setValue("nome", cnpjData.fantasia);
@@ -112,7 +110,7 @@ const FormFornecedor = ({
                     </span>
                   </div>
                   <FormSwitch
-                    name="ativo"
+                    name="active"
                     disabled={!modalEditing}
                     label="Ativo"
                     control={form.control}

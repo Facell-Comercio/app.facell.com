@@ -14,7 +14,7 @@ export interface Filters {
   descricao?: string;
   tipo?: string;
   id_grupo_economico?: string;
-  ativo?: string;
+  active?: string;
 }
 
 const initialFilters: Filters = {
@@ -22,7 +22,7 @@ const initialFilters: Filters = {
   descricao: "",
   tipo: "",
   id_grupo_economico: "",
-  ativo: "",
+  active: "",
 };
 
 export interface State {
