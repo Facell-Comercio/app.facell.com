@@ -1,4 +1,4 @@
-import { mountStoreDevtool } from "simple-zustand-devtools";
+// import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 
 export interface Pagination {
@@ -9,20 +9,17 @@ export interface Pagination {
 type RowSelection = Record<number, boolean>;
 
 export interface Filters {
-  codigo?: string;
-  descricao?: string;
-  tipo?: string;
-  id_grupo_economico?: string;
-  active?: string;
+  termo?: string;
 }
 
 const initialFilters: Filters = {
-  codigo: "",
-  descricao: "",
-  tipo: "",
-  id_grupo_economico: "",
-  active: "",
+  termo: "",
 };
+
+export interface SortingItem {
+  id: string;
+  desc: boolean;
+}
 
 export interface State {
   rowCount: number;
@@ -30,11 +27,8 @@ export interface State {
   isAllSelected: boolean;
   rowSelection: RowSelection;
   filters: Filters;
-}
 
-export interface SortingItem {
-  id: string;
-  desc: boolean;
+  modalOpen: boolean;
 }
 
 export interface Actions {
@@ -42,9 +36,15 @@ export interface Actions {
   resetFilters: () => void;
   setPagination: (pagination: Pagination) => void;
   setRowSelection: (rowSelection: RowSelection) => void;
+
+  openModal: (id: string) => void;
+  closeModal: () => void;
 }
 
-export const useStoreTablePlanoContas = create<State & Actions>((set) => ({
+export const useStoreTableFornecedor = create<State & Actions>((set) => ({
+  // Modal
+  modalOpen: false,
+
   // Table
   rowCount: 0,
   pagination: { pageIndex: 0, pageSize: 15 },
@@ -53,16 +53,16 @@ export const useStoreTablePlanoContas = create<State & Actions>((set) => ({
 
   // Filters
   filters: initialFilters,
-  setFilters: (novoFiltro) =>
-    set((state) => ({
-      filters: { ...state.filters, ...novoFiltro },
-    })),
+  setFilters: (novoFiltro) => set({ filters: novoFiltro }),
   resetFilters: () => {
     set({ filters: initialFilters });
   },
 
   setPagination: (pagination) => set({ pagination }),
   setRowSelection: (rowSelection) => set({ rowSelection }),
+
+  openModal: () => set({ modalOpen: true }),
+  closeModal: () => set({ modalOpen: false }),
 }));
 
-mountStoreDevtool("useStoreTablePlanoContas", useStoreTablePlanoContas);
+// mountStoreDevtool("useStoreTableFornecedor", useStoreTableFornecedor);

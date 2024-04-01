@@ -18,7 +18,7 @@ export type RowFornecedor = {
 
 const openModal = useStoreFornecedor.getState().openModal;
 
-export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
+export const columnsTable: ColumnDef<RowFornecedor>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -73,7 +73,7 @@ export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
     accessorKey: "nome",
     cell: (info) => {
       const nome = info.getValue<string>();
-      return <span>{nome}</span>;
+      return <span>{nome.toUpperCase()}</span>;
     },
   },
   {
@@ -81,7 +81,7 @@ export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
     accessorKey: "razao",
     cell: (info) => {
       const razao = info.getValue<string>();
-      return <span>{razao}</span>;
+      return <span>{razao && razao.toUpperCase()}</span>;
     },
   },
   {

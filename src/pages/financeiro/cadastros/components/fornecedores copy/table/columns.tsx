@@ -2,25 +2,23 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
-import { useStorePlanoContas } from "../plano-conta/store-plano-contas";
+import { useStoreFornecedor } from "../fornecedor/store-fornecedor";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type RowPlanoConta = {
+export type RowFornecedor = {
   select: ReactNode;
   id: string;
-  codigo: string;
-  descricao: string;
-  tipo: string;
-  grupo_economico: string;
+  cnpj: string;
+  nome: string;
+  razao: string;
   ativo: string;
 };
 
-const openModal = useStorePlanoContas.getState().openModal;
+const openModal = useStoreFornecedor.getState().openModal;
 
-export const columnsTablePlanoContas: ColumnDef<RowPlanoConta>[] = [
+export const columnsTable: ColumnDef<RowFornecedor>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -50,57 +48,46 @@ export const columnsTablePlanoContas: ColumnDef<RowPlanoConta>[] = [
     ),
   },
   {
-    header: "AÇÃO",
     accessorKey: "id",
+    header: "ID",
     cell: (info) => (
-      <FileSearch2
-        className="text-blue-500"
+      <span
+        className="font-semibold cursor-pointer text-blue-500"
         onClick={() => openModal(info.getValue<number>().toString())}
-      />
+      >
+        {info.getValue<number>()}
+      </span>
     ),
-    enableSorting: false,
+    sortDescFirst: true,
   },
   {
-    header: "CÓDIGO",
-    accessorKey: "codigo",
+    header: "CNPJ",
+    accessorKey: "cnpj",
     cell: (info) => {
-      const codigo = info.getValue<string>();
-      return <span>{codigo}</span>;
+      const cnpj = info.getValue<string>();
+      return <span>{cnpj}</span>;
     },
   },
   {
-    header: "DESCRIÇÃO",
-    accessorKey: "descricao",
+    header: "NOME FANTASIA",
+    accessorKey: "nome",
     cell: (info) => {
-      const descricao = info.getValue<string>();
-      return <span>{descricao}</span>;
+      const nome = info.getValue<string>();
+      return <span>{nome.toUpperCase()}</span>;
     },
   },
   {
-    header: "TIPO",
-    accessorKey: "tipo",
+    header: "RAZÃO SOCIAL",
+    accessorKey: "razao",
     cell: (info) => {
-      const tipo = info.getValue<string>();
-      let color = "";
-      if (tipo === "Receita") {
-        color = "text-green-500";
-      } else if (tipo === "Despesa") {
-        color = "text-red-500";
-      }
-      return <span className={`${color}`}>{tipo}</span>;
-    },
-  },
-  {
-    header: "GRUPO ECONÔMICO",
-    accessorKey: "grupo_economico",
-    cell: (info) => {
-      const grupo_economico = info.getValue<string>();
-      return <span>{grupo_economico}</span>;
+      const razao = info.getValue<string>();
+      return <span>{razao && razao.toUpperCase()}</span>;
     },
   },
   {
     header: "STATUS",
     accessorKey: "active",
+
     cell: (info) => {
       const active = info.getValue();
       let color = "";

@@ -19,8 +19,8 @@ const FormPlanoContas = ({
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   console.log("RENDER - PlanoContas:", id);
-  const { mutate: insertOne } = usePlanoContas().useInsertOne();
-  const { mutate: update } = usePlanoContas().useUpdate();
+  const { mutate: insertOne } = usePlanoContas().insertOne();
+  const { mutate: update } = usePlanoContas().update();
   const modalEditing = useStorePlanoContas().modalEditing;
   const editModal = useStorePlanoContas().editModal;
   const closeModal = useStorePlanoContas().closeModal;

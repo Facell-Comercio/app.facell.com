@@ -54,7 +54,7 @@ const ModalPlanoContas = () => {
   const id = useStorePlanoContas().id;
   const formRef = useRef(null);
 
-  const { data, isLoading } = usePlanoContas().useGetOne(id);
+  const { data, isLoading } = usePlanoContas().getOne(id);
   const newData: PlanoContasSchema & Record<string, any> =
     {} as PlanoContasSchema & Record<string, any>;
 
