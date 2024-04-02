@@ -3,6 +3,7 @@ import {
   checkUserDepartments,
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
+import Bancos from "./components/bancos/Bancos";
 import CentroCustos from "./components/centro-de-custos/CentroCustos";
 import Fornecedores from "./components/fornecedores/Fornecedores";
 import PlanoContas from "./components/plano-de-contas/PlanoContas";
@@ -25,6 +26,10 @@ const CadastrosPage = () => {
             (checkUserPermission("MASTER") && (
               <TabsTrigger value="centro-custos">Centro de Custo</TabsTrigger>
             ))}
+          {checkUserDepartments("FINANCEIRO") ||
+            (checkUserPermission("MASTER") && (
+              <TabsTrigger value="bancos">Bancos</TabsTrigger>
+            ))}
         </TabsList>
         <TabsContent value="fornecedores">
           <Fornecedores />
@@ -34,6 +39,9 @@ const CadastrosPage = () => {
         </TabsContent>
         <TabsContent value="centro-custos">
           <CentroCustos />
+        </TabsContent>
+        <TabsContent value="bancos">
+          <Bancos />
         </TabsContent>
       </Tabs>
     </div>

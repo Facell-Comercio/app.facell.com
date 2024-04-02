@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFornecedores } from "@/hooks/useFornecedores";
 import { useRef } from "react";
-import FormFornecedor from "./FormFornecedor";
+import FormFornecedor from "./Form";
 import { useStoreFornecedor } from "./store-fornecedor";
 
 export type FornecedorSchema = {
@@ -93,8 +93,6 @@ const ModalFornecedor = () => {
       newData[key] = data?.data[key];
     }
   }
-
-  console.log(newData);
 
   function handleClickCancel() {
     editModal(false);

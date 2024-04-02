@@ -14,8 +14,8 @@ import { api } from "@/lib/axios";
 import { Contact, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useWatch } from "react-hook-form";
-import { FornecedorSchema } from "./ModalFornecedor";
-import { useFormFornecedorData } from "./form-fornecedor-data";
+import { FornecedorSchema } from "./Modal";
+import { useFormFornecedorData } from "./form-data";
 import { useStoreFornecedor } from "./store-fornecedor";
 
 const FormFornecedor = ({
@@ -93,8 +93,6 @@ const FormFornecedor = ({
   };
 
   const onSubmitData = (data: FornecedorSchema) => {
-    console.log(data);
-
     if (id) update(data);
     if (!id) insertOne(data);
 
@@ -102,7 +100,7 @@ const FormFornecedor = ({
     closeModal();
   };
 
-  console.log(form.formState.errors);
+  // console.log(form.formState.errors);
 
   return (
     <div className="max-w-full overflow-x-hidden">

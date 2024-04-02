@@ -2,7 +2,7 @@ import { normalizeCepNumber, normalizeCnpjNumber, normalizePhoneNumber } from "@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { FornecedorSchema } from "./ModalFornecedor";
+import { FornecedorSchema } from "./Modal";
 
 const schemaFornecedor = z
   .object({

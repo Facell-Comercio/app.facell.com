@@ -1,6 +1,6 @@
 
 import { api } from "@/lib/axios";
-import { FornecedorSchema } from "@/pages/financeiro/cadastros/components/fornecedores/fornecedor/ModalFornecedor";
+import { FornecedorSchema } from "@/pages/financeiro/cadastros/components/fornecedores/fornecedor/Modal";
 import { getAllParams } from "@/types/params";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -19,7 +19,7 @@ export const useFornecedores = () => {
                 enabled: !!id,
                 queryKey: ['fin_fornecedores', id],
                 queryFn: async () => {
-                    console.log(`Buscando título com base no ID: ${id}`)
+                    console.log(`Buscando fornecedor com base no ID: ${id}`)
                     return await api.get(`/financeiro/fornecedores/${id}`)
                 },
             }),
