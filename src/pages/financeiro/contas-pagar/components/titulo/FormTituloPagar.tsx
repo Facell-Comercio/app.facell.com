@@ -17,14 +17,14 @@ import ModalPlanoContas, {
   ItemPlanoContas,
 } from "@/pages/financeiro/components/ModalPlanoContas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Contact, Divide, DollarSign, FileIcon, FileText, Save } from "lucide-react";
+import { Ban, Contact, Divide, DollarSign, Edit, FileIcon, FileText, Save } from "lucide-react";
 import { useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { ItemRateioTitulo, TituloPagar, initialPropsTitulo } from "./store-titulo";
 import FormFileUpload from "@/components/custom/FormFileUpload";
-import { checkUserDepartments } from "@/helpers/checkAuthorization";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaTitulo = z.object({
@@ -36,60 +36,75 @@ const schemaTitulo = z.object({
   id_centro_custo: z.coerce.number(),
 
   // Outros
-  data_emissao: z.date(),
-  data_vencimento: z.date(),
-  num_parcelas: z.coerce.number().min(1),
-  parcela: z.number().min(1),
-  valor: z.number().min(0),
+  data_emissao: z.coerce.date(),
+  data_vencimento: z.coerce.date(),
+  num_parcelas: z.string(),
+  parcela: z.string(),
+  valor: z.coerce.number(),
   descricao: z
     .string()
     .min(10, { message: "Precisa conter mais que 10 caracteres" }),
 
   // Rateio:
-  id_rateio: z.coerce.number(),
+  id_rateio: z.string(),
   itens_rateio: z.array(
     z.object({
-      id_filial: z.coerce.number(),
+      id_filial: z.string(),
       valor: z.number().min(0),
       percentual: z.number(),
     })
   ),
 
   // Anexos:
-  anexo_nota_fiscal: z.instanceof(FileList).optional(),
   url_nota_fiscal: z.string().optional(),
-
-  anexo_xml_nota: z.instanceof(FileList).optional(),
   url_xml_nota: z.string().optional(),
-
-  anexo_boleto: z.instanceof(FileList).optional(),
   url_boleto: z.string().optional(),
-
-  anexo_contrato: z.instanceof(FileList).optional(),
   url_contrato: z.string().optional(),
-
-  anexo_planilha: z.instanceof(FileList).optional(),
   url_planilha: z.string().optional(),
-
-  anexo_txt: z.instanceof(FileList).optional(),
   url_txt: z.string().optional(),
 });
 
 const FormTituloPagar = ({ id }: { id: string | null }) => {
   console.log("RENDER - Form, titulo:", id);
+  const [modalFornecedorOpen, setModalFornecedorOpen] = useState<boolean>(false);
+  const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(!id || false)
 
   const { data, isLoading, isError } = useTituloPagar().getOne(id);
-  const { titulo, itens_rateio: itensRateioTitulo } = data?.data ?? {
-    titulo: initialPropsTitulo,
-    itens_rateio: [],
-  };
 
-  const canEdit = titulo?.status === 'Solicitado' || (
-    checkUserDepartments('FINANCEIRO')
-    && titulo?.status !== 'Aprovado'
-    && titulo?.status !== 'Negado'
-    && titulo?.status !== 'Pago'
+  const { titulo, itens_rateio: itensRateioTitulo } = data?.data || { titulo: {}, itens_rateio: [] }
+
+  for (const key in titulo) {
+    if (Object.hasOwnProperty.call(titulo, key)) {
+      const tipo_campo = typeof titulo[key]
+      const val = titulo[key]
+      if (tipo_campo === 'number') {
+        titulo[key] = String(val);
+      }
+      if (val === null) {
+        titulo[key] = '';
+      }
+    }
+  }
+
+  console.log('Titulo', titulo)
+
+  const statusTitulo = titulo?.status || ''
+  const isMaster = checkUserDepartments('FINANCEIRO') || checkUserPermission('MASTER')
+  const canEdit = !id || (
+    statusTitulo === 'Solicitado' || (
+      isMaster
+      && statusTitulo !== 'Aprovado'
+      && statusTitulo !== 'Negado'
+      && statusTitulo !== 'Pago'
+    )
   )
+
+  const handleEditing = (mode: boolean) => {
+    if (canEdit) {
+      setIsEditing(mode)
+    }
+  }
 
   const itens_rateio: ItemRateioTitulo[] = []
   itensRateioTitulo?.forEach((item_rateio: ItemRateioTitulo) => {
@@ -103,20 +118,14 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   });
 
   const form = useForm<TituloPagar>({
-    mode: 'onBlur',
     resolver: zodResolver(schemaTitulo),
     values: {
       ...titulo, itens_rateio
     },
-    defaultValues: {
-      ...titulo, itens_rateio,
-    },
+    defaultValues: initialPropsTitulo,
   });
 
   const { setValue } = form;
-
-  const [modalFornecedorOpen, setModalFornecedorOpen] = useState(false);
-  const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
 
   // Controle de fornecedor
   function showModalFornecedor() {
@@ -132,9 +141,10 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
   // Controle de plano de contas
   function showModalPlanoContas() {
-    if (!canEdit) return;
-    console.log('Abrir modal plano contas')
-    setModalPlanoContasOpen(true)
+    if (canEdit) {
+      console.log('Abrir modal plano contas')
+      setModalPlanoContasOpen(true)
+    }
   }
 
   function handleSelectionPlanoContas(item: ItemPlanoContas) {
@@ -210,19 +220,14 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   }
 
   return (
-    <div className="max-w-full max-h-[90vh] overflow-hidden">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex justify-between">
-            {titulo?.status && <span className={`py-2 px-4 my-2 w-fit text-md font-bold rounded-sm ${generateStatusColor({ status: titulo?.status || '', bg: true, text: true })}`}>{titulo.status}</span>}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="flex flex-col max-w-full max-h-[85vh] overflow-hidden">
+          {titulo?.status && (<div className="flex-1 py-2">
+            <div className={`py-1 text-center border text-md font-bold rounded-sm ${generateStatusColor({ status: titulo?.status || '', bg: true, text: true })}`}>{titulo.status}</div>
+          </div>)}
 
-            <Button type="submit" size="lg">
-              <Save className="me-2" />
-              Salvar
-            </Button>
-          </div>
-
-          <ScrollArea className="max-h-[80vh] overflow-auto pe-3" >
+          <ScrollArea className="flex-1 overflow-auto pe-3" >
             <div className="max-w-full flex flex-col lg:flex-row gap-5">
 
               {/* Primeira coluna */}
@@ -237,6 +242,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                   <div className="flex flex-wrap gap-3">
                     <FormInput
                       type="hidden"
+                      readOnly={true}
                       name="id_filial"
                       control={form.control}
                     />
@@ -245,6 +251,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       name="cnpj_fornecedor"
                       readOnly={true}
                       label="CPF/CNPJ"
+                      fnMask={normalizeCnpjNumber}
                       control={form.control}
                     />
                     <FormInput
@@ -256,7 +263,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     />
 
                     <ModalFornecedores
-                      open={(canEdit && modalFornecedorOpen)}
+                      open={(isEditing && modalFornecedorOpen)}
                       handleSelecion={handleSelectionFornecedor}
                       onOpenChange={() => setModalFornecedorOpen((prev) => !prev)}
                     />
@@ -268,12 +275,13 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     <FileText />{" "}
                     <span className="text-lg font-bold ">Dados do título</span>
                   </div>
-                  <div className="flex gap-3 flex-wrap">
+                  <div className="flex gap-3 flex-wrap items-end">
                     <FormSelect
-                      disabled={!canEdit}
-                      name="tipo_solicitacao"
-                      control={form.control}
+                      disabled={!isEditing}
+                      name="id_tipo_solicitacao"
                       label={"Tipo de solicitação"}
+                      control={form.control}
+                      className="min-w-[32ch]"
                       options={[
                         { value: "1", label: "Com nota fiscal" },
                         { value: "2", label: "Antecipado / Nota fiscal futura" },
@@ -282,34 +290,38 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     />
 
                     <SelectFilial
-                      disabled={!canEdit}
+                      disabled={!isEditing}
                       name="id_filial"
                       label="Filial"
+                      className="min-w-[40ch]"
                       control={form.control}
                     />
 
                     {/* Plano contas */}
                     <FormInput
                       type="hidden"
+                      readOnly={true}
                       name="id_plano_contas"
                       control={form.control}
                     />
                     <FormItem>
                       <div className="flex justify-between items-end">
                         <FormLabel>Plano de contas</FormLabel>
-                        <Button type='button' onClick={showModalPlanoContas} size={'sm'}>Selecionar Plano de Contas</Button>
                       </div>
-                      <FormInput
-                        className="min-w-[50ch]"
-                        readOnly
-                        name="plano_contas"
-                        placeholder="Selecione o plano de contas"
-                        control={form.control}
-                      />
+
+                      <Button type="button" variant={'ghost'} onClick={showModalPlanoContas} className="flex-1 p-0">
+                        <FormInput
+                          className="min-w-[50ch]"
+                          readOnly={true}
+                          name="plano_contas"
+                          placeholder="Selecione o plano de contas"
+                          control={form.control}
+                        />
+                      </Button>
                     </FormItem>
 
                     <ModalPlanoContas
-                      open={canEdit && modalPlanoContasOpen}
+                      open={isEditing && modalPlanoContasOpen}
                       id_filial={watchIdFilial}
                       onOpenChange={() =>
                         setModalPlanoContasOpen((prev) => !prev)
@@ -318,7 +330,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     />
 
                     <FormSelect
-                      disabled={!canEdit}
+                      disabled={!isEditing}
                       name="centro_custo"
                       control={form.control}
                       label={"Centro de custo"}
@@ -331,12 +343,11 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     />
 
                     <FormSelect
-                      disabled={!canEdit}
+                      disabled={!isEditing}
                       name="forma_pagamento"
                       control={form.control}
                       label={"Forma de pagamento"}
                       className={"min-w-[30ch]"}
-                      defaultValue={titulo.id_forma_pagamento.toString()}
                       options={[
                         { value: "1", label: "Boleto" },
                         { value: "2", label: "Débito em conta" },
@@ -350,14 +361,14 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     />
 
                     <FormInput
-                      readOnly={!canEdit}
+                      readOnly={!isEditing}
                       name="num_parcelas"
                       type={"number"}
                       label="Número de parcelas"
                       control={form.control}
                     />
                     <FormInput
-                      readOnly={!canEdit}
+                      readOnly={!isEditing}
                       name="parcela"
                       type={"number"}
                       label="Parcela"
@@ -365,20 +376,20 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     />
 
                     <FormDateInput
-                      disabled={!canEdit}
+                      disabled={!isEditing}
                       name="data_emissao"
                       label="Data de emissão"
                       control={form.control}
                     />
                     <FormDateInput
-                      disabled={!canEdit}
+                      disabled={!isEditing}
                       name="data_vencimento"
                       label="Data de vencimento"
                       control={form.control}
                     />
 
                     <FormInput
-                      readOnly={!canEdit}
+                      readOnly={!isEditing}
                       className="min-w-[20ch]"
                       name="valor"
                       control={form.control}
@@ -387,7 +398,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     />
 
                     <FormInput
-                      readOnly={!canEdit}
+                      readOnly={!isEditing}
                       className="min-w-[400px]"
                       name="descricao"
                       label="Descrição do pagamento"
@@ -404,8 +415,8 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
                   <div className="flex gap-3">
                     <FormSelect
-                      name="tipo_rateio"
-                      disabled={!canEdit}
+                      name="id_rateio"
+                      disabled={!isEditing}
                       control={form.control}
                       label={"Tipo de rateio"}
                       className={"min-w-[30ch]"}
@@ -423,7 +434,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
                   <div className="flex justify-between items-baseline border mt-3">
                     <FormLabel>Itens do rateio</FormLabel>
-                    {rateioManual && (
+                    {isEditing && rateioManual && (
                       <Button type="button" onClick={addItemRateio}>
                         Novo item
                       </Button>
@@ -432,10 +443,12 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                   <div className="flex flex-col gap-3 mt-3">
                     <table>
                       <thead>
-                        <th>Filial</th>
-                        <th>Percentual</th>
-                        <th>Valor</th>
-                        {rateioManual && <th>Ação</th>}
+                        <tr>
+                          <th>Filial</th>
+                          <th>Percentual</th>
+                          <th>Valor</th>
+                          {isEditing && rateioManual && <th>Ação</th>}
+                        </tr>
                       </thead>
                       <tbody>
                         {itensRateio?.map((itemRateio, index) => (
@@ -443,32 +456,32 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                             <td className="p-1">
                               <SelectFilial
                                 name={`itens_rateio.${index}.id_filial`}
-                                disabled={!rateioManual}
+                                disabled={!(isEditing && rateioManual)}
                                 control={form.control}
                               />
                             </td>
                             <td className="p-1">
-                              <Input
-                                className=""
-                                readOnly={!rateioManual}
+                              <FormInput
+                                readOnly={!(isEditing && rateioManual)}
                                 type="number"
-                                value={(
-                                  parseFloat(itemRateio.percentual) * 100
-                                ).toFixed(2)}
+                                name={`itens_rateio.${index}.percentual`}
+                                control={form.control}
+
                               />
                             </td>
                             <td className="p-1">
-                              <Input
-                                className=""
-                                readOnly={!rateioManual}
+                              <FormInput
+                                readOnly={!(isEditing && rateioManual)}
                                 type="number"
-                                value={itemRateio.valor}
+                                name={`itens_rateio.${index}.valor`}
+                                control={form.control}
                               />
                             </td>
-                            {rateioManual && (
+                            {isEditing && rateioManual && (
                               <td className="p-1">
                                 <Button
                                   type="button"
+                                  size={'sm'}
                                   variant="destructive"
                                   onClick={() => {
                                     removeItemRateio(index);
@@ -497,24 +510,50 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
               </div>
 
               {/* Segunda coluna */}
-              <div className="max-w-[300px] flex shrink-0 flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
+              <div className="max-w-full lg:max-w-[300px] flex shrink-0 flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
                 <div className="flex gap-2 font-bold mb-3">
                   <FileIcon /> <span>Anexos</span>
                 </div>
 
-                <FormFileUpload disabled={!canEdit} label='XML Nota fiscal' name="url_xml" mediaType="xml" control={form.control} />
-                <FormFileUpload disabled={!canEdit} label='Nota fiscal' name="url_nota_fiscal" mediaType="pdf" control={form.control} />
-                <FormFileUpload disabled={!canEdit} label='Boleto' name="url_boleto" mediaType="pdf" control={form.control} />
-                <FormFileUpload disabled={!canEdit} label='Contrato/Autorização' name="url_contrato" mediaType="etc" control={form.control} />
-                <FormFileUpload disabled={!canEdit} label='Planilha' name="url_planilha" mediaType="excel" control={form.control} />
-                <FormFileUpload disabled={!canEdit} label='Arquivo remessa' name="url_txt" mediaType="txt" control={form.control} />
+                <FormFileUpload disabled={!isEditing} label='XML Nota fiscal' name="url_xml" mediaType="xml" control={form.control} />
+                <FormFileUpload disabled={!isEditing} label='Nota fiscal' name="url_nota_fiscal" mediaType="pdf" control={form.control} />
+                <FormFileUpload disabled={!isEditing} label='Boleto' name="url_boleto" mediaType="pdf" control={form.control} />
+                <FormFileUpload disabled={!isEditing} label='Contrato/Autorização' name="url_contrato" mediaType="etc" control={form.control} />
+                <FormFileUpload disabled={!isEditing} label='Planilha' name="url_planilha" mediaType="excel" control={form.control} />
+                <FormFileUpload disabled={!isEditing} label='Arquivo remessa' name="url_txt" mediaType="txt" control={form.control} />
 
               </div>
             </div>
           </ScrollArea>
-        </form>
-      </Form>
-    </div>
+
+          <div className="flex-1 flex items-center justify-between mt-3">
+
+            <div className="flex items-center gap-2 ms-auto">
+              {/* Editar */}
+              {canEdit && !isEditing && <Button
+                onClick={() => { handleEditing(true) }}
+                type="button"
+                size="lg"
+                className="ms-auto text-orange-950 bg-orange-500 hover:bg-orange-400 hover:dark:bg-orange-700 dark:bg-orange-600"
+              ><Edit className="me-2" /> Editar</Button>}
+
+              {/* Cancelar */}
+              {id && isEditing &&
+                <Button
+                  onClick={() => { handleEditing(false) }}
+                  type="button"
+                  variant={'secondary'}
+                  size="lg"
+                  className="ms-auto bg-slate-300 hover:bg-slate-400 dark:bg-slate-700"
+                ><Ban className="me-2" /> Cancelar</Button>}
+
+              {/* Salvar */}
+              {isEditing && <Button type="submit" size="lg" className="ms-auto"><Save className="me-2" /> Salvar</Button>}
+            </div>
+          </div>
+        </div>
+      </form>
+    </Form>
   );
 };
 

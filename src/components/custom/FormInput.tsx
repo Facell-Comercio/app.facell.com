@@ -14,6 +14,7 @@ interface IFormInput {
   className?: string
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  fnMask?: (val:string)=>void
 }
 
 import * as React from "react";
@@ -41,7 +42,7 @@ Input.displayName = "Input"
 
 export { Input };
 
-const FormInput = ({ name, type, control, label, placeholder, description, readOnly, disabled, className, onBlur, onChange }: IFormInput) => {
+const FormInput = ({ name, type, control, label, placeholder, description, readOnly, disabled, className, onBlur, onChange, fnMask }: IFormInput) => {
   return (
     <FormField
       control={control}
@@ -54,7 +55,7 @@ const FormInput = ({ name, type, control, label, placeholder, description, readO
               ref={field.ref}
               type={type || 'text'}
               name={field.name}
-              value={field.value}
+              value={typeof fnMask === 'function' ? fnMask(field.value) : field.value}
               placeholder={placeholder}
               readOnly={readOnly}
               disabled={typeof disabled === "undefined" ? field.disabled : disabled}
