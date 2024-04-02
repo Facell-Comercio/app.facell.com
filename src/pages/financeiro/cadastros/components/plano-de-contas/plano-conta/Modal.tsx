@@ -12,13 +12,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePlanoContas } from "@/hooks/usePlanoConta";
 import { useRef } from "react";
-import FormPlanoContas from "./FormPlanoContas";
-import { useStorePlanoContas } from "./store-plano-contas";
+import FormPlanoContas from "./Form";
+import { useStorePlanoContas } from "./store";
 
 export type PlanoContasSchema = {
   id: string;
   codigo: string;
-  ativo: boolean;
+  active: boolean;
   descricao: string;
   codigo_pai: string;
   descricao_pai: string;
@@ -34,7 +34,7 @@ const initialPropsPlanoContas: PlanoContasSchema = {
   // Identificador do plano de contas
   id: "",
   codigo: "",
-  ativo: true,
+  active: true,
   descricao: "",
   codigo_pai: "",
   descricao_pai: "",
@@ -54,7 +54,7 @@ const ModalPlanoContas = () => {
   const id = useStorePlanoContas().id;
   const formRef = useRef(null);
 
-  const { data, isLoading } = usePlanoContas().useGetOne(id);
+  const { data, isLoading } = usePlanoContas().getOne(id);
   const newData: PlanoContasSchema & Record<string, any> =
     {} as PlanoContasSchema & Record<string, any>;
 

@@ -10,79 +10,37 @@ import {
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useFornecedores } from "@/hooks/useFornecedores";
+import { useCentroCustos } from "@/hooks/useCentroCustos";
 import { useRef } from "react";
-import FormFornecedor from "./FormFornecedor";
-import { useStoreFornecedor } from "./store-fornecedor";
+import FormCentroCustos from "./Form";
+import { useStoreCentroCustos } from "./store";
 
-export type FornecedorSchema = {
+export type CentroCustosSchema = {
   id: string;
   active?: boolean;
-  cnpj: string;
   nome: string;
-  razao: string;
-  cep: string;
-  logradouro: string;
-  numero: string;
-  complemento: string | null;
-  bairro: string;
-  municipio: string;
-  uf: string;
-  email: string;
-  telefone: string;
-  id_forma_pagamento: string;
-  id_tipo_chave_pix: string;
-  chave_pix: string;
-  id_banco: string;
-  agencia: string;
-  dv_agencia: string | null;
-  conta: string;
-  dv_conta: string;
-  cnpj_favorecido: string;
-  favorecido: string;
+  id_grupo_economico: string;
 };
 
-const initialPropsFornecedor: FornecedorSchema = {
-  // Dados Fornecedor
+const initialPropsCentroCustos: CentroCustosSchema = {
+  // Dados CentroCustos
   id: "",
   active: true,
-  cnpj: "",
   nome: "",
-  razao: "",
-  cep: "",
-  logradouro: "",
-  numero: "",
-  complemento: "",
-  bairro: "",
-  municipio: "",
-  uf: "",
-  email: "",
-  telefone: "",
-
-  // Dados Bancários
-  id_forma_pagamento: "",
-  id_tipo_chave_pix: "",
-  id_banco: "",
-  chave_pix: "",
-  agencia: "",
-  dv_agencia: "",
-  conta: "",
-  dv_conta: "",
-  cnpj_favorecido: "",
-  favorecido: "",
+  id_grupo_economico: "",
 };
 
-const ModalFornecedor = () => {
-  const modalOpen = useStoreFornecedor().modalOpen;
-  const closeModal = useStoreFornecedor().closeModal;
-  const modalEditing = useStoreFornecedor().modalEditing;
-  const editModal = useStoreFornecedor().editModal;
-  const id = useStoreFornecedor().id;
+const ModalCentroCustos = () => {
+  const modalOpen = useStoreCentroCustos().modalOpen;
+  const closeModal = useStoreCentroCustos().closeModal;
+  const modalEditing = useStoreCentroCustos().modalEditing;
+  const editModal = useStoreCentroCustos().editModal;
+  const id = useStoreCentroCustos().id;
   const formRef = useRef(null);
 
-  const { data, isLoading } = useFornecedores().getOne(id);
-  const newData: FornecedorSchema & Record<string, any> =
-    {} as FornecedorSchema & Record<string, any>;
+  const { data, isLoading } = useCentroCustos().getOne(id);
+  const newData: CentroCustosSchema & Record<string, any> =
+    {} as CentroCustosSchema & Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -94,7 +52,7 @@ const ModalFornecedor = () => {
     }
   }
 
-  console.log(newData);
+  console.log("NEW DATA: ", newData);
 
   function handleClickCancel() {
     editModal(false);
@@ -106,14 +64,14 @@ const ModalFornecedor = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {id ? `Fornecedor: ${id}` : "Novo fornecedor"}
+            {id ? `Centro de Custos: ${id}` : "Novo Centro de Custos"}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <FormFornecedor
+            <FormCentroCustos
               id={id}
-              data={newData.id ? newData : initialPropsFornecedor}
+              data={newData.id ? newData : initialPropsCentroCustos}
               formRef={formRef}
             />
           ) : (
@@ -137,4 +95,4 @@ const ModalFornecedor = () => {
   );
 };
 
-export default ModalFornecedor;
+export default ModalCentroCustos;

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface useStoreFornecedor {
+interface useStoreCentroCustos {
   id?: string | null;
   modalEditing: boolean;
   modalOpen: boolean;
@@ -10,7 +10,7 @@ interface useStoreFornecedor {
   editModal: (bool: boolean) => void;
 }
 
-export const useStoreFornecedor = create<useStoreFornecedor>((set) => ({
+export const useStoreCentroCustos = create<useStoreCentroCustos>((set) => ({
   id: null,
   modalEditing: false,
   modalOpen: false,

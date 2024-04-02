@@ -5,9 +5,9 @@ import FormSwitch from "@/components/custom/FormSwitch";
 import { Form } from "@/components/ui/form";
 import { usePlanoContas } from "@/hooks/usePlanoConta";
 import { Fingerprint, Info } from "lucide-react";
-import { PlanoContasSchema } from "./ModalPlanoContas";
+import { PlanoContasSchema } from "./Modal";
 import { useFormPlanoContaData } from "./form-plano-contas-data";
-import { useStorePlanoContas } from "./store-plano-contas";
+import { useStorePlanoContas } from "./store";
 
 const FormPlanoContas = ({
   id,
@@ -19,8 +19,8 @@ const FormPlanoContas = ({
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   console.log("RENDER - PlanoContas:", id);
-  const { mutate: insertOne } = usePlanoContas().useInsertOne();
-  const { mutate: update } = usePlanoContas().useUpdate();
+  const { mutate: insertOne } = usePlanoContas().insertOne();
+  const { mutate: update } = usePlanoContas().update();
   const modalEditing = useStorePlanoContas().modalEditing;
   const editModal = useStorePlanoContas().editModal;
   const closeModal = useStorePlanoContas().closeModal;
@@ -53,7 +53,7 @@ const FormPlanoContas = ({
                     </span>
                   </div>
                   <FormSwitch
-                    name="ativo"
+                    name="active"
                     disabled={!modalEditing}
                     label="Ativo"
                     control={form.control}

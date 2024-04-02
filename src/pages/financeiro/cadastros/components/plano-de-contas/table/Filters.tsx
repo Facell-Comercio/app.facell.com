@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useStoreTablePlanoContas } from "./table-plano-contas/store-table";
+import { useStoreTablePlanoContas } from "./store-table";
 
 const FiltersPlanoContas = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTablePlanoContas((state) => state.filters);
@@ -87,9 +87,9 @@ const FiltersPlanoContas = ({ refetch }: { refetch: () => void }) => {
                 }}
               />
               <Select
-                value={filters.ativo}
+                value={filters.active}
                 onValueChange={(ativo) => {
-                  setFilters({ ativo: ativo });
+                  setFilters({ active: ativo });
                 }}
               >
                 <SelectTrigger className="w-[180px]">

@@ -1,4 +1,4 @@
-import { SortingState } from "@tanstack/react-table";
+// import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 
 export interface Pagination {
@@ -23,13 +23,10 @@ export interface SortingItem {
 
 export interface State {
   rowCount: number;
-  sorting?: SortingState;
   pagination: Pagination;
   isAllSelected: boolean;
   rowSelection: RowSelection;
   filters: Filters;
-
-  id_user: string;
 
   modalOpen: boolean;
 }
@@ -37,7 +34,6 @@ export interface State {
 export interface Actions {
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
-  setSorting: (sorting: SortingState) => void;
   setPagination: (pagination: Pagination) => void;
   setRowSelection: (rowSelection: RowSelection) => void;
 
@@ -45,15 +41,12 @@ export interface Actions {
   closeModal: () => void;
 }
 
-export const useStoreFiliais = create<State & Actions>((set) => ({
-  id_user: "",
-
+export const useStoreTableFornecedor = create<State & Actions>((set) => ({
   // Modal
   modalOpen: false,
 
   // Table
   rowCount: 0,
-  sorting: [],
   pagination: { pageIndex: 0, pageSize: 15 },
   isAllSelected: false,
   rowSelection: {},
@@ -65,10 +58,11 @@ export const useStoreFiliais = create<State & Actions>((set) => ({
     set({ filters: initialFilters });
   },
 
-  setSorting: (sorting) => set({ sorting }),
   setPagination: (pagination) => set({ pagination }),
   setRowSelection: (rowSelection) => set({ rowSelection }),
 
-  openModal: (id_user) => set({ id_user, modalOpen: true }),
+  openModal: () => set({ modalOpen: true }),
   closeModal: () => set({ modalOpen: false }),
 }));
+
+// mountStoreDevtool("useStoreTableFornecedor", useStoreTableFornecedor);

@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import { Checkbox } from "@/components/ui/checkbox"
-import { ColumnDef } from "@tanstack/react-table"
-import { FileSearch2 } from "lucide-react"
-import { ReactNode } from "react"
-import { useStorePlanoContas } from "../plano-conta/store-plano-contas"
+import { Checkbox } from "@/components/ui/checkbox";
+import { ColumnDef } from "@tanstack/react-table";
+import { FileSearch2 } from "lucide-react";
+import { ReactNode } from "react";
+import { useStorePlanoContas } from "../plano-conta/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type RowPlanoConta = {
-  select: ReactNode
-  id: string
-  codigo: string
-  descricao: string
-  tipo: string
-  grupo_economico: string
-  ativo: string
-}
+  select: ReactNode;
+  id: string;
+  codigo: string;
+  descricao: string;
+  tipo: string;
+  grupo_economico: string;
+  ativo: string;
+};
 
-const openModal = useStorePlanoContas.getState().openModal
+const openModal = useStorePlanoContas.getState().openModal;
 
-export const columnsTablePlanoContas: ColumnDef<RowPlanoConta>[] = [
+export const columnsTable: ColumnDef<RowPlanoConta>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -31,7 +31,6 @@ export const columnsTablePlanoContas: ColumnDef<RowPlanoConta>[] = [
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-
         />
       </div>
     ),
@@ -54,7 +53,10 @@ export const columnsTablePlanoContas: ColumnDef<RowPlanoConta>[] = [
     header: "AÇÃO",
     accessorKey: "id",
     cell: (info) => (
-      <FileSearch2 className="text-blue-500" onClick={() => openModal(info.getValue<number>().toString() )}/>
+      <FileSearch2
+        className="text-blue-500"
+        onClick={() => openModal(info.getValue<number>().toString())}
+      />
     ),
     enableSorting: false,
   },
@@ -71,7 +73,7 @@ export const columnsTablePlanoContas: ColumnDef<RowPlanoConta>[] = [
     accessorKey: "descricao",
     cell: (info) => {
       const descricao = info.getValue<string>();
-      return <span>{descricao}</span>;
+      return <span>{descricao.toUpperCase()}</span>;
     },
   },
   {
@@ -93,21 +95,21 @@ export const columnsTablePlanoContas: ColumnDef<RowPlanoConta>[] = [
     accessorKey: "grupo_economico",
     cell: (info) => {
       const grupo_economico = info.getValue<string>();
-      return <span>{grupo_economico}</span>;
+      return <span>{grupo_economico.toUpperCase()}</span>;
     },
   },
   {
     header: "STATUS",
-    accessorKey: "ativo",
+    accessorKey: "active",
     cell: (info) => {
-      const ativo = info.getValue();
+      const active = info.getValue();
       let color = "";
-      if (ativo == 1) {
+      if (active == 1) {
         color = "text-green-500";
-      } else if (ativo == 0) {
+      } else if (active == 0) {
         color = "text-red-500";
       }
-      return <span className={`${color}`}>{ativo?"Ativo":"Inativo"}</span>;
+      return <span className={`${color}`}>{active ? "Ativo" : "Inativo"}</span>;
     },
-  }
-]
+  },
+];

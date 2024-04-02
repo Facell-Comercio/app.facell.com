@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-import { Checkbox } from "@/components/ui/checkbox"
-import { ColumnDef } from "@tanstack/react-table"
-import { ReactNode } from "react"
-import { useStoreFornecedor } from "../fornecedor/store-fornecedor"
+import { Checkbox } from "@/components/ui/checkbox";
+import { ColumnDef } from "@tanstack/react-table";
+import { ReactNode } from "react";
+import { useStoreFornecedor } from "../fornecedor/store-fornecedor";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type RowFornecedor = {
-  select: ReactNode
-  id: string
-  cnpj: string
-  nome: string
-  razao: string
-  ativo: string
-}
+  select: ReactNode;
+  id: string;
+  cnpj: string;
+  nome: string;
+  razao: string;
+  ativo: string;
+};
 
-const openModal = useStoreFornecedor.getState().openModal
+const openModal = useStoreFornecedor.getState().openModal;
 
-export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
+export const columnsTable: ColumnDef<RowFornecedor>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -29,7 +29,6 @@ export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-
         />
       </div>
     ),
@@ -52,7 +51,12 @@ export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
     accessorKey: "id",
     header: "ID",
     cell: (info) => (
-      <span className='font-semibold cursor-pointer text-blue-500' onClick={() => openModal(info.getValue<number>().toString() )}>{info.getValue<number>()}</span>
+      <span
+        className="font-semibold cursor-pointer text-blue-500"
+        onClick={() => openModal(info.getValue<number>().toString())}
+      >
+        {info.getValue<number>()}
+      </span>
     ),
     sortDescFirst: true,
   },
@@ -69,7 +73,7 @@ export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
     accessorKey: "nome",
     cell: (info) => {
       const nome = info.getValue<string>();
-      return <span>{nome}</span>;
+      return <span>{nome.toUpperCase()}</span>;
     },
   },
   {
@@ -77,22 +81,22 @@ export const columnsTableFornecedores: ColumnDef<RowFornecedor>[] = [
     accessorKey: "razao",
     cell: (info) => {
       const razao = info.getValue<string>();
-      return <span>{razao}</span>;
+      return <span>{razao && razao.toUpperCase()}</span>;
     },
   },
   {
     header: "STATUS",
-    accessorKey: "ativo",
-    
+    accessorKey: "active",
+
     cell: (info) => {
-      const ativo = info.getValue();
+      const active = info.getValue();
       let color = "";
-      if (ativo == 1) {
+      if (active == 1) {
         color = "text-green-500";
-      } else if (ativo == 0) {
+      } else if (active == 0) {
         color = "text-red-500";
       }
-      return <span className={`${color}`}>{ativo?"Ativo":"Inativo"}</span>;
+      return <span className={`${color}`}>{active ? "Ativo" : "Inativo"}</span>;
     },
-  }
-]
+  },
+];

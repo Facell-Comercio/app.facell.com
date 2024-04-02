@@ -1,81 +1,50 @@
 
 import { api } from "@/lib/axios";
-import { RowPlanoConta } from "@/pages/financeiro/cadastros/components/plano-de-contas/table-plano-contas/columns-table";
+import { PlanoContasSchema } from "@/pages/financeiro/cadastros/components/plano-de-contas/plano-conta/Modal";
+import { getAllParams } from "@/types/params";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-export interface GetPlanoContasProps {
-    pagination?: {
-        pageIndex?: number;
-        pageLength?: number;
-    };
-    filters: any;
-}
-
-type PlanoContasSchema = {
-    id: string,
-    codigo: string,
-    ativo: boolean,
-    descricao: string,
-    codigo_pai: string,
-    descricao_pai: string,
-  
-    // Parâmetros
-    nivel: string,
-    tipo: string,
-    grupo_economico: string,
-    codigo_conta_estorno: string,
-  }
 
 export const usePlanoContas = () => {
     const queryClient = useQueryClient()
+    return ({
+        getAll : ({ pagination, filters }: getAllParams) => useQuery({
+            queryKey: ['fin_plano_contas', pagination],
+            queryFn: async () => { return await api.get(`financeiro/plano-contas/`, { params: { pagination, filters } }) },
+            placeholderData: keepPreviousData
+        }),
 
-    const useGetAll = ({ pagination, filters }: GetPlanoContasProps) => useQuery({
-        queryKey: ['fin_plano_contas', pagination],
-        queryFn: async () => { return await api.get<RowPlanoConta[] | Error>(`financeiro/plano-contas/`, { params: { pagination, filters } }) },
-        placeholderData: keepPreviousData
+        getOne : (id: string | null | undefined) => useQuery({
+            enabled: !!id,
+            queryKey: ['fin_plano_contas', id],
+            queryFn: async () => {
+                console.log(`Buscando plano de contas com base no ID: ${id}`)
+                return await api.get(`financeiro/plano-contas/${id}`)
+            },
+        }),
+
+        insertOne : () => useMutation({
+            mutationFn: (data:PlanoContasSchema) => {
+                console.log("Criando novo plano de contas:")            
+                return api.post("financeiro/plano-contas", data).then((response)=>response.data)
+            },
+            onSuccess() {
+                queryClient.invalidateQueries({queryKey:['fin_plano_contas']}) 
+            },
+            onError(error) {
+                console.log(error);
+            },
+        }),
+
+        update : () => useMutation({
+            mutationFn: ({id, ...rest}:PlanoContasSchema) => {
+                console.log(`Atualizando plano de contas com base no ID: ${id}`)            
+                return api.put("financeiro/plano-contas/", {id, ...rest}).then((response)=>response.data)
+            },
+            onSuccess() {
+                queryClient.invalidateQueries({queryKey:['fin_plano_contas']}) 
+            },
+            onError(error) {
+                console.log(error);
+            },
     })
-
-    const useGetOne = (id: string | null | undefined) => useQuery({
-        enabled: !!id,
-        queryKey: ['fin_plano_contas', id],
-        queryFn: async () => {
-            console.log(`Buscando plano de contas com base no ID: ${id}`)
-            return await api.get(`financeiro/plano-contas/${id}`)
-        },
-    })
-
-    const useInsertOne = () => useMutation({
-        mutationFn: (data:PlanoContasSchema) => {
-            console.log("Criando novo plano de contas:")            
-            return api.post("financeiro/plano-contas", data).then((response)=>response.data)
-        },
-        onSuccess() {
-            console.log("deu certo!!!!!".toLocaleUpperCase());
-            queryClient.invalidateQueries({queryKey:['fin_plano_contas']}) 
-        },
-        onError(error) {
-            console.log(error);
-        },
-    })
-
-    const useUpdate = () => useMutation({
-        mutationFn: ({id, ...rest}:PlanoContasSchema) => {
-            console.log(`Atualizando plano de contas com base no ID: ${id}`)            
-            return api.put("financeiro/plano-contas/", {id, ...rest}).then((response)=>response.data)
-        },
-        onSuccess() {
-            console.log("deu certo!!!!!".toLocaleUpperCase());
-            queryClient.invalidateQueries({queryKey:['fin_plano_contas']}) 
-        },
-        onError(error) {
-            console.log(error);
-        },
-    })
-
-    return {
-        useGetAll,
-        useGetOne,
-        useInsertOne,
-        useUpdate
-    }
-}
+})}

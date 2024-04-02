@@ -1,4 +1,4 @@
-import { SortingState } from "@tanstack/react-table";
+import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 
 export interface Pagination {
@@ -9,66 +9,60 @@ export interface Pagination {
 type RowSelection = Record<number, boolean>;
 
 export interface Filters {
-  termo?: string;
+  codigo?: string;
+  descricao?: string;
+  tipo?: string;
+  id_grupo_economico?: string;
+  active?: string;
 }
 
 const initialFilters: Filters = {
-  termo: "",
+  codigo: "",
+  descricao: "",
+  tipo: "",
+  id_grupo_economico: "",
+  active: "",
 };
+
+export interface State {
+  rowCount: number;
+  pagination: Pagination;
+  isAllSelected: boolean;
+  rowSelection: RowSelection;
+  filters: Filters;
+}
 
 export interface SortingItem {
   id: string;
   desc: boolean;
 }
 
-export interface State {
-  rowCount: number;
-  sorting?: SortingState;
-  pagination: Pagination;
-  isAllSelected: boolean;
-  rowSelection: RowSelection;
-  filters: Filters;
-
-  id_user: string;
-
-  modalOpen: boolean;
-}
-
 export interface Actions {
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
-  setSorting: (sorting: SortingState) => void;
   setPagination: (pagination: Pagination) => void;
   setRowSelection: (rowSelection: RowSelection) => void;
-
-  openModal: (id: string) => void;
-  closeModal: () => void;
 }
 
-export const useStoreFiliais = create<State & Actions>((set) => ({
-  id_user: "",
-
-  // Modal
-  modalOpen: false,
-
+export const useStoreTablePlanoContas = create<State & Actions>((set) => ({
   // Table
   rowCount: 0,
-  sorting: [],
   pagination: { pageIndex: 0, pageSize: 15 },
   isAllSelected: false,
   rowSelection: {},
 
   // Filters
   filters: initialFilters,
-  setFilters: (novoFiltro) => set({ filters: novoFiltro }),
+  setFilters: (novoFiltro) =>
+    set((state) => ({
+      filters: { ...state.filters, ...novoFiltro },
+    })),
   resetFilters: () => {
     set({ filters: initialFilters });
   },
 
-  setSorting: (sorting) => set({ sorting }),
   setPagination: (pagination) => set({ pagination }),
   setRowSelection: (rowSelection) => set({ rowSelection }),
-
-  openModal: (id_user) => set({ id_user, modalOpen: true }),
-  closeModal: () => set({ modalOpen: false }),
 }));
+
+mountStoreDevtool("useStoreTablePlanoContas", useStoreTablePlanoContas);

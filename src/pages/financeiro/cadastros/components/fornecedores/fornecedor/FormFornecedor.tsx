@@ -4,13 +4,13 @@ import FormSwitch from "@/components/custom/FormSwitch";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import { Form } from "@/components/ui/form";
-import { toast } from "@/components/ui/use-toast";
 import {
   normalizeCepNumber,
   normalizeCnpjNumber,
   normalizePhoneNumber,
 } from "@/helpers/mask";
 import { useFornecedores } from "@/hooks/useFornecedores";
+import { api } from "@/lib/axios";
 import { Contact, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useWatch } from "react-hook-form";
@@ -28,8 +28,12 @@ const FormFornecedor = ({
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   console.log("RENDER - Fornecedor:", id);
-  const [cnpj, setCnpj] = useState<string>();
+  const { mutate: insertOne } = useFornecedores().insertOne();
+  const { mutate: update } = useFornecedores().update();
   const modalEditing = useStoreFornecedor().modalEditing;
+  const editModal = useStoreFornecedor().editModal;
+  const closeModal = useStoreFornecedor().closeModal;
+  const [cnpj, setCnpj] = useState<string>();
   const { form } = useFormFornecedorData(data);
 
   const watchFormaPagamento = useWatch({
@@ -37,20 +41,24 @@ const FormFornecedor = ({
     name: "id_forma_pagamento",
   });
 
-  //todo setar os valores do getCnpj no form
-
   async function axiosGetCnpjData() {
-    const { data: cnpjData } = await useFornecedores().useConsultaCnpj(cnpj);
-    form.setValue("nome", cnpjData.fantasia);
-    form.setValue("telefone", cnpjData.telefone);
-    form.setValue("razao", cnpjData.nome);
-    form.setValue("email", cnpjData.email);
-    form.setValue("cep", cnpjData.cep);
-    form.setValue("logradouro", cnpjData.logradouro);
-    form.setValue("numero", cnpjData.numero);
-    form.setValue("bairro", cnpjData.bairro);
-    form.setValue("municipio", cnpjData.municipio);
-    form.setValue("uf", cnpjData.uf);
+    try {
+      const { data: cnpjData } = await api.get(
+        `/financeiro/fornecedores/consulta-cnpj/${cnpj}`
+      );
+      form.setValue("nome", cnpjData.fantasia);
+      form.setValue("telefone", cnpjData.telefone);
+      form.setValue("razao", cnpjData.nome);
+      form.setValue("email", cnpjData.email);
+      form.setValue("cep", cnpjData.cep);
+      form.setValue("logradouro", cnpjData.logradouro);
+      form.setValue("numero", cnpjData.numero);
+      form.setValue("bairro", cnpjData.bairro);
+      form.setValue("municipio", cnpjData.municipio);
+      form.setValue("uf", cnpjData.uf);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {
@@ -86,15 +94,15 @@ const FormFornecedor = ({
 
   const onSubmitData = (data: FornecedorSchema) => {
     console.log(data);
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+
+    if (id) update(data);
+    if (!id) insertOne(data);
+
+    editModal(false);
+    closeModal();
   };
+
+  console.log(form.formState.errors);
 
   return (
     <div className="max-w-full overflow-x-hidden">
@@ -112,7 +120,7 @@ const FormFornecedor = ({
                     </span>
                   </div>
                   <FormSwitch
-                    name="ativo"
+                    name="active"
                     disabled={!modalEditing}
                     label="Ativo"
                     control={form.control}
