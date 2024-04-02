@@ -42,23 +42,23 @@ const FormFornecedor = ({
   });
 
   async function axiosGetCnpjData() {
-    //  ^ Não era permitido o uso do hook por ocorrer dentro de uma função
-    // const { data: cnpjData } = await useFornecedores().consultaCnpj(cnpj);
-    const { data: cnpjData } = await api.get(
-      `/financeiro/fornecedores/consulta-cnpj/${cnpj}`
-    );
-    console.log(cnpjData);
-
-    form.setValue("nome", cnpjData.fantasia);
-    form.setValue("telefone", cnpjData.telefone);
-    form.setValue("razao", cnpjData.nome);
-    form.setValue("email", cnpjData.email);
-    form.setValue("cep", cnpjData.cep);
-    form.setValue("logradouro", cnpjData.logradouro);
-    form.setValue("numero", cnpjData.numero);
-    form.setValue("bairro", cnpjData.bairro);
-    form.setValue("municipio", cnpjData.municipio);
-    form.setValue("uf", cnpjData.uf);
+    try {
+      const { data: cnpjData } = await api.get(
+        `/financeiro/fornecedores/consulta-cnpj/${cnpj}`
+      );
+      form.setValue("nome", cnpjData.fantasia);
+      form.setValue("telefone", cnpjData.telefone);
+      form.setValue("razao", cnpjData.nome);
+      form.setValue("email", cnpjData.email);
+      form.setValue("cep", cnpjData.cep);
+      form.setValue("logradouro", cnpjData.logradouro);
+      form.setValue("numero", cnpjData.numero);
+      form.setValue("bairro", cnpjData.bairro);
+      form.setValue("municipio", cnpjData.municipio);
+      form.setValue("uf", cnpjData.uf);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {

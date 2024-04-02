@@ -12,8 +12,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePlanoContas } from "@/hooks/usePlanoConta";
 import { useRef } from "react";
-import FormPlanoContas from "./FormPlanoContas";
-import { useStorePlanoContas } from "./store-plano-contas";
+import FormPlanoContas from "./Form";
+import { useStorePlanoContas } from "./store";
 
 export type PlanoContasSchema = {
   id: string;

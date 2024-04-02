@@ -1,15 +1,15 @@
 
 import { api } from "@/lib/axios";
-import { PlanoContasSchema } from "@/pages/financeiro/cadastros/components/plano-de-contas/plano-conta/ModalPlanoContas";
+import { PlanoContasSchema } from "@/pages/financeiro/cadastros/components/plano-de-contas/plano-conta/Modal";
 import { getAllParams } from "@/types/params";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const usePlanoContas = () => {
     const queryClient = useQueryClient()
     return ({
-        getAll : (params: getAllParams) => useQuery({
-            queryKey: ['fin_plano_contas', params],
-            queryFn: async () => { return await api.get(`financeiro/plano-contas/`, { params: params }) },
+        getAll : ({ pagination, filters }: getAllParams) => useQuery({
+            queryKey: ['fin_plano_contas', pagination],
+            queryFn: async () => { return await api.get(`financeiro/plano-contas/`, { params: { pagination, filters } }) },
             placeholderData: keepPreviousData
         }),
 

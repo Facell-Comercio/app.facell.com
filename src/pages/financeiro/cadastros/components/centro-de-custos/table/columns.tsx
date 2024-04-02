@@ -2,25 +2,22 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
-import { useStorePlanoContas } from "../plano-conta/store-plano-contas";
+import { useStoreCentroCustos } from "../centro-custo/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type RowPlanoConta = {
+export type RowCentroCustos = {
   select: ReactNode;
   id: string;
-  codigo: string;
-  descricao: string;
-  tipo: string;
+  nome: string;
   grupo_economico: string;
   ativo: string;
 };
 
-const openModal = useStorePlanoContas.getState().openModal;
+const openModal = useStoreCentroCustos.getState().openModal;
 
-export const columnsTable: ColumnDef<RowPlanoConta>[] = [
+export const columnsTable: ColumnDef<RowCentroCustos>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -50,44 +47,24 @@ export const columnsTable: ColumnDef<RowPlanoConta>[] = [
     ),
   },
   {
-    header: "AÇÃO",
     accessorKey: "id",
+    header: "ID",
     cell: (info) => (
-      <FileSearch2
-        className="text-blue-500"
+      <span
+        className="font-semibold cursor-pointer text-blue-500"
         onClick={() => openModal(info.getValue<number>().toString())}
-      />
+      >
+        {info.getValue<number>()}
+      </span>
     ),
-    enableSorting: false,
+    sortDescFirst: true,
   },
   {
-    header: "CÓDIGO",
-    accessorKey: "codigo",
+    header: "NOME",
+    accessorKey: "nome",
     cell: (info) => {
-      const codigo = info.getValue<string>();
-      return <span>{codigo}</span>;
-    },
-  },
-  {
-    header: "DESCRIÇÃO",
-    accessorKey: "descricao",
-    cell: (info) => {
-      const descricao = info.getValue<string>();
-      return <span>{descricao.toUpperCase()}</span>;
-    },
-  },
-  {
-    header: "TIPO",
-    accessorKey: "tipo",
-    cell: (info) => {
-      const tipo = info.getValue<string>();
-      let color = "";
-      if (tipo === "Receita") {
-        color = "text-green-500";
-      } else if (tipo === "Despesa") {
-        color = "text-red-500";
-      }
-      return <span className={`${color}`}>{tipo}</span>;
+      const nome = info.getValue<string>();
+      return <span>{nome.toUpperCase()}</span>;
     },
   },
   {
@@ -95,12 +72,13 @@ export const columnsTable: ColumnDef<RowPlanoConta>[] = [
     accessorKey: "grupo_economico",
     cell: (info) => {
       const grupo_economico = info.getValue<string>();
-      return <span>{grupo_economico.toUpperCase()}</span>;
+      return <span>{grupo_economico && grupo_economico.toUpperCase()}</span>;
     },
   },
   {
     header: "STATUS",
     accessorKey: "active",
+
     cell: (info) => {
       const active = info.getValue();
       let color = "";

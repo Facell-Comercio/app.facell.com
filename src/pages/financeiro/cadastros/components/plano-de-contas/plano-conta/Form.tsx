@@ -5,9 +5,9 @@ import FormSwitch from "@/components/custom/FormSwitch";
 import { Form } from "@/components/ui/form";
 import { usePlanoContas } from "@/hooks/usePlanoConta";
 import { Fingerprint, Info } from "lucide-react";
-import { PlanoContasSchema } from "./ModalPlanoContas";
+import { PlanoContasSchema } from "./Modal";
 import { useFormPlanoContaData } from "./form-plano-contas-data";
-import { useStorePlanoContas } from "./store-plano-contas";
+import { useStorePlanoContas } from "./store";
 
 const FormPlanoContas = ({
   id,

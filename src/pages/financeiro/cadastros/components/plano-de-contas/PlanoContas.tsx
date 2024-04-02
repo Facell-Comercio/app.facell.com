@@ -1,11 +1,11 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { usePlanoContas } from "@/hooks/usePlanoConta";
-import { useStoreFornecedor } from "../fornecedores/fornecedor/store-fornecedor";
-import ModalPlanoContas from "./plano-conta/ModalPlanoContas";
-import FiltersPlanoContas from "./table-plano-contas/Filters";
-import { columnsTable } from "./table-plano-contas/columns";
-import { useStoreTablePlanoContas } from "./table-plano-contas/store-table";
+import ModalPlanoContas from "./plano-conta/Modal";
+import { useStorePlanoContas } from "./plano-conta/store";
+import FiltersPlanoContas from "./table/Filters";
+import { columnsTable } from "./table/columns";
+import { useStoreTablePlanoContas } from "./table/store-table";
 
 const PlanoContas = () => {
   console.log("RENDER - Section-Plano Contas");
@@ -18,9 +18,9 @@ const PlanoContas = () => {
   });
   const rows = data?.data?.rows || [];
   const rowCount = data?.data?.rowCount || 0;
-  const openModal = useStoreFornecedor().openModal;
-  const editModal = useStoreFornecedor().editModal;
-  function handleClickNewFornecedor() {
+  const openModal = useStorePlanoContas().openModal;
+  const editModal = useStorePlanoContas().editModal;
+  function handleClickNewPlanoContas() {
     openModal("");
     editModal(true);
   }
@@ -29,8 +29,8 @@ const PlanoContas = () => {
     <div className="flex flex-col gap-3">
       <div className="flex justify-between">
         <h2 className="text-3xl font-medium">Plano de Contas</h2>
-        <Button variant={"secondary"} onClick={handleClickNewFornecedor}>
-          Novo Fornecedor
+        <Button variant={"secondary"} onClick={handleClickNewPlanoContas}>
+          Novo Plano de Contas
         </Button>
       </div>
       <FiltersPlanoContas refetch={refetch} />

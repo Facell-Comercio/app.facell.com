@@ -1,4 +1,4 @@
-// import { mountStoreDevtool } from "simple-zustand-devtools";
+import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 
 export interface Pagination {
@@ -9,17 +9,16 @@ export interface Pagination {
 type RowSelection = Record<number, boolean>;
 
 export interface Filters {
-  termo?: string;
+  nome?: string;
+  id_grupo_economico?: string;
+  active?: string;
 }
 
 const initialFilters: Filters = {
-  termo: "",
+  nome: "",
+  id_grupo_economico: "",
+  active: "",
 };
-
-export interface SortingItem {
-  id: string;
-  desc: boolean;
-}
 
 export interface State {
   rowCount: number;
@@ -36,13 +35,9 @@ export interface Actions {
   resetFilters: () => void;
   setPagination: (pagination: Pagination) => void;
   setRowSelection: (rowSelection: RowSelection) => void;
-
-  openModal: (id: string) => void;
-  closeModal: () => void;
 }
 
-export const useStoreTableFornecedor = create<State & Actions>((set) => ({
-  // Modal
+export const useStoreTableCentroCusto = create<State & Actions>((set) => ({
   modalOpen: false,
 
   // Table
@@ -53,16 +48,17 @@ export const useStoreTableFornecedor = create<State & Actions>((set) => ({
 
   // Filters
   filters: initialFilters,
-  setFilters: (novoFiltro) => set({ filters: novoFiltro }),
+  setFilters: (novoFiltro) =>
+    set((state) => ({
+      ...state,
+      filters: { ...state.filters, ...novoFiltro },
+    })),
   resetFilters: () => {
     set({ filters: initialFilters });
   },
 
   setPagination: (pagination) => set({ pagination }),
   setRowSelection: (rowSelection) => set({ rowSelection }),
-
-  openModal: () => set({ modalOpen: true }),
-  closeModal: () => set({ modalOpen: false }),
 }));
 
-// mountStoreDevtool("useStoreTableFornecedor", useStoreTableFornecedor);
+mountStoreDevtool("useStoreTableCentroCusto", useStoreTableCentroCusto);
