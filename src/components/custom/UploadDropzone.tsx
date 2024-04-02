@@ -10,7 +10,7 @@ type UploadDropzoneProps = {
     mediaType: MediaType
 }
 type Accept = Record<string, string[]>
-const maxFileSize = 25 * 1024 * 1024
+const maxFileSize = 10 * 1024 * 1024
 
 const generateAcceptObject = (mediaType: MediaType): Accept => {
     switch (mediaType) {
@@ -54,7 +54,7 @@ const generateAcceptObject = (mediaType: MediaType): Accept => {
 
 const UploadDropzone = ({
     disabled,
-    mediaType = 'pdf',
+    mediaType = 'etc',
     onUploadSuccess,
 }: UploadDropzoneProps) => {
     const [uploadError, setUploadError] = useState<string | null>(null)
@@ -98,7 +98,7 @@ const UploadDropzone = ({
         if (erros) {
             const messagesErro = erros.map(e => {
                 if (e.code === 'file-too-large') {
-                    return 'Arquivo maior que o limite de 25mb.'
+                    return 'Arquivo maior que o limite de 10mb.'
                 }
             }).join(', ');
             setUploadError(messagesErro);
@@ -106,7 +106,6 @@ const UploadDropzone = ({
             setUploadError(null);
         }
     }, [fileRejections]);
-
 
     return (
         <div className="">

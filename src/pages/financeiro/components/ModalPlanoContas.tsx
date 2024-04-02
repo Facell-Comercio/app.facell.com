@@ -34,13 +34,13 @@ export type ItemPlanoContas = {
 }
 
 type PaginationProps = {
-    pageLength: number,
+    pageSize: number,
     pageIndex: number
 }
 
 const ModalPlanoContas = ({ open, handleSelecion, onOpenChange, id_filial }: IModalPlanoContas) => {
     const [search, setSearch] = useState<string>('')
-    const [pagination, setPagination] = useState<PaginationProps>({ pageLength: 15, pageIndex: 4 })
+    const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 4 })
 
     const queryKey = id_filial ? `plano_contas:${id_filial}` : 'plano_contas';
     const { data, isLoading, isError, refetch: refetchPlanoContas } = useQuery({
@@ -49,7 +49,7 @@ const ModalPlanoContas = ({ open, handleSelecion, onOpenChange, id_filial }: IMo
         enabled: open,
     })
 
-    const pages = [...Array(Math.ceil((data?.data?.qtdeTotal || 15) / pagination.pageLength)).keys()].map(page => page + 1);
+    const pages = [...Array(data?.data?.pageCount || 0).keys()].map(page => page + 1);
     const arrayPages = pages.filter(i => {
         if (i === 1 || i === pages.length) {
             return true
@@ -59,10 +59,10 @@ const ModalPlanoContas = ({ open, handleSelecion, onOpenChange, id_filial }: IMo
         return false
     })
 
-    async function handleSearch(text: string) {
+    async function handleSearch() {
         await new Promise((resolve) => {
-            setSearch(text)
-            setPagination(prev=>({...prev, pageIndex: 1}))
+            setSearch(searchRef.current?.value || "")
+            setPagination(prev=>({...prev, pageIndex: 0}))
             resolve(true)
         })
         refetchPlanoContas()
@@ -86,7 +86,7 @@ const ModalPlanoContas = ({ open, handleSelecion, onOpenChange, id_filial }: IMo
     async function handlePaginationDown() {
         await new Promise((resolve) => {
             const newPage = --pagination.pageIndex;
-            setPagination(prev => ({ ...prev, pageIndex: newPage <= 0 ? 1 : newPage }))
+            setPagination(prev => ({ ...prev, pageIndex: newPage <= 0 ? 0 : newPage }))
             resolve(true)
         })
         refetchPlanoContas()
@@ -113,8 +113,8 @@ const ModalPlanoContas = ({ open, handleSelecion, onOpenChange, id_filial }: IMo
 
                     <div className="flex gap-3">
 
-                        <Input ref={searchRef} type="search" placeholder="Buscar..." />
-                        <Button onClick={() => handleSearch(searchRef.current?.value || "")}>Procurar</Button>
+                        <Input ref={searchRef} type="search" placeholder="Buscar..." onKeyDown={(e)=>{if(e.key === 'Enter'){handleSearch()}}} />
+                        <Button onClick={() => handleSearch()}>Procurar</Button>
                     </div>
                 </DialogHeader>
 
@@ -140,7 +140,7 @@ const ModalPlanoContas = ({ open, handleSelecion, onOpenChange, id_filial }: IMo
                                 arrayPages.map((i) => {
                                     return (
                                         <PaginationItem key={i}>
-                                            <Button variant={i === pagination.pageIndex ? "default" : "ghost"} onClick={() => handlePaginationChange(i)}>{i}</Button>
+                                            <Button variant={i-1 === pagination.pageIndex ? "default" : "ghost"} onClick={() => handlePaginationChange(i-1)}>{i}</Button>
                                         </PaginationItem>
                                     )
                                 })

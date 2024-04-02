@@ -17,19 +17,18 @@ interface IFormSelect {
   className?: string, 
   options: Toption[],
   showAll?: boolean,
-  defaultValue?: string,
 }
 
 
-const FormSelect = ({ name, type, options, control, label, description, className, showAll, defaultValue, disabled }: IFormSelect) => {
+const FormSelect = ({ name, type, options, control, label, description, className, showAll, disabled }: IFormSelect) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className={`${type === "hidden" && "hidden"}`}>
+        <FormItem className={`flex-1 ${type === "hidden" && "hidden"} `}>
           {label && <FormLabel>{label}</FormLabel>}
-          <Select disabled={disabled} onValueChange={field.onChange} defaultValue={defaultValue || field.value}>
+          <Select disabled={disabled} {...field}>
             <FormControl>
               <SelectTrigger className={className}>
                 <SelectValue placeholder={'Selecione'} />

@@ -41,7 +41,7 @@ type PaginationProps = {
 
 const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornecedores) => {
     const [search, setSearch] = useState<string>("")
-    const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 4 })
+    const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 0 })
 
     const { data, isLoading, isError, refetch: fetchFornecedores } = useQuery({
         queryKey: ['fornecedores'],
@@ -59,10 +59,10 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
         return false
     })
 
-    async function handleSearch(text: string) {
+    async function handleSearch() {
         await new Promise((resolve) => {
-            setSearch(text)
-            setPagination(prev=>({...prev, pageIndex: 1}))
+            setSearch(searchRef.current?.value || "")
+            setPagination(prev=>({...prev, pageIndex: 0}))
             resolve(true)
         })
         fetchFornecedores()
@@ -88,7 +88,7 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
     async function handlePaginationDown() {
         await new Promise((resolve) => {
             const newPage = --pagination.pageIndex;
-            setPagination(prev => ({ ...prev, pageIndex: newPage <= 0 ? 1 : newPage }))
+            setPagination(prev => ({ ...prev, pageIndex: newPage <= 0 ? 0 : newPage }))
             resolve(true)
         })
         fetchFornecedores()
@@ -110,8 +110,8 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
                     </DialogDescription>
 
                     <div className="flex gap-3">
-                        <Input type='search' placeholder="Buscar..." ref={searchRef} />
-                        <Button onClick={() => handleSearch(searchRef.current?.value || "")}>Procurar</Button>
+                        <Input type='search' placeholder="Buscar..." ref={searchRef} onKeyDown={(e)=>{if(e.key === 'Enter'){handleSearch()}}}/>
+                        <Button onClick={() => handleSearch()}>Procurar</Button>
                     </div>
                 </DialogHeader>
 
@@ -136,7 +136,7 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
                                 arrayPages.map((i) => {
                                     return (
                                         <PaginationItem key={i}>
-                                            <Button variant={i === pagination.pageIndex ? "default" : "ghost"} onClick={() => handlePaginationChange(i)}>{i}</Button>
+                                            <Button variant={i-1 === pagination.pageIndex ? "default" : "ghost"} onClick={() => handlePaginationChange(i-1)}>{i}</Button>
                                         </PaginationItem>
                                     )
                                 })

@@ -13,10 +13,15 @@ export interface ItemRateioTitulo {
 export interface TituloPagar {
   id_tipo_solicitacao: string;
   id_status: string;
+
   id_centro_custo?: string;
-  id_forma_pagamento?: string;
+  centro_custo?: string;
+
   id_plano_contas?: string;
   plano_contas?: string | null;
+
+  id_forma_pagamento?: string;
+  forma_pagamento?: string;
 
   valor: number;
   data_emissao: string;
@@ -39,6 +44,7 @@ export interface TituloPagar {
   cnpj_fornecedor?: string | null;
 
   id_rateio?: string | null;
+  tipo_rateio?: string;
   itens_rateio: ItemRateioTitulo[];
 
   url_xml_nota?: string | null;
@@ -53,7 +59,11 @@ export const initialPropsTitulo: TituloPagar = {
   id_tipo_solicitacao: "1",
   id_status: "1",
   id_centro_custo: "",
+  centro_custo: '',
   id_forma_pagamento: "",
+
+  // Pagamento
+  forma_pagamento: '',
 
   valor: 0,
   data_emissao: "",
