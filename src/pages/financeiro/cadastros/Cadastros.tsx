@@ -1,3 +1,4 @@
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   checkUserDepartments,
@@ -5,6 +6,7 @@ import {
 } from "@/helpers/checkAuthorization";
 import Bancos from "./components/bancos/Bancos";
 import CentroCustos from "./components/centro-de-custos/CentroCustos";
+import ContasBancarias from "./components/contas-bancarias/ContasBancarias";
 import Fornecedores from "./components/fornecedores/Fornecedores";
 import PlanoContas from "./components/plano-de-contas/PlanoContas";
 
@@ -17,19 +19,27 @@ const CadastrosPage = () => {
     <div className="flex p-4">
       <Tabs defaultValue="fornecedores" className="w-full">
         <TabsList className="w-full justify-start flex">
-          <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
-          {checkUserDepartments("FINANCEIRO") ||
-            (checkUserPermission("MASTER") && (
-              <TabsTrigger value="plano-contas">Plano de Contas</TabsTrigger>
-            ))}
-          {checkUserDepartments("FINANCEIRO") ||
-            (checkUserPermission("MASTER") && (
-              <TabsTrigger value="centro-custos">Centro de Custo</TabsTrigger>
-            ))}
-          {checkUserDepartments("FINANCEIRO") ||
-            (checkUserPermission("MASTER") && (
-              <TabsTrigger value="bancos">Bancos</TabsTrigger>
-            ))}
+          <ScrollArea className="min-w-[1000px]">
+            <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="plano-contas">Plano de Contas</TabsTrigger>
+              ))}
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="centro-custos">Centro de Custo</TabsTrigger>
+              ))}
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="bancos">Bancos</TabsTrigger>
+              ))}
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="contas-bancarias">
+                  Contas Bancarias
+                </TabsTrigger>
+              ))}
+          </ScrollArea>
         </TabsList>
         <TabsContent value="fornecedores">
           <Fornecedores />
@@ -42,6 +52,9 @@ const CadastrosPage = () => {
         </TabsContent>
         <TabsContent value="bancos">
           <Bancos />
+        </TabsContent>
+        <TabsContent value="contas-bancarias">
+          <ContasBancarias />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,31 +1,32 @@
 import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
-import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
 import FormSwitch from "@/components/custom/FormSwitch";
+import SelectBanco from "@/components/custom/SelectBanco";
+import SelectFilial from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
-import { usePlanoContas } from "@/hooks/usePlanoConta";
+import { useContasBancarias } from "@/hooks/useContasBancarias";
 import { Fingerprint, Info } from "lucide-react";
-import { PlanoContasSchema } from "./Modal";
-import { useFormPlanoContaData } from "./form-data";
-import { useStorePlanoContas } from "./store";
+import { ContaBancariaSchema } from "./Modal";
+import { useFormContaBancariaData } from "./form-data";
+import { useStoreContaBancaria } from "./store";
 
-const FormPlanoContas = ({
+const FormContaBancaria = ({
   id,
   data,
   formRef,
 }: {
   id: string | null | undefined;
-  data: PlanoContasSchema;
+  data: ContaBancariaSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - PlanoContas:", id);
-  const { mutate: insertOne } = usePlanoContas().insertOne();
-  const { mutate: update } = usePlanoContas().update();
-  const modalEditing = useStorePlanoContas().modalEditing;
-  const editModal = useStorePlanoContas().editModal;
-  const closeModal = useStorePlanoContas().closeModal;
+  console.log("RENDER - ContaBancaria:", id);
+  const { mutate: insertOne } = useContasBancarias().insertOne();
+  const { mutate: update } = useContasBancarias().update();
+  const modalEditing = useStoreContaBancaria().modalEditing;
+  const editModal = useStoreContaBancaria().editModal;
+  const closeModal = useStoreContaBancaria().closeModal;
 
-  const onSubmitData = (data: PlanoContasSchema) => {
+  const onSubmitData = (data: ContaBancariaSchema) => {
     console.log(data);
 
     if (id) update(data);
@@ -35,7 +36,8 @@ const FormPlanoContas = ({
     closeModal();
   };
 
-  const { form } = useFormPlanoContaData(data);
+  const { form } = useFormContaBancariaData(data);
+  console.log(form.watch("id_tipo_conta"));
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-hidden">
@@ -49,7 +51,7 @@ const FormPlanoContas = ({
                   <div className="flex gap-2">
                     <Fingerprint />{" "}
                     <span className="text-lg font-bold ">
-                      Identificação do Plano Contas
+                      Identificação da Conta
                     </span>
                   </div>
                   <FormSwitch
@@ -68,31 +70,24 @@ const FormPlanoContas = ({
                     control={form.control}
                   />
                   <FormInput
-                    className="flex-1 min-w-40"
-                    name="codigo"
-                    readOnly={!modalEditing}
-                    label="Código"
-                    control={form.control}
-                  />
-                  <FormInput
                     className="flex-1 min-w-[40ch]"
                     name="descricao"
                     readOnly={!modalEditing}
                     label="Descrição"
                     control={form.control}
                   />
-                  <FormInput
-                    className="flex-1 min-w-40"
-                    name="codigo_pai"
-                    readOnly={!modalEditing}
-                    label="Código Pai"
+                  <SelectFilial
+                    className="min-w-32"
+                    name="id_filial"
+                    disabled={!modalEditing}
+                    label="Filial"
                     control={form.control}
                   />
-                  <FormInput
-                    className="flex-1 min-w-[40ch]"
-                    readOnly={!modalEditing}
-                    name="descricao_pai"
-                    label="Descrição Pai"
+                  <SelectBanco
+                    className="min-w-32"
+                    name="id_banco"
+                    disabled={!modalEditing}
+                    label="Banco"
                     control={form.control}
                   />
                 </div>
@@ -101,39 +96,46 @@ const FormPlanoContas = ({
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex items-center gap-2 mb-3">
                   <Info />{" "}
-                  <span className="text-lg font-bold ">Parâmetros</span>
+                  <span className="text-lg font-bold ">Informações Conta</span>
                 </div>
                 <div className="flex gap-3 flex-wrap">
                   <FormInput
-                    className="flex-1 min-w-32"
+                    className="flex-1 min-w-[5ch]"
+                    label="AG"
                     readOnly={!modalEditing}
-                    name="nivel"
-                    label="Nível de Controle"
-                    control={form.control}
-                  />
-                  <FormSelect
-                    name="tipo"
-                    disabled={!modalEditing}
-                    control={form.control}
-                    label={"Tipo"}
-                    className={"flex-1 min-w-[20ch]"}
-                    options={[
-                      { value: "Receita", label: "RECEITA" },
-                      { value: "Despesa", label: "DESPESA" },
-                    ]}
-                  />
-                  <FormSelectGrupoEconomico
-                    className="min-w-32"
-                    name="id_grupo_economico"
-                    disabled={!modalEditing}
-                    label="Grupo Econômico"
+                    name="agencia"
                     control={form.control}
                   />
                   <FormInput
-                    className="flex-1 min-w-44"
+                    className="flex-1 min-w-[5ch]"
+                    name="dv_agencia"
                     readOnly={!modalEditing}
-                    name="codigo_conta_estorno"
-                    label="Código Contra Estorno"
+                    label="DvAg"
+                    control={form.control}
+                  />
+                  <FormSelect
+                    name="id_tipo_conta"
+                    disabled={!modalEditing}
+                    control={form.control}
+                    label={"Tipo de conta"}
+                    className="flex-1 min-w-[20ch]"
+                    options={[
+                      { value: "1", label: "CORRENTE" },
+                      { value: "2", label: "POUPANÇA" },
+                    ]}
+                  />
+                  <FormInput
+                    className="flex-1 min-w-[5ch]"
+                    name="conta"
+                    readOnly={!modalEditing}
+                    label="Conta"
+                    control={form.control}
+                  />
+                  <FormInput
+                    name="dv_conta"
+                    className="flex-1 min-w-[5ch]"
+                    readOnly={!modalEditing}
+                    label="DvCt"
                     control={form.control}
                   />
                 </div>
@@ -146,4 +148,4 @@ const FormPlanoContas = ({
   );
 };
 
-export default FormPlanoContas;
+export default FormContaBancaria;

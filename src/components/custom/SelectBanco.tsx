@@ -1,12 +1,12 @@
-import { useFilial } from "@/hooks/useFilial";
+import { useBanco } from "@/hooks/useBanco";
 import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
 
-type Filial = {
+type Banco = {
   id: number;
   nome: string;
 };
-type TSelectFilial = {
+type TSelectBanco = {
   showAll?: boolean;
   name?: string;
   label?: string;
@@ -18,7 +18,7 @@ type TSelectFilial = {
   onChange?: (id?: string) => void;
 };
 
-const SelectFilial = ({
+const SelectBanco = ({
   name,
   label,
   control,
@@ -27,12 +27,11 @@ const SelectFilial = ({
   placeholder,
   value,
   onChange,
-}: TSelectFilial) => {
+}: TSelectBanco) => {
   // Use a single state variable for fetching and storing data
 
-  const { data } = useFilial().getAll(undefined);
+  const { data } = useBanco().getAll(undefined);
   const rows = data?.data?.rows || [];
-
   return (
     <FormSelect
       name={name}
@@ -44,13 +43,13 @@ const SelectFilial = ({
       value={value}
       onChange={onChange}
       options={
-        rows.map((filial: Filial) => ({
-          value: filial.id.toString(),
-          label: filial.nome,
+        rows.map((banco: Banco) => ({
+          value: banco.id.toString(),
+          label: banco.nome,
         })) || []
       }
     />
   );
 };
 
-export default SelectFilial;
+export default SelectBanco;
