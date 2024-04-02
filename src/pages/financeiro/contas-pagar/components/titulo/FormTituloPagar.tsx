@@ -72,8 +72,8 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
   const { data, isLoading, isError } = useTituloPagar().getOne(id);
 
-  const { titulo, itens_rateio: itensRateioTitulo } = data?.data || {titulo: {}, itens_rateio: []}
-  
+  const { titulo, itens_rateio: itensRateioTitulo } = data?.data || { titulo: {}, itens_rateio: [] }
+
   for (const key in titulo) {
     if (Object.hasOwnProperty.call(titulo, key)) {
       const tipo_campo = typeof titulo[key]
@@ -100,8 +100,8 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
     )
   )
 
-  const handleEditing = (mode: boolean)=>{
-    if(canEdit){
+  const handleEditing = (mode: boolean) => {
+    if (canEdit) {
       setIsEditing(mode)
     }
   }
@@ -221,10 +221,10 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
   return (
     <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col max-w-full max-h-[85vh] overflow-hidden">
-        {titulo?.status && (<div className="flex-1 py-2">
-         <div className={`py-1 text-center border text-md font-bold rounded-sm ${generateStatusColor({ status: titulo?.status || '', bg: true, text: true })}`}>{titulo.status}</div>
+          {titulo?.status && (<div className="flex-1 py-2">
+            <div className={`py-1 text-center border text-md font-bold rounded-sm ${generateStatusColor({ status: titulo?.status || '', bg: true, text: true })}`}>{titulo.status}</div>
           </div>)}
 
           <ScrollArea className="flex-1 overflow-auto pe-3" >
@@ -310,14 +310,14 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       </div>
 
                       <Button type="button" variant={'ghost'} onClick={showModalPlanoContas} className="flex-1 p-0">
-                      <FormInput
-                        className="min-w-[50ch]"
-                        readOnly={true}
-                        name="plano_contas"
-                        placeholder="Selecione o plano de contas"
-                        control={form.control}
+                        <FormInput
+                          className="min-w-[50ch]"
+                          readOnly={true}
+                          name="plano_contas"
+                          placeholder="Selecione o plano de contas"
+                          control={form.control}
                         />
-                        </Button>
+                      </Button>
                     </FormItem>
 
                     <ModalPlanoContas
@@ -466,7 +466,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                                 type="number"
                                 name={`itens_rateio.${index}.percentual`}
                                 control={form.control}
-                                
+
                               />
                             </td>
                             <td className="p-1">
@@ -527,29 +527,33 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
           </ScrollArea>
 
           <div className="flex-1 flex items-center justify-between mt-3">
-            
+
             <div className="flex items-center gap-2 ms-auto">
-              {canEdit && !isEditing && <Button 
-                onClick={()=>{handleEditing(true)}}
-                type="button" 
-                size="lg" 
+              {/* Editar */}
+              {canEdit && !isEditing && <Button
+                onClick={() => { handleEditing(true) }}
+                type="button"
+                size="lg"
                 className="ms-auto text-orange-950 bg-orange-500 hover:bg-orange-400 hover:dark:bg-orange-700 dark:bg-orange-600"
               ><Edit className="me-2" /> Editar</Button>}
 
-              {isEditing && 
-              <Button 
-                onClick={()=>{handleEditing(false)}}  
-                type="button" 
-                variant={'secondary'} 
-                size="lg" 
-                className="ms-auto bg-slate-300 hover:bg-slate-400 dark:bg-slate-700"
-              ><Ban className="me-2" /> Cancelar</Button>}
+              {/* Cancelar */}
+              {id && isEditing &&
+                <Button
+                  onClick={() => { handleEditing(false) }}
+                  type="button"
+                  variant={'secondary'}
+                  size="lg"
+                  className="ms-auto bg-slate-300 hover:bg-slate-400 dark:bg-slate-700"
+                ><Ban className="me-2" /> Cancelar</Button>}
+
+              {/* Salvar */}
               {isEditing && <Button type="submit" size="lg" className="ms-auto"><Save className="me-2" /> Salvar</Button>}
             </div>
           </div>
-    </div>
-        </form>
-      </Form>
+        </div>
+      </form>
+    </Form>
   );
 };
 
