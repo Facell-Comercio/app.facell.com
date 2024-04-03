@@ -10,34 +10,39 @@ import {
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useBancos } from "@/hooks/useBancos";
+import { useEquipamentos } from "@/hooks/useEquipamentos";
 import { useRef } from "react";
-import FormFornecedor from "./Form";
-import { useStoreBanco } from "./store";
+import FormEquipamento from "./Form";
+import { useStoreEquipamento } from "./store";
 
-export type BancoSchema = {
+export type EquipamentoSchema = {
   id: string;
-  codigo_banco: string;
-  nome_banco: string;
+  active: boolean;
+  estabelecimento: string;
+  num_maquina: string;
+  id_filial: string;
 };
 
-const initialPropsBanco: BancoSchema = {
+const initialPropsEquipamento: EquipamentoSchema = {
+  // Dados Equipamento
   id: "",
-  codigo_banco: "",
-  nome_banco: "",
+  active: true,
+  estabelecimento: "",
+  num_maquina: "",
+  id_filial: "",
 };
 
-const ModalBanco = () => {
-  const modalOpen = useStoreBanco().modalOpen;
-  const closeModal = useStoreBanco().closeModal;
-  const modalEditing = useStoreBanco().modalEditing;
-  const editModal = useStoreBanco().editModal;
-  const id = useStoreBanco().id;
+const ModalEquipamento = () => {
+  const modalOpen = useStoreEquipamento().modalOpen;
+  const closeModal = useStoreEquipamento().closeModal;
+  const modalEditing = useStoreEquipamento().modalEditing;
+  const editModal = useStoreEquipamento().editModal;
+  const id = useStoreEquipamento().id;
   const formRef = useRef(null);
 
-  const { data, isLoading } = useBancos().getOne(id);
-  const newData: BancoSchema & Record<string, any> = {} as BancoSchema &
-    Record<string, any>;
+  const { data, isLoading } = useEquipamentos().getOne(id);
+  const newData: EquipamentoSchema & Record<string, any> =
+    {} as EquipamentoSchema & Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -58,13 +63,15 @@ const ModalBanco = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{id ? `Banco: ${id}` : "Novo Banco"}</DialogTitle>
+          <DialogTitle>
+            {id ? `Equipamento: ${id}` : "Novo equipamento"}
+          </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <FormFornecedor
+            <FormEquipamento
               id={id}
-              data={newData.id ? newData : initialPropsBanco}
+              data={newData.id ? newData : initialPropsEquipamento}
               formRef={formRef}
             />
           ) : (
@@ -88,4 +95,4 @@ const ModalBanco = () => {
   );
 };
 
-export default ModalBanco;
+export default ModalEquipamento;

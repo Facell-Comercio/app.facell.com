@@ -1,4 +1,4 @@
-import { normalizeCepNumber, normalizeCnpjNumber, normalizePhoneNumber } from "@/helpers/mask";
+import { normalizeNumberOnly } from "@/helpers/mask";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -9,11 +9,11 @@ const schemaFornecedor = z
     // Dados Fornecedor
   id: z.string().optional(),
   active: z.boolean(),
-  cnpj: z.string().refine(v=>v.trim() !=="", {message: "CPF/CNPJ inválido"}).transform(v=>normalizeCnpjNumber(v)),
+  cnpj: z.string().refine(v=>v.trim() !=="", {message: "CPF/CNPJ inválido"}).transform(v=>normalizeNumberOnly(v)),
   nome: z.string().refine(v=>v.trim() !=="", {message: "Nome inválido"}),
-  telefone: z.string().transform(v=>normalizePhoneNumber(v)).optional(),
+  telefone: z.string().transform(v=>normalizeNumberOnly(v)).optional(),
   razao: z.string().optional(),
-  cep: z.string().transform(v=>normalizeCepNumber(v)).optional(),
+  cep: z.string().transform(v=>normalizeNumberOnly(v)).optional(),
   logradouro: z.string().optional(),
   numero: z.string().optional(),
   complemento: z.string().optional(),
@@ -31,7 +31,7 @@ const schemaFornecedor = z
   dv_agencia: z.string().optional(),
   conta: z.string().optional(),
   dv_conta: z.string().optional(),
-  cnpj_favorecido: z.string().optional(),
+  cnpj_favorecido: z.string().transform(v=>normalizeNumberOnly(v)).optional(),
   favorecido: z.string().optional(),
   });
 

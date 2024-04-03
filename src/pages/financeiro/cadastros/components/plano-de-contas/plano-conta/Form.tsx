@@ -6,7 +6,7 @@ import { Form } from "@/components/ui/form";
 import { usePlanoContas } from "@/hooks/usePlanoConta";
 import { Fingerprint, Info } from "lucide-react";
 import { PlanoContasSchema } from "./Modal";
-import { useFormPlanoContaData } from "./form-plano-contas-data";
+import { useFormPlanoContaData } from "./form-data";
 import { useStorePlanoContas } from "./store";
 
 const FormPlanoContas = ({

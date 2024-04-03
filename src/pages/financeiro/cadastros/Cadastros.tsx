@@ -1,3 +1,4 @@
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   checkUserDepartments,
@@ -5,6 +6,8 @@ import {
 } from "@/helpers/checkAuthorization";
 import Bancos from "./components/bancos/Bancos";
 import CentroCustos from "./components/centro-de-custos/CentroCustos";
+import ContasBancarias from "./components/contas-bancarias/ContasBancarias";
+import EquipamentosCielo from "./components/equipamentos-cielo/EquipamentosCielo";
 import Fornecedores from "./components/fornecedores/Fornecedores";
 import PlanoContas from "./components/plano-de-contas/PlanoContas";
 
@@ -16,20 +19,35 @@ const CadastrosPage = () => {
   return (
     <div className="flex p-4">
       <Tabs defaultValue="fornecedores" className="w-full">
-        <TabsList className="w-full justify-start flex">
-          <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
-          {checkUserDepartments("FINANCEIRO") ||
-            (checkUserPermission("MASTER") && (
-              <TabsTrigger value="plano-contas">Plano de Contas</TabsTrigger>
-            ))}
-          {checkUserDepartments("FINANCEIRO") ||
-            (checkUserPermission("MASTER") && (
-              <TabsTrigger value="centro-custos">Centro de Custo</TabsTrigger>
-            ))}
-          {checkUserDepartments("FINANCEIRO") ||
-            (checkUserPermission("MASTER") && (
-              <TabsTrigger value="bancos">Bancos</TabsTrigger>
-            ))}
+        <TabsList className="w-full justify-start flex h-auto">
+          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-2 md:p-0 h-auto">
+            <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="plano-contas">Plano de Contas</TabsTrigger>
+              ))}
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="centro-custos">Centro de Custo</TabsTrigger>
+              ))}
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="bancos">Bancos</TabsTrigger>
+              ))}
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="contas-bancarias">
+                  Contas Bancarias
+                </TabsTrigger>
+              ))}
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="equipamentos-cielo">
+                  Equipamentos Cielo
+                </TabsTrigger>
+              ))}
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </TabsList>
         <TabsContent value="fornecedores">
           <Fornecedores />
@@ -42,6 +60,12 @@ const CadastrosPage = () => {
         </TabsContent>
         <TabsContent value="bancos">
           <Bancos />
+        </TabsContent>
+        <TabsContent value="contas-bancarias">
+          <ContasBancarias />
+        </TabsContent>
+        <TabsContent value="equipamentos-cielo">
+          <EquipamentosCielo />
         </TabsContent>
       </Tabs>
     </div>
