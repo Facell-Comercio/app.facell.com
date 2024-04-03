@@ -29,9 +29,9 @@ const ContasBancarias = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between">
-        <h2 className="text-3xl font-medium">Plano de Contas</h2>
+        <h2 className="text-3xl font-medium">Contas Bancarias</h2>
         <Button variant={"secondary"} onClick={handleClickNewContasBancarias}>
-          Novo Plano de Contas
+          Nova Conta Bancaria
         </Button>
       </div>
       <FiltersContasBancarias refetch={refetch} />

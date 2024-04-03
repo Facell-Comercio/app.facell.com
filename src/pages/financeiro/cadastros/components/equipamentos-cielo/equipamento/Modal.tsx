@@ -10,50 +10,39 @@ import {
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useContasBancarias } from "@/hooks/useContasBancarias";
+import { useEquipamentos } from "@/hooks/useEquipamentos";
 import { useRef } from "react";
-import FormContaBancaria from "./Form";
-import { useStoreContaBancaria } from "./store";
+import FormEquipamento from "./Form";
+import { useStoreEquipamento } from "./store";
 
-export type ContaBancariaSchema = {
+export type EquipamentoSchema = {
   id: string;
   active: boolean;
+  estabelecimento: string;
+  num_maquina: string;
   id_filial: string;
-  id_tipo_conta: string;
-  id_banco: string;
-  banco: string;
-  agencia: string;
-  dv_agencia: string;
-  conta: string;
-  descricao: string;
-  dv_conta: string;
 };
 
-const initialPropsContaBancaria: ContaBancariaSchema = {
+const initialPropsEquipamento: EquipamentoSchema = {
+  // Dados Equipamento
   id: "",
   active: true,
+  estabelecimento: "",
+  num_maquina: "",
   id_filial: "",
-  id_tipo_conta: "",
-  id_banco: "",
-  banco: "",
-  agencia: "",
-  dv_agencia: "",
-  conta: "",
-  descricao: "",
-  dv_conta: "",
 };
 
-const ModalContaBancaria = () => {
-  const modalOpen = useStoreContaBancaria().modalOpen;
-  const closeModal = useStoreContaBancaria().closeModal;
-  const modalEditing = useStoreContaBancaria().modalEditing;
-  const editModal = useStoreContaBancaria().editModal;
-  const id = useStoreContaBancaria().id;
+const ModalEquipamento = () => {
+  const modalOpen = useStoreEquipamento().modalOpen;
+  const closeModal = useStoreEquipamento().closeModal;
+  const modalEditing = useStoreEquipamento().modalEditing;
+  const editModal = useStoreEquipamento().editModal;
+  const id = useStoreEquipamento().id;
   const formRef = useRef(null);
 
-  const { data, isLoading } = useContasBancarias().getOne(id);
-  const newData: ContaBancariaSchema & Record<string, any> =
-    {} as ContaBancariaSchema & Record<string, any>;
+  const { data, isLoading } = useEquipamentos().getOne(id);
+  const newData: EquipamentoSchema & Record<string, any> =
+    {} as EquipamentoSchema & Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -65,8 +54,6 @@ const ModalContaBancaria = () => {
     }
   }
 
-  console.log(newData);
-
   function handleClickCancel() {
     editModal(false);
     closeModal();
@@ -77,14 +64,14 @@ const ModalContaBancaria = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {id ? `Plano de Contas: ${id}` : "Novo Plano de Contas"}
+            {id ? `Equipamento: ${id}` : "Novo equipamento"}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <FormContaBancaria
+            <FormEquipamento
               id={id}
-              data={newData.id ? newData : initialPropsContaBancaria}
+              data={newData.id ? newData : initialPropsEquipamento}
               formRef={formRef}
             />
           ) : (
@@ -108,4 +95,4 @@ const ModalContaBancaria = () => {
   );
 };
 
-export default ModalContaBancaria;
+export default ModalEquipamento;

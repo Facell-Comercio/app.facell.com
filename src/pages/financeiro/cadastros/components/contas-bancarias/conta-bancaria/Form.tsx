@@ -1,11 +1,14 @@
 import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
 import FormSwitch from "@/components/custom/FormSwitch";
-import SelectBanco from "@/components/custom/SelectBanco";
 import SelectFilial from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
 import { useContasBancarias } from "@/hooks/useContasBancarias";
+import ModalBancos, {
+  ItemBancos,
+} from "@/pages/financeiro/components/ModalBancos";
 import { Fingerprint, Info } from "lucide-react";
+import { useState } from "react";
 import { ContaBancariaSchema } from "./Modal";
 import { useFormContaBancariaData } from "./form-data";
 import { useStoreContaBancaria } from "./store";
@@ -20,6 +23,7 @@ const FormContaBancaria = ({
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   console.log("RENDER - ContaBancaria:", id);
+  const [modalBancosOpen, setModalBancosOpen] = useState<boolean>(false);
   const { mutate: insertOne } = useContasBancarias().insertOne();
   const { mutate: update } = useContasBancarias().update();
   const modalEditing = useStoreContaBancaria().modalEditing;
@@ -38,6 +42,12 @@ const FormContaBancaria = ({
 
   const { form } = useFormContaBancariaData(data);
   console.log(form.watch("id_tipo_conta"));
+
+  function handleSelectionBancos(item: ItemBancos) {
+    form.setValue("id_banco", item.id);
+    form.setValue("banco", item.codigo + " - " + item.nome);
+    setModalBancosOpen(false);
+  }
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-hidden">
@@ -63,12 +73,7 @@ const FormContaBancaria = ({
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                  <FormInput
-                    name="id"
-                    type="hidden"
-                    label="ID"
-                    control={form.control}
-                  />
+                  <FormInput name="id" type="hidden" control={form.control} />
                   <FormInput
                     className="flex-1 min-w-[40ch]"
                     name="descricao"
@@ -83,12 +88,26 @@ const FormContaBancaria = ({
                     label="Filial"
                     control={form.control}
                   />
-                  <SelectBanco
-                    className="min-w-32"
+                  <FormInput
                     name="id_banco"
-                    disabled={!modalEditing}
-                    label="Banco"
+                    type="hidden"
                     control={form.control}
+                  />
+                  <span onClick={() => setModalBancosOpen(true)}>
+                    <FormInput
+                      className="flex-1 min-w-[40ch]"
+                      name="banco"
+                      readOnly={!modalEditing}
+                      label="Banco"
+                      control={form.control}
+                    />
+                  </span>
+                  <ModalBancos
+                    open={modalEditing && modalBancosOpen}
+                    onOpenChange={() =>
+                      setModalBancosOpen((prev: boolean) => !prev)
+                    }
+                    handleSelecion={handleSelectionBancos}
                   />
                 </div>
               </div>

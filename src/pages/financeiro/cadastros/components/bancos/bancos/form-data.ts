@@ -7,8 +7,8 @@ const schemaBanco = z
   .object({
   // Dados Banco
   id: z.string().optional(),
-  nome_banco: z.string().refine(v=>v.trim() !=="", {message: "Nome inválido"}),
-  codigo_banco: z.string().refine(v=>v.trim() !=="", {message: "Código requerido"}),
+  nome: z.string().refine(v=>v.trim() !=="", {message: "Nome inválido"}),
+  codigo: z.string().refine(v=>v.trim() !=="", {message: "Código requerido"}),
   });
 
 export const useFormBancoData =(data:BancoSchema)=>{

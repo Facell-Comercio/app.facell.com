@@ -17,14 +17,14 @@ import { useStoreBanco } from "./store";
 
 export type BancoSchema = {
   id: string;
-  codigo_banco: string;
-  nome_banco: string;
+  codigo: string;
+  nome: string;
 };
 
 const initialPropsBanco: BancoSchema = {
   id: "",
-  codigo_banco: "",
-  nome_banco: "",
+  codigo: "",
+  nome: "",
 };
 
 const ModalBanco = () => {

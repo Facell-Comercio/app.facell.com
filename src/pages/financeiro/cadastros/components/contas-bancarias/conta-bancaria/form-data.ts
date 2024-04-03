@@ -11,6 +11,7 @@ const schemaContaBancaria = z
   id_filial: z.string().trim().min(1, "Selecione a filial"),
   id_tipo_conta: z.string().trim().min(1, "Selecione o tipo"),
   id_banco: z.string().trim().min(1, "Selecione o banco"),
+  // banco: z.string().optional(),
   agencia: z.string().trim().min(1, "Coloque a agencia"),
   dv_agencia: z.string().trim().optional(),
   conta: z.string().trim().min(1, "Coloque a conta"),

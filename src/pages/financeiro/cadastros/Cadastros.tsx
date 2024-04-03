@@ -1,4 +1,4 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   checkUserDepartments,
@@ -7,6 +7,7 @@ import {
 import Bancos from "./components/bancos/Bancos";
 import CentroCustos from "./components/centro-de-custos/CentroCustos";
 import ContasBancarias from "./components/contas-bancarias/ContasBancarias";
+import EquipamentosCielo from "./components/equipamentos-cielo/EquipamentosCielo";
 import Fornecedores from "./components/fornecedores/Fornecedores";
 import PlanoContas from "./components/plano-de-contas/PlanoContas";
 
@@ -18,8 +19,8 @@ const CadastrosPage = () => {
   return (
     <div className="flex p-4">
       <Tabs defaultValue="fornecedores" className="w-full">
-        <TabsList className="w-full justify-start flex">
-          <ScrollArea className="min-w-[1000px]">
+        <TabsList className="w-full justify-start flex h-auto">
+          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-2 md:p-0 h-auto">
             <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
             {checkUserDepartments("FINANCEIRO") ||
               (checkUserPermission("MASTER") && (
@@ -39,6 +40,13 @@ const CadastrosPage = () => {
                   Contas Bancarias
                 </TabsTrigger>
               ))}
+            {checkUserDepartments("FINANCEIRO") ||
+              (checkUserPermission("MASTER") && (
+                <TabsTrigger value="equipamentos-cielo">
+                  Equipamentos Cielo
+                </TabsTrigger>
+              ))}
+            <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </TabsList>
         <TabsContent value="fornecedores">
@@ -55,6 +63,9 @@ const CadastrosPage = () => {
         </TabsContent>
         <TabsContent value="contas-bancarias">
           <ContasBancarias />
+        </TabsContent>
+        <TabsContent value="equipamentos-cielo">
+          <EquipamentosCielo />
         </TabsContent>
       </Tabs>
     </div>

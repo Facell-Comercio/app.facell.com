@@ -51,17 +51,17 @@ const FormBanco = ({
 
                 <div className="flex flex-wrap gap-3">
                   <FormInput
-                    className="flex-1 min-w-[40ch] shrink-0"
-                    name="nome_banco"
+                    className="flex-1 min-w-[20ch]"
+                    name="codigo"
                     readOnly={!modalEditing}
-                    label="Nome do Banco"
+                    label="Código do Banco"
                     control={form.control}
                   />
                   <FormInput
-                    className="flex-1 min-w-[20ch]"
-                    name="codigo_banco"
+                    className="flex-1 min-w-[40ch] shrink-0"
+                    name="nome"
                     readOnly={!modalEditing}
-                    label="Código do Banco"
+                    label="Nome do Banco"
                     control={form.control}
                   />
                 </div>
