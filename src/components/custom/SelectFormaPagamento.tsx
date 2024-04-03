@@ -27,6 +27,7 @@ const SelectFormaPagamento = (props: TSelectFormaPagamento) => {
     })
 
     return (
+        //@ts-expect-error FormSelect props abstraídas
         <FormSelect {...props} options={data?.data?.map((formaPagamento: FormaPagamento) => ({ value: formaPagamento.id.toString(), label: formaPagamento.forma_pagamento })) || []} />
     );
 };

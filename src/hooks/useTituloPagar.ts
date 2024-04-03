@@ -15,6 +15,8 @@ export const useTituloPagar = () => {
 
     const getAll = ({ pagination, filters }: GetTitulosPagarProps) => useQuery({
         queryKey: ['fin_cp_titulos', pagination],
+        staleTime: 5 * 1000 * 60,
+        retry: false,
         queryFn: async () => { return await api.get<RowTitulo[] | Error>(`/financeiro/contas-a-pagar/titulo`, { params: { pagination, filters } }) },
         placeholderData: keepPreviousData
     })
@@ -22,6 +24,7 @@ export const useTituloPagar = () => {
     const getOne = (id: string | null) => useQuery({
         enabled: !!id,
         retry: false,
+        staleTime: 5 * 1000 * 60,
         queryKey: ['fin_cp_titulo', id],
         queryFn: async () => {
             console.log(`Buscando título com base no ID: ${id}`)

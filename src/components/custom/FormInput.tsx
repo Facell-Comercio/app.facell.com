@@ -1,11 +1,12 @@
-import { cn } from '@/lib/utils';
-import { Control } from 'react-hook-form';
+import { Control, UseFormRegister } from 'react-hook-form';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Input } from '../ui/input';
 
 interface IFormInput {
   name: string,
   type?: string,
-  control: Control<any>,
+  control?: Control<any>,
+  register?: UseFormRegister<any>,
   label?: string,
   placeholder?: string,
   description?: string,
@@ -17,41 +18,40 @@ interface IFormInput {
   fnMask?: (val:string)=>void
 }
 
-import * as React from "react";
+const FormInput = ({ name, type, control, register, label, placeholder, description, readOnly, disabled, className, onBlur, onChange, fnMask = (val)=>{return val} }: IFormInput) => {
 
-
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> { }
-
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
+  if(typeof register !== 'undefined'){
     return (
-      <input
-        type={type}
-        className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
+      <FormItem className={`${type === "hidden" && "hidden"} ${className} flex-1`}>
+          {label && <FormLabel className='text-nowrap'>{label}</FormLabel>}
+          <FormControl>
+            <Input
+              {...register(name, {
+                onBlur: (e)=>fnMask(e.target.value)
+              })}
+              type={type || 'text'}
+              placeholder={placeholder}
+              readOnly={readOnly}
+              disabled={disabled}
+            />
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
     )
   }
-)
-Input.displayName = "Input"
 
-export { Input };
-
-const FormInput = ({ name, type, control, label, placeholder, description, readOnly, disabled, className, onBlur, onChange, fnMask }: IFormInput) => {
+if(typeof control !== 'undefined') {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className={`${type === "hidden" && "hidden"} ${className} flex-1`}>
+        <FormItem className={`${type === "hidden" && "hidden"} ${className}`}>
           {label && <FormLabel className='text-nowrap'>{label}</FormLabel>}
           <FormControl>
             <Input
+              className={className}
               ref={field.ref}
               type={type || 'text'}
               name={field.name}
@@ -68,7 +68,8 @@ const FormInput = ({ name, type, control, label, placeholder, description, readO
         </FormItem>
       )}
     />
-  );
+  )};
+  return <p>Precisa prover Control ou Register</p>
 };
 
 export default FormInput;

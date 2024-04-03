@@ -4,11 +4,10 @@ import FormSelect from "@/components/custom/FormSelect";
 import SelectFilial from "@/components/custom/SelectFilial";
 import { Button } from "@/components/ui/button";
 import { Form, FormItem, FormLabel } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
-import { normalizeCnpjNumber } from "@/helpers/mask";
+import { normalizeCnpjNumber, normalizePercentual } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
 import ModalFornecedores, {
   ItemFornecedor,
@@ -25,6 +24,9 @@ import { ItemRateioTitulo, TituloPagar, initialPropsTitulo } from "./store-titul
 import FormFileUpload from "@/components/custom/FormFileUpload";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
+import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
+import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaTitulo = z.object({
@@ -33,6 +35,7 @@ const schemaTitulo = z.object({
   id_filial: z.coerce.number(),
   id_plano_contas: z.coerce.number(),
   id_tipo_solicitacao: z.coerce.number(),
+  id_forma_pagamento: z.coerce.number(),
   id_centro_custo: z.coerce.number(),
 
   // Outros
@@ -50,8 +53,8 @@ const schemaTitulo = z.object({
   itens_rateio: z.array(
     z.object({
       id_filial: z.string(),
-      valor: z.number().min(0),
-      percentual: z.number(),
+      valor: z.coerce.number().min(0),
+      percentual: z.coerce.number(),
     })
   ),
 
@@ -63,9 +66,9 @@ const schemaTitulo = z.object({
   url_planilha: z.string().optional(),
   url_txt: z.string().optional(),
 });
-
+var i = 0;
 const FormTituloPagar = ({ id }: { id: string | null }) => {
-  console.log("RENDER - Form, titulo:", id);
+  console.log(`RENDER ${++i} - Form, titulo:`, id);
   const [modalFornecedorOpen, setModalFornecedorOpen] = useState<boolean>(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(!id || false)
@@ -107,11 +110,12 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   }
 
   const itens_rateio: ItemRateioTitulo[] = []
+
   itensRateioTitulo?.forEach((item_rateio: ItemRateioTitulo) => {
     const item = {
       id: item_rateio.id?.toString() || "",
       id_filial: item_rateio.id_filial?.toString() || "",
-      percentual: item_rateio.percentual?.toString() || "",
+      percentual: item_rateio.percentual || '',
       valor: item_rateio.valor || 0,
     };
     itens_rateio.push(item);
@@ -153,6 +157,9 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
     setModalPlanoContasOpen(false);
   }
   const watchIdFilial = useWatch({ name: "id_filial", control: form.control });
+  const watchFormaPagamento = useWatch({ name: "id_forma_pagamento", control: form.control });
+  const showPix = watchFormaPagamento === '4'
+  const showDadosBancarios = watchFormaPagamento === '2' || watchFormaPagamento === '5' || watchFormaPagamento === '8' 
 
   // Controle de rateio
   const {
@@ -176,9 +183,11 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
     toast({
       title: "You submitted the following values:",
       description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
+        <ScrollArea className="h-[300px]">
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          </pre>
+        </ScrollArea>
       ),
     });
   };
@@ -239,7 +248,8 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     <Button disabled={!canEdit} type="button" onClick={showModalFornecedor} size={'sm'}>Procurar</Button>
                   </div>
 
-                  <div className="flex flex-wrap gap-3">
+                  {/* Dados do Fornecedor */}
+                  <div className="flex flex-wrap gap-3 items-end">
                     <FormInput
                       type="hidden"
                       readOnly={true}
@@ -260,7 +270,97 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       readOnly={true}
                       label="Nome do fornecedor"
                       control={form.control}
+                    /> <br/>
+
+                    <SelectFormaPagamento
+                      label="Forma de pagamento"
+                      name="id_forma_pagamento"
+                      control={form.control}
                     />
+
+                    <div className={`${showPix ? 'flex' : 'hidden'} gap-3 flex-wrap`}>
+                      <SelectTipoChavePix
+                        control={form.control}
+                        name="id_tipo_chave_pix"
+                        label="Tipo Chave PIX"
+                      />
+
+                      <FormInput
+                        label="Chave PIX"
+                        name="chave_pix"
+                        control={form.control}
+                        readOnly={!isEditing}
+                      />
+                    </div>
+
+                    {/* Dados bancários do fornecedor */}
+                    <div className={`${showDadosBancarios ? 'flex' : 'hidden'} gap-3 flex-wrap`}>
+                      <FormInput
+                        label="Favorecido"
+                        name="favorecido"
+                        control={form.control}
+                        readOnly={!isEditing}
+                      />
+
+                      <FormInput
+                        label="CNPJ Favorecido"
+                        name="cnpj_favorecido"
+                        control={form.control}
+                        readOnly={!isEditing}
+                      />
+
+                      <FormInput
+                        label="Cód. Banco"
+                        name="codigo_banco"
+                        className="max-w-[10ch]"
+                        control={form.control}
+                        readOnly={true}
+                      />
+
+                      <FormInput
+                        label="Banco"
+                        name="nome_banco"
+                        className="max-w-fit"
+                        control={form.control}
+                        readOnly={true}
+                      />
+
+                      <FormInput
+                        label="Agência"
+                        name="agencia"
+                        control={form.control}
+                        readOnly={true}
+                      />
+
+                      <FormInput
+                        label="Dv. Ag."
+                        name="dv_agencia"
+                        className="max-w-[10ch]"
+                        control={form.control}
+                        readOnly={true}
+                      />
+
+                      <SelectTipoContaBancaria
+                        label="Tipo conta"
+                        name="id_tipo_conta"
+                        control={form.control}
+                      />
+
+                      <FormInput
+                        label="Conta"
+                        name="conta"
+                        control={form.control}
+                        readOnly={true}
+                      />
+
+                      <FormInput
+                        label="Dv. Conta"
+                        name="dv_conta"
+                        className="max-w-[10ch]"
+                        control={form.control}
+                        readOnly={true}
+                      />
+                    </div>
 
                     <ModalFornecedores
                       open={(isEditing && modalFornecedorOpen)}
@@ -331,7 +431,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
                     <FormSelect
                       disabled={!isEditing}
-                      name="centro_custo"
+                      name="id_centro_custo"
                       control={form.control}
                       label={"Centro de custo"}
                       className={"min-w-[30ch]"}
@@ -339,24 +439,6 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                         { value: "1", label: "DIRETORIA" },
                         { value: "2", label: "DP" },
                         { value: "3", label: "COMERCIAL" },
-                      ]}
-                    />
-
-                    <FormSelect
-                      disabled={!isEditing}
-                      name="forma_pagamento"
-                      control={form.control}
-                      label={"Forma de pagamento"}
-                      className={"min-w-[30ch]"}
-                      options={[
-                        { value: "1", label: "Boleto" },
-                        { value: "2", label: "Débito em conta" },
-                        { value: "3", label: "Dinheiro" },
-                        { value: "4", label: "PIX" },
-                        { value: "5", label: "Transferência" },
-                        { value: "6", label: "Cartão" },
-                        { value: "7", label: "Câmbio Invoice" },
-                        { value: "8", label: "Débito automático" },
                       ]}
                     />
 
@@ -390,7 +472,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
                     <FormInput
                       readOnly={!isEditing}
-                      className="min-w-[20ch]"
+                      className="w-[20ch]"
                       name="valor"
                       control={form.control}
                       type={"number"}
@@ -399,11 +481,23 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
 
                     <FormInput
                       readOnly={!isEditing}
-                      className="min-w-[400px]"
+                      className="min-w-[400px] flex-1"
                       name="descricao"
                       label="Descrição do pagamento"
                       control={form.control}
                     />
+                  </div>
+                </div>
+
+
+                <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                  <div className="flex gap-2 mb-3">
+                    <DollarSign />{" "}
+                    <span className="text-lg font-bold ">Dados do pagamento</span>
+                  </div>
+                  <div className="flex gap-3">
+
+
                   </div>
                 </div>
 
@@ -420,7 +514,6 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       control={form.control}
                       label={"Tipo de rateio"}
                       className={"min-w-[30ch]"}
-                      defaultValue={titulo.id_rateio?.toString()}
                       options={[
                         { value: "6", label: "R08 - RATEIO MANUAL" },
                         { value: "1", label: "R01 - RATEIO REGIONAL RN" },
@@ -431,6 +524,8 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       ]}
                     />
                   </div>
+
+
 
                   <div className="flex justify-between items-baseline border mt-3">
                     <FormLabel>Itens do rateio</FormLabel>
@@ -451,7 +546,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {itensRateio?.map((itemRateio, index) => (
+                        {itensRateio?.map((_, index) => (
                           <tr key={index}>
                             <td className="p-1">
                               <SelectFilial
@@ -462,15 +557,17 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                             </td>
                             <td className="p-1">
                               <FormInput
+                                className="text-end"
                                 readOnly={!(isEditing && rateioManual)}
-                                type="number"
+                                type="text"
                                 name={`itens_rateio.${index}.percentual`}
                                 control={form.control}
-
+                                fnMask={normalizePercentual}
                               />
                             </td>
                             <td className="p-1">
                               <FormInput
+                                className="text-end"
                                 readOnly={!(isEditing && rateioManual)}
                                 type="number"
                                 name={`itens_rateio.${index}.valor`}
@@ -496,14 +593,6 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       </tbody>
                     </table>
                   </div>
-                </div>
-
-                <div className="hidden p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                  <div className="flex gap-2 mb-3">
-                    <DollarSign />{" "}
-                    <span className="text-lg font-bold ">Dados do pagamento</span>
-                  </div>
-                  <div className="flex gap-3">pagamento aqui</div>
                 </div>
 
                 {/* Fim da primeira coluna */}

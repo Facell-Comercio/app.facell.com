@@ -60,7 +60,7 @@ export const initialPropsTitulo: TituloPagar = {
   id_status: "1",
   id_centro_custo: "",
   centro_custo: '',
-  id_forma_pagamento: "",
+  id_forma_pagamento: "1",
 
   // Pagamento
   forma_pagamento: '',

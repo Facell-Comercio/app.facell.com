@@ -13,14 +13,24 @@ import QueryClientProviderComponent from "./providers/query-provider.tsx";
 import AppRoutes from "./routes.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <QueryClientProviderComponent>
-      <Router>
-        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-          <AppRoutes />
-        </ThemeProvider>
-      </Router>
-      <ReactQueryDevtools initialIsOpen={true} />
-    </QueryClientProviderComponent>
-  </React.StrictMode>
+  // <React.StrictMode>
+  //   <QueryClientProviderComponent>
+  //     <Router>
+  //       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+  //         <AppRoutes />
+  //       </ThemeProvider>
+  //     </Router>
+  //     <ReactQueryDevtools initialIsOpen={true} />
+  //   </QueryClientProviderComponent>
+  // </React.StrictMode>
+
+  <QueryClientProviderComponent>
+    <Router>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <AppRoutes />
+      </ThemeProvider>
+    </Router>
+    <ReactQueryDevtools initialIsOpen={true} />
+  </QueryClientProviderComponent>
+
 );

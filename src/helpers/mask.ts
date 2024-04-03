@@ -37,3 +37,12 @@ export const normalizeCepNumber = (value: string | undefined) => {
         .replace(/(-\d{3})(\d+?)/, '$1')
         .substring(0, 9)
 }
+
+export const normalizePercentual = (value: string | undefined) => {
+    if (!value) return '0.00%'
+    const valueMultiplicado = parseFloat(value)
+    if(isNaN(valueMultiplicado)){
+        return '0.00%'
+    }
+    return valueMultiplicado.toLocaleString("pt-BR", { style: "percent", minimumFractionDigits: 2 });
+}
