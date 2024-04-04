@@ -1,27 +1,38 @@
-import { cn } from '@/lib/utils';
-import { Control } from 'react-hook-form';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { cn } from "@/lib/utils";
+import { Control } from "react-hook-form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 
 interface IFormInput {
-  name: string,
-  type?: string,
-  control: Control<any>,
-  label?: string,
-  placeholder?: string,
-  description?: string,
-  readOnly?: boolean,
-  disabled?: boolean,
-  className?: string
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-  fnMask?: (val:string)=>void
+  name: string;
+  type?: string;
+  control: Control<any>;
+  label?: string;
+  placeholder?: string;
+  description?: string;
+  readOnly?: boolean;
+  disabled?: boolean;
+  className?: string;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  fnMask?: (val: string) => void;
+  min?: number;
+  max?: number;
+  icon?: React.ElementType;
+  iconLeft?: boolean;
 }
 
 import * as React from "react";
-
+import { Button } from "../ui/button";
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> { }
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
@@ -35,33 +46,80 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         {...props}
       />
-    )
+    );
   }
-)
-Input.displayName = "Input"
+);
+Input.displayName = "Input";
 
 export { Input };
 
-const FormInput = ({ name, type, control, label, placeholder, description, readOnly, disabled, className, onBlur, onChange, fnMask }: IFormInput) => {
+const FormInput = ({
+  name,
+  type,
+  control,
+  label,
+  placeholder,
+  description,
+  readOnly,
+  disabled,
+  className,
+  onBlur,
+  onChange,
+  fnMask,
+  min,
+  max,
+  icon: Icon,
+  iconLeft,
+}: IFormInput) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className={`${type === "hidden" && "hidden"} ${className} flex-1`}>
-          {label && <FormLabel className='text-nowrap'>{label}</FormLabel>}
-          <FormControl>
-            <Input
-              ref={field.ref}
-              type={type || 'text'}
-              name={field.name}
-              value={typeof fnMask === 'function' ? fnMask(field.value) : field.value}
-              placeholder={placeholder}
-              readOnly={readOnly}
-              disabled={typeof disabled === "undefined" ? field.disabled : disabled}
-              onBlur={typeof onBlur == "undefined" ? field.onBlur : onBlur}
-              onChange={typeof onChange == "undefined" ? field.onChange : onChange}
-            />
+        <FormItem
+          className={`${type === "hidden" && "hidden"} ${className} flex-1`}
+        >
+          {label && <FormLabel className="text-nowrap">{label}</FormLabel>}
+          <FormControl className={`flex ${iconLeft && "flex-row-reverse"}`}>
+            <div>
+              <Input
+                ref={field.ref}
+                type={type || "text"}
+                name={field.name}
+                value={
+                  typeof fnMask === "function"
+                    ? fnMask(field.value)
+                    : field.value
+                }
+                placeholder={placeholder}
+                readOnly={readOnly}
+                disabled={
+                  typeof disabled === "undefined" ? field.disabled : disabled
+                }
+                onBlur={typeof onBlur == "undefined" ? field.onBlur : onBlur}
+                onChange={
+                  typeof onChange == "undefined" ? field.onChange : onChange
+                }
+                min={min}
+                max={max}
+                className={`${
+                  Icon &&
+                  `rounded-none ${iconLeft ? "rounded-r-md" : "rounded-l-md"}`
+                }`}
+              />
+              {Icon && (
+                <Button
+                  type={"button"}
+                  variant={"secondary"}
+                  disabled={true}
+                  className={`flex items-center justify-center rounded-none p-2 ${
+                    iconLeft ? "rounded-l-md" : "rounded-r-md"
+                  }`}
+                >
+                  <Icon />
+                </Button>
+              )}
+            </div>
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />

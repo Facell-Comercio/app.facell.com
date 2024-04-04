@@ -28,8 +28,7 @@ const Fornecedores = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex justify-between">
-        <h2 className="text-3xl font-medium">Fornecedores</h2>
+      <div className="flex justify-end">
         <Button variant={"secondary"} onClick={handleClickNewFornecedor}>
           Novo Fornecedor
         </Button>
