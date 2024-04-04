@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { RateiosSchema } from "./Modal";
 
@@ -11,10 +11,11 @@ const schemaRateios = z
   active: z.coerce.boolean(),
   nome: z.string().trim().min(12, "A nome deve ter no mínimo 12 caracteres").toUpperCase(),
   id_grupo_economico: z.string().trim().toUpperCase().min(1, "Obrigatório"),
+  manual: z.coerce.boolean(),
   itens: z.array(z.object({
     id: z.string().trim().optional(),
-    id_filial: z.string().trim().min(1, "Obrigatório"),
-    percentual: z.string().trim().transform(v=> +v*100)
+    id_filial: z.coerce.string().trim().min(1, "Obrigatório"),
+    percentual: z.string().transform(v=> parseFloat(v)/100)
   }))
 });
 
@@ -24,8 +25,15 @@ export const useFormRateioData =(data:RateiosSchema)=>{
         defaultValues: data,
         values: data
       });
+    const {fields, append, remove} = useFieldArray({
+      control: form.control,
+      name: "itens"
+    })
 
     return {
-        form
+        form,
+        itens: fields,
+        appendItem: append,
+        removeItem: remove
     }
 }

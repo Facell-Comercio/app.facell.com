@@ -102,6 +102,7 @@ const FormInput = ({
                 }
                 min={min}
                 max={max}
+                step={type === "number" ? "0.01" : undefined}
                 className={`${
                   Icon &&
                   `rounded-none ${iconLeft ? "rounded-r-md" : "rounded-l-md"}`

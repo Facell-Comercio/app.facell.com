@@ -1,10 +1,11 @@
 
 import { api } from "@/lib/axios";
+import { RateiosSchema } from "@/pages/financeiro/cadastros/components/rateios/rateio/Modal";
 import { getAllParams } from "@/types/params";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useRateios = () => {
-    // const queryClient = useQueryClient()
+    const queryClient = useQueryClient()
     return ({
         getAll : ({ pagination, filters }: getAllParams) => useQuery({
             queryKey: ['fin_rateios', pagination],
@@ -21,29 +22,29 @@ export const useRateios = () => {
             },
         }),
 
-    //     insertOne : () => useMutation({
-    //         mutationFn: (data:RateiosSchema) => {
-    //             console.log("Criando novo plano de contas:")            
-    //             return api.post("financeiro/rateios", data).then((response)=>response.data)
-    //         },
-    //         onSuccess() {
-    //             queryClient.invalidateQueries({queryKey:['fin_rateios']}) 
-    //         },
-    //         onError(error) {
-    //             console.log(error);
-    //         },
-    //     }),
+        insertOne : () => useMutation({
+            mutationFn: (data:RateiosSchema) => {
+                console.log("Criando novo plano de contas:")            
+                return api.post("financeiro/rateios", data).then((response)=>response.data)
+            },
+            onSuccess() {
+                queryClient.invalidateQueries({queryKey:['fin_rateios']}) 
+            },
+            onError(error) {
+                console.log(error);
+            },
+        }),
 
-    //     update : () => useMutation({
-    //         mutationFn: ({id, ...rest}:RateiosSchema) => {
-    //             console.log(`Atualizando plano de contas com base no ID: ${id}`)            
-    //             return api.put("financeiro/rateios/", {id, ...rest}).then((response)=>response.data)
-    //         },
-    //         onSuccess() {
-    //             queryClient.invalidateQueries({queryKey:['fin_rateios']}) 
-    //         },
-    //         onError(error) {
-    //             console.log(error);
-    //         },
-    // })
+        update : () => useMutation({
+            mutationFn: ({id, ...rest}:RateiosSchema) => {
+                console.log(`Atualizando plano de contas com base no ID: ${id}`)            
+                return api.put("financeiro/rateios/", {id, ...rest}).then((response)=>response.data)
+            },
+            onSuccess() {
+                queryClient.invalidateQueries({queryKey:['fin_rateios']}) 
+            },
+            onError(error) {
+                console.log(error);
+            },
+    })
 })}

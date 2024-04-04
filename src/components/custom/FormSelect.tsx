@@ -52,8 +52,6 @@ const FormSelect = ({
   value,
   onChange,
 }: IFormSelect) => {
-  console.log(name, !!(control && name));
-
   if (control && name) {
     return (
       <FormField

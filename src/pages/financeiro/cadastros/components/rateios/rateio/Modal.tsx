@@ -22,10 +22,10 @@ export interface RateiosSchema {
   nome: string;
   codigo: string;
   itens: RateioItens[];
+  manual: boolean;
 }
 
 type RateioItens = {
-  id_item: string;
   id_filial: string;
   percentual: string;
 };
@@ -37,6 +37,7 @@ const initialPropsRateios: RateiosSchema = {
   nome: "",
   codigo: "",
   itens: [],
+  manual: false,
 };
 
 const ModalRateios = () => {
@@ -50,16 +51,21 @@ const ModalRateios = () => {
   const { data, isLoading } = useRateios().getOne(id);
   const newData: RateiosSchema & Record<string, any> = {} as RateiosSchema &
     Record<string, any>;
+  const rateio = data?.data;
 
-  for (const key in data?.data) {
-    if (typeof data?.data[key] === "number") {
-      newData[key] = String(data?.data[key]);
-    } else if (data?.data[key] === null) {
+  for (const key in rateio) {
+    if (typeof rateio[key] === "number") {
+      newData[key] = String(rateio[key]);
+    } else if (rateio[key] === null) {
       newData[key] = "";
     } else {
-      newData[key] = data?.data[key];
+      newData[key] = rateio[key];
     }
   }
+
+  rateio?.itens?.forEach(
+    (value: any) => (value.id_filial = value.id_filial.toString())
+  );
 
   console.log(newData);
 
