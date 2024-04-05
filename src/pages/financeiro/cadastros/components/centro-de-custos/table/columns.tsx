@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ReactNode } from "react";
 import { useStoreCentroCustos } from "../centro-custo/store";
+import { FileSearch2 } from "lucide-react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -50,12 +51,10 @@ export const columnsTable: ColumnDef<RowCentroCustos>[] = [
     accessorKey: "id",
     header: "ID",
     cell: (info) => (
-      <span
-        className="font-semibold cursor-pointer text-blue-500"
-        onClick={() => openModal(info.getValue<number>().toString())}
-      >
-        {info.getValue<number>()}
-      </span>
+      <FileSearch2
+      className="text-blue-500 cursor-pointer"
+      onClick={() => openModal(info.getValue<number>().toString())}
+    />
     ),
     sortDescFirst: true,
   },

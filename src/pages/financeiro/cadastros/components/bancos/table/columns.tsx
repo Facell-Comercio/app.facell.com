@@ -51,7 +51,7 @@ export const columnsTable: ColumnDef<RowFornecedor>[] = [
     header: "ID",
     cell: (info) => (
       <FileSearch2
-        className="text-blue-500"
+        className="text-blue-500 cursor-pointer"
         onClick={() => openModal(info.getValue<number>().toString())}
       />
     ),

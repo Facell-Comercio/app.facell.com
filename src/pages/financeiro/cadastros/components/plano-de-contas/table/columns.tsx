@@ -54,7 +54,7 @@ export const columnsTable: ColumnDef<RowPlanoConta>[] = [
     accessorKey: "id",
     cell: (info) => (
       <FileSearch2
-        className="text-blue-500"
+        className="text-blue-500 cursor-pointer"
         onClick={() => openModal(info.getValue<number>().toString())}
       />
     ),

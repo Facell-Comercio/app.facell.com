@@ -53,7 +53,7 @@ export const columnsTable: ColumnDef<RowEquipamento>[] = [
     accessorKey: "id",
     cell: (info) => (
       <FileSearch2
-        className="text-blue-500"
+        className="text-blue-500 cursor-pointer" 
         onClick={() => openModal(info.getValue<number>().toString())}
       />
     ),
