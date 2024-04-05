@@ -128,7 +128,5 @@ const FormInput = ({
       )}
     />
   )};
-  return <p>Precisa prover Control ou Register</p>
-};
 
 export default FormInput;

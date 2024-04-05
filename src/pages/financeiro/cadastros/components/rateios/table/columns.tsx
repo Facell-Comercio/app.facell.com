@@ -9,7 +9,6 @@ import { useStoreRateios } from "../rateio/store";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type RowPlanoConta = {
-  select: ReactNode;
   id: string;
   nome: string;
   codigo: string;
@@ -21,39 +20,11 @@ const openModal = useStoreRateios.getState().openModal;
 
 export const columnsTable: ColumnDef<RowPlanoConta>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <div className="px-1">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        />
-      </div>
-    ),
-    enableSorting: false,
-    cell: ({ row }) => (
-      <div className="px-1">
-        <input
-          type="checkbox"
-          {...{
-            checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            indeterminate: row.getIsSomeSelected().toString(),
-            onChange: row.getToggleSelectedHandler(),
-          }}
-        />
-      </div>
-    ),
-  },
-  {
     header: "AÇÃO",
     accessorKey: "id",
     cell: (info) => (
       <FileSearch2
-        className="text-blue-500"
+        className="text-blue-500 cursor-pointer"
         onClick={() => openModal(info.getValue<number>().toString())}
       />
     ),

@@ -63,8 +63,7 @@ const FormRateios = ({
     removeItem(index);
   }
   const manual = form.watch("manual");
-
-  console.log(manual, "NEGAÇÃO -> ", !manual);
+  const isManual = +manual;
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-hidden">
@@ -78,7 +77,7 @@ const FormRateios = ({
                   <div className="flex gap-2">
                     <Fingerprint />{" "}
                     <span className="text-lg font-bold ">
-                      Identificação do Plano Contas
+                      Dados do rateio
                     </span>
                   </div>
                   <span className="flex gap-4">
@@ -125,8 +124,9 @@ const FormRateios = ({
                     label="Grupo Econômico"
                     control={form.control}
                   />
-                  {!manual && (
-                    <span className="w-full flex justify-between mt-2">
+
+                  {!isManual && (
+                    <section className="w-full flex justify-between mt-2">
                       <p className="text-lg font-medium">Rateios</p>
                       <Button
                         type="button"
@@ -135,14 +135,14 @@ const FormRateios = ({
                       >
                         Adicionar Rateio
                       </Button>
-                    </span>
+                    </section>
                   )}
+
+                  {!isManual  && (
                   <ScrollArea className="flex w-[98%] mx-auto max-h-96 pr-3">
-                    {itens &&
-                      !manual &&
-                      itens.map((item, index) => {
+                    {itens.map((item, index) => {
                         return (
-                          <span
+                          <div
                             className="flex gap-2 py-1 items-end "
                             key={item.id}
                           >
@@ -172,11 +172,13 @@ const FormRateios = ({
                             >
                               <Trash />
                             </Button>
-                          </span>
+                          </div>
                         );
                       })}
                     <ScrollBar />
                   </ScrollArea>
+                  )
+                  }
                 </div>
               </div>
             </div>
