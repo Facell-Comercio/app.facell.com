@@ -1,9 +1,7 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
-import { ReactNode } from "react";
 import { useStoreRateios } from "../rateio/store";
 
 // This type is used to define the shape of our data.
@@ -43,7 +41,7 @@ export const columnsTable: ColumnDef<RowPlanoConta>[] = [
     accessorKey: "nome",
     cell: (info) => {
       const nome = info.getValue<string>();
-      return <span>{nome.split(" - ")[1].toUpperCase()}</span>;
+      return <span>{nome}</span>;
     },
   },
   {
@@ -51,7 +49,7 @@ export const columnsTable: ColumnDef<RowPlanoConta>[] = [
     accessorKey: "grupo_economico",
     cell: (info) => {
       const grupo_economico = info.getValue<string>();
-      return <span>{grupo_economico.toUpperCase()}</span>;
+      return <span>{grupo_economico}</span>;
     },
   },
   {

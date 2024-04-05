@@ -63,6 +63,7 @@ const FormRateios = ({
     removeItem(index);
   }
   const manual = form.watch("manual");
+  const id_grupo_economico = form.watch("id_grupo_economico");
   const isManual = +manual;
 
   return (
@@ -76,9 +77,7 @@ const FormRateios = ({
                 <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
                     <Fingerprint />{" "}
-                    <span className="text-lg font-bold ">
-                      Dados do rateio
-                    </span>
+                    <span className="text-lg font-bold ">Dados do rateio</span>
                   </div>
                   <span className="flex gap-4">
                     <FormSwitch
@@ -138,9 +137,9 @@ const FormRateios = ({
                     </section>
                   )}
 
-                  {!isManual  && (
-                  <ScrollArea className="flex w-[98%] mx-auto max-h-96 pr-3">
-                    {itens.map((item, index) => {
+                  {!isManual && (
+                    <ScrollArea className="flex w-[98%] mx-auto max-h-96 pr-3">
+                      {itens.map((item, index) => {
                         return (
                           <div
                             className="flex gap-2 py-1 items-end "
@@ -152,6 +151,7 @@ const FormRateios = ({
                               disabled={!modalEditing}
                               label="Filial"
                               control={form.control}
+                              id_grupo_economico={id_grupo_economico}
                             />
                             <FormInput
                               type="number"
@@ -175,10 +175,9 @@ const FormRateios = ({
                           </div>
                         );
                       })}
-                    <ScrollBar />
-                  </ScrollArea>
-                  )
-                  }
+                      <ScrollBar />
+                    </ScrollArea>
+                  )}
                 </div>
               </div>
             </div>

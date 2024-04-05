@@ -67,7 +67,10 @@ const ModalRateios = () => {
     (value: any) => (value.id_filial = value.id_filial.toString())
   );
 
-  console.log(newData);
+  // Salvo pelo Gambiarrex
+  newData["manual"] = !!+newData["manual"];
+
+  console.log("TESTE ", newData);
 
   function handleClickCancel() {
     editModal(false);

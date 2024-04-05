@@ -16,6 +16,7 @@ type TSelectFilial = {
   placeholder?: string;
   value?: string;
   onChange?: (id?: string) => void;
+  id_grupo_economico?: string;
 };
 
 const SelectFilial = ({
@@ -27,10 +28,15 @@ const SelectFilial = ({
   placeholder,
   value,
   onChange,
+  id_grupo_economico,
 }: TSelectFilial) => {
   // Use a single state variable for fetching and storing data
 
-  const { data } = useFilial().getAll(undefined);
+  const { data } = useFilial().getAll({
+    filters: {
+      id_grupo_economico: id_grupo_economico,
+    },
+  });
   const rows = data?.data?.rows || [];
 
   return (
