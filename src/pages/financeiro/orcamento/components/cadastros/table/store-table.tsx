@@ -1,4 +1,3 @@
-// import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 
 export interface Pagination {
@@ -9,17 +8,11 @@ export interface Pagination {
 type RowSelection = Record<number, boolean>;
 
 export interface Filters {
-  mes?: string;
-  ano?: string;
-  id_centro_custo?: string;
-  plano_contas?: string;
+  termo?: string;
 }
 
 const initialFilters: Filters = {
-  mes: (new Date().getMonth() + 1).toString(),
-  ano: new Date().getFullYear().toString(),
-  id_centro_custo: "",
-  plano_contas: "",
+  termo: "",
 };
 
 export interface SortingItem {
@@ -47,7 +40,7 @@ export interface Actions {
   closeModal: () => void;
 }
 
-export const useStoreTableMeuOrcamento = create<State & Actions>((set) => ({
+export const useStoreTableCadastro = create<State & Actions>((set) => ({
   // Modal
   modalOpen: false,
 
@@ -59,10 +52,7 @@ export const useStoreTableMeuOrcamento = create<State & Actions>((set) => ({
 
   // Filters
   filters: initialFilters,
-  setFilters: (novoFiltro) =>
-    set((state) => ({
-      filters: { ...state.filters, ...novoFiltro },
-    })),
+  setFilters: (novoFiltro) => set({ filters: novoFiltro }),
   resetFilters: () => {
     set({ filters: initialFilters });
   },

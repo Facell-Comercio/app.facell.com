@@ -4,6 +4,7 @@ import {
   checkUserDepartments,
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
+import Cadastros from "./components/cadastros/Cadastros";
 import MeuOrcamento from "./components/meu-orcamento/MeuOrcamento";
 
 // import { useAuthStore } from "@/context/auth-store";
@@ -27,7 +28,9 @@ const OrcamentoPage = () => {
         <TabsContent value="meu-orcamento">
           <MeuOrcamento />
         </TabsContent>
-        <TabsContent value="cadastros"></TabsContent>
+        <TabsContent value="cadastros">
+          <Cadastros />
+        </TabsContent>
       </Tabs>
     </div>
   );

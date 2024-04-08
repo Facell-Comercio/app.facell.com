@@ -2,7 +2,7 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { FileSearch2 } from "lucide-react";
+import { ArrowLeftRight } from "lucide-react";
 import { ReactNode } from "react";
 import { useStoreMeuOrcamento } from "../orcamento/store";
 // import { useStoreMeuOrcamento } from "../orcamento/store";
@@ -13,9 +13,10 @@ export type RowMeuOrcamento = {
   select: ReactNode;
   id: string;
   centro_de_custo: string;
-  nome: string;
-  razao: string;
-  ativo: string;
+  plano_contas: string;
+  valor_previsto: string;
+  saldo: string;
+  realizado_percentual: string;
 };
 
 const openModal = useStoreMeuOrcamento.getState().openModal;
@@ -53,7 +54,7 @@ export const columnsTable: ColumnDef<RowMeuOrcamento>[] = [
     header: "AÇÃO",
     accessorKey: "id",
     cell: (info) => (
-      <FileSearch2
+      <ArrowLeftRight
         className="text-blue-500 cursor-pointer"
         onClick={() => openModal(info.getValue<number>().toString())}
       />
@@ -61,19 +62,27 @@ export const columnsTable: ColumnDef<RowMeuOrcamento>[] = [
     enableSorting: false,
   },
   {
-    header: "CENTRO DE CUSTO",
-    accessorKey: "centro_custos",
+    header: "GRUPO ECONOMICO",
+    accessorKey: "grupo_economico",
     cell: (info) => {
-      const id_centro_custo = info.getValue<string>();
-      return <span>{id_centro_custo}</span>;
+      const grupo_economico = info.getValue<string>();
+      return <span>{grupo_economico}</span>;
     },
   },
   {
-    header: "PLANO CONTAS",
+    header: "CENTRO DE CUSTO",
+    accessorKey: "centro_custos",
+    cell: (info) => {
+      const centro_custos = info.getValue<string>();
+      return <span>{centro_custos}</span>;
+    },
+  },
+  {
+    header: "PLANO DE CONTAS",
     accessorKey: "plano_contas",
     cell: (info) => {
-      const id_plano_contas = info.getValue<string>();
-      return <span>{id_plano_contas}</span>;
+      const plano_contas = info.getValue<string>();
+      return <span>{plano_contas}</span>;
     },
   },
   {

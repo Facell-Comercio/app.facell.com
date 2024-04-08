@@ -4,10 +4,17 @@ import { z } from "zod";
 
 const schemaMeuOrcamento = z
   .object({
-  id_conta_saida: z.string(),
-  disponivel: z.string(),
-  id_conta_entrada: z.string(),
-  valor_transferido: z.string(),
+  id_conta_saida: z.coerce.string(),
+  disponivel: z.coerce.string(),
+  conta_saida: z.coerce.string(),
+  id_conta_entrada: z.coerce.string(),
+  conta_entrada: z.coerce.string(),
+  valor_transferido: z.coerce.string(),
+
+  id_filial: z.coerce.string(),
+  id_orcamento: z.coerce.string(),
+  id_centro_custo_saida: z.coerce.string(),
+  id_centro_custo_entrada: z.coerce.string(),
 });
 
 export type MeuOrcamentoSchema =  z.infer<typeof schemaMeuOrcamento>;
