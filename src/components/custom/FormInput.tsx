@@ -26,6 +26,7 @@ interface IFormInput {
   max?: number;
   icon?: React.ElementType;
   iconLeft?: boolean;
+  step?: string;
 }
 
 import * as React from "react";
@@ -70,6 +71,7 @@ const FormInput = ({
   max,
   icon: Icon,
   iconLeft,
+  step,
 }: IFormInput) => {
   return (
     <FormField
@@ -102,7 +104,7 @@ const FormInput = ({
                 }
                 min={min}
                 max={max}
-                step={type === "number" ? "0.01" : undefined}
+                step={step ? step : type === "number" ? "0.01" : undefined}
                 className={`${
                   Icon &&
                   `rounded-none ${iconLeft ? "rounded-r-md" : "rounded-l-md"}`
@@ -127,6 +129,7 @@ const FormInput = ({
         </FormItem>
       )}
     />
-  )};
+  );
+};
 
 export default FormInput;

@@ -1,6 +1,5 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-// import { useCentroCustos } from "@/hooks/useCentroCustos";
 import { useCentroCustos } from "@/hooks/useCentroCustos";
 import ModalFornecedor from "./centro-custo/Modal";
 import { useStoreCentroCustos } from "./centro-custo/store";

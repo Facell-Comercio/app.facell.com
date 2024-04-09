@@ -29,7 +29,7 @@ const CadastrosPage = () => {
             )}
             {(checkUserDepartments("FINANCEIRO") ||
               checkUserPermission("MASTER")) && (
-              <TabsTrigger value="centro-custos">Centro de Custo</TabsTrigger>
+              <TabsTrigger value="centros-custos">Centros de Custo</TabsTrigger>
             )}
             {(checkUserDepartments("FINANCEIRO") ||
               checkUserPermission("MASTER")) && (
@@ -60,7 +60,7 @@ const CadastrosPage = () => {
         <TabsContent value="plano-contas">
           <PlanoContas />
         </TabsContent>
-        <TabsContent value="centro-custos">
+        <TabsContent value="centros-custos">
           <CentroCustos />
         </TabsContent>
         <TabsContent value="bancos">

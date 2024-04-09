@@ -35,8 +35,8 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowCount: number;
-  pagination: PaginationState;
-  setPagination: (pagination: PaginationState) => void;
+  pagination?: PaginationState;
+  setPagination?: (pagination: PaginationState) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -58,7 +58,9 @@ export function DataTable<TData, TValue>({
     onPaginationChange: (callback) => {
       // @ts-expect-error ignorado
       const result = callback(pagination);
-      setPagination(result);
+      if (setPagination) {
+        setPagination(result);
+      }
     },
     manualPagination: true,
   });

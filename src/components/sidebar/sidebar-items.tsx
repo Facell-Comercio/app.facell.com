@@ -1,18 +1,29 @@
-import { Bolt, BoltIcon, Settings } from 'lucide-react';
-import { ReactNode } from 'react';
-import { BsFillBarChartFill, BsFillChatLeftDotsFill, BsFillClipboardCheckFill, BsFillSendFill, BsPersonVideo3 } from "react-icons/bs";
-import { FaBullhorn, FaSackDollar, FaTruckRampBox, FaUsers } from 'react-icons/fa6';
+import { Settings } from "lucide-react";
+import { ReactNode } from "react";
+import {
+  BsFillBarChartFill,
+  BsFillChatLeftDotsFill,
+  BsFillClipboardCheckFill,
+  BsFillSendFill,
+  BsPersonVideo3,
+} from "react-icons/bs";
+import {
+  FaBullhorn,
+  FaSackDollar,
+  FaTruckRampBox,
+  FaUsers,
+} from "react-icons/fa6";
 
 export type SidebarItem = {
-  name: string,
-  type: string,
-  icon?: ReactNode,
-  uri?: string,
-  visible: boolean,
-  children?: SidebarItem[],
-  shortName?: string,
-  spacing?: boolean
-}
+  name: string;
+  type: string;
+  icon?: ReactNode;
+  uri?: string;
+  visible: boolean;
+  children?: SidebarItem[];
+  shortName?: string;
+  spacing?: boolean;
+};
 
 export const sidebarItems: SidebarItem[] = [
   {
@@ -171,6 +182,13 @@ export const sidebarItems: SidebarItem[] = [
         visible: true,
       },
       {
+        name: "Orçamento",
+        type: "link",
+        shortName: "ORC",
+        uri: "/financeiro/orcamento",
+        visible: true,
+      },
+      {
         name: "Cadastros",
         type: "link",
         shortName: "C",
@@ -223,6 +241,5 @@ export const sidebarItems: SidebarItem[] = [
     icon: <Settings />,
     uri: "/administracao",
     visible: true,
-  }
-
+  },
 ];

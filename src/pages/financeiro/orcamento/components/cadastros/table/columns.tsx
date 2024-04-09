@@ -1,14 +1,14 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { normalizeCnpjNumber } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
+import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
-import { useStoreFornecedor } from "../fornecedor/store-fornecedor";
+import { useStoreCadastro } from "../cadastro/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type RowFornecedor = {
+export type RowCadastro = {
   select: ReactNode;
   id: string;
   cnpj: string;
@@ -17,9 +17,9 @@ export type RowFornecedor = {
   ativo: string;
 };
 
-const openModal = useStoreFornecedor.getState().openModal;
+const openModal = useStoreCadastro.getState().openModal;
 
-export const columnsTable: ColumnDef<RowFornecedor>[] = [
+export const columnsTable: ColumnDef<RowCadastro>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -52,37 +52,37 @@ export const columnsTable: ColumnDef<RowFornecedor>[] = [
     accessorKey: "id",
     header: "ID",
     cell: (info) => (
-      <span
-        className="font-semibold cursor-pointer text-blue-500"
+      <FileSearch2
+        className="text-blue-500 cursor-pointer"
         onClick={() => openModal(info.getValue<number>().toString())}
-      >
-        {info.getValue<number>()}
-      </span>
+      />
     ),
     sortDescFirst: true,
   },
   {
-    header: "CNPJ",
-    accessorKey: "cnpj",
+    header: "MÊS/ANO",
+    accessorKey: "ref",
     cell: (info) => {
-      const cnpj = info.getValue<string>();
-      return <span>{normalizeCnpjNumber(cnpj)}</span>;
+      const ref = info.getValue<string>();
+      const partesData = ref?.split("-") || "2024-04-01".split("-");
+      console.log(partesData);
+
+      const mes = partesData[1];
+      const ano = partesData[0];
+
+      return (
+        <span>
+          {mes}/{ano}
+        </span>
+      );
     },
   },
   {
-    header: "NOME FANTASIA",
-    accessorKey: "nome",
+    header: "GRUPO ECONÔMICO",
+    accessorKey: "grupo_economico",
     cell: (info) => {
-      const nome = info.getValue<string>();
-      return <span>{nome.toUpperCase()}</span>;
-    },
-  },
-  {
-    header: "RAZÃO SOCIAL",
-    accessorKey: "razao",
-    cell: (info) => {
-      const razao = info.getValue<string>();
-      return <span>{razao && razao.toUpperCase()}</span>;
+      const grupo_economico = info.getValue<string>();
+      return <span>{grupo_economico.toUpperCase()}</span>;
     },
   },
   {
