@@ -1,13 +1,13 @@
 
 import { api } from "@/lib/axios";
 import { RateiosSchema } from "@/pages/financeiro/cadastros/components/rateios/rateio/Modal";
-import { getAllParams } from "@/types/query-params-type";
+import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useRateios = () => {
     const queryClient = useQueryClient()
     return ({
-        getAll : ({ pagination, filters }: getAllParams) => useQuery({
+        getAll : ({ pagination, filters }: GetAllParams) => useQuery({
             queryKey: ['fin_rateios', pagination],
             queryFn: async () => { return await api.get(`financeiro/rateios/`, { params: { pagination, filters } }) },
             placeholderData: keepPreviousData

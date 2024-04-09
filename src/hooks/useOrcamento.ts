@@ -3,7 +3,7 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { CadastroSchema } from "@/pages/financeiro/orcamento/components/cadastros/cadastro/Modal";
 import { MeuOrcamentoSchema } from "@/pages/financeiro/orcamento/components/meu-orcamento/orcamento/form-data";
-import { getAllParams } from "@/types/params";
+import { GetAllParams } from "@/types/params";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useOrcamento = () => {
@@ -11,7 +11,7 @@ export const useOrcamento = () => {
     
     return (
         {
-            getAll : (params?: getAllParams) => useQuery({
+            getAll : (params?: GetAllParams) => useQuery({
                 queryKey: ['fin_orcamento', params],
                 queryFn: async () => await api.get(`/financeiro/orcamento/`, { params: params }),
                 placeholderData: keepPreviousData
@@ -55,7 +55,7 @@ export const useOrcamento = () => {
                 },
             }),
 
-            getMyBudgets : ({ pagination, filters }: getAllParams) => useQuery({
+            getMyBudgets : ({ pagination, filters }: GetAllParams) => useQuery({
                 queryKey: ['fin_my_budget', pagination],
                 queryFn: async () => await api.get(`/financeiro/orcamento/my-budget`, { params: { pagination, filters } }),
                 placeholderData: keepPreviousData

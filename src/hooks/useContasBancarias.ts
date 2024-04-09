@@ -1,13 +1,13 @@
 
 import { api } from "@/lib/axios";
 import { ContaBancariaSchema } from "@/pages/financeiro/cadastros/components/contas-bancarias/conta-bancaria/Modal";
-import { getAllParams } from "@/types/query-params-type";
+import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useContasBancarias = () => {
     const queryClient = useQueryClient()
     return ({
-        getAll : ({ pagination, filters }: getAllParams) => useQuery({
+        getAll : ({ pagination, filters }: GetAllParams) => useQuery({
             queryKey: ['fin_contas_bancarias', pagination],
             queryFn: async () => { return await api.get(`financeiro/contas-bancarias/`, { params: { pagination, filters } }) },
             placeholderData: keepPreviousData

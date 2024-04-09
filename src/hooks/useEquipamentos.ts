@@ -1,7 +1,7 @@
 
 import { api } from "@/lib/axios";
 import { EquipamentoSchema } from "@/pages/financeiro/cadastros/components/equipamentos-cielo/equipamento/Modal";
-import { getAllParams } from "@/types/query-params-type";
+import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useEquipamentos = () => {
@@ -9,7 +9,7 @@ export const useEquipamentos = () => {
     
     return (
         {
-            getAll : ({ pagination, filters }: getAllParams) => useQuery({
+            getAll : ({ pagination, filters }: GetAllParams) => useQuery({
                 queryKey: ['fin_equipamentos_cielo', pagination],
                 queryFn: async () => await api.get(`/financeiro/equipamentos-cielo`, { params: { pagination, filters } }),
                 placeholderData: keepPreviousData

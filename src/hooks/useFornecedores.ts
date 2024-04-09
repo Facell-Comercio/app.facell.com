@@ -1,7 +1,7 @@
 
 import { api } from "@/lib/axios";
 import { FornecedorSchema } from "@/pages/financeiro/cadastros/components/fornecedores/fornecedor/Modal";
-import { getAllParams } from "@/types/query-params-type";
+import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useFornecedores = () => {
@@ -9,7 +9,7 @@ export const useFornecedores = () => {
     
     return (
         {
-            getAll : (params?: getAllParams) => useQuery({
+            getAll : (params?: GetAllParams) => useQuery({
                 queryKey: ['fin_fornecedores', params],
                 queryFn: async () => await api.get(`/financeiro/fornecedores`, { params: params }),
                 placeholderData: keepPreviousData
