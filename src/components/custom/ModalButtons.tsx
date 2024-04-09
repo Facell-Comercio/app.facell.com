@@ -1,5 +1,4 @@
-import { PenLine, Save } from "lucide-react";
-import { FaRegCircleXmark } from "react-icons/fa6";
+import { Ban, PenLine, Save } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface ModalButtonsProps {
@@ -21,17 +20,18 @@ const ModalButtons = ({
     <>
       {!id && (
         <div className="flex gap-2 items-end flex-wrap">
-          <Button
+          {/* <Button
             type={"button"}
             size="lg"
             variant={"secondary"}
             onClick={cancel}
           >
-            <FaRegCircleXmark className="me-2 text-xl" />
+            <Ban className="me-2 text-xl" />
             Cancelar
-          </Button>
+          </Button> */}
+
           <Button
-            type={"button"}
+            type={"submit"}
             size="lg"
             className="dark:text-white"
             onClick={() => formRef.current && formRef.current.requestSubmit()}
@@ -49,7 +49,7 @@ const ModalButtons = ({
             variant={"secondary"}
             onClick={cancel}
           >
-            <FaRegCircleXmark className="me-2 text-xl" />
+            <Ban className="me-2 text-xl" />
             Cancelar
           </Button>
           <Button

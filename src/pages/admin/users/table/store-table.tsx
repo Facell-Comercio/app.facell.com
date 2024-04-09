@@ -27,26 +27,15 @@ export interface State {
   isAllSelected: boolean
   rowSelection: RowSelection
   filters: Filters
-
-  id_user: string
-
-  modalOpen: boolean
 }
 
 export interface Actions {
   setFilters: (filters: Filters) => void,
   resetFilters: () => void,
   setPagination: (pagination: Pagination) => void,
-  openModal: (id: string)=>void
-  closeModal: ()=>void
 }
 
 export const useStoreUsers = create<State & Actions>(set => ({
-  id_user: '',
-  
-  // Modal
-  modalOpen: false,
-
   // Table
   rowCount: 0,
 
@@ -59,6 +48,4 @@ export const useStoreUsers = create<State & Actions>(set => ({
   setFilters: (novoFiltro) => set(({ filters: novoFiltro })),
   resetFilters: () => { set(({ filters: initialFilters })) },
   setPagination: (pagination) => set(({ pagination })),
-  openModal: (id_user)=>set({id_user, modalOpen: true}),
-  closeModal: ()=>set({modalOpen: false})
 }))

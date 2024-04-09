@@ -9,17 +9,17 @@ const AdminPage = () => {
     return (<div className="content p-5">
         <h3 className="text-lg font-bold mb-5">Configurações</h3>
 
-        <Tabs defaultValue="users" className="w-full">
+        <Tabs defaultValue="filiais" className="w-full">
             <TabsList className="w-full justify-start" >
                 <TabsTrigger value="users">Usuários</TabsTrigger>
-                <TabsTrigger value="Departamentos">Departamentos</TabsTrigger>
+                <TabsTrigger value="departamentos">Departamentos</TabsTrigger>
                 <TabsTrigger value="filiais">Filiais</TabsTrigger>
                 <TabsTrigger value="gruposEconomicos">Grupos econômicos</TabsTrigger>
             </TabsList>
             <TabsContent value="users">
                 <Users />
             </TabsContent>
-            <TabsContent value="Departamentos">
+            <TabsContent value="departamentos">
                 <Departamentos />
             </TabsContent>
             <TabsContent value="filiais">

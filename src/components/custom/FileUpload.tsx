@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { FileIcon, X } from "lucide-react";
 import UploadDropzone from "./UploadDropzone";
-import { MediaType } from "@/types/mediaTypes";
+import { MediaType } from "@/types/media-type";
 import { useState } from "react";
 import { api } from "@/lib/axios";
 import { toast } from "../ui/use-toast";
@@ -89,7 +89,7 @@ export const FileUpload = ({
         <img
           src={value}
           alt="Upload"
-          className="w-full h-auto"
+          className="w-full h-auto rounded-lg"
         />
 
         {!disabled && <ButtonFileDelete isDeleting={isDeleting} handleDelete={handleDelete}/>}

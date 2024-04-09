@@ -3,7 +3,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { ReactNode } from "react"
-import { useStoreFiliais } from "./store-table"
+import { useStoreFilial } from "../filial/store"
 import { FileSearch } from "lucide-react"
 
 // This type is used to define the shape of our data.
@@ -15,7 +15,7 @@ export type RowUsers = {
   nome: string
 }
 
-const openModal = useStoreFiliais.getState().openModal
+const openModal = useStoreFilial.getState().openModal
 
 export const columnsTable: ColumnDef<RowUsers>[] = [
   {

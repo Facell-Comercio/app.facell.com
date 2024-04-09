@@ -2,7 +2,7 @@ import { useDropzone } from 'react-dropzone'
 import { api } from '@/lib/axios';
 import { File } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { MediaType } from '@/types/mediaTypes';
+import { MediaType } from '@/types/media-type';
 
 type UploadDropzoneProps = {
     disabled?: boolean,
@@ -116,7 +116,7 @@ const UploadDropzone = ({
                 `}
             >
                 <input {...getInputProps()} />
-                <File className='shrink-0' /> <span>Selecione um arquivo ou solte-o na área marcada.</span>
+                <File className='shrink-0' /> <span className='truncate'>Selecione um arquivo ou solte-o na área marcada.</span>
             </div>
             {uploadError && <p className='text-red-500'>{uploadError}</p>}
         </div>

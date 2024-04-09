@@ -40,7 +40,7 @@ type PaginationProps = {
 
 const ModalPlanoContas = ({ open, handleSelecion, onOpenChange, id_filial }: IModalPlanoContas) => {
     const [search, setSearch] = useState<string>('')
-    const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 4 })
+    const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 0 })
 
     const queryKey = id_filial ? `plano_contas:${id_filial}` : 'plano_contas';
     const { data, isLoading, isError, refetch: refetchPlanoContas } = useQuery({

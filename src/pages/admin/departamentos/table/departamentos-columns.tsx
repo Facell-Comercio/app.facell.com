@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { useStoreDepartamentos } from "./store-table"
 import { FileSearch } from "lucide-react"
+import { useStoreDepartamento } from "../departamento/store"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -9,7 +9,7 @@ export type RowUsers = {
   nome: string
 }
 
-const openModal = useStoreDepartamentos.getState().openModal
+const openModal = useStoreDepartamento.getState().openModal
 
 export const columnsTableDepartamentos: ColumnDef<RowUsers>[] = [
   {

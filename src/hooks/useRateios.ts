@@ -1,7 +1,7 @@
 
 import { api } from "@/lib/axios";
 import { RateiosSchema } from "@/pages/financeiro/cadastros/components/rateios/rateio/Modal";
-import { getAllParams } from "@/types/params";
+import { getAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useRateios = () => {

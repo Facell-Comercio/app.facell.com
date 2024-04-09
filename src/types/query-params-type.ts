@@ -1,4 +1,4 @@
-export type getAllParams = {
+export type GetAllParams = {
     pagination?: {
         pageIndex: number,
         pageSize: number,

@@ -11,9 +11,9 @@ const Filters = ({ refetch }: { refetch: () => void }) => {
     setFilters: state.setFilters
   }))
 
-  async function handleSearch(text: string) {
+  async function handleSearch() {
     await new Promise((resolve) => {
-      setFilters({termo: text})
+      setFilters({termo: searchRef.current?.value || ""})
         resolve(true)
       })
     refetch()
@@ -23,8 +23,8 @@ const Filters = ({ refetch }: { refetch: () => void }) => {
 
   return (
     <div className="flex gap-3 mb-3">
-      <Input ref={searchRef} type="search" placeholder="Buscar..." />
-      <Button onClick={() => handleSearch(searchRef.current?.value || "")}>Procurar</Button>
+      <Input ref={searchRef} type="search" placeholder="Buscar..."  onKeyDown={(e)=>{if(e.key === 'Enter'){handleSearch()}}} />
+      <Button onClick={() => handleSearch()}>Procurar</Button>
     </div>
   );
 };

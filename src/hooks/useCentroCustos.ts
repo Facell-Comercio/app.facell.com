@@ -1,14 +1,14 @@
 
 import { api } from "@/lib/axios";
 import { CentroCustosSchema } from "@/pages/financeiro/cadastros/components/centro-de-custos/centro-custo/Modal";
-import { getAllParams } from "@/types/params";
+import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useCentroCustos = () => {
     const queryClient = useQueryClient()
     return (
         {
-            getAll : ({ pagination, filters }: getAllParams) => useQuery({
+            getAll : ({ pagination, filters }: GetAllParams) => useQuery({
                 queryKey: ['fin_centro_custos', pagination],
                 queryFn: async () => await api.get(`/financeiro/centro-custos`, { params: { pagination, filters } }),
                 placeholderData: keepPreviousData

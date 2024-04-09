@@ -1,7 +1,7 @@
 import { Control } from 'react-hook-form';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { FileUpload } from './FileUpload';
-import { MediaType } from '@/types/mediaTypes';
+import { MediaType } from '@/types/media-type';
 
 interface FormFileUploadProps {
   name: string

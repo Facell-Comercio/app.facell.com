@@ -1,9 +1,9 @@
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
 import { ReactNode } from "react"
-import { useStoreUsers } from "./store-table"
 import { UserSearch } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useStoreUser } from "../user/store"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -14,7 +14,7 @@ export type RowUsers = {
   nome: string
 }
 
-const openModal = useStoreUsers.getState().openModal
+const openModal = useStoreUser.getState().openModal
 
 export const columnsTableUsers: ColumnDef<RowUsers>[] = [
   {

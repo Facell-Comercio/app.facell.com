@@ -42,7 +42,7 @@ const ModalBancos = ({ open, handleSelecion, onOpenChange }: IModalBancos) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
-    pageIndex: 4,
+    pageIndex: 0,
   });
 
   const {

@@ -1,24 +1,54 @@
 import { api } from "@/lib/axios";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/components/ui/use-toast";
+import { GetAllParams } from "@/types/query-params-type";
+import { GrupoEconomicoFormData } from "@/pages/admin/grupos-economicos/grupo-economico/form-data";
 
-export const useGrupoEconomico = ()=>({
-    getAll: ()=> useQuery({ 
-        queryKey: ['grupo-economico'], 
-        queryFn: async()=> {
-            const result = await api.get('/grupo-economico')
-            return result
-        }, 
+export const useGrupoEconomico = ()=>{
+    const queryClient = useQueryClient()
+    return {
+    getAll: (params: undefined | GetAllParams)=> useQuery({ 
+        queryKey: ['grupos-economicos', params], 
+        queryFn: async()=> await api.get('/grupo-economico', {params: params}), 
+        placeholderData: keepPreviousData,
         staleTime: Infinity, 
         refetchOnMount: false
     }),
     
-    getOne: (id: number)=> useQuery({ 
+    getOne: (id?: string)=> useQuery({ 
+        enabled: !!id,
         queryKey: ['grupo-economico', id], 
-        queryFn: async ()=>{
-            const result = await api.get(`/grupo-economico/${id}`)
-            return result;
-        }, 
+        queryFn: async()=> await api.get(`/grupo-economico/${id}`), 
         staleTime: Infinity, 
         refetchOnMount: false
     }),
-})
+
+    insertOne: () => useMutation({
+        mutationFn: (data: GrupoEconomicoFormData) => {
+            return api.post("grupo-economico", data).then((response) => response.data)
+        },
+        onSuccess() {
+            toast({title: 'Sucesso!', description: 'Grupo econômico inserido com sucesso.'})
+            queryClient.invalidateQueries({ queryKey: ['grupos-economicos'] })
+        },
+        onError(error) {
+            toast({title: 'Ocorreu o seguinte erro', description: error.message})
+            console.log(error);
+        },
+    }),
+    update: () => useMutation({
+        mutationFn: ({ id, ...rest }: GrupoEconomicoFormData) => {
+            return api.put("grupo-economico", { id, ...rest }).then((response) => response.data)
+        },
+        onSuccess() {
+            toast({title: 'Sucesso!', description: 'Grupo econômico atualizado com sucesso.'})
+            queryClient.invalidateQueries({ queryKey: ['grupos-economicos'] })
+            queryClient.invalidateQueries({ queryKey: ['grupo-economico'] })
+        },
+        onError(error) {
+            toast({title: 'Ocorreu o seguinte erro', description: error.message})
+            console.log(error);
+        },
+    })
+}
+}
