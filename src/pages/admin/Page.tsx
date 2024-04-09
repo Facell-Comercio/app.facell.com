@@ -7,9 +7,7 @@ import GruposEconomicos from "./grupos-economicos/GruposEconomicos";
 
 const AdminPage = () => {
     return (<div className="content p-5">
-        <h3 className="text-lg font-bold mb-5">Configurações</h3>
-
-        <Tabs defaultValue="filiais" className="w-full">
+        <Tabs defaultValue="users" className="w-full">
             <TabsList className="w-full justify-start" >
                 <TabsTrigger value="users">Usuários</TabsTrigger>
                 <TabsTrigger value="departamentos">Departamentos</TabsTrigger>

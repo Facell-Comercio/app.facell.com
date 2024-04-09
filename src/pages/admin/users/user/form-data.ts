@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { User } from "@/types/user-type";
 
 const schemaUser = z
   .object({
@@ -16,7 +15,7 @@ const schemaUser = z
   filiais: z.array(z.object({
     id: z.string().trim().optional(),
     id_filial: z.coerce.string().trim().min(1, "Obrigatório"),
-    id_user: z.string().trim().min(1, "Obrigatório"),
+    id_user: z.string(),
     nome: z.string().optional(),
     gestor: z.coerce.boolean()
   })),
@@ -25,7 +24,7 @@ const schemaUser = z
   departamentos: z.array(z.object({
     id: z.string().trim().optional(),
     id_departamento: z.coerce.string().trim().min(1, "Obrigatório"),
-    id_user: z.string().trim().min(1, "Obrigatório"),
+    id_user: z.string(),
     nome: z.string().optional(),
     gestor: z.coerce.boolean()
   })),
@@ -34,7 +33,7 @@ const schemaUser = z
   centros_custo: z.array(z.object({
     id: z.string().trim().optional(),
     id_centro_custo: z.coerce.string().trim().min(1, "Obrigatório"),
-    id_user: z.string().trim().min(1, "Obrigatório"),
+    id_user: z.string(),
     nome: z.string().optional(),
     gestor: z.coerce.boolean()
   })),
@@ -44,7 +43,7 @@ const schemaUser = z
     id: z.string().trim().optional(),
     id_permissao: z.coerce.string().trim().min(1, "Obrigatório"),
     nome: z.string().optional(),
-    id_user: z.string().trim().min(1, "Obrigatório"),
+    id_user: z.string(),
   })),
 });
 

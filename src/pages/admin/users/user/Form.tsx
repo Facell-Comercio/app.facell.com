@@ -38,6 +38,7 @@ const FormUsers = ({
   const closeModal = useStoreUser().closeModal;
 
   const { form } = useFormUserData(data);
+  console.log(form.formState.errors)
 
   const { fields: filiais, append: addFilial, remove: removeFilial } = useFieldArray({
     name: 'filiais',
