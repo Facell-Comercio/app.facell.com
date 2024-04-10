@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/context/auth-store";
 
 export const checkUserPermission = (permission:string | number)=>{
-    const user = useAuthStore().user
+    const user = useAuthStore.getState().user
     const tipo = typeof permission
 
     if(!user) return false;
@@ -21,7 +21,7 @@ export const checkUserPermission = (permission:string | number)=>{
 }
 
 export const checkUserDepartments = (depart:string | number)=>{
-    const user = useAuthStore().user
+    const user = useAuthStore.getState().user
     const tipo = typeof depart
 
     if(!user) return false;

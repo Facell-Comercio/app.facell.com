@@ -20,16 +20,6 @@ const ModalButtons = ({
     <>
       {!id && (
         <div className="flex gap-2 items-end flex-wrap">
-          {/* <Button
-            type={"button"}
-            size="lg"
-            variant={"secondary"}
-            onClick={cancel}
-          >
-            <Ban className="me-2 text-xl" />
-            Cancelar
-          </Button> */}
-
           <Button
             type={"submit"}
             size="lg"

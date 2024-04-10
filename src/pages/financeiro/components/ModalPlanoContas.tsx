@@ -24,6 +24,7 @@ interface IModalPlanoContas {
   handleSelecion: (item: ItemPlanoContas) => void;
   onOpenChange: () => void;
   id_filial?: string | null;
+  tipo?: "Despesa" | "Receita";
 }
 
 export type ItemPlanoContas = {
@@ -43,6 +44,7 @@ const ModalPlanoContas = ({
   handleSelecion,
   onOpenChange,
   id_filial,
+  tipo,
 }: IModalPlanoContas) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -60,7 +62,7 @@ const ModalPlanoContas = ({
     queryKey: [queryKey, search],
     queryFn: async () =>
       await api.get("financeiro/plano-contas", {
-        params: { filters: { termo: search, id_filial }, pagination },
+        params: { filters: { termo: search, id_filial, tipo }, pagination },
       }),
     enabled: open,
   });

@@ -1,6 +1,5 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
@@ -21,36 +20,8 @@ const openModal = useStoreCadastro.getState().openModal;
 
 export const columnsTable: ColumnDef<RowCadastro>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <div className="px-1">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        />
-      </div>
-    ),
-    enableSorting: false,
-    cell: ({ row }) => (
-      <div className="px-1">
-        <input
-          type="checkbox"
-          {...{
-            checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            indeterminate: row.getIsSomeSelected().toString(),
-            onChange: row.getToggleSelectedHandler(),
-          }}
-        />
-      </div>
-    ),
-  },
-  {
     accessorKey: "id",
-    header: "ID",
+    header: "AÇÃO",
     cell: (info) => (
       <FileSearch2
         className="text-blue-500 cursor-pointer"
@@ -65,7 +36,6 @@ export const columnsTable: ColumnDef<RowCadastro>[] = [
     cell: (info) => {
       const ref = info.getValue<string>();
       const partesData = ref?.split("-") || "2024-04-01".split("-");
-      console.log(partesData);
 
       const mes = partesData[1];
       const ano = partesData[0];

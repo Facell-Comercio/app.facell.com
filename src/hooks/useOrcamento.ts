@@ -1,9 +1,9 @@
 
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
-import { CadastroSchema } from "@/pages/financeiro/orcamento/components/cadastros/cadastro/Modal";
+import { cadastroSchemaProps } from "@/pages/financeiro/orcamento/components/cadastros/cadastro/form-data";
 import { MeuOrcamentoSchema } from "@/pages/financeiro/orcamento/components/meu-orcamento/orcamento/form-data";
-import { GetAllParams } from "@/types/params";
+import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useOrcamento = () => {
@@ -27,12 +27,12 @@ export const useOrcamento = () => {
             }),
 
             insertOne : () => useMutation({
-                mutationFn: (data:CadastroSchema) => {
+                mutationFn: (data:cadastroSchemaProps) => {
                     console.log("Criando novo orcamento:")            
                     return api.post("financeiro/orcamento", data).then((response)=>response.data)
                 },
                 onSuccess() {
-                    toast({title: "Sucesso", description: "Novo Orçamento Criado"})
+                    toast({title: "Sucesso", description: "Novo Orçamento Criado", duration: 3500})
                     queryClient.invalidateQueries({queryKey:['fin_orcamento']}) 
                 },
                 onError(error) {
@@ -41,16 +41,31 @@ export const useOrcamento = () => {
             }),
 
             update : () => useMutation({
-                mutationFn: (data:CadastroSchema) => {
+                mutationFn: (data:cadastroSchemaProps) => {
                     console.log(`Atualizando meu orcamento com base no ID`)            
-                    return api.put("financeiro/orcamento/my-budget", data).then((response)=>response.data)
+                    return api.put("financeiro/orcamento", data).then((response)=>response.data)
                 },
                 onSuccess() {
-                    toast({title: "Sucesso", description: "Atualização Realizada"})
+                    toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
                     queryClient.invalidateQueries({queryKey:['fin_orcamento']}) 
                 },
                 onError(error) {
-                    toast({title: "Error", description: error.message})
+                    toast({title: "Error", description: error.message, duration: 3500})
+                    console.log(error);
+                },
+            }),
+
+            deleteBudget :() => useMutation({
+                mutationFn: (id: string|null|undefined|number) => {
+                    console.log(`Deletando conta com base no ID`)            
+                    return api.delete(`financeiro/orcamento/${id}`).then((response)=>response.data)
+                },
+                onSuccess() {
+                    toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
+                    queryClient.invalidateQueries({queryKey:['fin_orcamento']}) 
+                },
+                onError(error) {
+                    toast({title: "Error", description: error.message, duration: 3500})
                     console.log(error);
                 },
             }),
@@ -76,12 +91,12 @@ export const useOrcamento = () => {
                     return api.put("financeiro/orcamento/my-budget", data).then((response)=>response.data)
                 },
                 onSuccess() {
-                    toast({title: "Sucesso", description: "Tranferencia Realizada"})
+                    toast({title: "Sucesso", description: "Tranferencia Realizada", duration: 3500})
 
                     queryClient.invalidateQueries({queryKey:['fin_my_budget']}) 
                 },
                 onError(error) {
-                    toast({title: "Error", description: error.message})
+                    toast({title: "Error", description: error.message, duration: 3500})
                     console.log(error);
                 },
             }),

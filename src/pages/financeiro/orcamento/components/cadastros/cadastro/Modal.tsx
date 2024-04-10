@@ -1,10 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 // import { useStoreTitulo } from "./store-titulo";
 
 import { Button } from "@/components/ui/button";
@@ -15,63 +9,24 @@ import { Save } from "lucide-react";
 import { useRef } from "react";
 import { FaRegCircleXmark } from "react-icons/fa6";
 import FormCadastro from "./Form";
+import { cadastroSchemaProps } from "./form-data";
 import { useStoreCadastro } from "./store";
 
-export type CadastroSchema = {
-  id: string;
-  active?: boolean;
-  cnpj: string;
-  nome: string;
-  razao: string;
-  cep: string;
-  logradouro: string;
-  numero: string;
-  complemento: string | null;
-  bairro: string;
-  municipio: string;
-  uf: string;
-  email: string;
-  telefone: string;
-  id_forma_pagamento: string;
-  id_tipo_chave_pix: string;
-  chave_pix: string;
-  id_banco: string;
-  agencia: string;
-  dv_agencia: string | null;
-  conta: string;
-  dv_conta: string;
-  cnpj_favorecido: string;
-  favorecido: string;
-};
+const data = new Date();
 
-const initialPropsCadastro: CadastroSchema = {
-  // Dados Cadastro
+const ano = data.getFullYear();
+const mes = String(data.getMonth() + 1).padStart(2, "0"); // Adiciona um zero à esquerda se o mês for menor que 10
+const dia = String(data.getDate()).padStart(2, "0"); // Adiciona um zero à esquerda se o dia for menor que 10
+
+export const dataFormatada = `${ano}-${mes}-${dia}`;
+
+const initialPropsCadastro: cadastroSchemaProps = {
   id: "",
+  id_grupo_economico: "",
+  grupo_economico: "",
   active: true,
-  cnpj: "",
-  nome: "",
-  razao: "",
-  cep: "",
-  logradouro: "",
-  numero: "",
-  complemento: "",
-  bairro: "",
-  municipio: "",
-  uf: "",
-  email: "",
-  telefone: "",
-
-  // Dados Bancários
-  id_forma_pagamento: "",
-  id_tipo_chave_pix: "",
-  id_banco: "",
-  chave_pix: "",
-  agencia: "",
-  dv_agencia: "",
-  conta: "",
-  dv_conta: "",
-  cnpj_favorecido: "",
-  favorecido: "",
+  ref: dataFormatada,
+  contas: [],
 };
 
 const ModalCadastro = () => {
@@ -81,8 +36,8 @@ const ModalCadastro = () => {
   const formRef = useRef(null);
 
   const { data, isLoading } = useOrcamento().getOne(id);
-  const newData: CadastroSchema & Record<string, any> = {} as CadastroSchema &
-    Record<string, any>;
+  const newData: cadastroSchemaProps & Record<string, any> =
+    {} as cadastroSchemaProps & Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -104,12 +59,7 @@ const ModalCadastro = () => {
     <div>
       <Dialog open={modalOpen} onOpenChange={() => closeModal()}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {id ? `Cadastro: ${id}` : "Novo cadastro"}
-            </DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="max-h-[70vh]">
+          <ScrollArea className="max-h-[80vh]">
             {modalOpen && !isLoading ? (
               <FormCadastro
                 id={id}

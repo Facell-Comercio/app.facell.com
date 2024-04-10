@@ -119,6 +119,7 @@ const FormMeuOrcamento = ({
                   <ModalPlanoContas
                     open={modalPlanoContasOpen}
                     id_filial={data.id_filial}
+                    tipo="Despesa"
                     onOpenChange={() =>
                       setModalPlanoContasOpen((prev: boolean) => !prev)
                     }
