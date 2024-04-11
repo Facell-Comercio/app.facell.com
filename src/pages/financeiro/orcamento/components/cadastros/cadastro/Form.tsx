@@ -5,8 +5,11 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
+import FormDateInput from "@/components/custom/FormDate";
+import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
+import importExportXLS from "@/helpers/importExportXLS";
 import { useOrcamento } from "@/hooks/useOrcamento";
 import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
 import ModalPlanoContas, {
@@ -15,6 +18,7 @@ import ModalPlanoContas, {
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
 import { Download, Trash, Upload } from "lucide-react";
 import { useRef, useState } from "react";
+import { useWatch } from "react-hook-form";
 import { dataFormatada } from "./Modal";
 import { cadastroSchemaProps, useFormCadastroData } from "./form-data";
 import { useStoreCadastro } from "./store";
@@ -29,11 +33,12 @@ const FormCadastro = ({
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   console.log("RENDER - Cadastro:", id);
-  // const { mutate: insertOne } = useContas().insertOne();
+  const { mutate: insertOne } = useOrcamento().insertOne();
   const { mutate: update } = useOrcamento().update();
   const { mutate: deleteBudget } = useOrcamento().deleteBudget();
   const closeModal = useStoreCadastro().closeModal;
   const { form, contas, appendConta, removeConta } = useFormCadastroData(data);
+  const modalEditing = useStoreCadastro().modalEditing;
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
   const [modalCentrosCustoOpen, setModalCentrosCustoOpen] = useState(false);
   const [insertContaIsOpen, setInsertContaIsOpen] = useState(false);
@@ -47,12 +52,9 @@ const FormCadastro = ({
   });
 
   function onSubmitData(data: cadastroSchemaProps) {
-    // if (!id) insertOne(data);
-
     const filteredData: cadastroSchemaProps = {
       id: data.id,
       active: data.active,
-      id_filial: data.id_filial,
       id_grupo_economico: data.id_grupo_economico,
       ref: data.ref,
       contas: data.contas?.filter((conta) => {
@@ -61,10 +63,29 @@ const FormCadastro = ({
         if (!hasId || !sameValue) return conta;
       }),
     };
+    console.log(filteredData);
 
-    update(filteredData);
+    if (id) {
+      update(filteredData);
+    } else {
+      insertOne(filteredData);
+    }
 
     closeModal();
+  }
+
+  function exportedFilteredData(data: any[], grupo_economico: string) {
+    // todo Ver oque está dando errado
+    const newArray: any[] = [];
+    data.forEach((item) =>
+      newArray.push({
+        grupo_economico: grupo_economico,
+        centro_custo: item.centro_custo,
+        plano_contas: item.plano_contas,
+        valor: item.valor,
+      })
+    );
+    return newArray;
   }
 
   function addNewConta() {
@@ -142,6 +163,11 @@ const FormCadastro = ({
 
   const searchRef = useRef<HTMLInputElement | null>(null);
 
+  const id_grupo_economico = useWatch({
+    name: "id_grupo_economico",
+    control: form.control,
+  });
+
   // console.log(form.formState.errors);
 
   return (
@@ -149,16 +175,30 @@ const FormCadastro = ({
       <Form {...form}>
         <div className="flex justify-between text-lg font-medium">
           <span>
-            {ref
+            {data.grupo_economico
               ? `Budget: ${mes}/${ano} - ${data.grupo_economico}`
               : "Novo Budget"}
           </span>
-          <FormSwitch name="active" label="Ativo" control={form.control} />
+          <FormSwitch
+            name="active"
+            label="Ativo"
+            control={form.control}
+            disabled={!modalEditing}
+          />
         </div>
         <div className="flex justify-between">
           <div className="flex gap-2">
             <Button variant={"outline"}>
-              <Upload className="me-2" size={20} />
+              <Upload
+                className="me-2"
+                size={20}
+                onClick={() =>
+                  importExportXLS.exportToExcel(
+                    exportedFilteredData(contas, data.grupo_economico || ""),
+                    "cadastro"
+                  )
+                }
+              />
               Exportar
             </Button>
             <Button variant={"outline"}>
@@ -166,9 +206,11 @@ const FormCadastro = ({
               Importar
             </Button>
           </div>
-          <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
-            Novo Item
-          </Button>
+          {!(id_grupo_economico && !modalEditing) && (
+            <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
+              Novo Item
+            </Button>
+          )}
         </div>
         <div className="flex gap-3">
           <Input
@@ -188,6 +230,23 @@ const FormCadastro = ({
             Procurar
           </Button>
         </div>
+        {!id && (
+          <div className="flex gap-2 items-end">
+            <FormSelectGrupoEconomico
+              className="flex-1 min-w-32"
+              name="id_grupo_economico"
+              control={form.control}
+              disabled={!modalEditing}
+              label="Grupo Econômico"
+            />
+            <FormDateInput
+              disabled={!modalEditing}
+              name="ref"
+              label="Data de referência"
+              control={form.control}
+            />
+          </div>
+        )}
         <div
           className={`flex gap-3 ${
             !insertContaIsOpen
@@ -206,10 +265,10 @@ const FormCadastro = ({
           </span>
           <ModalCentrosCustos
             handleSelecion={handleSelectionCentroCustos}
-            // @ts-expect-error 'Ignore, vai funcionar...'
+            // @ts-expect-error 'Ignore, vai funcionar..'
             onOpenChange={setModalCentrosCustoOpen}
             open={modalCentrosCustoOpen}
-            id_filial={data.id_filial}
+            id_grupo_economico={data.id_grupo_economico}
             closeOnSelection={true}
           />
 
@@ -224,7 +283,7 @@ const FormCadastro = ({
           </span>
           <ModalPlanoContas
             open={modalPlanoContasOpen}
-            id_filial={data.id_filial}
+            id_grupo_economico={data.id_grupo_economico}
             tipo="Despesa"
             onOpenChange={() =>
               setModalPlanoContasOpen((prev: boolean) => !prev)
@@ -247,7 +306,11 @@ const FormCadastro = ({
         </div>
         <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
           <div className="w-full flex flex-col gap-2">
-            <header className="flex gap-2 w-[98%] mx-auto pr-3 font-medium">
+            <header
+              className={`flex gap-2 w-[98%] mx-auto pr-3 font-medium ${
+                !contas.length && "hidden"
+              }`}
+            >
               <span className="flex-1 pr-6">Centro de Custos</span>
               <span className="px-3 w-5/12">Plano de Contas</span>
               <span className="flex-1 px-3">Valor</span>
@@ -283,19 +346,24 @@ const FormCadastro = ({
                         className="flex-1"
                         name={`contas.${index}.valor`}
                         control={form.control}
+                        readOnly={!modalEditing}
                       />
                       <AlertPopUp
                         title="Deseja realmente excluir?"
                         description="Essa ação não pode ser desfeita. A conta será excluída definitivamente do servidor, podendo ser enviada novamente."
                         action={() => removeItemConta(index, item.id_conta)}
                       >
-                        <Button
-                          type="button"
-                          className="w-1/12"
-                          variant={"destructive"}
-                        >
-                          <Trash />
-                        </Button>
+                        {modalEditing ? (
+                          <Button
+                            type="button"
+                            className="w-1/12"
+                            variant={"destructive"}
+                          >
+                            <Trash />
+                          </Button>
+                        ) : (
+                          <></>
+                        )}
                       </AlertPopUp>
                     </div>
                   );

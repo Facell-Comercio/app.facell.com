@@ -9,7 +9,7 @@ export const useCentroCustos = () => {
     return (
         {
             getAll : ({ pagination, filters }: GetAllParams) => useQuery({
-                queryKey: ['fin_centro_custos', pagination],
+                queryKey: ['fin_centro_custos', pagination, filters.termo],
                 queryFn: async () => await api.get(`/financeiro/centro-custos`, { params: { pagination, filters } }),
                 placeholderData: keepPreviousData
             }),

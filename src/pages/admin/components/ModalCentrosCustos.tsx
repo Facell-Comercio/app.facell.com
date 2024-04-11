@@ -22,9 +22,10 @@ import { useRef, useState } from "react";
 interface IModalCentrosCustos {
   open: boolean;
   handleSelecion: (item: CentroCustos) => void;
-  onOpenChange: () => void;
+  onOpenChange: (value: boolean) => boolean;
   closeOnSelection?: boolean;
-  // id_filial?: string | null;
+  id_matriz?: string | null;
+  id_grupo_economico?: string | null;
 }
 
 type PaginationProps = {
@@ -37,17 +38,20 @@ const ModalCentrosCustos = ({
   handleSelecion,
   onOpenChange,
   closeOnSelection,
-}: // id_filial,
-IModalCentrosCustos) => {
+  id_matriz,
+  id_grupo_economico,
+}: IModalCentrosCustos) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
     pageIndex: 0,
   });
 
+  console.log(search);
+
   const { data, isLoading, isError } = useCentroCustos().getAll({
     pagination,
-    filters: { termo: search },
+    filters: { termo: search, id_matriz, id_grupo_economico },
   });
   const pages = [...Array(data?.data?.pageCount || 0).keys()].map(
     (page) => page + 1
@@ -95,7 +99,7 @@ IModalCentrosCustos) => {
 
   function handleSelection(item: CentroCustos) {
     if (closeOnSelection) {
-      // @ts-ignore 'vai funcionar...'
+      // @ts-expect-error 'vai funcionar...'
       onOpenChange((prev) => !prev);
     }
     handleSelecion(item);
@@ -161,7 +165,7 @@ IModalCentrosCustos) => {
               <PaginationItem>
                 <Button
                   variant={"outline"}
-                  disabled={pagination.pageIndex === 1}
+                  disabled={pagination.pageIndex === 0}
                   onClick={handlePaginationDown}
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -184,7 +188,7 @@ IModalCentrosCustos) => {
               <PaginationItem>
                 <Button
                   variant={"outline"}
-                  disabled={pagination.pageIndex === pages.length}
+                  disabled={pagination.pageIndex === pages.length - 1}
                   onClick={handlePaginationUp}
                 >
                   <ChevronRight className="h-4 w-4" />

@@ -1,13 +1,13 @@
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 // import { useStoreTitulo } from "./store-titulo";
 
+import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useOrcamento } from "@/hooks/useOrcamento";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { Save } from "lucide-react";
+import { CircleFadingPlusIcon } from "lucide-react";
 import { useRef } from "react";
-import { FaRegCircleXmark } from "react-icons/fa6";
 import FormCadastro from "./Form";
 import { cadastroSchemaProps } from "./form-data";
 import { useStoreCadastro } from "./store";
@@ -32,6 +32,10 @@ const initialPropsCadastro: cadastroSchemaProps = {
 const ModalCadastro = () => {
   const modalOpen = useStoreCadastro().modalOpen;
   const closeModal = useStoreCadastro().closeModal;
+  const openReplicateModal = useStoreCadastro().openReplicateModal;
+  const modalEditing = useStoreCadastro((state) => state.modalEditing);
+  const editModal = useStoreCadastro((state) => state.editModal);
+
   const id = useStoreCadastro().id;
   const formRef = useRef(null);
 
@@ -49,15 +53,20 @@ const ModalCadastro = () => {
     }
   }
 
-  function handleClickReply(
-    ref: React.MutableRefObject<HTMLFormElement | null>
-  ) {
-    ref.current && ref.current.requestSubmit();
+  // function handleClickReply(
+  //   ref: React.MutableRefObject<HTMLFormElement | null>
+  // ) {
+  //   ref.current && ref.current.requestSubmit();
+  // }
+
+  function handleClickCancel() {
+    editModal(false);
+    closeModal();
   }
 
   return (
     <div>
-      <Dialog open={modalOpen} onOpenChange={() => closeModal()}>
+      <Dialog open={modalOpen} onOpenChange={() => handleClickCancel()}>
         <DialogContent>
           <ScrollArea className="max-h-[80vh]">
             {modalOpen && !isLoading ? (
@@ -73,19 +82,25 @@ const ModalCadastro = () => {
               </div>
             )}
           </ScrollArea>
-          <DialogFooter className="flex gap-2 items-end flex-wrap">
-            <Button onClick={() => closeModal()} variant={"secondary"}>
-              <FaRegCircleXmark className="me-2 text-xl" />
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              className="dark:text-white"
-              onClick={() => handleClickReply(formRef)}
+          <DialogFooter className="flex w-full gap-2 items-end flex-wrap">
+            <ModalButtons
+              id={id}
+              modalEditing={modalEditing}
+              edit={() => editModal(true)}
+              cancel={() => closeModal()}
+              formRef={formRef}
             >
-              <Save className="me-2" />
-              Salvar
-            </Button>
+              <Button
+                type={"submit"}
+                size="lg"
+                variant={"secondary"}
+                className="dark:text-white justify-self-start	mx-3"
+                onClick={() => openReplicateModal(id || "")}
+              >
+                <CircleFadingPlusIcon className="me-2" />
+                Replicar
+              </Button>
+            </ModalButtons>
           </DialogFooter>
         </DialogContent>
       </Dialog>

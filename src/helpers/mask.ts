@@ -46,3 +46,16 @@ export const normalizePercentual = (value: string | undefined) => {
     }
     return valueMultiplicado.toLocaleString("pt-BR", { style: "percent", minimumFractionDigits: 2 });
 }
+
+export const normalizeDataDayOne = (dataString?: string) => {
+    if(dataString){
+        const data = new Date(dataString);
+    
+        const ano = data.getFullYear();
+        const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+        
+        const dataFormatada = `${ano}-${mes}-01`;
+        
+        return dataFormatada;
+    }
+}

@@ -10,55 +10,56 @@ import {
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFilial } from "@/hooks/useFilial";
 import { useRef } from "react";
 import Form from "./Form";
-import { useStoreFilial } from "./store";
 import { FilialFormData } from "./form-data";
-import { useFilial } from "@/hooks/useFilial";
+import { useStoreFilial } from "./store";
 
 const initialProps: FilialFormData = {
   id: "",
   active: true,
   nome: "",
-  id_grupo_economico: '',
-  id_matriz: '',
-  
-  nome_fantasia: '',
-  razao: '',
-  telefone: '',
-  email: '',
+  id_grupo_economico: "",
+  id_matriz: "",
 
-  cnpj: '',
-  apelido: '',
-  cod_datasys: '',
-  cnpj_datasys: '',
-  
-  logradouro: '',
-  numero: '',
-  complemento: '',
-  cep: '',
-  municipio: '',
-  uf: '',
+  nome_fantasia: "",
+  razao: "",
+  telefone: "",
+  email: "",
+
+  cnpj: "",
+  apelido: "",
+  cod_datasys: "",
+  cnpj_datasys: "",
+
+  logradouro: "",
+  numero: "",
+  complemento: "",
+  cep: "",
+  municipio: "",
+  uf: "",
 };
 
 const ModalDepartamento = () => {
-  const modalOpen = useStoreFilial(state=>state.modalOpen);
-  const closeModal = useStoreFilial(state=>state.closeModal);
-  const modalEditing = useStoreFilial(state=>state.modalEditing);
-  const editModal = useStoreFilial(state=>state.editModal);
-  const id = useStoreFilial(state=>state.id);
+  const modalOpen = useStoreFilial((state) => state.modalOpen);
+  const closeModal = useStoreFilial((state) => state.closeModal);
+  const modalEditing = useStoreFilial((state) => state.modalEditing);
+  const editModal = useStoreFilial((state) => state.editModal);
+  const id = useStoreFilial((state) => state.id);
   const formRef = useRef(null);
 
   const { data, isLoading } = useFilial().getOne(id);
-  const newData = data?.data;
+  const newData: FilialFormData & Record<string, any> = {} as FilialFormData &
+    Record<string, any>;
 
-  for (const key in newData) {
-    if (typeof newData[key] === "number") {
-      newData[key] = String(newData[key]);
-    } else if (newData[key] === null) {
+  for (const key in data?.data) {
+    if (typeof data?.data[key] === "number") {
+      newData[key] = String(data?.data[key]);
+    } else if (data?.data[key] === null) {
       newData[key] = "";
     } else {
-      newData[key] = newData[key];
+      newData[key] = data?.data[key];
     }
   }
 

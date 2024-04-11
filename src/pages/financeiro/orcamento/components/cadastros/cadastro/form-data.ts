@@ -1,3 +1,4 @@
+import { normalizeDataDayOne } from "@/helpers/mask";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,8 +9,7 @@ const schemaCadastro = z
     id: z.string().optional(),
     grupo_economico: z.string().optional(),
     id_grupo_economico: z.coerce.string().optional(),
-    id_filial: z.string().optional(),
-    ref: z.string().optional(),
+      ref: z.coerce.string().transform(v=>normalizeDataDayOne(v)).optional(),
     active: z.coerce.boolean().optional(),
     contas: z.array(z.object({
       id_conta: z.coerce.string().trim().optional(),

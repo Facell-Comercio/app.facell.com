@@ -29,7 +29,7 @@ export const useOrcamento = () => {
             insertOne : () => useMutation({
                 mutationFn: (data:cadastroSchemaProps) => {
                     console.log("Criando novo orcamento:")            
-                    return api.post("financeiro/orcamento", data).then((response)=>response.data)
+                    return api.post("/financeiro/orcamento", data).then((response)=>response.data)
                 },
                 onSuccess() {
                     toast({title: "Sucesso", description: "Novo Orçamento Criado", duration: 3500})

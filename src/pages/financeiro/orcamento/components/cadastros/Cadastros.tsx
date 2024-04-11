@@ -2,6 +2,7 @@ import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { useOrcamento } from "@/hooks/useOrcamento";
 import ModalCadastro from "./cadastro/Modal";
+import ModalReplicateCadastro from "./cadastro/ModalReplicateCadastro";
 import { useStoreCadastro } from "./cadastro/store";
 import FilterCadastros from "./table/Filters";
 import { columnsTable } from "./table/columns";
@@ -20,8 +21,10 @@ const Cadastros = () => {
   const rowCount = data?.data?.rowCount || 0;
 
   const openModal = useStoreCadastro().openModal;
+  const editModal = useStoreCadastro((state) => state.editModal);
   function handleClickNewCadastro() {
     openModal("");
+    editModal(true);
   }
 
   return (
@@ -40,6 +43,7 @@ const Cadastros = () => {
         columns={columnsTable}
       />
       <ModalCadastro />
+      <ModalReplicateCadastro />
     </div>
   );
 };
