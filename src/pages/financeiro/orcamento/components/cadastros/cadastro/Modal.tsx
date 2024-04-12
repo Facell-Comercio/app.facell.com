@@ -40,6 +40,7 @@ const ModalCadastro = () => {
   const formRef = useRef(null);
 
   const { data, isLoading } = useOrcamento().getOne(id);
+
   const newData: cadastroSchemaProps & Record<string, any> =
     {} as cadastroSchemaProps & Record<string, any>;
 
@@ -81,7 +82,7 @@ const ModalCadastro = () => {
               id={id}
               modalEditing={modalEditing}
               edit={() => editModal(true)}
-              cancel={() => closeModal()}
+              cancel={handleClickCancel}
               formRef={formRef}
             >
               <Button

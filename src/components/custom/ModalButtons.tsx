@@ -27,7 +27,10 @@ const ModalButtons = ({
             type={"submit"}
             size="lg"
             className="dark:text-white"
-            onClick={() => formRef.current && formRef.current.requestSubmit()}
+            onClick={() => {
+              formRef.current && formRef.current.requestSubmit();
+              cancel();
+            }}
           >
             <Save className="me-2" />
             Salvar
@@ -49,7 +52,10 @@ const ModalButtons = ({
             type={"button"}
             size="lg"
             className="dark:text-white"
-            onClick={() => formRef.current && formRef.current.requestSubmit()}
+            onClick={() => {
+              formRef.current && formRef.current.requestSubmit();
+              cancel();
+            }}
           >
             <Save className="me-2" />
             Salvar
@@ -84,7 +90,10 @@ const ModalButtons = ({
             type={"button"}
             size="lg"
             className="dark:text-white"
-            onClick={() => formRef.current && formRef.current.requestSubmit()}
+            onClick={() => {
+              formRef.current && formRef.current.requestSubmit();
+              cancel();
+            }}
           >
             <Save className="me-2" />
             Salvar

@@ -10,7 +10,7 @@ const schemaCadastro = z
     grupo_economico: z.string().optional(),
     id_grupo_economico: z.coerce.string().optional(),
       ref: z.coerce.string().transform(v=>normalizeDataDayOne(v)).optional(),
-    active: z.coerce.boolean().optional(),
+    active: z.coerce.boolean(),
     contas: z.array(z.object({
       id_conta: z.coerce.string().trim().optional(),
       centro_custo: z.coerce.string().trim().min(1, "Obrigatório").optional(),

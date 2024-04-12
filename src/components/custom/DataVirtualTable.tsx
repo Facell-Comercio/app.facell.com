@@ -52,8 +52,6 @@ export function DataVirtualTable<TData, TValue>({
     overscan: 20,
   });
 
-  console.log(virtualizer.getTotalSize);
-
   return (
     <div ref={parentRef}>
       <div style={{ height: `${virtualizer.getTotalSize()}px` }}>

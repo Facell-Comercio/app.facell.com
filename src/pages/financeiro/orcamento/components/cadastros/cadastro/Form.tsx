@@ -1,10 +1,8 @@
-import FormInput from "@/components/custom/FormInput";
 import FormSwitch from "@/components/custom/FormSwitch";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
 import SelectMes from "@/components/custom/SelectMes";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -16,17 +14,11 @@ import ModalPlanoContas, {
   ItemPlanoContas,
 } from "@/pages/financeiro/components/ModalPlanoContas";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
-import {
-  ChevronDown,
-  Download,
-  Plus,
-  Search,
-  Trash,
-  Upload,
-} from "lucide-react";
+import { ChevronDown, Download, Plus, Search, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { dataFormatada } from "./Modal";
+import RowVirtualizerFixed, { itemContaProps } from "./RowVirtualizedFixed";
 import { cadastroSchemaProps, useFormCadastroData } from "./form-data";
 import { useStoreCadastro } from "./store";
 
@@ -65,7 +57,7 @@ const FormCadastro = ({
   function onSubmitData(data: cadastroSchemaProps) {
     const filteredData: cadastroSchemaProps = {
       id: data.id,
-      active: data.active,
+      active: !!+form.watch("active"),
       id_grupo_economico: data.id_grupo_economico,
       ref: `${refDate.ano}-${refDate.mes}-1`,
       contas: data.contas?.filter((conta) => {
@@ -74,7 +66,6 @@ const FormCadastro = ({
         if (!hasId || !sameValue) return conta;
       }),
     };
-    console.log(filteredData);
 
     if (id) {
       update(filteredData);
@@ -83,6 +74,28 @@ const FormCadastro = ({
     }
 
     closeModal();
+  }
+
+  function filteredContas() {
+    const newArray: any[] = [];
+    contas.forEach((item: itemContaProps) =>
+      newArray.push({
+        id: item.id,
+        centro_custo: item.centro_custo,
+        plano_contas: item.plano_contas,
+        id_conta: item.id_conta,
+      })
+    );
+    return newArray.filter((conta) => {
+      if (filter) {
+        return (
+          conta.centro_custo?.includes(filter.toUpperCase()) ||
+          conta.plano_contas?.includes(filter.toUpperCase())
+        );
+      } else {
+        return conta;
+      }
+    });
   }
 
   function exportedFilteredData(data: any[], grupo_economico: string) {
@@ -346,57 +359,63 @@ const FormCadastro = ({
               <span className="w-1/12"></span>
             </header>
             <ScrollArea className="flex flex-col w-[98%] mx-auto max-h-72 pr-3">
-              {contas
-                .filter((conta) => {
-                  if (filter) {
+              {/* {contas
+                  .filter((conta) => {
+                    if (filter) {
+                      return (
+                        conta.centro_custo?.includes(filter.toUpperCase()) ||
+                        conta.plano_contas?.includes(filter.toUpperCase())
+                      );
+                    } else {
+                      return conta;
+                    }
+                  })
+                  .map((item, index) => {
                     return (
-                      conta.centro_custo?.includes(filter.toUpperCase()) ||
-                      conta.plano_contas?.includes(filter.toUpperCase())
+                      <div className="flex gap-2 py-1 pl-1" key={item.id}>
+                        <Input
+                          className="flex-1"
+                          value={item.centro_custo}
+                          readOnly={true}
+                        />
+                        <Input
+                          className="w-5/12"
+                          value={item.plano_contas}
+                          readOnly={true}
+                        />
+                        <FormInput
+                          type="number"
+                          className="flex-1"
+                          name={`contas.${index}.valor`}
+                          control={form.control}
+                          readOnly={!modalEditing}
+                        />
+                        <AlertPopUp
+                          title="Deseja realmente excluir?"
+                          description="Essa ação não pode ser desfeita. A conta será excluída definitivamente do servidor, podendo ser enviada novamente."
+                          action={() => removeItemConta(index, item.id_conta)}
+                        >
+                          {modalEditing ? (
+                            <Button
+                              type="button"
+                              className="w-1/12"
+                              variant={"destructive"}
+                            >
+                              <Trash />
+                            </Button>
+                          ) : (
+                            <></>
+                          )}
+                        </AlertPopUp>
+                      </div>
                     );
-                  } else {
-                    return conta;
-                  }
-                })
-                .map((item, index) => {
-                  return (
-                    <div className="flex gap-2 py-1 pl-1" key={item.id}>
-                      <Input
-                        className="flex-1"
-                        value={item.centro_custo}
-                        readOnly={true}
-                      />
-                      <Input
-                        className="w-5/12"
-                        value={item.plano_contas}
-                        readOnly={true}
-                      />
-                      <FormInput
-                        type="number"
-                        className="flex-1"
-                        name={`contas.${index}.valor`}
-                        control={form.control}
-                        readOnly={!modalEditing}
-                      />
-                      <AlertPopUp
-                        title="Deseja realmente excluir?"
-                        description="Essa ação não pode ser desfeita. A conta será excluída definitivamente do servidor, podendo ser enviada novamente."
-                        action={() => removeItemConta(index, item.id_conta)}
-                      >
-                        {modalEditing ? (
-                          <Button
-                            type="button"
-                            className="w-1/12"
-                            variant={"destructive"}
-                          >
-                            <Trash />
-                          </Button>
-                        ) : (
-                          <></>
-                        )}
-                      </AlertPopUp>
-                    </div>
-                  );
-                })}
+                  })} */}
+              <RowVirtualizerFixed
+                data={filteredContas()}
+                form={form}
+                modalEditing={modalEditing}
+                removeItem={removeItemConta}
+              />
             </ScrollArea>
           </div>
         </form>
