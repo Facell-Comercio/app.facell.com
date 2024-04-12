@@ -1,30 +1,27 @@
-import { DataVirtualTable } from "@/components/custom/DataVirtualTable";
+import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { useOrcamento } from "@/hooks/useOrcamento";
+import { api } from "@/lib/axios";
 import { Upload } from "lucide-react";
 import ModalMeuOrcamento from "./orcamento/Modal";
 import FilterMeuOrcamento from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTableMeuOrcamento } from "./table/store-table";
 
-interface exportedDataProps {
-  grupo_economico: string;
-  centro_custos: string;
-  plano_contas: string;
-  valor_previsto: number;
-  saldo: number;
-  realizado_percentual: string;
-}
-
 const MeuOrcamento = () => {
   console.log("RENDER - Section-Titulos");
-  const [filters] = useStoreTableMeuOrcamento((state) => [state.filters]);
+  const [pagination, setPagination, filters] = useStoreTableMeuOrcamento(
+    (state) => [state.pagination, state.setPagination, state.filters]
+  );
   const { data, refetch } = useOrcamento().getMyBudgets({
+    pagination,
     filters,
   });
 
   const rows = data?.data?.rows || [];
+  const rowCount = data?.data?.rowCount || 0;
 
   const arrayMes = [
     { id: "1", mes: "Janeiro" },
@@ -47,22 +44,32 @@ const MeuOrcamento = () => {
     ].mes;
   const ano = data?.data?.ano;
 
-  async function exportedFilteredData(data: exportedDataProps[]) {
-    const newArray: exportedDataProps[] = [];
-    data.forEach((item: exportedDataProps) =>
-      newArray.push({
-        grupo_economico: item.grupo_economico,
-        centro_custos: item.centro_custos,
-        plano_contas: item.plano_contas,
-        valor_previsto: parseFloat(item.valor_previsto.toString()),
-        saldo: parseFloat(item.saldo.toString()),
-        realizado_percentual:
-          (parseFloat(item.realizado_percentual) * 100)
-            .toFixed(2)
-            .replace(".", ",") + "%",
-      })
-    );
-    exportToExcel(newArray, `meu-orcamento-${mes.toLowerCase()}-${ano}`);
+  async function exportedFilteredData() {
+    try {
+      const response = await api.get(`/financeiro/orcamento/my-budget`, {
+        params: { filters },
+      });
+      const newArray: any[] = [];
+
+      response.data.rows.forEach((item: any) =>
+        newArray.push({
+          grupo_economico: item.grupo_economico,
+          centro_custo: item.centro_custos,
+          plano_contas: item.plano_contas,
+          previsto: parseFloat(item.valor_previsto),
+          saldo: parseFloat(item.saldo),
+          realizado_percentual:
+            (parseFloat(item.realizado_percentual) * 100)
+              .toFixed(2)
+              .replace(".", ",") + "%",
+        })
+      );
+      exportToExcel(newArray, `meu-orcamento-${mes.toLowerCase()}-${ano}`);
+      return newArray;
+    } catch (err) {
+      console.log(err);
+      toast({ title: "Erro na exportação", description: "Erro na exportação" });
+    }
   }
 
   return (
@@ -79,7 +86,7 @@ const MeuOrcamento = () => {
           <Button
             variant={"outline"}
             type={"button"}
-            onClick={() => exportedFilteredData(rows)}
+            onClick={() => exportedFilteredData()}
           >
             <Upload className="me-2" size={20} />
             Exportar
@@ -87,11 +94,11 @@ const MeuOrcamento = () => {
         </div>
       </div>
       <FilterMeuOrcamento refetch={refetch} />
-      <DataVirtualTable
-        // pagination={pagination}
-        // setPagination={setPagination}
+      <DataTable
+        pagination={pagination}
+        setPagination={setPagination}
         data={rows}
-        // rowCount={rowCount}
+        rowCount={rowCount}
         columns={columnsTable}
       />{" "}
       <ModalMeuOrcamento />

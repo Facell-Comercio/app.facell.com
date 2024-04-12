@@ -48,13 +48,14 @@ export function DataVirtualTable<TData, TValue>({
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 34,
+    estimateSize: () => 40,
     overscan: 20,
   });
 
+  console.log(virtualizer.getTotalSize);
+
   return (
-    // <div ref={parentRef} className="rounded-md border">
-    <div ref={parentRef} className="rounded-md border border-transparent">
+    <div ref={parentRef}>
       <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
         <Table>
           <TableHeader>
@@ -96,7 +97,7 @@ export function DataVirtualTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {virtualizer.getVirtualItems() ? (
+            {virtualizer.getVirtualItems().length ? (
               virtualizer.getVirtualItems().map((virtualRow, index) => {
                 const row = rows[virtualRow.index];
                 return (
