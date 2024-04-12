@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 // import { ScrollArea } from "@radix-ui/react-scroll-area";
+import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
+import SelectMes from "@/components/custom/SelectMes";
 import {
   Accordion,
   AccordionContent,
@@ -35,7 +37,7 @@ const FilterMeuOrcamento = ({ refetch }: { refetch: () => void }) => {
         </AccordionTrigger>
         <AccordionContent className="p-0">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
-            <div className="flex items-end w-max space-x-4">
+            <div className="flex items-end w-max space-x-4 pb-1">
               <Button onClick={handleClickFilter}>
                 Filtrar <FilterIcon size={12} className="ms-2" />
               </Button>
@@ -43,21 +45,16 @@ const FilterMeuOrcamento = ({ refetch }: { refetch: () => void }) => {
                 Limpar <EraserIcon size={12} className="ms-2" />
               </Button>
 
-              <div className="max-w-[200px]">
+              <div>
                 <label className="text-sm font-medium">Mês</label>
-                <Input
-                  type="number"
-                  min={1}
-                  max={12}
-                  step={"1"}
-                  placeholder="Mês"
+                <SelectMes
                   value={filters.mes}
-                  onChange={(e) => {
-                    setFilters({ mes: e.target.value });
+                  onValueChange={(e) => {
+                    setFilters({ mes: e });
                   }}
                 />
               </div>
-              <div className="max-w-[200px]">
+              <div>
                 <label className="text-sm font-medium">Ano</label>
                 <Input
                   type="number"
@@ -72,21 +69,31 @@ const FilterMeuOrcamento = ({ refetch }: { refetch: () => void }) => {
                   }}
                 />
               </div>
-              <div className="max-w-[200px]">
+              <div>
+                <label className="text-sm font-medium">Grupo Econômico</label>
+                <SelectGrupoEconomico
+                  showAll
+                  value={filters?.id_grupo_economico}
+                  onChange={(id_grupo_economico) => {
+                    setFilters({ id_grupo_economico: id_grupo_economico });
+                  }}
+                />
+              </div>
+              <div>
                 <label className="text-sm font-medium">Centro de custo</label>
                 <SelectCentrosCustos
                   placeholder="Selecione..."
                   value={filters?.id_centro_custo}
+                  id_grupo_economico={filters.id_grupo_economico}
                   onChange={(id_centro_custo) => {
                     setFilters({ id_centro_custo: id_centro_custo });
                   }}
                 />
               </div>
-              <div className="max-w-[200px]">
+              <div>
                 <label className="text-sm font-medium">Plano de Contas</label>
                 <Input
                   placeholder="Digite..."
-                  className="max-w-[200px]"
                   value={filters?.plano_contas}
                   onChange={(e) => {
                     setFilters({ plano_contas: e.target.value });

@@ -90,7 +90,7 @@ export const columnsTable: ColumnDef<RowMeuOrcamento>[] = checkUserPermission(
         accessorKey: "plano_contas",
         cell: (info) => {
           const plano_contas = info.getValue<string>();
-          return <span>{plano_contas}</span>;
+          return <span>{plano_contas && plano_contas.toUpperCase()}</span>;
         },
       },
       {
@@ -98,7 +98,7 @@ export const columnsTable: ColumnDef<RowMeuOrcamento>[] = checkUserPermission(
         accessorKey: "valor_previsto",
         cell: (info) => {
           const valor_previsto = info.getValue<string>();
-          return <span>{valor_previsto && valor_previsto}</span>;
+          return <span>{valor_previsto}</span>;
         },
       },
       {
@@ -106,7 +106,7 @@ export const columnsTable: ColumnDef<RowMeuOrcamento>[] = checkUserPermission(
         accessorKey: "saldo",
         cell: (info) => {
           const saldo = info.getValue<string>();
-          return <span>{saldo && saldo}</span>;
+          return <span>{saldo}</span>;
         },
       },
       {

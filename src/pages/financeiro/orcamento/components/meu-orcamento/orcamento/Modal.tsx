@@ -26,8 +26,6 @@ const ModalMeuOrcamento = () => {
 
   const { data, isLoading } = useOrcamento().getMyBudget(id);
 
-  console.log("TESTANDO", data?.data);
-
   const newData: MeuOrcamentoSchema = {
     id_conta_saida: data?.data?.id_conta_saida,
     conta_saida: data?.data?.conta_saida,
@@ -36,9 +34,11 @@ const ModalMeuOrcamento = () => {
     conta_entrada: "",
     valor_transferido: "",
 
-    id_filial: data?.data?.id_filial,
+    id_grupo_economico: data?.data?.id_grupo_economico?.toString(),
     id_orcamento: data?.data?.id_orcamento,
     id_centro_custo_saida: data?.data?.id_centro_custo?.toString(),
+    centro_custo_entrada: data?.data?.centro_custo_entrada?.toString(),
+    centro_custo_saida: data?.data?.centro_custo_entrada?.toString(),
     id_centro_custo_entrada: data?.data?.id_centro_custo?.toString(),
   };
 

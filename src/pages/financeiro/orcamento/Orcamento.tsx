@@ -14,7 +14,7 @@ const OrcamentoPage = () => {
 
   return (
     <div className="flex p-4">
-      <Tabs defaultValue="cadastros" className="w-full">
+      <Tabs defaultValue="meu-orcamento" className="w-full">
         <TabsList className="w-full justify-start flex h-auto">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-2 md:p-0 h-auto">
             <TabsTrigger value="meu-orcamento">Meu Orçamento</TabsTrigger>

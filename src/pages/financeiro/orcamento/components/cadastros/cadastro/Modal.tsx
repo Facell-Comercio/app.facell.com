@@ -53,12 +53,6 @@ const ModalCadastro = () => {
     }
   }
 
-  // function handleClickReply(
-  //   ref: React.MutableRefObject<HTMLFormElement | null>
-  // ) {
-  //   ref.current && ref.current.requestSubmit();
-  // }
-
   function handleClickCancel() {
     editModal(false);
     closeModal();

@@ -100,6 +100,8 @@ export const useOrcamento = () => {
                     console.log(error);
                 },
             }),
+
+            exportMyBudgets: ({filters}:GetAllParams) => api.get(`/financeiro/orcamento/my-budget`, { params: { filters } })
         }
     )
 }

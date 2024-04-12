@@ -6,18 +6,23 @@ import { Form } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useOrcamento } from "@/hooks/useOrcamento";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { cadastroSchemaProps, useFormCadastroData } from "./form-data";
 import { useStoreCadastro } from "./store";
 
-import FormDateInput from "@/components/custom/FormDate";
+import { Input } from "@/components/custom/FormInput";
 import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
+import SelectMes from "@/components/custom/SelectMes";
 import { dataFormatada } from "./Modal";
 
 const ModalReplicateCadastro = () => {
   const { mutate: insertOne } = useOrcamento().insertOne();
   const modalReplicateOpen = useStoreCadastro().modalReplicateOpen;
   const closeReplicateModal = useStoreCadastro().closeReplicateModal;
+  const [refDate, setRefDate] = useState({
+    mes: (new Date().getMonth() + 1).toString(),
+    ano: new Date().getFullYear().toString(),
+  });
 
   const id = useStoreCadastro().id;
   const formRef = useRef(null);
@@ -43,6 +48,7 @@ const ModalReplicateCadastro = () => {
   }
 
   function onSubmitData(newData: cadastroSchemaProps) {
+    newData.ref = `${refDate.ano}-${refDate.mes}-1`;
     console.log(newData);
     insertOne(newData);
 
@@ -84,11 +90,30 @@ const ModalReplicateCadastro = () => {
                     label="Grupo Econômico"
                     disabled
                   />
-                  <FormDateInput
-                    name="ref"
-                    label="Data de referência"
-                    control={form.control}
-                  />
+                  <div>
+                    <label className="text-sm font-medium">Mês</label>
+                    <SelectMes
+                      value={refDate.mes}
+                      onValueChange={(e) => {
+                        setRefDate({ ...refDate, mes: e });
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Ano</label>
+                    <Input
+                      type="number"
+                      min={2020}
+                      max={new Date().getFullYear() + 1}
+                      step={"1"}
+                      placeholder="Ano"
+                      className="w-[80px]"
+                      value={refDate.ano}
+                      onChange={(e) => {
+                        setRefDate({ ...refDate, ano: e.target.value });
+                      }}
+                    />
+                  </div>
                 </form>
               </Form>
             ) : (

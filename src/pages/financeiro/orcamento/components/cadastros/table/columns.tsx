@@ -28,7 +28,6 @@ export const columnsTable: ColumnDef<RowCadastro>[] = [
         onClick={() => openModal(info.getValue<number>().toString())}
       />
     ),
-    sortDescFirst: true,
   },
   {
     header: "MÊS/ANO",

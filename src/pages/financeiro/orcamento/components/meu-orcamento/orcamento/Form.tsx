@@ -1,10 +1,11 @@
 import FormInput from "@/components/custom/FormInput";
-import SelectCentrosCustos from "@/components/custom/SelectCentrosCustos";
 import { Form } from "@/components/ui/form";
 import { useOrcamento } from "@/hooks/useOrcamento";
+import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
 import ModalPlanoContas, {
   ItemPlanoContas,
 } from "@/pages/financeiro/components/ModalPlanoContas";
+import { CentroCustos } from "@/types/financeiro/centro-custos-type";
 import { useState } from "react";
 import { MeuOrcamentoSchema, useFormMeuOrcamentoData } from "./form-data";
 import { useStoreMeuOrcamento } from "./store";
@@ -19,11 +20,18 @@ const FormMeuOrcamento = ({
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   console.log("RENDER - MeuOrcamento:", id);
+  const [modalCentrosCustoOpen, setModalCentrosCustoOpen] = useState(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
   const { mutate: transfer } = useOrcamento().transfer();
   const closeModal = useStoreMeuOrcamento().closeModal;
   const { form } = useFormMeuOrcamentoData(data);
 
+  function handleSelectionCentroCustos(item: CentroCustos) {
+    form.setValue("id_centro_custo_entrada", item.id);
+
+    form.setValue("centro_custo_entrada", item.nome);
+    setModalCentrosCustoOpen(false);
+  }
   function handleSelectionPlanoContas(item: ItemPlanoContas) {
     form.setValue("id_conta_entrada", item.id);
     form.setValue("conta_entrada", item.codigo + " - " + item.descricao);
@@ -32,12 +40,10 @@ const FormMeuOrcamento = ({
 
   const onSubmitData = (data: MeuOrcamentoSchema) => {
     transfer(data);
-    console.log(data);
-
     closeModal();
   };
 
-  console.log(form.formState.errors);
+  // console.log(form.formState.errors);
 
   return (
     <div className="max-w-full overflow-x-hidden">
@@ -48,19 +54,12 @@ const FormMeuOrcamento = ({
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex flex-wrap gap-3">
-                  <SelectCentrosCustos
-                    name="id_centro_custo_saida"
-                    label={"Centro de Custo de Saída"}
-                    control={form.control}
-                    disabled={true}
-                  />
                   <FormInput
-                    className="flex-1 min-w-[40ch]"
-                    name="id_conta_saida"
+                    className="flex-1"
+                    name="centro_custo_entrada"
                     readOnly={true}
-                    label="ID conta saida"
+                    label="Centro de Custo de Saída"
                     control={form.control}
-                    type="hidden"
                   />
                   <FormInput
                     className="flex-1 min-w-[40ch]"
@@ -78,33 +77,27 @@ const FormMeuOrcamento = ({
                     control={form.control}
                   />
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  <SelectCentrosCustos
-                    name="id_centro_custo_entrada"
-                    label={"Centro de Custo de Entrada"}
-                    control={form.control}
-                  />
-                  <FormInput
-                    type="hidden"
+                <div className="flex flex-wrap items-end gap-3">
+                  <span
                     className="flex-1"
-                    name="id_conta_entrada"
-                    label="Para Essa Conta"
-                    control={form.control}
+                    onClick={() => setModalCentrosCustoOpen(true)}
+                  >
+                    <FormInput
+                      className="w-full"
+                      name="centro_custo_entrada"
+                      label="Centro de Custo de Entrada"
+                      control={form.control}
+                    />
+                  </span>
+                  <ModalCentrosCustos
+                    handleSelecion={handleSelectionCentroCustos}
+                    // @ts-expect-error 'Ignore, vai funcionar..'
+                    onOpenChange={setModalCentrosCustoOpen}
+                    open={modalCentrosCustoOpen}
+                    id_grupo_economico={data.id_grupo_economico}
+                    closeOnSelection={true}
                   />
-                  <FormInput
-                    type="hidden"
-                    className="flex-1"
-                    name="id_orcamento"
-                    label="Para Essa Conta"
-                    control={form.control}
-                  />
-                  <FormInput
-                    type="hidden"
-                    className="flex-1"
-                    name="id_plano_conta"
-                    label="Para Essa Conta"
-                    control={form.control}
-                  />
+
                   <span
                     className="flex-1"
                     onClick={() => setModalPlanoContasOpen(true)}
@@ -118,7 +111,7 @@ const FormMeuOrcamento = ({
                   </span>
                   <ModalPlanoContas
                     open={modalPlanoContasOpen}
-                    id_filial={data.id_filial}
+                    id_grupo_economico={data.id_grupo_economico}
                     tipo="Despesa"
                     onOpenChange={() =>
                       setModalPlanoContasOpen((prev: boolean) => !prev)

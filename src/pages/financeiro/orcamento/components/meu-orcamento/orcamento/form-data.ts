@@ -11,10 +11,12 @@ const schemaMeuOrcamento = z
   conta_entrada: z.coerce.string(),
   valor_transferido: z.coerce.string(),
 
-  id_filial: z.coerce.string(),
+  id_grupo_economico: z.coerce.string(),
   id_orcamento: z.coerce.string(),
   id_centro_custo_saida: z.coerce.string(),
   id_centro_custo_entrada: z.coerce.string(),
+  centro_custo_saida: z.coerce.string(),
+  centro_custo_entrada: z.coerce.string(),
 });
 
 export type MeuOrcamentoSchema =  z.infer<typeof schemaMeuOrcamento>;

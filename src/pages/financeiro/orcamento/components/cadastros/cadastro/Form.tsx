@@ -5,18 +5,25 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
-import FormDateInput from "@/components/custom/FormDate";
 import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
+import SelectMes from "@/components/custom/SelectMes";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import importExportXLS from "@/helpers/importExportXLS";
+import { exportToExcel } from "@/helpers/importExportXLS";
 import { useOrcamento } from "@/hooks/useOrcamento";
 import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
 import ModalPlanoContas, {
   ItemPlanoContas,
 } from "@/pages/financeiro/components/ModalPlanoContas";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
-import { Download, Trash, Upload } from "lucide-react";
+import {
+  ChevronDown,
+  Download,
+  Plus,
+  Search,
+  Trash,
+  Upload,
+} from "lucide-react";
 import { useRef, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { dataFormatada } from "./Modal";
@@ -50,13 +57,17 @@ const FormCadastro = ({
     id_plano_contas: "",
     valor: "",
   });
+  const [refDate, setRefDate] = useState({
+    mes: (new Date().getMonth() + 1).toString(),
+    ano: new Date().getFullYear().toString(),
+  });
 
   function onSubmitData(data: cadastroSchemaProps) {
     const filteredData: cadastroSchemaProps = {
       id: data.id,
       active: data.active,
       id_grupo_economico: data.id_grupo_economico,
-      ref: data.ref,
+      ref: `${refDate.ano}-${refDate.mes}-1`,
       contas: data.contas?.filter((conta) => {
         const hasId = conta.id_conta;
         const sameValue = conta.valor === conta.valor_inicial;
@@ -75,17 +86,16 @@ const FormCadastro = ({
   }
 
   function exportedFilteredData(data: any[], grupo_economico: string) {
-    // todo Ver oque está dando errado
     const newArray: any[] = [];
     data.forEach((item) =>
       newArray.push({
         grupo_economico: grupo_economico,
         centro_custo: item.centro_custo,
         plano_contas: item.plano_contas,
-        valor: item.valor,
+        valor: parseFloat(item.valor),
       })
     );
-    return newArray;
+    exportToExcel(newArray, "cadastro");
   }
 
   function addNewConta() {
@@ -188,17 +198,14 @@ const FormCadastro = ({
         </div>
         <div className="flex justify-between">
           <div className="flex gap-2">
-            <Button variant={"outline"}>
-              <Upload
-                className="me-2"
-                size={20}
-                onClick={() =>
-                  importExportXLS.exportToExcel(
-                    exportedFilteredData(contas, data.grupo_economico || ""),
-                    "cadastro"
-                  )
-                }
-              />
+            <Button
+              variant={"outline"}
+              type={"button"}
+              onClick={() =>
+                exportedFilteredData(contas, data.grupo_economico || "")
+              }
+            >
+              <Upload className="me-2" size={20} />
               Exportar
             </Button>
             <Button variant={"outline"}>
@@ -208,6 +215,7 @@ const FormCadastro = ({
           </div>
           {!(id_grupo_economico && !modalEditing) && (
             <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
+              <Plus className="me-2" strokeWidth={2} />
               Novo Item
             </Button>
           )}
@@ -227,6 +235,7 @@ const FormCadastro = ({
             className="dark:bg-purple-500"
             onClick={() => setFilter(searchRef.current?.value || "")}
           >
+            <Search className="me-2" />
             Procurar
           </Button>
         </div>
@@ -239,12 +248,30 @@ const FormCadastro = ({
               disabled={!modalEditing}
               label="Grupo Econômico"
             />
-            <FormDateInput
-              disabled={!modalEditing}
-              name="ref"
-              label="Data de referência"
-              control={form.control}
-            />
+            <div>
+              <label className="text-sm font-medium">Mês</label>
+              <SelectMes
+                value={refDate.mes}
+                onValueChange={(e) => {
+                  setRefDate({ ...refDate, mes: e });
+                }}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Ano</label>
+              <Input
+                type="number"
+                min={2020}
+                max={new Date().getFullYear() + 1}
+                step={"1"}
+                placeholder="Ano"
+                className="w-[80px]"
+                value={refDate.ano}
+                onChange={(e) => {
+                  setRefDate({ ...refDate, ano: e.target.value });
+                }}
+              />
+            </div>
           </div>
         )}
         <div
@@ -300,7 +327,9 @@ const FormCadastro = ({
               setNewConta({ ...newConta, valor: e.target.value })
             }
           />
-          <Button className="dark:bg-purple-500" onClick={() => addNewConta()}>
+          <Button onClick={() => addNewConta()}>
+            {/* <ArrowBigDown className="me-2" /> */}
+            <ChevronDown className="me-2" />
             Inserir
           </Button>
         </div>
