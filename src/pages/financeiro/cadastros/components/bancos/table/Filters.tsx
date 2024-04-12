@@ -20,7 +20,16 @@ const FilterBancos = ({ refetch }: { refetch: () => void }) => {
 
   return (
     <div className="flex gap-3">
-      <Input ref={searchRef} type="search" placeholder="Buscar..." />
+      <Input
+        ref={searchRef}
+        type="search"
+        placeholder="Buscar..."
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSearch(searchRef.current?.value || "");
+          }
+        }}
+      />{" "}
       <Button onClick={() => handleSearch(searchRef.current?.value || "")}>
         Procurar
       </Button>

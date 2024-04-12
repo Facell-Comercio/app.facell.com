@@ -11,6 +11,7 @@ type RowSelection = Record<number, boolean>;
 export interface Filters {
   mes?: string;
   ano?: string;
+  id_grupo_economico?: string;
   id_centro_custo?: string;
   plano_contas?: string;
 }
@@ -18,6 +19,7 @@ export interface Filters {
 const initialFilters: Filters = {
   mes: (new Date().getMonth() + 1).toString(),
   ano: new Date().getFullYear().toString(),
+  id_grupo_economico: "",
   id_centro_custo: "",
   plano_contas: "",
 };

@@ -1,13 +1,13 @@
-import { api } from "@/lib/axios";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
-import { GetAllParams } from "@/types/query-params-type";
+import { api } from "@/lib/axios";
 import { GrupoEconomicoFormData } from "@/pages/admin/grupos-economicos/grupo-economico/form-data";
+import { GetAllParams } from "@/types/query-params-type";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGrupoEconomico = ()=>{
     const queryClient = useQueryClient()
     return {
-    getAll: (params: undefined | GetAllParams)=> useQuery({ 
+    getAll: (params?: GetAllParams)=> useQuery({ 
         queryKey: ['grupos-economicos', params], 
         queryFn: async()=> await api.get('/grupo-economico', {params: params}), 
         placeholderData: keepPreviousData,

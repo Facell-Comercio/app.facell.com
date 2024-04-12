@@ -23,7 +23,9 @@ interface IModalPlanoContas {
   open: boolean;
   handleSelecion: (item: ItemPlanoContas) => void;
   onOpenChange: () => void;
-  id_filial?: string | null;
+  id_matriz?: string | null;
+  id_grupo_economico?: string | null;
+  tipo?: "Despesa" | "Receita";
 }
 
 export type ItemPlanoContas = {
@@ -42,7 +44,9 @@ const ModalPlanoContas = ({
   open,
   handleSelecion,
   onOpenChange,
-  id_filial,
+  id_matriz,
+  id_grupo_economico,
+  tipo,
 }: IModalPlanoContas) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -50,7 +54,7 @@ const ModalPlanoContas = ({
     pageIndex: 0,
   });
 
-  const queryKey = id_filial ? `plano_contas:${id_filial}` : "plano_contas";
+  const queryKey = id_matriz ? `plano_contas:${id_matriz}` : "plano_contas";
   const {
     data,
     isLoading,
@@ -60,7 +64,10 @@ const ModalPlanoContas = ({
     queryKey: [queryKey, search],
     queryFn: async () =>
       await api.get("financeiro/plano-contas", {
-        params: { filters: { termo: search, id_filial }, pagination },
+        params: {
+          filters: { termo: search, id_matriz, id_grupo_economico, tipo },
+          pagination,
+        },
       }),
     enabled: open,
   });
@@ -173,7 +180,7 @@ const ModalPlanoContas = ({
               <PaginationItem>
                 <Button
                   variant={"outline"}
-                  disabled={pagination.pageIndex === 1}
+                  disabled={pagination.pageIndex === 0}
                   onClick={handlePaginationDown}
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -196,7 +203,7 @@ const ModalPlanoContas = ({
               <PaginationItem>
                 <Button
                   variant={"outline"}
-                  disabled={pagination.pageIndex === pages.length}
+                  disabled={pagination.pageIndex === pages.length - 1}
                   onClick={handlePaginationUp}
                 >
                   <ChevronRight className="h-4 w-4" />

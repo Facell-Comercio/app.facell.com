@@ -1,10 +1,9 @@
-import { CalendarIcon } from "@radix-ui/react-icons"
-import { format } from "date-fns"
-import { ptBR } from 'date-fns/locale';
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   FormControl,
   FormDescription,
@@ -12,68 +11,78 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { Control } from "react-hook-form"
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Control } from "react-hook-form";
 
 type FormDateProps = {
-  name: string,
-  control: Control<any>,
-  label?: string
-  description?: string
-  disabled?: boolean
-}
+  name: string;
+  control: Control<any>;
+  label?: string;
+  description?: string;
+  disabled?: boolean;
+  max?: Date;
+  min?: Date;
+};
 
-const FormDateInput = ({ name, control, label, description, disabled }: FormDateProps) => {
-  return <FormField
-    control={control}
-    name={name}
-    render={({ field }) => (
-      <FormItem className="flex flex-col flex-1 max-w-[18ch]">
-        {label && <FormLabel>{label}</FormLabel>}
-        <Popover>
-          <PopoverTrigger asChild>
-            <FormControl>
-              <Button
-                disabled={disabled}
-                variant={"outline"}
-                className={cn(
-                  "pl-3 text-left font-normal",
-                  !field.value && "text-muted-foreground"
-                )}
-              >
-                {field.value ? (
-                  format(field.value, "dd/MM/yyyy")
-                ) : (
-                  <span>Selecione a data</span>
-                )}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Button>
-            </FormControl>
-          </PopoverTrigger>
-          
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={field.value}
-              onSelect={field.onChange}
-              locale={ptBR}
-              disabled={(date) =>
-                date > new Date() || date < new Date("1900-01-01")
-              }
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-        {description && <FormDescription>{description}</FormDescription>}
-        <FormMessage />
-      </FormItem>
-    )}
-  />;
-}
+const FormDateInput = ({
+  name,
+  control,
+  label,
+  description,
+  disabled,
+}: FormDateProps) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className="flex flex-col flex-1 max-w-[18ch]">
+          {label && <FormLabel>{label}</FormLabel>}
+          <Popover>
+            <PopoverTrigger asChild>
+              <FormControl>
+                <Button
+                  disabled={disabled}
+                  variant={"outline"}
+                  className={cn(
+                    "pl-3 text-left font-normal",
+                    !field.value && "text-muted-foreground"
+                  )}
+                >
+                  {field.value ? (
+                    format(field.value, "dd/MM/yyyy")
+                  ) : (
+                    <span>Selecione a data</span>
+                  )}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </FormControl>
+            </PopoverTrigger>
+
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={field.value}
+                onSelect={field.onChange}
+                locale={ptBR}
+                // todo usar o max e min -> date > max
+                disabled={(date) => date < new Date("1900-01-01")}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+};
 
 export default FormDateInput;

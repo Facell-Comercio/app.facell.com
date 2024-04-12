@@ -1,4 +1,5 @@
 import { Ban, PenLine, Save } from "lucide-react";
+import { ReactNode } from "react";
 import { Button } from "../ui/button";
 
 interface ModalButtonsProps {
@@ -7,6 +8,7 @@ interface ModalButtonsProps {
   cancel: () => void;
   edit?: () => void;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
+  children?: ReactNode;
 }
 
 const ModalButtons = ({
@@ -15,34 +17,28 @@ const ModalButtons = ({
   cancel,
   edit,
   formRef,
+  children: Children,
 }: ModalButtonsProps) => {
   return (
-    <>
+    <div className="flex flex-row-reverse w-full justify-between">
       {!id && (
-        <div className="flex gap-2 items-end flex-wrap">
-          {/* <Button
-            type={"button"}
-            size="lg"
-            variant={"secondary"}
-            onClick={cancel}
-          >
-            <Ban className="me-2 text-xl" />
-            Cancelar
-          </Button> */}
-
+        <div className="flex gap-2 items-end justify-self-end	flex-wrap">
           <Button
             type={"submit"}
             size="lg"
             className="dark:text-white"
-            onClick={() => formRef.current && formRef.current.requestSubmit()}
+            onClick={() => {
+              formRef.current && formRef.current.requestSubmit();
+              cancel();
+            }}
           >
             <Save className="me-2" />
             Salvar
           </Button>
         </div>
       )}
-      {id && modalEditing && (
-        <div className="flex gap-2 items-end flex-wrap">
+      {id && modalEditing && edit && (
+        <div className="flex gap-2 items-end justify-self-end	flex-wrap">
           <Button
             type={"button"}
             size="lg"
@@ -56,15 +52,18 @@ const ModalButtons = ({
             type={"button"}
             size="lg"
             className="dark:text-white"
-            onClick={() => formRef.current && formRef.current.requestSubmit()}
+            onClick={() => {
+              formRef.current && formRef.current.requestSubmit();
+              cancel();
+            }}
           >
             <Save className="me-2" />
             Salvar
           </Button>
         </div>
       )}
-      {id && !modalEditing && (
-        <div className="flex gap-2 items-end flex-wrap">
+      {id && !modalEditing && edit && (
+        <div className="flex gap-2 items-end justify-self-end	flex-wrap">
           <Button
             type={"button"}
             size="lg"
@@ -76,7 +75,33 @@ const ModalButtons = ({
           </Button>
         </div>
       )}
-    </>
+      {id && !modalEditing && !edit && (
+        <div className="flex gap-2 items-end justify-self-end	flex-wrap">
+          <Button
+            type={"button"}
+            size="lg"
+            variant={"secondary"}
+            onClick={cancel}
+          >
+            <Ban className="me-2 text-xl" />
+            Cancelar
+          </Button>
+          <Button
+            type={"button"}
+            size="lg"
+            className="dark:text-white"
+            onClick={() => {
+              formRef.current && formRef.current.requestSubmit();
+              cancel();
+            }}
+          >
+            <Save className="me-2" />
+            Salvar
+          </Button>
+        </div>
+      )}
+      {id && Children}
+    </div>
   );
 };
 
