@@ -16,7 +16,7 @@ import ModalPlanoContas, {
   ItemPlanoContas,
 } from "@/pages/financeiro/components/ModalPlanoContas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Ban, Contact, Divide, DollarSign, Edit, FileIcon, FileText, Save } from "lucide-react";
+import { Ban, Contact, Divide, DollarSign, Edit, FileIcon, FileText, History, Save } from "lucide-react";
 import { useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
@@ -27,6 +27,9 @@ import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthor
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
+import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
+import { CentroCustos } from "@/types/financeiro/centro-custos-type";
+import { formatarDataHora } from "@/helpers/format";
 // import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const schemaTitulo = z.object({
@@ -43,6 +46,8 @@ const schemaTitulo = z.object({
   data_vencimento: z.coerce.date(),
   num_parcelas: z.string(),
   parcela: z.string(),
+
+  num_doc: z.string(),
   valor: z.coerce.number(),
   descricao: z
     .string()
@@ -71,6 +76,8 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   console.log(`RENDER ${++i} - Form, titulo:`, id);
   const [modalFornecedorOpen, setModalFornecedorOpen] = useState<boolean>(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState<boolean>(false);
+  const [modalCentrosCustosOpen, setModalCentrosCustosOpen] = useState<boolean>(false);
+
   const [isEditing, setIsEditing] = useState<boolean>(!id || false)
 
   const { data, isLoading, isError } = useTituloPagar().getOne(id);
@@ -146,8 +153,13 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
   // Controle de plano de contas
   function showModalPlanoContas() {
     if (canEdit) {
-      console.log('Abrir modal plano contas')
       setModalPlanoContasOpen(true)
+    }
+  }
+
+  function showModalCentrosCustos() {
+    if (canEdit) {
+      setModalCentrosCustosOpen(true)
     }
   }
 
@@ -156,10 +168,17 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
     setValue("plano_contas", item.codigo + " - " + item.descricao);
     setModalPlanoContasOpen(false);
   }
+
+  function handleSelectionCentroCusto(item: CentroCustos) {
+    setValue("id_centro_custo", item.id);
+    setValue("centro_custo", item.nome);
+    setModalCentrosCustosOpen(false);
+  }
+
   const watchIdFilial = useWatch({ name: "id_filial", control: form.control });
   const watchFormaPagamento = useWatch({ name: "id_forma_pagamento", control: form.control });
   const showPix = watchFormaPagamento === '4'
-  const showDadosBancarios = watchFormaPagamento === '2' || watchFormaPagamento === '5' || watchFormaPagamento === '8' 
+  const showDadosBancarios = watchFormaPagamento === '2' || watchFormaPagamento === '5' || watchFormaPagamento === '8'
 
   // Controle de rateio
   const {
@@ -270,7 +289,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       readOnly={true}
                       label="Nome do fornecedor"
                       control={form.control}
-                    /> <br/>
+                    /> <br />
 
                     <SelectFormaPagamento
                       label="Forma de pagamento"
@@ -429,18 +448,35 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       handleSelecion={handleSelectionPlanoContas}
                     />
 
-                    <FormSelect
-                      disabled={!isEditing}
+                    <FormInput
                       name="id_centro_custo"
+                      type={"hidden"}
                       control={form.control}
-                      label={"Centro de custo"}
-                      className={"min-w-[30ch]"}
-                      options={[
-                        { value: "1", label: "DIRETORIA" },
-                        { value: "2", label: "DP" },
-                        { value: "3", label: "COMERCIAL" },
-                      ]}
                     />
+
+                    <FormItem>
+                      <div className="flex justify-between items-end">
+                        <FormLabel>Centro de custo</FormLabel>
+                      </div>
+
+                      <Button type="button" variant={'ghost'} onClick={showModalCentrosCustos} className="flex-1 p-0">
+                        <FormInput
+                          disabled={!isEditing}
+                          name="centro_custo"
+                          control={form.control}
+                          className={"min-w-[40ch]"}
+                        />
+                      </Button>
+                    </FormItem>
+
+                    <ModalCentrosCustos
+                      handleSelecion={handleSelectionCentroCusto}
+                      // @ts-ignore
+                      onOpenChange={setModalCentrosCustosOpen}
+                      open={modalCentrosCustosOpen}
+                      closeOnSelection={true}
+                    />
+
 
                     <FormInput
                       readOnly={!isEditing}
@@ -449,6 +485,7 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       label="Número de parcelas"
                       control={form.control}
                     />
+
                     <FormInput
                       readOnly={!isEditing}
                       name="parcela"
@@ -467,6 +504,13 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                       disabled={!isEditing}
                       name="data_vencimento"
                       label="Data de vencimento"
+                      control={form.control}
+                    />
+
+                    <FormInput
+                      readOnly={!isEditing}
+                      name="num_doc"
+                      label="Núm. Doc."
                       control={form.control}
                     />
 
@@ -594,6 +638,19 @@ const FormTituloPagar = ({ id }: { id: string | null }) => {
                     </table>
                   </div>
                 </div>
+
+                <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                  <div className="flex gap-2 mb-3">
+                    <History />{" "}
+                    <span className="text-lg font-bold ">Histórico do título</span>
+                  </div>
+                  <div className="flex gap-3 flex-wrap items-end">
+                        {data?.data?.historico?.map(h=>(
+                          <p key={`hist.${h.id}`}>{formatarDataHora(h.created_at)} - {h.text}</p>
+                        ))}
+                  </div>
+                </div>
+
 
                 {/* Fim da primeira coluna */}
               </div>
