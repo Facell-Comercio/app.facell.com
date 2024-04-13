@@ -32,6 +32,7 @@ const initialPropsCadastro: cadastroSchemaProps = {
 const ModalCadastro = () => {
   const modalOpen = useStoreCadastro().modalOpen;
   const closeModal = useStoreCadastro().closeModal;
+  const toggleModal = useStoreCadastro().toggleModal;
   const openReplicateModal = useStoreCadastro().openReplicateModal;
   const modalEditing = useStoreCadastro((state) => state.modalEditing);
   const editModal = useStoreCadastro((state) => state.editModal);
@@ -56,12 +57,12 @@ const ModalCadastro = () => {
 
   function handleClickCancel() {
     editModal(false);
-    closeModal();
+    // closeModal();
   }
 
   return (
     <div>
-      <Dialog open={modalOpen} onOpenChange={() => handleClickCancel()}>
+      <Dialog open={modalOpen} onOpenChange={toggleModal}>
         <DialogContent>
           <ScrollArea className="max-h-[80vh]">
             {modalOpen && !isLoading ? (

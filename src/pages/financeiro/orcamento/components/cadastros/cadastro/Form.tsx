@@ -353,12 +353,12 @@ const FormCadastro = ({
                 !contas.length && "hidden"
               }`}
             >
-              <span className="flex-1 pr-6">Centro de Custos</span>
+              <span className="flex-1 pr-32">Centro de Custos</span>
               <span className="px-3 w-5/12">Plano de Contas</span>
               <span className="flex-1 px-3">Valor</span>
               <span className="w-1/12"></span>
             </header>
-            <ScrollArea className="flex flex-col w-[98%] mx-auto max-h-72 pr-3">
+            {/* <ScrollArea className="flex flex-col w-[98%] mx-auto max-h-72 pr-3"> */}
               {/* {contas
                   .filter((conta) => {
                     if (filter) {
@@ -416,7 +416,7 @@ const FormCadastro = ({
                 modalEditing={modalEditing}
                 removeItem={removeItemConta}
               />
-            </ScrollArea>
+            {/* </ScrollArea> */}
           </div>
         </form>
       </Form>

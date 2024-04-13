@@ -115,80 +115,85 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
   const parentElement = React.useRef(null);
 
   const count = data.length;
-  const virtaulizer = useVirtualizer({
+
+  const virtualizer = useVirtualizer({
     count,
     getScrollElement: () => parentElement.current,
-    estimateSize: () => 45,
-    overscan: 5,
+    estimateSize: () => 44,
+    overscan: 10,
   });
 
-  const items = virtaulizer.getVirtualItems();
-
   return (
-    <ScrollArea ref={parentElement}>
+    <div
+      ref={parentElement}
+      className="pe-2"
+      style={{
+        height: `300px`,
+        width: `100%`,
+        overflow: 'auto',
+      }}
+    >
       <div
-        className="h-72"
         style={{
-          position: "relative",
-          //   height: virtaulizer.getTotalSize(),
-          width: "100%",
+          height: `${virtualizer.getTotalSize()}px`,
+          width: '100%',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            // transform: `translateY(${items[0].start}px)`,
-          }}
-        >
-          {items.map((item, index) => (
-            <div
-              ref={virtaulizer.measureElement}
-              key={item.key}
-              data-index={index}
-              className="flex gap-2 py-1 pl-1"
+        {virtualizer.getVirtualItems().map((item, index) => (
+          <div
+            // ref={virtualizer.measureElement}
+            key={item.index}
+            data-index={index}
+            className="flex gap-2 py-1 pl-1"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: `${item.size}px`,
+              transform: `translateY(${item.start}px)`,
+            }}
+          >
+            <Input
+              className="flex-1"
+              value={data[item.index].centro_custo}
+              readOnly={true}
+            />
+            <Input
+              className="w-5/12"
+              value={data[item.index].plano_contas}
+              readOnly={true}
+            />
+            <FormInput
+              type="number"
+              className="flex-1"
+              name={`contas.${index}.valor`}
+              control={form.control}
+              readOnly={!modalEditing}
+            />
+            <AlertPopUp
+              title="Deseja realmente excluir?"
+              description="Essa ação não pode ser desfeita. A conta será excluída definitivamente do servidor, podendo ser enviada novamente."
+              action={() => removeItem(index, data[item.index].id_conta)}
             >
-              <Input
-                className="flex-1"
-                value={data[item.index].centro_custo}
-                readOnly={true}
-              />
-              <Input
-                className="w-5/12"
-                value={data[item.index].plano_contas}
-                readOnly={true}
-              />
-              <FormInput
-                type="number"
-                className="flex-1"
-                name={`contas.${index}.valor`}
-                control={form.control}
-                readOnly={!modalEditing}
-              />
-              <AlertPopUp
-                title="Deseja realmente excluir?"
-                description="Essa ação não pode ser desfeita. A conta será excluída definitivamente do servidor, podendo ser enviada novamente."
-                action={() => removeItem(index, data[item.index].id_conta)}
-              >
-                {modalEditing ? (
-                  <Button
-                    type="button"
-                    className="w-1/12"
-                    variant={"destructive"}
-                  >
-                    <Trash />
-                  </Button>
-                ) : (
-                  <></>
-                )}
-              </AlertPopUp>
-            </div>
-          ))}
-        </div>
+              {modalEditing ? (
+                <Button
+                  type="button"
+                  className="w-1/12"
+                  variant={"destructive"}
+                >
+                  <Trash />
+                </Button>
+              ) : (
+                <></>
+              )}
+            </AlertPopUp>
+          </div>
+        ))}
       </div>
-    </ScrollArea>
+    </div>
   );
 };
 
