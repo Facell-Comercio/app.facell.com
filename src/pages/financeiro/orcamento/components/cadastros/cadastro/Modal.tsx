@@ -31,7 +31,7 @@ const initialPropsCadastro: cadastroSchemaProps = {
 
 const ModalCadastro = () => {
   const modalOpen = useStoreCadastro().modalOpen;
-  const closeModal = useStoreCadastro().closeModal;
+  // const closeModal = useStoreCadastro().closeModal;
   const toggleModal = useStoreCadastro().toggleModal;
   const openReplicateModal = useStoreCadastro().openReplicateModal;
   const modalEditing = useStoreCadastro((state) => state.modalEditing);
@@ -68,7 +68,7 @@ const ModalCadastro = () => {
             {modalOpen && !isLoading ? (
               <FormCadastro
                 id={id}
-                data={newData.id ? newData : initialPropsCadastro}
+                data={id ? newData : initialPropsCadastro}
                 formRef={formRef}
               />
             ) : (

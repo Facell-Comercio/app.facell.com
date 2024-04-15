@@ -3,7 +3,6 @@ import * as React from "react";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormInput, { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Trash } from "lucide-react";
 
@@ -126,19 +125,19 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
   return (
     <div
       ref={parentElement}
-      className="pe-2"
-      style={{
-        height: `300px`,
-        width: `100%`,
-        overflow: 'auto',
-      }}
+      className="pe-2 h-[300px] w-full overflow-auto"
+      // style={{
+      //   height: `300px`,
+      //   width: `100%`,
+      //   overflow: 'auto',
+      // }}
     >
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
-          width: '100%',
-          position: 'relative',
-          overflow: 'hidden'
+          width: "100%",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
         {virtualizer.getVirtualItems().map((item, index) => (
@@ -148,10 +147,10 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
             data-index={index}
             className="flex gap-2 py-1 pl-1"
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
-              width: '100%',
+              width: "100%",
               height: `${item.size}px`,
               transform: `translateY(${item.start}px)`,
             }}
@@ -169,7 +168,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
             <FormInput
               type="number"
               className="flex-1"
-              name={`contas.${index}.valor`}
+              name={`contas.${item.index}.valor`}
               control={form.control}
               readOnly={!modalEditing}
             />

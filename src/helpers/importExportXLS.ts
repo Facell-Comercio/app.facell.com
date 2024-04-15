@@ -8,3 +8,10 @@ export const exportToExcel = (data: any, name: string) => {
       XLSX.writeFile(workbook, `${name.toLowerCase()}.xlsx`)
     }, 100);
   };
+
+  export const importFromExcel = (data: any) => {
+    const workbook = XLSX.read(data, {type:"buffer"})
+    const worksheetName = workbook.SheetNames[0]
+    const worksheet = workbook.Sheets[worksheetName];
+    return XLSX.utils.sheet_to_json(worksheet)
+  };

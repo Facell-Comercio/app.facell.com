@@ -3,12 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
+import AlertPopUp from "@/components/custom/AlertPopUp";
+import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
 import SelectMes from "@/components/custom/SelectMes";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import { exportToExcel } from "@/helpers/importExportXLS";
+import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { useOrcamento } from "@/hooks/useOrcamento";
+import { api } from "@/lib/axios";
 import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
 import ModalPlanoContas, {
   ItemPlanoContas,
@@ -21,6 +22,15 @@ import { dataFormatada } from "./Modal";
 import RowVirtualizerFixed, { itemContaProps } from "./RowVirtualizedFixed";
 import { cadastroSchemaProps, useFormCadastroData } from "./form-data";
 import { useStoreCadastro } from "./store";
+
+export type newContaProps = {
+  centro_custo: string;
+  id_centro_custo: string;
+  plano_contas: string;
+  id_plano_contas: string;
+  grupo_economico?: string;
+  valor: string;
+};
 
 const FormCadastro = ({
   id,
@@ -35,6 +45,7 @@ const FormCadastro = ({
   const { mutate: insertOne } = useOrcamento().insertOne();
   const { mutate: update } = useOrcamento().update();
   const { mutate: deleteBudget } = useOrcamento().deleteBudget();
+
   const closeModal = useStoreCadastro().closeModal;
   const { form, contas, appendConta, removeConta } = useFormCadastroData(data);
   const modalEditing = useStoreCadastro().modalEditing;
@@ -77,7 +88,7 @@ const FormCadastro = ({
   }
 
   function filteredContas() {
-    const newArray: any[] = [];
+    const newArray: itemContaProps[] = [];
     contas.forEach((item: itemContaProps) =>
       newArray.push({
         id: item.id,
@@ -105,13 +116,13 @@ const FormCadastro = ({
         grupo_economico: grupo_economico,
         centro_custo: item.centro_custo,
         plano_contas: item.plano_contas,
-        valor: parseFloat(item.valor),
+        valor: parseFloat(item.valor.toString()),
       })
     );
     exportToExcel(newArray, "cadastro");
   }
 
-  function addNewConta() {
+  function addNewConta(newConta: newContaProps) {
     const hasIds = newConta.id_centro_custo && newConta.id_plano_contas;
     const isDuplicated =
       contas.findIndex((conta) => {
@@ -128,21 +139,27 @@ const FormCadastro = ({
         title: "Atenção",
         description:
           "É necessário selecionar um centro de custos e um plano de contas",
-        duration: 5000,
       });
     } else if (isDuplicated) {
       toast({
         title: "Conta duplicada",
         description: "Centro de custos e plano de contas já existentes",
-        duration: 5000,
       });
     } else {
+      console.log({
+        centro_custo: newConta.centro_custo,
+        plano_contas: newConta.plano_contas,
+        id_centro_custo: newConta.id_centro_custo,
+        id_plano_contas: newConta.id_plano_contas,
+        valor: newConta.valor.toString(),
+      });
+
       appendConta({
         centro_custo: newConta.centro_custo,
         plano_contas: newConta.plano_contas,
         id_centro_custo: newConta.id_centro_custo,
         id_plano_contas: newConta.id_plano_contas,
-        valor: newConta.valor,
+        valor: newConta.valor.toString(),
       });
 
       setInsertContaIsOpen(false);
@@ -191,6 +208,76 @@ const FormCadastro = ({
     control: form.control,
   });
 
+  console.log(!id_grupo_economico);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleChangeImportButton = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = async (e) => {
+        const importedData = e.target?.result;
+        const result = importFromExcel(importedData)[0] as newContaProps;
+        console.log(importFromExcel(importedData));
+
+        const { centro_custo, plano_contas, valor } = result;
+
+        console.log(id_grupo_economico, data.grupo_economico);
+
+        if (!id_grupo_economico) {
+          toast({
+            title: "Sem grupo econômico",
+            description:
+              "Nenhum grupo econômico foi selecionado, antes de realizar a importação defina o grupo econômico",
+          });
+        } else if (id_grupo_economico !== data.id_grupo_economico) {
+          toast({
+            title: "Grupo econômico incorreto",
+            description:
+              "Faça a importação dos orçamentos de um mesmo grupo econômico",
+          });
+        } else if (centro_custo && plano_contas && valor) {
+          try {
+            const returnedIds = await api.get("/financeiro/orcamento/get-ids", {
+              params: importFromExcel(importedData),
+            });
+            const newArray: any[] = [];
+
+            importFromExcel(importedData).forEach(
+              // @ts-expect-error "Vai funcionar"
+              (item: newContaProps, index: number) => {
+                addNewConta({
+                  centro_custo: item.centro_custo,
+                  plano_contas: item.plano_contas,
+                  id_centro_custo: returnedIds.data[index].id_centro_custo,
+                  id_plano_contas: returnedIds.data[index].id_plano_contas,
+                  valor: item.valor.toString(),
+                });
+              }
+            );
+
+            console.log("IDS Retornados:", newArray);
+          } catch (err) {
+            console.log(err);
+          }
+        } else {
+          toast({
+            title: "Arquivo incompleto",
+            description:
+              "O aquivo não pode ser importado, pois não tem todos os dados necessários",
+          });
+        }
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      };
+    }
+  };
   // console.log(form.formState.errors);
 
   return (
@@ -221,12 +308,29 @@ const FormCadastro = ({
               <Upload className="me-2" size={20} />
               Exportar
             </Button>
-            <Button variant={"outline"}>
-              <Download className="me-2" size={20} />
-              Importar
-            </Button>
+            {modalEditing && (
+              <AlertPopUp
+                title="Deseja realmente importar?"
+                description="Esta ação não pode ser desfeita. Ao adicionar muitos itens a este orçamento, pode ser necessário apagá-los individualmente, o que pode se tornar cansativo. Por favor, confirme se deseja prosseguir."
+                action={() =>
+                  fileInputRef.current && fileInputRef.current.click()
+                }
+              >
+                <Button variant={"outline"}>
+                  <Download className="me-2" size={20} />
+                  Importar
+                  <input
+                    type="file"
+                    className="hidden"
+                    ref={fileInputRef}
+                    onChange={handleChangeImportButton}
+                    accept=".xlsx, .xls, .csv"
+                  />
+                </Button>
+              </AlertPopUp>
+            )}
           </div>
-          {!(id_grupo_economico && !modalEditing) && (
+          {id_grupo_economico && modalEditing && (
             <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
               <Plus className="me-2" strokeWidth={2} />
               Novo Item
@@ -254,12 +358,13 @@ const FormCadastro = ({
         </div>
         {!id && (
           <div className="flex gap-2 items-end">
-            <FormSelectGrupoEconomico
+            <SelectGrupoEconomico
               className="flex-1 min-w-32"
-              name="id_grupo_economico"
-              control={form.control}
-              disabled={!modalEditing}
-              label="Grupo Econômico"
+              value={id_grupo_economico}
+              onChange={(id) => {
+                form.setValue("id_grupo_economico", id || "");
+                data.id_grupo_economico = id || "";
+              }}
             />
             <div>
               <label className="text-sm font-medium">Mês</label>
@@ -340,7 +445,7 @@ const FormCadastro = ({
               setNewConta({ ...newConta, valor: e.target.value })
             }
           />
-          <Button onClick={() => addNewConta()}>
+          <Button onClick={() => addNewConta(newConta)}>
             {/* <ArrowBigDown className="me-2" /> */}
             <ChevronDown className="me-2" />
             Inserir
@@ -353,13 +458,17 @@ const FormCadastro = ({
                 !contas.length && "hidden"
               }`}
             >
-              <span className="flex-1 pr-32">Centro de Custos</span>
-              <span className="px-3 w-5/12">Plano de Contas</span>
-              <span className="flex-1 px-3">Valor</span>
+              <span className={`flex-1 ${!modalEditing ? "pr-32" : "pr-6"}`}>
+                Centro de Custos
+              </span>
+              <span className={`w-5/12 ${!modalEditing && "pr-4"}`}>
+                Plano de Contas
+              </span>
+              <span className={`flex-1 ${modalEditing && "pl-3"}`}>Valor</span>
               <span className="w-1/12"></span>
             </header>
             {/* <ScrollArea className="flex flex-col w-[98%] mx-auto max-h-72 pr-3"> */}
-              {/* {contas
+            {/* {contas
                   .filter((conta) => {
                     if (filter) {
                       return (
@@ -410,12 +519,12 @@ const FormCadastro = ({
                       </div>
                     );
                   })} */}
-              <RowVirtualizerFixed
-                data={filteredContas()}
-                form={form}
-                modalEditing={modalEditing}
-                removeItem={removeItemConta}
-              />
+            <RowVirtualizerFixed
+              data={filteredContas()}
+              form={form}
+              modalEditing={modalEditing}
+              removeItem={removeItemConta}
+            />
             {/* </ScrollArea> */}
           </div>
         </form>

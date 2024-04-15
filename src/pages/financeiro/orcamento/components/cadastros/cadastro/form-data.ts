@@ -8,7 +8,7 @@ const schemaCadastro = z
     // Dados Cadastro
     id: z.string().optional(),
     grupo_economico: z.string().optional(),
-    id_grupo_economico: z.coerce.string().optional(),
+    id_grupo_economico: z.coerce.string(),
       ref: z.coerce.string().transform(v=>normalizeDataDayOne(v)).optional(),
     active: z.coerce.boolean(),
     contas: z.array(z.object({
@@ -19,7 +19,7 @@ const schemaCadastro = z
       id_plano_contas: z.coerce.string(),
       valor: z.coerce.string().min(1, "Obrigatório"),
       valor_inicial: z.coerce.string().optional(),
-    })).optional()
+    }))
   });
 
 export type cadastroSchemaProps = z.infer<typeof schemaCadastro>
