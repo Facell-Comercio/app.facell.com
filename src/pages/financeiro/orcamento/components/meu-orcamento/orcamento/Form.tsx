@@ -77,7 +77,7 @@ const FormMeuOrcamento = ({
                     control={form.control}
                   />
                 </div>
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap gap-3">
                   <span
                     className="flex-1"
                     onClick={() => setModalCentrosCustoOpen(true)}
@@ -123,7 +123,7 @@ const FormMeuOrcamento = ({
                     className="flex-1 max-w-[20ch]"
                     name="valor_transferido"
                     label="Valor a Transferir"
-                    min={0}
+                    min={0.1}
                     max={+data.disponivel}
                     control={form.control}
                   />

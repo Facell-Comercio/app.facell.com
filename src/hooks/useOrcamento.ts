@@ -55,14 +55,13 @@ export const useOrcamento = () => {
                 },
             }),
 
-            deleteBudget :() => useMutation({
+            deleteItemBudget :() => useMutation({
                 mutationFn: (id: string|null|undefined|number) => {
                     console.log(`Deletando conta com base no ID`)            
                     return api.delete(`financeiro/orcamento/${id}`).then((response)=>response.data)
                 },
                 onSuccess() {
                     toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
-                    queryClient.invalidateQueries({queryKey:['fin_orcamento']}) 
                 },
                 onError(error) {
                     toast({title: "Error", description: error.message, duration: 3500})

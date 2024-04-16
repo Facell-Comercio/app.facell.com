@@ -8,8 +8,8 @@ const schemaMeuOrcamento = z
   disponivel: z.coerce.string(),
   conta_saida: z.coerce.string(),
   id_conta_entrada: z.coerce.string(),
-  conta_entrada: z.coerce.string(),
-  valor_transferido: z.coerce.string(),
+  conta_entrada: z.coerce.string().min(1, "Selecione a conta"),
+  valor_transferido: z.coerce.string().min(1, "Valor obrigatório"),
 
   id_grupo_economico: z.coerce.string(),
   id_orcamento: z.coerce.string(),

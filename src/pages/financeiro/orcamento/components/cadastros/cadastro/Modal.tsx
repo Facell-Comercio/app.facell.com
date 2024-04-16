@@ -20,7 +20,7 @@ const dia = String(data.getDate()).padStart(2, "0"); // Adiciona um zero à esqu
 
 export const dataFormatada = `${ano}-${mes}-${dia}`;
 
-const initialPropsCadastro: cadastroSchemaProps = {
+export const initialPropsCadastro: cadastroSchemaProps = {
   id: "",
   id_grupo_economico: "",
   grupo_economico: "",
