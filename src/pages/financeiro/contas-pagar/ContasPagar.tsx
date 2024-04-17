@@ -3,6 +3,7 @@ import {
   checkUserDepartments,
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
+import Borderos from "./components/borderos/Borderos";
 import TitulosPagar from "./components/titulos/TitulosPagar";
 
 const ContasPagarPage = () => {
@@ -10,7 +11,7 @@ const ContasPagarPage = () => {
 
   return (
     <div className="flex p-4">
-      <Tabs defaultValue="titulos" className="w-full">
+      <Tabs defaultValue="borderos" className="w-full">
         <TabsList className="w-full justify-start">
           <TabsTrigger value="titulos">Solicitações</TabsTrigger>
           {(checkUserPermission("MASTER") ||
@@ -24,7 +25,9 @@ const ContasPagarPage = () => {
         <TabsContent value="titulos">
           <TitulosPagar />
         </TabsContent>
-        <TabsContent value="borderos"></TabsContent>
+        <TabsContent value="borderos">
+          <Borderos />
+        </TabsContent>
         <TabsContent value="conciliacoes"></TabsContent>
       </Tabs>
     </div>
