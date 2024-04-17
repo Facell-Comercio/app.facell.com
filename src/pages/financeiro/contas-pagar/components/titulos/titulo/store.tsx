@@ -6,7 +6,7 @@ export interface ItemRateioTitulo {
   id_filial: string;
   filial?: string;
   percentual: string;
-  valor: number;
+  valor: string;
   ordem?: string;
 }
 
@@ -55,15 +55,22 @@ export interface TituloPagar {
   url_txt?: string | null;
 }
 
+export interface Historico {
+  id: string;
+  id_titulo: string;
+  created_at: string;
+  text: string;
+}
+
 export const initialPropsTitulo: TituloPagar = {
   id_tipo_solicitacao: "1",
   id_status: "1",
   id_centro_custo: "",
-  centro_custo: '',
+  centro_custo: "",
   id_forma_pagamento: "1",
 
   // Pagamento
-  forma_pagamento: '',
+  forma_pagamento: "",
 
   valor: 0,
   data_emissao: "",

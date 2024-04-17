@@ -1,28 +1,32 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import TitulosPagar from "./components/SectionTitulosPagar";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import {
+  checkUserDepartments,
+  checkUserPermission,
+} from "@/helpers/checkAuthorization";
+import TitulosPagar from "./components/titulos/TitulosPagar";
 
 const ContasPagarPage = () => {
-  console.log(checkUserDepartments('FINANCEIRO'))
+  console.log(checkUserDepartments("FINANCEIRO"));
 
   return (
-    <div className='flex p-4'>
-        <Tabs defaultValue="titulos" className="w-full" >
-        <TabsList className='w-full justify-start'>
-            <TabsTrigger value="titulos">Solicitações</TabsTrigger>
-            {(checkUserPermission('MASTER') || checkUserDepartments('FINANCEIRO')) && (
-              <>
+    <div className="flex p-4">
+      <Tabs defaultValue="titulos" className="w-full">
+        <TabsList className="w-full justify-start">
+          <TabsTrigger value="titulos">Solicitações</TabsTrigger>
+          {(checkUserPermission("MASTER") ||
+            checkUserDepartments("FINANCEIRO")) && (
+            <>
               <TabsTrigger value="borderos">Borderôs</TabsTrigger>
               <TabsTrigger value="conciliacoes">Conciliação</TabsTrigger>
-              </>
-            )}
+            </>
+          )}
         </TabsList>
         <TabsContent value="titulos">
-          <TitulosPagar/>
+          <TitulosPagar />
         </TabsContent>
         <TabsContent value="borderos"></TabsContent>
         <TabsContent value="conciliacoes"></TabsContent>
-        </Tabs>
+      </Tabs>
     </div>
   );
 };

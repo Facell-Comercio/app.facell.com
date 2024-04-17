@@ -1,7 +1,6 @@
 
 import { api } from "@/lib/axios";
-import { RowTitulo } from "@/pages/financeiro/contas-pagar/components/table-titulos/columns-table";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export interface GetTitulosPagarProps {
     pagination?: {
@@ -17,7 +16,7 @@ export const useTituloPagar = () => {
         queryKey: ['fin_cp_titulos', pagination],
         staleTime: 5 * 1000 * 60,
         retry: false,
-        queryFn: async () => { return await api.get<RowTitulo[] | Error>(`/financeiro/contas-a-pagar/titulo`, { params: { pagination, filters } }) },
+        queryFn: async () => { return await api.get(`/financeiro/contas-a-pagar/titulo`, { params: { pagination, filters } }) },
         placeholderData: keepPreviousData
     })
 

@@ -2,7 +2,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { ColumnDef } from "@tanstack/react-table";
 import { ReactNode } from "react";
-import { useStoreTitulo } from "../titulo/store-titulo";
+import { useStoreTitulo } from "../titulo/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -20,7 +20,7 @@ export type RowTitulo = {
 
 const openModal = useStoreTitulo.getState().openModal;
 
-export const columnsTableTitulos: ColumnDef<RowTitulo>[] = [
+export const columnsTable: ColumnDef<RowTitulo>[] = [
   {
     id: "select",
     header: ({ table }) => (
