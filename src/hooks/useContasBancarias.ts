@@ -8,7 +8,7 @@ export const useContasBancarias = () => {
     const queryClient = useQueryClient()
     return ({
         getAll : ({ pagination, filters }: GetAllParams) => useQuery({
-            queryKey: ['fin_contas_bancarias', pagination],
+            queryKey: ['fin_contas_bancarias', pagination, filters.id_matriz],
             queryFn: async () => { return await api.get(`financeiro/contas-bancarias/`, { params: { pagination, filters } }) },
             placeholderData: keepPreviousData
         }),

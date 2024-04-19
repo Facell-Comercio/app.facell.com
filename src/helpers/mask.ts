@@ -59,3 +59,5 @@ export const normalizeDataDayOne = (dataString?: string) => {
         return dataFormatada;
     }
 }
+
+export const normalizeDate = (data: string) => data && data.split("T")[0].split("-").reverse().join("/") 

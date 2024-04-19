@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { useBordero } from "@/hooks/useBordero";
-import ModalBorderos from "./bordero/Modal";
+import ModalBordero from "./bordero/Modal";
 import { useStoreBordero } from "./bordero/store";
 import FiltersBorderos from "./table/Filters";
 import { columnsTable } from "./table/columns";
@@ -40,7 +40,7 @@ const Borderos = () => {
         rowCount={rowCount}
         columns={columnsTable}
       />
-      <ModalBorderos />
+      <ModalBordero />
     </div>
   );
 };

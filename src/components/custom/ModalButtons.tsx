@@ -29,7 +29,6 @@ const ModalButtons = ({
             className="dark:text-white"
             onClick={() => {
               formRef.current && formRef.current.requestSubmit();
-              cancel();
             }}
           >
             <Save className="me-2" />
@@ -54,7 +53,6 @@ const ModalButtons = ({
             className="dark:text-white"
             onClick={() => {
               formRef.current && formRef.current.requestSubmit();
-              cancel();
             }}
           >
             <Save className="me-2" />
@@ -92,7 +90,6 @@ const ModalButtons = ({
             className="dark:text-white"
             onClick={() => {
               formRef.current && formRef.current.requestSubmit();
-              cancel();
             }}
           >
             <Save className="me-2" />

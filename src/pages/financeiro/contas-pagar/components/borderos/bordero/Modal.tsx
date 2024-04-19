@@ -7,57 +7,51 @@ import {
 } from "@/components/ui/dialog";
 // import { useStoreTitulo } from "./store-titulo";
 
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import ModalButtons from "@/components/custom/ModalButtons";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBordero } from "@/hooks/useBordero";
-import { useRef } from "react";
+import { api } from "@/lib/axios";
+import ModalBorderos, {
+  BorderoProps,
+} from "@/pages/financeiro/components/ModalBorderos";
+import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
+import { ArrowUpDown } from "lucide-react";
+import { useRef, useState } from "react";
 import FormBordero from "./Form";
 import { useStoreBordero } from "./store";
 
 export type BorderoSchemaProps = {
   id: string;
-  conta_bancaria: string;
+  conta_bancaria?: string;
+  banco?: string;
   id_conta_bancaria: string;
   data_pagamento: string;
+  id_matriz: string;
   titulos: TitulosProps[];
-};
-
-type TitulosProps = {
-  id_titulo: string;
-  vencimento: string;
-  nome_fornecedor: string;
-  valor_total: string;
-  num_doc: string;
-  descricao: string;
-  filial: string;
-  data_pagamento: string;
 };
 
 const initialPropsBordero: BorderoSchemaProps = {
   id: "",
   conta_bancaria: "",
+  banco: "",
   id_conta_bancaria: "",
   data_pagamento: "",
-  titulos: [
-    {
-      id_titulo: "teste",
-      vencimento: "teste",
-      nome_fornecedor: "teste",
-      valor_total: "teste",
-      num_doc: "teste",
-      descricao: "teste",
-      filial: "teste",
-      data_pagamento: "teste",
-    },
-  ],
+  id_matriz: "",
+  titulos: [],
 };
 
 const ModalBordero = () => {
+  const [modalBorderosOpen, setModalBorderosOpen] = useState<boolean>(false);
   const modalOpen = useStoreBordero().modalOpen;
-  const closeModal = useStoreBordero().closeModal;
+  // const closeModal = useStoreBordero().closeModal;
+  const toggleModal = useStoreBordero().toggleModal;
   const modalEditing = useStoreBordero().modalEditing;
   const editModal = useStoreBordero().editModal;
+  const toggleGetTitulo = useStoreBordero().toggleGetTitulo;
+  const checkedTitulos = useStoreBordero().checkedTitulos;
   const id = useStoreBordero().id;
   const formRef = useRef(null);
 
@@ -75,15 +69,42 @@ const ModalBordero = () => {
     }
   }
 
-  console.log(newData);
+  if (newData.titulos && newData.titulos.length > 0) {
+    const newTitulos = newData.titulos.map((titulo: TitulosProps) => {
+      return {
+        checked: titulo.checked,
+        id_titulo: titulo.id_titulo,
+        vencimento: titulo.vencimento,
+        nome_fornecedor: titulo.nome_fornecedor,
+        valor_total: titulo.valor_total,
+        num_doc: titulo.num_doc || "",
+        descricao: titulo.descricao,
+        filial: titulo.filial,
+        data_pagamento: titulo.data_pagamento || "",
+      };
+    });
+    newData.titulos = newTitulos;
+  }
+
+  async function handleSelectionBorderos(item: BorderoProps) {
+    const transferredData = {
+      new_id: item.id,
+      titulos: checkedTitulos,
+    };
+    await api.put(
+      `financeiro/contas-a-pagar/bordero/transfer`,
+      transferredData
+    );
+    console.log(transferredData);
+    toggleModal();
+  }
 
   function handleClickCancel() {
     editModal(false);
-    closeModal();
   }
 
   return (
-    <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
+    <Dialog open={modalOpen} onOpenChange={toggleModal}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Borderô: ${id}` : "Novo Borderô"}</DialogTitle>
@@ -109,6 +130,31 @@ const ModalBordero = () => {
             edit={() => editModal(true)}
             cancel={handleClickCancel}
             formRef={formRef}
+          >
+            <AlertPopUp
+              title="Deseja realmente realizar essa tranferência de titulos?"
+              description="Os títulos desse borderô serão transferidos para o outro borderô."
+              action={() => {
+                setModalBorderosOpen(true);
+                toggleGetTitulo();
+              }}
+            >
+              <Button
+                type={"button"}
+                size="lg"
+                variant={"secondary"}
+                className="dark:text-white justify-self-start"
+              >
+                <ArrowUpDown className="me-2" />
+                Transferir Títulos
+              </Button>
+            </AlertPopUp>
+          </ModalButtons>
+          <ModalBorderos
+            open={modalBorderosOpen}
+            handleSelecion={handleSelectionBorderos}
+            onOpenChange={() => setModalBorderosOpen((prev) => !prev)}
+            id_matriz={newData.id_matriz || ""}
           />
         </DialogFooter>
       </DialogContent>

@@ -1,4 +1,5 @@
 
+import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/components/borderos/bordero/Modal";
 import { GetAllParams } from "@/types/query-params-type";
@@ -46,6 +47,18 @@ export const useBordero = () => {
             },
             onError(error) {
                 console.log(error);
-            },
-    })
+            }}),
+            deleteTitulo :() => useMutation({
+                mutationFn: (id: string|null|undefined|number) => {
+                    console.log(`Deletando conta com base no ID`)            
+                    return api.delete(`/financeiro/contas-a-pagar/bordero/${id}`).then((response)=>response.data)
+                },
+                onSuccess() {
+                    toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
+                },
+                onError(error) {
+                    toast({title: "Error", description: error.message, duration: 3500})
+                    console.log(error);
+                },
+            }),
 })}

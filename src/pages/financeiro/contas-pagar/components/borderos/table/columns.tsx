@@ -1,6 +1,7 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
+import { normalizeDate } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
@@ -62,11 +63,7 @@ export const columnsTable: ColumnDef<RowBordero>[] = [
     accessorKey: "data_pagamento",
     cell: (info) => {
       const data_pagamento = info.getValue<string>();
-      return (
-        <span>
-          {data_pagamento && data_pagamento.split("T")[0].replaceAll("-", "/")}
-        </span>
-      );
+      return <span>{data_pagamento && normalizeDate(data_pagamento)}</span>;
     },
   },
   {

@@ -42,7 +42,7 @@ const FormDateInput = ({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col flex-1 max-w-[18ch]">
+        <FormItem className="flex flex-col flex-1 max-w-[18ch] justify-end">
           {label && <FormLabel>{label}</FormLabel>}
           <Popover>
             <PopoverTrigger asChild>

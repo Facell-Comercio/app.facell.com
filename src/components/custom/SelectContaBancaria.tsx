@@ -17,6 +17,7 @@ type TSelectContaBancaria = {
   value?: string;
   onChange?: (id?: string) => void;
   id_grupo_economico?: string;
+  id_matriz?: string;
 };
 
 const SelectContaBancaria = ({
@@ -29,12 +30,14 @@ const SelectContaBancaria = ({
   value,
   onChange,
   id_grupo_economico,
+  id_matriz,
 }: TSelectContaBancaria) => {
   // Use a single state variable for fetching and storing data
 
   const { data } = useContasBancarias().getAll({
     filters: {
       id_grupo_economico: id_grupo_economico,
+      id_matriz: id_matriz || "",
     },
   });
   const rows = data?.data?.rows || [];
