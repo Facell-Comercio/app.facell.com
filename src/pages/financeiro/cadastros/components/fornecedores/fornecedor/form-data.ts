@@ -26,6 +26,7 @@ const schemaFornecedor = z
   id_forma_pagamento: z.string(),
   id_tipo_chave_pix: z.string().optional(),
   id_banco: z.string().optional(),
+  id_tipo_conta: z.string().optional(),
   chave_pix: z.string().optional(),
   agencia: z.string().optional(),
   dv_agencia: z.string().optional(),

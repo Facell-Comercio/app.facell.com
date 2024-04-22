@@ -36,10 +36,11 @@ const ModalTituloPagar = () => {
   const { data, isLoading } = useTituloPagar().getOne(id);
 
   const titulo = data?.data.titulo;
-  const itensRateio = data?.data.itens_rateio;
+  const itens = data?.data.itens;
+  const itens_rateio = data?.data.itens_rateio;
   const historico = data?.data.historico;
 
-  if (titulo && itensRateio && historico) {
+  if (titulo && itens_rateio && historico) {
     Object.keys(titulo).forEach((propriedade) => {
       if (titulo[propriedade] === null) {
         titulo[propriedade] = "";
@@ -48,7 +49,19 @@ const ModalTituloPagar = () => {
       }
     });
 
-    itensRateio.forEach((objeto: any) => {
+    itens.forEach((objeto: any) => {
+      Object.keys(objeto).forEach((propriedade) => {
+        if (objeto[propriedade] === null) {
+          objeto[propriedade] = "";
+        } else if (typeof objeto[propriedade] === "number") {
+          objeto[propriedade] = objeto[propriedade].toString();
+        }
+      });
+    });
+
+    console.log('itens_banco: ', itens)
+
+    itens_rateio.forEach((objeto: any) => {
       Object.keys(objeto).forEach((propriedade) => {
         if (objeto[propriedade] === null) {
           objeto[propriedade] = "";
@@ -71,11 +84,11 @@ const ModalTituloPagar = () => {
 
   function handleClickCancel() {
     editModal(false);
-    closeModal();
+    // closeModal();
   }
 
   return (
-    <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
+    <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -88,12 +101,8 @@ const ModalTituloPagar = () => {
               id={id}
               data={
                 id
-                  ? { titulo, itens_rateio: itensRateio, historico }
-                  : {
-                      titulo: initialPropsTitulo,
-                      itens_rateio: [],
-                      historico: [],
-                    }
+                  ? {...titulo, itens, itens_rateio, historico}
+                  : initialPropsTitulo
               }
               formRef={formRef}
             />
@@ -120,7 +129,7 @@ const ModalTituloPagar = () => {
             </ScrollArea>
           )}
         </ScrollArea>
-        <DialogFooter>
+        {/* <DialogFooter>
           <ModalButtons
             id={id}
             modalEditing={modalEditing}
@@ -128,7 +137,7 @@ const ModalTituloPagar = () => {
             cancel={handleClickCancel}
             formRef={formRef}
           />
-        </DialogFooter>
+        </DialogFooter> */}
       </DialogContent>
     </Dialog>
   );

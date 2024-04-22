@@ -17,6 +17,7 @@ import { useWatch } from "react-hook-form";
 import { FornecedorSchema } from "./Modal";
 import { useFormFornecedorData } from "./form-data";
 import { useStoreFornecedor } from "./store-fornecedor";
+import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
 
 const FormFornecedor = ({
   id,
@@ -253,45 +254,44 @@ const FormFornecedor = ({
                     control={form.control}
                   />
 
-                  <FormInput
-                    className="flex-1 min-w-[5ch]"
-                    readOnly={!modalEditing}
-                    name="agencia"
-                    label="AG"
-                    control={form.control}
-                  />
-                  <FormInput
-                    className="flex-1 min-w-[5ch]"
-                    readOnly={!modalEditing}
-                    name="dv_agencia"
-                    label="DvAg"
-                    control={form.control}
-                  />
-                  <FormSelect
-                    name="tipo_conta"
-                    disabled={!modalEditing}
-                    control={form.control}
-                    label={"Tipo de conta"}
-                    className="flex-1 min-w-[20ch]"
-                    options={[
-                      { value: "CORRENTE", label: "CORRENTE" },
-                      { value: "POUPANÇA", label: "POUPANÇA" },
-                    ]}
-                  />
-                  <FormInput
-                    className="flex-1 min-w-[5ch]"
-                    readOnly={!modalEditing}
-                    name="conta"
-                    label="Conta"
-                    control={form.control}
-                  />
-                  <FormInput
-                    className="flex-1 min-w-[5ch]"
-                    readOnly={!modalEditing}
-                    name="dv_conta"
-                    label="DvCt"
-                    control={form.control}
-                  />
+                  <div className="flex gap-3">
+                    <FormInput
+                      className="flex-1 min-w-[10ch]"
+                      readOnly={!modalEditing}
+                      name="agencia"
+                      label="Agência"
+                      control={form.control}
+                    />
+                    <FormInput
+                      className="flex-1 min-w-[5ch] max-w-[10ch]"
+                      readOnly={!modalEditing}
+                      name="dv_agencia"
+                      label="Dígito AG."
+                      control={form.control}
+                    />
+
+                    <SelectTipoContaBancaria
+                      disabled={!modalEditing}
+                      control={form.control}
+                      name="id_tipo_conta"
+                      label="Tipo de Conta"
+                    />
+
+                    <FormInput
+                      className="flex-1 min-w-[10ch]"
+                      readOnly={!modalEditing}
+                      name="conta"
+                      label="Conta"
+                      control={form.control}
+                    />
+                    <FormInput
+                      className="flex-1 min-w-[5ch] max-w-[10ch]"
+                      readOnly={!modalEditing}
+                      name="dv_conta"
+                      label="Digito. CT."
+                      control={form.control}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

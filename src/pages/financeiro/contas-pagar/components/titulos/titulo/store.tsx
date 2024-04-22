@@ -6,8 +6,14 @@ export interface ItemRateioTitulo {
   id_filial: string;
   filial?: string;
   percentual: string;
-  valor: string;
   ordem?: string;
+}
+
+export interface ItemTitulo {
+  id?: string;
+  id_plano_conta: string;
+  plano_conta?: string;
+  valor: string;
 }
 
 export interface TituloPagar {
@@ -16,9 +22,6 @@ export interface TituloPagar {
 
   id_centro_custo?: string;
   centro_custo?: string;
-
-  id_plano_contas?: string;
-  plano_contas?: string | null;
 
   id_forma_pagamento?: string;
   forma_pagamento?: string;
@@ -31,7 +34,9 @@ export interface TituloPagar {
 
   num_parcelas: number;
   parcela: number;
-
+  
+  id_matriz?: string;
+  id_grupo_economico?: string;
   id_filial?: string | null;
   nome_filial?: string | null;
   cnpj_filial?: string | null;
@@ -42,7 +47,26 @@ export interface TituloPagar {
   id_fornecedor?: string | null;
   nome_fornecedor?: string | null;
   cnpj_fornecedor?: string | null;
+  favorecido?:string;
+  cnpj_favorecido?:string;
 
+  banco?: string;
+  id_banco?: string;
+  codigo_banco?: string;
+
+  agencia?:string;
+  dv_agencia?:string;
+  conta: string;
+  dv_conta:string;
+  id_tipo_conta:string;
+  id_tipo_chave_pix:string;
+  chave_pix:string;
+  
+
+  itens: ItemTitulo[];
+
+  update_rateio?: boolean;
+  rateio_manual?:boolean;
   id_rateio?: string | null;
   tipo_rateio?: string;
   itens_rateio: ItemRateioTitulo[];
@@ -95,8 +119,26 @@ export const initialPropsTitulo: TituloPagar = {
   id_fornecedor: "",
   nome_fornecedor: "",
   cnpj_fornecedor: "",
+  favorecido: '',
+  cnpj_favorecido: '',
+  id_banco: '',
+  banco: '',
+  codigo_banco: '',
+  id_tipo_conta: '',
+  conta: '',
+  dv_conta: '',
+  agencia: '',
+  dv_agencia: '',
+  id_tipo_chave_pix: '',
+  chave_pix: '',
+  
+  
+  // Itens
+  itens: [],
 
   // rateio
+  update_rateio: false,
+  rateio_manual: false,
   id_rateio: "",
   itens_rateio: [],
 
@@ -126,7 +168,7 @@ export const useStoreTitulo = create<useStoreTitulo>((set) => ({
   modalEditing: false,
   modalOpen: false,
 
-  openModal: (id: string) => set({ modalOpen: true, id: id }),
+  openModal: (id: string) => set({ modalOpen: true, id: id, modalEditing: !id ? true : false }),
   closeModal: () => set({ modalOpen: false }),
   editModal: (bool) => set({ modalEditing: bool }),
 }));
@@ -162,41 +204,8 @@ export interface TipoRateio {
 }
 
 export interface ItemRateio {
-  id: number;
-  id_filial: number;
+  id?: string;
+  id_filial: string;
   filial?: string;
-  percentual: number;
+  percentual: string;
 }
-
-export interface UseStoreRateio {
-  valorRateio: number;
-  tipoRateio: TipoRateio;
-  itensRateio: ItemRateio[];
-
-  addItemRateio: (novoItemRateio: ItemRateio) => void;
-  removeItemRateio: (index: number) => void;
-}
-
-export const useStoreRateio = create<UseStoreRateio>((set) => ({
-  valorRateio: 0,
-  tipoRateio: {},
-  itensRateio: [],
-
-  setValorRateio: (novoValor: number) => {
-    set({ valorRateio: novoValor });
-  },
-  addItemRateio: (novoItemRateio: ItemRateio) => {
-    set((state) => ({
-      ...state,
-      itensRateio: [...state.itensRateio, novoItemRateio],
-    }));
-  },
-  removeItemRateio: (index) => {
-    set((state) => ({
-      ...state,
-      itensRateio: state.itensRateio.filter(
-        (_, itemIndex) => itemIndex !== index
-      ),
-    }));
-  },
-}));

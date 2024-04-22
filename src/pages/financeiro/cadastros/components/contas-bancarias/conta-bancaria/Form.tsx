@@ -120,7 +120,7 @@ const FormContaBancaria = ({
                 <div className="flex gap-3 flex-wrap">
                   <FormInput
                     className="flex-1 min-w-[5ch]"
-                    label="AG"
+                    label="Agência"
                     readOnly={!modalEditing}
                     name="agencia"
                     control={form.control}
@@ -129,7 +129,7 @@ const FormContaBancaria = ({
                     className="flex-1 min-w-[5ch]"
                     name="dv_agencia"
                     readOnly={!modalEditing}
-                    label="DvAg"
+                    label="Dígito Agência"
                     control={form.control}
                   />
                   <FormSelect
@@ -154,7 +154,7 @@ const FormContaBancaria = ({
                     name="dv_conta"
                     className="flex-1 min-w-[5ch]"
                     readOnly={!modalEditing}
-                    label="DvCt"
+                    label="Dígito Conta"
                     control={form.control}
                   />
                 </div>

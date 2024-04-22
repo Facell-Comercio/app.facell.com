@@ -26,26 +26,36 @@ import ModalPlanoContas, {
 } from "@/pages/financeiro/components/ModalPlanoContas";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
 import {
+  ArrowDown,
+  Ban,
+  Check,
   Contact,
   Divide,
+  Download,
   FileIcon,
   FileText,
   History,
   List,
+  Pen,
   Percent,
+  Plus,
+  Save,
   Trash,
+  Undo2,
+  Upload,
+  X,
 } from "lucide-react";
-import { useState } from "react";
+import React, { ChangeEvent, InputHTMLAttributes, useRef, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
-import { Historico, ItemRateioTitulo, useStoreTitulo } from "./store";
-// import { useTituloPagar } from "@/hooks/useTituloPagar";
-
-export type DataSchemaProps = {
-  titulo: TituloSchemaProps;
-  itens_rateio: ItemRateioTitulo[];
-  historico: Historico[];
-};
+import { Historico, ItemRateio, initialPropsTitulo, useStoreTitulo } from "./store";
+import { Input } from "@/components/ui/input";
+import { api } from "@/lib/axios";
+import SelectTipoRateio from "@/components/custom/SelectTipoRateio";
+import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
+import { useFilial } from "@/hooks/useFilial";
+import { Separator } from "@/components/ui/separator";
+import { Filial } from "@/types/filial-type";
 
 let i = 0;
 const FormTituloPagar = ({
@@ -54,7 +64,7 @@ const FormTituloPagar = ({
   formRef,
 }: {
   id: string | null | undefined;
-  data: DataSchemaProps;
+  data: TituloSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   console.log(`RENDER ${++i} - Form, titulo:`, id);
@@ -69,112 +79,349 @@ const FormTituloPagar = ({
   const [modalCentrosCustosOpen, setModalCentrosCustosOpen] =
     useState<boolean>(false);
 
-  const { titulo, itens_rateio: itensRateioTitulo } = data || {
-    titulo: {},
-    itens_rateio: [],
-  };
+  const titulo = data || initialPropsTitulo;
 
-  console.log("Titulo", titulo);
+  console.log("Data", titulo);
 
-  const statusTitulo = titulo?.status || "";
+  // * [ VERIFICAÇÕES ]
+  const status = titulo?.status || "";
   const isMaster =
     checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
   const canEdit =
-    !id ||
-    statusTitulo === "Solicitado" ||
-    (isMaster &&
-      statusTitulo !== "Aprovado" &&
-      statusTitulo !== "Negado" &&
-      statusTitulo !== "Pago");
+    (!id ||
+      status === "Solicitado" ||
+      (isMaster &&
+        status !== "Aprovado" &&
+        status !== "Negado" &&
+        status !== "Pago")
+    );
 
-  const itens_rateio: ItemRateioTitulo[] = [];
+  const readOnly = !canEdit || !modalEditing
+  const disabled = !canEdit || !modalEditing
 
-  itensRateioTitulo?.forEach((item_rateio: ItemRateioTitulo) => {
-    const item = {
-      id: item_rateio.id?.toString() || "",
-      id_filial: item_rateio.id_filial?.toString() || "",
-      percentual: item_rateio.percentual || "",
-      valor: item_rateio.valor || "0",
-    };
-    itens_rateio.push(item);
+  // * [ FORM ]
+  const { form } = useFormTituloData(titulo);
+  const { setValue, formState: { errors } } = form;
+  console.log('ERRORS:', errors)
+
+  // * [ WATCHES ]
+  const valor = useWatch({ name: "valor", control: form.control });
+  const id_filial = useWatch({ name: "id_filial", control: form.control });
+  const id_matriz = useWatch({ name: "id_matriz", control: form.control });
+  const id_grupo_economico = useWatch({ name: "id_grupo_economico", control: form.control });
+  const id_forma_pagamento = useWatch({ name: "id_forma_pagamento", control: form.control });
+  const id_centro_custo = useWatch({ name: "id_centro_custo", control: form.control });
+
+  // * [ FILIAL ]
+  // Ao alterar a filial:
+  async function handleChangeFilial(novo_id_filial: string) {
+    if (novo_id_filial) {
+
+      api.get(`filial/${novo_id_filial}`)
+        .then(data => {
+          const novaFilial = data.data;
+
+          console.log('Difença entre filiais', id_grupo_economico != novaFilial.id_grupo_economico)
+          if (id_grupo_economico != novaFilial.id_grupo_economico) {
+            setValue('id_grupo_economico', novaFilial.id_grupo_economico)
+            setValue('id_matriz', novaFilial.id_matriz)
+
+            setValue('id_centro_custo', '')
+            setValue('centro_custo', '')
+            form.resetField('itens', { defaultValue: [] })
+            form.resetField('itens_rateio', { defaultValue: [] })
+          }
+        })
+        .catch(error => {
+          toast({
+            title: 'Erro!',
+            description: "Não foi possível receber os dados da Filial"
+          })
+        })
+    }
+  }
+  const { data: responseFiliais } = useFilial().getAll({ filters: { id_grupo_economico: id_grupo_economico } })
+  const filiais = responseFiliais?.data?.rows;
+
+  // * [ITENS DO TÍTULO]
+  const {
+    fields: itens,
+    append: addItem,
+    remove: removeItem,
+  } = useFieldArray({
+    control: form.control,
+    name: "itens",
   });
 
-  // const { form, itens, appendItem, removeItem } = useFormTituloData(data);
-  const { form } = useFormTituloData({
-    ...titulo,
-    itens_rateio: itensRateioTitulo,
-    historico: data.historico,
+  function handleAddItem() {
+    if (!novoItemIdPlanoContasRef.current) return;
+    if (!novoItemPlanoContasRef.current) return;
+    if (!novoItemValorRef.current) return;
+
+    if (!id_centro_custo) {
+      toast({
+        title: 'Erro!',
+        description: 'Selecione o centro de custo!',
+      })
+      return
+    }
+    const idPlanoConta = novoItemIdPlanoContasRef.current.value
+    const planoConta = novoItemPlanoContasRef.current.value
+    const valor = parseFloat(novoItemValorRef.current.value)
+    if (!valor) {
+      toast({
+        title: 'Corrija o valor',
+        description: 'Não pode ser zerado'
+      })
+      return
+    }
+    if (!idPlanoConta) {
+      toast({
+        title: 'Erro!',
+        description: 'Selecione um plano de contas',
+      })
+      return
+    }
+    const checkIfExistis = itens.findIndex(item => item.id_plano_conta == idPlanoConta)
+    if (checkIfExistis !== -1) {
+      toast({
+        title: 'Erro!',
+        description: 'Plano de contas já foi selecionado!',
+      })
+      return
+    }
+
+    addItem({ id_plano_conta: idPlanoConta, valor: valor.toFixed(2), plano_conta: planoConta });
+    novoItemIdPlanoContasRef.current.value = ''
+    novoItemPlanoContasRef.current.value = ''
+    novoItemValorRef.current.value = ''
+  }
+
+  function handleRemoveItem(index: number) {
+    removeItem(index);
+  }
+
+
+  // * [ RATEIO ]
+  const rateio_manual = form.watch("rateio_manual");
+  const canEditRateio = canEdit && modalEditing;
+  const canEditItensRateio = canEdit && modalEditing && rateio_manual;
+
+  const fileImportRateioRef = useRef<InputHTMLAttributes | null>(null);
+
+  const {
+    fields: itensRateio,
+    append: addItemRateio,
+    remove: removeItemRateio,
+  } = useFieldArray({
+    control: form.control,
+    name: "itens_rateio",
   });
 
-  const { setValue } = form;
+  async function handleChangeRateio(novo_id_rateio: string) {
+    if (novo_id_rateio) {
 
-  // Controle de fornecedor
+      api.get(`financeiro/rateios/${novo_id_rateio}`, { params: { id_grupo_economico: id_grupo_economico } })
+        .then(async data => {
+          const novoRateio = data.data;
+          const itensNovoRateio = novoRateio.itens;
+
+          console.log('Novos itens rateio', itensNovoRateio);
+
+          // itensNovoRateio?.forEach((item: ItemRateio) => {
+          //   item.id_filial = String(item.id_filial || "")
+          //   item.percentual = String(item.percentual || "0.00")
+          // })
+
+          await new Promise((resolve) => {
+            form.resetField('itens_rateio', { defaultValue: [] })
+            resolve('success')
+          })
+
+          itensNovoRateio?.forEach((item: ItemRateio) => {
+            addItemRateio({
+              id_filial: String(item.id_filial || ""),
+              percentual: String(item.percentual || "0.00")
+            })
+          })
+
+          setValue('rateio_manual', !!novoRateio.manual)
+        })
+        .catch(error => {
+          toast({
+            title: 'Erro!',
+            description: "Não foi possível receber os dados do novo rateio"
+          })
+        })
+    }
+  }
+
+  function handleAddItemRateio() {
+    addItemRateio({ id_filial: "", percentual: "0.00" });
+  }
+
+  function handleRemoveItemRateio(index: number) {
+    removeItemRateio(index);
+  }
+
+  function handleClickExportarRateio() {
+    const json: any = []
+    itensRateio.forEach((item: ItemRateio) => {
+      const obj: any = {}
+      obj.filial = filiais?.find((f: { id: string, nome: string }) => f.id == item.id_filial)?.nome || 'Não identificada';
+      obj.percentual = parseFloat(item.percentual)
+      // @ts-ignore
+      obj.valor = (parseFloat(item.percentual) / 100) * parseFloat(valor || 0);
+      json.push(obj)
+    })
+    exportToExcel(json, `rateio-${id ? "titulo-" + id : 'novo-titulo'}`)
+  }
+
+  function handleClickImportarRateio() {
+    fileImportRateioRef?.current?.click()
+  }
+  function handleChangeImportarRateio() {
+    if (fileImportRateioRef?.current) {
+      const file = fileImportRateioRef.current.files && fileImportRateioRef.current.files[0]
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onload = async (e) => {
+          const importedData = e.target?.result;
+
+          const result = importFromExcel(importedData);
+          console.log(result)
+          
+          const valorTotalRateio = result.reduce((acc, cur)=>{
+            // @ts-ignore
+            return acc+cur.valor
+          },0)
+          
+          form.resetField('itens_rateio', { defaultValue: []})
+
+          result?.forEach((item, index)=>{
+            // @ts-ignore
+            const id_filial_rateio_item = filiais.find((f:Filial)=>f.nome === item?.filial)?.id
+            // @ts-ignore
+            const percentual_rateio_item = (item.valor / valorTotalRateio * 100).toFixed(2)
+            console.log(item.filial, id_filial_rateio_item,  item.valor, valorTotalRateio,percentual_rateio_item )
+
+             addItemRateio({
+              id_filial: String(id_filial_rateio_item),
+              percentual: String(percentual_rateio_item)
+             })
+          })
+        }
+      };
+    }
+  }
+
+
+  // * [ FORNECEDOR ]
   function showModalFornecedor() {
     setModalFornecedorOpen(true);
   }
 
-  function handleSelectionFornecedor(item: ItemFornecedor) {
-    setValue("id_fornecedor", item.id);
-    setValue("cnpj_fornecedor", normalizeCnpjNumber(item.cnpj));
-    setValue("nome_fornecedor", item.nome);
-    setModalFornecedorOpen(false);
+  // Quando escolher um fornecedor:
+  async function handleSelectionFornecedor(item: ItemFornecedor) {
+    try {
+      const result = await api.get(`financeiro/fornecedores/${item.id}`)
+      const fornecedor = result.data;
+
+      console.log('FORNECEDOR', fornecedor)
+      setValue("id_fornecedor", fornecedor.id);
+      setValue("cnpj_fornecedor", normalizeCnpjNumber(fornecedor.cnpj));
+      setValue("nome_fornecedor", fornecedor.nome);
+      setValue("favorecido", fornecedor.favorecido);
+      setValue("cnpj_favorecido", fornecedor.cnpj_favorecido);
+      setValue("id_banco", fornecedor.id_banco?.toString());
+      setValue("banco", fornecedor.banco);
+      setValue("codigo_banco", fornecedor.codigo_banco);
+      setValue("agencia", fornecedor.agencia);
+      setValue("dv_agencia", fornecedor.dv_agencia);
+      setValue("conta", fornecedor.conta);
+      setValue("dv_conta", fornecedor.dv_conta);
+      setValue("id_forma_pagamento", fornecedor.id_forma_pagamento?.toString());
+      setValue("id_tipo_conta", fornecedor.id_tipo_conta?.toString());
+      setValue("id_tipo_chave_pix", fornecedor.id_tipo_chave_pix?.toString());
+      setValue("chave_pix", fornecedor.chave_pix);
+      setModalFornecedorOpen(false);
+    } catch (error) {
+
+    }
   }
 
+  // * [ ANEXOS ]
+  // Quando um anexo for alterado:
+  async function handleChangeFile({ campo, fileUrl }: { campo: string, fileUrl?: string }) {
+    console.log(campo, fileUrl)
+    try {
+      if (id && !fileUrl) {
+        await api.post('financeiro/contas-a-pagar/titulo/update-anexo', { campo, fileUrl, id })
+      }
+    } catch (error) {
+      toast({
+        title: 'Erro!', description: 'O arquivo pode ter sido excluído, mas não foi possível remover o anexo da solicitação, tente excluir novamente mais tarde!'
+      })
+    }
+  }
+
+  // * [ PLANO DE CONTAS ]
   // Controle de plano de contas
   function showModalPlanoContas() {
-    if (canEdit) {
-      setModalPlanoContasOpen(true);
+    if (!id_matriz) {
+      toast({
+        title: 'Erro!',
+        description: 'Selecione primeiro a filial!'
+      })
+      return
     }
-  }
-
-  function showModalCentrosCustos() {
-    if (canEdit) {
-      setModalCentrosCustosOpen(true);
+    if (!canEdit) {
+      return
     }
+    setModalPlanoContasOpen(true);
   }
+  const novoItemPlanoContasRef = useRef<HTMLInputElement | null>(null)
+  const novoItemIdPlanoContasRef = useRef<HTMLInputElement | null>(null)
+  const novoItemValorRef = useRef<HTMLInputElement | null>(null)
 
   function handleSelectionPlanoContas(item: ItemPlanoContas) {
-    setValue("id_plano_contas", item.id);
-    setValue("plano_contas", item.codigo + " - " + item.descricao);
+    if (!novoItemPlanoContasRef?.current) return;
+    if (!novoItemIdPlanoContasRef?.current) return;
+
+    novoItemPlanoContasRef.current.value = `${item.codigo} - ${item.descricao}`
+    novoItemIdPlanoContasRef.current.value = item.id
     setModalPlanoContasOpen(false);
   }
 
+  // * [ CENTRO DE CUSTOS ]
+  function showModalCentrosCustos() {
+    if (!id_matriz) {
+      toast({
+        title: 'Erro!',
+        description: 'Selecione primeiro a filial!'
+      })
+      return
+    }
+    if (!canEdit) {
+      return
+    }
+    setModalCentrosCustosOpen(true);
+  }
   function handleSelectionCentroCusto(item: CentroCustos) {
     setValue("id_centro_custo", item.id);
     setValue("centro_custo", item.nome);
     setModalCentrosCustosOpen(false);
   }
 
-  const watchIdFilial = useWatch({ name: "id_filial", control: form.control });
-
-  const watchFormaPagamento = useWatch({
-    name: "id_forma_pagamento",
-    control: form.control,
-  });
-  const showPix = watchFormaPagamento === "4";
+  // * [ FORMA DE PAGAMENTO ]
+  const showPix = id_forma_pagamento === "4";
   const showDadosBancarios =
-    watchFormaPagamento === "2" ||
-    watchFormaPagamento === "5" ||
-    watchFormaPagamento === "8";
+    id_forma_pagamento === "2" ||
+    id_forma_pagamento === "5" ||
+    id_forma_pagamento === "8";
 
-  // Controle de rateio
-  const {
-    fields: itensRateio,
-    append: addFieldArray,
-    remove: removeFieldArray,
-  } = useFieldArray({
-    control: form.control,
-    name: "itens_rateio",
-  });
-
-  function addItemRateio() {
-    addFieldArray({ id_filial: "1", valor: "0", percentual: "0" });
-  }
-
-  function removeItemRateio(index: number) {
-    removeFieldArray(index);
-  }
-
+  // ! [ ACTIONS ] //////////////////////////////////////////////
   const onSubmit = (data: TituloSchemaProps) => {
     toast({
       title: "You submitted the following values:",
@@ -187,16 +434,38 @@ const FormTituloPagar = ({
       ),
     });
     editModal(false);
-    closeModal();
   };
 
-  const isManual = form.watch("id_rateio");
-  console.log("É MANUAL -> ", isManual);
-
-  const rateioManual = titulo.id_rateio == "6";
+  const handleClickVoltarSolicitado = () => {
+    console.log('Voltar status para solicitado')
+  }
+  const handleClickNegar = () => {
+    console.log('Negar titulo')
+  }
+  const handleClickAprovar = () => {
+    console.log('Aprovar titulo')
+  }
+  // ! FIM - ACTIONS //////////////////////////////////////
 
   return (
     <div className="max-w-full  overflow-hidden">
+      <ModalPlanoContas
+        open={canEdit && modalPlanoContasOpen && !!id_matriz}
+        id_matriz={id_matriz}
+        tipo="Despesa"
+        onOpenChange={() => setModalPlanoContasOpen(prev => !prev)}
+        handleSelecion={handleSelectionPlanoContas}
+      />
+
+      <ModalCentrosCustos
+        handleSelecion={handleSelectionCentroCusto}
+        id_matriz={id_matriz}
+        // @ts-expect-error 'Vai funcionar'
+        onOpenChange={setModalCentrosCustosOpen}
+        open={canEdit && modalCentrosCustosOpen && !!id_matriz}
+        closeOnSelection={true}
+      />
+
       <Form {...form}>
         <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
           <ScrollArea className="flex flex-col max-w-full max-h-[70vh] overflow-hidden">
@@ -216,12 +485,14 @@ const FormTituloPagar = ({
               <div className="max-w-full flex flex-col lg:flex-row gap-5">
                 {/* Primeira coluna */}
                 <div className="flex flex-1 flex-col gap-3 shrink-0">
+
+                  {/* Dados do Fornecedor */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3">
                       <Contact />{" "}
                       <span className="text-lg font-bold ">Fornecedor</span>
                       <Button
-                        disabled={!canEdit}
+                        disabled={disabled}
                         type="button"
                         onClick={showModalFornecedor}
                         size={"sm"}
@@ -230,7 +501,6 @@ const FormTituloPagar = ({
                       </Button>
                     </div>
 
-                    {/* Dados do Fornecedor */}
                     <div className="flex flex-wrap gap-3 items-end">
                       <FormInput
                         type="hidden"
@@ -257,17 +527,18 @@ const FormTituloPagar = ({
                         label="Forma de pagamento"
                         name="id_forma_pagamento"
                         control={form.control}
+                        disabled={disabled}
                         className="flex-1"
                       />
                       <div
-                        className={`${
-                          showPix ? "flex flex-1" : "hidden"
-                        } gap-3 flex-wrap`}
+                        className={`${showPix ? "flex flex-1" : "hidden"
+                          } gap-3 flex-wrap`}
                       >
                         <SelectTipoChavePix
                           control={form.control}
                           name="id_tipo_chave_pix"
                           label="Tipo Chave PIX"
+                          disabled={disabled}
                           className="flex-1"
                         />
 
@@ -275,21 +546,21 @@ const FormTituloPagar = ({
                           label="Chave PIX"
                           name="chave_pix"
                           control={form.control}
-                          readOnly={!modalEditing}
+                          readOnly={readOnly}
                           className="flex-1"
                         />
                       </div>
                       {/* Dados bancários do fornecedor */}
                       <div
-                        className={`${
-                          showDadosBancarios ? "flex" : "hidden"
-                        } gap-3 flex-wrap`}
+                        className={`${showDadosBancarios ? "flex" : "hidden"
+                          } gap-3 flex-wrap`}
                       >
                         <FormInput
                           label="Favorecido"
                           name="favorecido"
                           control={form.control}
-                          readOnly={!modalEditing}
+                          readOnly={readOnly}
+                          inputClass="min-w-[40ch]"
                           className="flex-1"
                         />
 
@@ -297,14 +568,15 @@ const FormTituloPagar = ({
                           label="CNPJ Favorecido"
                           name="cnpj_favorecido"
                           control={form.control}
-                          readOnly={!modalEditing}
+                          readOnly={readOnly}
+                          inputClass="min-w-[20ch]"
                           className="flex-1"
                         />
 
                         <FormInput
                           label="Cód. Banco"
                           name="codigo_banco"
-                          className="min-w-[10ch]"
+                          className="min-w-[4ch]"
                           control={form.control}
                           readOnly={true}
                         />
@@ -354,7 +626,7 @@ const FormTituloPagar = ({
                         />
                       </div>
                       <ModalFornecedores
-                        open={modalEditing && modalFornecedorOpen}
+                        open={canEdit && modalFornecedorOpen}
                         handleSelecion={handleSelectionFornecedor}
                         onOpenChange={() =>
                           setModalFornecedorOpen((prev) => !prev)
@@ -363,6 +635,7 @@ const FormTituloPagar = ({
                     </div>
                   </div>
 
+                  {/* Dados da solicitação */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3">
                       <FileText />{" "}
@@ -372,7 +645,7 @@ const FormTituloPagar = ({
                     </div>
                     <div className="flex gap-3 flex-wrap items-end">
                       <FormSelect
-                        disabled={!modalEditing}
+                        disabled={disabled}
                         name="id_tipo_solicitacao"
                         label={"Tipo de solicitação"}
                         control={form.control}
@@ -388,48 +661,12 @@ const FormTituloPagar = ({
                       />
 
                       <SelectFilial
-                        disabled={!modalEditing}
+                        disabled={disabled}
                         name="id_filial"
                         label="Filial"
                         className="flex-1 min-w-[40ch]"
                         control={form.control}
-                      />
-
-                      {/* Plano contas */}
-                      <FormInput
-                        type="hidden"
-                        readOnly={true}
-                        name="id_plano_contas"
-                        control={form.control}
-                      />
-                      <FormItem>
-                        <div className="flex justify-between items-end">
-                          <FormLabel>Plano de contas</FormLabel>
-                        </div>
-
-                        <Button
-                          type="button"
-                          variant={"ghost"}
-                          onClick={showModalPlanoContas}
-                          className="flex-1 p-0"
-                        >
-                          <FormInput
-                            className="min-w-[50ch]"
-                            readOnly={true}
-                            name="plano_contas"
-                            placeholder="Selecione o plano de contas"
-                            control={form.control}
-                          />
-                        </Button>
-                      </FormItem>
-
-                      <ModalPlanoContas
-                        open={modalEditing && modalPlanoContasOpen}
-                        id_matriz={watchIdFilial}
-                        onOpenChange={() =>
-                          setModalPlanoContasOpen((prev) => !prev)
-                        }
-                        handleSelecion={handleSelectionPlanoContas}
+                        onChange={handleChangeFilial}
                       />
 
                       <FormInput
@@ -450,7 +687,7 @@ const FormTituloPagar = ({
                           className="flex flex-1 p-0"
                         >
                           <FormInput
-                            disabled={!modalEditing}
+                            readOnly={true}
                             name="centro_custo"
                             control={form.control}
                             className={"flex-1 min-w-[40ch]"}
@@ -458,16 +695,8 @@ const FormTituloPagar = ({
                         </Button>
                       </FormItem>
 
-                      <ModalCentrosCustos
-                        handleSelecion={handleSelectionCentroCusto}
-                        // @ts-expect-error 'Vai funcionar'
-                        onOpenChange={setModalCentrosCustosOpen}
-                        open={modalCentrosCustosOpen}
-                        closeOnSelection={true}
-                      />
-
                       <FormInput
-                        readOnly={!modalEditing}
+                        readOnly={readOnly}
                         name="num_parcelas"
                         type={"number"}
                         label="Número de parcelas"
@@ -475,7 +704,7 @@ const FormTituloPagar = ({
                       />
 
                       <FormInput
-                        readOnly={!modalEditing}
+                        readOnly={readOnly}
                         name="parcela"
                         type={"number"}
                         label="Parcela"
@@ -483,28 +712,29 @@ const FormTituloPagar = ({
                       />
 
                       <FormDateInput
-                        disabled={!modalEditing}
+                        disabled={disabled}
                         name="data_emissao"
                         label="Data de emissão"
                         control={form.control}
                       />
                       <FormDateInput
-                        disabled={!modalEditing}
+                        disabled={disabled}
                         name="data_vencimento"
                         label="Data de vencimento"
                         control={form.control}
                       />
 
                       <FormInput
-                        readOnly={!modalEditing}
+                        readOnly={readOnly}
                         name="num_doc"
                         label="Núm. Doc."
                         control={form.control}
                       />
 
                       <FormInput
-                        readOnly={!modalEditing}
-                        className="w-[20ch]"
+                        readOnly={readOnly}
+                        inputClass="text-end px-0"
+                        className="w-[20ch] text-center"
                         name="valor"
                         control={form.control}
                         type={"number"}
@@ -512,7 +742,7 @@ const FormTituloPagar = ({
                       />
 
                       <FormInput
-                        readOnly={!modalEditing}
+                        readOnly={readOnly}
                         className="min-w-[400px] flex-1"
                         name="descricao"
                         label="Descrição do pagamento"
@@ -521,16 +751,126 @@ const FormTituloPagar = ({
                     </div>
                   </div>
 
+                  {/* Itens da solicitação */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3 items-center">
                       <List />{" "}
                       <span className="text-lg font-bold ">
-                        Items da Solicitação
+                        Itens da Solicitação
                       </span>
+
                     </div>
-                    <div className="flex gap-3"></div>
+                    {canEdit && (
+                      <div className="flex gap-3 mb-3 rounded-md items-end">
+                        {/* Plano contas */}
+                        <Input
+                          type="hidden"
+                          ref={novoItemIdPlanoContasRef}
+                          readOnly={true}
+                          name="id_plano_contas"
+                        />
+                        <FormItem className="w-full">
+                          <div className="flex justify-between items-end">
+                            <FormLabel>Plano de Contas Novo Item</FormLabel>
+                          </div>
+                          <Button
+                            type="button"
+                            variant={"ghost"}
+                            onClick={showModalPlanoContas}
+                            className="w-full p-0"
+                          >
+                            <Input
+                              ref={novoItemPlanoContasRef}
+                              className="w-full"
+                              readOnly={true}
+                              placeholder="Selecione o plano de contas"
+                            />
+                          </Button>
+                        </FormItem>
+                        <FormItem>
+                          <div className="flex justify-between items-end">
+                            <FormLabel>Valor Novo Item</FormLabel>
+                          </div>
+                          <Input
+                            type="number"
+                            ref={novoItemValorRef}
+                            className="max-w-40 text-end"
+                          />
+                        </FormItem>
+
+                        <Button className="ms-auto" type="button" onClick={handleAddItem}>
+                          <ArrowDown size={18} className="me-2" /> Add item
+                        </Button>
+                      </div>
+                    )}
+                    <Separator className="my-4 bg-gray-900" />
+                    <div className="flex gap-3">
+                      <table className="w-full">
+                        <thead>
+                          <tr>
+                            <th className="text-center pl-2">Item</th>
+                            <th className="text-left pl-2">Plano de contas</th>
+                            <th className="text-center pl-2">Valor</th>
+                            {canEdit && (
+                              <th className="text-left max-w-[20ch]">Ação</th>
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {itens?.map((item, index) => (
+                            <tr key={item.id}>
+                              <td className="mt-1 text-center flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                {index + 1}
+                              </td>
+                              <td className="p-1 w-full">
+                                <FormInput
+                                  className="w-full"
+                                  readOnly={true}
+                                  name={`itens.${index}.plano_conta`}
+                                  control={form.control}
+                                />
+                              </td>
+                              <td className="p-1">
+                                <FormInput
+                                  type="number"
+                                  className="min-w-40 text-center"
+                                  readOnly={readOnly}
+                                  name={`itens.${index}.valor`}
+                                  inputClass="text-end pe-3"
+                                  control={form.control}
+                                  min={0.1}
+                                />
+                              </td>
+                              {canEdit && (
+                                <td>
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    className="w-full"
+                                    onClick={() => {
+                                      if (itens.length === 1) {
+                                        toast({
+                                          title: 'Ops!',
+                                          description: 'Tem que ter pelo menos um item na solicitação!'
+                                        })
+                                        return
+                                      }
+                                      handleRemoveItem(index);
+                                    }}
+                                  >
+                                    <Trash size={18} />
+                                  </Button>
+                                </td>
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+
+                    </div>
                   </div>
 
+                  {/* Rateio de filiais */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3 items-center">
                       <Divide />{" "}
@@ -539,31 +879,33 @@ const FormTituloPagar = ({
                       </span>
                     </div>
 
-                    <div className="flex gap-3">
-                      <FormSelect
+                    <div className="flex gap-3 flex-wrap items-end">
+                      <SelectTipoRateio
+                        label="Tipo de rateio"
                         name="id_rateio"
-                        disabled={!modalEditing}
+                        disabled={disabled}
+                        id_grupo_economico={id_grupo_economico}
                         control={form.control}
-                        label={"Tipo de rateio"}
-                        className={"min-w-[30ch]"}
-                        options={[
-                          { value: "6", label: "R08 - RATEIO MANUAL" },
-                          { value: "1", label: "R01 - RATEIO REGIONAL RN" },
-                          { value: "2", label: "R02 - RATEIO REGIONAL CE" },
-                          { value: "3", label: "R03 - RATEIO REGIONAL BA" },
-                          { value: "4", label: "R05 - TODAS FILIAIS" },
-                          { value: "5", label: "R07 - RATEIO REGIONAL RN/CE" },
-                        ]}
+                        onChange={handleChangeRateio}
                       />
+
+                      <div className="flex items-center gap-3">
+                        <Button onClick={handleClickExportarRateio} variant={'success'}><Download size={18} className="me-2" /> Exportar Padrão</Button>
+
+                        <input className="hidden" type="file" ref={fileImportRateioRef} onChange={handleChangeImportarRateio} />
+                        {canEditRateio && rateio_manual && (
+                          <Button onClick={handleClickImportarRateio} variant={'tertiary'}><Upload size={18} className="me-2" /> Importar Rateio</Button>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex justify-between items-baseline mt-3">
                       <span className="text-md font-medium">
                         Itens do rateio
                       </span>
-                      {modalEditing && rateioManual && (
-                        <Button type="button" onClick={addItemRateio}>
-                          Novo item
+                      {canEditRateio && rateio_manual && (
+                        <Button type="button" onClick={handleAddItemRateio}>
+                          <Plus size={18} className="me-2" /> Novo item Rateio
                         </Button>
                       )}
                     </div>
@@ -572,44 +914,46 @@ const FormTituloPagar = ({
                         <thead>
                           <tr>
                             <th className="text-left pl-2">Filial</th>
-                            <th className="text-left pl-2">Percentual</th>
-                            {modalEditing && rateioManual && (
+                            <th className="text-center pl-2">Percentual</th>
+                            {canEditItensRateio && (
                               <th className="text-left max-w-[20ch]">Ação</th>
                             )}
                           </tr>
                         </thead>
                         <tbody>
-                          {itensRateio?.map((_, index) => (
-                            <tr key={index}>
-                              <td className="p-1">
+                          {itensRateio?.map((item, index) => (
+                            <tr key={item.id}>
+                              <td className="p-1 w-full">
                                 <SelectFilial
                                   name={`itens_rateio.${index}.id_filial`}
-                                  disabled={modalEditing || rateioManual}
+                                  id_grupo_economico={id_grupo_economico}
+                                  disabled={!canEditItensRateio}
                                   control={form.control}
                                 />
                               </td>
-                              <td className="p-1">
+                              <td className="p-1 min-w-40">
                                 <FormInput
                                   type="number"
-                                  readOnly={modalEditing || rateioManual}
+                                  readOnly={!canEditItensRateio}
                                   name={`itens_rateio.${index}.percentual`}
                                   control={form.control}
+                                  inputClass="text-end pe-3"
                                   icon={Percent}
-                                  min={0.1}
-                                  max={99}
+                                  min={0.01}
+                                  max={100}
                                 />
                               </td>
-                              {modalEditing && rateioManual && (
+                              {canEditItensRateio && (
                                 <td>
                                   <Button
                                     type="button"
                                     variant="destructive"
-                                    className="w-full"
+                                    className=""
                                     onClick={() => {
-                                      removeItemRateio(index);
+                                      handleRemoveItemRateio(index);
                                     }}
                                   >
-                                    <Trash />
+                                    <Trash size={18} />
                                   </Button>
                                 </td>
                               )}
@@ -620,6 +964,7 @@ const FormTituloPagar = ({
                     </div>
                   </div>
 
+                  {/* Histórico da solicitação */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3">
                       <History />{" "}
@@ -628,7 +973,7 @@ const FormTituloPagar = ({
                       </span>
                     </div>
                     <div className="flex gap-3 flex-wrap items-end">
-                      {data.historico.map((h) => (
+                      {data?.historico?.map((h) => (
                         <p key={`hist.${h.id}`}>
                           {formatarDataHora(h.created_at)} - {h.text}
                         </p>
@@ -641,56 +986,88 @@ const FormTituloPagar = ({
 
                 {/* Segunda coluna */}
                 <div className="max-w-full lg:max-w-[300px] flex shrink-0 flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
+                  {/* Anexos */}
                   <div className="flex gap-2 font-bold mb-3">
                     <FileIcon /> <span>Anexos</span>
                   </div>
 
                   <FormFileUpload
-                    disabled={!modalEditing}
+                    disabled={disabled}
                     label="XML Nota fiscal"
                     name="url_xml"
                     mediaType="xml"
                     control={form.control}
+                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_xml' })}
                   />
                   <FormFileUpload
-                    disabled={!modalEditing}
+                    disabled={disabled}
                     label="Nota fiscal"
                     name="url_nota_fiscal"
                     mediaType="pdf"
                     control={form.control}
+                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_nota_fiscal' })}
                   />
                   <FormFileUpload
-                    disabled={!modalEditing}
+                    disabled={disabled}
                     label="Boleto"
                     name="url_boleto"
                     mediaType="pdf"
                     control={form.control}
+                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_boleto' })}
                   />
                   <FormFileUpload
-                    disabled={!modalEditing}
+                    disabled={disabled}
                     label="Contrato/Autorização"
                     name="url_contrato"
                     mediaType="etc"
                     control={form.control}
+                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_contrato' })}
                   />
                   <FormFileUpload
-                    disabled={!modalEditing}
+                    disabled={disabled}
                     label="Planilha"
                     name="url_planilha"
                     mediaType="excel"
                     control={form.control}
+                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_planilha' })}
                   />
                   <FormFileUpload
-                    disabled={!modalEditing}
+                    disabled={disabled}
                     label="Arquivo remessa"
                     name="url_txt"
                     mediaType="txt"
                     control={form.control}
+                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_txt' })}
                   />
                 </div>
               </div>
             </ScrollArea>
           </ScrollArea>
+          <div className="flex justify-between items-center mt-4">
+            <div className="flex gap-3 items-center">
+              {isMaster && id && status !== 'Solicitado' && status !== 'Pago' && (
+                <Button onClick={handleClickVoltarSolicitado} size="lg" variant={'secondary'}><Undo2 className="me-2" size={18} />Tornar solicitado</Button>
+              )}
+              {isMaster && id && status !== 'Negado' && status !== 'Pago' && (
+                <Button onClick={handleClickNegar} size="lg" variant={'destructive'}><X className="me-2" size={18} />Negar</Button>
+              )}
+              {isMaster && id && status !== 'Aprovado' && status !== 'Pago' && (
+                <Button onClick={handleClickAprovar} size="lg" variant={'success'}><Check className="me-2" size={18} /> Aprovar</Button>
+              )}
+            </div>
+            <div className="flex gap-3 items-center">
+              {canEdit && modalEditing && (
+                <>
+                  <Button onClick={() => editModal(false)} size="lg" variant={'secondary'}><Ban className="me-2" size={18} /> Cancelar</Button>
+                  <Button type="submit" size="lg" variant={'default'}><Save className="me-2" size={18} />{id ? 'Salvar' : 'Solicitar'}</Button>
+                </>
+              )
+              }
+              {canEdit && !modalEditing && (
+                <Button onClick={() => editModal(true)} size="lg" variant={'warning'}><Pen size={18} className="me-2" /> Editar</Button>
+              )}
+            </div>
+          </div>
         </form>
       </Form>
     </div>

@@ -32,6 +32,18 @@ export type ItemFornecedor = {
     cnpj: string,
     razao: string,
     nome: string,
+    favorecido?: string
+    cnpj_favorecido?: string
+    id_banco?: string
+    banco?: string
+    codigo_banco?: string
+    agencia?: string
+    dv_agencia?: string
+    conta?: string
+    dv_conta?: string
+    id_tipo_conta?: string
+    id_tipo_chave_pix?: string
+    chave_pix?: string
 }
 
 type PaginationProps = {

@@ -32,8 +32,9 @@ export type FornecedorSchema = {
   telefone: string;
   id_forma_pagamento: string;
   id_tipo_chave_pix: string;
-  chave_pix: string;
   id_banco: string;
+  id_tipo_conta: string;
+  chave_pix: string;
   agencia: string;
   dv_agencia: string | null;
   conta: string;
@@ -63,6 +64,7 @@ const initialPropsFornecedor: FornecedorSchema = {
   id_forma_pagamento: "",
   id_tipo_chave_pix: "",
   id_banco: "",
+  id_tipo_conta: "",
   chave_pix: "",
   agencia: "",
   dv_agencia: "",

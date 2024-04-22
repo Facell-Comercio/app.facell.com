@@ -9,8 +9,8 @@ export const exportToExcel = (data: any, name: string) => {
     }, 100);
   };
 
-  export const importFromExcel = (data: any) => {
-    const workbook = XLSX.read(data, {type:"buffer"})
+  export const importFromExcel = (data: any, type: "string" | "buffer" | "base64" | "binary" | "file" | "array" | undefined = 'buffer') => {
+    const workbook = XLSX.read(data, {type})
     const worksheetName = workbook.SheetNames[0]
     const worksheet = workbook.Sheets[worksheetName];
     return XLSX.utils.sheet_to_json(worksheet)

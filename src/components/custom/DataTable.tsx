@@ -129,7 +129,7 @@ export function DataTable<TData, TValue>({
           {table.getFilteredSelectedRowModel().rows.length} de{" "}
           {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
         </div>
-        <div className="flex items-center space-x-6 lg:space-x-8">
+        <div className="flex flex-col sm:flex-row gap-3 items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium">Linhas por página</p>
             <Select
@@ -158,7 +158,7 @@ export function DataTable<TData, TValue>({
             Página {table.getState().pagination.pageIndex + 1} de{" "}
             {table.getPageCount()}
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
@@ -168,6 +168,7 @@ export function DataTable<TData, TValue>({
               <span className="sr-only">Vá para a primeira</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
             </Button>
+
             <Button
               variant="outline"
               className="h-8 w-8 p-0"
