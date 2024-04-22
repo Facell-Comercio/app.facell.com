@@ -1,12 +1,14 @@
 import { useFilial } from "@/hooks/useFilial";
 import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
+import { useRateios } from "@/hooks/useRateios";
+import { ItemRateio, TipoRateio } from "@/pages/financeiro/contas-pagar/components/titulos/titulo/store";
 
 type Filial = {
   id: number;
   nome: string;
 };
-type TSelectFilial = {
+type TSelectTipoRateio = {
   showAll?: boolean;
   name?: string;
   label?: string;
@@ -15,11 +17,11 @@ type TSelectFilial = {
   className?: string;
   placeholder?: string;
   value?: string;
-  onChange?: (data:any) => any;
+  onChange?: (data: any) => void;
   id_grupo_economico?: string;
 };
 
-const SelectFilial = ({
+const SelectTipoRateio = ({
   name,
   label,
   control,
@@ -29,10 +31,10 @@ const SelectFilial = ({
   value,
   onChange,
   id_grupo_economico,
-}: TSelectFilial) => {
+}: TSelectTipoRateio) => {
   // Use a single state variable for fetching and storing data
 
-  const { data } = useFilial().getAll({
+  const { data } = useRateios().getAll({
     filters: {
       id_grupo_economico: id_grupo_economico,
     },
@@ -50,13 +52,13 @@ const SelectFilial = ({
       value={value}
       onChange={onChange}
       options={
-        rows.map((filial: Filial) => ({
-          value: filial.id.toString(),
-          label: filial.nome,
+        rows.map((rateio: TipoRateio) => ({
+          value: rateio?.id?.toString() || '',
+          label: rateio.nome,
         })) || []
       }
     />
   );
 };
 
-export default SelectFilial;
+export default SelectTipoRateio;

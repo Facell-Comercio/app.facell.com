@@ -11,20 +11,29 @@ interface FormFileUploadProps {
   disabled?: boolean
   className?: string
   mediaType: MediaType
+  onChange?: (any: any) => void
 }
 
-const FormFileUpload = ({ name, mediaType, control, label, description, disabled, className }: FormFileUploadProps) => {
+const FormFileUpload = ({ name, mediaType, control, label, description, disabled, className, onChange }: FormFileUploadProps) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem  className={`${className}`}>
+        <FormItem className={`${className}`}>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
-            <FileUpload 
+            <FileUpload
               value={field.value}
-              onChange={field.onChange}
+              onChange={(event) => {
+                if (typeof onChange === 'function') {
+                  onChange(event)
+                  field.onChange(event)
+                  return
+                }
+                field.onChange(event)
+              }
+              }
               mediaType={mediaType}
               disabled={disabled}
             />

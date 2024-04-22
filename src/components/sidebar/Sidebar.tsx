@@ -97,7 +97,7 @@ export function Sidebar() {
           </div>
         )} */}
 
-        <ul className={`${sidebarOpen ? "flex" : "hidden"} sm:flex flex-col flex-1 mt-3 px-5 overflow-visible z-50`}>
+        <ul className={`${sidebarOpen ? "flex" : "hidden"} sm:flex flex-col flex-1 mt-3 px-5 overflow-visible z-20`}>
           {sidebarItems
             .filter((item) => item.visible)
             .map((item, itemIndex) => (

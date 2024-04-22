@@ -1,16 +1,32 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Historico, ItemRateioTitulo } from "./store";
+import { Historico, ItemRateioTitulo, ItemTitulo } from "./store";
 
 const schemaTitulo = z.object({
   // IDs
   id_fornecedor: z.string(),
   id_filial: z.string(),
-  id_plano_contas: z.string(),
+  id_plano_conta: z.string(),
   id_tipo_solicitacao: z.string(),
   id_forma_pagamento: z.string(),
   id_centro_custo: z.string(),
+
+  // Fornecedor
+  favorecido: z.string().optional(),
+  cnpj_favorecido: z.string().optional(),
+  id_tipo_chave_pix: z.string().optional(),
+  chave_pix: z.string().optional(),
+
+  id_banco: z.string().optional(),
+  banco: z.string().optional(),
+  codigo_banco: z.string().optional(),
+
+  agencia: z.string().optional(),
+  dv_agencia: z.string().optional(),
+  id_tipo_conta: z.string().optional(),
+  conta: z.string().optional(),
+  dv_conta: z.string().optional(),
 
   // Outros
   data_emissao: z.coerce.date(),
@@ -24,12 +40,22 @@ const schemaTitulo = z.object({
     .string()
     .min(10, { message: "Precisa conter mais que 10 caracteres" }),
 
+  itens: z.array(
+    z.object({
+      id: z.string().optional(),
+      id_plano_conta: z.string(),
+      plano_conta: z.string(),
+      valor: z.string().min(0),
+    })
+  ),
+    
   // Rateio:
   id_rateio: z.string(),
+  rateio_manual: z.boolean(),
   itens_rateio: z.array(
     z.object({
+      id: z.string().optional(),
       id_filial: z.string(),
-      valor: z.string().min(0),
       percentual: z.string(),
     })
   ),
@@ -46,23 +72,29 @@ const schemaTitulo = z.object({
 export interface TituloSchemaProps {
   id_fornecedor: string;
   id_filial: string;
-  id_plano_contas: string;
   id_tipo_solicitacao: string;
   id_centro_custo: string;
+  id_matriz?: string;
+  id_grupo_economico?: string;
+  status?: string;
 
   num_doc: string;
   
   id?: string;
   id_solicitante?: string;
+
+  itens: ItemTitulo[];
+
+  update_rateio: boolean;
+  rateio_manual: boolean;
   id_rateio?: string;
   itens_rateio: ItemRateioTitulo[];
-  update_rateio: boolean;
+
   id_extrato?: string | null;
   id_extrato_lote?: string | null;
   id_status?: string;
   id_tipo_baixa?: string | null;
   
-  id_forma_pagamento?: string;
   created_at?: string;
   updated_at?: string;
   data_emissao?: string;
@@ -72,22 +104,34 @@ export interface TituloSchemaProps {
   valor_pago?: string;
   descricao?: string;
   valor?: string;
-  id_bordero?: string | null;
+  
   num_parcelas?: string;
   parcela?: string;
   linha_digitavel?: string | null;
+
+  // Fornecedor
+  nome_fornecedor?: string;
+  cnpj_fornecedor?: string;
+  
   cnpj_favorecido?: string | null;
   favorecido?: string | null;
-  id_tipo_chave_pix?: string | null;
-  chave_pix?: string | null;
+
+  id_forma_pagamento?: string;
   id_banco?: string | null;
+  banco?: string;
+  codigo_banco?: string;
   agencia?: string | null;
   dv_agencia?: string | null;
   id_tipo_conta?: string | null;
   conta?: string | null;
   dv_conta?: string | null;
 
+  id_tipo_chave_pix?: string | null;
+  chave_pix?: string | null;
+
   centro_custo?: string;
+
+  historico?: Historico[] 
   
   url_xml?: string | null;
   url_nota_fiscal?: string | null;
@@ -97,15 +141,6 @@ export interface TituloSchemaProps {
   url_txt?: string | null;
   url_xml_nota?: string;
 
-  lancado_sistema?: string;
-  temp_acrescimo_desconto?: string | null;
-  temp_tipo_baixa?: string | null;
-  status?: string;
-  nome_fornecedor?: string;
-  cnpj_fornecedor?: string;
-  plano_contas?: string;
-
-  historico?: Historico[] 
 }
 
 export const useFormTituloData =(data:TituloSchemaProps)=>{
@@ -114,15 +149,7 @@ export const useFormTituloData =(data:TituloSchemaProps)=>{
         defaultValues: data,
         values: data
       });
-    const {fields, append, remove} = useFieldArray({
-      control: form.control,
-      name: "itens_rateio"
-    })
-
     return {
-        form,
-        itens: fields,
-        appendItem: append,
-        removeItem: remove
+        form
     }
 }

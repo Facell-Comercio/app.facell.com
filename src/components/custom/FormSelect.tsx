@@ -64,7 +64,13 @@ const FormSelect = ({
               disabled={disabled}
               value={field.value}
               name={field.name}
-              onValueChange={field.onChange}
+              onValueChange={(event) => {
+                field.onChange(event)
+                if (typeof onChange === 'function') {
+                  onChange(event)
+                }
+              }
+              }
             >
               <FormControl>
                 <SelectTrigger className={className}>

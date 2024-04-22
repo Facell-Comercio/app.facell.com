@@ -8,7 +8,7 @@ export const useRateios = () => {
     const queryClient = useQueryClient()
     return ({
         getAll : ({ pagination, filters }: GetAllParams) => useQuery({
-            queryKey: ['fin_rateios', pagination],
+            queryKey: ['fin_rateios', pagination, filters?.id_grupo_economico],
             queryFn: async () => { return await api.get(`financeiro/rateios/`, { params: { pagination, filters } }) },
             placeholderData: keepPreviousData
         }),
@@ -24,7 +24,6 @@ export const useRateios = () => {
 
         insertOne : () => useMutation({
             mutationFn: (data:RateiosSchema) => {
-                console.log("Criando novo plano de contas:")            
                 return api.post("financeiro/rateios", data).then((response)=>response.data)
             },
             onSuccess() {
@@ -37,7 +36,6 @@ export const useRateios = () => {
 
         update : () => useMutation({
             mutationFn: ({id, ...rest}:RateiosSchema) => {
-                console.log(`Atualizando plano de contas com base no ID: ${id}`)            
                 return api.put("financeiro/rateios/", {id, ...rest}).then((response)=>response.data)
             },
             onSuccess() {

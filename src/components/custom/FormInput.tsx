@@ -27,6 +27,7 @@ interface IFormInput {
   icon?: React.ElementType;
   iconLeft?: boolean;
   step?: string;
+  inputClass?: string;
 }
 
 import * as React from "react";
@@ -72,6 +73,7 @@ const FormInput = ({
   icon: Icon,
   iconLeft,
   step,
+  inputClass
 }: IFormInput) => {
   return (
     <FormField
@@ -105,21 +107,21 @@ const FormInput = ({
                 min={min}
                 max={max}
                 step={step ? step : type === "number" ? "0.01" : undefined}
-                className={`${
+                className={`${inputClass} ${
                   Icon &&
-                  `rounded-none ${iconLeft ? "rounded-r-md" : "rounded-l-md"}`
+                  ` rounded-none ${iconLeft ? "rounded-r-md" : "rounded-l-md"}`
                 }`}
               />
               {Icon && (
                 <Button
                   type={"button"}
-                  variant={"secondary"}
+                  variant={"outline"}
                   disabled={true}
                   className={`flex items-center justify-center rounded-none p-2 ${
                     iconLeft ? "rounded-l-md" : "rounded-r-md"
                   }`}
                 >
-                  <Icon />
+                  <Icon size={18} />
                 </Button>
               )}
             </div>

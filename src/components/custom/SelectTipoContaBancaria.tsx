@@ -3,7 +3,7 @@ import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
 
 type TipoContaBancaria = {
-    id: number,
+    id: string,
     tipo: string,
 }
 type TSelectTipoContaBancaria = {
@@ -20,12 +20,12 @@ const SelectTipoContaBancaria = (props: TSelectTipoContaBancaria) => {
     // Use a single state variable for fetching and storing data
 
     const data = [
-        {id: 1, tipo: 'CORRENTE'},
-        {id: 2, tipo: 'POUPANÇA'},
+        {id: '1', tipo: 'CORRENTE'},
+        {id: '2', tipo: 'POUPANÇA'},
     ]
 
     return (
-        //@ts-expect-error FormSelect props abstraídas
+        //@ts-ignore
         <FormSelect 
         {...props} 
         options={data?.map((tipoContaBancaria: TipoContaBancaria) => ({ value: tipoContaBancaria.id.toString(), label: tipoContaBancaria.tipo })) || []} 

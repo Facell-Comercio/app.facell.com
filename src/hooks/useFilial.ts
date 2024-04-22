@@ -8,7 +8,7 @@ export const useFilial = ()=>{
     const queryClient = useQueryClient()
     return {
     getAll: (params?: GetAllParams)=> useQuery({ 
-        queryKey: ['filiais', params?.pagination], 
+        queryKey: ['filiais', params], 
         queryFn: async()=> await api.get('/filial', {params: params}), 
         placeholderData: keepPreviousData,
         staleTime: Infinity, 
