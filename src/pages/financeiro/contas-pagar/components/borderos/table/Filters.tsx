@@ -58,6 +58,14 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
                 }}
               />
               <Input
+                placeholder="Banco"
+                className="max-w-[200px]"
+                value={filters.banco}
+                onChange={(e) => {
+                  setFilters({ banco: e.target.value });
+                }}
+              />
+              <Input
                 placeholder="Fornecedor"
                 className="max-w-[200px]"
                 value={filters.fornecedor}

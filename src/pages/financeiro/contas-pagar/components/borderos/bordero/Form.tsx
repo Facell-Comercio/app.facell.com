@@ -4,6 +4,7 @@ import SelectContaBancaria from "@/components/custom/SelectContaBancaria";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form } from "@/components/ui/form";
+import { normalizeCurrency } from "@/helpers/mask";
 import { useBordero } from "@/hooks/useBordero";
 import { api } from "@/lib/axios";
 import ModalTitulos, {
@@ -63,7 +64,7 @@ const FormBordero = ({
       ),
     };
 
-    if (!id) insertOne(data);
+    if (!id) insertOne(newData);
     if (id) update(filteredData);
 
     editModal(false);
@@ -74,6 +75,7 @@ const FormBordero = ({
     item.forEach((subItem: TitulosProps) => addTitulo(subItem));
     setModalTituloOpen(false);
   }
+
   async function handleChangeContaBancaria(novo_id_conta: string) {
     const response = await api.get(
       `financeiro/contas-bancarias/${novo_id_conta}`
@@ -94,7 +96,7 @@ const FormBordero = ({
 
   // const data_pagamento = form.watch("data_pagamento");
   // console.log(data_pagamento);
-  console.log(form.formState.errors);
+  // console.log(form.formState.errors);
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-hidden">
@@ -162,7 +164,7 @@ const FormBordero = ({
                 {id_conta_bancaria && (
                   <>
                     {form.watch("titulos").length > 0 && (
-                      <header className="flex py-1 pl-1 pr-2 gap-1 font-medium text-sm">
+                      <header className="flex py-1 pl-1 pr-5 gap-1 font-medium text-sm">
                         <Checkbox
                           className="flex-1 max-w-[16px] me-1"
                           onCheckedChange={(e) => {
@@ -175,10 +177,10 @@ const FormBordero = ({
                           }}
                         />
                         <p className="w-16 text-center">ID</p>
-                        <p className="pl-1 w-24">Vencimento</p>
+                        <p className="pl-1 w-24 text-center">Vencimento</p>
                         <p className="flex-1 pl-1">Fornecedor</p>
                         <p className="w-24 text-center">Nº Doc</p>
-                        <p className="pl-1 w-24">Valor</p>
+                        <p className="pl-1 w-32 text-center">Valor</p>
                         <p className="flex-1 pl-1">Filial</p>
                         {modalEditing && (
                           <p className="flex-1 pl-1 max-w-[52px]">Ação</p>
@@ -193,6 +195,22 @@ const FormBordero = ({
                         modalEditing={modalEditing}
                         removeItem={removeItemTitulos}
                       />
+                    </div>
+                    <div className="flex items-center justify-between pt-2 text-sm">
+                      <span className="flex rounded-full bg-slate-500 px-2 py-1">
+                        <p className="mr-1">Qtd. Títulos: </p>
+                        {titulos.length}
+                      </span>
+                      <span className="flex rounded-full bg-slate-500 px-2 py-1">
+                        <p className="mr-1">Valor Total: </p>
+                        {normalizeCurrency(
+                          titulos.reduce(
+                            (acc, item: TitulosProps) =>
+                              acc + +item.valor_total,
+                            0
+                          )
+                        )}
+                      </span>
                     </div>
                   </>
                 )}

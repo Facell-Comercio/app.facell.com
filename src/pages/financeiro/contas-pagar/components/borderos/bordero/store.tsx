@@ -4,6 +4,7 @@ interface UseStoreBordero {
   id?: string | null;
   modalEditing: boolean;
   modalOpen: boolean;
+  modalBorderosOpen: boolean;
   checkedTitulos: string[];
   getTitulo: boolean;
 
@@ -11,6 +12,7 @@ interface UseStoreBordero {
   closeModal: () => void;
   editModal: (bool: boolean) => void;
   toggleModal: () => void;
+  toggleModalBorderos: () => void;
   toggleGetTitulo: () => void;
   setCheckedTitulos: (array: string[]) => void;
 }
@@ -19,6 +21,7 @@ export const useStoreBordero = create<UseStoreBordero>((set) => ({
   id: null,
   modalEditing: false,
   modalOpen: false,
+  modalBorderosOpen: false,
   checkedTitulos: [],
   getTitulo: false,
 
@@ -29,6 +32,10 @@ export const useStoreBordero = create<UseStoreBordero>((set) => ({
     set((state) => ({
       modalOpen: !state.modalOpen,
       modalEditing: false,
+    })),
+  toggleModalBorderos: () =>
+    set((state) => ({
+      modalBorderosOpen: !state.modalBorderosOpen,
     })),
   toggleGetTitulo: () =>
     set((state) => ({

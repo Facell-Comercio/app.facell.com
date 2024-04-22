@@ -11,6 +11,7 @@ type RowSelection = Record<number, boolean>;
 
 export interface Filters {
   id_conta_bancaria?: string;
+  banco?: string;
   fornecedor?: string;
   id_titulo?: string;
   num_doc?: string;
@@ -20,6 +21,7 @@ export interface Filters {
 
 const initialFilters: Filters = {
   id_conta_bancaria: "",
+  banco: "",
   id_titulo: "",
   num_doc: "",
   tipo_data: "data_vencimento",

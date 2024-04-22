@@ -4,7 +4,7 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { normalizeDate } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Trash } from "lucide-react";
@@ -36,7 +36,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
   return (
     <div
       ref={parentElement}
-      className="pe-2 h-[250px] w-full overflow-auto"
+      className="pe-2 h-[300px] w-full overflow-auto"
       // style={{
       //   height: `300px`,
       //   width: `100%`,
@@ -72,18 +72,17 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
               checked={form.watch(`titulos.${item.index}.checked`)}
               onCheckedChange={(e) => {
                 form.setValue(`titulos.${item.index}.checked`, e.valueOf());
-                console.log(e.valueOf());
               }}
               className="me-1"
             />
             <Input
-              className="w-16 h-9 p-2 text-end"
+              className="w-16 h-9 p-2 text-center"
               value={data[item.index].id_titulo || ""}
               readOnly={true}
             />
             <Input
-              className="w-24 h-9 p-2"
-              value={normalizeDate(data[item.index].vencimento || "") || ""}
+              className="w-24 h-9 p-2 text-center"
+              value={normalizeDate(data[item.index].vencimento || "")}
               readOnly={true}
             />
             <Input
@@ -97,8 +96,8 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
               readOnly={true}
             />
             <Input
-              className="w-24 h-9 p-2 text-end"
-              value={data[item.index].valor_total || ""}
+              className="w-32 h-9 p-2 text-end"
+              value={normalizeCurrency(data[item.index].valor_total)}
               readOnly={true}
             />
             <Input

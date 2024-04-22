@@ -8,7 +8,7 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableBorderos } from "./table/store-table";
 
 const Borderos = () => {
-  console.log("RENDER - Section-Plano Contas");
+  console.log("RENDER - Section Borderos");
   const [pagination, setPagination, filters] = useStoreTableBorderos(
     (state) => [state.pagination, state.setPagination, state.filters]
   );

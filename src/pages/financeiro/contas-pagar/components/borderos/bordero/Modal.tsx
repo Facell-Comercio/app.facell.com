@@ -12,14 +12,14 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/components/ui/use-toast";
 import { useBordero } from "@/hooks/useBordero";
-import { api } from "@/lib/axios";
 import ModalBorderos, {
   BorderoProps,
 } from "@/pages/financeiro/components/ModalBorderos";
 import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
 import { ArrowUpDown } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import FormBordero from "./Form";
 import { useStoreBordero } from "./store";
 
@@ -44,13 +44,17 @@ const initialPropsBordero: BorderoSchemaProps = {
 };
 
 const ModalBordero = () => {
-  const [modalBorderosOpen, setModalBorderosOpen] = useState<boolean>(false);
   const modalOpen = useStoreBordero().modalOpen;
-  // const closeModal = useStoreBordero().closeModal;
+  const modalBorderosOpen = useStoreBordero().modalBorderosOpen;
+
   const toggleModal = useStoreBordero().toggleModal;
-  const modalEditing = useStoreBordero().modalEditing;
-  const editModal = useStoreBordero().editModal;
+  const toggleModalBorderos = useStoreBordero().toggleModalBorderos;
   const toggleGetTitulo = useStoreBordero().toggleGetTitulo;
+
+  const { mutate: transferTitulos } = useBordero().transferTitulos();
+
+  const editModal = useStoreBordero().editModal;
+  const modalEditing = useStoreBordero().modalEditing;
   const checkedTitulos = useStoreBordero().checkedTitulos;
   const id = useStoreBordero().id;
   const formRef = useRef(null);
@@ -86,17 +90,24 @@ const ModalBordero = () => {
     newData.titulos = newTitulos;
   }
 
-  async function handleSelectionBorderos(item: BorderoProps) {
-    const transferredData = {
-      new_id: item.id,
-      titulos: checkedTitulos,
-    };
-    await api.put(
-      `financeiro/contas-a-pagar/bordero/transfer`,
-      transferredData
-    );
-    console.log(transferredData);
-    toggleModal();
+  function handleSelectionBorderos(item: BorderoProps) {
+    if (checkedTitulos.length) {
+      const transferredData = {
+        new_id: item.id,
+        titulos: checkedTitulos,
+      };
+      transferTitulos(transferredData);
+      toggleModal();
+    } else {
+      toast({
+        title: "Nenhum título foi selecionado",
+        duration: 3000,
+        description:
+          "Para realizar a tranferência de títulos é necessário selecionar alguns",
+      });
+    }
+    // toggleGetTitulo(false);
+    toggleModalBorderos();
   }
 
   function handleClickCancel() {
@@ -132,11 +143,11 @@ const ModalBordero = () => {
             formRef={formRef}
           >
             <AlertPopUp
-              title="Deseja realmente realizar essa tranferência de titulos?"
+              title={"Deseja realmente realizar essa tranferência de titulos?"}
               description="Os títulos desse borderô serão transferidos para o outro borderô."
               action={() => {
-                setModalBorderosOpen(true);
                 toggleGetTitulo();
+                toggleModalBorderos();
               }}
             >
               <Button
@@ -153,8 +164,9 @@ const ModalBordero = () => {
           <ModalBorderos
             open={modalBorderosOpen}
             handleSelecion={handleSelectionBorderos}
-            onOpenChange={() => setModalBorderosOpen((prev) => !prev)}
+            onOpenChange={toggleModalBorderos}
             id_matriz={newData.id_matriz || ""}
+            id_bordero={id || ""}
           />
         </DialogFooter>
       </DialogContent>

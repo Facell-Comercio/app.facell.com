@@ -26,6 +26,7 @@ interface IModalBorderos {
   handleSelecion: (item: BorderoProps) => void;
   onOpenChange: () => void;
   id_matriz?: string;
+  id_bordero?: string;
 }
 
 export type BorderoProps = {
@@ -46,6 +47,7 @@ const ModalBorderos = ({
   handleSelecion,
   onOpenChange,
   id_matriz,
+  id_bordero,
 }: IModalBorderos) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -148,28 +150,30 @@ const ModalBorderos = ({
         </DialogHeader>
 
         <ScrollArea className="h-72 w-full rounded-md border p-3">
-          {data?.data?.rows.map((item: BorderoProps) => (
-            <div
-              key={"forn:" + item.id}
-              className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2"
-            >
-              <span>
-                {item.id}
-                {" - "}
-                {item.conta_bancaria}
-                {" - "}
-                {normalizeDate(item.data_pagamento)}
-              </span>
-              <Button
-                size={"sm"}
-                onClick={() => {
-                  handleSelection(item);
-                }}
+          {data?.data?.rows
+            .filter((item: BorderoProps) => item.id != id_bordero)
+            .map((item: BorderoProps) => (
+              <div
+                key={"forn:" + item.id}
+                className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2"
               >
-                Selecionar
-              </Button>
-            </div>
-          ))}
+                <span>
+                  {item.id}
+                  {" - "}
+                  {item.conta_bancaria}
+                  {" - "}
+                  {normalizeDate(item.data_pagamento)}
+                </span>
+                <Button
+                  size={"sm"}
+                  onClick={() => {
+                    handleSelection(item);
+                  }}
+                >
+                  Selecionar
+                </Button>
+              </div>
+            ))}
         </ScrollArea>
         <DialogFooter>
           <Pagination>
