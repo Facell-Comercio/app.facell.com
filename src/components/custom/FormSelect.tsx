@@ -65,12 +65,11 @@ const FormSelect = ({
               value={field.value}
               name={field.name}
               onValueChange={(event) => {
-                field.onChange(event)
-                if (typeof onChange === 'function') {
-                  onChange(event)
+                field.onChange(event);
+                if (typeof onChange === "function") {
+                  onChange(event);
                 }
-              }
-              }
+              }}
             >
               <FormControl>
                 <SelectTrigger className={className}>
@@ -113,7 +112,6 @@ const FormSelect = ({
       </SelectContent>
     </Select>
   );
-
 };
 
 export default FormSelect;

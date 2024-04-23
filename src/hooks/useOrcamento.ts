@@ -36,6 +36,7 @@ export const useOrcamento = () => {
                     queryClient.invalidateQueries({queryKey:['fin_orcamento']}) 
                 },
                 onError(error) {
+                    toast({title: "Error", description: error.message, duration: 3500})
                     console.log(error);
                 },
             }),

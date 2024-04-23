@@ -59,3 +59,16 @@ export const normalizeDataDayOne = (dataString?: string) => {
         return dataFormatada;
     }
 }
+
+export const normalizeDate = (data: string) => data && data.split("T")[0].split("-").reverse().join("/") 
+export const normalizeCurrency = (data: string|number) => {
+    if(typeof data === "string"){
+        const valor = parseFloat(data)
+        if(!valor)
+            return "R$ 0,00"
+        return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2 });
+    }else{
+        return data.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2 });
+
+    }
+}
