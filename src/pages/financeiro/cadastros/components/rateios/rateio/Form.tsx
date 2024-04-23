@@ -21,7 +21,7 @@ const FormRateios = ({
   data: RateiosSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - Rateios:", id);
+  console.log("RENDER - Rateio:", id);
   const { mutate: insertOne } = useRateios().insertOne();
   const { mutate: update } = useRateios().update();
   const modalEditing = useStoreRateios().modalEditing;
@@ -29,6 +29,7 @@ const FormRateios = ({
   const closeModal = useStoreRateios().closeModal;
 
   const { form, itens, appendItem, removeItem } = useFormRateioData(data);
+  console.log(form.formState.errors)
 
   const onSubmitData = (newData: RateiosSchema) => {
     const soma = newData.itens.reduce((cont, submitedData) => {
@@ -37,7 +38,7 @@ const FormRateios = ({
 
     // Arredonda a soma para duas casas decimais
     const somaArredondada = parseFloat(soma.toFixed(4));
-
+    console.log('Submetendo data: ', newData, 'soma: ', somaArredondada)
     toast({
       title: "DATA",
       description: `${somaArredondada} ${JSON.stringify(newData)}`,
@@ -47,7 +48,7 @@ const FormRateios = ({
     if (id) update(newData);
     if (!id) insertOne(newData);
     editModal(false);
-    closeModal();
+    // closeModal();
     // } else {
     //   alert("A soma dos percentuais deve ser igual a 100%");
     // }
@@ -59,6 +60,7 @@ const FormRateios = ({
       percentual: "0",
     });
   }
+
   function removeItemRateio(index: number) {
     removeItem(index);
   }
@@ -132,7 +134,7 @@ const FormRateios = ({
                         onClick={() => addNewRateio()}
                         disabled={!modalEditing}
                       >
-                        Adicionar Rateio
+                        Adicionar Item
                       </Button>
                     </section>
                   )}

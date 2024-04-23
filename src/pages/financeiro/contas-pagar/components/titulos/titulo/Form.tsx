@@ -291,25 +291,26 @@ const FormTituloPagar = ({
 
           const result = importFromExcel(importedData);
           console.log(result)
-          
-          const valorTotalRateio = result.reduce((acc, cur)=>{
-            // @ts-ignore
-            return acc+cur.valor
-          },0)
-          
-          form.resetField('itens_rateio', { defaultValue: []})
 
-          result?.forEach((item, index)=>{
+          const valorTotalRateio = result.reduce((acc, cur) => {
             // @ts-ignore
-            const id_filial_rateio_item = filiais.find((f:Filial)=>f.nome === item?.filial)?.id
-            // @ts-ignore
-            const percentual_rateio_item = (item.valor / valorTotalRateio * 100).toFixed(2)
-            console.log(item.filial, id_filial_rateio_item,  item.valor, valorTotalRateio,percentual_rateio_item )
+            return acc + cur.valor
+          }, 0)
 
-             addItemRateio({
+          form.resetField('itens_rateio', { defaultValue: [] })
+          const lastItem = (result?.length || 0) - 1
+          result?.forEach((item, index) => {
+            // @ts-ignore
+            const id_filial_rateio_item = filiais.find((f: Filial) => f.nome === item?.filial)?.id
+            // const incremento = lastItem === index ? 0.01 : 0;
+            // @ts-ignore
+            const percentual_rateio_item = (item.valor / valorTotalRateio * 100).toFixed(4)
+            // console.log(item.filial, id_filial_rateio_item,  item.valor, valorTotalRateio,percentual_rateio_item )
+
+            addItemRateio({
               id_filial: String(id_filial_rateio_item),
               percentual: String(percentual_rateio_item)
-             })
+            })
           })
         }
       };
@@ -939,7 +940,8 @@ const FormTituloPagar = ({
                                   control={form.control}
                                   inputClass="text-end pe-3"
                                   icon={Percent}
-                                  min={0.01}
+                                  step="0.0001"
+                                  min={0.0001}
                                   max={100}
                                 />
                               </td>
@@ -961,6 +963,10 @@ const FormTituloPagar = ({
                           ))}
                         </tbody>
                       </table>
+                      <div className="mt-2 text-muted-foreground">
+                        <span>Total percentual: </span>
+                        {itensRateio.reduce((acc, curr) => { return acc + parseFloat(curr.percentual) }, 0).toFixed(2).replace('.',',')}%
+                      </div>
                     </div>
                   </div>
 
