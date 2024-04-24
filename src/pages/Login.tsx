@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 
 import iconFacell from "@/assets/images/facell-192x192.png";
 import ErrorAlert from "@/components/ui/error-alert";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/context/auth-store";
 import { useState } from "react";
 import { api } from "@/lib/axios";
@@ -21,8 +21,6 @@ const formSchema = z.object({
 });
 
 const useLogin = () => {
-  const navigate = useNavigate()
-
   const login = useAuthStore(state => state.login);
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
@@ -38,7 +36,6 @@ const useLogin = () => {
 
       if (user && token) {
         login({ user, token });
-        navigate('/');
       }
     } catch (error) {
       //@ts-ignore
@@ -53,7 +50,7 @@ const useLogin = () => {
 };
 
 const Login = () => {
-
+  const user = useAuthStore(state => state.user);
   const { handleSubmit, loginLoading, loginError } = useLogin();
 
   const form = useForm({
@@ -66,6 +63,9 @@ const Login = () => {
 
   return (
     <div className="flex h-screen items-center justify-center">
+      {user && (
+          <Navigate to="/" replace={true} />
+        )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-2 flex flex-col items-center gap-4 backdrop-brightness-125 shadow-xl rounded-xl p-7 min-w-[400px]">
           <div className="flex w-full justify-start items-center font-medium">

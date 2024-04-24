@@ -14,8 +14,16 @@ import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.tsx";
 import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
+import { useEffect } from "react";
+import { useAuthStore } from "./context/auth-store.tsx";
 
 const AppRoutes = () => {
+  const user = useAuthStore(state=>state.user);
+
+  useEffect(()=>{
+
+  }, [user])
+
   return (
     <Routes>
       <Route element={<PrivateRoutes />}>
