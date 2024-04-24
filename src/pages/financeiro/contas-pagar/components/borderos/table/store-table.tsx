@@ -21,6 +21,7 @@ export interface Filters {
 
 const initialFilters: Filters = {
   id_conta_bancaria: "",
+  fornecedor: "",
   banco: "",
   id_titulo: "",
   num_doc: "",

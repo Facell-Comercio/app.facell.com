@@ -8,8 +8,8 @@ const schemaCadastro = z
     // Dados Cadastro
     id: z.string().optional(),
     grupo_economico: z.string().optional(),
-    id_grupo_economico: z.coerce.string(),
-      ref: z.coerce.string().transform(v=>normalizeDataDayOne(v)).optional(),
+    id_grupo_economico: z.coerce.string().min(1,"Grupo econômico é obrigatório"),
+      ref: z.coerce.string().transform(v=>normalizeDataDayOne(v)),
     active: z.coerce.boolean(),
     contas: z.array(z.object({
       id_conta: z.coerce.string().trim().optional(),
@@ -19,7 +19,8 @@ const schemaCadastro = z
       id_plano_contas: z.coerce.string(),
       valor: z.coerce.string().min(1, "Obrigatório"),
       valor_inicial: z.coerce.string().optional(),
-    }))
+      saldo: z.coerce.string().optional(),
+    })).min(1, "Obrigatório"),
   });
 
 export type cadastroSchemaProps = z.infer<typeof schemaCadastro>

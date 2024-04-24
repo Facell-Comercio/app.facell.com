@@ -11,6 +11,8 @@ export interface itemContaProps {
   plano_contas?: string;
   centro_custo?: string;
   id_conta?: string;
+  saldo?: string;
+  valor_inicial?: string;
 }
 interface RowVirtualizerFixedProps {
   data: itemContaProps[];
@@ -18,92 +20,6 @@ interface RowVirtualizerFixedProps {
   removeItem: (index: number, id?: string) => void;
   modalEditing: boolean;
 }
-
-// const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
-//   data,
-//   form,
-//   removeItem,
-//   modalEditing,
-// }) => {
-//   const parentRef = React.useRef(null);
-
-//   const rowVirtualizer = useVirtualizer({
-//     count: data.length,
-//     getScrollElement: () => parentRef.current,
-//     estimateSize: () => 35,
-//     overscan: 5,
-//   });
-
-//   return (
-//     <>
-//       <ScrollArea ref={parentRef} className="max-h-32">
-//         <div
-//           style={{
-//             height: `${rowVirtualizer.getTotalSize() + 10}px`,
-//             width: "100%",
-//             position: "relative",
-//           }}
-//         >
-//           {rowVirtualizer.getVirtualItems().map((virtualRow) => (
-//             <div
-//               key={virtualRow.index}
-//               className={virtualRow.index % 2 ? "ListItemOdd" : "ListItemEven"}
-//               style={{
-//                 position: "absolute",
-//                 top: 0,
-//                 left: 0,
-//                 width: "100%",
-//                 height: `${virtualRow.size}px`,
-//                 transform: `translateY(${virtualRow.start}px)`,
-//               }}
-//             >
-//               {data.map((item, index) => {
-//                 return (
-//                   <div className="flex gap-2 py-1 pl-1" key={item.id}>
-//                     <Input
-//                       className="flex-1"
-//                       value={item.centro_custo}
-//                       readOnly={true}
-//                     />
-//                     <Input
-//                       className="w-5/12"
-//                       value={item.plano_contas}
-//                       readOnly={true}
-//                     />
-//                     <FormInput
-//                       type="number"
-//                       className="flex-1"
-//                       name={`contas.${index}.valor`}
-//                       control={form.control}
-//                       readOnly={!modalEditing}
-//                     />
-//                     <AlertPopUp
-//                       title="Deseja realmente excluir?"
-//                       description="Essa ação não pode ser desfeita. A conta será excluída definitivamente do servidor, podendo ser enviada novamente."
-//                       action={() => removeItem(index, item.id_conta)}
-//                     >
-//                       {modalEditing ? (
-//                         <Button
-//                           type="button"
-//                           className="w-1/12"
-//                           variant={"destructive"}
-//                         >
-//                           <Trash />
-//                         </Button>
-//                       ) : (
-//                         <></>
-//                       )}
-//                     </AlertPopUp>
-//                   </div>
-//                 );
-//               })}
-//             </div>
-//           ))}
-//         </div>
-//       </ScrollArea>
-//     </>
-//   );
-// };
 
 const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
   data,
@@ -140,57 +56,70 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
           overflow: "hidden",
         }}
       >
-        {virtualizer.getVirtualItems().map((item, index) => (
-          <div
-            // ref={virtualizer.measureElement}
-            key={item.index}
-            data-index={index}
-            className="flex gap-2 py-1 pl-1"
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: `${item.size}px`,
-              transform: `translateY(${item.start}px)`,
-            }}
-          >
-            <Input
-              className="flex-1"
-              value={data[item.index].centro_custo}
-              readOnly={true}
-            />
-            <Input
-              className="w-5/12"
-              value={data[item.index].plano_contas}
-              readOnly={true}
-            />
-            <FormInput
-              type="number"
-              className="flex-1"
-              name={`contas.${item.index}.valor`}
-              control={form.control}
-              readOnly={!modalEditing}
-            />
-            <AlertPopUp
-              title="Deseja realmente excluir?"
-              description="Essa ação não pode ser desfeita. A conta será excluída definitivamente do servidor, podendo ser enviada novamente."
-              action={() => removeItem(index, data[item.index].id_conta)}
+        {virtualizer.getVirtualItems().map((item, index) => {
+          let minValue = 0;
+          if (
+            data[item.index]?.saldo !== undefined &&
+            data[item.index]?.valor_inicial !== undefined
+          ) {
+            minValue =
+              Number(data[item.index].valor_inicial) -
+              Number(data[item.index].saldo);
+          }
+
+          return (
+            <div
+              // ref={virtualizer.measureElement}
+              key={item.index}
+              data-index={index}
+              className="flex gap-2 py-1 pl-1"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: `${item.size}px`,
+                transform: `translateY(${item.start}px)`,
+              }}
             >
-              {modalEditing ? (
-                <Button
-                  type="button"
-                  className="w-1/12"
-                  variant={"destructive"}
-                >
-                  <Trash />
-                </Button>
-              ) : (
-                <></>
-              )}
-            </AlertPopUp>
-          </div>
-        ))}
+              <Input
+                className="flex-1"
+                value={data[item.index].centro_custo}
+                readOnly={true}
+              />
+              <Input
+                className="w-5/12"
+                value={data[item.index].plano_contas}
+                readOnly={true}
+              />
+              <FormInput
+                type="number"
+                className="flex-1"
+                name={`contas.${item.index}.valor`}
+                control={form.control}
+                readOnly={!modalEditing}
+                min={minValue}
+              />
+              <AlertPopUp
+                title="Deseja realmente excluir?"
+                description="Essa ação não pode ser desfeita. A conta será excluída definitivamente do servidor, podendo ser enviada novamente."
+                action={() => removeItem(item.index, data[item.index].id_conta)}
+              >
+                {modalEditing ? (
+                  <Button
+                    type="button"
+                    className="w-1/12"
+                    variant={"destructive"}
+                  >
+                    <Trash />
+                  </Button>
+                ) : (
+                  <></>
+                )}
+              </AlertPopUp>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

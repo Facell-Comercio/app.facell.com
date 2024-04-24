@@ -1,6 +1,8 @@
 
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
+import { AxiosError } from "axios";
+
 import { cadastroSchemaProps } from "@/pages/financeiro/orcamento/components/cadastros/cadastro/form-data";
 import { MeuOrcamentoSchema } from "@/pages/financeiro/orcamento/components/meu-orcamento/orcamento/form-data";
 import { GetAllParams } from "@/types/query-params-type";
@@ -64,9 +66,11 @@ export const useOrcamento = () => {
                 onSuccess() {
                     toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
                 },
-                onError(error) {
-                    toast({title: "Error", description: error.message, duration: 3500})
-                    console.log(error);
+                onError(error: AxiosError) {
+                    // @ts-expect-error "Vai funcionar"
+                    const errorMessage = error.response?.data.message
+                    toast({title: "Erro", description:errorMessage, duration: 3500})
+                    console.log(errorMessage);
                 },
             }),
 
@@ -98,6 +102,16 @@ export const useOrcamento = () => {
                 onError(error) {
                     toast({title: "Error", description: error.message, duration: 3500})
                     console.log(error);
+                },
+            }),
+
+            
+            getLogs : (id: string|null|undefined) => useQuery({
+                enabled: !!id,
+                queryKey: ['fin_orcamento_log', id],
+                queryFn: async () => {
+                    console.log(`Buscando logs de orcamento com base no ID: ${id}`)
+                    return await api.get(`/financeiro/orcamento/logs/${id}`)
                 },
             }),
 

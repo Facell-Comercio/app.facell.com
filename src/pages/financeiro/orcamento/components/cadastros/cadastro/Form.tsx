@@ -16,7 +16,7 @@ import ModalPlanoContas, {
   ItemPlanoContas,
 } from "@/pages/financeiro/components/ModalPlanoContas";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
-import { ChevronDown, Download, Plus, Search, Upload } from "lucide-react";
+import { ChevronDown, Download, Eye, Plus, Search, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { dataFormatada } from "./Modal";
@@ -47,9 +47,11 @@ const FormCadastro = ({
   const { mutate: update } = useOrcamento().update();
   const { mutate: deleteItemBudget } = useOrcamento().deleteItemBudget();
 
+  const openLogsModal = useStoreCadastro().openLogsModal;
   const closeModal = useStoreCadastro().closeModal;
-  const { form, contas, appendConta, removeConta } = useFormCadastroData(data);
+  const editModal = useStoreCadastro().editModal;
   const modalEditing = useStoreCadastro().modalEditing;
+  const { form, contas, appendConta, removeConta } = useFormCadastroData(data);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
   const [modalCentrosCustoOpen, setModalCentrosCustoOpen] = useState(false);
   const [insertContaIsOpen, setInsertContaIsOpen] = useState(false);
@@ -102,6 +104,7 @@ const FormCadastro = ({
       insertOne(filteredData);
     }
 
+    editModal(false);
     closeModal();
   }
 
@@ -113,6 +116,8 @@ const FormCadastro = ({
         centro_custo: item.centro_custo,
         plano_contas: item.plano_contas,
         id_conta: item.id_conta,
+        saldo: item.saldo,
+        valor_inicial: item.valor_inicial,
       })
     );
     return newArray.filter((conta) => {
@@ -326,7 +331,7 @@ const FormCadastro = ({
                   exportedFilteredData(contas, data.grupo_economico || "")
                 }
               >
-                <Upload className="me-2" size={20} />
+                <Download className="me-2" size={20} />
                 Exportar
               </Button>
             )}
@@ -339,7 +344,7 @@ const FormCadastro = ({
                 }
               >
                 <Button variant={"outline"}>
-                  <Download className="me-2" size={20} />
+                  <Upload className="me-2" size={20} />
                   Importar
                   <input
                     type="file"
@@ -351,6 +356,10 @@ const FormCadastro = ({
                 </Button>
               </AlertPopUp>
             )}
+            <Button variant={"outline"} onClick={() => openLogsModal(id || "")}>
+              <Eye className="me-2" size={20} />
+              Visualizar Alterações
+            </Button>
           </div>
           {id_grupo_economico && modalEditing && (
             <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
@@ -379,7 +388,7 @@ const FormCadastro = ({
           </Button>
         </div>
         {!id && (
-          <div className="flex gap-2 items-end">
+          <div className="flex gap-2">
             <FormSelectGrupoEconomico
               className="flex-1 min-w-32"
               name={"id_grupo_economico"}
@@ -390,6 +399,7 @@ const FormCadastro = ({
               <label className="text-sm font-medium">Mês</label>
               <SelectMes
                 value={refDate.mes}
+                className="mt-2"
                 onValueChange={(e) => {
                   setRefDate({ ...refDate, mes: e });
                 }}
@@ -403,7 +413,7 @@ const FormCadastro = ({
                 max={new Date().getFullYear() + 1}
                 step={"1"}
                 placeholder="Ano"
-                className="w-[80px]"
+                className="w-[80px] mt-2"
                 value={refDate.ano}
                 onChange={(e) => {
                   setRefDate({ ...refDate, ano: e.target.value });

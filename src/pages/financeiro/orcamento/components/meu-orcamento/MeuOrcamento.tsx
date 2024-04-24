@@ -4,7 +4,7 @@ import { toast } from "@/components/ui/use-toast";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { useOrcamento } from "@/hooks/useOrcamento";
 import { api } from "@/lib/axios";
-import { Upload } from "lucide-react";
+import { Download } from "lucide-react";
 import ModalMeuOrcamento from "./orcamento/Modal";
 import FilterMeuOrcamento from "./table/Filters";
 import { columnsTable } from "./table/columns";
@@ -88,7 +88,7 @@ const MeuOrcamento = () => {
             type={"button"}
             onClick={() => exportedFilteredData()}
           >
-            <Upload className="me-2" size={20} />
+            <Download className="me-2" size={20} />
             Exportar
           </Button>
         </div>

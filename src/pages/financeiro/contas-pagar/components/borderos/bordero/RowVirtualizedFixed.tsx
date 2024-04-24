@@ -12,7 +12,7 @@ import { Trash } from "lucide-react";
 interface RowVirtualizerFixedProps {
   data: TitulosProps[];
   form: any;
-  removeItem: (index: number, id?: string) => void;
+  removeItem: (index: number, id?: string, status?: string) => void;
   modalEditing: boolean;
 }
 
@@ -82,7 +82,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
             />
             <Input
               className="w-24 h-9 p-2 text-center"
-              value={normalizeDate(data[item.index].vencimento || "")}
+              value={normalizeDate(data[item.index].previsao || "")}
               readOnly={true}
             />
             <Input
@@ -113,7 +113,13 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
             <AlertPopUp
               title="Deseja realmente remover?"
               description="O título será removido definitivamente deste borderô, podendo ser incluido novamente."
-              action={() => removeItem(index, data[item.index].id_titulo)}
+              action={() =>
+                removeItem(
+                  item.index,
+                  data[item.index].id_titulo,
+                  data[item.index].id_status
+                )
+              }
             >
               {modalEditing ? (
                 <Button type="button" className="h-9" variant={"destructive"}>

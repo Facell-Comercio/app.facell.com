@@ -15,8 +15,9 @@ type TSelectFilial = {
   className?: string;
   placeholder?: string;
   value?: string;
-  onChange?: (data:any) => any;
+  onChange?: (data: any) => any;
   id_grupo_economico?: string;
+  id_matriz?: string;
 };
 
 const SelectFilial = ({
@@ -29,12 +30,15 @@ const SelectFilial = ({
   value,
   onChange,
   id_grupo_economico,
+  id_matriz,
+  showAll,
 }: TSelectFilial) => {
   // Use a single state variable for fetching and storing data
 
   const { data } = useFilial().getAll({
     filters: {
       id_grupo_economico: id_grupo_economico,
+      id_matriz: id_matriz,
     },
   });
   const rows = data?.data?.rows || [];
@@ -46,14 +50,22 @@ const SelectFilial = ({
       control={control}
       disabled={disabled}
       className={className}
-      placeholder={placeholder}
+      placeholder={placeholder ? placeholder : "Selecione a filial"}
       value={value}
       onChange={onChange}
       options={
-        rows.map((filial: Filial) => ({
-          value: filial.id.toString(),
-          label: filial.nome,
-        })) || []
+        showAll
+          ? [
+              { value: "all", label: "TODAS" },
+              ...rows.map((filial: Filial) => ({
+                value: String(filial.id),
+                label: filial.nome,
+              })),
+            ]
+          : rows.map((filial: Filial) => ({
+              value: String(filial.id),
+              label: filial.nome,
+            }))
       }
     />
   );
