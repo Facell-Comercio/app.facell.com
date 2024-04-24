@@ -25,7 +25,7 @@ const initialFilters: Filters = {
   banco: "",
   id_titulo: "",
   num_doc: "",
-  tipo_data: "data_vencimento",
+  tipo_data: "data_pagamento",
   range_data: { from: undefined, to: undefined },
 };
 

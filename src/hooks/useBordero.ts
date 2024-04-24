@@ -32,7 +32,7 @@ export const useBordero = () => {
                 return api.post("/financeiro/contas-a-pagar/bordero", data).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Novo Borderô Criado", duration: 3500})
+                toast({title: "Sucesso", description: "Novo borderô criado", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
             onError(error) {
@@ -47,7 +47,7 @@ export const useBordero = () => {
                 return api.put("/financeiro/contas-a-pagar/bordero/", {id, ...rest}).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
+                toast({title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
             onError(error) {
@@ -62,7 +62,7 @@ export const useBordero = () => {
                 return api.put("financeiro/contas-a-pagar/bordero/transfer", data).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Tranferencia Realizada", duration: 3500})
+                toast({title: "Sucesso", description: "Transferência realizada com sucesso", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
             onError(error) {
@@ -77,7 +77,7 @@ export const useBordero = () => {
                 return api.delete(`/financeiro/contas-a-pagar/bordero/titulo/${id}`).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
+                toast({title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
             },
             onError(error) {
                 toast({title: "Error", description: error.message, duration: 3500})

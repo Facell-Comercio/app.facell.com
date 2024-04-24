@@ -72,7 +72,7 @@ const RowVirtualizerLogs: React.FC<RowVirtualizerLogsProps> = ({ data }) => {
                     {formatarDataHoraBr(data[item.index].created_at)}
                   </span>
                 </span>
-                <span className="col-span-7 mr-2">
+                <span className="col-span-7 mx-2">
                   {data[item.index].descricao}
                 </span>
                 <span className="col-span-3">{data[item.index].nome}</span>

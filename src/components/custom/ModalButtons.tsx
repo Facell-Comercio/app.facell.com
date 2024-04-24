@@ -66,7 +66,7 @@ const ModalButtons = ({
             type={"button"}
             size="lg"
             variant={"warning"}
-            className="dark:text-white"
+            className="text-white"
             onClick={edit}
           >
             <PenLine className="me-2" />

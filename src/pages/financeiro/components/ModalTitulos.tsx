@@ -129,15 +129,6 @@ const ModalTitulos = ({
     return false;
   });
 
-  // async function handleSearch() {
-  //   await new Promise((resolve) => {
-  //     setSearch(searchRef.current?.value || "");
-  //     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  //     resolve(true);
-  //   });
-  //   refetchTitulos();
-  // }
-
   async function handleClickFilters() {
     await new Promise((resolve) => {
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
@@ -153,6 +144,36 @@ const ModalTitulos = ({
       resolve(true);
     });
     refetchTitulos();
+  }
+
+  function handleSelectAll() {
+    data?.data?.rows.forEach((item: TitulosProps) => {
+      const isAlreadyInTitulos = titulos.some(
+        (existingItem) => existingItem.id_titulo === item.id_titulo
+      );
+
+      if (!isAlreadyInTitulos) {
+        setTitulos((prevTitulos) => [
+          ...prevTitulos,
+          {
+            id_titulo: item.id_titulo,
+            filial: item.filial,
+            previsao: item.previsao,
+            nome_fornecedor: item.nome_fornecedor,
+            valor_total: item.valor_total,
+            num_doc: item.num_doc || "",
+            descricao: item.descricao,
+            data_pagamento: item.data_pagamento || "",
+          },
+        ]);
+
+        setIds((prevIds) => [...prevIds, item.id_titulo.toString()]);
+
+        console.log("Item adicionado:", item);
+      }
+    });
+
+    console.log("Seleção concluída, titulos:", titulos);
   }
 
   async function handlePaginationChange(index: number) {
@@ -182,6 +203,16 @@ const ModalTitulos = ({
     });
     refetchTitulos();
   }
+  async function handlePaginationSize(value: string) {
+    await new Promise((resolve) => {
+      setPagination((prev) => ({
+        ...prev,
+        pageSize: Number(value),
+      }));
+      resolve(true);
+    });
+    refetchTitulos();
+  }
 
   function handleSelection(item: TitulosProps) {
     setTitulos([
@@ -198,6 +229,7 @@ const ModalTitulos = ({
       },
     ]);
     setIds([...ids, item.id_titulo.toString()]);
+    console.log(ids);
   }
 
   if (isLoading) return null;
@@ -306,6 +338,13 @@ const ModalTitulos = ({
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+          <Button
+            className="max-w-fit self-end"
+            variant={"outline"}
+            onClick={() => handleSelectAll()}
+          >
+            Selecionar Todos
+          </Button>
         </DialogHeader>
 
         <ScrollArea className="h-96 rounded-md">
@@ -374,12 +413,29 @@ const ModalTitulos = ({
         </ScrollArea>
 
         <DialogFooter className="flex">
-          <Pagination className="items-cente">
+          <div className="flex items-center space-x-2">
+            <Select
+              value={`${pagination.pageSize}`}
+              onValueChange={handlePaginationSize}
+            >
+              <SelectTrigger className="h-8 w-[80px]">
+                <SelectValue placeholder={pagination.pageSize} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-sm font-medium min-w-fit">Linhas por página</p>
+          </div>
+          <Pagination className="items-center">
             <PaginationContent>
               <PaginationItem>
                 <Button
                   variant={"outline"}
-                  size={"actionCell"}
                   disabled={pagination.pageIndex === 0}
                   onClick={handlePaginationDown}
                 >

@@ -1,28 +1,32 @@
-import { ptBR } from 'date-fns/locale';
-import * as React from "react"
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { DateRange } from "react-day-picker"
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Calendar as CalendarIcon } from "lucide-react";
+import * as React from "react";
+import { DateRange } from "react-day-picker";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
-interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
-  className?: string,
-  date?: DateRange,
-  setDate?: (date: DateRange) => void
+interface DatePickerWithRangeProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string;
+  date?: DateRange;
+  setDate?: (date: DateRange) => void;
 }
 
 export function DatePickerWithRange({
   className,
+  date,
+  setDate,
 }: DatePickerWithRangeProps) {
-  const [date, setDate] = React.useState<DateRange | undefined>()
+  // Não é necessário definir date e setDate no estado interno.
+  // O código já recebe date e setDate das propriedades.
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -58,11 +62,11 @@ export function DatePickerWithRange({
             locale={ptBR}
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={setDate} // Chama a função setDate recebida como parâmetro
             numberOfMonths={2}
           />
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

@@ -224,11 +224,11 @@ const FormBordero = ({
                       />
                     </div>
                     <div className="flex items-center justify-between pt-2 text-sm">
-                      <span className="flex rounded-full bg-slate-500 px-2 py-1">
+                      <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
                         <p className="mr-1">Qtd. Títulos: </p>
                         {titulos.length}
                       </span>
-                      <span className="flex rounded-full bg-slate-500 px-2 py-1">
+                      <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
                         <p className="mr-1">Valor Total: </p>
                         {normalizeCurrency(
                           titulos.reduce(

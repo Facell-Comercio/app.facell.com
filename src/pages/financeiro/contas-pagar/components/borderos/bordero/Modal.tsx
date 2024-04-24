@@ -92,8 +92,6 @@ const ModalBordero = () => {
     newData.titulos = newTitulos;
   }
 
-  console.log(newData);
-
   function handleSelectionBorderos(item: BorderoProps) {
     if (checkedTitulos.length) {
       const transferredData = {
@@ -163,7 +161,7 @@ const ModalBordero = () => {
                   type={"button"}
                   size="lg"
                   variant={"destructive"}
-                  className={`dark:text-white justify-self-start ${
+                  className={`text-white justify-self-start ${
                     !modalEditing && "hidden"
                   }`}
                 >
@@ -186,7 +184,7 @@ const ModalBordero = () => {
                   type={"button"}
                   size="lg"
                   variant={"tertiary"}
-                  className="dark:text-white justify-self-start"
+                  className="text-white justify-self-start"
                 >
                   <ArrowUpDown className="me-2" />
                   Transferir Títulos

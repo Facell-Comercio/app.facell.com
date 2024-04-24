@@ -362,7 +362,11 @@ const FormCadastro = ({
             </Button>
           </div>
           {id_grupo_economico && modalEditing && (
-            <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
+            <Button
+              className="dark:text-white"
+              type="button"
+              onClick={() => setInsertContaIsOpen(true)}
+            >
               <Plus className="me-2" strokeWidth={2} />
               Novo Item
             </Button>
@@ -380,7 +384,7 @@ const FormCadastro = ({
             }}
           />
           <Button
-            className="dark:bg-purple-500"
+            variant={"tertiary"}
             onClick={() => setFilter(searchRef.current?.value || "")}
           >
             <Search className="me-2" />
