@@ -45,10 +45,10 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import React, { ChangeEvent, InputHTMLAttributes, useCallback, useRef, useState } from "react";
+import React, { InputHTMLAttributes, useCallback, useRef, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
-import { Historico, ItemRateio, initialPropsTitulo, useStoreTitulo } from "./store";
+import { ItemRateio, initialPropsTitulo, useStoreTitulo } from "./store";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/axios";
 import SelectTipoRateio from "@/components/custom/SelectTipoRateio";
@@ -56,8 +56,9 @@ import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { useFilial } from "@/hooks/useFilial";
 import { Separator } from "@/components/ui/separator";
 import { Filial } from "@/types/filial-type";
-import { AxiosError } from "axios";
 import ButtonMotivation from "@/components/custom/ButtonMotivation";
+import { checkFeriado } from "@/helpers/checkFeriado";
+import { addDays,subDays, startOfDay, isMonday, isThursday, isSaturday, isSunday } from "date-fns";
 
 let i = 0;
 function getVencimentoMinimo(isMaster: boolean) {
@@ -65,6 +66,39 @@ function getVencimentoMinimo(isMaster: boolean) {
   const dataAtual = new Date();
   dataAtual.setDate(dataAtual.getDate())
   return dataAtual;
+}
+function calcularDataPrevisaoPagamento(data_venc: Date) {
+  let dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
+
+  const dataAtual = startOfDay(new Date());
+  let dataMinima = addDays(dataAtual, 2);
+  
+  while ((!isMonday(dataMinima) && !isThursday(dataMinima)) || checkFeriado(dataMinima)) {
+    dataMinima = addDays(dataMinima, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
+  }
+  let dataPagamento = dataMinima;
+  
+  // 27-04 <= 26-04 
+  if(dataVencimento <= dataMinima){
+    // A data de vencimento é inferior a data atual, 
+    //então vou buscar a partir da data atual + 1 a próxima data de pagamento
+    while ((dataPagamento < dataMinima || !isMonday(dataPagamento) && !isThursday(dataPagamento)) || checkFeriado(dataPagamento)) {
+      dataPagamento = addDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
+    }
+  }else{
+    dataPagamento = dataVencimento
+    if(isSaturday(dataPagamento)){
+      dataPagamento = addDays(dataPagamento,2)
+    }
+    if(isSunday(dataPagamento)){
+      dataPagamento = addDays(dataPagamento,1)
+    }
+    while ((!isMonday(dataPagamento) && !isThursday(dataPagamento)) || checkFeriado(dataPagamento)) {
+      dataPagamento = subDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
+    }
+  }
+
+  return dataPagamento;
 }
 
 const FormTituloPagar = ({
@@ -108,7 +142,6 @@ const FormTituloPagar = ({
   const readOnly = !canEdit || !modalEditing
   const disabled = !canEdit || !modalEditing
 
-
   // * [ FORM ]
   const { form } = useFormTituloData(titulo);
   const { setValue, formState: { errors } } = form;
@@ -121,6 +154,16 @@ const FormTituloPagar = ({
   const id_grupo_economico = useWatch({ name: "id_grupo_economico", control: form.control });
   const id_forma_pagamento = useWatch({ name: "id_forma_pagamento", control: form.control });
   const id_centro_custo = useWatch({ name: "id_centro_custo", control: form.control });
+
+  // * [ DATA PREVISTA ]
+  const onChangeDataVencimento = (data_venc:Date)=>{
+    console.log('DATA:', data_venc)
+    // todo - procurar a próxima data de pagamento com base na data 
+    // setar a data para o data_prevista
+    const data_prevista = calcularDataPrevisaoPagamento(data_venc)
+    setValue('data_prevista', data_prevista)
+
+  }
 
   // * [ FILIAL ]
   // Ao alterar a filial:
@@ -451,11 +494,10 @@ const FormTituloPagar = ({
   };
 
   type changeStatusTituloProps = {
-    id_status: string,
     id_novo_status: string,
-    motivo: string
+    motivo?: string
   }
-  const changeStatusTitulo = async ({ id_status, id_novo_status, motivo }: changeStatusTituloProps) => {
+  const changeStatusTitulo = async ({ id_novo_status, motivo }: changeStatusTituloProps) => {
     try {
       if (!motivo || motivo.length < 10) {
         toast({
@@ -463,26 +505,30 @@ const FormTituloPagar = ({
         })
         return;
       }
-      const result = await api.post(`financeiro/contas-a-pagar/titulo/change-status`, { id_titulo: id, id_status, id_novo_status, motivo })
+      const result = await api.post(`financeiro/contas-a-pagar/titulo/change-status`, { id_titulo: id, id_novo_status, motivo })
     } catch (error: unknown) {
       // @ts-ignore;
       toast({ title: 'Erro!', description: error?.response?.data?.message || error?.message })
     }
   }
 
-  const handleChangeVoltarSolicitado = () => {
+  const handleChangeVoltarSolicitado = (motivo: string) => {
     console.log('Voltar status para solicitado')
-
-
     changeStatusTitulo({
-      id_novo_status: 1, motivo: motivo
+      id_novo_status: '1', motivo
     })
   }
-  const handleChangeNegar = () => {
+  const handleChangeNegar = (motivo: string) => {
     console.log('Negar titulo')
+    changeStatusTitulo({
+      id_novo_status: '2', motivo: motivo
+    })
   }
   const handleChangeAprovar = () => {
     console.log('Aprovar titulo')
+    changeStatusTitulo({
+      id_novo_status: '3'
+    })
   }
   // ! FIM - ACTIONS //////////////////////////////////////
 
@@ -765,13 +811,13 @@ const FormTituloPagar = ({
                         label="Data de vencimento"
                         min={getVencimentoMinimo(isMaster)}
                         control={form.control}
+                        onChange={onChangeDataVencimento}
                       />
 
                       <FormDateInput
-                        disabled={true}
-                        name="data_pagamento"
-                        label="Data de pagamento"
-                        min={getVencimentoMinimo(isMaster)}
+                        disabled={!isMaster}
+                        name="data_prevista"
+                        label="Previsão de Pagamento"
                         control={form.control}
                       />
 

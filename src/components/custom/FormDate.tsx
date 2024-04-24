@@ -28,6 +28,7 @@ type FormDateProps = {
   disabled?: boolean;
   max?: Date;
   min?: Date;
+  onChange?: (date:Date)=>void
 };
 
 const FormDateInput = ({
@@ -38,6 +39,7 @@ const FormDateInput = ({
   disabled,
   max,
   min,
+  onChange,
 }: FormDateProps) => {
   return (
     <FormField
@@ -73,6 +75,12 @@ const FormDateInput = ({
                 selected={field.value}
                 onSelect={field.onChange}
                 locale={ptBR}
+                onDayClick={(event) => {
+                  field.onChange(event);
+                  if (typeof onChange === "function") {
+                    onChange(event);
+                  }
+                }}
                 disabled={(date) => {
                   if(min && date < min){
                     return true;

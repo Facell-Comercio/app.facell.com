@@ -30,7 +30,7 @@ const ButtonMotivation = ({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Digite o motivo para poder prosseguir</AlertDialogTitle>
-                    <Input value={motivo} onChange={(e) => setMotivo(e.target.value)} />
+                    <Input value={motivo} onChange={(e) => setMotivo(e.target.value)} placeholder="Ajuste necessário em..."/>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>

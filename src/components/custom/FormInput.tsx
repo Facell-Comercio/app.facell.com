@@ -101,9 +101,12 @@ const FormInput = ({
                   typeof disabled === "undefined" ? field.disabled : disabled
                 }
                 onBlur={typeof onBlur == "undefined" ? field.onBlur : onBlur}
-                onChange={
-                  typeof onChange == "undefined" ? field.onChange : onChange
-                }
+                onChange={(event) => {
+                  field.onChange(event);
+                  if (typeof onChange === "function") {
+                    onChange(event);
+                  }
+                }}
                 min={min}
                 max={max}
                 step={step ? step : type === "number" ? "0.01" : undefined}
