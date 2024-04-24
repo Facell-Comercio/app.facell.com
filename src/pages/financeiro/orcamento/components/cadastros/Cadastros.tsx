@@ -2,6 +2,7 @@ import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { useOrcamento } from "@/hooks/useOrcamento";
 import ModalCadastro from "./cadastro/Modal";
+import ModalLogs from "./cadastro/ModalLogs";
 import ModalReplicateCadastro from "./cadastro/ModalReplicateCadastro";
 import { useStoreCadastro } from "./cadastro/store";
 import FilterCadastros from "./table/Filters";
@@ -43,6 +44,7 @@ const Cadastros = () => {
         columns={columnsTable}
       />
       <ModalCadastro />
+      <ModalLogs />
       <ModalReplicateCadastro />
     </div>
   );

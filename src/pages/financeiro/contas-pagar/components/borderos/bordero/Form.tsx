@@ -4,13 +4,15 @@ import SelectContaBancaria from "@/components/custom/SelectContaBancaria";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form } from "@/components/ui/form";
+import { toast } from "@/components/ui/use-toast";
+import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeCurrency } from "@/helpers/mask";
 import { useBordero } from "@/hooks/useBordero";
 import { api } from "@/lib/axios";
 import ModalTitulos, {
   TitulosProps,
 } from "@/pages/financeiro/components/ModalTitulos";
-import { Fingerprint, List, Plus } from "lucide-react";
+import { Download, Fingerprint, List, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BorderoSchemaProps } from "./Modal";
 import RowVirtualizerFixed from "./RowVirtualizedFixed";
@@ -89,9 +91,26 @@ const FormBordero = ({
     }
   }
 
-  function removeItemTitulos(index: number, id?: string) {
-    if (id) deleteTitulo(id);
-    removeTitulo(index);
+  function removeItemTitulos(index: number, id?: string, status?: string) {
+    if (status != "4") {
+      deleteTitulo(id);
+      removeTitulo(index);
+    } else {
+      toast({
+        title: "Erro",
+        description:
+          "Não é possível remover do borderô titulos com status pago!",
+        duration: 3500,
+      });
+    }
+  }
+
+  async function exportBordero(id: string) {
+    const response = await api.put(
+      `/financeiro/contas-a-pagar/bordero/export`,
+      { data: [id] }
+    );
+    exportToExcel(response.data, `bordero-${id}`);
   }
 
   // const data_pagamento = form.watch("data_pagamento");
@@ -111,6 +130,14 @@ const FormBordero = ({
                     <Fingerprint />{" "}
                     <span className="text-lg font-bold ">Dados do Borderô</span>
                   </div>
+                  <Button
+                    variant={"outline"}
+                    type={"button"}
+                    onClick={() => exportBordero(id || "")}
+                  >
+                    <Download className="me-2" size={20} />
+                    Exportar
+                  </Button>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
@@ -177,7 +204,7 @@ const FormBordero = ({
                           }}
                         />
                         <p className="w-16 text-center">ID</p>
-                        <p className="pl-1 w-24 text-center">Vencimento</p>
+                        <p className="pl-1 w-24 text-center">Pagamento</p>
                         <p className="flex-1 pl-1">Fornecedor</p>
                         <p className="w-24 text-center">Nº Doc</p>
                         <p className="pl-1 w-32 text-center">Valor</p>

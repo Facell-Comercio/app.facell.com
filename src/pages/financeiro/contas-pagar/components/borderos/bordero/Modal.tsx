@@ -18,7 +18,7 @@ import ModalBorderos, {
   BorderoProps,
 } from "@/pages/financeiro/components/ModalBorderos";
 import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Trash } from "lucide-react";
 import { useRef } from "react";
 import FormBordero from "./Form";
 import { useStoreBordero } from "./store";
@@ -60,6 +60,7 @@ const ModalBordero = () => {
   const formRef = useRef(null);
 
   const { data, isLoading } = useBordero().getOne(id);
+  const { mutate: deleteBordero } = useBordero().deleteBordero();
   const newData: BorderoSchemaProps & Record<string, any> =
     {} as BorderoSchemaProps & Record<string, any>;
 
@@ -78,17 +79,20 @@ const ModalBordero = () => {
       return {
         checked: titulo.checked,
         id_titulo: titulo.id_titulo,
-        vencimento: titulo.vencimento,
+        previsao: titulo.previsao || "",
         nome_fornecedor: titulo.nome_fornecedor,
         valor_total: titulo.valor_total,
         num_doc: titulo.num_doc || "",
         descricao: titulo.descricao,
         filial: titulo.filial,
         data_pagamento: titulo.data_pagamento || "",
+        id_status: titulo.id_status || "",
       };
     });
     newData.titulos = newTitulos;
   }
+
+  console.log(newData);
 
   function handleSelectionBorderos(item: BorderoProps) {
     if (checkedTitulos.length) {
@@ -112,6 +116,11 @@ const ModalBordero = () => {
 
   function handleClickCancel() {
     editModal(false);
+  }
+
+  function excluirBordero() {
+    deleteBordero({ id, titulos: data?.data.titulos });
+    toggleModal();
   }
 
   return (
@@ -142,24 +151,48 @@ const ModalBordero = () => {
             cancel={handleClickCancel}
             formRef={formRef}
           >
-            <AlertPopUp
-              title={"Deseja realmente realizar essa tranferência de titulos?"}
-              description="Os títulos desse borderô serão transferidos para o outro borderô."
-              action={() => {
-                toggleGetTitulo();
-                toggleModalBorderos();
-              }}
-            >
-              <Button
-                type={"button"}
-                size="lg"
-                variant={"secondary"}
-                className="dark:text-white justify-self-start"
+            <div className="flex gap-2">
+              <AlertPopUp
+                title={"Deseja realmente excluir"}
+                description="Essa ação não pode ser desfeita. O borderô será excluído definitivamente do servidor."
+                action={() => {
+                  excluirBordero();
+                }}
               >
-                <ArrowUpDown className="me-2" />
-                Transferir Títulos
-              </Button>
-            </AlertPopUp>
+                <Button
+                  type={"button"}
+                  size="lg"
+                  variant={"destructive"}
+                  className={`dark:text-white justify-self-start ${
+                    !modalEditing && "hidden"
+                  }`}
+                >
+                  <Trash className="me-2" />
+                  Excluir Borderô
+                </Button>
+              </AlertPopUp>
+
+              <AlertPopUp
+                title={
+                  "Deseja realmente realizar essa tranferência de titulos?"
+                }
+                description="Os títulos desse borderô serão transferidos para o outro borderô."
+                action={() => {
+                  toggleGetTitulo();
+                  toggleModalBorderos();
+                }}
+              >
+                <Button
+                  type={"button"}
+                  size="lg"
+                  variant={"tertiary"}
+                  className="dark:text-white justify-self-start"
+                >
+                  <ArrowUpDown className="me-2" />
+                  Transferir Títulos
+                </Button>
+              </AlertPopUp>
+            </div>
           </ModalButtons>
           <ModalBorderos
             open={modalBorderosOpen}

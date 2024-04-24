@@ -37,21 +37,26 @@ const FormRateios = ({
     }, 0);
 
     // Arredonda a soma para duas casas decimais
-    const somaArredondada = parseFloat(soma.toFixed(4));
-    console.log('Submetendo data: ', newData, 'soma: ', somaArredondada)
-    toast({
-      title: "DATA",
-      description: `${somaArredondada} ${JSON.stringify(newData)}`,
-    });
 
-    // if (somaArredondada === 1.0) {
+    // toast({
+    //   title: "DATA",
+    //   description: `
+    //   ${soma.toFixed(4) != (1.0).toFixed(4)}
+    //   ${(1.0).toFixed(4)}
+    //   ${soma.toFixed(4)} ${JSON.stringify(newData)}`,
+    // });
+
+    if (soma.toFixed(4) != (1.0).toFixed(4)) {
+      toast({
+        title: "Erro!",
+        description: "A soma dos percentuais deve ser igual a 100%",
+      });
+      return;
+    }
     if (id) update(newData);
     if (!id) insertOne(newData);
     editModal(false);
-    // closeModal();
-    // } else {
-    //   alert("A soma dos percentuais deve ser igual a 100%");
-    // }
+    closeModal();
   };
 
   function addNewRateio() {
@@ -163,8 +168,9 @@ const FormRateios = ({
                               label="Percentual"
                               control={form.control}
                               icon={Percent}
-                              min={0.1}
-                              max={99}
+                              step={"0.0001"}
+                              min={0.0001}
+                              max={100}
                             />
                             <Button
                               type="button"

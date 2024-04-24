@@ -15,7 +15,7 @@ const schemaBorderos = z
   titulos: z.array(z.object({
     checked: z.coerce.boolean().optional(),
     id_titulo: z.coerce.string().trim().optional(),
-    vencimento: z.string().trim().optional(),
+    previsao: z.string().trim().optional(),
     nome_fornecedor: z.string().trim().optional(),
     valor_total: z.string().trim().optional(),
     num_doc: z.string().optional(),

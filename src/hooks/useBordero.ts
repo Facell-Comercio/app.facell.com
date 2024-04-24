@@ -1,9 +1,11 @@
 
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
+import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
 import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/components/borderos/bordero/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 export const useBordero = () => {
     const queryClient = useQueryClient()
@@ -72,7 +74,7 @@ export const useBordero = () => {
         deleteTitulo :() => useMutation({
             mutationFn: (id: string|null|undefined|number) => {
                 console.log(`Deletando conta com base no ID`)            
-                return api.delete(`/financeiro/contas-a-pagar/bordero/${id}`).then((response)=>response.data)
+                return api.delete(`/financeiro/contas-a-pagar/bordero/titulo/${id}`).then((response)=>response.data)
             },
             onSuccess() {
                 toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
@@ -80,6 +82,24 @@ export const useBordero = () => {
             onError(error) {
                 toast({title: "Error", description: error.message, duration: 3500})
                 console.log(error);
+            },
+        }),
+
+        deleteBordero :() => useMutation({
+            mutationFn: (params:{id: string|null|undefined|number, titulos:TitulosProps[]}) => {
+                const {id, titulos} = params;
+                console.log(`Deletando conta com base no ID`)            
+                return api.delete(`/financeiro/contas-a-pagar/bordero/${id}`, {data:titulos}).then((response)=>response.data)
+            },
+            onSuccess() {
+                queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
+                toast({title: "Sucesso", description: "Exclusão realizada com sucesso", duration: 3500})
+            },
+            onError(error: AxiosError) {
+                // @ts-expect-error "Vai funcionar"
+                const errorMessage = error.response?.data.message
+                toast({title: "Erro", description:errorMessage, duration: 3500})
+                console.log(errorMessage);
             },
         }),
 })}
