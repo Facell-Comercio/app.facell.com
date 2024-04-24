@@ -36,6 +36,8 @@ const FormDateInput = ({
   label,
   description,
   disabled,
+  max,
+  min,
 }: FormDateProps) => {
   return (
     <FormField
@@ -71,8 +73,15 @@ const FormDateInput = ({
                 selected={field.value}
                 onSelect={field.onChange}
                 locale={ptBR}
-                // todo usar o max e min -> date > max
-                disabled={(date) => date < new Date("1900-01-01")}
+                disabled={(date) => {
+                  if(min && date < min){
+                    return true;
+                  }
+                  if(max && date > max){
+                    return true;
+                  }
+                  return date < new Date("1900-01-01")
+                }}
                 initialFocus
               />
             </PopoverContent>

@@ -16,7 +16,7 @@ import {
 } from "@/helpers/checkAuthorization";
 import { formatarDataHora } from "@/helpers/format";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
-import { normalizeCnpjNumber } from "@/helpers/mask";
+import { normalizeCnpjNumber, normalizeCurrency } from "@/helpers/mask";
 import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
 import ModalFornecedores, {
   ItemFornecedor,
@@ -45,7 +45,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import React, { ChangeEvent, InputHTMLAttributes, useRef, useState } from "react";
+import React, { ChangeEvent, InputHTMLAttributes, useCallback, useRef, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
 import { Historico, ItemRateio, initialPropsTitulo, useStoreTitulo } from "./store";
@@ -56,8 +56,17 @@ import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { useFilial } from "@/hooks/useFilial";
 import { Separator } from "@/components/ui/separator";
 import { Filial } from "@/types/filial-type";
+import { AxiosError } from "axios";
+import ButtonMotivation from "@/components/custom/ButtonMotivation";
 
 let i = 0;
+function getVencimentoMinimo(isMaster: boolean) {
+  if (isMaster) return undefined;
+  const dataAtual = new Date();
+  dataAtual.setDate(dataAtual.getDate())
+  return dataAtual;
+}
+
 const FormTituloPagar = ({
   id,
   data,
@@ -95,9 +104,10 @@ const FormTituloPagar = ({
         status !== "Negado" &&
         status !== "Pago")
     );
-
+  const canChangeParcelas = canEdit && !id
   const readOnly = !canEdit || !modalEditing
   const disabled = !canEdit || !modalEditing
+
 
   // * [ FORM ]
   const { form } = useFormTituloData(titulo);
@@ -152,6 +162,10 @@ const FormTituloPagar = ({
     control: form.control,
     name: "itens",
   });
+
+  const calcularTotal = useCallback(() => {
+    return itens.reduce((acc, curr) => acc + parseFloat(curr.valor), 0)
+  }, [itens])
 
   function handleAddItem() {
     if (!novoItemIdPlanoContasRef.current) return;
@@ -355,7 +369,6 @@ const FormTituloPagar = ({
   // * [ ANEXOS ]
   // Quando um anexo for alterado:
   async function handleChangeFile({ campo, fileUrl }: { campo: string, fileUrl?: string }) {
-    console.log(campo, fileUrl)
     try {
       if (id && !fileUrl) {
         await api.post('financeiro/contas-a-pagar/titulo/update-anexo', { campo, fileUrl, id })
@@ -437,13 +450,38 @@ const FormTituloPagar = ({
     editModal(false);
   };
 
-  const handleClickVoltarSolicitado = () => {
-    console.log('Voltar status para solicitado')
+  type changeStatusTituloProps = {
+    id_status: string,
+    id_novo_status: string,
+    motivo: string
   }
-  const handleClickNegar = () => {
+  const changeStatusTitulo = async ({ id_status, id_novo_status, motivo }: changeStatusTituloProps) => {
+    try {
+      if (!motivo || motivo.length < 10) {
+        toast({
+          title: 'Erro!', description: 'Preencha o motivo corretamente!'
+        })
+        return;
+      }
+      const result = await api.post(`financeiro/contas-a-pagar/titulo/change-status`, { id_titulo: id, id_status, id_novo_status, motivo })
+    } catch (error: unknown) {
+      // @ts-ignore;
+      toast({ title: 'Erro!', description: error?.response?.data?.message || error?.message })
+    }
+  }
+
+  const handleChangeVoltarSolicitado = () => {
+    console.log('Voltar status para solicitado')
+
+
+    changeStatusTitulo({
+      id_novo_status: 1, motivo: motivo
+    })
+  }
+  const handleChangeNegar = () => {
     console.log('Negar titulo')
   }
-  const handleClickAprovar = () => {
+  const handleChangeAprovar = () => {
     console.log('Aprovar titulo')
   }
   // ! FIM - ACTIONS //////////////////////////////////////
@@ -498,7 +536,7 @@ const FormTituloPagar = ({
                         onClick={showModalFornecedor}
                         size={"sm"}
                       >
-                        Procurar
+                        Selecionar
                       </Button>
                     </div>
 
@@ -683,6 +721,7 @@ const FormTituloPagar = ({
 
                         <Button
                           type="button"
+                          disabled={disabled}
                           variant={"ghost"}
                           onClick={showModalCentrosCustos}
                           className="flex flex-1 p-0"
@@ -697,18 +736,20 @@ const FormTituloPagar = ({
                       </FormItem>
 
                       <FormInput
-                        readOnly={readOnly}
+                        readOnly={!canChangeParcelas}
                         name="num_parcelas"
                         type={"number"}
                         label="Número de parcelas"
+                        step='1'
                         control={form.control}
                       />
 
                       <FormInput
-                        readOnly={readOnly}
+                        readOnly={true}
                         name="parcela"
                         type={"number"}
                         label="Parcela"
+                        step='1'
                         control={form.control}
                       />
 
@@ -722,6 +763,15 @@ const FormTituloPagar = ({
                         disabled={disabled}
                         name="data_vencimento"
                         label="Data de vencimento"
+                        min={getVencimentoMinimo(isMaster)}
+                        control={form.control}
+                      />
+
+                      <FormDateInput
+                        disabled={true}
+                        name="data_pagamento"
+                        label="Data de pagamento"
+                        min={getVencimentoMinimo(isMaster)}
                         control={form.control}
                       />
 
@@ -729,18 +779,19 @@ const FormTituloPagar = ({
                         readOnly={readOnly}
                         name="num_doc"
                         label="Núm. Doc."
+                        className="max-w-[15ch]"
                         control={form.control}
                       />
 
-                      <FormInput
-                        readOnly={readOnly}
-                        inputClass="text-end px-0"
-                        className="w-[20ch] text-center"
-                        name="valor"
-                        control={form.control}
-                        type={"number"}
-                        label="Valor Total"
-                      />
+                      <FormItem className="w-[20ch] text-center">
+                        <FormLabel>Valor Total</FormLabel>
+                        <Input
+                          readOnly={true}
+                          className="text-end"
+                          name="valor"
+                          value={normalizeCurrency(calcularTotal())}
+                        />
+                      </FormItem>
 
                       <FormInput
                         readOnly={readOnly}
@@ -761,50 +812,52 @@ const FormTituloPagar = ({
                       </span>
 
                     </div>
-                    {canEdit && (
-                      <div className="flex gap-3 mb-3 rounded-md items-end">
-                        {/* Plano contas */}
-                        <Input
-                          type="hidden"
-                          ref={novoItemIdPlanoContasRef}
-                          readOnly={true}
-                          name="id_plano_contas"
-                        />
-                        <FormItem className="w-full">
-                          <div className="flex justify-between items-end">
-                            <FormLabel>Plano de Contas Novo Item</FormLabel>
-                          </div>
-                          <Button
-                            type="button"
-                            variant={"ghost"}
-                            onClick={showModalPlanoContas}
-                            className="w-full p-0"
-                          >
-                            <Input
-                              ref={novoItemPlanoContasRef}
-                              className="w-full"
-                              readOnly={true}
-                              placeholder="Selecione o plano de contas"
-                            />
-                          </Button>
-                        </FormItem>
-                        <FormItem>
-                          <div className="flex justify-between items-end">
-                            <FormLabel>Valor Novo Item</FormLabel>
-                          </div>
+                    {canEdit && modalEditing && (
+                      <>
+                        <div className="flex gap-3 mb-3 rounded-md items-end">
+                          {/* Plano contas */}
                           <Input
-                            type="number"
-                            ref={novoItemValorRef}
-                            className="max-w-40 text-end"
+                            type="hidden"
+                            ref={novoItemIdPlanoContasRef}
+                            readOnly={true}
+                            name="id_plano_contas"
                           />
-                        </FormItem>
+                          <FormItem className="w-full">
+                            <div className="flex justify-between items-end">
+                              <FormLabel>Plano de Contas Novo Item</FormLabel>
+                            </div>
+                            <Button
+                              type="button"
+                              variant={"ghost"}
+                              onClick={showModalPlanoContas}
+                              className="w-full p-0"
+                            >
+                              <Input
+                                ref={novoItemPlanoContasRef}
+                                className="w-full"
+                                readOnly={true}
+                                placeholder="Selecione o plano de contas"
+                              />
+                            </Button>
+                          </FormItem>
+                          <FormItem>
+                            <div className="flex justify-between items-end">
+                              <FormLabel>Valor Novo Item</FormLabel>
+                            </div>
+                            <Input
+                              type="number"
+                              ref={novoItemValorRef}
+                              className="max-w-40 text-end"
+                            />
+                          </FormItem>
 
-                        <Button className="ms-auto" type="button" onClick={handleAddItem}>
-                          <ArrowDown size={18} className="me-2" /> Add item
-                        </Button>
-                      </div>
+                          <Button className="ms-auto" type="button" onClick={handleAddItem}>
+                            <ArrowDown size={18} className="me-2" /> Add item
+                          </Button>
+                        </div>
+                        <Separator className="my-4 bg-gray-900" />
+                      </>
                     )}
-                    <Separator className="my-4 bg-gray-900" />
                     <div className="flex gap-3">
                       <table className="w-full">
                         <thead>
@@ -812,7 +865,7 @@ const FormTituloPagar = ({
                             <th className="text-center pl-2">Item</th>
                             <th className="text-left pl-2">Plano de contas</th>
                             <th className="text-center pl-2">Valor</th>
-                            {canEdit && (
+                            {canEdit && modalEditing && (
                               <th className="text-left max-w-[20ch]">Ação</th>
                             )}
                           </tr>
@@ -842,7 +895,7 @@ const FormTituloPagar = ({
                                   min={0.1}
                                 />
                               </td>
-                              {canEdit && (
+                              {canEdit && modalEditing && (
                                 <td>
                                   <Button
                                     type="button"
@@ -965,7 +1018,7 @@ const FormTituloPagar = ({
                       </table>
                       <div className="mt-2 text-muted-foreground">
                         <span>Total percentual: </span>
-                        {itensRateio.reduce((acc, curr) => { return acc + parseFloat(curr.percentual) }, 0).toFixed(2).replace('.',',')}%
+                        {itensRateio.reduce((acc, curr) => { return acc + parseFloat(curr.percentual) }, 0).toFixed(2).replace('.', ',')}%
                       </div>
                     </div>
                   </div>
@@ -1051,14 +1104,20 @@ const FormTituloPagar = ({
           </ScrollArea>
           <div className="flex justify-between items-center mt-4">
             <div className="flex gap-3 items-center">
-              {isMaster && id && status !== 'Solicitado' && status !== 'Pago' && (
-                <Button onClick={handleClickVoltarSolicitado} size="lg" variant={'secondary'}><Undo2 className="me-2" size={18} />Tornar solicitado</Button>
+              {id && status !== 'Solicitado' && status !== 'Pago' && (
+                <ButtonMotivation variant={'secondary'} size={'lg'} action={handleChangeVoltarSolicitado}>
+                  <Undo2 className="me-2" size={18} />Tornar solicitado
+                </ButtonMotivation>
               )}
               {isMaster && id && status !== 'Negado' && status !== 'Pago' && (
-                <Button onClick={handleClickNegar} size="lg" variant={'destructive'}><X className="me-2" size={18} />Negar</Button>
+                <ButtonMotivation variant={'destructive'} size={'lg'} action={handleChangeNegar}>
+                  <X className="me-2" size={18} />Negar
+                </ButtonMotivation>
               )}
               {isMaster && id && status !== 'Aprovado' && status !== 'Pago' && (
-                <Button onClick={handleClickAprovar} size="lg" variant={'success'}><Check className="me-2" size={18} /> Aprovar</Button>
+                <Button variant={'success'} size={'lg'} onClick={handleChangeAprovar}>
+                  <Check className="me-2" size={18} />Aprovar
+                </Button>
               )}
             </div>
             <div className="flex gap-3 items-center">
