@@ -100,8 +100,8 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                   <SelectItem value="created_at">Criação</SelectItem>
                   <SelectItem value="data_emissao">Emissão</SelectItem>
                   <SelectItem value="data_vencimento">Vencimento</SelectItem>
+                  <SelectItem value="data_prevista">Previsão</SelectItem>
                   <SelectItem value="data_pagamento">Pagamento</SelectItem>
-                  <SelectItem value="data_provisao">Provisão</SelectItem>
                 </SelectContent>
               </Select>
 

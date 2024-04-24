@@ -99,7 +99,7 @@ export interface TituloSchemaProps {
   updated_at?: string;
   data_emissao?: string;
   data_vencimento?: string;
-  data_provisao?: string;
+  data_prevista?: string;
   data_pagamento?: string | null;
   valor_pago?: string;
   descricao?: string;

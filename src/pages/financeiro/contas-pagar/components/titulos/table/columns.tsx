@@ -11,7 +11,7 @@ export type RowTitulo = {
   id: string;
   status: string;
   created_at: Date;
-  updated_at: Date;
+  data_prevista: Date;
   valor: string;
   descricao: string;
   fornecedor: string;
@@ -83,8 +83,8 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     },
   },
   {
-    header: "Vencimento",
-    accessorKey: "data_vencimento",
+    header: "Previsão",
+    accessorKey: "data_prevista",
     cell: (info) => {
       const data = info.getValue<Date>();
       return new Date(data).toLocaleString("pt-BR", {

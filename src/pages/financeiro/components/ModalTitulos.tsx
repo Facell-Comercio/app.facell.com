@@ -316,7 +316,7 @@ const ModalTitulos = ({
                         <SelectItem value="data_pagamento">
                           Pagamento
                         </SelectItem>
-                        <SelectItem value="data_provisao">Provisão</SelectItem>
+                        <SelectItem value="data_prevista">Provisão</SelectItem>
                       </SelectContent>
                     </Select>
                     <DatePickerWithRange

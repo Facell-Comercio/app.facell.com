@@ -21,7 +21,7 @@ const FormRateios = ({
   data: RateiosSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - Rateios:", id);
+  console.log("RENDER - Rateio:", id);
   const { mutate: insertOne } = useRateios().insertOne();
   const { mutate: update } = useRateios().update();
   const modalEditing = useStoreRateios().modalEditing;
@@ -29,6 +29,7 @@ const FormRateios = ({
   const closeModal = useStoreRateios().closeModal;
 
   const { form, itens, appendItem, removeItem } = useFormRateioData(data);
+  console.log(form.formState.errors)
 
   const onSubmitData = (newData: RateiosSchema) => {
     const soma = newData.itens.reduce((cont, submitedData) => {
@@ -64,6 +65,7 @@ const FormRateios = ({
       percentual: "0",
     });
   }
+
   function removeItemRateio(index: number) {
     removeItem(index);
   }
@@ -137,7 +139,7 @@ const FormRateios = ({
                         onClick={() => addNewRateio()}
                         disabled={!modalEditing}
                       >
-                        Adicionar Rateio
+                        Adicionar Item
                       </Button>
                     </section>
                   )}

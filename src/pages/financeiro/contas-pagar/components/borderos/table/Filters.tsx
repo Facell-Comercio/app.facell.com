@@ -101,6 +101,7 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
                 <SelectContent>
                   <SelectItem value="created_at">Criação</SelectItem>
                   <SelectItem value="data_pagamento">Pagamento</SelectItem>
+                  <SelectItem value="data_prevista">Provisão</SelectItem>
                 </SelectContent>
               </Select>
               <DatePickerWithRange
