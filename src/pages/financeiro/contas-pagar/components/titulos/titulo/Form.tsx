@@ -8,7 +8,7 @@ import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
 import { Button } from "@/components/ui/button";
 import { Form, FormItem, FormLabel } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
 import {
   checkUserDepartments,
@@ -46,6 +46,7 @@ import {
   X,
 } from "lucide-react";
 import React, { InputHTMLAttributes, useCallback, useRef, useState } from "react";
+import { useQueryClient } from '@tanstack/react-query'
 import { useFieldArray, useWatch } from "react-hook-form";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
 import { ItemRateio, initialPropsTitulo, useStoreTitulo } from "./store";
@@ -58,7 +59,8 @@ import { Separator } from "@/components/ui/separator";
 import { Filial } from "@/types/filial-type";
 import ButtonMotivation from "@/components/custom/ButtonMotivation";
 import { checkFeriado } from "@/helpers/checkFeriado";
-import { addDays,subDays, startOfDay, isMonday, isThursday, isSaturday, isSunday } from "date-fns";
+import { addDays, subDays, startOfDay, isMonday, isThursday, isSaturday, isSunday } from "date-fns";
+import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 let i = 0;
 function getVencimentoMinimo(isMaster: boolean) {
@@ -67,31 +69,32 @@ function getVencimentoMinimo(isMaster: boolean) {
   dataAtual.setDate(dataAtual.getDate())
   return dataAtual;
 }
+
 function calcularDataPrevisaoPagamento(data_venc: Date) {
   let dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
 
   const dataAtual = startOfDay(new Date());
   let dataMinima = addDays(dataAtual, 2);
-  
+
   while ((!isMonday(dataMinima) && !isThursday(dataMinima)) || checkFeriado(dataMinima)) {
     dataMinima = addDays(dataMinima, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
   }
   let dataPagamento = dataMinima;
-  
+
   // 27-04 <= 26-04 
-  if(dataVencimento <= dataMinima){
+  if (dataVencimento <= dataMinima) {
     // A data de vencimento é inferior a data atual, 
     //então vou buscar a partir da data atual + 1 a próxima data de pagamento
     while ((dataPagamento < dataMinima || !isMonday(dataPagamento) && !isThursday(dataPagamento)) || checkFeriado(dataPagamento)) {
       dataPagamento = addDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
     }
-  }else{
+  } else {
     dataPagamento = dataVencimento
-    if(isSaturday(dataPagamento)){
-      dataPagamento = addDays(dataPagamento,2)
+    if (isSaturday(dataPagamento)) {
+      dataPagamento = addDays(dataPagamento, 2)
     }
-    if(isSunday(dataPagamento)){
-      dataPagamento = addDays(dataPagamento,1)
+    if (isSunday(dataPagamento)) {
+      dataPagamento = addDays(dataPagamento, 1)
     }
     while ((!isMonday(dataPagamento) && !isThursday(dataPagamento)) || checkFeriado(dataPagamento)) {
       dataPagamento = subDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
@@ -99,6 +102,43 @@ function calcularDataPrevisaoPagamento(data_venc: Date) {
   }
 
   return dataPagamento;
+}
+
+function formatarHistorico(descricao: string) {
+  if (!descricao) return descricao;
+  let iniciais = descricao.substring(0, 2).toUpperCase();
+  let cor = ''
+  switch (iniciais) {
+    case 'AP':
+      // APROVADO
+      cor = 'text-green-500'
+      break;
+    case 'NE':
+      // NEGADO
+      cor = 'text-red-500'
+      break;
+    case 'RE':
+      // RETORNADO PARA SOLICITADO
+      cor = ''
+      break;
+    case 'ED':
+      // EDITADO
+      cor = 'text-orange-500'
+      break;
+    case 'PA':
+      // PAGO
+      cor = 'text-blue-500'
+      break;
+    default:
+      break;
+  }
+  return <span className={`${cor}`}>{descricao?.split('\n').map((trecho,index)=>
+  <>
+    <span key={'trecho.'+index} className={`${trecho.includes('\t') ? 'ms-2': ''}`}>{trecho}</span>
+    <br/>
+  </>
+  )}
+  </span>
 }
 
 const FormTituloPagar = ({
@@ -110,6 +150,8 @@ const FormTituloPagar = ({
   data: TituloSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
+  const queryClient = useQueryClient()
+
   console.log(`RENDER ${++i} - Form, titulo:`, id);
   const modalEditing = useStoreTitulo().modalEditing;
   const editModal = useStoreTitulo().editModal;
@@ -156,12 +198,12 @@ const FormTituloPagar = ({
   const id_centro_custo = useWatch({ name: "id_centro_custo", control: form.control });
 
   // * [ DATA PREVISTA ]
-  const onChangeDataVencimento = (data_venc:Date)=>{
+  const onChangeDataVencimento = (data_venc: Date) => {
     console.log('DATA:', data_venc)
     // todo - procurar a próxima data de pagamento com base na data 
     // setar a data para o data_prevista
     const data_prevista = calcularDataPrevisaoPagamento(data_venc)
-    setValue('data_prevista', data_prevista)
+    setValue('data_prevista', data_prevista.toString())
 
   }
 
@@ -479,18 +521,14 @@ const FormTituloPagar = ({
     id_forma_pagamento === "8";
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
+  const { mutate: insertOne } = useTituloPagar().insertOne();
+  const { mutate: update } = useTituloPagar().update();
+
   const onSubmit = (data: TituloSchemaProps) => {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <ScrollArea className="h-[300px]">
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        </ScrollArea>
-      ),
-    });
-    editModal(false);
+    if (!id) insertOne(data);
+    if (id) update(data);
+
+    // editModal(false);
   };
 
   type changeStatusTituloProps = {
@@ -499,13 +537,9 @@ const FormTituloPagar = ({
   }
   const changeStatusTitulo = async ({ id_novo_status, motivo }: changeStatusTituloProps) => {
     try {
-      if (!motivo || motivo.length < 10) {
-        toast({
-          title: 'Erro!', description: 'Preencha o motivo corretamente!'
-        })
-        return;
-      }
       const result = await api.post(`financeiro/contas-a-pagar/titulo/change-status`, { id_titulo: id, id_novo_status, motivo })
+      queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
+      queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
     } catch (error: unknown) {
       // @ts-ignore;
       toast({ title: 'Erro!', description: error?.response?.data?.message || error?.message })
@@ -815,7 +849,7 @@ const FormTituloPagar = ({
                       />
 
                       <FormDateInput
-                        disabled={!isMaster}
+                        disabled={!isMaster || disabled}
                         name="data_prevista"
                         label="Previsão de Pagamento"
                         control={form.control}
@@ -1077,13 +1111,13 @@ const FormTituloPagar = ({
                         Histórico do título
                       </span>
                     </div>
-                    <div className="flex gap-3 flex-wrap items-end">
-                      {data?.historico?.map((h) => (
-                        <p key={`hist.${h.id}`}>
-                          {formatarDataHora(h.created_at)} - {h.text}
-                        </p>
-                      ))}
-                    </div>
+                      <div className="flex flex-col gap-3 overflow-auto max-h-72">
+                        {data?.historico?.map((h) => (
+                          <p key={`hist.${h.id}`} className="text-xs">
+                            {formatarDataHora(h.created_at)}: {formatarHistorico(h.descricao)}
+                          </p>
+                        ))}
+                      </div>
                   </div>
 
                   {/* Fim da primeira coluna */}
@@ -1150,7 +1184,7 @@ const FormTituloPagar = ({
           </ScrollArea>
           <div className="flex justify-between items-center mt-4">
             <div className="flex gap-3 items-center">
-              {id && status !== 'Solicitado' && status !== 'Pago' && (
+              {id && status !== 'Solicitado' && status !== 'Pago' && (isMaster === true && (status === 'Aprovado' || status === 'Negado') ? true : false) && (
                 <ButtonMotivation variant={'secondary'} size={'lg'} action={handleChangeVoltarSolicitado}>
                   <Undo2 className="me-2" size={18} />Tornar solicitado
                 </ButtonMotivation>

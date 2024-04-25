@@ -24,8 +24,8 @@ const ButtonMotivation = ({
     const [motivo, setMotivo] = useState<string>('');
     return (
         <AlertDialog>
-            <AlertDialogTrigger>
-                <Button variant={variant} size={size}>{children}</Button>
+            <AlertDialogTrigger type="button" asChild>
+                <Button type="button" variant={variant} size={size}>{children}</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>

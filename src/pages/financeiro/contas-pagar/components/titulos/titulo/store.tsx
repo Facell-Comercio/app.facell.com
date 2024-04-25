@@ -83,7 +83,7 @@ export interface Historico {
   id: string;
   id_titulo: string;
   created_at: string;
-  text: string;
+  descricao: string;
 }
 
 export const initialPropsTitulo: TituloPagar = {

@@ -4,10 +4,11 @@ import { z } from "zod";
 import { Historico, ItemRateioTitulo, ItemTitulo } from "./store";
 
 const schemaTitulo = z.object({
+  id: z.string().optional(),
   // IDs
   id_fornecedor: z.string(),
   id_filial: z.string(),
-  id_plano_conta: z.string(),
+  id_grupo_economico: z.string(),
   id_tipo_solicitacao: z.string(),
   id_forma_pagamento: z.string(),
   id_centro_custo: z.string(),
@@ -31,6 +32,8 @@ const schemaTitulo = z.object({
   // Outros
   data_emissao: z.coerce.date(),
   data_vencimento: z.coerce.date(),
+  data_prevista: z.coerce.date(),
+
   num_parcelas: z.string(),
   parcela: z.string(),
 
@@ -51,7 +54,7 @@ const schemaTitulo = z.object({
     
   // Rateio:
   id_rateio: z.string(),
-  rateio_manual: z.boolean(),
+  rateio_manual: z.coerce.boolean(),
   itens_rateio: z.array(
     z.object({
       id: z.string().optional(),

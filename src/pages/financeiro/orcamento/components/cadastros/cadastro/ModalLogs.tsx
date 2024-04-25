@@ -29,8 +29,6 @@ const ModalLogs = () => {
   const { data, isLoading } = useOrcamento().getLogs(id);
   const newData = data?.data.rows.map((data: LogsProps) => data);
 
-  console.log(newData);
-
   function handleClickCancel() {
     closeLogsModal();
   }

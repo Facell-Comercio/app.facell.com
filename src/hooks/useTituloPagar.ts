@@ -1,6 +1,8 @@
 
+import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/components/titulos/titulo/form-data";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface GetTitulosPagarProps {
     pagination?: {
@@ -11,6 +13,7 @@ export interface GetTitulosPagarProps {
 }
 
 export const useTituloPagar = () => {
+    const queryClient = useQueryClient();
 
     const getAll = ({ pagination, filters }: GetTitulosPagarProps) => useQuery({
         queryKey: ['fin_cp_titulos', pagination],
@@ -38,8 +41,42 @@ export const useTituloPagar = () => {
         },
     })
 
+    const insertOne = () => useMutation({
+        mutationFn: (data: TituloSchemaProps) => {
+            return api.post("/financeiro/contas-a-pagar/titulo", data).then((response) => response.data)
+        },
+        onSuccess() {
+            toast({title: 'Sucesso!', description: 'Usuário inserido com sucesso.'})
+            queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
+        },
+        onError(error) {
+            // @ts-ignore
+            toast({title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message})
+            console.log(error);
+        },
+    })
+
+    const update = () => useMutation({
+        mutationFn: ({ id, ...rest }: TituloSchemaProps) => {
+            return api.put("/financeiro/contas-a-pagar/titulo", { id, ...rest }).then((response) => response.data)
+        },
+        onSuccess() {
+            toast({title: 'Sucesso!', description: 'Usuário atualizado com sucesso.'})
+            queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
+            queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
+        },
+        onError(error) {
+            // @ts-ignore
+            toast({title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message})
+            console.log(error);
+        },
+    })
+
+
     return {
         getAll,
         getOne,
+        insertOne,
+        update,
     }
 }

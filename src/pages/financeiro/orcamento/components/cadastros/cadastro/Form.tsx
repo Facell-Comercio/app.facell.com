@@ -308,6 +308,15 @@ const FormCadastro = ({
   return (
     <div className="flex flex-col gap-4 max-w-full overflow-x-hidden p-2">
       <Form {...form}>
+        <ModalCentrosCustos
+          handleSelecion={handleSelectionCentroCustos}
+          // @ts-expect-error 'Ignore, vai funcionar..'
+          onOpenChange={setModalCentrosCustoOpen}
+          open={modalCentrosCustoOpen}
+          id_grupo_economico={id_grupo_economico}
+          closeOnSelection={true}
+        />
+
         <div className="flex justify-between text-lg font-medium">
           <span>
             {data.grupo_economico
@@ -361,32 +370,16 @@ const FormCadastro = ({
               Visualizar Alterações
             </Button>
           </div>
+
           {id_grupo_economico && modalEditing && (
             <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
               <Plus className="me-2" strokeWidth={2} />
-              Novo Item
+              Nova conta
             </Button>
           )}
         </div>
-        <div className="flex gap-3">
-          <Input
-            ref={searchRef}
-            type="search"
-            placeholder="Pesquisar..."
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                setFilter(searchRef.current?.value || "");
-              }
-            }}
-          />
-          <Button
-            className="dark:bg-purple-500"
-            onClick={() => setFilter(searchRef.current?.value || "")}
-          >
-            <Search className="me-2" />
-            Procurar
-          </Button>
-        </div>
+
+        {/* Seleção de grupo, mes e ano */}
         {!id && (
           <div className="flex gap-2">
             <FormSelectGrupoEconomico
@@ -422,12 +415,15 @@ const FormCadastro = ({
             </div>
           </div>
         )}
+
+
+
+
         <div
-          className={`flex gap-3 ${
-            !insertContaIsOpen
-              ? "opacity-0 transition-all -translate-x-1 duration-500 ease-in-out hidden"
-              : "opacity-100"
-          }`}
+          className={`flex gap-3 ${!insertContaIsOpen
+            ? "opacity-0 transition-all -translate-x-1 duration-500 ease-in-out hidden"
+            : "opacity-100"
+            }`}
         >
           <span
             className="flex-1"
@@ -438,15 +434,6 @@ const FormCadastro = ({
               defaultValue={newConta.centro_custo && newConta.centro_custo}
             />
           </span>
-          <ModalCentrosCustos
-            handleSelecion={handleSelectionCentroCustos}
-            // @ts-expect-error 'Ignore, vai funcionar..'
-            onOpenChange={setModalCentrosCustoOpen}
-            open={modalCentrosCustoOpen}
-            id_grupo_economico={id_grupo_economico}
-            closeOnSelection={true}
-          />
-
           <span
             className="flex-1"
             onClick={() => setModalPlanoContasOpen(true)}
@@ -480,12 +467,34 @@ const FormCadastro = ({
             Inserir
           </Button>
         </div>
+
+        {/* Pesquisar conta */}
+        <div className={`${!contas.length ? 'hidden' : 'flex'} gap-3`}>
+          <Input
+            ref={searchRef}
+            type="search"
+            placeholder="Pesquisar..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setFilter(searchRef.current?.value || "");
+              }
+            }}
+          />
+          <Button
+            variant={'tertiary'}
+            onClick={() => setFilter(searchRef.current?.value || "")}
+          >
+            <Search className="me-2" />
+            Pesquisar conta
+          </Button>
+        </div>
+
         <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
-          <div className="w-full flex flex-col gap-2">
+          <div className={`w-full flex flex-col gap-2 ${!contas.length && "hidden"
+                }`}>
+            {/* Inserção de nova conta */}
             <header
-              className={`flex gap-2 w-[98%] mx-auto pr-3 font-medium ${
-                !contas.length && "hidden"
-              }`}
+              className={`flex gap-2 w-[98%] mx-auto pr-3 font-medium`}
             >
               <span className={`flex-1 ${!modalEditing ? "pr-32" : "pr-6"}`}>
                 Centro de Custos
@@ -498,6 +507,7 @@ const FormCadastro = ({
               </span>
               <span className="w-1/12"></span>
             </header>
+
             <RowVirtualizerFixed
               data={filteredContas()}
               form={form}

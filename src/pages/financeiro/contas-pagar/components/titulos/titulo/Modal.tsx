@@ -48,19 +48,21 @@ const ModalTituloPagar = () => {
         titulo[propriedade] = titulo[propriedade].toString();
       }
     });
+  }
 
+  if (itens) {
     itens.forEach((objeto: any) => {
-      Object.keys(objeto).forEach((propriedade) => {
-        if (objeto[propriedade] === null) {
-          objeto[propriedade] = "";
-        } else if (typeof objeto[propriedade] === "number") {
-          objeto[propriedade] = objeto[propriedade].toString();
-        }
-      });
+    Object.keys(objeto).forEach((propriedade) => {
+      if (objeto[propriedade] === null) {
+        objeto[propriedade] = "";
+      } else if (typeof objeto[propriedade] === "number") {
+        objeto[propriedade] = objeto[propriedade].toString();
+      }
     });
-
-    console.log('itens_banco: ', itens)
-
+  });
+}
+  
+  if (itens_rateio) {
     itens_rateio.forEach((objeto: any) => {
       Object.keys(objeto).forEach((propriedade) => {
         if (objeto[propriedade] === null) {
@@ -70,7 +72,9 @@ const ModalTituloPagar = () => {
         }
       });
     });
+  }
 
+  if (historico) {
     historico.forEach((objeto: any) => {
       Object.keys(objeto).forEach((propriedade) => {
         if (objeto[propriedade] === null) {
@@ -81,13 +85,14 @@ const ModalTituloPagar = () => {
       });
     });
   }
-
-  function handleClickCancel() {
-    editModal(false);
-    // closeModal();
-  }
-
-  return (
+    
+    
+    function handleClickCancel() {
+      editModal(false);
+      // closeModal();
+    }
+    
+    return (
     <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent>
         <DialogHeader>
