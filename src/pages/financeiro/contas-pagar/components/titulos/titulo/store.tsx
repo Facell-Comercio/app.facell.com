@@ -61,8 +61,8 @@ export interface TituloPagar {
   id_tipo_conta:string;
   id_tipo_chave_pix:string;
   chave_pix:string;
-  
 
+  update_itens: boolean,
   itens: ItemTitulo[];
 
   update_rateio?: boolean;
@@ -83,7 +83,7 @@ export interface Historico {
   id: string;
   id_titulo: string;
   created_at: string;
-  text: string;
+  descricao: string;
 }
 
 export const initialPropsTitulo: TituloPagar = {
@@ -132,9 +132,9 @@ export const initialPropsTitulo: TituloPagar = {
   id_tipo_chave_pix: '',
   chave_pix: '',
   
-  
   // Itens
   itens: [],
+  update_itens: true,
 
   // rateio
   update_rateio: false,

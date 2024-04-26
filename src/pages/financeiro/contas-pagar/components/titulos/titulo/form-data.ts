@@ -4,13 +4,16 @@ import { z } from "zod";
 import { Historico, ItemRateioTitulo, ItemTitulo } from "./store";
 
 const schemaTitulo = z.object({
+  id: z.string().optional(),
   // IDs
   id_fornecedor: z.string(),
   id_filial: z.string(),
-  id_plano_conta: z.string(),
+  id_grupo_economico: z.string(),
   id_tipo_solicitacao: z.string(),
   id_forma_pagamento: z.string(),
-  id_centro_custo: z.string(),
+
+  centro_custo: z.string().optional(),
+  id_centro_custo: z.coerce.string(),
 
   // Fornecedor
   favorecido: z.string().optional(),
@@ -31,6 +34,8 @@ const schemaTitulo = z.object({
   // Outros
   data_emissao: z.coerce.date(),
   data_vencimento: z.coerce.date(),
+  data_prevista: z.coerce.date(),
+
   num_parcelas: z.string(),
   parcela: z.string(),
 
@@ -40,6 +45,7 @@ const schemaTitulo = z.object({
     .string()
     .min(10, { message: "Precisa conter mais que 10 caracteres" }),
 
+  update_itens: z.boolean(),
   itens: z.array(
     z.object({
       id: z.string().optional(),
@@ -51,12 +57,13 @@ const schemaTitulo = z.object({
     
   // Rateio:
   id_rateio: z.string(),
-  rateio_manual: z.boolean(),
+  update_rateio: z.boolean(),
+  rateio_manual: z.coerce.boolean(),
   itens_rateio: z.array(
     z.object({
       id: z.string().optional(),
       id_filial: z.string(),
-      percentual: z.string(),
+      percentual: z.string().transform(value=>parseFloat(value)/100),
     })
   ),
 
@@ -83,6 +90,7 @@ export interface TituloSchemaProps {
   id?: string;
   id_solicitante?: string;
 
+  update_itens: boolean;
   itens: ItemTitulo[];
 
   update_rateio: boolean;
