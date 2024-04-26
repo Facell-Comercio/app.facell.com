@@ -99,14 +99,13 @@ const ModalTitulos = ({
   };
   const [filters, setFilters] = useState(initialFilters);
 
-  const queryKey = id_matriz ? `titulos:${id_matriz}` : "titulos";
   const {
     data,
     isLoading,
     isError,
     refetch: refetchTitulos,
   } = useQuery({
-    queryKey: [queryKey],
+    queryKey: ["filtros", id_matriz],
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/titulo/titulos-bordero", {
         params: {
@@ -129,15 +128,6 @@ const ModalTitulos = ({
     return false;
   });
 
-  // async function handleSearch() {
-  //   await new Promise((resolve) => {
-  //     setSearch(searchRef.current?.value || "");
-  //     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  //     resolve(true);
-  //   });
-  //   refetchTitulos();
-  // }
-
   async function handleClickFilters() {
     await new Promise((resolve) => {
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
@@ -155,6 +145,32 @@ const ModalTitulos = ({
     refetchTitulos();
   }
 
+  function handleSelectAll() {
+    data?.data?.rows.forEach((item: TitulosProps) => {
+      const isAlreadyInTitulos = titulos.some(
+        (existingItem) => existingItem.id_titulo === item.id_titulo
+      );
+
+      if (!isAlreadyInTitulos) {
+        setTitulos((prevTitulos) => [
+          ...prevTitulos,
+          {
+            id_titulo: item.id_titulo,
+            filial: item.filial,
+            previsao: item.previsao,
+            nome_fornecedor: item.nome_fornecedor,
+            valor_total: item.valor_total,
+            num_doc: item.num_doc || "",
+            descricao: item.descricao,
+            data_pagamento: item.data_pagamento || "",
+          },
+        ]);
+
+        setIds((prevIds) => [...prevIds, item.id_titulo.toString()]);
+      }
+    });
+  }
+
   async function handlePaginationChange(index: number) {
     await new Promise((resolve) => {
       setPagination((prev) => ({ ...prev, pageIndex: index }));
@@ -165,7 +181,6 @@ const ModalTitulos = ({
   async function handlePaginationUp() {
     await new Promise((resolve) => {
       const newPage = ++pagination.pageIndex;
-      console.log(newPage);
       setPagination((prev) => ({ ...prev, pageIndex: newPage }));
       resolve(true);
     });
@@ -177,6 +192,16 @@ const ModalTitulos = ({
       setPagination((prev) => ({
         ...prev,
         pageIndex: newPage <= 0 ? 0 : newPage,
+      }));
+      resolve(true);
+    });
+    refetchTitulos();
+  }
+  async function handlePaginationSize(value: string) {
+    await new Promise((resolve) => {
+      setPagination((prev) => ({
+        ...prev,
+        pageSize: Number(value),
       }));
       resolve(true);
     });
@@ -218,22 +243,23 @@ const ModalTitulos = ({
           >
             <AccordionItem value="item-1" className="border-0">
               <AccordionTrigger className="py-0.5 hover:no-underline">
-                Filtros
+                <div className="flex gap-3 items-center">
+                  <span>Filtros</span>
+                  <Button size={"xs"} onClick={() => handleClickFilters()}>
+                    Filtrar <FilterIcon size={12} className="ms-2" />
+                  </Button>
+                  <Button
+                    size={"xs"}
+                    onClick={() => handleClickResetFilters()}
+                    variant="destructive"
+                  >
+                    Limpar <EraserIcon size={12} className="ms-2" />
+                  </Button>
+                </div>
               </AccordionTrigger>
-              <AccordionContent className="p-0">
+              <AccordionContent className="p-0 pt-3">
                 <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
                   <div className="flex w-max space-x-4">
-                    <Button size={"sm"} onClick={() => handleClickFilters()}>
-                      Filtrar <FilterIcon size={12} className="ms-2" />
-                    </Button>
-                    <Button
-                      size={"sm"}
-                      onClick={() => handleClickResetFilters()}
-                      variant="destructive"
-                    >
-                      Limpar <EraserIcon size={12} className="ms-2" />
-                    </Button>
-
                     <Input
                       placeholder="ID Título"
                       className="w-[20ch]"
@@ -306,6 +332,13 @@ const ModalTitulos = ({
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+          <Button
+            className="max-w-fit self-end"
+            variant={"outline"}
+            onClick={() => handleSelectAll()}
+          >
+            Selecionar Todos
+          </Button>
         </DialogHeader>
 
         <ScrollArea className="h-96 rounded-md">
@@ -356,6 +389,7 @@ const ModalTitulos = ({
                     <td className="text-center p-1">
                       <Button
                         size={"xs"}
+                        size={"xs"}
                         variant={"outline"}
                         className="p-1"
                         onClick={() => {
@@ -373,8 +407,43 @@ const ModalTitulos = ({
           </table>
         </ScrollArea>
 
+        <div className="flex items-center justify-between text-sm">
+          <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
+            <p className="mr-1">Qtd. Títulos: </p>
+            {data?.data.rows.length}
+          </span>
+          <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
+            <p className="mr-1">Valor Total: </p>
+            {normalizeCurrency(
+              data?.data.rows.reduce(
+                (acc: number, titulo: TitulosProps) =>
+                  acc + +titulo.valor_total,
+                0
+              ) || 0
+            )}
+          </span>
+        </div>
         <DialogFooter className="flex">
-          <Pagination className="items-cente">
+          <div className="flex items-center space-x-2">
+            <Select
+              value={`${pagination.pageSize}`}
+              onValueChange={handlePaginationSize}
+            >
+              <SelectTrigger className="h-8 w-[80px]">
+                <SelectValue placeholder={pagination.pageSize} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-sm font-medium min-w-fit">Linhas por página</p>
+          </div>
+
+          <Pagination className="items-center">
             <PaginationContent>
               <PaginationItem>
                 <Button

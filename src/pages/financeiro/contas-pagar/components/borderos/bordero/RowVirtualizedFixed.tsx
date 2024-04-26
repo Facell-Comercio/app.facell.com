@@ -69,6 +69,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
             }}
           >
             <Checkbox
+              disabled={!(data[item.index].id_status == "3")}
               checked={form.watch(`titulos.${item.index}.checked`)}
               onCheckedChange={(e) => {
                 form.setValue(`titulos.${item.index}.checked`, e.valueOf());
@@ -82,7 +83,10 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
             />
             <Input
               className="w-24 h-9 p-2 text-center"
-              value={normalizeDate(data[item.index].previsao || "")}
+              value={
+                data[item.index].previsao &&
+                normalizeDate(data[item.index].previsao || "")
+              }
               readOnly={true}
             />
             <Input
@@ -97,7 +101,10 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
             />
             <Input
               className="w-32 h-9 p-2 text-end"
-              value={normalizeCurrency(data[item.index].valor_total)}
+              value={
+                data[item.index].valor_total &&
+                normalizeCurrency(data[item.index].valor_total)
+              }
               readOnly={true}
             />
             <Input
@@ -122,7 +129,12 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
               }
             >
               {modalEditing ? (
-                <Button type="button" className="h-9" variant={"destructive"}>
+                <Button
+                  disabled={!(data[item.index].id_status == "3")}
+                  type="button"
+                  className="h-9"
+                  variant={"destructive"}
+                >
                   <Trash size={20} />
                 </Button>
               ) : (

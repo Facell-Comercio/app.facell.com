@@ -7,6 +7,11 @@ import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
+type TransferDataProps = {
+    id_titulo: string,
+    id_status?: string
+  }
+
 export const useBordero = () => {
     const queryClient = useQueryClient()
     return ({
@@ -32,12 +37,14 @@ export const useBordero = () => {
                 return api.post("/financeiro/contas-a-pagar/bordero", data).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Novo Borderô Criado", duration: 3500})
+                toast({title: "Sucesso", description: "Novo borderô criado", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
-            onError(error) {
-                toast({title: "Error", description: error.message, duration: 3500})
-                console.log(error);
+            onError(error: AxiosError) {
+                // @ts-expect-error "Vai funcionar"
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                console.log(errorMessage);
             },
         }),
 
@@ -47,27 +54,31 @@ export const useBordero = () => {
                 return api.put("/financeiro/contas-a-pagar/bordero/", {id, ...rest}).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
+                toast({title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
-            onError(error) {
-                toast({title: "Error", description: error.message, duration: 3500})
-                console.log(error);
+            onError(error: AxiosError) {
+                // @ts-expect-error "Vai funcionar"
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                console.log(errorMessage);
             }
         }),
 
         transferTitulos : () => useMutation({
-            mutationFn: (data:{new_id: string, titulos: string[]}) => {
+            mutationFn: (data:{id_conta_bancaria: string, date: Date, titulos: TransferDataProps[]}) => {
                 console.log(`Realizando tranferência de títulos`)            
                 return api.put("financeiro/contas-a-pagar/bordero/transfer", data).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Tranferencia Realizada", duration: 3500})
+                toast({title: "Sucesso", description: "Transferência realizada com sucesso", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
-            onError(error) {
-                toast({title: "Error", description: error.message, duration: 3500})
-                console.log(error);
+            onError(error: AxiosError) {
+                // @ts-expect-error "Vai funcionar"
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                console.log(errorMessage);
             },
         }),
             
@@ -77,11 +88,14 @@ export const useBordero = () => {
                 return api.delete(`/financeiro/contas-a-pagar/bordero/titulo/${id}`).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
+                queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
+                toast({title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
             },
-            onError(error) {
-                toast({title: "Error", description: error.message, duration: 3500})
-                console.log(error);
+            onError(error: AxiosError) {
+                // @ts-expect-error "Vai funcionar"
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                console.log(errorMessage);
             },
         }),
 
@@ -97,8 +111,8 @@ export const useBordero = () => {
             },
             onError(error: AxiosError) {
                 // @ts-expect-error "Vai funcionar"
-                const errorMessage = error.response?.data.message
-                toast({title: "Erro", description:errorMessage, duration: 3500})
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
                 console.log(errorMessage);
             },
         }),

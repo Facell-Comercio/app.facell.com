@@ -117,6 +117,7 @@ const FormCadastro = ({
         plano_contas: item.plano_contas,
         id_conta: item.id_conta,
         saldo: item.saldo,
+        realizado: item.realizado,
         valor_inicial: item.valor_inicial,
       })
     );
@@ -370,7 +371,6 @@ const FormCadastro = ({
               Visualizar Alterações
             </Button>
           </div>
-
         </div>
 
         {/* Seleção de grupo, mes e ano */}
@@ -411,7 +411,7 @@ const FormCadastro = ({
         )}
 
         <div className="flex justify-end">
-        {id_grupo_economico && modalEditing && (
+          {id_grupo_economico && modalEditing && (
             <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
               <Plus className="me-2" strokeWidth={2} />
               Nova conta
@@ -419,10 +419,11 @@ const FormCadastro = ({
           )}
         </div>
         <div
-          className={`flex gap-3 ${!insertContaIsOpen
-            ? "opacity-0 transition-all -translate-x-1 duration-500 ease-in-out hidden"
-            : "opacity-100"
-            }`}
+          className={`flex gap-3 ${
+            !insertContaIsOpen
+              ? "opacity-0 transition-all -translate-x-1 duration-500 ease-in-out hidden"
+              : "opacity-100"
+          }`}
         >
           <span
             className="flex-1"
@@ -468,7 +469,7 @@ const FormCadastro = ({
         </div>
 
         {/* Pesquisar conta */}
-        <div className={`${!contas.length ? 'hidden' : 'flex'} gap-3`}>
+        <div className={`${!contas.length ? "hidden" : "flex"} gap-3`}>
           <Input
             ref={searchRef}
             type="search"
@@ -480,7 +481,7 @@ const FormCadastro = ({
             }}
           />
           <Button
-            variant={'tertiary'}
+            variant={"tertiary"}
             onClick={() => setFilter(searchRef.current?.value || "")}
           >
             <Search className="me-2" />
@@ -489,12 +490,13 @@ const FormCadastro = ({
         </div>
 
         <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
-          <div className={`w-full flex flex-col gap-2 ${!contas.length && "hidden"
-                }`}>
+          <div
+            className={`w-full flex flex-col gap-2 ${
+              !contas.length && "hidden"
+            }`}
+          >
             {/* Inserção de nova conta */}
-            <header
-              className={`flex gap-2 w-[98%] mx-auto pr-3 font-medium`}
-            >
+            <header className={`flex gap-2 w-[98%] mx-auto pr-3 font-medium`}>
               <span className={`flex-1 ${!modalEditing ? "pr-32" : "pr-6"}`}>
                 Centro de Custos
               </span>

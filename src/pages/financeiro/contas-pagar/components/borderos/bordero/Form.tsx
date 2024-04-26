@@ -1,6 +1,6 @@
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormDateInput from "@/components/custom/FormDate";
 import { Input } from "@/components/custom/FormInput";
-import SelectContaBancaria from "@/components/custom/SelectContaBancaria";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form } from "@/components/ui/form";
@@ -9,12 +9,23 @@ import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeCurrency } from "@/helpers/mask";
 import { useBordero } from "@/hooks/useBordero";
 import { api } from "@/lib/axios";
+import ModalContasBancarias, {
+  ItemContaBancariaProps,
+} from "@/pages/financeiro/components/ModalContasBancarias";
 import ModalTitulos, {
   TitulosProps,
 } from "@/pages/financeiro/components/ModalTitulos";
-import { Download, Fingerprint, List, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  ArrowUpDown,
+  Download,
+  Fingerprint,
+  List,
+  Minus,
+  Plus,
+} from "lucide-react";
+import { useState } from "react";
 import { BorderoSchemaProps } from "./Modal";
+import ModalTransfer from "./ModalTransfer";
 import RowVirtualizerFixed from "./RowVirtualizedFixed";
 import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
@@ -32,27 +43,24 @@ const FormBordero = ({
   const { mutate: insertOne } = useBordero().insertOne();
   const { mutate: update } = useBordero().update();
   const { mutate: deleteTitulo } = useBordero().deleteTitulo();
+  // const { mutate: transferTitulos } = useBordero().transferTitulos();
 
   const modalEditing = useStoreBordero().modalEditing;
   const editModal = useStoreBordero().editModal;
   const closeModal = useStoreBordero().closeModal;
-  const setCheckedTitulos = useStoreBordero().setCheckedTitulos;
-  const getTitulo = useStoreBordero().getTitulo;
+  const toggleModalTransfer = useStoreBordero().toggleModalTransfer;
 
   const [modalTituloOpen, setModalTituloOpen] = useState<boolean>(false);
+  const [modalContaBancariaOpen, setModalContaBancariaOpen] =
+    useState<boolean>(false);
   const { form, titulos, addTitulo, removeTitulo } = useFormBorderoData(data);
 
   const id_conta_bancaria = form.watch("id_conta_bancaria");
   const id_matriz = form.watch("id_matriz");
 
-  const titulosChecked = form.watch("titulos");
-  useEffect(() => {
-    setCheckedTitulos(
-      titulosChecked
-        .filter((titulo) => titulo.checked)
-        .map((titulo) => titulo.id_titulo)
-    );
-  }, [getTitulo]);
+  const titulosChecked = form
+    .watch("titulos")
+    .filter((titulo) => titulo.checked);
 
   function onSubmitData(newData: BorderoSchemaProps) {
     const filteredData: BorderoSchemaProps = {
@@ -66,6 +74,8 @@ const FormBordero = ({
       ),
     };
 
+    console.log(filteredData);
+
     if (!id) insertOne(newData);
     if (id) update(filteredData);
 
@@ -78,23 +88,25 @@ const FormBordero = ({
     setModalTituloOpen(false);
   }
 
-  async function handleChangeContaBancaria(novo_id_conta: string) {
-    const response = await api.get(
-      `financeiro/contas-bancarias/${novo_id_conta}`
-    );
-
-    console.log(response.data);
-    form.setValue("banco", response.data.banco);
-
+  function handleSelectionContaBancaria(item: ItemContaBancariaProps) {
+    form.setValue("id_conta_bancaria", item.id);
+    form.setValue("conta_bancaria", item.descricao);
+    form.setValue("banco", item.banco);
     if (!data.id_matriz && !id_matriz) {
-      form.setValue("id_matriz", response.data.id_matriz);
+      form.setValue("id_matriz", item.id_matriz);
     }
+
+    setModalContaBancariaOpen(false);
   }
 
-  function removeItemTitulos(index: number, id?: string, status?: string) {
+  async function removeItemTitulos(
+    index?: number,
+    id?: string,
+    status?: string
+  ) {
     if (status != "4") {
       deleteTitulo(id);
-      removeTitulo(index);
+      removeTitulo(index && titulos.findIndex((item) => item.id_titulo == id));
     } else {
       toast({
         title: "Erro",
@@ -103,6 +115,20 @@ const FormBordero = ({
         duration: 3500,
       });
     }
+  }
+
+  function removeCheckedTitulos(checkedTitulos: TitulosProps[]) {
+    checkedTitulos.forEach((titulo_checked: TitulosProps) => {
+      console.log(
+        titulos.findIndex((item) => item.id_titulo == titulo_checked.id_titulo)
+      );
+
+      removeItemTitulos(
+        undefined,
+        titulo_checked.id_titulo,
+        titulo_checked.id_status
+      );
+    });
   }
 
   async function exportBordero(id: string) {
@@ -141,13 +167,25 @@ const FormBordero = ({
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                  <SelectContaBancaria
-                    disabled={!modalEditing}
-                    name="id_conta_bancaria"
-                    control={form.control}
-                    label="Conta Bancaria"
-                    id_matriz={form.watch("id_matriz") || ""}
-                    onChange={(e) => handleChangeContaBancaria(e || "")}
+                  <div className="flex flex-col justify-end flex-1">
+                    <label className="text-sm font-medium">
+                      Conta Bancária
+                    </label>
+                    <Input
+                      value={form.watch("conta_bancaria")?.toUpperCase()}
+                      className="flex-1 max-h-10 mt-2"
+                      readOnly
+                      disabled={!modalEditing}
+                      onClick={() => setModalContaBancariaOpen(true)}
+                    />
+                  </div>
+                  <ModalContasBancarias
+                    open={modalEditing && modalContaBancariaOpen}
+                    handleSelecion={handleSelectionContaBancaria}
+                    onOpenChange={() =>
+                      setModalContaBancariaOpen((prev) => !prev)
+                    }
+                    id_matriz={id_matriz || ""}
                   />
                   <div className="flex flex-col justify-end flex-1">
                     <label className="text-sm font-medium">Banco</label>
@@ -172,21 +210,52 @@ const FormBordero = ({
                   <span className="flex gap-2 items-center">
                     <List /> <span className="text-lg font-bold ">Títulos</span>
                   </span>
-                  {id_conta_bancaria && modalEditing && (
-                    <Button
-                      type="button"
-                      onClick={() => setModalTituloOpen(true)}
-                    >
-                      <Plus className="me-2" strokeWidth={2} />
-                      Novo Título
-                    </Button>
-                  )}
-                  <ModalTitulos
-                    open={modalEditing && modalTituloOpen}
-                    handleSelecion={handleSelectionTitulo}
-                    onOpenChange={() => setModalTituloOpen((prev) => !prev)}
-                    id_matriz={id_matriz || ""}
-                  />
+                  <div className="flex gap-2">
+                    {id_conta_bancaria &&
+                      modalEditing &&
+                      titulosChecked.length > 0 && (
+                        <>
+                          <Button
+                            type={"button"}
+                            variant={"tertiary"}
+                            className="text-white justify-self-start"
+                            onClick={() => toggleModalTransfer()}
+                          >
+                            <ArrowUpDown className="me-2" />
+                            Transferir Títulos
+                          </Button>
+                          <AlertPopUp
+                            title="Deseja realmente remover esses títulos?"
+                            description="Os títulos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
+                            action={() => removeCheckedTitulos(titulosChecked)}
+                          >
+                            <Button
+                              type={"button"}
+                              variant={"destructive"}
+                              className="justify-self-start"
+                            >
+                              <Minus className="me-2" />
+                              Remover Títulos
+                            </Button>
+                          </AlertPopUp>
+                        </>
+                      )}
+                    {id_conta_bancaria && modalEditing && (
+                      <Button
+                        type="button"
+                        onClick={() => setModalTituloOpen(true)}
+                      >
+                        <Plus className="me-2" strokeWidth={2} />
+                        Novo Título
+                      </Button>
+                    )}
+                    <ModalTitulos
+                      open={modalEditing && modalTituloOpen}
+                      handleSelecion={handleSelectionTitulo}
+                      onOpenChange={() => setModalTituloOpen((prev) => !prev)}
+                      id_matriz={id_matriz || ""}
+                    />
+                  </div>
                 </div>
                 {id_conta_bancaria && (
                   <>
@@ -196,10 +265,12 @@ const FormBordero = ({
                           className="flex-1 max-w-[16px] me-1"
                           onCheckedChange={(e) => {
                             titulos.forEach((item, index) => {
+                              // if (item.id_status == "3") {
                               form.setValue(
                                 `titulos.${index}.checked`,
                                 !!e.valueOf()
                               );
+                              // }
                             });
                           }}
                         />
@@ -216,26 +287,28 @@ const FormBordero = ({
                       </header>
                     )}
                     <div className="flex gap-3 flex-wrap">
-                      <RowVirtualizerFixed
-                        data={titulos}
-                        form={form}
-                        modalEditing={modalEditing}
-                        removeItem={removeItemTitulos}
-                      />
+                      {titulos?.length > 0 && (
+                        <RowVirtualizerFixed
+                          data={titulos}
+                          form={form}
+                          modalEditing={modalEditing}
+                          removeItem={removeItemTitulos}
+                        />
+                      )}
                     </div>
                     <div className="flex items-center justify-between pt-2 text-sm">
-                      <span className="flex rounded-full bg-slate-500 px-2 py-1">
+                      <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
                         <p className="mr-1">Qtd. Títulos: </p>
                         {titulos.length}
                       </span>
-                      <span className="flex rounded-full bg-slate-500 px-2 py-1">
+                      <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
                         <p className="mr-1">Valor Total: </p>
                         {normalizeCurrency(
                           titulos.reduce(
                             (acc, item: TitulosProps) =>
                               acc + +item.valor_total,
                             0
-                          )
+                          ) || 0
                         )}
                       </span>
                     </div>
@@ -245,6 +318,7 @@ const FormBordero = ({
             </div>
           </div>
         </form>
+        <ModalTransfer data={titulosChecked} id_matriz={id_matriz || ""} />
       </Form>
     </div>
   );

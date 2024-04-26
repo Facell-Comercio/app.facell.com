@@ -51,7 +51,7 @@ const ModalBancos = ({ open, handleSelecion, onOpenChange }: IModalBancos) => {
     isError,
     refetch: refetchBancos,
   } = useQuery({
-    queryKey: ["fin_bancos", search],
+    queryKey: ["fin_bancos"],
     queryFn: async () =>
       await api.get("financeiro/bancos", {
         params: { filters: { termo: search }, pagination },

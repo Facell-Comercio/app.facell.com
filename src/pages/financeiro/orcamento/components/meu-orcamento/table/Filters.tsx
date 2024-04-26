@@ -33,18 +33,23 @@ const FilterMeuOrcamento = ({ refetch }: { refetch: () => void }) => {
     >
       <AccordionItem value="item-1" className="border-0">
         <AccordionTrigger className="py-1 hover:no-underline">
-          Filtros
+          <div className="flex gap-3 items-center">
+            <span>Filtros</span>
+            <Button size={"xs"} onClick={handleClickFilter}>
+              Filtrar <FilterIcon size={12} className="ms-2" />
+            </Button>
+            <Button
+              size={"xs"}
+              onClick={handleResetFilter}
+              variant="destructive"
+            >
+              Limpar <EraserIcon size={12} className="ms-2" />
+            </Button>
+          </div>
         </AccordionTrigger>
-        <AccordionContent className="p-0">
+        <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
             <div className="flex items-end w-max space-x-4 pb-1">
-              <Button onClick={handleClickFilter}>
-                Filtrar <FilterIcon size={12} className="ms-2" />
-              </Button>
-              <Button onClick={handleResetFilter} variant="destructive">
-                Limpar <EraserIcon size={12} className="ms-2" />
-              </Button>
-
               <div>
                 <label className="text-sm font-medium">Mês</label>
                 <SelectMes

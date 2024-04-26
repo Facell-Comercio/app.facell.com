@@ -12,13 +12,9 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "@/components/ui/use-toast";
 import { useBordero } from "@/hooks/useBordero";
-import ModalBorderos, {
-  BorderoProps,
-} from "@/pages/financeiro/components/ModalBorderos";
 import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
-import { ArrowUpDown, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import { useRef } from "react";
 import FormBordero from "./Form";
 import { useStoreBordero } from "./store";
@@ -45,17 +41,11 @@ const initialPropsBordero: BorderoSchemaProps = {
 
 const ModalBordero = () => {
   const modalOpen = useStoreBordero().modalOpen;
-  const modalBorderosOpen = useStoreBordero().modalBorderosOpen;
 
   const toggleModal = useStoreBordero().toggleModal;
-  const toggleModalBorderos = useStoreBordero().toggleModalBorderos;
-  const toggleGetTitulo = useStoreBordero().toggleGetTitulo;
-
-  const { mutate: transferTitulos } = useBordero().transferTitulos();
 
   const editModal = useStoreBordero().editModal;
   const modalEditing = useStoreBordero().modalEditing;
-  const checkedTitulos = useStoreBordero().checkedTitulos;
   const id = useStoreBordero().id;
   const formRef = useRef(null);
 
@@ -74,6 +64,7 @@ const ModalBordero = () => {
     }
   }
 
+  // ^ Observar se não ocorrerá nenhum erro com essa "gambiarra"
   if (newData.titulos && newData.titulos.length > 0) {
     const newTitulos = newData.titulos.map((titulo: TitulosProps) => {
       return {
@@ -89,30 +80,33 @@ const ModalBordero = () => {
         id_status: titulo.id_status || "",
       };
     });
-    newData.titulos = newTitulos;
-  }
 
-  console.log(newData);
-
-  function handleSelectionBorderos(item: BorderoProps) {
-    if (checkedTitulos.length) {
-      const transferredData = {
-        new_id: item.id,
-        titulos: checkedTitulos,
-      };
-      transferTitulos(transferredData);
-      toggleModal();
+    if (newTitulos[0].id_titulo) {
+      newData.titulos = newTitulos;
     } else {
-      toast({
-        title: "Nenhum título foi selecionado",
-        duration: 3000,
-        description:
-          "Para realizar a tranferência de títulos é necessário selecionar alguns",
-      });
+      newData.titulos = [];
     }
-    // toggleGetTitulo(false);
-    toggleModalBorderos();
   }
+
+  // function handleSelectionBorderos(item: BorderoProps) {
+  //   if (checkedTitulos.length) {
+  //     const transferredData = {
+  //       new_id: item.id,
+  //       titulos: checkedTitulos,
+  //     };
+  //     transferTitulos(transferredData);
+  //     toggleModal();
+  //   } else {
+  //     toast({
+  //       title: "Nenhum título foi selecionado",
+  //       duration: 3000,
+  //       description:
+  //         "Para realizar a tranferência de títulos é necessário selecionar alguns",
+  //     });
+  //   }
+  //   // toggleGetTitulo(false);
+  //   toggleModalBorderos();
+  // }
 
   function handleClickCancel() {
     editModal(false);
@@ -163,7 +157,7 @@ const ModalBordero = () => {
                   type={"button"}
                   size="lg"
                   variant={"destructive"}
-                  className={`dark:text-white justify-self-start ${
+                  className={`text-white justify-self-start ${
                     !modalEditing && "hidden"
                   }`}
                 >
@@ -171,36 +165,8 @@ const ModalBordero = () => {
                   Excluir Borderô
                 </Button>
               </AlertPopUp>
-
-              <AlertPopUp
-                title={
-                  "Deseja realmente realizar essa tranferência de titulos?"
-                }
-                description="Os títulos desse borderô serão transferidos para o outro borderô."
-                action={() => {
-                  toggleGetTitulo();
-                  toggleModalBorderos();
-                }}
-              >
-                <Button
-                  type={"button"}
-                  size="lg"
-                  variant={"tertiary"}
-                  className="dark:text-white justify-self-start"
-                >
-                  <ArrowUpDown className="me-2" />
-                  Transferir Títulos
-                </Button>
-              </AlertPopUp>
             </div>
           </ModalButtons>
-          <ModalBorderos
-            open={modalBorderosOpen}
-            handleSelecion={handleSelectionBorderos}
-            onOpenChange={toggleModalBorderos}
-            id_matriz={newData.id_matriz || ""}
-            id_bordero={id || ""}
-          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

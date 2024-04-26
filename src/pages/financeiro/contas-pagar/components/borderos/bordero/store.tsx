@@ -4,26 +4,23 @@ interface UseStoreBordero {
   id?: string | null;
   modalEditing: boolean;
   modalOpen: boolean;
-  modalBorderosOpen: boolean;
-  checkedTitulos: string[];
-  getTitulo: boolean;
+  modalTransferOpen: boolean;
+  modalContasBancariasOpen: boolean;
 
   openModal: (id: string) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
   toggleModal: () => void;
-  toggleModalBorderos: () => void;
-  toggleGetTitulo: () => void;
-  setCheckedTitulos: (array: string[]) => void;
+  toggleModalContasBancarias: () => void;
+  toggleModalTransfer: () => void;
 }
 
 export const useStoreBordero = create<UseStoreBordero>((set) => ({
   id: null,
   modalEditing: false,
   modalOpen: false,
-  modalBorderosOpen: false,
-  checkedTitulos: [],
-  getTitulo: false,
+  modalTransferOpen: false,
+  modalContasBancariasOpen: false,
 
   openModal: (id: string) => set({ modalOpen: true, id }),
   closeModal: () => set({ modalOpen: false }),
@@ -33,13 +30,12 @@ export const useStoreBordero = create<UseStoreBordero>((set) => ({
       modalOpen: !state.modalOpen,
       modalEditing: false,
     })),
-  toggleModalBorderos: () =>
+  toggleModalContasBancarias: () =>
     set((state) => ({
-      modalBorderosOpen: !state.modalBorderosOpen,
+      modalContasBancariasOpen: !state.modalContasBancariasOpen,
     })),
-  toggleGetTitulo: () =>
+  toggleModalTransfer: () =>
     set((state) => ({
-      getTitulo: !state.getTitulo,
+      modalTransferOpen: !state.modalTransferOpen,
     })),
-  setCheckedTitulos: (array: string[]) => set({ checkedTitulos: array }),
 }));
