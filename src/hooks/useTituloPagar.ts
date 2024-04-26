@@ -51,7 +51,7 @@ export const useTituloPagar = () => {
         },
         onError(error) {
             // @ts-ignore
-            toast({title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message})
+            toast({variant: "destructive", title: 'Erro ao tentar criar a solicitação!', description: error?.response?.data?.message || error.message})
             console.log(error);
         },
     })
@@ -61,7 +61,7 @@ export const useTituloPagar = () => {
             return api.put("/financeiro/contas-a-pagar/titulo", { id, ...rest }).then((response) => response.data)
         },
         onSuccess() {
-            toast({title: 'Sucesso!', description: 'Usuário atualizado com sucesso.'})
+            toast({title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!'})
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
         },
