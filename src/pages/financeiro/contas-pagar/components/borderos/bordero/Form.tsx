@@ -265,12 +265,12 @@ const FormBordero = ({
                           className="flex-1 max-w-[16px] me-1"
                           onCheckedChange={(e) => {
                             titulos.forEach((item, index) => {
-                              if (item.id_status == "3") {
-                                form.setValue(
-                                  `titulos.${index}.checked`,
-                                  !!e.valueOf()
-                                );
-                              }
+                              // if (item.id_status == "3") {
+                              form.setValue(
+                                `titulos.${index}.checked`,
+                                !!e.valueOf()
+                              );
+                              // }
                             });
                           }}
                         />

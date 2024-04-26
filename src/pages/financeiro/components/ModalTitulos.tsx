@@ -243,22 +243,23 @@ const ModalTitulos = ({
           >
             <AccordionItem value="item-1" className="border-0">
               <AccordionTrigger className="py-0.5 hover:no-underline">
-                Filtros
+                <div className="flex gap-3 items-center">
+                  <span>Filtros</span>
+                  <Button size={"xs"} onClick={() => handleClickFilters()}>
+                    Filtrar <FilterIcon size={12} className="ms-2" />
+                  </Button>
+                  <Button
+                    size={"xs"}
+                    onClick={() => handleClickResetFilters()}
+                    variant="destructive"
+                  >
+                    Limpar <EraserIcon size={12} className="ms-2" />
+                  </Button>
+                </div>
               </AccordionTrigger>
-              <AccordionContent className="p-0">
+              <AccordionContent className="p-0 pt-3">
                 <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
                   <div className="flex w-max space-x-4">
-                    <Button size={"sm"} onClick={() => handleClickFilters()}>
-                      Filtrar <FilterIcon size={12} className="ms-2" />
-                    </Button>
-                    <Button
-                      size={"sm"}
-                      onClick={() => handleClickResetFilters()}
-                      variant="destructive"
-                    >
-                      Limpar <EraserIcon size={12} className="ms-2" />
-                    </Button>
-
                     <Input
                       placeholder="ID Título"
                       className="w-[20ch]"
@@ -387,7 +388,7 @@ const ModalTitulos = ({
                     <td className="text-xs p-1">{item.filial}</td>
                     <td className="text-center p-1">
                       <Button
-                        size={"actionCell"}
+                        size={"xs"}
                         variant={"outline"}
                         className="p-1"
                         onClick={() => {

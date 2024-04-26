@@ -40,9 +40,11 @@ export const useBordero = () => {
                 toast({title: "Sucesso", description: "Novo borderô criado", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
-            onError(error) {
-                toast({title: "Error", description: error.message, duration: 3500})
-                console.log(error);
+            onError(error: AxiosError) {
+                // @ts-expect-error "Vai funcionar"
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                console.log(errorMessage);
             },
         }),
 
@@ -55,9 +57,11 @@ export const useBordero = () => {
                 toast({title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
-            onError(error) {
-                toast({title: "Error", description: error.message, duration: 3500})
-                console.log(error);
+            onError(error: AxiosError) {
+                // @ts-expect-error "Vai funcionar"
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                console.log(errorMessage);
             }
         }),
 
@@ -70,10 +74,10 @@ export const useBordero = () => {
                 toast({title: "Sucesso", description: "Transferência realizada com sucesso", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
-            onError(error: AxiosError){
+            onError(error: AxiosError) {
                 // @ts-expect-error "Vai funcionar"
-                const errorMessage = error.response?.data.message
-                toast({title: "Erro", description:errorMessage, duration: 3500})
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
                 console.log(errorMessage);
             },
         }),
@@ -87,9 +91,11 @@ export const useBordero = () => {
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
                 toast({title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
             },
-            onError(error) {
-                toast({title: "Error", description: error.message, duration: 3500})
-                console.log(error);
+            onError(error: AxiosError) {
+                // @ts-expect-error "Vai funcionar"
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                console.log(errorMessage);
             },
         }),
 
@@ -105,8 +111,8 @@ export const useBordero = () => {
             },
             onError(error: AxiosError) {
                 // @ts-expect-error "Vai funcionar"
-                const errorMessage = error.response?.data.message
-                toast({title: "Erro", description:errorMessage, duration: 3500})
+                const errorMessage = error.response?.data.message||error.message
+                toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
                 console.log(errorMessage);
             },
         }),

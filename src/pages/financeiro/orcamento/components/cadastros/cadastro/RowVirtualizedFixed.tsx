@@ -12,6 +12,7 @@ export interface itemContaProps {
   centro_custo?: string;
   id_conta?: string;
   saldo?: string;
+  realizado?: string;
   valor_inicial?: string;
 }
 interface RowVirtualizerFixedProps {
@@ -58,13 +59,9 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
       >
         {virtualizer.getVirtualItems().map((item, index) => {
           let minValue = 0;
-          if (
-            data[item.index]?.saldo !== undefined &&
-            data[item.index]?.valor_inicial !== undefined
-          ) {
-            minValue =
-              Number(data[item.index].valor_inicial) -
-              Number(data[item.index].saldo);
+
+          if (data[item.index]?.realizado !== undefined) {
+            minValue = Number(data[item.index].realizado);
           }
 
           return (

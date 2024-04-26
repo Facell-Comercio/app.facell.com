@@ -117,6 +117,7 @@ const FormCadastro = ({
         plano_contas: item.plano_contas,
         id_conta: item.id_conta,
         saldo: item.saldo,
+        realizado: item.realizado,
         valor_inicial: item.valor_inicial,
       })
     );

@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 type InputDateProps = {
   disabled?: boolean;
@@ -22,8 +23,11 @@ export function InputDate({
   onChange,
   className,
 }: InputDateProps) {
+  const [date, setDate] = useState<Date>(new Date());
+  const [open, setOpen] = useState(false);
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -40,8 +44,16 @@ export function InputDate({
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={value}
-          onSelect={(e) => onChange(e || new Date())}
+          selected={date}
+          onSelect={(e) => {
+            setDate(e || new Date());
+            setOpen(false);
+          }}
+          onDayClick={(e) => {
+            setDate(e || new Date());
+            onChange(e || new Date());
+            setOpen(false);
+          }}
           initialFocus
         />
       </PopoverContent>

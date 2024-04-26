@@ -37,9 +37,11 @@ export const useOrcamento = () => {
                     toast({title: "Sucesso", description: "Novo Orçamento Criado", duration: 3500})
                     queryClient.invalidateQueries({queryKey:['fin_orcamento']}) 
                 },
-                onError(error) {
-                    toast({title: "Error", description: error.message, duration: 3500})
-                    console.log(error);
+                onError(error: AxiosError) {
+                    // @ts-expect-error "Vai funcionar"
+                    const errorMessage = error.response?.data.message||error.message
+                    toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                    console.log(errorMessage);
                 },
             }),
 
@@ -52,9 +54,11 @@ export const useOrcamento = () => {
                     toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
                     queryClient.invalidateQueries({queryKey:['fin_orcamento']}) 
                 },
-                onError(error) {
-                    toast({title: "Error", description: error.message, duration: 3500})
-                    console.log(error);
+                onError(error: AxiosError) {
+                    // @ts-expect-error "Vai funcionar"
+                    const errorMessage = error.response?.data.message||error.message
+                    toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                    console.log(errorMessage);
                 },
             }),
 
@@ -68,8 +72,8 @@ export const useOrcamento = () => {
                 },
                 onError(error: AxiosError) {
                     // @ts-expect-error "Vai funcionar"
-                    const errorMessage = error.response?.data.message
-                    toast({title: "Erro", description:errorMessage, duration: 3500})
+                    const errorMessage = error.response?.data.message||error.message
+                    toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
                     console.log(errorMessage);
                 },
             }),
@@ -99,9 +103,11 @@ export const useOrcamento = () => {
 
                     queryClient.invalidateQueries({queryKey:['fin_my_budget']}) 
                 },
-                onError(error) {
-                    toast({title: "Error", description: error.message, duration: 3500})
-                    console.log(error);
+                onError(error: AxiosError) {
+                    // @ts-expect-error "Vai funcionar"
+                    const errorMessage = error.response?.data.message||error.message
+                    toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
+                    console.log(errorMessage);
                 },
             }),
 

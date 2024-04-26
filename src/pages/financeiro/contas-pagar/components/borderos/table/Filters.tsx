@@ -51,18 +51,23 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
     >
       <AccordionItem value="item-1" className="border-0">
         <AccordionTrigger className="py-1 hover:no-underline">
-          Filtros
+          <div className="flex gap-3 items-center">
+            <span>Filtros</span>
+            <Button size={"xs"} onClick={handleClickFilter}>
+              Filtrar <FilterIcon size={12} className="ms-2" />
+            </Button>
+            <Button
+              size={"xs"}
+              onClick={handleResetFilter}
+              variant="destructive"
+            >
+              Limpar <EraserIcon size={12} className="ms-2" />
+            </Button>
+          </div>
         </AccordionTrigger>
-        <AccordionContent className="p-0">
+        <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
             <div className="flex w-max space-x-4">
-              <Button onClick={handleClickFilter}>
-                Filtrar <FilterIcon size={12} className="ms-2" />
-              </Button>
-              <Button onClick={handleResetFilter} variant="destructive">
-                Limpar <EraserIcon size={12} className="ms-2" />
-              </Button>
-
               <Input
                 value={contaBancaria}
                 className="flex-1 max-h-10 min-w-[26ch]"
