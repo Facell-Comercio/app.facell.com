@@ -11,7 +11,9 @@ const schemaTitulo = z.object({
   id_grupo_economico: z.string(),
   id_tipo_solicitacao: z.string(),
   id_forma_pagamento: z.string(),
-  id_centro_custo: z.string(),
+
+  centro_custo: z.string().optional(),
+  id_centro_custo: z.coerce.string(),
 
   // Fornecedor
   favorecido: z.string().optional(),
@@ -43,6 +45,7 @@ const schemaTitulo = z.object({
     .string()
     .min(10, { message: "Precisa conter mais que 10 caracteres" }),
 
+  update_itens: z.boolean(),
   itens: z.array(
     z.object({
       id: z.string().optional(),
@@ -54,12 +57,13 @@ const schemaTitulo = z.object({
     
   // Rateio:
   id_rateio: z.string(),
+  update_rateio: z.boolean(),
   rateio_manual: z.coerce.boolean(),
   itens_rateio: z.array(
     z.object({
       id: z.string().optional(),
       id_filial: z.string(),
-      percentual: z.string(),
+      percentual: z.string().transform(value=>parseFloat(value)/100),
     })
   ),
 
@@ -86,6 +90,7 @@ export interface TituloSchemaProps {
   id?: string;
   id_solicitante?: string;
 
+  update_itens: boolean;
   itens: ItemTitulo[];
 
   update_rateio: boolean;

@@ -371,12 +371,6 @@ const FormCadastro = ({
             </Button>
           </div>
 
-          {id_grupo_economico && modalEditing && (
-            <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
-              <Plus className="me-2" strokeWidth={2} />
-              Nova conta
-            </Button>
-          )}
         </div>
 
         {/* Seleção de grupo, mes e ano */}
@@ -416,9 +410,14 @@ const FormCadastro = ({
           </div>
         )}
 
-
-
-
+        <div className="flex justify-end">
+        {id_grupo_economico && modalEditing && (
+            <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
+              <Plus className="me-2" strokeWidth={2} />
+              Nova conta
+            </Button>
+          )}
+        </div>
         <div
           className={`flex gap-3 ${!insertContaIsOpen
             ? "opacity-0 transition-all -translate-x-1 duration-500 ease-in-out hidden"

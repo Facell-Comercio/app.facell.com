@@ -134,7 +134,7 @@ function formatarHistorico(descricao: string) {
   }
   return <span className={`${cor}`}>{descricao?.split('\n').map((trecho,index)=>
   <>
-    <span key={'trecho.'+index} className={`${trecho.includes('\t') ? 'ms-2': ''}`}>{trecho}</span>
+    <span key={'trecho.'+index} className={`${trecho.includes('\t') ? 'ms-3': ''}`}>{trecho}</span>
     <br/>
   </>
   )}
@@ -164,7 +164,11 @@ const FormTituloPagar = ({
   const [modalCentrosCustosOpen, setModalCentrosCustosOpen] =
     useState<boolean>(false);
 
-  const titulo = data || initialPropsTitulo;
+  const titulo = {
+    ...data, 
+    update_itens: false,
+    update_rateio: false,
+  } || initialPropsTitulo;
 
   console.log("Data", titulo);
 
@@ -264,6 +268,7 @@ const FormTituloPagar = ({
       })
       return
     }
+
     const idPlanoConta = novoItemIdPlanoContasRef.current.value
     const planoConta = novoItemPlanoContasRef.current.value
     const valor = parseFloat(novoItemValorRef.current.value)
@@ -289,7 +294,7 @@ const FormTituloPagar = ({
       })
       return
     }
-
+    setValue('update_itens', true);
     addItem({ id_plano_conta: idPlanoConta, valor: valor.toFixed(2), plano_conta: planoConta });
     novoItemIdPlanoContasRef.current.value = ''
     novoItemPlanoContasRef.current.value = ''
@@ -297,12 +302,17 @@ const FormTituloPagar = ({
   }
 
   function handleRemoveItem(index: number) {
+    setValue('update_itens', true);
     removeItem(index);
+  }
+  function handleChangeItemValue(){
+    setValue('update_itens', true)
   }
 
 
   // * [ RATEIO ]
-  const rateio_manual = form.watch("rateio_manual");
+  const rateio_manual = !!+form.watch("rateio_manual");
+  console.log(rateio_manual)
   const canEditRateio = canEdit && modalEditing;
   const canEditItensRateio = canEdit && modalEditing && rateio_manual;
 
@@ -319,7 +329,7 @@ const FormTituloPagar = ({
 
   async function handleChangeRateio(novo_id_rateio: string) {
     if (novo_id_rateio) {
-
+      setValue('update_rateio', true);
       api.get(`financeiro/rateios/${novo_id_rateio}`, { params: { id_grupo_economico: id_grupo_economico } })
         .then(async data => {
           const novoRateio = data.data;
@@ -336,6 +346,13 @@ const FormTituloPagar = ({
             form.resetField('itens_rateio', { defaultValue: [] })
             resolve('success')
           })
+
+          if(novoRateio.manual){
+            addItemRateio({
+              id_filial: `${id_filial}`,
+              percentual: '100.00',
+            })
+          }
 
           itensNovoRateio?.forEach((item: ItemRateio) => {
             addItemRateio({
@@ -356,10 +373,12 @@ const FormTituloPagar = ({
   }
 
   function handleAddItemRateio() {
+    setValue('update_rateio', true);
     addItemRateio({ id_filial: "", percentual: "0.00" });
   }
 
   function handleRemoveItemRateio(index: number) {
+    setValue('update_rateio', true);
     removeItemRateio(index);
   }
 
@@ -379,6 +398,7 @@ const FormTituloPagar = ({
   function handleClickImportarRateio() {
     fileImportRateioRef?.current?.click()
   }
+
   function handleChangeImportarRateio() {
     if (fileImportRateioRef?.current) {
       const file = fileImportRateioRef.current.files && fileImportRateioRef.current.files[0]
@@ -396,6 +416,7 @@ const FormTituloPagar = ({
             return acc + cur.valor
           }, 0)
 
+          setValue('update_rateio', true);
           form.resetField('itens_rateio', { defaultValue: [] })
           const lastItem = (result?.length || 0) - 1
           result?.forEach((item, index) => {
@@ -416,6 +437,10 @@ const FormTituloPagar = ({
     }
   }
 
+  function handleChangeItemRateio(){
+    setValue('update_rateio', true)
+  }
+
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
@@ -428,23 +453,22 @@ const FormTituloPagar = ({
       const result = await api.get(`financeiro/fornecedores/${item.id}`)
       const fornecedor = result.data;
 
-      console.log('FORNECEDOR', fornecedor)
-      setValue("id_fornecedor", fornecedor.id);
-      setValue("cnpj_fornecedor", normalizeCnpjNumber(fornecedor.cnpj));
-      setValue("nome_fornecedor", fornecedor.nome);
-      setValue("favorecido", fornecedor.favorecido);
-      setValue("cnpj_favorecido", fornecedor.cnpj_favorecido);
-      setValue("id_banco", fornecedor.id_banco?.toString());
-      setValue("banco", fornecedor.banco);
-      setValue("codigo_banco", fornecedor.codigo_banco);
-      setValue("agencia", fornecedor.agencia);
-      setValue("dv_agencia", fornecedor.dv_agencia);
-      setValue("conta", fornecedor.conta);
-      setValue("dv_conta", fornecedor.dv_conta);
-      setValue("id_forma_pagamento", fornecedor.id_forma_pagamento?.toString());
-      setValue("id_tipo_conta", fornecedor.id_tipo_conta?.toString());
-      setValue("id_tipo_chave_pix", fornecedor.id_tipo_chave_pix?.toString());
-      setValue("chave_pix", fornecedor.chave_pix);
+      setValue("id_fornecedor", fornecedor.id?.toString() || '');
+      setValue("cnpj_fornecedor", normalizeCnpjNumber(fornecedor.cnpj) || '');
+      setValue("nome_fornecedor", fornecedor.nome || '');
+      setValue("favorecido", fornecedor.favorecido || '');
+      setValue("cnpj_favorecido", fornecedor.cnpj_favorecido || '');
+      setValue("id_banco", fornecedor.id_banco?.toString() || '');
+      setValue("banco", fornecedor.banco || '');
+      setValue("codigo_banco", fornecedor.codigo_banco || '');
+      setValue("agencia", fornecedor.agencia || '');
+      setValue("dv_agencia", fornecedor.dv_agencia || '');
+      setValue("conta", fornecedor.conta || '');
+      setValue("dv_conta", fornecedor.dv_conta || '');
+      setValue("id_forma_pagamento", fornecedor.id_forma_pagamento?.toString() || '');
+      setValue("id_tipo_conta", fornecedor.id_tipo_conta?.toString() || '');
+      setValue("id_tipo_chave_pix", fornecedor.id_tipo_chave_pix?.toString() || '');
+      setValue("chave_pix", fornecedor.chave_pix || '');
       setModalFornecedorOpen(false);
     } catch (error) {
 
@@ -508,7 +532,7 @@ const FormTituloPagar = ({
     setModalCentrosCustosOpen(true);
   }
   function handleSelectionCentroCusto(item: CentroCustos) {
-    setValue("id_centro_custo", item.id);
+    setValue("id_centro_custo", `${item.id.toString()}`);
     setValue("centro_custo", item.nome);
     setModalCentrosCustosOpen(false);
   }
@@ -972,6 +996,7 @@ const FormTituloPagar = ({
                                   name={`itens.${index}.valor`}
                                   inputClass="text-end pe-3"
                                   control={form.control}
+                                  onChange={handleChangeItemValue}
                                   min={0.1}
                                 />
                               </td>
@@ -1076,6 +1101,7 @@ const FormTituloPagar = ({
                                   step="0.0001"
                                   min={0.0001}
                                   max={100}
+                                  onChange={handleChangeItemRateio}
                                 />
                               </td>
                               {canEditItensRateio && (
