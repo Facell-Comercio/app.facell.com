@@ -355,7 +355,7 @@ const ModalTitulos = ({
                     <td className="text-xs p-1">{item.filial}</td>
                     <td className="text-center p-1">
                       <Button
-                        size={"actionCell"}
+                        size={"xs"}
                         variant={"outline"}
                         className="p-1"
                         onClick={() => {
@@ -379,7 +379,7 @@ const ModalTitulos = ({
               <PaginationItem>
                 <Button
                   variant={"outline"}
-                  size={"actionCell"}
+                  size={"xs"}
                   disabled={pagination.pageIndex === 0}
                   onClick={handlePaginationDown}
                 >
