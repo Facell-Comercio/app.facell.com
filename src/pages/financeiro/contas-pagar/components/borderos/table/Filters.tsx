@@ -1,4 +1,4 @@
-import SelectContaBancaria from "@/components/custom/SelectContaBancaria";
+import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
 import {
   Accordion,
   AccordionContent,
@@ -16,19 +16,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ModalContasBancarias, {
+  ItemContaBancariaProps,
+} from "@/pages/financeiro/components/ModalContasBancarias";
 import { EraserIcon, FilterIcon } from "lucide-react";
+import { useState } from "react";
 import { useStoreTableBorderos } from "./store-table";
 
 const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableBorderos((state) => state.filters);
   const setFilters = useStoreTableBorderos((state) => state.setFilters);
   const resetFilters = useStoreTableBorderos((state) => state.resetFilters);
+  const [modalContaBancariaOpen, setModalContaBancariaOpen] =
+    useState<boolean>(false);
+  const [contaBancaria, setContaBancaria] = useState("");
 
   const handleClickFilter = () => refetch();
   const handleResetFilter = async () => {
     await new Promise((resolve) => resolve(resetFilters()));
     refetch();
   };
+
+  function handleSelectionContaBancaria(item: ItemContaBancariaProps) {
+    setContaBancaria(item.descricao);
+    setFilters({ id_conta_bancaria: item.id });
+    setModalContaBancariaOpen(false);
+  }
 
   return (
     <Accordion
@@ -50,12 +63,18 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
                 Limpar <EraserIcon size={12} className="ms-2" />
               </Button>
 
-              <SelectContaBancaria
-                placeholder="Selecione..."
-                value={filters.id_conta_bancaria}
-                onChange={(id_conta_bancaria) => {
-                  setFilters({ id_conta_bancaria: id_conta_bancaria });
-                }}
+              <Input
+                value={contaBancaria}
+                className="flex-1 max-h-10 min-w-[26ch]"
+                readOnly
+                placeholder="Conta Bancaria"
+                onClick={() => setModalContaBancariaOpen(true)}
+              />
+              <ModalContasBancarias
+                open={modalContaBancariaOpen}
+                handleSelecion={handleSelectionContaBancaria}
+                onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
+                // id_matriz={id_matriz || ""}
               />
               <Input
                 placeholder="Banco"
@@ -63,6 +82,13 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
                 value={filters.banco}
                 onChange={(e) => {
                   setFilters({ banco: e.target.value });
+                }}
+              />
+              <SelectGrupoEconomico
+                showAll
+                value={filters.id_grupo_economico}
+                onChange={(id_grupo_economico) => {
+                  setFilters({ id_grupo_economico: id_grupo_economico });
                 }}
               />
               <Input
@@ -101,7 +127,6 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
                 <SelectContent>
                   <SelectItem value="created_at">Criação</SelectItem>
                   <SelectItem value="data_pagamento">Pagamento</SelectItem>
-                  <SelectItem value="data_prevista">Provisão</SelectItem>
                 </SelectContent>
               </Select>
               <DatePickerWithRange

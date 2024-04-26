@@ -8,7 +8,7 @@ const schemaBorderos = z
   // Identificador do plano de contas
   id: z.string().trim().optional(),
   conta_bancaria: z.string().trim().toUpperCase().optional(),
-  id_conta_bancaria: z.string(),
+  id_conta_bancaria: z.coerce.string(),
   banco: z.string().optional(),
   data_pagamento: z.coerce.string().trim().min(1, "Data Obrigatória"),
   id_matriz: z.coerce.string().trim().optional(),
@@ -22,7 +22,7 @@ const schemaBorderos = z
     descricao: z.string().trim().optional(),
     filial: z.string().trim().optional(),
     data_pagamento: z.string().optional(),
-  })).min(1, "É necessário colocar no mínimo 1 título")
+  }))
   
   });
 

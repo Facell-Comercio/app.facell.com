@@ -54,14 +54,13 @@ const ModalPlanoContas = ({
     pageIndex: 0,
   });
 
-  const queryKey = id_matriz ? `plano_contas:${id_matriz}` : "plano_contas";
   const {
     data,
     isLoading,
     isError,
     refetch: refetchPlanoContas,
   } = useQuery({
-    queryKey: [queryKey, search],
+    queryKey: ["plano_contas", id_matriz],
     queryFn: async () =>
       await api.get("financeiro/plano-contas", {
         params: {

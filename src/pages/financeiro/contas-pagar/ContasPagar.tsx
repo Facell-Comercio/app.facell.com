@@ -11,7 +11,7 @@ const ContasPagarPage = () => {
 
   return (
     <div className="flex p-4">
-      <Tabs defaultValue="titulos" className="w-full">
+      <Tabs defaultValue="borderos" className="w-full">
         <TabsList className="w-full justify-start">
           <TabsTrigger value="titulos">Solicitações</TabsTrigger>
           {(checkUserPermission("MASTER") ||

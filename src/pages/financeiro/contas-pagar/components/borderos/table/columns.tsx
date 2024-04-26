@@ -1,7 +1,7 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { normalizeDate } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
@@ -72,6 +72,22 @@ export const columnsTable: ColumnDef<RowBordero>[] = [
     cell: (info) => {
       const conta_bancaria = info.getValue<string>();
       return <span>{conta_bancaria}</span>;
+    },
+  },
+  {
+    header: "QUANTIDADE",
+    accessorKey: "qtde_titulos",
+    cell: (info) => {
+      const qtde_titulos = info.getValue<string>();
+      return <span>{qtde_titulos}</span>;
+    },
+  },
+  {
+    header: "VALOR TOTAL",
+    accessorKey: "valor_total",
+    cell: (info) => {
+      const valor_total = info.getValue<string>() || 0;
+      return <span>{normalizeCurrency(valor_total)}</span>;
     },
   },
 ];

@@ -99,14 +99,13 @@ const ModalTitulos = ({
   };
   const [filters, setFilters] = useState(initialFilters);
 
-  const queryKey = id_matriz ? `titulos:${id_matriz}` : "titulos";
   const {
     data,
     isLoading,
     isError,
     refetch: refetchTitulos,
   } = useQuery({
-    queryKey: [queryKey],
+    queryKey: ["filtros", id_matriz],
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/titulo/titulos-bordero", {
         params: {
@@ -168,12 +167,8 @@ const ModalTitulos = ({
         ]);
 
         setIds((prevIds) => [...prevIds, item.id_titulo.toString()]);
-
-        console.log("Item adicionado:", item);
       }
     });
-
-    console.log("Seleção concluída, titulos:", titulos);
   }
 
   async function handlePaginationChange(index: number) {
@@ -186,7 +181,6 @@ const ModalTitulos = ({
   async function handlePaginationUp() {
     await new Promise((resolve) => {
       const newPage = ++pagination.pageIndex;
-      console.log(newPage);
       setPagination((prev) => ({ ...prev, pageIndex: newPage }));
       resolve(true);
     });
@@ -229,7 +223,6 @@ const ModalTitulos = ({
       },
     ]);
     setIds([...ids, item.id_titulo.toString()]);
-    console.log(ids);
   }
 
   if (isLoading) return null;
@@ -412,6 +405,22 @@ const ModalTitulos = ({
           </table>
         </ScrollArea>
 
+        <div className="flex items-center justify-between text-sm">
+          <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
+            <p className="mr-1">Qtd. Títulos: </p>
+            {data?.data.rows.length}
+          </span>
+          <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
+            <p className="mr-1">Valor Total: </p>
+            {normalizeCurrency(
+              data?.data.rows.reduce(
+                (acc: number, titulo: TitulosProps) =>
+                  acc + +titulo.valor_total,
+                0
+              ) || 0
+            )}
+          </span>
+        </div>
         <DialogFooter className="flex">
           <div className="flex items-center space-x-2">
             <Select
@@ -431,6 +440,7 @@ const ModalTitulos = ({
             </Select>
             <p className="text-sm font-medium min-w-fit">Linhas por página</p>
           </div>
+
           <Pagination className="items-center">
             <PaginationContent>
               <PaginationItem>
