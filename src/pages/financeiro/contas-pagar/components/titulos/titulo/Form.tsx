@@ -475,36 +475,34 @@ const FormTituloPagar = ({
     id_forma_pagamento === "8";
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
-  const { mutate: insertOne, error: erroInsertOne } = useTituloPagar().insertOne();
+  const { mutate: insertOne, isSuccess: insertOneSuccess } = useTituloPagar().insertOne();
   const { mutate: update } = useTituloPagar().update();
 
   const onSubmit = async (data: TituloSchemaProps) => {
     if (!id) {
-      // console.log('INSERT ONE: ', data)
       insertOne(data)
-
-      if (erroInsertOne) {
-        console.log('ERRO_INSERT_ONE_TITULO_PAGAR: ', erroInsertOne)
-      } else {
-        if (parcelas === parcela) {
-          closeModal()
-        } else {
-          const qtde_parcelas = parseInt(parcelas || 1)
-          const parcela_atual = parseInt(parcela || 1)
-          if (qtde_parcelas > parcela_atual) {
-            const proxima_parcela = parcela_atual + 1;
-            setValue('parcela', String(proxima_parcela))
-            setValue('data_vencimento', '')
-            setValue('data_prevista', '')
-          }
-        }
-        console.log('INSERIU COM SUCESSO!')
-      }
-
     };
     if (id) update(data);
     // editModal(false);
   };
+
+  useEffect(()=>{
+    if (insertOneSuccess) {
+      if (parcelas === parcela) {
+        closeModal()
+      } else {
+        const qtde_parcelas = parseInt(parcelas || 1)
+        const parcela_atual = parseInt(parcela || 1)
+        if (qtde_parcelas > parcela_atual) {
+          const proxima_parcela = parcela_atual + 1;
+          setValue('parcela', String(proxima_parcela))
+          setValue('data_vencimento', '')
+          setValue('data_prevista', '')
+        }
+      }
+      console.log('INSERIU COM SUCESSO!')
+    }
+  }, [insertOneSuccess])
 
   type changeStatusTituloProps = {
     id_novo_status: string,
