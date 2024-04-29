@@ -476,15 +476,20 @@ const FormTituloPagar = ({
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
   const { mutate: insertOne, isSuccess: insertOneSuccess } = useTituloPagar().insertOne();
-  const { mutate: update } = useTituloPagar().update();
+  const { mutate: update, isSuccess: updateSuccess } = useTituloPagar().update();
 
   const onSubmit = async (data: TituloSchemaProps) => {
     if (!id) {
       insertOne(data)
     };
     if (id) update(data);
-    // editModal(false);
   };
+  
+  useEffect(()=>{
+    if(updateSuccess){
+      editModal(false);
+    }
+  }, [updateSuccess])
 
   useEffect(()=>{
     if (insertOneSuccess) {

@@ -39,10 +39,13 @@ export const useTituloPagar = () => {
         queryFn: async () => {
             console.log(`Buscando título com base no ID: ${id}`)
             try {
-                
+
                 const result = await api.get(`/financeiro/contas-a-pagar/titulo/${id}`)
                 return result
             } catch (error) {
+                // @ts-ignore
+                toast({ variant: "destructive", title: 'Erro ao tentar obter os dados!', description: error?.response?.data?.message || error.message })
+                console.log(error);
                 console.log(error)
                 throw error
             }
@@ -54,12 +57,12 @@ export const useTituloPagar = () => {
             return api.post("/financeiro/contas-a-pagar/titulo", data).then((response) => response.data)
         },
         onSuccess() {
-            toast({variant:'success', title: 'Sucesso!', description: 'Solicitação criada com sucesso!'})
+            toast({ variant: 'success', title: 'Sucesso!', description: 'Solicitação criada com sucesso!' })
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
         },
         onError(error) {
             // @ts-ignore
-            toast({variant: "destructive", title: 'Erro ao tentar criar a solicitação!', description: error?.response?.data?.message || error.message})
+            toast({ variant: "destructive", title: 'Erro ao tentar criar a solicitação!', description: error?.response?.data?.message || error.message })
             console.log(error);
         },
     })
@@ -69,13 +72,13 @@ export const useTituloPagar = () => {
             return api.put("/financeiro/contas-a-pagar/titulo", { id, ...rest }).then((response) => response.data)
         },
         onSuccess() {
-            toast({variant:'success', title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!'})
+            toast({ variant: 'success', title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!' })
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
         },
         onError(error) {
             // @ts-ignore
-            toast({title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message})
+            toast({ variant: "destructive", title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message })
             console.log(error);
         },
     })
@@ -85,13 +88,13 @@ export const useTituloPagar = () => {
             return api.delete("/financeiro/contas-a-pagar/titulo/recorrencia", { id, ...rest }).then((response) => response.data)
         },
         onSuccess() {
-            toast({variant:'success', title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!'})
+            toast({ variant: 'success', title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!' })
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
         },
         onError(error) {
             // @ts-ignore
-            toast({title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message})
+            toast({ variant: "destructive", title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message })
             console.log(error);
         },
     })
