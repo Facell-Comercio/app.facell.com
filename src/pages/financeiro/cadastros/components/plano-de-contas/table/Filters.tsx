@@ -26,7 +26,7 @@ const FiltersPlanoContas = ({ refetch }: { refetch: () => void }) => {
   const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     refetch();
-  }
+  };
   const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     await new Promise((resolve) => resolve(resetFilters()));
@@ -46,11 +46,7 @@ const FiltersPlanoContas = ({ refetch }: { refetch: () => void }) => {
             <Button size={"xs"} onClick={handleClickFilter}>
               Filtrar <FilterIcon size={12} className="ms-2" />
             </Button>
-            <Button
-              size={"xs"}
-              onClick={handleResetFilter}
-              variant="destructive"
-            >
+            <Button size={"xs"} onClick={handleResetFilter} variant="secondary">
               Limpar <EraserIcon size={12} className="ms-2" />
             </Button>
           </div>

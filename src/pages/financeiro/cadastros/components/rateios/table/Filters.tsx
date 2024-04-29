@@ -20,7 +20,7 @@ const FiltersRateios = ({ refetch }: { refetch: () => void }) => {
   const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     refetch();
-  }
+  };
   const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     await new Promise((resolve) => resolve(resetFilters()));
