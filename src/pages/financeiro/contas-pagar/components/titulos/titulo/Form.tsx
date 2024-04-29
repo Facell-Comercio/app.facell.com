@@ -8,7 +8,7 @@ import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
 import { Button } from "@/components/ui/button";
 import { Form, FormItem, FormLabel } from "@/components/ui/form";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
 import {
   checkUserDepartments,
@@ -29,6 +29,7 @@ import {
   ArrowDown,
   Ban,
   Check,
+  Clock,
   Contact,
   Divide,
   Download,
@@ -39,16 +40,17 @@ import {
   Pen,
   Percent,
   Plus,
+  Repeat2,
   Save,
   Trash,
   Undo2,
   Upload,
   X,
 } from "lucide-react";
-import React, { InputHTMLAttributes, useCallback, useRef, useState } from "react";
+import React, { InputHTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from '@tanstack/react-query'
 import { useFieldArray, useWatch } from "react-hook-form";
-import { TituloSchemaProps, useFormTituloData } from "./form-data";
+import { TituloSchemaProps, schemaTitulo, useFormTituloData } from "./form-data";
 import { ItemRateio, initialPropsTitulo, useStoreTitulo } from "./store";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/axios";
@@ -58,89 +60,11 @@ import { useFilial } from "@/hooks/useFilial";
 import { Separator } from "@/components/ui/separator";
 import { Filial } from "@/types/filial-type";
 import ButtonMotivation from "@/components/custom/ButtonMotivation";
-import { checkFeriado } from "@/helpers/checkFeriado";
-import { addDays, subDays, startOfDay, isMonday, isThursday, isSaturday, isSunday } from "date-fns";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { calcularDataPrevisaoPagamento, formatarHistorico, getVencimentoMinimo } from "./helper";
+import { Badge } from "@/components/ui/badge";
 
 let i = 0;
-function getVencimentoMinimo(isMaster: boolean) {
-  if (isMaster) return undefined;
-  const dataAtual = new Date();
-  dataAtual.setDate(dataAtual.getDate())
-  return dataAtual;
-}
-
-function calcularDataPrevisaoPagamento(data_venc: Date) {
-  let dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
-
-  const dataAtual = startOfDay(new Date());
-  let dataMinima = addDays(dataAtual, 2);
-
-  while ((!isMonday(dataMinima) && !isThursday(dataMinima)) || checkFeriado(dataMinima)) {
-    dataMinima = addDays(dataMinima, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
-  }
-  let dataPagamento = dataMinima;
-
-  // 27-04 <= 26-04 
-  if (dataVencimento <= dataMinima) {
-    // A data de vencimento é inferior a data atual, 
-    //então vou buscar a partir da data atual + 1 a próxima data de pagamento
-    while ((dataPagamento < dataMinima || !isMonday(dataPagamento) && !isThursday(dataPagamento)) || checkFeriado(dataPagamento)) {
-      dataPagamento = addDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
-    }
-  } else {
-    dataPagamento = dataVencimento
-    if (isSaturday(dataPagamento)) {
-      dataPagamento = addDays(dataPagamento, 2)
-    }
-    if (isSunday(dataPagamento)) {
-      dataPagamento = addDays(dataPagamento, 1)
-    }
-    while ((!isMonday(dataPagamento) && !isThursday(dataPagamento)) || checkFeriado(dataPagamento)) {
-      dataPagamento = subDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
-    }
-  }
-
-  return dataPagamento;
-}
-
-function formatarHistorico(descricao: string) {
-  if (!descricao) return descricao;
-  let iniciais = descricao.substring(0, 2).toUpperCase();
-  let cor = ''
-  switch (iniciais) {
-    case 'AP':
-      // APROVADO
-      cor = 'text-green-500'
-      break;
-    case 'NE':
-      // NEGADO
-      cor = 'text-red-500'
-      break;
-    case 'RE':
-      // RETORNADO PARA SOLICITADO
-      cor = ''
-      break;
-    case 'ED':
-      // EDITADO
-      cor = 'text-orange-500'
-      break;
-    case 'PA':
-      // PAGO
-      cor = 'text-blue-500'
-      break;
-    default:
-      break;
-  }
-  return <span className={`${cor}`}>{descricao?.split('\n').map((trecho,index)=>
-  <>
-    <span key={'trecho.'+index} className={`${trecho.includes('\t') ? 'ms-3': ''}`}>{trecho}</span>
-    <br/>
-  </>
-  )}
-  </span>
-}
-
 const FormTituloPagar = ({
   id,
   data,
@@ -152,7 +76,7 @@ const FormTituloPagar = ({
 }) => {
   const queryClient = useQueryClient()
 
-  console.log(`RENDER ${++i} - Form, titulo:`, id);
+  // console.log(`RENDER ${++i} - Form, titulo:`, id);
   const modalEditing = useStoreTitulo().modalEditing;
   const editModal = useStoreTitulo().editModal;
   const closeModal = useStoreTitulo().closeModal;
@@ -165,12 +89,12 @@ const FormTituloPagar = ({
     useState<boolean>(false);
 
   const titulo = {
-    ...data, 
+    ...data,
     update_itens: false,
     update_rateio: false,
   } || initialPropsTitulo;
 
-  console.log("Data", titulo);
+  // console.log("Data", titulo);
 
   // * [ VERIFICAÇÕES ]
   const status = titulo?.status || "";
@@ -190,6 +114,7 @@ const FormTituloPagar = ({
 
   // * [ FORM ]
   const { form } = useFormTituloData(titulo);
+
   const { setValue, formState: { errors } } = form;
   console.log('ERRORS:', errors)
 
@@ -200,15 +125,15 @@ const FormTituloPagar = ({
   const id_grupo_economico = useWatch({ name: "id_grupo_economico", control: form.control });
   const id_forma_pagamento = useWatch({ name: "id_forma_pagamento", control: form.control });
   const id_centro_custo = useWatch({ name: "id_centro_custo", control: form.control });
+  const witens = useWatch({ name: "itens", control: form.control });
+  const parcelas = useWatch({ name: "num_parcelas", control: form.control });
+  const parcela = useWatch({ name: "parcela", control: form.control });
 
   // * [ DATA PREVISTA ]
   const onChangeDataVencimento = (data_venc: Date) => {
-    console.log('DATA:', data_venc)
-    // todo - procurar a próxima data de pagamento com base na data 
     // setar a data para o data_prevista
     const data_prevista = calcularDataPrevisaoPagamento(data_venc)
     setValue('data_prevista', data_prevista.toString())
-
   }
 
   // * [ FILIAL ]
@@ -220,7 +145,6 @@ const FormTituloPagar = ({
         .then(data => {
           const novaFilial = data.data;
 
-          console.log('Difença entre filiais', id_grupo_economico != novaFilial.id_grupo_economico)
           if (id_grupo_economico != novaFilial.id_grupo_economico) {
             setValue('id_grupo_economico', novaFilial.id_grupo_economico)
             setValue('id_matriz', novaFilial.id_matriz)
@@ -233,6 +157,7 @@ const FormTituloPagar = ({
         })
         .catch(error => {
           toast({
+            variant: 'destructive',
             title: 'Erro!',
             description: "Não foi possível receber os dados da Filial"
           })
@@ -252,9 +177,14 @@ const FormTituloPagar = ({
     name: "itens",
   });
 
-  const calcularTotal = useCallback(() => {
-    return itens.reduce((acc, curr) => acc + parseFloat(curr.valor), 0)
-  }, [itens])
+  const calcularTotal = () => {
+    return witens.reduce((acc, curr) => acc + parseFloat(curr.valor), 0)
+  }
+
+  useEffect(() => {
+    const updatedValue = normalizeCurrency(calcularTotal());
+    form.setValue('valor', updatedValue)
+  }, [witens])
 
   function handleAddItem() {
     if (!novoItemIdPlanoContasRef.current) return;
@@ -263,6 +193,7 @@ const FormTituloPagar = ({
 
     if (!id_centro_custo) {
       toast({
+        variant: 'destructive',
         title: 'Erro!',
         description: 'Selecione o centro de custo!',
       })
@@ -274,6 +205,7 @@ const FormTituloPagar = ({
     const valor = parseFloat(novoItemValorRef.current.value)
     if (!valor) {
       toast({
+        variant: 'destructive',
         title: 'Corrija o valor',
         description: 'Não pode ser zerado'
       })
@@ -281,6 +213,7 @@ const FormTituloPagar = ({
     }
     if (!idPlanoConta) {
       toast({
+        variant: 'destructive',
         title: 'Erro!',
         description: 'Selecione um plano de contas',
       })
@@ -289,6 +222,7 @@ const FormTituloPagar = ({
     const checkIfExistis = itens.findIndex(item => item.id_plano_conta == idPlanoConta)
     if (checkIfExistis !== -1) {
       toast({
+        variant: 'destructive',
         title: 'Erro!',
         description: 'Plano de contas já foi selecionado!',
       })
@@ -305,18 +239,17 @@ const FormTituloPagar = ({
     setValue('update_itens', true);
     removeItem(index);
   }
-  function handleChangeItemValue(){
+  function handleChangeItemValue() {
     setValue('update_itens', true)
   }
 
 
   // * [ RATEIO ]
   const rateio_manual = !!+form.watch("rateio_manual");
-  console.log(rateio_manual)
   const canEditRateio = canEdit && modalEditing;
   const canEditItensRateio = canEdit && modalEditing && rateio_manual;
 
-  const fileImportRateioRef = useRef<InputHTMLAttributes | null>(null);
+  const fileImportRateioRef = useRef<HTMLInputElement | null>(null);
 
   const {
     fields: itensRateio,
@@ -335,19 +268,12 @@ const FormTituloPagar = ({
           const novoRateio = data.data;
           const itensNovoRateio = novoRateio.itens;
 
-          console.log('Novos itens rateio', itensNovoRateio);
-
-          // itensNovoRateio?.forEach((item: ItemRateio) => {
-          //   item.id_filial = String(item.id_filial || "")
-          //   item.percentual = String(item.percentual || "0.00")
-          // })
-
           await new Promise((resolve) => {
             form.resetField('itens_rateio', { defaultValue: [] })
             resolve('success')
           })
 
-          if(novoRateio.manual){
+          if (novoRateio.manual) {
             addItemRateio({
               id_filial: `${id_filial}`,
               percentual: '100.00',
@@ -365,6 +291,7 @@ const FormTituloPagar = ({
         })
         .catch(error => {
           toast({
+            variant: 'destructive',
             title: 'Erro!',
             description: "Não foi possível receber os dados do novo rateio"
           })
@@ -409,7 +336,6 @@ const FormTituloPagar = ({
           const importedData = e.target?.result;
 
           const result = importFromExcel(importedData);
-          console.log(result)
 
           const valorTotalRateio = result.reduce((acc, cur) => {
             // @ts-ignore
@@ -437,7 +363,7 @@ const FormTituloPagar = ({
     }
   }
 
-  function handleChangeItemRateio(){
+  function handleChangeItemRateio() {
     setValue('update_rateio', true)
   }
 
@@ -452,6 +378,7 @@ const FormTituloPagar = ({
     try {
       const result = await api.get(`financeiro/fornecedores/${item.id}`)
       const fornecedor = result.data;
+      // console.log('FORNECEDOR SELECIONADO', fornecedor)
 
       setValue("id_fornecedor", fornecedor.id?.toString() || '');
       setValue("cnpj_fornecedor", normalizeCnpjNumber(fornecedor.cnpj) || '');
@@ -484,6 +411,7 @@ const FormTituloPagar = ({
       }
     } catch (error) {
       toast({
+        variant: 'destructive',
         title: 'Erro!', description: 'O arquivo pode ter sido excluído, mas não foi possível remover o anexo da solicitação, tente excluir novamente mais tarde!'
       })
     }
@@ -494,6 +422,7 @@ const FormTituloPagar = ({
   function showModalPlanoContas() {
     if (!id_matriz) {
       toast({
+        variant: 'destructive',
         title: 'Erro!',
         description: 'Selecione primeiro a filial!'
       })
@@ -521,6 +450,7 @@ const FormTituloPagar = ({
   function showModalCentrosCustos() {
     if (!id_matriz) {
       toast({
+        variant: 'destructive',
         title: 'Erro!',
         description: 'Selecione primeiro a filial!'
       })
@@ -532,7 +462,7 @@ const FormTituloPagar = ({
     setModalCentrosCustosOpen(true);
   }
   function handleSelectionCentroCusto(item: CentroCustos) {
-    setValue("id_centro_custo", `${item.id.toString()}`);
+    setValue("id_centro_custo", `${item.id}`);
     setValue("centro_custo", item.nome);
     setModalCentrosCustosOpen(false);
   }
@@ -545,13 +475,34 @@ const FormTituloPagar = ({
     id_forma_pagamento === "8";
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
-  const { mutate: insertOne } = useTituloPagar().insertOne();
+  const { mutate: insertOne, error: erroInsertOne } = useTituloPagar().insertOne();
   const { mutate: update } = useTituloPagar().update();
 
-  const onSubmit = (data: TituloSchemaProps) => {
-    if (!id) insertOne(data);
-    if (id) update(data);
+  const onSubmit = async (data: TituloSchemaProps) => {
+    if (!id) {
+      // console.log('INSERT ONE: ', data)
+      insertOne(data)
 
+      if (erroInsertOne) {
+        console.log('ERRO_INSERT_ONE_TITULO_PAGAR: ', erroInsertOne)
+      } else {
+        if (parcelas === parcela) {
+          closeModal()
+        } else {
+          const qtde_parcelas = parseInt(parcelas || 1)
+          const parcela_atual = parseInt(parcela || 1)
+          if (qtde_parcelas > parcela_atual) {
+            const proxima_parcela = parcela_atual + 1;
+            setValue('parcela', String(proxima_parcela))
+            setValue('data_vencimento', '')
+            setValue('data_prevista', '')
+          }
+        }
+        console.log('INSERIU COM SUCESSO!')
+      }
+
+    };
+    if (id) update(data);
     // editModal(false);
   };
 
@@ -566,27 +517,48 @@ const FormTituloPagar = ({
       queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
     } catch (error: unknown) {
       // @ts-ignore;
-      toast({ title: 'Erro!', description: error?.response?.data?.message || error?.message })
+      toast({ variant: 'destructive', title: 'Erro!', description: error?.response?.data?.message || error?.message })
     }
   }
 
   const handleChangeVoltarSolicitado = (motivo: string) => {
-    console.log('Voltar status para solicitado')
     changeStatusTitulo({
       id_novo_status: '1', motivo
     })
   }
   const handleChangeNegar = (motivo: string) => {
-    console.log('Negar titulo')
     changeStatusTitulo({
       id_novo_status: '2', motivo: motivo
     })
   }
   const handleChangeAprovar = () => {
-    console.log('Aprovar titulo')
     changeStatusTitulo({
       id_novo_status: '3'
     })
+  }
+  const handleClickCriarRecorrencia = async (e) => {
+    try {
+      e.preventDefault()
+      const dados = form.getValues();
+      try {
+        await schemaTitulo.parse(dados)
+      } catch (error) {
+          form.trigger()
+          return;
+      }
+
+      await api.post('financeiro/contas-a-pagar/titulo/criar-recorrencia', { ...dados })
+      toast({
+        variant:'success', title: 'Recorrência criada com sucesso!'
+      })
+    } catch (error) {
+      console.log(error)
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao tentar criar a recorrência!',
+        description: error.response?.data?.message || error.message
+      })
+    }
   }
   // ! FIM - ACTIONS //////////////////////////////////////
 
@@ -642,6 +614,8 @@ const FormTituloPagar = ({
                       >
                         Selecionar
                       </Button>
+                      {errors.id_fornecedor?.message && (<span className="rounded-md flex-1 px-3 text-white bg-destructive">{errors.id_fornecedor?.message}</span>)}
+
                     </div>
 
                     <div className="flex flex-wrap gap-3 items-end">
@@ -665,7 +639,7 @@ const FormTituloPagar = ({
                         readOnly={true}
                         label="Nome do fornecedor"
                         control={form.control}
-                      />{" "}
+                      />
                       <SelectFormaPagamento
                         label="Forma de pagamento"
                         name="id_forma_pagamento"
@@ -712,6 +686,7 @@ const FormTituloPagar = ({
                           name="cnpj_favorecido"
                           control={form.control}
                           readOnly={readOnly}
+                          fnMask={normalizeCnpjNumber}
                           inputClass="min-w-[20ch]"
                           className="flex-1"
                         />
@@ -726,7 +701,7 @@ const FormTituloPagar = ({
 
                         <FormInput
                           label="Banco"
-                          name="nome_banco"
+                          name="banco"
                           className="min-w-fit"
                           control={form.control}
                           readOnly={true}
@@ -837,6 +812,7 @@ const FormTituloPagar = ({
                             className={"flex-1 min-w-[40ch]"}
                           />
                         </Button>
+                        {errors.id_centro_custo && <Badge variant={'destructive'}>{errors.id_centro_custo?.message}</Badge>}
                       </FormItem>
 
                       <FormInput
@@ -845,6 +821,8 @@ const FormTituloPagar = ({
                         type={"number"}
                         label="Número de parcelas"
                         step='1'
+                        min={1}
+                        max={365}
                         control={form.control}
                       />
 
@@ -892,8 +870,8 @@ const FormTituloPagar = ({
                         <Input
                           readOnly={true}
                           className="text-end"
-                          name="valor"
                           value={normalizeCurrency(calcularTotal())}
+                          {...form.register('valor')}
                         />
                       </FormItem>
 
@@ -914,7 +892,7 @@ const FormTituloPagar = ({
                       <span className="text-lg font-bold ">
                         Itens da Solicitação
                       </span>
-
+                      {errors.itens?.message && <Badge variant={'destructive'}>{errors.itens?.message}</Badge>}
                     </div>
                     {canEdit && modalEditing && (
                       <>
@@ -928,7 +906,7 @@ const FormTituloPagar = ({
                           />
                           <FormItem className="w-full">
                             <div className="flex justify-between items-end">
-                              <FormLabel>Plano de Contas Novo Item</FormLabel>
+                              <FormLabel>Plano de Contas</FormLabel>
                             </div>
                             <Button
                               type="button"
@@ -946,7 +924,7 @@ const FormTituloPagar = ({
                           </FormItem>
                           <FormItem>
                             <div className="flex justify-between items-end">
-                              <FormLabel>Valor Novo Item</FormLabel>
+                              <FormLabel>Valor</FormLabel>
                             </div>
                             <Input
                               type="number"
@@ -1009,6 +987,7 @@ const FormTituloPagar = ({
                                     onClick={() => {
                                       if (itens.length === 1) {
                                         toast({
+                                          variant: 'destructive',
                                           title: 'Ops!',
                                           description: 'Tem que ter pelo menos um item na solicitação!'
                                         })
@@ -1036,6 +1015,7 @@ const FormTituloPagar = ({
                       <span className="text-lg font-bold ">
                         Dados do rateio
                       </span>
+                      {errors.itens_rateio?.message && <Badge variant={'destructive'}>{errors.itens_rateio?.message}</Badge>}
                     </div>
 
                     <div className="flex gap-3 flex-wrap items-end">
@@ -1137,13 +1117,13 @@ const FormTituloPagar = ({
                         Histórico do título
                       </span>
                     </div>
-                      <div className="flex flex-col gap-3 overflow-auto max-h-72">
-                        {data?.historico?.map((h) => (
-                          <p key={`hist.${h.id}`} className="text-xs">
-                            {formatarDataHora(h.created_at)}: {formatarHistorico(h.descricao)}
-                          </p>
-                        ))}
-                      </div>
+                    <div className="flex flex-col gap-3 overflow-auto max-h-72">
+                      {data?.historico?.map((h) => (
+                        <p key={`hist.${h.id}`} className="text-xs">
+                          {formatarDataHora(h.created_at)}: {formatarHistorico(h.descricao)}
+                        </p>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Fim da primeira coluna */}
@@ -1221,8 +1201,13 @@ const FormTituloPagar = ({
                 </ButtonMotivation>
               )}
               {isMaster && id && status !== 'Aprovado' && status !== 'Pago' && (
-                <Button variant={'success'} size={'lg'} onClick={handleChangeAprovar}>
+                <Button type="button" variant={'success'} size={'lg'} onClick={handleChangeAprovar}>
                   <Check className="me-2" size={18} />Aprovar
+                </Button>
+              )}
+              {id && isMaster && (
+                <Button type="button" variant={'secondary'} size={'lg'} onClick={handleClickCriarRecorrencia}>
+                  <Repeat2 className="me-2" size={18} />Criar Recorrência
                 </Button>
               )}
             </div>

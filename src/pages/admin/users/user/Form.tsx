@@ -217,7 +217,7 @@ const FormUsers = ({
         // @ts-expect-error 'Ignore, vai funcionar...'
         onOpenChange={setOpenModalFiliais}
         open={openModalFiliais}
-        closeOnSelection={true}
+        closeOnSelection={false}
         />
 
       <ModalDepartamentos
@@ -225,7 +225,7 @@ const FormUsers = ({
         // @ts-expect-error 'Ignore, vai funcionar...'
         onOpenChange={setOpenModalDepartamentos}
         open={openModalDepartamentos}
-        closeOnSelection={true}
+        closeOnSelection={false}
       />
 
       <ModalCentrosCustos
@@ -233,7 +233,7 @@ const FormUsers = ({
         // @ts-expect-error 'Ignore, vai funcionar...'
         onOpenChange={setOpenModalCentrosCusto}
         open={openModalCentrosCusto}
-        closeOnSelection={true}
+        closeOnSelection={false}
         />
 
       <ModalPermissoes
@@ -241,7 +241,7 @@ const FormUsers = ({
         // @ts-expect-error 'Ignore, vai funcionar...'
         onOpenChange={setOpenModalPermissoes}
         open={openModalPermissoes}
-        closeOnSelection={true}
+        closeOnSelection={false}
       />
 
 

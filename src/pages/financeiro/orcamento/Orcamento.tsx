@@ -20,7 +20,7 @@ const OrcamentoPage = () => {
             <TabsTrigger value="meu-orcamento">Meu Orçamento</TabsTrigger>
             {(checkUserDepartments("FINANCEIRO") ||
               checkUserPermission("MASTER")) && (
-              <TabsTrigger value="cadastros">Cadastros</TabsTrigger>
+              <TabsTrigger value="cadastros">Cadastro</TabsTrigger>
             )}
             <ScrollBar orientation="horizontal" />
           </ScrollArea>

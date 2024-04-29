@@ -31,8 +31,12 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
     useState<boolean>(false);
   const [contaBancaria, setContaBancaria] = useState("");
 
-  const handleClickFilter = () => refetch();
-  const handleResetFilter = async () => {
+  const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    refetch();
+  }
+  const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     await new Promise((resolve) => resolve(resetFilters()));
     refetch();
   };

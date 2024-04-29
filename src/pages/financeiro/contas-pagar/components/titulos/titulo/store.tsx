@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { calcularDataPrevisaoPagamento } from "./helper";
 
 export interface ItemRateioTitulo {
   id?: string;
@@ -30,6 +31,8 @@ export interface TituloPagar {
   data_emissao: string;
   data_vencimento: string;
   data_pagamento: string;
+  data_prevista: string;
+
   descricao: string;
 
   num_parcelas: number;
@@ -96,10 +99,12 @@ export const initialPropsTitulo: TituloPagar = {
   // Pagamento
   forma_pagamento: "",
 
-  valor: 0,
-  data_emissao: "",
-  data_vencimento: "",
+  data_emissao: new Date().toString(),
+  data_vencimento: new Date().toString(),
   data_pagamento: "",
+  data_prevista: calcularDataPrevisaoPagamento(new Date()).toString(),
+  
+  valor: 0,
   descricao: "",
 
   // Parcelamento
