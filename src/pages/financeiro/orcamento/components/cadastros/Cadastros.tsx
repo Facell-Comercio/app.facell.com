@@ -8,6 +8,7 @@ import { useStoreCadastro } from "./cadastro/store";
 import FilterCadastros from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTableCadastro } from "./table/store-table";
+import { Plus } from "lucide-react";
 
 const Cadastros = () => {
   console.log("RENDER - Section-Titulos");
@@ -31,8 +32,8 @@ const Cadastros = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-end">
-        <Button variant={"secondary"} onClick={handleClickNewCadastro}>
-          Novo Orçamento
+        <Button variant={"default"} onClick={handleClickNewCadastro}>
+          <Plus size={18} className="me-2"/> Novo Orçamento
         </Button>
       </div>
       <FilterCadastros refetch={refetch} />

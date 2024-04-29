@@ -3,7 +3,7 @@ export const generateStatusColor = ({ status, bg, text }: {
 }) => {
     if (!status) return ' ';
     var bgColor = 'bg-gray-300 dark:bg-gray-800'
-    var textColor = 'text-slate-300'
+    var textColor = 'text-slate-800 dark:text-slate-300'
 
     switch (status) {
         case 'Pago':

@@ -7,11 +7,9 @@ import Borderos from "./components/borderos/Borderos";
 import TitulosPagar from "./components/titulos/TitulosPagar";
 
 const ContasPagarPage = () => {
-  console.log(checkUserDepartments("FINANCEIRO"));
-
   return (
     <div className="flex p-4">
-      <Tabs defaultValue="borderos" className="w-full">
+      <Tabs defaultValue="titulos" className="w-full">
         <TabsList className="w-full justify-start">
           <TabsTrigger value="titulos">Solicitações</TabsTrigger>
           {(checkUserPermission("MASTER") ||

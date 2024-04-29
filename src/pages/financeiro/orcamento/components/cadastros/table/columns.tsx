@@ -23,10 +23,12 @@ export const columnsTable: ColumnDef<RowCadastro>[] = [
     accessorKey: "id",
     header: "AÇÃO",
     cell: (info) => (
+      <div title="Visualizar">
       <FileSearch2
         className="text-blue-500 cursor-pointer"
         onClick={() => openModal(info.getValue<number>().toString())}
-      />
+        />
+        </div>
     ),
   },
   {

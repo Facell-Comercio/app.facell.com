@@ -47,8 +47,6 @@ const ModalCentrosCustos = ({
     pageIndex: 0,
   });
 
-  console.log(search);
-
   const { data, isLoading, isError } = useCentroCustos().getAll({
     pagination,
     filters: { termo: search, id_matriz, id_grupo_economico },

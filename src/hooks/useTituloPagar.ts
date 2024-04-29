@@ -23,6 +23,14 @@ export const useTituloPagar = () => {
         placeholderData: keepPreviousData
     })
 
+    const getRecorrencias = () => useQuery({
+        queryKey: ['fin_cp_recorrencias'],
+        staleTime: 5 * 1000 * 60,
+        retry: false,
+        queryFn: async () => { return await api.get(`/financeiro/contas-a-pagar/titulo/recorrencia`) },
+        placeholderData: keepPreviousData
+    })
+
     const getOne = (id: string | null) => useQuery({
         enabled: !!id,
         retry: false,
@@ -46,7 +54,7 @@ export const useTituloPagar = () => {
             return api.post("/financeiro/contas-a-pagar/titulo", data).then((response) => response.data)
         },
         onSuccess() {
-            toast({title: 'Sucesso!', description: 'Usuário inserido com sucesso.'})
+            toast({variant:'success', title: 'Sucesso!', description: 'Solicitação criada com sucesso!'})
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
         },
         onError(error) {
@@ -61,7 +69,23 @@ export const useTituloPagar = () => {
             return api.put("/financeiro/contas-a-pagar/titulo", { id, ...rest }).then((response) => response.data)
         },
         onSuccess() {
-            toast({title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!'})
+            toast({variant:'success', title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!'})
+            queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
+            queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
+        },
+        onError(error) {
+            // @ts-ignore
+            toast({title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message})
+            console.log(error);
+        },
+    })
+
+    const deleteRecorrencia = () => useMutation({
+        mutationFn: ({ id, ...rest }: TituloSchemaProps) => {
+            return api.delete("/financeiro/contas-a-pagar/titulo/recorrencia", { id, ...rest }).then((response) => response.data)
+        },
+        onSuccess() {
+            toast({variant:'success', title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!'})
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
         },
@@ -75,8 +99,10 @@ export const useTituloPagar = () => {
 
     return {
         getAll,
+        getRecorrencias,
         getOne,
         insertOne,
         update,
+        deleteRecorrencia,
     }
 }

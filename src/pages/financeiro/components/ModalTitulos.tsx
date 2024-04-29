@@ -389,7 +389,6 @@ const ModalTitulos = ({
                     <td className="text-center p-1">
                       <Button
                         size={"xs"}
-                        size={"xs"}
                         variant={"outline"}
                         className="p-1"
                         onClick={() => {

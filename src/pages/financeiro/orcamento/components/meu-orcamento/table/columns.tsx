@@ -28,181 +28,183 @@ export const columnsTable: ColumnDef<RowMeuOrcamento>[] = checkUserPermission(
   "MASTER"
 )
   ? [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <div className="px-1">
-            <Checkbox
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && "indeterminate")
-              }
-              onCheckedChange={(value) =>
-                table.toggleAllPageRowsSelected(!!value)
-              }
-            />
-          </div>
-        ),
-        enableSorting: false,
-        cell: ({ row }) => (
-          <div className="px-1">
-            <input
-              type="checkbox"
-              {...{
-                checked: row.getIsSelected(),
-                disabled: !row.getCanSelect(),
-                indeterminate: row.getIsSomeSelected().toString(),
-                onChange: row.getToggleSelectedHandler(),
-              }}
-            />
-          </div>
-        ),
-      },
-      {
-        header: "AÇÃO",
-        accessorKey: "id",
-        cell: (info) => (
+    {
+      id: "select",
+      header: ({ table }) => (
+        <div className="px-1">
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+          />
+        </div>
+      ),
+      enableSorting: false,
+      cell: ({ row }) => (
+        <div className="px-1">
+          <input
+            type="checkbox"
+            {...{
+              checked: row.getIsSelected(),
+              disabled: !row.getCanSelect(),
+              indeterminate: row.getIsSomeSelected().toString(),
+              onChange: row.getToggleSelectedHandler(),
+            }}
+          />
+        </div>
+      ),
+    },
+    {
+      header: "AÇÃO",
+      accessorKey: "id",
+      cell: (info) => (
+        <div title="Transferir">
           <ArrowLeftRight
             className="text-blue-500 cursor-pointer"
             onClick={() => openModal(info.getValue<number>().toString())}
           />
-        ),
-        enableSorting: false,
+        </div>
+      ),
+      enableSorting: false,
+    },
+    {
+      header: "GRUPO ECONOMICO",
+      accessorKey: "grupo_economico",
+      cell: (info) => {
+        const grupo_economico = info.getValue<string>();
+        return <span>{grupo_economico}</span>;
       },
-      {
-        header: "GRUPO ECONOMICO",
-        accessorKey: "grupo_economico",
-        cell: (info) => {
-          const grupo_economico = info.getValue<string>();
-          return <span>{grupo_economico}</span>;
-        },
+    },
+    {
+      header: "CENTRO DE CUSTO",
+      accessorKey: "centro_custos",
+      cell: (info) => {
+        const centro_custos = info.getValue<string>();
+        return <span>{centro_custos}</span>;
       },
-      {
-        header: "CENTRO DE CUSTO",
-        accessorKey: "centro_custos",
-        cell: (info) => {
-          const centro_custos = info.getValue<string>();
-          return <span>{centro_custos}</span>;
-        },
+    },
+    {
+      header: "PLANO DE CONTAS",
+      accessorKey: "plano_contas",
+      cell: (info) => {
+        const plano_contas = info.getValue<string>();
+        return <span>{plano_contas && plano_contas.toUpperCase()}</span>;
       },
-      {
-        header: "PLANO DE CONTAS",
-        accessorKey: "plano_contas",
-        cell: (info) => {
-          const plano_contas = info.getValue<string>();
-          return <span>{plano_contas && plano_contas.toUpperCase()}</span>;
-        },
+    },
+    {
+      header: "PREVISTO",
+      accessorKey: "valor_previsto",
+      cell: (info) => {
+        const valor_previsto = info.getValue<string>();
+        return <span>{valor_previsto}</span>;
       },
-      {
-        header: "PREVISTO",
-        accessorKey: "valor_previsto",
-        cell: (info) => {
-          const valor_previsto = info.getValue<string>();
-          return <span>{valor_previsto}</span>;
-        },
+    },
+    {
+      header: "SALDO",
+      accessorKey: "saldo",
+      cell: (info) => {
+        const saldo = info.getValue<string>();
+        return <span>{saldo}</span>;
       },
-      {
-        header: "SALDO",
-        accessorKey: "saldo",
-        cell: (info) => {
-          const saldo = info.getValue<string>();
-          return <span>{saldo}</span>;
-        },
+    },
+    {
+      header: "% Realizado",
+      accessorKey: "realizado_percentual",
+      cell: (info) => {
+        const percentual = info.getValue<number>();
+        return (
+          <span>
+            {percentual && parseFloat((+percentual * 100).toFixed(2))}%
+          </span>
+        );
       },
-      {
-        header: "% Realizado",
-        accessorKey: "realizado_percentual",
-        cell: (info) => {
-          const percentual = info.getValue<number>();
-          return (
-            <span>
-              {percentual && parseFloat((+percentual * 100).toFixed(2))}%
-            </span>
-          );
-        },
-      },
-    ]
+    },
+  ]
   : [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <div className="px-1">
-            <Checkbox
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && "indeterminate")
-              }
-              onCheckedChange={(value) =>
-                table.toggleAllPageRowsSelected(!!value)
-              }
-            />
-          </div>
-        ),
-        enableSorting: false,
-        cell: ({ row }) => (
-          <div className="px-1">
-            <input
-              type="checkbox"
-              {...{
-                checked: row.getIsSelected(),
-                disabled: !row.getCanSelect(),
-                indeterminate: row.getIsSomeSelected().toString(),
-                onChange: row.getToggleSelectedHandler(),
-              }}
-            />
-          </div>
-        ),
+    {
+      id: "select",
+      header: ({ table }) => (
+        <div className="px-1">
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+          />
+        </div>
+      ),
+      enableSorting: false,
+      cell: ({ row }) => (
+        <div className="px-1">
+          <input
+            type="checkbox"
+            {...{
+              checked: row.getIsSelected(),
+              disabled: !row.getCanSelect(),
+              indeterminate: row.getIsSomeSelected().toString(),
+              onChange: row.getToggleSelectedHandler(),
+            }}
+          />
+        </div>
+      ),
+    },
+    // {
+    //   header: "GRUPO ECONOMICO",
+    //   accessorKey: "grupo_economico",
+    //   cell: (info) => {
+    //     const grupo_economico = info.getValue<string>();
+    //     return <span>{grupo_economico}</span>;
+    //   },
+    // },
+    {
+      header: "CENTRO DE CUSTO",
+      accessorKey: "centro_custos",
+      cell: (info) => {
+        const centro_custos = info.getValue<string>();
+        return <span>{centro_custos}</span>;
       },
-      // {
-      //   header: "GRUPO ECONOMICO",
-      //   accessorKey: "grupo_economico",
-      //   cell: (info) => {
-      //     const grupo_economico = info.getValue<string>();
-      //     return <span>{grupo_economico}</span>;
-      //   },
-      // },
-      {
-        header: "CENTRO DE CUSTO",
-        accessorKey: "centro_custos",
-        cell: (info) => {
-          const centro_custos = info.getValue<string>();
-          return <span>{centro_custos}</span>;
-        },
+    },
+    {
+      header: "PLANO DE CONTAS",
+      accessorKey: "plano_contas",
+      cell: (info) => {
+        const plano_contas = info.getValue<string>();
+        return <span>{plano_contas}</span>;
       },
-      {
-        header: "PLANO DE CONTAS",
-        accessorKey: "plano_contas",
-        cell: (info) => {
-          const plano_contas = info.getValue<string>();
-          return <span>{plano_contas}</span>;
-        },
+    },
+    {
+      header: "PREVISTO",
+      accessorKey: "valor_previsto",
+      cell: (info) => {
+        const valor_previsto = info.getValue<string>();
+        return <span>{valor_previsto && valor_previsto}</span>;
       },
-      {
-        header: "PREVISTO",
-        accessorKey: "valor_previsto",
-        cell: (info) => {
-          const valor_previsto = info.getValue<string>();
-          return <span>{valor_previsto && valor_previsto}</span>;
-        },
+    },
+    {
+      header: "SALDO",
+      accessorKey: "saldo",
+      cell: (info) => {
+        const saldo = info.getValue<string>();
+        return <span>{saldo && saldo}</span>;
       },
-      {
-        header: "SALDO",
-        accessorKey: "saldo",
-        cell: (info) => {
-          const saldo = info.getValue<string>();
-          return <span>{saldo && saldo}</span>;
-        },
+    },
+    {
+      header: "% Realizado",
+      accessorKey: "realizado_percentual",
+      cell: (info) => {
+        const percentual = info.getValue<number>();
+        return (
+          <span>
+            {percentual && parseFloat((+percentual * 100).toFixed(2))}%
+          </span>
+        );
       },
-      {
-        header: "% Realizado",
-        accessorKey: "realizado_percentual",
-        cell: (info) => {
-          const percentual = info.getValue<number>();
-          return (
-            <span>
-              {percentual && parseFloat((+percentual * 100).toFixed(2))}%
-            </span>
-          );
-        },
-      },
-    ];
+    },
+  ];
