@@ -24,8 +24,12 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
   const setFilters = useStoreTablePagar((state) => state.setFilters);
   const resetFilters = useStoreTablePagar((state) => state.resetFilters);
 
-  const handleClickFilter = () => refetch();
-  const handleResetFilter = async () => {
+  const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    refetch();
+  };
+  const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     await new Promise((resolve) => resolve(resetFilters()));
     refetch();
   };
@@ -40,10 +44,10 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
         <AccordionTrigger className={`py-1 hover:no-underline`}>
           <div className="flex gap-3 items-center">
             <span>Filtros</span>
-            <Button size={'xs'} onClick={handleClickFilter}>
+            <Button size={"xs"} onClick={handleClickFilter}>
               Aplicar <FilterIcon size={12} className="ms-2" />
             </Button>
-            <Button size={'xs'} variant="secondary" onClick={handleResetFilter} >
+            <Button size={"xs"} variant="secondary" onClick={handleResetFilter}>
               Limpar <EraserIcon size={12} className="ms-2" />
             </Button>
           </div>
@@ -51,8 +55,6 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
             <div className="flex w-max space-x-4">
-
-
               <Input
                 type="number"
                 placeholder="ID"
