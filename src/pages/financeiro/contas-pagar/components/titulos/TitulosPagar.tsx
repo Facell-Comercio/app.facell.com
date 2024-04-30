@@ -30,6 +30,12 @@ const TitulosPagar = () => {
     state.setPagination,
     state.filters,
   ]);
+  const [rowSelection, handleRowSelection, idSelection] = useStoreTablePagar((state) => [
+    state.rowSelection,
+    state.handleRowSelection,
+    state.idSelection,
+  ]);
+  
   const { data, refetch } = useTituloPagar().getAll({ pagination, filters });
 
   const rows = data?.data?.rows || [];
@@ -73,9 +79,12 @@ const TitulosPagar = () => {
       </div>
       <ModalRecorrencias />
       <FiltersLancamentosPagar refetch={refetch} />
+      
       <DataTable
         pagination={pagination}
         setPagination={setPagination}
+        rowSelection={rowSelection}
+        handleRowSelection={handleRowSelection}
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}

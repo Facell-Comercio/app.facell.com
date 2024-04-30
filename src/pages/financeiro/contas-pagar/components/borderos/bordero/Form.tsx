@@ -29,6 +29,7 @@ import ModalTransfer from "./ModalTransfer";
 import RowVirtualizerFixed from "./RowVirtualizedFixed";
 import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
+import { FaSpinner } from "react-icons/fa6";
 
 const FormBordero = ({
   id,
@@ -53,6 +54,9 @@ const FormBordero = ({
   const [modalTituloOpen, setModalTituloOpen] = useState<boolean>(false);
   const [modalContaBancariaOpen, setModalContaBancariaOpen] =
     useState<boolean>(false);
+
+  const [exporting, setExporting] = useState<string>('');
+
   const { form, titulos, addTitulo, removeTitulo } = useFormBorderoData(data);
 
   const id_conta_bancaria = form.watch("id_conta_bancaria");
@@ -132,8 +136,24 @@ const FormBordero = ({
   }
 
   async function exportBordero(id: string) {
+    setExporting('default')
     const response = await api.put(
       `/financeiro/contas-a-pagar/bordero/export`,
+      { data: [id] }
+    );
+    exportToExcel(response.data, `bordero-${id}`);
+    setExporting('')
+  }
+
+  async function exportRemessa(id: string) {
+    setExporting('remessa')
+    setTimeout(() => {
+      setExporting('')
+    }, 4000)
+
+    return
+    const response = await api.put(
+      `/financeiro/contas-a-pagar/bordero/export-remessa`,
       { data: [id] }
     );
     exportToExcel(response.data, `bordero-${id}`);
@@ -156,14 +176,28 @@ const FormBordero = ({
                     <Fingerprint />{" "}
                     <span className="text-lg font-bold ">Dados do Borderô</span>
                   </div>
-                  <Button
-                    variant={"outline"}
-                    type={"button"}
-                    onClick={() => exportBordero(id || "")}
-                  >
-                    <Download className="me-2" size={20} />
-                    Exportar
-                  </Button>
+
+                  {id && (
+                    <div className="flex gap-3 items-center">
+                      <Button
+                        disabled={!!exporting}
+                        variant={"outline"}
+                        type={"button"}
+                        onClick={() => exportRemessa(id)}
+                      >
+                        {exporting== 'remessa' ? <FaSpinner size={18} className="me-2 animate-spin"/> : <Download className="me-2" size={20} />} Exportar Remessa
+                      </Button>
+                      <Button
+                        disabled={!!exporting}
+                        variant={"outline"}
+                        type={"button"}
+                        onClick={() => exportBordero(id || "")}
+                      >
+                        {exporting == 'default' ? <FaSpinner size={18} className="me-2 animate-spin"/> : <Download className="me-2" size={20} />}
+                        Exportar
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap gap-3">

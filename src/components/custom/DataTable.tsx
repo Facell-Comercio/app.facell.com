@@ -1,8 +1,10 @@
 import {
   ColumnDef,
   PaginationState,
+  RowSelectionState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -30,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -37,6 +40,8 @@ interface DataTableProps<TData, TValue> {
   rowCount: number;
   pagination?: PaginationState;
   setPagination?: (pagination: PaginationState) => void;
+  rowSelection?: RowSelectionState,
+  handleRowSelection?: (data:any)=>void;
 }
 
 export function DataTable<TData, TValue>({
@@ -45,21 +50,39 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   rowCount,
+  rowSelection,
+  handleRowSelection,
 }: DataTableProps<TData, TValue>) {
+  // const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  console.log('ROW_SELECTION', rowSelection)
   const table = useReactTable({
     data,
     rowCount: rowCount || 0,
     columns,
+    getFilteredRowModel: getFilteredRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
       pagination,
+      rowSelection: rowSelection || {},
     },
     onPaginationChange: (callback) => {
       // @ts-expect-error ignorado
       const result = callback(pagination);
       if (setPagination) {
         setPagination(result);
+      }
+      if(handleRowSelection){
+        handleRowSelection({rowSelection: {}, idSelection: []})
+      }
+    },
+    enableRowSelection: true,
+    onRowSelectionChange: (callback)=>{
+      // @ts-expect-error ignorado
+      const result = callback(rowSelection);
+      if (handleRowSelection) {
+        const ids = Object.keys(result).map(c=>data[c].id)
+        handleRowSelection({rowSelection: result, idSelection: ids});
       }
     },
     manualPagination: true,
