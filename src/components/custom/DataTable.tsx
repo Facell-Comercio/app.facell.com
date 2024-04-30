@@ -32,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -53,8 +52,7 @@ export function DataTable<TData, TValue>({
   rowSelection,
   handleRowSelection,
 }: DataTableProps<TData, TValue>) {
-  // const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  console.log('ROW_SELECTION', rowSelection)
+
   const table = useReactTable({
     data,
     rowCount: rowCount || 0,
