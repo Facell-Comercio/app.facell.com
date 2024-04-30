@@ -1,6 +1,7 @@
 import { useStoreTablePagar } from "./table/store-table";
 // import { useStoreTitulo } from "./titulo/store-titulo";
 import { DataTable } from "@/components/custom/DataTable";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,21 +10,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/dropdown-menu";
+import {
+  checkUserDepartments,
+  checkUserPermission,
+} from "@/helpers/checkAuthorization";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { Download, Edit, Plus, Repeat2 } from "lucide-react";
 import FiltersLancamentosPagar from "./FiltersTitulosPagar";
+import ModalRecorrencias from "./recorrencias/Modal";
+import { useStoreRecorrencias } from "./recorrencias/store";
 import { columnsTable } from "./table/columns";
 import ModalTituloPagar from "./titulo/Modal";
 import { useStoreTitulo } from "./titulo/store";
-import { useStoreRecorrencias } from "./recorrencias/store";
-import ModalRecorrencias from "./recorrencias/Modal";
-import { Download, Edit, Plus, Repeat2 } from "lucide-react";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 
 const TitulosPagar = () => {
   console.log("RENDER - Section-Titulos");
-  const isMaster = checkUserDepartments('FINANCEIRO') || checkUserPermission('MASTER')
+  const isMaster =
+    checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
 
   const [pagination, setPagination, filters] = useStoreTablePagar((state) => [
     state.pagination,
@@ -40,15 +44,21 @@ const TitulosPagar = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex justify-end gap-3">
+      <div className="flex flex-wrap justify-end gap-3 ">
         {isMaster && (
-          <Button variant={"outline"} className="border border-orange-200 dark:border-orange-600">
+          <Button
+            variant={"outline"}
+            className="border border-orange-200 dark:border-orange-600"
+          >
             <Edit className="me-2" size={18} /> Alterar em lote
           </Button>
         )}
 
         <DropdownMenu>
-          <DropdownMenuTrigger type="button" className="px-3 border border-emerald-200 dark:border-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800 flex font-medium gap-2 items-center rounded-lg">
+          <DropdownMenuTrigger
+            type="button"
+            className="py-2 px-4 border border-emerald-200 dark:border-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm flex font-medium gap-2 items-center rounded-lg"
+          >
             <Download className="me-2" size={18} /> Exportar
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -64,14 +74,17 @@ const TitulosPagar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button variant={"outline"}  onClick={() => openModalRecorrencias("")}>
+        <Button variant={"outline"} onClick={() => openModalRecorrencias("")}>
           <Repeat2 className="me-2" size={18} /> Recorrências
         </Button>
-        <Button variant={"outline"} className="border-blue-200 dark:border-primary" onClick={() => openModal("")}>
+        <Button
+          variant={"outline"}
+          className="border-blue-200 dark:border-primary"
+          onClick={() => openModal("")}
+        >
           <Plus className="me-2" size={18} /> Nova Solicitação
         </Button>
       </div>
-      <ModalRecorrencias />
       <FiltersLancamentosPagar refetch={refetch} />
       <DataTable
         pagination={pagination}
@@ -81,6 +94,7 @@ const TitulosPagar = () => {
         columns={columnsTable}
       />
       <ModalTituloPagar />
+      <ModalRecorrencias />
     </div>
   );
 };

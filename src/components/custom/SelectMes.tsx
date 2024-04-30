@@ -14,6 +14,7 @@ type TSelectMes = {
   className?: string;
   value?: string;
   onValueChange?: (value: string) => void;
+  placeholder?: string;
 };
 
 const SelectMes = (props: TSelectMes) => {
@@ -35,7 +36,9 @@ const SelectMes = (props: TSelectMes) => {
   return (
     <Select onValueChange={props.onValueChange} value={props.value}>
       <SelectTrigger className={`min-w-[15ch] ${props.className}`}>
-        <SelectValue placeholder="Selecione..." />
+        <SelectValue
+          placeholder={props.placeholder ? props.placeholder : `Selecione...`}
+        />
       </SelectTrigger>
       <SelectContent>
         {arrayMes.map((option: Mes) => (

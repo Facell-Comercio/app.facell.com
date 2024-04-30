@@ -1,8 +1,6 @@
-import ModalButtons from "@/components/custom/ModalButtons";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -12,6 +10,7 @@ import { useTituloPagar } from "@/hooks/useTituloPagar";
 import { useRef } from "react";
 import FormTituloPagar from "./Form";
 import { TituloSchemaProps } from "./form-data";
+import { calcularDataPrevisaoPagamento } from "./helper";
 import {
   Historico,
   ItemRateioTitulo,
@@ -28,9 +27,8 @@ export type DataSchemaProps = {
 const ModalTituloPagar = () => {
   const modalOpen = useStoreTitulo().modalOpen;
   const closeModal = useStoreTitulo().closeModal;
-  const modalEditing = useStoreTitulo().modalEditing;
-  const editModal = useStoreTitulo().editModal;
   const id = useStoreTitulo().id;
+  const recorrencia = useStoreTitulo().recorrencia;
   const formRef = useRef(null);
 
   const { data, isLoading } = useTituloPagar().getOne(id);
@@ -52,16 +50,16 @@ const ModalTituloPagar = () => {
 
   if (itens) {
     itens.forEach((objeto: any) => {
-    Object.keys(objeto).forEach((propriedade) => {
-      if (objeto[propriedade] === null) {
-        objeto[propriedade] = "";
-      } else if (typeof objeto[propriedade] === "number") {
-        objeto[propriedade] = objeto[propriedade].toString();
-      }
+      Object.keys(objeto).forEach((propriedade) => {
+        if (objeto[propriedade] === null) {
+          objeto[propriedade] = "";
+        } else if (typeof objeto[propriedade] === "number") {
+          objeto[propriedade] = objeto[propriedade].toString();
+        }
+      });
     });
-  });
-}
-  
+  }
+
   if (itens_rateio) {
     itens_rateio.forEach((objeto: any) => {
       Object.keys(objeto).forEach((propriedade) => {
@@ -85,30 +83,47 @@ const ModalTituloPagar = () => {
       });
     });
   }
-    
-    
-    function handleClickCancel() {
-      editModal(false);
-      // closeModal();
-    }
-    
-    return (
+
+  let modalData = initialPropsTitulo;
+  if (recorrencia) {
+    modalData = {
+      ...titulo,
+      id: "",
+      status: "Solicitado",
+      id_status: "1",
+      url_boleto: "",
+      url_contrato: "",
+      url_nota_fiscal: "",
+      url_planilha: "",
+      url_txt: "",
+      url_xml: "",
+      url_xml_nota: "",
+      data_vencimento: recorrencia.data_vencimento,
+      data_emissao: new Date(),
+      data_prevista: calcularDataPrevisaoPagamento(
+        new Date(recorrencia.data_vencimento)
+      ),
+      itens,
+      itens_rateio,
+      id_recorrencia: recorrencia.id
+    };
+  } else if (id) {
+    modalData = { ...titulo, itens, itens_rateio, historico };
+  }
+
+  return (
     <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {id ? `Solicitação: ${id}` : "Nova Solicitação"}
+            {!!id && !recorrencia ? `Solicitação: ${id}` : "Nova Solicitação"}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="min-h-[70vh]">
           {modalOpen && !isLoading ? (
             <FormTituloPagar
-              id={id}
-              data={
-                id
-                  ? {...titulo, itens, itens_rateio, historico}
-                  : initialPropsTitulo
-              }
+              id={!!id && !recorrencia ? id : ""}
+              data={modalData}
               formRef={formRef}
             />
           ) : (

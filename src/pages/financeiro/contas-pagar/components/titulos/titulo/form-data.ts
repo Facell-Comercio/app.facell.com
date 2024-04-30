@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { checkIsPIX, checkIsTransferenciaBancaria } from "./helper";
 import { Historico, ItemRateioTitulo, ItemTitulo } from "./store";
-import { checkIsTransferenciaBancaria, checkIsPIX } from "./helper";
 
 export const schemaTitulo = z.object({
   id: z.string().optional(),
+  id_recorrencia: z.number  ().optional(),
   // IDs
   id_fornecedor: z.coerce.string({ message: 'Campo obrigatório' }).min(1, { message: 'Selecione o Fornecedor!' }),
   id_filial: z.coerce.string({ required_error: 'Campo obrigatório' }).min(1, { message: 'Selecione a Filial!' }),
@@ -108,7 +109,7 @@ export interface TituloSchemaProps {
 
   num_doc: string;
 
-  id?: string;
+  id?: string|null;
   id_solicitante?: string;
 
   update_itens: boolean;
@@ -170,6 +171,7 @@ export interface TituloSchemaProps {
   url_txt?: string | null;
   url_xml_nota?: string;
 
+  id_recorrencia?: string;
 }
 
 export const useFormTituloData = (data: TituloSchemaProps) => {

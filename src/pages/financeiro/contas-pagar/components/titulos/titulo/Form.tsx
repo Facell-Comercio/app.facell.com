@@ -1,3 +1,4 @@
+import ButtonMotivation from "@/components/custom/ButtonMotivation";
 import FormDateInput from "@/components/custom/FormDate";
 import FormFileUpload from "@/components/custom/FormFileUpload";
 import FormInput from "@/components/custom/FormInput";
@@ -6,9 +7,13 @@ import SelectFilial from "@/components/custom/SelectFilial";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
+import SelectTipoRateio from "@/components/custom/SelectTipoRateio";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Form, FormItem, FormLabel } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import {
   checkUserDepartments,
@@ -16,7 +21,11 @@ import {
 } from "@/helpers/checkAuthorization";
 import { formatarDataHora } from "@/helpers/format";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
+import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { normalizeCnpjNumber, normalizeCurrency } from "@/helpers/mask";
+import { useFilial } from "@/hooks/useFilial";
+import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { api } from "@/lib/axios";
 import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
 import ModalFornecedores, {
   ItemFornecedor,
@@ -24,12 +33,13 @@ import ModalFornecedores, {
 import ModalPlanoContas, {
   ItemPlanoContas,
 } from "@/pages/financeiro/components/ModalPlanoContas";
+import { Filial } from "@/types/filial-type";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ArrowDown,
   Ban,
   Check,
-  Clock,
   Contact,
   Divide,
   Download,
@@ -47,24 +57,16 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import React, { InputHTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
-import { useQueryClient } from '@tanstack/react-query'
+import React, { useEffect, useRef, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
-import { TituloSchemaProps, schemaTitulo, useFormTituloData } from "./form-data";
+import { TituloSchemaProps, useFormTituloData } from "./form-data";
+import {
+  calcularDataPrevisaoPagamento,
+  formatarHistorico,
+  getVencimentoMinimo,
+} from "./helper";
 import { ItemRateio, initialPropsTitulo, useStoreTitulo } from "./store";
-import { Input } from "@/components/ui/input";
-import { api } from "@/lib/axios";
-import SelectTipoRateio from "@/components/custom/SelectTipoRateio";
-import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
-import { useFilial } from "@/hooks/useFilial";
-import { Separator } from "@/components/ui/separator";
-import { Filial } from "@/types/filial-type";
-import ButtonMotivation from "@/components/custom/ButtonMotivation";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
-import { calcularDataPrevisaoPagamento, formatarHistorico, getVencimentoMinimo } from "./helper";
-import { Badge } from "@/components/ui/badge";
 
-let i = 0;
 const FormTituloPagar = ({
   id,
   data,
@@ -74,7 +76,7 @@ const FormTituloPagar = ({
   data: TituloSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   // console.log(`RENDER ${++i} - Form, titulo:`, id);
   const modalEditing = useStoreTitulo().modalEditing;
@@ -88,43 +90,56 @@ const FormTituloPagar = ({
   const [modalCentrosCustosOpen, setModalCentrosCustosOpen] =
     useState<boolean>(false);
 
-  const titulo = {
-    ...data,
-    update_itens: false,
-    update_rateio: false,
-  } || initialPropsTitulo;
+  const titulo =
+    {
+      ...data,
+      update_itens: false,
+      update_rateio: false,
+    } || initialPropsTitulo;
 
-  // console.log("Data", titulo);
+console.log(data);
+
 
   // * [ VERIFICAÇÕES ]
   const status = titulo?.status || "";
   const isMaster =
     checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
   const canEdit =
-    (!id ||
-      status === "Solicitado" ||
-      (isMaster &&
-        status !== "Aprovado" &&
-        status !== "Negado" &&
-        status !== "Pago")
-    );
-  const canChangeParcelas = canEdit && !id
-  const readOnly = !canEdit || !modalEditing
-  const disabled = !canEdit || !modalEditing
+    !id ||
+    status === "Solicitado" ||
+    (isMaster &&
+      status !== "Aprovado" &&
+      status !== "Negado" &&
+      status !== "Pago");
+  const canChangeParcelas = canEdit && !id;
+  const readOnly = !canEdit || !modalEditing;
+  const disabled = !canEdit || !modalEditing;
 
   // * [ FORM ]
   const { form } = useFormTituloData(titulo);
 
-  const { setValue, formState: { errors } } = form;
-  console.log('ERRORS:', errors)
+  const {
+    setValue,
+    formState: { errors },
+  } = form;
+  console.log("ERRORS:", errors);
 
   // * [ WATCHES ]
   const valor = useWatch({ name: "valor", control: form.control });
   const id_filial = useWatch({ name: "id_filial", control: form.control });
   const id_matriz = useWatch({ name: "id_matriz", control: form.control });
-  const id_grupo_economico = useWatch({ name: "id_grupo_economico", control: form.control });
-  const id_forma_pagamento = useWatch({ name: "id_forma_pagamento", control: form.control });
-  const id_centro_custo = useWatch({ name: "id_centro_custo", control: form.control });
+  const id_grupo_economico = useWatch({
+    name: "id_grupo_economico",
+    control: form.control,
+  });
+  const id_forma_pagamento = useWatch({
+    name: "id_forma_pagamento",
+    control: form.control,
+  });
+  const id_centro_custo = useWatch({
+    name: "id_centro_custo",
+    control: form.control,
+  });
   const witens = useWatch({ name: "itens", control: form.control });
   const parcelas = useWatch({ name: "num_parcelas", control: form.control });
   const parcela = useWatch({ name: "parcela", control: form.control });
@@ -132,39 +147,41 @@ const FormTituloPagar = ({
   // * [ DATA PREVISTA ]
   const onChangeDataVencimento = (data_venc: Date) => {
     // setar a data para o data_prevista
-    const data_prevista = calcularDataPrevisaoPagamento(data_venc)
-    setValue('data_prevista', data_prevista.toString())
-  }
+    const data_prevista = calcularDataPrevisaoPagamento(data_venc);
+    setValue("data_prevista", data_prevista.toString());
+  };
 
   // * [ FILIAL ]
   // Ao alterar a filial:
   async function handleChangeFilial(novo_id_filial: string) {
     if (novo_id_filial) {
-
-      api.get(`filial/${novo_id_filial}`)
-        .then(data => {
+      api
+        .get(`filial/${novo_id_filial}`)
+        .then((data) => {
           const novaFilial = data.data;
 
           if (id_grupo_economico != novaFilial.id_grupo_economico) {
-            setValue('id_grupo_economico', novaFilial.id_grupo_economico)
-            setValue('id_matriz', novaFilial.id_matriz)
+            setValue("id_grupo_economico", novaFilial.id_grupo_economico);
+            setValue("id_matriz", novaFilial.id_matriz);
 
-            setValue('id_centro_custo', '')
-            setValue('centro_custo', '')
-            form.resetField('itens', { defaultValue: [] })
-            form.resetField('itens_rateio', { defaultValue: [] })
+            setValue("id_centro_custo", "");
+            setValue("centro_custo", "");
+            form.resetField("itens", { defaultValue: [] });
+            form.resetField("itens_rateio", { defaultValue: [] });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           toast({
-            variant: 'destructive',
-            title: 'Erro!',
-            description: "Não foi possível receber os dados da Filial"
-          })
-        })
+            variant: "destructive",
+            title: "Erro!",
+            description: "Não foi possível receber os dados da Filial",
+          });
+        });
     }
   }
-  const { data: responseFiliais } = useFilial().getAll({ filters: { id_grupo_economico: id_grupo_economico } })
+  const { data: responseFiliais } = useFilial().getAll({
+    filters: { id_grupo_economico: id_grupo_economico },
+  });
   const filiais = responseFiliais?.data?.rows;
 
   // * [ITENS DO TÍTULO]
@@ -178,13 +195,13 @@ const FormTituloPagar = ({
   });
 
   const calcularTotal = () => {
-    return witens.reduce((acc, curr) => acc + parseFloat(curr.valor), 0)
-  }
+    return witens.reduce((acc, curr) => acc + parseFloat(curr.valor), 0);
+  };
 
   useEffect(() => {
     const updatedValue = normalizeCurrency(calcularTotal());
-    form.setValue('valor', updatedValue)
-  }, [witens])
+    form.setValue("valor", updatedValue);
+  }, [witens]);
 
   function handleAddItem() {
     if (!novoItemIdPlanoContasRef.current) return;
@@ -193,56 +210,61 @@ const FormTituloPagar = ({
 
     if (!id_centro_custo) {
       toast({
-        variant: 'destructive',
-        title: 'Erro!',
-        description: 'Selecione o centro de custo!',
-      })
-      return
+        variant: "destructive",
+        title: "Erro!",
+        description: "Selecione o centro de custo!",
+      });
+      return;
     }
 
-    const idPlanoConta = novoItemIdPlanoContasRef.current.value
-    const planoConta = novoItemPlanoContasRef.current.value
-    const valor = parseFloat(novoItemValorRef.current.value)
+    const idPlanoConta = novoItemIdPlanoContasRef.current.value;
+    const planoConta = novoItemPlanoContasRef.current.value;
+    const valor = parseFloat(novoItemValorRef.current.value);
     if (!valor) {
       toast({
-        variant: 'destructive',
-        title: 'Corrija o valor',
-        description: 'Não pode ser zerado'
-      })
-      return
+        variant: "destructive",
+        title: "Corrija o valor",
+        description: "Não pode ser zerado",
+      });
+      return;
     }
     if (!idPlanoConta) {
       toast({
-        variant: 'destructive',
-        title: 'Erro!',
-        description: 'Selecione um plano de contas',
-      })
-      return
+        variant: "destructive",
+        title: "Erro!",
+        description: "Selecione um plano de contas",
+      });
+      return;
     }
-    const checkIfExistis = itens.findIndex(item => item.id_plano_conta == idPlanoConta)
+    const checkIfExistis = itens.findIndex(
+      (item) => item.id_plano_conta == idPlanoConta
+    );
     if (checkIfExistis !== -1) {
       toast({
-        variant: 'destructive',
-        title: 'Erro!',
-        description: 'Plano de contas já foi selecionado!',
-      })
-      return
+        variant: "destructive",
+        title: "Erro!",
+        description: "Plano de contas já foi selecionado!",
+      });
+      return;
     }
-    setValue('update_itens', true);
-    addItem({ id_plano_conta: idPlanoConta, valor: valor.toFixed(2), plano_conta: planoConta });
-    novoItemIdPlanoContasRef.current.value = ''
-    novoItemPlanoContasRef.current.value = ''
-    novoItemValorRef.current.value = ''
+    setValue("update_itens", true);
+    addItem({
+      id_plano_conta: idPlanoConta,
+      valor: valor.toFixed(2),
+      plano_conta: planoConta,
+    });
+    novoItemIdPlanoContasRef.current.value = "";
+    novoItemPlanoContasRef.current.value = "";
+    novoItemValorRef.current.value = "";
   }
 
   function handleRemoveItem(index: number) {
-    setValue('update_itens', true);
+    setValue("update_itens", true);
     removeItem(index);
   }
   function handleChangeItemValue() {
-    setValue('update_itens', true)
+    setValue("update_itens", true);
   }
-
 
   // * [ RATEIO ]
   const rateio_manual = !!+form.watch("rateio_manual");
@@ -262,73 +284,81 @@ const FormTituloPagar = ({
 
   async function handleChangeRateio(novo_id_rateio: string) {
     if (novo_id_rateio) {
-      setValue('update_rateio', true);
-      api.get(`financeiro/rateios/${novo_id_rateio}`, { params: { id_grupo_economico: id_grupo_economico } })
-        .then(async data => {
+      setValue("update_rateio", true);
+      api
+        .get(`financeiro/rateios/${novo_id_rateio}`, {
+          params: { id_grupo_economico: id_grupo_economico },
+        })
+        .then(async (data) => {
           const novoRateio = data.data;
           const itensNovoRateio = novoRateio.itens;
 
           await new Promise((resolve) => {
-            form.resetField('itens_rateio', { defaultValue: [] })
-            resolve('success')
-          })
+            form.resetField("itens_rateio", { defaultValue: [] });
+            resolve("success");
+          });
 
           if (novoRateio.manual) {
             addItemRateio({
               id_filial: `${id_filial}`,
-              percentual: '100.00',
-            })
+              percentual: "100.00",
+            });
           }
 
           itensNovoRateio?.forEach((item: ItemRateio) => {
             addItemRateio({
               id_filial: String(item.id_filial || ""),
-              percentual: String(item.percentual || "0.00")
-            })
-          })
+              percentual: String(item.percentual || "0.00"),
+            });
+          });
 
-          setValue('rateio_manual', !!novoRateio.manual)
+          setValue("rateio_manual", !!novoRateio.manual);
         })
-        .catch(error => {
+        .catch((error) => {
           toast({
-            variant: 'destructive',
-            title: 'Erro!',
-            description: "Não foi possível receber os dados do novo rateio"
-          })
-        })
+            variant: "destructive",
+            title: "Erro!",
+            description: "Não foi possível receber os dados do novo rateio",
+          });
+        });
     }
   }
 
   function handleAddItemRateio() {
-    setValue('update_rateio', true);
+    setValue("update_rateio", true);
     addItemRateio({ id_filial: "", percentual: "0.00" });
   }
 
   function handleRemoveItemRateio(index: number) {
-    setValue('update_rateio', true);
+    setValue("update_rateio", true);
     removeItemRateio(index);
   }
 
   function handleClickExportarRateio() {
-    const json: any = []
+    const json: any = [];
     itensRateio.forEach((item: ItemRateio) => {
-      const obj: any = {}
-      obj.filial = filiais?.find((f: { id: string, nome: string }) => f.id == item.id_filial)?.nome || 'Não identificada';
-      obj.percentual = parseFloat(item.percentual)
+      const obj: any = {};
+      obj.filial =
+        filiais?.find(
+          (f: { id: string; nome: string }) => f.id == item.id_filial
+        )?.nome || "Não identificada";
+      obj.percentual = parseFloat(item.percentual);
       // @ts-ignore
       obj.valor = (parseFloat(item.percentual) / 100) * parseFloat(valor || 0);
-      json.push(obj)
-    })
-    exportToExcel(json, `rateio-${id ? "titulo-" + id : 'novo-titulo'}`)
+      json.push(obj);
+    });
+    exportToExcel(json, `rateio-${id ? "titulo-" + id : "novo-titulo"}`);
   }
 
   function handleClickImportarRateio() {
-    fileImportRateioRef?.current?.click()
+    fileImportRateioRef?.current?.click();
   }
 
   function handleChangeImportarRateio() {
     if (fileImportRateioRef?.current) {
-      const file = fileImportRateioRef.current.files && fileImportRateioRef.current.files[0]
+      const file =
+        fileImportRateioRef.current.files &&
+        fileImportRateioRef.current.files[0];
       if (file) {
         const reader = new FileReader();
         reader.readAsArrayBuffer(file);
@@ -339,34 +369,38 @@ const FormTituloPagar = ({
 
           const valorTotalRateio = result.reduce((acc, cur) => {
             // @ts-ignore
-            return acc + cur.valor
-          }, 0)
+            return acc + cur.valor;
+          }, 0);
 
-          setValue('update_rateio', true);
-          form.resetField('itens_rateio', { defaultValue: [] })
-          const lastItem = (result?.length || 0) - 1
+          setValue("update_rateio", true);
+          form.resetField("itens_rateio", { defaultValue: [] });
+          const lastItem = (result?.length || 0) - 1;
           result?.forEach((item, index) => {
             // @ts-ignore
-            const id_filial_rateio_item = filiais.find((f: Filial) => f.nome === item?.filial)?.id
+            const id_filial_rateio_item = filiais.find(
+              (f: Filial) => f.nome === item?.filial
+            )?.id;
             // const incremento = lastItem === index ? 0.01 : 0;
             // @ts-ignore
-            const percentual_rateio_item = (item.valor / valorTotalRateio * 100).toFixed(4)
+            const percentual_rateio_item = (
+              (item.valor / valorTotalRateio) *
+              100
+            ).toFixed(4);
             // console.log(item.filial, id_filial_rateio_item,  item.valor, valorTotalRateio,percentual_rateio_item )
 
             addItemRateio({
               id_filial: String(id_filial_rateio_item),
-              percentual: String(percentual_rateio_item)
-            })
-          })
-        }
-      };
+              percentual: String(percentual_rateio_item),
+            });
+          });
+        };
+      }
     }
   }
 
   function handleChangeItemRateio() {
-    setValue('update_rateio', true)
+    setValue("update_rateio", true);
   }
-
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
@@ -376,44 +410,60 @@ const FormTituloPagar = ({
   // Quando escolher um fornecedor:
   async function handleSelectionFornecedor(item: ItemFornecedor) {
     try {
-      const result = await api.get(`financeiro/fornecedores/${item.id}`)
+      const result = await api.get(`financeiro/fornecedores/${item.id}`);
       const fornecedor = result.data;
       // console.log('FORNECEDOR SELECIONADO', fornecedor)
 
-      setValue("id_fornecedor", fornecedor.id?.toString() || '');
-      setValue("cnpj_fornecedor", normalizeCnpjNumber(fornecedor.cnpj) || '');
-      setValue("nome_fornecedor", fornecedor.nome || '');
-      setValue("favorecido", fornecedor.favorecido || '');
-      setValue("cnpj_favorecido", fornecedor.cnpj_favorecido || '');
-      setValue("id_banco", fornecedor.id_banco?.toString() || '');
-      setValue("banco", fornecedor.banco || '');
-      setValue("codigo_banco", fornecedor.codigo_banco || '');
-      setValue("agencia", fornecedor.agencia || '');
-      setValue("dv_agencia", fornecedor.dv_agencia || '');
-      setValue("conta", fornecedor.conta || '');
-      setValue("dv_conta", fornecedor.dv_conta || '');
-      setValue("id_forma_pagamento", fornecedor.id_forma_pagamento?.toString() || '');
-      setValue("id_tipo_conta", fornecedor.id_tipo_conta?.toString() || '');
-      setValue("id_tipo_chave_pix", fornecedor.id_tipo_chave_pix?.toString() || '');
-      setValue("chave_pix", fornecedor.chave_pix || '');
+      setValue("id_fornecedor", fornecedor.id?.toString() || "");
+      setValue("cnpj_fornecedor", normalizeCnpjNumber(fornecedor.cnpj) || "");
+      setValue("nome_fornecedor", fornecedor.nome || "");
+      setValue("favorecido", fornecedor.favorecido || "");
+      setValue("cnpj_favorecido", fornecedor.cnpj_favorecido || "");
+      setValue("id_banco", fornecedor.id_banco?.toString() || "");
+      setValue("banco", fornecedor.banco || "");
+      setValue("codigo_banco", fornecedor.codigo_banco || "");
+      setValue("agencia", fornecedor.agencia || "");
+      setValue("dv_agencia", fornecedor.dv_agencia || "");
+      setValue("conta", fornecedor.conta || "");
+      setValue("dv_conta", fornecedor.dv_conta || "");
+      setValue(
+        "id_forma_pagamento",
+        fornecedor.id_forma_pagamento?.toString() || ""
+      );
+      setValue("id_tipo_conta", fornecedor.id_tipo_conta?.toString() || "");
+      setValue(
+        "id_tipo_chave_pix",
+        fornecedor.id_tipo_chave_pix?.toString() || ""
+      );
+      setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
-    } catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   // * [ ANEXOS ]
   // Quando um anexo for alterado:
-  async function handleChangeFile({ campo, fileUrl }: { campo: string, fileUrl?: string }) {
+  async function handleChangeFile({
+    campo,
+    fileUrl,
+  }: {
+    campo: string;
+    fileUrl?: string;
+  }) {
     try {
       if (id && !fileUrl) {
-        await api.post('financeiro/contas-a-pagar/titulo/update-anexo', { campo, fileUrl, id })
+        await api.post("financeiro/contas-a-pagar/titulo/update-anexo", {
+          campo,
+          fileUrl,
+          id,
+        });
       }
     } catch (error) {
       toast({
-        variant: 'destructive',
-        title: 'Erro!', description: 'O arquivo pode ter sido excluído, mas não foi possível remover o anexo da solicitação, tente excluir novamente mais tarde!'
-      })
+        variant: "destructive",
+        title: "Erro!",
+        description:
+          "O arquivo pode ter sido excluído, mas não foi possível remover o anexo da solicitação, tente excluir novamente mais tarde!",
+      });
     }
   }
 
@@ -422,27 +472,27 @@ const FormTituloPagar = ({
   function showModalPlanoContas() {
     if (!id_matriz) {
       toast({
-        variant: 'destructive',
-        title: 'Erro!',
-        description: 'Selecione primeiro a filial!'
-      })
-      return
+        variant: "destructive",
+        title: "Erro!",
+        description: "Selecione primeiro a filial!",
+      });
+      return;
     }
     if (!canEdit) {
-      return
+      return;
     }
     setModalPlanoContasOpen(true);
   }
-  const novoItemPlanoContasRef = useRef<HTMLInputElement | null>(null)
-  const novoItemIdPlanoContasRef = useRef<HTMLInputElement | null>(null)
-  const novoItemValorRef = useRef<HTMLInputElement | null>(null)
+  const novoItemPlanoContasRef = useRef<HTMLInputElement | null>(null);
+  const novoItemIdPlanoContasRef = useRef<HTMLInputElement | null>(null);
+  const novoItemValorRef = useRef<HTMLInputElement | null>(null);
 
   function handleSelectionPlanoContas(item: ItemPlanoContas) {
     if (!novoItemPlanoContasRef?.current) return;
     if (!novoItemIdPlanoContasRef?.current) return;
 
-    novoItemPlanoContasRef.current.value = `${item.codigo} - ${item.descricao}`
-    novoItemIdPlanoContasRef.current.value = item.id
+    novoItemPlanoContasRef.current.value = `${item.codigo} - ${item.descricao}`;
+    novoItemIdPlanoContasRef.current.value = item.id;
     setModalPlanoContasOpen(false);
   }
 
@@ -450,14 +500,14 @@ const FormTituloPagar = ({
   function showModalCentrosCustos() {
     if (!id_matriz) {
       toast({
-        variant: 'destructive',
-        title: 'Erro!',
-        description: 'Selecione primeiro a filial!'
-      })
-      return
+        variant: "destructive",
+        title: "Erro!",
+        description: "Selecione primeiro a filial!",
+      });
+      return;
     }
     if (!canEdit) {
-      return
+      return;
     }
     setModalCentrosCustosOpen(true);
   }
@@ -475,91 +525,107 @@ const FormTituloPagar = ({
     id_forma_pagamento === "8";
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
-  const { mutate: insertOne, error: erroInsertOne } = useTituloPagar().insertOne();
+  const { mutate: insertOne, error: erroInsertOne } =
+    useTituloPagar().insertOne();
   const { mutate: update } = useTituloPagar().update();
 
   const onSubmit = async (data: TituloSchemaProps) => {
     if (!id) {
       // console.log('INSERT ONE: ', data)
-      insertOne(data)
+      insertOne(data);
 
       if (erroInsertOne) {
-        console.log('ERRO_INSERT_ONE_TITULO_PAGAR: ', erroInsertOne)
+        console.log("ERRO_INSERT_ONE_TITULO_PAGAR: ", erroInsertOne);
       } else {
         if (parcelas === parcela) {
-          closeModal()
+          closeModal();
         } else {
-          const qtde_parcelas = parseInt(parcelas || 1)
-          const parcela_atual = parseInt(parcela || 1)
+          const qtde_parcelas = parseInt(parcelas || 1);
+          const parcela_atual = parseInt(parcela || 1);
           if (qtde_parcelas > parcela_atual) {
             const proxima_parcela = parcela_atual + 1;
-            setValue('parcela', String(proxima_parcela))
-            setValue('data_vencimento', '')
-            setValue('data_prevista', '')
+            setValue("parcela", String(proxima_parcela));
+            setValue("data_vencimento", "");
+            setValue("data_prevista", "");
           }
         }
-        console.log('INSERIU COM SUCESSO!')
+        console.log("INSERIU COM SUCESSO!");
       }
-
-    };
+    }
     if (id) update(data);
     // editModal(false);
   };
 
   type changeStatusTituloProps = {
-    id_novo_status: string,
-    motivo?: string
-  }
-  const changeStatusTitulo = async ({ id_novo_status, motivo }: changeStatusTituloProps) => {
+    id_novo_status: string;
+    motivo?: string;
+  };
+  const changeStatusTitulo = async ({
+    id_novo_status,
+    motivo,
+  }: changeStatusTituloProps) => {
     try {
-      const result = await api.post(`financeiro/contas-a-pagar/titulo/change-status`, { id_titulo: id, id_novo_status, motivo })
-      queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
-      queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
+      const result = await api.post(
+        `financeiro/contas-a-pagar/titulo/change-status`,
+        { id_titulo: id, id_novo_status, motivo }
+      );
+      queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
+      queryClient.invalidateQueries({ queryKey: ["fin_cp_titulo"] });
     } catch (error: unknown) {
-      // @ts-ignore;
-      toast({ variant: 'destructive', title: 'Erro!', description: error?.response?.data?.message || error?.message })
+      toast({
+        variant: "destructive",
+        title: "Erro!",
+        // @ts-expected-error "Funciona"
+        description: error?.response?.data?.message || error?.message,
+      });
     }
-  }
+  };
 
   const handleChangeVoltarSolicitado = (motivo: string) => {
     changeStatusTitulo({
-      id_novo_status: '1', motivo
-    })
-  }
+      id_novo_status: "1",
+      motivo,
+    });
+  };
   const handleChangeNegar = (motivo: string) => {
     changeStatusTitulo({
-      id_novo_status: '2', motivo: motivo
-    })
-  }
+      id_novo_status: "2",
+      motivo: motivo,
+    });
+  };
   const handleChangeAprovar = () => {
     changeStatusTitulo({
-      id_novo_status: '3'
-    })
-  }
+      id_novo_status: "3",
+    });
+  };
   const handleClickCriarRecorrencia = async (e) => {
     try {
-      e.preventDefault()
+      e.preventDefault();
       const dados = form.getValues();
-      try {
-        await schemaTitulo.parse(dados)
-      } catch (error) {
-          form.trigger()
-          return;
-      }
+      // try {
+      //   await schemaTitulo.parse(dados)
+      // } catch (error) {
+      //     form.trigger()
+      //     return;
+      // }
 
-      await api.post('financeiro/contas-a-pagar/titulo/criar-recorrencia', { ...dados })
+      await api.post("financeiro/contas-a-pagar/titulo/criar-recorrencia", {
+        ...dados,
+      });
+      queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
       toast({
-        variant:'success', title: 'Recorrência criada com sucesso!'
-      })
+        variant: "success",
+        title: "Recorrência criada com sucesso!",
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast({
-        variant: 'destructive',
-        title: 'Erro ao tentar criar a recorrência!',
-        description: error.response?.data?.message || error.message
-      })
+        variant: "destructive",
+        title: "Erro ao tentar criar a recorrência!",
+        description: error.response?.data?.message || error.message,
+      });
     }
-  }
+  };
   // ! FIM - ACTIONS //////////////////////////////////////
 
   return (
@@ -568,7 +634,7 @@ const FormTituloPagar = ({
         open={canEdit && modalPlanoContasOpen && !!id_matriz}
         id_matriz={id_matriz}
         tipo="Despesa"
-        onOpenChange={() => setModalPlanoContasOpen(prev => !prev)}
+        onOpenChange={() => setModalPlanoContasOpen((prev) => !prev)}
         handleSelecion={handleSelectionPlanoContas}
       />
 
@@ -600,7 +666,6 @@ const FormTituloPagar = ({
               <div className="max-w-full flex flex-col lg:flex-row gap-5">
                 {/* Primeira coluna */}
                 <div className="flex flex-1 flex-col gap-3 shrink-0">
-
                   {/* Dados do Fornecedor */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3">
@@ -614,8 +679,11 @@ const FormTituloPagar = ({
                       >
                         Selecionar
                       </Button>
-                      {errors.id_fornecedor?.message && (<span className="rounded-md flex-1 px-3 text-white bg-destructive">{errors.id_fornecedor?.message}</span>)}
-
+                      {errors.id_fornecedor?.message && (
+                        <span className="rounded-md flex-1 px-3 text-white bg-destructive">
+                          {errors.id_fornecedor?.message}
+                        </span>
+                      )}
                     </div>
 
                     <div className="flex flex-wrap gap-3 items-end">
@@ -648,8 +716,9 @@ const FormTituloPagar = ({
                         className="flex-1"
                       />
                       <div
-                        className={`${showPix ? "flex flex-1" : "hidden"
-                          } gap-3 flex-wrap`}
+                        className={`${
+                          showPix ? "flex flex-1" : "hidden"
+                        } gap-3 flex-wrap`}
                       >
                         <SelectTipoChavePix
                           control={form.control}
@@ -669,8 +738,9 @@ const FormTituloPagar = ({
                       </div>
                       {/* Dados bancários do fornecedor */}
                       <div
-                        className={`${showDadosBancarios ? "flex" : "hidden"
-                          } gap-3 flex-wrap`}
+                        className={`${
+                          showDadosBancarios ? "flex" : "hidden"
+                        } gap-3 flex-wrap`}
                       >
                         <FormInput
                           label="Favorecido"
@@ -812,7 +882,11 @@ const FormTituloPagar = ({
                             className={"flex-1 min-w-[40ch]"}
                           />
                         </Button>
-                        {errors.id_centro_custo && <Badge variant={'destructive'}>{errors.id_centro_custo?.message}</Badge>}
+                        {errors.id_centro_custo && (
+                          <Badge variant={"destructive"}>
+                            {errors.id_centro_custo?.message}
+                          </Badge>
+                        )}
                       </FormItem>
 
                       <FormInput
@@ -820,7 +894,7 @@ const FormTituloPagar = ({
                         name="num_parcelas"
                         type={"number"}
                         label="Número de parcelas"
-                        step='1'
+                        step="1"
                         min={1}
                         max={365}
                         control={form.control}
@@ -831,7 +905,7 @@ const FormTituloPagar = ({
                         name="parcela"
                         type={"number"}
                         label="Parcela"
-                        step='1'
+                        step="1"
                         control={form.control}
                       />
 
@@ -871,7 +945,7 @@ const FormTituloPagar = ({
                           readOnly={true}
                           className="text-end"
                           value={normalizeCurrency(calcularTotal())}
-                          {...form.register('valor')}
+                          {...form.register("valor")}
                         />
                       </FormItem>
 
@@ -892,7 +966,11 @@ const FormTituloPagar = ({
                       <span className="text-lg font-bold ">
                         Itens da Solicitação
                       </span>
-                      {errors.itens?.message && <Badge variant={'destructive'}>{errors.itens?.message}</Badge>}
+                      {errors.itens?.message && (
+                        <Badge variant={"destructive"}>
+                          {errors.itens?.message}
+                        </Badge>
+                      )}
                     </div>
                     {canEdit && modalEditing && (
                       <>
@@ -933,7 +1011,11 @@ const FormTituloPagar = ({
                             />
                           </FormItem>
 
-                          <Button className="ms-auto" type="button" onClick={handleAddItem}>
+                          <Button
+                            className="ms-auto"
+                            type="button"
+                            onClick={handleAddItem}
+                          >
                             <ArrowDown size={18} className="me-2" /> Add item
                           </Button>
                         </div>
@@ -987,11 +1069,12 @@ const FormTituloPagar = ({
                                     onClick={() => {
                                       if (itens.length === 1) {
                                         toast({
-                                          variant: 'destructive',
-                                          title: 'Ops!',
-                                          description: 'Tem que ter pelo menos um item na solicitação!'
-                                        })
-                                        return
+                                          variant: "destructive",
+                                          title: "Ops!",
+                                          description:
+                                            "Tem que ter pelo menos um item na solicitação!",
+                                        });
+                                        return;
                                       }
                                       handleRemoveItem(index);
                                     }}
@@ -1004,7 +1087,6 @@ const FormTituloPagar = ({
                           ))}
                         </tbody>
                       </table>
-
                     </div>
                   </div>
 
@@ -1015,7 +1097,11 @@ const FormTituloPagar = ({
                       <span className="text-lg font-bold ">
                         Dados do rateio
                       </span>
-                      {errors.itens_rateio?.message && <Badge variant={'destructive'}>{errors.itens_rateio?.message}</Badge>}
+                      {errors.itens_rateio?.message && (
+                        <Badge variant={"destructive"}>
+                          {errors.itens_rateio?.message}
+                        </Badge>
+                      )}
                     </div>
 
                     <div className="flex gap-3 flex-wrap items-end">
@@ -1029,11 +1115,28 @@ const FormTituloPagar = ({
                       />
 
                       <div className="flex items-center gap-3">
-                        <Button onClick={handleClickExportarRateio} variant={'success'}><Download size={18} className="me-2" /> Exportar Padrão</Button>
+                        <Button
+                          onClick={handleClickExportarRateio}
+                          variant={"success"}
+                        >
+                          <Download size={18} className="me-2" /> Exportar
+                          Padrão
+                        </Button>
 
-                        <input className="hidden" type="file" ref={fileImportRateioRef} onChange={handleChangeImportarRateio} />
+                        <input
+                          className="hidden"
+                          type="file"
+                          ref={fileImportRateioRef}
+                          onChange={handleChangeImportarRateio}
+                        />
                         {canEditRateio && rateio_manual && (
-                          <Button onClick={handleClickImportarRateio} variant={'tertiary'}><Upload size={18} className="me-2" /> Importar Rateio</Button>
+                          <Button
+                            onClick={handleClickImportarRateio}
+                            variant={"tertiary"}
+                          >
+                            <Upload size={18} className="me-2" /> Importar
+                            Rateio
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -1104,7 +1207,13 @@ const FormTituloPagar = ({
                       </table>
                       <div className="mt-2 text-muted-foreground">
                         <span>Total percentual: </span>
-                        {itensRateio.reduce((acc, curr) => { return acc + parseFloat(curr.percentual) }, 0).toFixed(2).replace('.', ',')}%
+                        {itensRateio
+                          .reduce((acc, curr) => {
+                            return acc + parseFloat(curr.percentual);
+                          }, 0)
+                          .toFixed(2)
+                          .replace(".", ",")}
+                        %
                       </div>
                     </div>
                   </div>
@@ -1120,7 +1229,8 @@ const FormTituloPagar = ({
                     <div className="flex flex-col gap-3 overflow-auto max-h-72">
                       {data?.historico?.map((h) => (
                         <p key={`hist.${h.id}`} className="text-xs">
-                          {formatarDataHora(h.created_at)}: {formatarHistorico(h.descricao)}
+                          {formatarDataHora(h.created_at)}:{" "}
+                          {formatarHistorico(h.descricao)}
                         </p>
                       ))}
                     </div>
@@ -1142,7 +1252,9 @@ const FormTituloPagar = ({
                     name="url_xml"
                     mediaType="xml"
                     control={form.control}
-                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_xml' })}
+                    onChange={(fileUrl: string) =>
+                      handleChangeFile({ fileUrl, campo: "url_xml" })
+                    }
                   />
                   <FormFileUpload
                     disabled={disabled}
@@ -1150,7 +1262,9 @@ const FormTituloPagar = ({
                     name="url_nota_fiscal"
                     mediaType="pdf"
                     control={form.control}
-                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_nota_fiscal' })}
+                    onChange={(fileUrl: string) =>
+                      handleChangeFile({ fileUrl, campo: "url_nota_fiscal" })
+                    }
                   />
                   <FormFileUpload
                     disabled={disabled}
@@ -1158,7 +1272,9 @@ const FormTituloPagar = ({
                     name="url_boleto"
                     mediaType="pdf"
                     control={form.control}
-                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_boleto' })}
+                    onChange={(fileUrl: string) =>
+                      handleChangeFile({ fileUrl, campo: "url_boleto" })
+                    }
                   />
                   <FormFileUpload
                     disabled={disabled}
@@ -1166,7 +1282,9 @@ const FormTituloPagar = ({
                     name="url_contrato"
                     mediaType="etc"
                     control={form.control}
-                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_contrato' })}
+                    onChange={(fileUrl: string) =>
+                      handleChangeFile({ fileUrl, campo: "url_contrato" })
+                    }
                   />
                   <FormFileUpload
                     disabled={disabled}
@@ -1174,7 +1292,9 @@ const FormTituloPagar = ({
                     name="url_planilha"
                     mediaType="excel"
                     control={form.control}
-                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_planilha' })}
+                    onChange={(fileUrl: string) =>
+                      handleChangeFile({ fileUrl, campo: "url_planilha" })
+                    }
                   />
                   <FormFileUpload
                     disabled={disabled}
@@ -1182,7 +1302,9 @@ const FormTituloPagar = ({
                     name="url_txt"
                     mediaType="txt"
                     control={form.control}
-                    onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: 'url_txt' })}
+                    onChange={(fileUrl: string) =>
+                      handleChangeFile({ fileUrl, campo: "url_txt" })
+                    }
                   />
                 </div>
               </div>
@@ -1190,37 +1312,79 @@ const FormTituloPagar = ({
           </ScrollArea>
           <div className="flex justify-between items-center mt-4">
             <div className="flex gap-3 items-center">
-              {id && status !== 'Solicitado' && status !== 'Pago' && (isMaster === true && (status === 'Aprovado' || status === 'Negado') ? true : false) && (
-                <ButtonMotivation variant={'secondary'} size={'lg'} action={handleChangeVoltarSolicitado}>
-                  <Undo2 className="me-2" size={18} />Tornar solicitado
+              {id &&
+                status !== "Solicitado" &&
+                status !== "Pago" &&
+                (isMaster === true &&
+                (status === "Aprovado" || status === "Negado")
+                  ? true
+                  : false) && (
+                  <ButtonMotivation
+                    variant={"secondary"}
+                    size={"lg"}
+                    action={handleChangeVoltarSolicitado}
+                  >
+                    <Undo2 className="me-2" size={18} />
+                    Tornar solicitado
+                  </ButtonMotivation>
+                )}
+              {isMaster && id && status !== "Negado" && status !== "Pago" && (
+                <ButtonMotivation
+                  variant={"destructive"}
+                  size={"lg"}
+                  action={handleChangeNegar}
+                >
+                  <X className="me-2" size={18} />
+                  Negar
                 </ButtonMotivation>
               )}
-              {isMaster && id && status !== 'Negado' && status !== 'Pago' && (
-                <ButtonMotivation variant={'destructive'} size={'lg'} action={handleChangeNegar}>
-                  <X className="me-2" size={18} />Negar
-                </ButtonMotivation>
-              )}
-              {isMaster && id && status !== 'Aprovado' && status !== 'Pago' && (
-                <Button type="button" variant={'success'} size={'lg'} onClick={handleChangeAprovar}>
-                  <Check className="me-2" size={18} />Aprovar
+              {isMaster && id && status !== "Aprovado" && status !== "Pago" && (
+                <Button
+                  type="button"
+                  variant={"success"}
+                  size={"lg"}
+                  onClick={handleChangeAprovar}
+                >
+                  <Check className="me-2" size={18} />
+                  Aprovar
                 </Button>
               )}
               {id && isMaster && (
-                <Button type="button" variant={'secondary'} size={'lg'} onClick={handleClickCriarRecorrencia}>
-                  <Repeat2 className="me-2" size={18} />Criar Recorrência
+                <Button
+                  type="button"
+                  variant={"secondary"}
+                  size={"lg"}
+                  onClick={handleClickCriarRecorrencia}
+                >
+                  <Repeat2 className="me-2" size={18} />
+                  Criar Recorrência
                 </Button>
               )}
             </div>
             <div className="flex gap-3 items-center">
               {canEdit && modalEditing && (
                 <>
-                  <Button onClick={() => editModal(false)} size="lg" variant={'secondary'}><Ban className="me-2" size={18} /> Cancelar</Button>
-                  <Button type="submit" size="lg" variant={'default'}><Save className="me-2" size={18} />{id ? 'Salvar' : 'Solicitar'}</Button>
+                  <Button
+                    onClick={() => editModal(false)}
+                    size="lg"
+                    variant={"secondary"}
+                  >
+                    <Ban className="me-2" size={18} /> Cancelar
+                  </Button>
+                  <Button type="submit" size="lg" variant={"default"}>
+                    <Save className="me-2" size={18} />
+                    {id ? "Salvar" : "Solicitar"}
+                  </Button>
                 </>
-              )
-              }
+              )}
               {canEdit && !modalEditing && (
-                <Button onClick={() => editModal(true)} size="lg" variant={'warning'}><Pen size={18} className="me-2" /> Editar</Button>
+                <Button
+                  onClick={() => editModal(true)}
+                  size="lg"
+                  variant={"warning"}
+                >
+                  <Pen size={18} className="me-2" /> Editar
+                </Button>
               )}
             </div>
           </div>

@@ -23,11 +23,11 @@ export const useTituloPagar = () => {
         placeholderData: keepPreviousData
     })
 
-    const getRecorrencias = () => useQuery({
+    const getRecorrencias = ({ filters }: GetTitulosPagarProps) => useQuery({
         queryKey: ['fin_cp_recorrencias'],
         staleTime: 5 * 1000 * 60,
         retry: false,
-        queryFn: async () => { return await api.get(`/financeiro/contas-a-pagar/titulo/recorrencia`) },
+        queryFn: async () => { return await api.get(`/financeiro/contas-a-pagar/titulo/recorrencias`, { params: { filters } }) },
         placeholderData: keepPreviousData
     })
 
@@ -39,7 +39,6 @@ export const useTituloPagar = () => {
         queryFn: async () => {
             console.log(`Buscando título com base no ID: ${id}`)
             try {
-                
                 const result = await api.get(`/financeiro/contas-a-pagar/titulo/${id}`)
                 return result
             } catch (error) {
@@ -58,7 +57,7 @@ export const useTituloPagar = () => {
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
         },
         onError(error) {
-            // @ts-ignore
+            // @ts-expect-error "Funciona"
             toast({variant: "destructive", title: 'Erro ao tentar criar a solicitação!', description: error?.response?.data?.message || error.message})
             console.log(error);
         },
@@ -74,7 +73,7 @@ export const useTituloPagar = () => {
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
         },
         onError(error) {
-            // @ts-ignore
+            // @ts-expect-error "Funciona"
             toast({title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message})
             console.log(error);
         },
@@ -82,7 +81,7 @@ export const useTituloPagar = () => {
 
     const deleteRecorrencia = () => useMutation({
         mutationFn: ({ id, ...rest }: TituloSchemaProps) => {
-            return api.delete("/financeiro/contas-a-pagar/titulo/recorrencia", { id, ...rest }).then((response) => response.data)
+            return api.delete("/financeiro/contas-a-pagar/titulo/recorrencia", { data:{id, ...rest} }).then((response) => response.data)
         },
         onSuccess() {
             toast({variant:'success', title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!'})
@@ -90,7 +89,7 @@ export const useTituloPagar = () => {
             queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
         },
         onError(error) {
-            // @ts-ignore
+            // @ts-expect-error "Funciona"
             toast({title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message})
             console.log(error);
         },
