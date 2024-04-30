@@ -19,38 +19,58 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { useTituloPagar } from "@/hooks/useTituloPagar";
 import { useEffect, useState } from "react";
 import { useStoreTablePagar } from "../table/store-table";
 import { useStoreAlteracoesLote } from "./store";
 
 type AlteracaoLoteProps = {
   type?: string;
-  vencimento?: Date;
+  data_prevista?: Date;
   status?: string;
+};
+
+export type AlteracaoLoteSchemaProps = {
+  type: string;
+  value: string | Date;
+  ids: number[];
 };
 
 const ModalAlteracoesLote = () => {
   const [data, setData] = useState<AlteracaoLoteProps>({
     type: "",
-    vencimento: undefined,
+    data_prevista: undefined,
     status: "",
   });
-
   const modalOpen = useStoreAlteracoesLote().modalOpen;
-
   const closeModal = useStoreAlteracoesLote().closeModal;
-  // const queryClient = useQueryClient();
   const idSelection = useStoreTablePagar().idSelection;
 
+  const { mutate: changeTitulos } = useTituloPagar().changeTitulos();
+
+  // const queryClient = useQueryClient();
+
   const alterarLote = async () => {
-    if (data.type === "vencimento" && data.vencimento) {
-      console.log(data.type, data.vencimento);
-      console.log(idSelection);
+    if (idSelection.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Solicitações não selecionadas",
+        description:
+          "Selecione uma ou mais solicitações para realizar as alterações",
+      });
+    } else if (data.type === "data_prevista" && data.data_prevista) {
+      changeTitulos({
+        type: data.type,
+        value: data.data_prevista,
+        ids: idSelection,
+      });
+      closeModal();
     } else if (data.type === "status" && data.status) {
-      console.log(data.type, data.status);
-      console.log(idSelection);
+      changeTitulos({ type: data.type, value: data.status, ids: idSelection });
+      closeModal();
     } else {
       toast({
+        variant: "destructive",
         title: "Dados insuficientes!",
         description: "Selecione o tipo da alteração e seu valor",
       });
@@ -61,21 +81,21 @@ const ModalAlteracoesLote = () => {
     if (!modalOpen) {
       setData({
         type: "",
-        vencimento: undefined,
+        data_prevista: undefined,
         status: "",
       });
     }
   }, [modalOpen]);
 
   function valorAlterado() {
-    if (data.type == "vencimento") {
+    if (data.type == "data_prevista") {
       return (
         <div className="flex-1">
-          <label className="text-sm font-medium">Data de Vencimento</label>
+          <label className="text-sm font-medium">Previsão de Pagamento</label>
           <InputDate
             className="mt-2 flex-1"
-            value={data.vencimento}
-            onChange={(e: Date) => setData({ ...data, vencimento: e })}
+            value={data.data_prevista}
+            onChange={(e: Date) => setData({ ...data, data_prevista: e })}
           />
         </div>
       );
@@ -93,8 +113,8 @@ const ModalAlteracoesLote = () => {
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="1">Solicitado</SelectItem>
-                <SelectItem value="2">Aprovado</SelectItem>
-                <SelectItem value="3">Negado</SelectItem>
+                <SelectItem value="3">Aprovado</SelectItem>
+                <SelectItem value="2">Negado</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -118,13 +138,13 @@ const ModalAlteracoesLote = () => {
                   onValueChange={(value) => setData({ ...data, type: value })}
                 >
                   <SelectTrigger className="flex-1 mt-2">
-                    <SelectValue placeholder="Selecione o status" />
+                    <SelectValue placeholder="Selecione tipo" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       <SelectItem value="status">Status</SelectItem>
-                      <SelectItem value="vencimento">
-                        Data de Vencimento
+                      <SelectItem value="data_prevista">
+                        Data Prevista
                       </SelectItem>
                     </SelectGroup>
                   </SelectContent>

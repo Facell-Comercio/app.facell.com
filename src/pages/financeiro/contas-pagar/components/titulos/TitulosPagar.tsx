@@ -15,7 +15,9 @@ import {
   checkUserDepartments,
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
+import { exportToExcel } from "@/helpers/importExportXLS";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { api } from "@/lib/axios";
 import { Download, Edit, Plus, Repeat2 } from "lucide-react";
 import FiltersLancamentosPagar from "./FiltersTitulosPagar";
 import ModalAlteracoesLote from "./alteracao-lote/Modal";
@@ -36,12 +38,11 @@ const TitulosPagar = () => {
     state.setPagination,
     state.filters,
   ]);
-  const [rowSelection, handleRowSelection, idSelection] = useStoreTablePagar((state) => [
+  const [rowSelection, handleRowSelection] = useStoreTablePagar((state) => [
     state.rowSelection,
     state.handleRowSelection,
-    state.idSelection,
   ]);
-  
+
   const { data, refetch } = useTituloPagar().getAll({ pagination, filters });
 
   const rows = data?.data?.rows || [];
@@ -50,6 +51,18 @@ const TitulosPagar = () => {
   const openModal = useStoreTitulo().openModal;
   const openModalRecorrencias = useStoreRecorrencias().openModal;
   const openModalAlteracoesLote = useStoreAlteracoesLote().openModal;
+
+  function refetchTitulos() {
+    refetch();
+    handleRowSelection({ idSelection: [], rowSelection: {} });
+  }
+
+  async function exportSolicitacao() {
+    const response = await api.get(`/financeiro/contas-a-pagar/titulo`, {
+      params: { filters },
+    });
+    exportToExcel(response?.data?.rows || [], `solicitacoes`);
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -72,7 +85,9 @@ const TitulosPagar = () => {
             <Download className="me-2" size={18} /> Exportar
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>Solicitações</DropdownMenuItem>
+            <DropdownMenuItem onClick={exportSolicitacao}>
+              Solicitações
+            </DropdownMenuItem>
             <DropdownMenuItem>Para o Datasys</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -95,8 +110,8 @@ const TitulosPagar = () => {
           <Plus className="me-2" size={18} /> Nova Solicitação
         </Button>
       </div>
-      <FiltersLancamentosPagar refetch={refetch} />
-      
+      <FiltersLancamentosPagar refetch={refetchTitulos} />
+
       <DataTable
         pagination={pagination}
         setPagination={setPagination}

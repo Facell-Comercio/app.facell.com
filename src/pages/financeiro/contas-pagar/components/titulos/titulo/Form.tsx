@@ -572,13 +572,14 @@ const FormTituloPagar = ({
     motivo,
   }: changeStatusTituloProps) => {
     try {
-      const result = await api.post(
-        `financeiro/contas-a-pagar/titulo/change-status`,
-        { id_titulo: id, id_novo_status, motivo }
-      );
+      await api.post(`financeiro/contas-a-pagar/titulo/change-status`, {
+        id_titulo: id,
+        id_novo_status,
+        motivo,
+      });
       queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
       queryClient.invalidateQueries({ queryKey: ["fin_cp_titulo"] });
-    } catch (error: unknown) {
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Erro!",
