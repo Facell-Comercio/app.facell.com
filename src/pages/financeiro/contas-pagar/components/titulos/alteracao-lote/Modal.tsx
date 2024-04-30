@@ -40,15 +40,15 @@ const ModalAlteracoesLote = () => {
 
   const closeModal = useStoreAlteracoesLote().closeModal;
   // const queryClient = useQueryClient();
-  const rowSelection = useStoreTablePagar().rowSelection;
+  const idSelection = useStoreTablePagar().idSelection;
 
   const alterarLote = async () => {
     if (data.type === "vencimento" && data.vencimento) {
       console.log(data.type, data.vencimento);
-      console.log(rowSelection);
+      console.log(idSelection);
     } else if (data.type === "status" && data.status) {
       console.log(data.type, data.status);
-      console.log(rowSelection);
+      console.log(idSelection);
     } else {
       toast({
         title: "Dados insuficientes!",
