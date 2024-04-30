@@ -547,8 +547,8 @@ const FormTituloPagar = ({
       if (parcelas === parcela) {
         closeModal();
       } else {
-        const qtde_parcelas = parseInt(parcelas || 1);
-        const parcela_atual = parseInt(parcela || 1);
+        const qtde_parcelas = parseInt(parcelas || "1");
+        const parcela_atual = parseInt(parcela || "1");
         if (qtde_parcelas > parcela_atual) {
           const proxima_parcela = parcela_atual + 1;
           setValue("parcela", String(proxima_parcela));
@@ -557,6 +557,9 @@ const FormTituloPagar = ({
         }
       }
       console.log("INSERIU COM SUCESSO!");
+      if (titulo.id_recorrencia) {
+        queryClient.invalidateQueries({ queryKey: ["fin_cp_rec"] });
+      }
     }
   }, [insertOneSuccess]);
 

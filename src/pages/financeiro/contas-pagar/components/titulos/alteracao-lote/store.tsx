@@ -10,7 +10,7 @@ const initialFilters: Filters = {
   mes: new Date().getMonth() + 1,
 };
 
-interface UseStoreRecorrencias {
+interface UseStoreAlteracoesLote {
   id?: string | null;
   modalOpen: boolean;
   filters: Filters;
@@ -23,7 +23,7 @@ interface UseStoreRecorrencias {
   resetFilters: () => void;
 }
 
-export const useStoreRecorrencias = create<UseStoreRecorrencias>((set) => ({
+export const useStoreAlteracoesLote = create<UseStoreAlteracoesLote>((set) => ({
   id: null,
   modalOpen: false,
   filters: initialFilters,

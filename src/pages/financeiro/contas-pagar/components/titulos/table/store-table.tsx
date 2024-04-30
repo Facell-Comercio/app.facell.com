@@ -63,5 +63,9 @@ export const useStoreTablePagar = create<State & Actions>((set) => ({
   },
 
   setPagination: (pagination) => set({ pagination }),
-  setRowSelection: (rowSelection) => set({ rowSelection }),
+  setRowSelection: (selection) =>
+    set((state) => ({
+      ...state,
+      rowSelection: { ...state.rowSelection, ...selection },
+    })),
 }));

@@ -14,10 +14,13 @@ export function TableTitulos<TData, TValue>({
   data,
   rowCount,
 }: DataTableProps<TData, TValue>) {
-  const [pagination, setPagination] = useStoreTablePagar((state) => [
-    state.pagination,
-    state.setPagination,
-  ]);
+  const [pagination, setPagination, rowSelection, setRowSelection] =
+    useStoreTablePagar((state) => [
+      state.pagination,
+      state.setPagination,
+      state.rowSelection,
+      state.setRowSelection,
+    ]);
 
   return (
     <DataTable
@@ -26,6 +29,8 @@ export function TableTitulos<TData, TValue>({
       columns={columns}
       data={data}
       rowCount={rowCount}
+      rowSelection={rowSelection}
+      setRowSelection={setRowSelection}
     />
   );
 }

@@ -108,7 +108,6 @@ const ModalRecorrencias = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="mb-2">Recorrências</DialogTitle>
-          <div className="flex items-center gap-2 justify-center"></div>
           <Accordion
             type="single"
             collapsible

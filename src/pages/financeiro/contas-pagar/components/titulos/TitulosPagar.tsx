@@ -18,6 +18,8 @@ import {
 import { useTituloPagar } from "@/hooks/useTituloPagar";
 import { Download, Edit, Plus, Repeat2 } from "lucide-react";
 import FiltersLancamentosPagar from "./FiltersTitulosPagar";
+import ModalAlteracoesLote from "./alteracao-lote/Modal";
+import { useStoreAlteracoesLote } from "./alteracao-lote/store";
 import ModalRecorrencias from "./recorrencias/Modal";
 import { useStoreRecorrencias } from "./recorrencias/store";
 import { columnsTable } from "./table/columns";
@@ -41,6 +43,7 @@ const TitulosPagar = () => {
 
   const openModal = useStoreTitulo().openModal;
   const openModalRecorrencias = useStoreRecorrencias().openModal;
+  const openModalAlteracoesLote = useStoreAlteracoesLote().openModal;
 
   return (
     <div className="flex flex-col gap-3">
@@ -49,6 +52,7 @@ const TitulosPagar = () => {
           <Button
             variant={"outline"}
             className="border border-orange-200 dark:border-orange-600"
+            onClick={() => openModalAlteracoesLote("")}
           >
             <Edit className="me-2" size={18} /> Alterar em lote
           </Button>
@@ -95,6 +99,7 @@ const TitulosPagar = () => {
       />
       <ModalTituloPagar />
       <ModalRecorrencias />
+      <ModalAlteracoesLote />
     </div>
   );
 };
