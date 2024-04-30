@@ -1,3 +1,4 @@
+import { RowSelectionState } from "@tanstack/react-table";
 import { DateRange } from "react-day-picker";
 import { create } from "zustand";
 
@@ -32,15 +33,20 @@ export interface State {
   rowCount: number;
   pagination: Pagination;
   isAllSelected: boolean;
-  rowSelection: RowSelection;
   filters: Filters;
+  rowSelection: RowSelection;
+  idSelection: number[];
 }
+type HandleRowSelectionProps = {
+  rowSelection: RowSelectionState;
+  idSelection: number[];
+};
 
 export interface Actions {
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
   setPagination: (pagination: Pagination) => void;
-  setRowSelection: (rowSelection: RowSelection) => void;
+  handleRowSelection: (data: HandleRowSelectionProps) => void;
 }
 
 export const useStoreTablePagar = create<State & Actions>((set) => ({
@@ -50,6 +56,7 @@ export const useStoreTablePagar = create<State & Actions>((set) => ({
   pagination: { pageIndex: 0, pageSize: 15 },
   isAllSelected: false,
   rowSelection: {},
+  idSelection: [],
 
   // Filters
   filters: initialFilters,
@@ -63,9 +70,6 @@ export const useStoreTablePagar = create<State & Actions>((set) => ({
   },
 
   setPagination: (pagination) => set({ pagination }),
-  setRowSelection: (selection) =>
-    set((state) => ({
-      ...state,
-      rowSelection: { ...state.rowSelection, ...selection },
-    })),
+  handleRowSelection: (data: HandleRowSelectionProps) =>
+    set({ rowSelection: data.rowSelection, idSelection: data.idSelection }),
 }));
