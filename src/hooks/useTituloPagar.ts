@@ -26,7 +26,6 @@ export const useTituloPagar = () => {
 
     const getRecorrencias = ({ filters }: GetTitulosPagarProps) => useQuery({
         queryKey: ['fin_cp_recorrencias'],
-        staleTime: 5 * 1000 * 60,
         retry: false,
         queryFn: async () => { return await api.get(`/financeiro/contas-a-pagar/titulo/recorrencias`, { params: { filters } }) },
         placeholderData: keepPreviousData

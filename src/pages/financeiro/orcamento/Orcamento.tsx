@@ -17,7 +17,7 @@ const OrcamentoPage = () => {
       <Tabs defaultValue="meu-orcamento" className="w-full">
         <TabsList className="w-full justify-start flex h-auto">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-2 md:p-0 h-auto">
-            <TabsTrigger value="meu-orcamento">Meu Orçamento</TabsTrigger>
+            <TabsTrigger value="meu-orcamento">Acompanhamento</TabsTrigger>
             {(checkUserDepartments("FINANCEIRO") ||
               checkUserPermission("MASTER")) && (
               <TabsTrigger value="cadastros">Cadastro</TabsTrigger>
