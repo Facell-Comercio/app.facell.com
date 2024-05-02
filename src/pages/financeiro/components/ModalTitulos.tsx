@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DatePickerWithRange } from "@/components/ui/date-range";
 import {
@@ -46,12 +47,16 @@ interface IModalTitulos {
   handleSelecion: (item: TitulosProps[]) => void;
   onOpenChange: () => void;
   id_matriz?: string;
+  initialFilters?: {
+    [key: string]: any;
+  }
 }
 
 export type TitulosProps = {
   checked?: boolean;
   id_titulo: string;
   id_status?: string;
+  status: string;
   previsao: string;
   nome_fornecedor: string;
   valor_total: string;
@@ -81,6 +86,7 @@ const ModalTitulos = ({
   handleSelecion,
   onOpenChange,
   id_matriz,
+  initialFilters,
 }: IModalTitulos) => {
   const [ids, setIds] = useState<string[]>([]);
   const [titulos, setTitulos] = useState<TitulosProps[]>([]);
@@ -88,7 +94,8 @@ const ModalTitulos = ({
     pageSize: 15,
     pageIndex: 0,
   });
-  const initialFilters: Filters = {
+
+  const defaultFilters: Filters = {
     id: "",
     fornecedor: "",
     descricao: "",
@@ -97,7 +104,7 @@ const ModalTitulos = ({
     range_data: { from: undefined, to: undefined },
     id_filial: "",
   };
-  const [filters, setFilters] = useState(initialFilters);
+  const [filters, setFilters] = useState({ ...defaultFilters, ...initialFilters });
 
   const {
     data,
@@ -106,6 +113,7 @@ const ModalTitulos = ({
     refetch: refetchTitulos,
   } = useQuery({
     queryKey: ["filtros", id_matriz],
+    staleTime: 0,
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/titulo/titulos-bordero", {
         params: {
@@ -116,6 +124,7 @@ const ModalTitulos = ({
     enabled: open,
   });
 
+  console.log('PAGINA_TITULOS', data?.data?.rows)
   const pages = [...Array(data?.data?.pageCount || 0).keys()].map(
     (page) => page + 1
   );
@@ -138,13 +147,17 @@ const ModalTitulos = ({
 
   async function handleClickResetFilters() {
     await new Promise((resolve) => {
-      setFilters(initialFilters);
+      setFilters(defaultFilters);
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
     refetchTitulos();
   }
 
+  function handleRemoveAll() {
+    setTitulos([])
+    setIds([])
+  }
   function handleSelectAll() {
     data?.data?.rows.forEach((item: TitulosProps) => {
       const isAlreadyInTitulos = titulos.some(
@@ -156,6 +169,8 @@ const ModalTitulos = ({
           ...prevTitulos,
           {
             id_titulo: item.id_titulo,
+            id_status: item.id_status,
+            status: item.status,
             filial: item.filial,
             previsao: item.previsao,
             nome_fornecedor: item.nome_fornecedor,
@@ -213,6 +228,8 @@ const ModalTitulos = ({
       ...titulos,
       {
         id_titulo: item.id_titulo,
+        id_status: item.id_status,
+        status: item.status,
         filial: item.filial,
         previsao: item.previsao,
         nome_fornecedor: item.nome_fornecedor,
@@ -236,6 +253,7 @@ const ModalTitulos = ({
           <DialogDescription>
             Selecione um ao clicar no botão à direita.
           </DialogDescription>
+
           <Accordion
             type="single"
             collapsible
@@ -251,7 +269,7 @@ const ModalTitulos = ({
                   <Button
                     size={"xs"}
                     onClick={() => handleClickResetFilters()}
-                    variant="destructive"
+                    variant="secondary"
                   >
                     Limpar <EraserIcon size={12} className="ms-2" />
                   </Button>
@@ -292,33 +310,6 @@ const ModalTitulos = ({
                         setFilters({ ...filters, num_doc: e.target.value });
                       }}
                     />
-                    <Select
-                      value={filters.tipo_data}
-                      onValueChange={(tipo_data) => {
-                        setFilters({ ...filters, tipo_data: tipo_data });
-                      }}
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Tipo de data" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="created_at">Criação</SelectItem>
-                        <SelectItem value="data_emissao">Emissão</SelectItem>
-                        <SelectItem value="data_vencimento">
-                          Vencimento
-                        </SelectItem>
-                        <SelectItem value="data_pagamento">
-                          Pagamento
-                        </SelectItem>
-                        <SelectItem value="data_prevista">Provisão</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <DatePickerWithRange
-                      date={filters.range_data}
-                      setDate={(date) => {
-                        setFilters({ ...filters, range_data: date });
-                      }}
-                    />
                     <SelectFilial
                       id_matriz={id_matriz}
                       showAll
@@ -332,13 +323,26 @@ const ModalTitulos = ({
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-          <Button
-            className="max-w-fit self-end"
-            variant={"outline"}
-            onClick={() => handleSelectAll()}
-          >
-            Selecionar Todos
-          </Button>
+
+          <div className="flex justify-between mt-4">
+            <Button
+              variant={"destructive"}
+              size={'sm'}
+              onClick={() => handleRemoveAll()}
+            >
+              Remover Todos
+            </Button>
+
+            <Button
+              variant={"outline"}
+              size={'sm'}
+              onClick={() => handleSelectAll()}
+            >
+              Selecionar Todos
+            </Button>
+
+          </div>
+
         </DialogHeader>
 
         <ScrollArea className="h-96 rounded-md">
@@ -361,10 +365,9 @@ const ModalTitulos = ({
                 return (
                   <tr
                     key={"titulos:" + item.id_titulo + index}
-                    className={`bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-1 px-2 ${
-                      isSelected &&
+                    className={`bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-1 px-2 ${isSelected &&
                       "bg-primary-foreground dark:bg-primary-foreground"
-                    }`}
+                      }`}
                   >
                     <td className="text-xs p-1 text-center">
                       {" "}
@@ -406,21 +409,43 @@ const ModalTitulos = ({
           </table>
         </ScrollArea>
 
-        <div className="flex items-center justify-between text-sm">
-          <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
-            <p className="mr-1">Qtd. Títulos: </p>
-            {data?.data.rows.length}
-          </span>
-          <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
-            <p className="mr-1">Valor Total: </p>
-            {normalizeCurrency(
-              data?.data.rows.reduce(
-                (acc: number, titulo: TitulosProps) =>
-                  acc + +titulo.valor_total,
-                0
-              ) || 0
-            )}
-          </span>
+        <div className="flex items-center justify-between gap-3 text-sm">
+          <div className="flex items-center gap-3">
+            <Badge variant={'secondary'}>
+              <p className="mr-1">Qtde: </p>
+              {data?.data.rows.length}
+            </Badge>
+            <Badge variant={'secondary'}>
+              <p className="mr-1">Valor Total: </p>
+              {normalizeCurrency(
+                data?.data.rows.reduce(
+                  (acc: number, titulo: TitulosProps) =>
+                    acc + +titulo.valor_total,
+                  0
+                ) || 0
+              )}
+            </Badge>
+          </div>
+          {titulos.length > 0 &&
+            <div className="flex items-center gap-3">
+              Selecionado:
+              <Badge variant={'default'}>
+                <p className="mr-1">Qtde: </p>
+                {titulos.length}
+              </Badge>
+              <Badge variant={'default'}>
+                <p className="mr-1">Valor: </p>
+                {normalizeCurrency(
+                  titulos?.reduce(
+                    (acc: number, titulo: TitulosProps) =>
+                      acc + +titulo.valor_total,
+                    0
+                  ) || 0
+                )}
+              </Badge>
+            </div>
+          }
+
         </div>
         <DialogFooter className="flex">
           <div className="flex items-center space-x-2">
@@ -447,7 +472,6 @@ const ModalTitulos = ({
               <PaginationItem>
                 <Button
                   variant={"outline"}
-                  size={"xs"}
                   disabled={pagination.pageIndex === 0}
                   onClick={handlePaginationDown}
                 >
@@ -479,7 +503,7 @@ const ModalTitulos = ({
               </PaginationItem>
             </PaginationContent>
           </Pagination>
-          <Button onClick={() => handleSelecion(titulos)}>Salvar</Button>
+          <Button onClick={() => handleSelecion(titulos)}>Salvar seleção</Button>
           {/* <PaginationEllipsis /> */}
         </DialogFooter>
       </DialogContent>

@@ -9,24 +9,26 @@ import TitulosPagar from "./components/titulos/TitulosPagar";
 const ContasPagarPage = () => {
   return (
     <div className="flex p-4">
-      <Tabs defaultValue="titulos" className="w-full">
+      <Tabs defaultValue="titulo" className="w-full">
         <TabsList className="w-full justify-start">
-          <TabsTrigger value="titulos">Solicitações</TabsTrigger>
+          <TabsTrigger value="titulo">Solicitações</TabsTrigger>
           {(checkUserPermission("MASTER") ||
             checkUserDepartments("FINANCEIRO")) && (
             <>
-              <TabsTrigger value="borderos">Borderôs</TabsTrigger>
-              <TabsTrigger value="conciliacoes">Conciliação</TabsTrigger>
+              <TabsTrigger value="bordero">Borderôs</TabsTrigger>
+              <TabsTrigger value="conciliacao">Conciliação</TabsTrigger>
+              <TabsTrigger value="movimento-contabil">Movimento Contábil</TabsTrigger>
             </>
           )}
         </TabsList>
-        <TabsContent value="titulos">
+        <TabsContent value="titulo">
           <TitulosPagar />
         </TabsContent>
-        <TabsContent value="borderos">
+        <TabsContent value="bordero">
           <Borderos />
         </TabsContent>
-        <TabsContent value="conciliacoes"></TabsContent>
+        <TabsContent value="conciliacao"></TabsContent>
+        <TabsContent value="movimento-contabil"></TabsContent>
       </Tabs>
     </div>
   );

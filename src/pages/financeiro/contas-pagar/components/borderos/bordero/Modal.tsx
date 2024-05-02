@@ -70,6 +70,7 @@ const ModalBordero = () => {
       return {
         checked: titulo.checked,
         id_titulo: titulo.id_titulo,
+        status: titulo.status,
         previsao: titulo.previsao || "",
         nome_fornecedor: titulo.nome_fornecedor,
         valor_total: titulo.valor_total,

@@ -24,12 +24,15 @@ import {
   Plus,
 } from "lucide-react";
 import { useState } from "react";
-import { BorderoSchemaProps } from "./Modal";
-import ModalTransfer from "./ModalTransfer";
-import RowVirtualizerFixed from "./RowVirtualizedFixed";
 import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
 import { FaSpinner } from "react-icons/fa6";
+import { Badge } from "@/components/ui/badge";
+
+// Componentes
+import { BorderoSchemaProps } from "./Modal";
+import RowVirtualizerFixed from "./RowVirtualizedFixed";
+import ModalTransfer from "./ModalTransfer";
 
 const FormBordero = ({
   id,
@@ -40,7 +43,7 @@ const FormBordero = ({
   data: BorderoSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - Borderos:", id);
+  // console.log("RENDER - Borderos:", id);
   const { mutate: insertOne } = useBordero().insertOne();
   const { mutate: update } = useBordero().update();
   const { mutate: deleteTitulo } = useBordero().deleteTitulo();
@@ -58,7 +61,7 @@ const FormBordero = ({
   const [exporting, setExporting] = useState<string>('');
 
   const { form, titulos, addTitulo, removeTitulo } = useFormBorderoData(data);
-
+  console.log('Titulos no form:',titulos)
   const id_conta_bancaria = form.watch("id_conta_bancaria");
   const id_matriz = form.watch("id_matriz");
 
@@ -106,9 +109,9 @@ const FormBordero = ({
   async function removeItemTitulos(
     index?: number,
     id?: string,
-    status?: string
+    id_status?: string
   ) {
-    if (status != "4") {
+    if (id_status != "4") {
       deleteTitulo(id);
       removeTitulo(index && titulos.findIndex((item) => item.id_titulo == id));
     } else {
@@ -123,9 +126,6 @@ const FormBordero = ({
 
   function removeCheckedTitulos(checkedTitulos: TitulosProps[]) {
     checkedTitulos.forEach((titulo_checked: TitulosProps) => {
-      console.log(
-        titulos.findIndex((item) => item.id_titulo == titulo_checked.id_titulo)
-      );
 
       removeItemTitulos(
         undefined,
@@ -170,6 +170,8 @@ const FormBordero = ({
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
             {/* Primeira coluna */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
+
+              {/* Dados do Borderô */}
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
@@ -177,6 +179,7 @@ const FormBordero = ({
                     <span className="text-lg font-bold ">Dados do Borderô</span>
                   </div>
 
+                  {/* Exportação */}
                   {id && (
                     <div className="flex gap-3 items-center">
                       <Button
@@ -185,7 +188,7 @@ const FormBordero = ({
                         type={"button"}
                         onClick={() => exportRemessa(id)}
                       >
-                        {exporting== 'remessa' ? <FaSpinner size={18} className="me-2 animate-spin"/> : <Download className="me-2" size={20} />} Exportar Remessa
+                        {exporting == 'remessa' ? <FaSpinner size={18} className="me-2 animate-spin" /> : <Download className="me-2" size={20} />} Exportar Remessa
                       </Button>
                       <Button
                         disabled={!!exporting}
@@ -193,7 +196,7 @@ const FormBordero = ({
                         type={"button"}
                         onClick={() => exportBordero(id || "")}
                       >
-                        {exporting == 'default' ? <FaSpinner size={18} className="me-2 animate-spin"/> : <Download className="me-2" size={20} />}
+                        {exporting == 'default' ? <FaSpinner size={18} className="me-2 animate-spin" /> : <Download className="me-2" size={20} />}
                         Exportar
                       </Button>
                     </div>
@@ -239,10 +242,13 @@ const FormBordero = ({
                 </div>
               </div>
 
+              {/* Titúlos do Borderô */}
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex items-center gap-2 mb-3 justify-between">
                   <span className="flex gap-2 items-center">
                     <List /> <span className="text-lg font-bold ">Títulos</span>
+
+                    
                   </span>
                   <div className="flex gap-2">
                     {id_conta_bancaria &&
@@ -256,7 +262,7 @@ const FormBordero = ({
                             onClick={() => toggleModalTransfer()}
                           >
                             <ArrowUpDown className="me-2" />
-                            Transferir Títulos
+                            Transferir de borderô
                           </Button>
                           <AlertPopUp
                             title="Deseja realmente remover esses títulos?"
@@ -269,7 +275,7 @@ const FormBordero = ({
                               className="justify-self-start"
                             >
                               <Minus className="me-2" />
-                              Remover Títulos
+                              Remover
                             </Button>
                           </AlertPopUp>
                         </>
@@ -280,7 +286,7 @@ const FormBordero = ({
                         onClick={() => setModalTituloOpen(true)}
                       >
                         <Plus className="me-2" strokeWidth={2} />
-                        Novo Título
+                        Adicionar
                       </Button>
                     )}
                     <ModalTitulos
@@ -288,6 +294,12 @@ const FormBordero = ({
                       handleSelecion={handleSelectionTitulo}
                       onOpenChange={() => setModalTituloOpen((prev) => !prev)}
                       id_matriz={id_matriz || ""}
+                      initialFilters={{
+                        tipo_data: 'data_prevista', 
+                        range_data: {
+                          from: data.data_pagamento, to: data.data_pagamento
+                        }
+                      }}
                     />
                   </div>
                 </div>
@@ -295,9 +307,10 @@ const FormBordero = ({
                   <>
                     {form.watch("titulos").length > 0 && (
                       <header className="flex py-1 pl-1 pr-5 gap-1 font-medium text-sm">
+                        {modalEditing && 
                         <Checkbox
-                          className="flex-1 max-w-[16px] me-1"
-                          onCheckedChange={(e) => {
+                        className="flex-1 max-w-[16px] me-1"
+                        onCheckedChange={(e) => {
                             titulos.forEach((item, index) => {
                               // if (item.id_status == "3") {
                               form.setValue(
@@ -307,8 +320,10 @@ const FormBordero = ({
                               // }
                             });
                           }}
-                        />
+                          />
+                        }
                         <p className="w-16 text-center">ID</p>
+                        <p className="pl-1 w-24 text-center">Status</p>
                         <p className="pl-1 w-24 text-center">Pagamento</p>
                         <p className="flex-1 pl-1">Fornecedor</p>
                         <p className="w-24 text-center">Nº Doc</p>
@@ -330,13 +345,13 @@ const FormBordero = ({
                         />
                       )}
                     </div>
-                    <div className="flex items-center justify-between pt-2 text-sm">
-                      <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
-                        <p className="mr-1">Qtd. Títulos: </p>
+                    <div className="ms-2 mt-3 flex gap-2 items-center">
+                      <Badge variant={'dark'} className="font-medium text-base">
+                        <p className="me-1">Qtde: </p>
                         {titulos.length}
-                      </span>
-                      <span className="flex rounded-full bg-white dark:bg-slate-500 px-2 py-1">
-                        <p className="mr-1">Valor Total: </p>
+                      </Badge>
+                      <Badge variant={'dark'} className="font-medium text-base">
+                        <p className="me-1">Valor Total: </p>
                         {normalizeCurrency(
                           titulos.reduce(
                             (acc, item: TitulosProps) =>
@@ -344,8 +359,9 @@ const FormBordero = ({
                             0
                           ) || 0
                         )}
-                      </span>
+                      </Badge>
                     </div>
+                    
                   </>
                 )}
               </div>
