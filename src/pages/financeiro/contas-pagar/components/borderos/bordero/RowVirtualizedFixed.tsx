@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Minus, Trash } from "lucide-react";
+import { Minus } from "lucide-react";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 
 interface RowVirtualizerFixedProps {

@@ -1,13 +1,8 @@
-import { useFilial } from "@/hooks/useFilial";
 import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
 import { useRateios } from "@/hooks/useRateios";
-import { ItemRateio, TipoRateio } from "@/pages/financeiro/contas-pagar/components/titulos/titulo/store";
+import {  TipoRateio } from "@/pages/financeiro/contas-pagar/components/titulos/titulo/store";
 
-type Filial = {
-  id: number;
-  nome: string;
-};
 type TSelectTipoRateio = {
   showAll?: boolean;
   name?: string;

@@ -62,6 +62,7 @@ export function DatePickerWithRange({
             locale={ptBR}
             defaultMonth={date?.from}
             selected={date}
+            // @ts-ignore
             onSelect={setDate} // Chama a função setDate recebida como parâmetro
             numberOfMonths={2}
           />

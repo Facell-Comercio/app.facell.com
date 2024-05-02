@@ -311,7 +311,7 @@ const FormBordero = ({
                         <Checkbox
                         className="flex-1 max-w-[16px] me-1"
                         onCheckedChange={(e) => {
-                            titulos.forEach((item, index) => {
+                            titulos.forEach((_, index) => {
                               // if (item.id_status == "3") {
                               form.setValue(
                                 `titulos.${index}.checked`,

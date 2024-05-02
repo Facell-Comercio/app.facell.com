@@ -1,5 +1,4 @@
 import FormInput from "@/components/custom/FormInput";
-import FormSelect from "@/components/custom/FormSelect";
 import FormSwitch from "@/components/custom/FormSwitch";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
