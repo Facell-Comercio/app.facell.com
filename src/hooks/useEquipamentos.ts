@@ -1,6 +1,6 @@
 
 import { api } from "@/lib/axios";
-import { EquipamentoSchema } from "@/pages/financeiro/cadastros/components/equipamentos-cielo/equipamento/Modal";
+import { EquipamentoSchema } from "@/pages/financeiro/cadastros/equipamentos-cielo/equipamento/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 

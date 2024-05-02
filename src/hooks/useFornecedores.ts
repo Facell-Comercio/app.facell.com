@@ -1,6 +1,6 @@
 
 import { api } from "@/lib/axios";
-import { FornecedorSchema } from "@/pages/financeiro/cadastros/components/fornecedores/fornecedor/Modal";
+import { FornecedorSchema } from "@/pages/financeiro/cadastros/fornecedores/fornecedor/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 

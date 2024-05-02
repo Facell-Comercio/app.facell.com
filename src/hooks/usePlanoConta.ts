@@ -1,6 +1,6 @@
 
 import { api } from "@/lib/axios";
-import { PlanoContasSchema } from "@/pages/financeiro/cadastros/components/plano-de-contas/plano-conta/Modal";
+import { PlanoContasSchema } from "@/pages/financeiro/cadastros/plano-de-contas/plano-conta/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 

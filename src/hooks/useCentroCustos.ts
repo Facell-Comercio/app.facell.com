@@ -1,6 +1,6 @@
 
 import { api } from "@/lib/axios";
-import { CentroCustosSchema } from "@/pages/financeiro/cadastros/components/centro-de-custos/centro-custo/Modal";
+import { CentroCustosSchema } from "@/pages/financeiro/cadastros/centro-de-custos/centro-custo/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 

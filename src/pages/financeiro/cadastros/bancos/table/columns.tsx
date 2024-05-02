@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
-import { useStoreBanco } from "../bancos/store";
+import { useStoreBanco } from "../banco/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
