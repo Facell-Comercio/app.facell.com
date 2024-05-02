@@ -105,7 +105,7 @@ const ModalTituloPagar = () => {
       ),
       itens,
       itens_rateio,
-      id_recorrencia: recorrencia.id
+      id_recorrencia: recorrencia.id,
     };
   } else if (id) {
     modalData = { ...titulo, itens, itens_rateio, historico };

@@ -1,7 +1,10 @@
 
 import { toast } from "@/components/ui/use-toast";
+import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
 import { AlteracaoLoteSchemaProps } from "@/pages/financeiro/contas-pagar/components/titulos/alteracao-lote/Modal";
+import { ExportAnexosProps } from "@/pages/financeiro/contas-pagar/components/titulos/components/ButtonExportarTitulos";
+import { EditRecorrenciaProps } from "@/pages/financeiro/contas-pagar/components/titulos/recorrencias/editar/Modal";
 import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/components/titulos/titulo/form-data";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -84,13 +87,12 @@ export const useTituloPagar = () => {
     })
 
     const deleteRecorrencia = () => useMutation({
-        mutationFn: ({ id, ...rest }: TituloSchemaProps) => {
-            return api.delete("/financeiro/contas-a-pagar/titulo/recorrencia", { data:{id, ...rest} }).then((response) => response.data)
+        mutationFn: (id : number|string) => {
+            return api.delete(`/financeiro/contas-a-pagar/titulo/recorrencias/${id}`).then((response) => response.data)
         },
         onSuccess() {
-            toast({ variant: 'success', title: 'Sucesso!', description: 'Solicitação atualizada com sucesso!' })
-            queryClient.invalidateQueries({ queryKey: ['fin_cp_titulos'] })
-            queryClient.invalidateQueries({ queryKey: ['fin_cp_titulo'] })
+            toast({ variant: 'success', title: 'Sucesso!', description: 'Exclusão de recorrência realizada com sucesso!' })
+            queryClient.invalidateQueries({ queryKey: ['fin_cp_recorrencias'] })
         },
         onError(error) {
             // @ts-expect-error "Funciona"
@@ -114,6 +116,38 @@ export const useTituloPagar = () => {
             console.log(error);
         },
     })
+    const changeRecorrencia = () => useMutation({
+        mutationFn: async ({id,data_vencimento}:EditRecorrenciaProps) => {
+            return await api.put(`/financeiro/contas-a-pagar/titulo/recorrencias/${id}`, {data_vencimento}).then((response) => response.data)
+        },
+        onSuccess() {
+            toast({ variant: 'success', title: 'Sucesso!', description: 'Alterações realizadas com sucesso!' })
+            queryClient.invalidateQueries({ queryKey: ['fin_cp_recorrencias'] })
+        },
+        onError(error) {
+            // @ts-expect-error "Funciona"
+            toast({ variant: "destructive", title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message })
+            console.log(error);
+        },
+    })
+
+    const exportAnexo = () => useMutation({
+        mutationFn: async ({type, idSelection}:ExportAnexosProps) => {
+            return await api.post(`/financeiro/contas-a-pagar/titulo/download`, {type,idSelection},{
+                responseType: 'blob'
+            }).then((response) => {
+                downloadResponse(response)
+            })
+        },
+        onSuccess() {
+            toast({ variant: 'success', title: 'Sucesso!', description: 'Exportação realizadas com sucesso!' })
+        },
+        onError(error) {
+            // @ts-expect-error "Funciona"
+            toast({ variant: "destructive", title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message })
+            console.log(error);
+        },
+    })
 
     return {
         getAll,
@@ -122,6 +156,8 @@ export const useTituloPagar = () => {
         insertOne,
         update,
         deleteRecorrencia,
-        changeTitulos
+        changeTitulos,
+        changeRecorrencia,
+        exportAnexo,
     }
 }

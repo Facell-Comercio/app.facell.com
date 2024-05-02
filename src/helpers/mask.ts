@@ -88,3 +88,23 @@ export const normalizeFirstAndLastName = (nomeCompleto: string) => {
       return `${nomeCompleto}`;
     }
   }
+
+  export const normalizeMes=(mes: string|number) =>{
+    const arrayMes = [
+        "Janeiro" ,
+        "Fevereiro" ,
+        "Março" ,
+        "Abril" ,
+        "Maio" ,
+        "Junho" ,
+        "Julho" ,
+        "Agosto" ,
+        "Setembro" ,
+        "Outubro" ,
+        "Novembro" ,
+        "Dezembro" ,
+      ];
+    if(mes ){
+        return arrayMes[+mes-1].toLocaleLowerCase()
+    }
+  }

@@ -27,9 +27,11 @@ const TitulosPagar = () => {
     state.setPagination,
     state.filters,
   ]);
-  const [rowSelection, handleRowSelection, idSelection] = useStoreTablePagar(
-    (state) => [state.rowSelection, state.handleRowSelection, state.idSelection]
-  );
+  const [rowSelection, handleRowSelection] = useStoreTablePagar((state) => [
+    state.rowSelection,
+    state.handleRowSelection,
+    state.idSelection,
+  ]);
 
   const { data, refetch } = useTituloPagar().getAll({ pagination, filters });
 

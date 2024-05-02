@@ -48,8 +48,6 @@ const ModalAlteracoesLote = () => {
 
   const { mutate: changeTitulos } = useTituloPagar().changeTitulos();
 
-  // const queryClient = useQueryClient();
-
   const alterarLote = async () => {
     if (idSelection.length === 0) {
       toast({
