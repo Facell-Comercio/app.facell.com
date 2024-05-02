@@ -8,7 +8,6 @@ import NotAuthorizedPage from "./pages/NotAuthorized.tsx";
 import PageNotFound from "./pages/NotFound.tsx";
 import Perfil from "./pages/Perfil.tsx";
 import PrivateRoutes from "./pages/PrivateRoutes.tsx";
-import TestPage from "./pages/Test.tsx";
 import AdminPage from "./pages/admin/Page.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
@@ -28,9 +27,6 @@ const AppRoutes = () => {
     <Routes>
       <Route element={<PrivateRoutes />}>
         <Route path="/" element={<App />}>
-          {/* Testes */}
-          <Route path="/test" element={<TestPage />} />
-
           {/* Páginas protegidas isoladas */}
           <Route element={<Home />} path="/" />
           <Route element={<Perfil />} path="/perfil" />

@@ -169,7 +169,7 @@ const FormTituloPagar = ({
             form.resetField("itens_rateio", { defaultValue: [] });
           }
         })
-        .catch((error) => {
+        .catch(() => {
           toast({
             variant: "destructive",
             title: "Erro!",
@@ -313,7 +313,7 @@ const FormTituloPagar = ({
 
           setValue("rateio_manual", !!novoRateio.manual);
         })
-        .catch((error) => {
+        .catch(() => {
           toast({
             variant: "destructive",
             title: "Erro!",
@@ -366,23 +366,23 @@ const FormTituloPagar = ({
 
           const result = importFromExcel(importedData);
 
-          const valorTotalRateio = result.reduce((acc, cur) => {
+          // @ts-ignore
+          const valorTotalRateio:number = result.reduce((acc, cur) => {
             // @ts-ignore
             return acc + cur.valor;
-          }, 0);
+          }, 0) || 0;
 
           setValue("update_rateio", true);
           form.resetField("itens_rateio", { defaultValue: [] });
-          const lastItem = (result?.length || 0) - 1;
-          result?.forEach((item, index) => {
-            // @ts-ignore
+          result?.forEach((item) => {
             const id_filial_rateio_item = filiais.find(
+              // @ts-ignore
               (f: Filial) => f.nome === item?.filial
             )?.id;
-            // const incremento = lastItem === index ? 0.01 : 0;
-            // @ts-ignore
+
             const percentual_rateio_item = (
-              (item.valor / valorTotalRateio) *
+              // @ts-ignore
+              (item?.valor / valorTotalRateio) *
               100
             ).toFixed(4);
             // console.log(item.filial, id_filial_rateio_item,  item.valor, valorTotalRateio,percentual_rateio_item )
@@ -583,7 +583,7 @@ const FormTituloPagar = ({
       toast({
         variant: "destructive",
         title: "Erro!",
-        // @ts-expected-error "Funciona"
+        // @ts-ignore
         description: error?.response?.data?.message || error?.message,
       });
     }
@@ -606,7 +606,7 @@ const FormTituloPagar = ({
       id_novo_status: "3",
     });
   };
-  const handleClickCriarRecorrencia = async (e) => {
+  const handleClickCriarRecorrencia = async (e:any) => {
     try {
       e.preventDefault();
       const dados = form.getValues();
@@ -630,6 +630,7 @@ const FormTituloPagar = ({
       toast({
         variant: "destructive",
         title: "Erro ao tentar criar a recorrência!",
+        // @ts-ignore
         description: error.response?.data?.message || error.message,
       });
     }

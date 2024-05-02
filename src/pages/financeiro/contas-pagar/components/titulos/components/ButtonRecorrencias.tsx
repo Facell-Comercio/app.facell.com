@@ -5,9 +5,10 @@ import { useStoreRecorrencias } from "../recorrencias/store";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
 
 const ButtonRecorrencias = () => {
-    const {data, isLoading} = useTituloPagar().getRecorrencias({ filters: {}})
+    const {data} = useTituloPagar().getRecorrencias({ filters: {}})
     const openModalRecorrencias = useStoreRecorrencias().openModal;
     const recorrencias = data?.data?.rows || []
+    // @ts-ignore
     const qtdeRecorrencias = recorrencias.reduce((acc, curr)=>{
         if(curr.lancado == 0){
             return acc + 1
