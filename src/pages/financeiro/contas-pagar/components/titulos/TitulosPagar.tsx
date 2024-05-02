@@ -38,10 +38,9 @@ const TitulosPagar = () => {
     state.setPagination,
     state.filters,
   ]);
-  const [rowSelection, handleRowSelection] = useStoreTablePagar((state) => [
-    state.rowSelection,
-    state.handleRowSelection,
-  ]);
+  const [rowSelection, handleRowSelection, idSelection] = useStoreTablePagar(
+    (state) => [state.rowSelection, state.handleRowSelection, state.idSelection]
+  );
 
   const { data, refetch } = useTituloPagar().getAll({ pagination, filters });
 
@@ -62,6 +61,17 @@ const TitulosPagar = () => {
       params: { filters },
     });
     exportToExcel(response?.data?.rows || [], `solicitacoes`);
+  }
+
+  async function exportAnexo(type: string) {
+    const response = await api.put(
+      `/financeiro/contas-a-pagar/titulo/download`,
+      {
+        type,
+        idSelection,
+      }
+    );
+    console.log(response);
   }
 
   return (
@@ -92,7 +102,9 @@ const TitulosPagar = () => {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuLabel>Anexos</DropdownMenuLabel>
-              <DropdownMenuItem>Boleto</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => exportAnexo("url_boleto")}>
+                Boleto
+              </DropdownMenuItem>
               <DropdownMenuItem>Nota fiscal</DropdownMenuItem>
               <DropdownMenuItem>Contrato/Autorização</DropdownMenuItem>
             </DropdownMenuGroup>
