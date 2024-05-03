@@ -23,7 +23,7 @@ import {
   Minus,
   Plus,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
 import { FaSpinner } from "react-icons/fa6";

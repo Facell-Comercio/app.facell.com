@@ -106,7 +106,6 @@ const ModalTitulos = ({
 
   const {
     data,
-    isLoading,
     isError,
     refetch: refetchTitulos,
   } = useQuery({
