@@ -34,7 +34,10 @@ const TitulosPagar = () => {
     state.idSelection,
   ]);
 
-  const { data, refetch } = useTituloPagar().getAll({ pagination, filters });
+  const { data, refetch, isLoading } = useTituloPagar().getAll({
+    pagination,
+    filters,
+  });
 
   const rows = data?.data?.rows || [];
   const rowCount = data?.data?.rowCount || 0;
@@ -65,6 +68,7 @@ const TitulosPagar = () => {
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />
       <ModalTituloPagar />
       <ModalRecorrencias />

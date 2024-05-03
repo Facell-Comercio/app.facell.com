@@ -4,6 +4,7 @@ import {
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
 import Borderos from "./borderos/Borderos";
+import MovimentoContabil from "./movimento-contabil/MoviementoContabil";
 import TitulosPagar from "./titulos/TitulosPagar";
 
 const ContasPagarPage = () => {
@@ -17,7 +18,9 @@ const ContasPagarPage = () => {
             <>
               <TabsTrigger value="bordero">Borderôs</TabsTrigger>
               <TabsTrigger value="conciliacao">Conciliação</TabsTrigger>
-              <TabsTrigger value="movimento-contabil">Movimento Contábil</TabsTrigger>
+              <TabsTrigger value="movimento-contabil">
+                Movimento Contábil
+              </TabsTrigger>
             </>
           )}
         </TabsList>
@@ -28,7 +31,9 @@ const ContasPagarPage = () => {
           <Borderos />
         </TabsContent>
         <TabsContent value="conciliacao"></TabsContent>
-        <TabsContent value="movimento-contabil"></TabsContent>
+        <TabsContent value="movimento-contabil">
+          <MovimentoContabil />
+        </TabsContent>
       </Tabs>
     </div>
   );

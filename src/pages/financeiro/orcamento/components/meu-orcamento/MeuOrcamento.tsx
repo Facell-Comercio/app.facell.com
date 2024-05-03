@@ -15,7 +15,7 @@ const MeuOrcamento = () => {
   const [pagination, setPagination, filters] = useStoreTableMeuOrcamento(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
-  const { data, refetch } = useOrcamento().getMyBudgets({
+  const { data, refetch, isLoading } = useOrcamento().getMyBudgets({
     pagination,
     filters,
   });
@@ -100,6 +100,7 @@ const MeuOrcamento = () => {
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />{" "}
       <ModalMeuOrcamento />
     </div>

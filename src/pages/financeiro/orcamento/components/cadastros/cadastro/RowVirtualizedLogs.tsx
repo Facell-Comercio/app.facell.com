@@ -20,7 +20,7 @@ interface RowVirtualizerLogsProps {
 const RowVirtualizerLogs: React.FC<RowVirtualizerLogsProps> = ({ data }) => {
   const parentElement = React.useRef(null);
 
-  const count = data.length;
+  const count = data ? data.length : 0;
 
   const virtualizer = useVirtualizer({
     count,

@@ -1,34 +1,34 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { exportToExcel } from "@/helpers/importExportXLS";
-import { useBordero } from "@/hooks/useBordero";
+import { useMovimentoContabil } from "@/hooks/useMovimentoContabil";
 import { api } from "@/lib/axios";
 import { Download } from "lucide-react";
-import ModalBordero from "./bordero/Modal";
-import { useStoreBordero } from "./bordero/store";
-import FiltersBorderos from "./table/Filters";
+import ModalMovimentoContabil from "./movimento/Modal";
+import { useStoreMovimentoContabil } from "./movimento/store";
+import FiltersMovimentoContabil from "./table/Filters";
 import { columnsTable } from "./table/columns";
-import { useStoreTableBorderos } from "./table/store-table";
+import { useStoreTableMovimentoContabil } from "./table/store-table";
 
-const Borderos = () => {
-  console.log("RENDER - Section Borderos");
-  const [pagination, setPagination, filters] = useStoreTableBorderos(
+const MovimentoContabil = () => {
+  console.log("RENDER - Section MovimentoContabil");
+  const [pagination, setPagination, filters] = useStoreTableMovimentoContabil(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
-  const { data, refetch, isLoading } = useBordero().getAll({
+  const { data, refetch, isLoading } = useMovimentoContabil().getAll({
     pagination,
     filters,
   });
   const rows = data?.data?.rows || [];
   const rowCount = data?.data?.rowCount || 0;
-  const openModal = useStoreBordero().openModal;
-  const editModal = useStoreBordero().editModal;
-  function handleClickNewBorderos() {
+  const openModal = useStoreMovimentoContabil().openModal;
+  const editModal = useStoreMovimentoContabil().editModal;
+  function handleClickNewMovimentoContabil() {
     openModal("");
     editModal(true);
   }
 
-  async function exportBordero(ids: string[]) {
+  async function exportMovimentoContabil(ids: string[]) {
     const response = await api.put(
       `/financeiro/contas-a-pagar/bordero/export`,
       { data: ids }
@@ -42,16 +42,18 @@ const Borderos = () => {
         <Button
           variant={"outline"}
           type={"button"}
-          onClick={() => exportBordero(rows.map((row: any) => row.id) || "")}
+          onClick={() =>
+            exportMovimentoContabil(rows.map((row: any) => row.id) || "")
+          }
         >
           <Download className="me-2" size={20} />
           Exportar
         </Button>
-        <Button variant={"secondary"} onClick={handleClickNewBorderos}>
+        <Button variant={"secondary"} onClick={handleClickNewMovimentoContabil}>
           Novo Borderô
         </Button>
       </div>
-      <FiltersBorderos refetch={refetch} />
+      <FiltersMovimentoContabil refetch={refetch} />
       <DataTable
         pagination={pagination}
         setPagination={setPagination}
@@ -60,9 +62,9 @@ const Borderos = () => {
         columns={columnsTable}
         isLoading={isLoading}
       />
-      <ModalBordero />
+      <ModalMovimentoContabil />
     </div>
   );
 };
 
-export default Borderos;
+export default MovimentoContabil;

@@ -2,10 +2,10 @@
 import { toast } from "@/components/ui/use-toast";
 import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
-import { AlteracaoLoteSchemaProps } from "@/pages/financeiro/contas-pagar/components/titulos/alteracao-lote/Modal";
-import { ExportAnexosProps } from "@/pages/financeiro/contas-pagar/components/titulos/components/ButtonExportarTitulos";
-import { EditRecorrenciaProps } from "@/pages/financeiro/contas-pagar/components/titulos/recorrencias/editar/Modal";
-import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/components/titulos/titulo/form-data";
+import { AlteracaoLoteSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/alteracao-lote/Modal";
+import { ExportAnexosProps } from "@/pages/financeiro/contas-pagar/titulos/components/ButtonExportarTitulos";
+import { EditRecorrenciaProps } from "@/pages/financeiro/contas-pagar/titulos/recorrencias/editar/Modal";
+import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/titulo/form-data";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface GetTitulosPagarProps {
