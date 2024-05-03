@@ -14,7 +14,7 @@ const Bancos = () => {
     state.setPagination,
     state.filters,
   ]);
-  const { data, refetch } = useBancos().getAll({
+  const { data, refetch, isLoading } = useBancos().getAll({
     pagination,
     filters,
   });
@@ -42,6 +42,7 @@ const Bancos = () => {
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />
       <ModalBanco />
     </div>

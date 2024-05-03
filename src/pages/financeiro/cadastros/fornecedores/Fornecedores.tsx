@@ -12,7 +12,7 @@ const Fornecedores = () => {
   const [pagination, setPagination, filters] = useStoreTableFornecedor(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
-  const { data, refetch } = useFornecedores().getAll({
+  const { data, refetch, isLoading } = useFornecedores().getAll({
     pagination,
     filters,
   });
@@ -40,6 +40,7 @@ const Fornecedores = () => {
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />
       <ModalFornecedor />
     </div>

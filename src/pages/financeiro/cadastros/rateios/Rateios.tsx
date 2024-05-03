@@ -13,7 +13,7 @@ const Rateios = () => {
     state.setPagination,
     state.filters,
   ]);
-  const { data } = useRateios().getAll({
+  const { data, isLoading } = useRateios().getAll({
     pagination,
     filters,
   });
@@ -40,6 +40,7 @@ const Rateios = () => {
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />
       <ModalRateios />
     </div>

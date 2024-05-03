@@ -1,3 +1,5 @@
+import { format } from "date-fns"
+
 export const normalizeNumberOnly = (value: string | undefined) => {
     if (!value) return ''
     return value.replace(/[\D]/g, '')
@@ -60,7 +62,7 @@ export const normalizeDataDayOne = (dataString?: string) => {
     }
 }
 
-export const normalizeDate = (data: string) => data && data.split("T")[0].split("-").reverse().join("/") 
+export const normalizeDate = (data: string|Date) => data && format(data, "dd/MM/yyyy");
 export const normalizeCurrency = (data: string|number) => {
     if(typeof data === "string"){
         const valor = parseFloat(data)

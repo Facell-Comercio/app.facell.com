@@ -13,6 +13,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
 import { Download } from "lucide-react";
+import { useStoreExportDatasys } from "../export-datasys/store";
 import { useStoreTablePagar } from "../table/store-table";
 
 export type ExportAnexosProps = {
@@ -22,7 +23,7 @@ export type ExportAnexosProps = {
 
 const ButtonExportTitulos = () => {
   const { mutate: exportAnexo } = useTituloPagar().exportAnexo();
-
+  const openModalExportDatasys = useStoreExportDatasys().openModal;
   const [filters, idSelection] = useStoreTablePagar((state) => [
     state.filters,
     state.idSelection,
@@ -61,7 +62,9 @@ const ButtonExportTitulos = () => {
         <DropdownMenuItem onClick={exportSolicitacao}>
           Solicitações
         </DropdownMenuItem>
-        <DropdownMenuItem>Para o Datasys</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => openModalExportDatasys("")}>
+          Para o Datasys
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuLabel>Anexos</DropdownMenuLabel>

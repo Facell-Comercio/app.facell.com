@@ -12,7 +12,7 @@ const CentroCustos = () => {
   const [pagination, setPagination, filters] = useStoreTableCentroCusto(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
-  const { data, refetch } = useCentroCustos().getAll({
+  const { data, refetch, isLoading } = useCentroCustos().getAll({
     pagination,
     filters,
   });
@@ -42,6 +42,7 @@ const CentroCustos = () => {
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />
       <ModalFornecedor />
     </div>

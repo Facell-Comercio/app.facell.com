@@ -13,6 +13,7 @@ import ButtonEditTitulos from "./components/ButtonEditTitulos";
 import ButtonExportTitulos from "./components/ButtonExportarTitulos";
 import ButtonNovoTitulo from "./components/ButtonNovoTitulo";
 import ButtonRecorrencias from "./components/ButtonRecorrencias";
+import ModalExportDatasys from "./export-datasys/Modal";
 import ModalRecorrencias from "./recorrencias/Modal";
 import { columnsTable } from "./table/columns";
 import ModalTituloPagar from "./titulo/Modal";
@@ -68,6 +69,7 @@ const TitulosPagar = () => {
       <ModalTituloPagar />
       <ModalRecorrencias />
       <ModalAlteracoesLote />
+      <ModalExportDatasys />
     </div>
   );
 };
