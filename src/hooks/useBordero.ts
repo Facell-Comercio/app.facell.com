@@ -2,7 +2,7 @@
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
-import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/components/borderos/bordero/Modal";
+import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/borderos/bordero/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";

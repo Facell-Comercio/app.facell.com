@@ -1,7 +1,7 @@
 import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
 import { useRateios } from "@/hooks/useRateios";
-import {  TipoRateio } from "@/pages/financeiro/contas-pagar/components/titulos/titulo/store";
+import {  TipoRateio } from "@/pages/financeiro/contas-pagar/titulos/titulo/store";
 
 type TSelectTipoRateio = {
   showAll?: boolean;

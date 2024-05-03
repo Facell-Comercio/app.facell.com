@@ -38,7 +38,7 @@ import {
   EraserIcon,
   FilterIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 interface IModalTitulos {
@@ -93,17 +93,16 @@ const ModalTitulos = ({
     pageSize: 15,
     pageIndex: 0,
   });
-
+  console.log('Inicial',initialFilters)
   const defaultFilters: Filters = {
     id: "",
     fornecedor: "",
     descricao: "",
     num_doc: "",
-    tipo_data: "data_vencimento",
-    range_data: { from: undefined, to: undefined },
     id_filial: "",
   };
-  const [filters, setFilters] = useState({ ...defaultFilters, ...initialFilters });
+
+  const [filters, setFilters] = useState(initialFilters);
 
   const {
     data,
@@ -111,7 +110,7 @@ const ModalTitulos = ({
     isError,
     refetch: refetchTitulos,
   } = useQuery({
-    queryKey: ["filtros", id_matriz],
+    queryKey: ["modal-titulos", id_matriz, filters],
     staleTime: 0,
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/titulo/titulos-bordero", {
@@ -123,7 +122,12 @@ const ModalTitulos = ({
     enabled: open,
   });
 
-  console.log('PAGINA_TITULOS', data?.data?.rows)
+
+  useEffect(()=>{
+    setFilters(prev=>({...prev, ...initialFilters}))
+    refetchTitulos()
+  }, [initialFilters])
+
   const pages = [...Array(data?.data?.pageCount || 0).keys()].map(
     (page) => page + 1
   );
@@ -146,7 +150,7 @@ const ModalTitulos = ({
 
   async function handleClickResetFilters() {
     await new Promise((resolve) => {
-      setFilters(defaultFilters);
+      setFilters(prev=>({...prev, ...defaultFilters}));
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
@@ -241,8 +245,7 @@ const ModalTitulos = ({
     setIds([...ids, item.id_titulo.toString()]);
   }
 
-  if (isLoading) return null;
-  if (isError) return null;
+  if (isError) return <p>Ocorreu um erro ao tentar buscar os títulos</p>;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -280,7 +283,7 @@ const ModalTitulos = ({
                     <Input
                       placeholder="ID Título"
                       className="w-[20ch]"
-                      value={filters.id}
+                      value={filters?.id || ''}
                       onChange={(e) => {
                         setFilters({ ...filters, id: e.target.value });
                       }}
@@ -288,7 +291,7 @@ const ModalTitulos = ({
                     <Input
                       placeholder="Fornecedor"
                       className="max-w-[200px]"
-                      value={filters.fornecedor}
+                      value={filters?.fornecedor || ''}
                       onChange={(e) => {
                         setFilters({ ...filters, fornecedor: e.target.value });
                       }}
@@ -296,7 +299,7 @@ const ModalTitulos = ({
                     <Input
                       placeholder="Descrição"
                       className="w-[20ch]"
-                      value={filters.descricao}
+                      value={filters?.descricao || ''}
                       onChange={(e) => {
                         setFilters({ ...filters, descricao: e.target.value });
                       }}
@@ -304,7 +307,7 @@ const ModalTitulos = ({
                     <Input
                       placeholder="Nº Doc"
                       className="w-[20ch]"
-                      value={filters.num_doc}
+                      value={filters?.num_doc || ''}
                       onChange={(e) => {
                         setFilters({ ...filters, num_doc: e.target.value });
                       }}

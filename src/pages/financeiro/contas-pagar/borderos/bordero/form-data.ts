@@ -23,7 +23,7 @@ const schemaBorderos = z
     num_doc: z.string().optional(),
     descricao: z.string().trim().optional(),
     filial: z.string().trim().optional(),
-    data_pagamento: z.string().optional(),
+    data_pagamento: z.coerce.date({message: "Data Obrigatória"}),
   }))
   
   });

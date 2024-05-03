@@ -23,7 +23,7 @@ import {
   Minus,
   Plus,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
 import { FaSpinner } from "react-icons/fa6";
@@ -61,9 +61,10 @@ const FormBordero = ({
   const [exporting, setExporting] = useState<string>('');
 
   const { form, titulos, addTitulo, removeTitulo } = useFormBorderoData(data);
-  console.log('Titulos no form:',titulos)
+
   const id_conta_bancaria = form.watch("id_conta_bancaria");
   const id_matriz = form.watch("id_matriz");
+  const data_pagamento = form.watch('data_pagamento');
 
   const titulosChecked = form
     .watch("titulos")
@@ -297,7 +298,7 @@ const FormBordero = ({
                       initialFilters={{
                         tipo_data: 'data_prevista', 
                         range_data: {
-                          from: data.data_pagamento, to: data.data_pagamento
+                          from: data_pagamento, to: data_pagamento
                         }
                       }}
                     />

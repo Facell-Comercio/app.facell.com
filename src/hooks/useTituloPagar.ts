@@ -1,8 +1,8 @@
 
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
-import { AlteracaoLoteSchemaProps } from "@/pages/financeiro/contas-pagar/components/titulos/alteracao-lote/Modal";
-import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/components/titulos/titulo/form-data";
+import { AlteracaoLoteSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/alteracao-lote/Modal";
+import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/titulo/form-data";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface GetTitulosPagarProps {

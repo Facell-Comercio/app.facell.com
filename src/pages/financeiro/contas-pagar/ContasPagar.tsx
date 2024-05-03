@@ -3,8 +3,8 @@ import {
   checkUserDepartments,
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
-import Borderos from "./components/borderos/Borderos";
-import TitulosPagar from "./components/titulos/TitulosPagar";
+import Borderos from "./borderos/Borderos";
+import TitulosPagar from "./titulos/TitulosPagar";
 
 const ContasPagarPage = () => {
   return (
