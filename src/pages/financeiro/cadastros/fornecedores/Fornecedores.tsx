@@ -1,51 +1,50 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { useCentroCustos } from "@/hooks/useCentroCustos";
-import ModalFornecedor from "./centro-custo/Modal";
-import { useStoreCentroCustos } from "./centro-custo/store";
-import FilterCentroCustos from "./table/Filters";
+import { useFornecedores } from "@/hooks/useFornecedores";
+import ModalFornecedor from "./fornecedor/Modal";
+import { useStoreFornecedor } from "./fornecedor/store-fornecedor";
+import FilterFornecedores from "./table/Filters";
 import { columnsTable } from "./table/columns";
-import { useStoreTableCentroCusto } from "./table/store-table";
+import { useStoreTableFornecedor } from "./table/store-table";
 
-const CentroCustos = () => {
+const Fornecedores = () => {
   console.log("RENDER - Section-Titulos");
-  const [pagination, setPagination, filters] = useStoreTableCentroCusto(
+  const [pagination, setPagination, filters] = useStoreTableFornecedor(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
-  const { data, refetch } = useCentroCustos().getAll({
+  const { data, refetch, isLoading } = useFornecedores().getAll({
     pagination,
     filters,
   });
   const rows = data?.data?.rows || [];
   const rowCount = data?.data?.rowCount || 0;
 
-  const openModal = useStoreCentroCustos().openModal;
-  const editModal = useStoreCentroCustos().editModal;
+  const openModal = useStoreFornecedor().openModal;
+  const editModal = useStoreFornecedor().editModal;
   function handleClickNewFornecedor() {
     openModal("");
     editModal(true);
   }
 
-  console.log("FILTROS ", filters);
-
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-end">
         <Button variant={"secondary"} onClick={handleClickNewFornecedor}>
-          Novo Centro de Custos
+          Novo Fornecedor
         </Button>
       </div>
-      <FilterCentroCustos refetch={refetch} />
+      <FilterFornecedores refetch={refetch} />
       <DataTable
         pagination={pagination}
         setPagination={setPagination}
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />
       <ModalFornecedor />
     </div>
   );
 };
 
-export default CentroCustos;
+export default Fornecedores;

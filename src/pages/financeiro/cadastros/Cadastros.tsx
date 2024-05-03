@@ -4,13 +4,13 @@ import {
   checkUserDepartments,
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
-import Bancos from "./components/bancos/Bancos";
-import CentroCustos from "./components/centro-de-custos/CentroCustos";
-import ContasBancarias from "./components/contas-bancarias/ContasBancarias";
-import EquipamentosCielo from "./components/equipamentos-cielo/EquipamentosCielo";
-import Fornecedores from "./components/fornecedores/Fornecedores";
-import PlanoContas from "./components/plano-de-contas/PlanoContas";
-import Rateios from "./components/rateios/Rateios";
+import Bancos from "./bancos/Bancos";
+import CentroCustos from "./centro-de-custos/CentroCustos";
+import ContasBancarias from "./contas-bancarias/ContasBancarias";
+import EquipamentosCielo from "./equipamentos-cielo/EquipamentosCielo";
+import Fornecedores from "./fornecedores/Fornecedores";
+import PlanoContas from "./plano-de-contas/PlanoContas";
+import Rateios from "./rateios/Rateios";
 
 // import { useAuthStore } from "@/context/auth-store";
 

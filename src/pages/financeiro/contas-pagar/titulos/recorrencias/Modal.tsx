@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/dialog";
 // import { useStoreTitulo } from "./store-titulo";
 
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import SelectMes from "@/components/custom/SelectMes";
 import {
   Accordion,
@@ -25,17 +26,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "@/components/ui/use-toast";
+import { exportToExcel } from "@/helpers/importExportXLS";
 import {
   normalizeCurrency,
   normalizeDate,
   normalizeFirstAndLastName,
+  normalizeMes,
 } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/useTituloPagar";
-import { api } from "@/lib/axios";
-import { useQueryClient } from "@tanstack/react-query";
-import { Check, EraserIcon, FilterIcon, Plus, Repeat2 } from "lucide-react";
+import {
+  Check,
+  Download,
+  EraserIcon,
+  FilterIcon,
+  Pen,
+  Plus,
+  Trash,
+} from "lucide-react";
 import { useStoreTitulo } from "../titulo/store";
+import ModalEditarRecorrencias from "./editar/Modal";
+import { useStoreEditarRecorrencias } from "./editar/store";
 import { useStoreRecorrencias } from "./store";
 
 type recorrenciaProps = {
@@ -58,13 +68,14 @@ const ModalRecorrencias = () => {
   const setFilters = useStoreRecorrencias().setFilters;
   const filters = useStoreRecorrencias().filters;
   const openModal = useStoreTitulo.getState().openModal;
+  const openModalEditarTitulo = useStoreEditarRecorrencias.getState().openModal;
   const closeModal = useStoreRecorrencias().closeModal;
-  const queryClient = useQueryClient();
 
   const { data, isLoading, refetch } = useTituloPagar().getRecorrencias({
     filters,
   });
-  // const { mutate: deleteRecorrencia } = useTituloPagar().deleteRecorrencia();
+  const { mutate: deleteRecorrencia } = useTituloPagar().deleteRecorrencia();
+  const rows = data?.data.rows;
 
   const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -76,38 +87,42 @@ const ModalRecorrencias = () => {
     refetch();
   };
 
-  // function excluirRecorrencia() {
-  //   deleteRecorrencia({ id, titulos: data?.data.titulos });
-  //   closeModal();
-  // }
-
-  const replicarRecorrencia = async (id: string, data_vencimento: string) => {
-    try {
-      await api.post("financeiro/contas-a-pagar/titulo/criar-recorrencia", {
-        id,
-        data_vencimento,
-      });
-      queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
-      toast({
-        variant: "success",
-        title: "Recorrência criada com sucesso!",
-      });
-    } catch (error) {
-      console.log(error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao tentar criar a recorrência!",
-        // @ts-expect-error "Funciona"
-        description: error.response?.data?.message || error.message,
+  async function exportRecorrencias() {
+    const exportedData: any[] = [];
+    for (const row of rows) {
+      exportedData.push({
+        "ID TITULO": row.id_titulo,
+        FORNECEDOR: row.fornecedor,
+        FILIAL: row.filial,
+        "DATA VENCIMENTO": normalizeDate(row.data_vencimento),
+        VALOR: row.valor,
+        DESCRICAO: row.descricao,
+        CENTRO_CUSTO: row.centro_custo,
+        "GRUPO ECONOMICO": row.grupo_economico,
+        CRIADOR: normalizeFirstAndLastName(row.criador),
       });
     }
-  };
+    exportToExcel(
+      exportedData,
+      `recorrencias-${normalizeMes(filters.mes || "")}-${filters.ano}`
+    );
+  }
 
   return (
     <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="mb-2">Recorrências</DialogTitle>
+          <DialogTitle className="flex gap-2 justify-between items-center mb-2">
+            <span>Recorrências</span>
+            <Button
+              variant={"outline"}
+              type={"button"}
+              onClick={() => exportRecorrencias()}
+            >
+              <Download className="me-2" size={20} />
+              Exportar
+            </Button>
+          </DialogTitle>
           <Accordion
             type="single"
             collapsible
@@ -160,7 +175,7 @@ const ModalRecorrencias = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-center text-sm px-2 py-1">
-                      Ação
+                      Ações
                     </TableHead>
                     <TableHead className="text-start text-sm min-w-[15ch] px-2 py-1">
                       Fornecedor
@@ -193,20 +208,6 @@ const ModalRecorrencias = () => {
                     (rec: recorrenciaProps, index: number) => (
                       <TableRow key={`rec.${index}`} className="text-nowrap">
                         <TableCell className="flex gap-2 justify-center text-xs p-2">
-                          <Button
-                            onClick={() =>
-                              replicarRecorrencia(
-                                rec["id_titulo"],
-                                rec["data_vencimento"]
-                              )
-                            }
-                            title="Replicar para o próximo mês"
-                            size={"xs"}
-                            variant={"tertiary"}
-                          >
-                            <Repeat2 size={18} />
-                            {/* {} */}
-                          </Button>
                           {rec["lancado"] ? (
                             <Button
                               title="Solicitado"
@@ -230,6 +231,30 @@ const ModalRecorrencias = () => {
                               <Plus size={18} />
                             </Button>
                           )}
+                          <Button
+                            onClick={() => openModalEditarTitulo(rec["id"])}
+                            title="Editar recorrência"
+                            size={"xs"}
+                            variant={"warning"}
+                          >
+                            <Pen size={18} />
+                            {/* {} */}
+                          </Button>
+                          <AlertPopUp
+                            title="Deseja realmente excluir?"
+                            description="Essa ação não pode ser desfeita. A recorrência será excluída definitivamente do servidor."
+                            action={() => deleteRecorrencia(rec["id"])}
+                          >
+                            <Button
+                              onClick={() => console.log("Exluir")}
+                              title="Excluir recorrência"
+                              size={"xs"}
+                              variant={"destructive"}
+                            >
+                              <Trash size={18} />
+                              {/* {} */}
+                            </Button>
+                          </AlertPopUp>
                         </TableCell>
                         <TableCell className="text-xs p-2">
                           {rec["fornecedor"]}
@@ -270,6 +295,7 @@ const ModalRecorrencias = () => {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </DialogContent>
+      <ModalEditarRecorrencias />
     </Dialog>
   );
 };

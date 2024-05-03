@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FaSpinner } from "react-icons/fa6";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,8 +40,9 @@ interface DataTableProps<TData, TValue> {
   rowCount: number;
   pagination?: PaginationState;
   setPagination?: (pagination: PaginationState) => void;
-  rowSelection?: RowSelectionState,
-  handleRowSelection?: (data:any)=>void;
+  rowSelection?: RowSelectionState;
+  handleRowSelection?: (data: any) => void;
+  isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -51,8 +53,8 @@ export function DataTable<TData, TValue>({
   rowCount,
   rowSelection,
   handleRowSelection,
+  isLoading,
 }: DataTableProps<TData, TValue>) {
-
   const table = useReactTable({
     data,
     rowCount: rowCount || 0,
@@ -70,18 +72,18 @@ export function DataTable<TData, TValue>({
       if (setPagination) {
         setPagination(result);
       }
-      if(handleRowSelection){
-        handleRowSelection({rowSelection: {}, idSelection: []})
+      if (handleRowSelection) {
+        handleRowSelection({ rowSelection: {}, idSelection: [] });
       }
     },
     enableRowSelection: true,
-    onRowSelectionChange: (callback)=>{
+    onRowSelectionChange: (callback) => {
       // @ts-expect-error ignorado
       const result = callback(rowSelection);
       if (handleRowSelection) {
         // @ts-ignore
-        const ids = Object.keys(result).map(c=>data[c].id)
-        handleRowSelection({rowSelection: result, idSelection: ids});
+        const ids = Object.keys(result).map((c) => data[c].id);
+        handleRowSelection({ rowSelection: result, idSelection: ids });
       }
     },
     manualPagination: true,
@@ -137,9 +139,24 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
+              {isLoading ? (
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  <span className="flex gap-2 w-full items-center justify-center">
+                    <FaSpinner size={18} className="me-2 animate-spin" />{" "}
+                    Carregando...
+                  </span>
+                </TableCell>
+              ) : (
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              )}
             </TableRow>
           )}
         </TableBody>

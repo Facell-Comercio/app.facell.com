@@ -12,7 +12,7 @@ const ContasBancarias = () => {
   const [pagination, setPagination, filters] = useStoreTableContasBancarias(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
-  const { data, refetch } = useContasBancarias().getAll({
+  const { data, refetch, isLoading } = useContasBancarias().getAll({
     pagination,
     filters,
   });
@@ -40,6 +40,7 @@ const ContasBancarias = () => {
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />
       <ModalContaBancaria />
     </div>

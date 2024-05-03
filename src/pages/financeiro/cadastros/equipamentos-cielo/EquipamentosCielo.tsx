@@ -12,7 +12,7 @@ const EquipamentosCielo = () => {
   const [pagination, setPagination, filters] = useStoreTableEquipamentos(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
-  const { data, refetch } = useEquipamentos().getAll({
+  const { data, refetch, isLoading } = useEquipamentos().getAll({
     pagination,
     filters,
   });
@@ -40,6 +40,7 @@ const EquipamentosCielo = () => {
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />
       <ModalEquipamento />
     </div>

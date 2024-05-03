@@ -12,7 +12,7 @@ const PlanoContas = () => {
   const [pagination, setPagination, filters] = useStoreTablePlanoContas(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
-  const { data, refetch } = usePlanoContas().getAll({
+  const { data, refetch, isLoading } = usePlanoContas().getAll({
     pagination,
     filters,
   });
@@ -39,6 +39,7 @@ const PlanoContas = () => {
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
+        isLoading={isLoading}
       />
       <ModalPlanoContas />
     </div>

@@ -1,3 +1,5 @@
+import { format } from "date-fns"
+
 export const normalizeNumberOnly = (value: string | undefined) => {
     if (!value) return ''
     return value.replace(/[\D]/g, '')
@@ -60,7 +62,7 @@ export const normalizeDataDayOne = (dataString?: string) => {
     }
 }
 
-export const normalizeDate = (data: string) => data && data.split("T")[0].split("-").reverse().join("/") 
+export const normalizeDate = (data: string|Date) => data && format(data, "dd/MM/yyyy");
 export const normalizeCurrency = (data: string|number) => {
     if(typeof data === "string"){
         const valor = parseFloat(data)
@@ -86,5 +88,25 @@ export const normalizeFirstAndLastName = (nomeCompleto: string) => {
     } else {
       // Se não houver correspondência, assume que o nome completo é o primeiro nome
       return `${nomeCompleto}`;
+    }
+  }
+
+  export const normalizeMes=(mes: string|number) =>{
+    const arrayMes = [
+        "Janeiro" ,
+        "Fevereiro" ,
+        "Março" ,
+        "Abril" ,
+        "Maio" ,
+        "Junho" ,
+        "Julho" ,
+        "Agosto" ,
+        "Setembro" ,
+        "Outubro" ,
+        "Novembro" ,
+        "Dezembro" ,
+      ];
+    if(mes ){
+        return arrayMes[+mes-1].toLocaleLowerCase()
     }
   }

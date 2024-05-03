@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface UseStoreAlteracoesLote {
+interface UseStoreExportDatasys {
   id?: string | null;
   modalOpen: boolean;
 
@@ -9,7 +9,7 @@ interface UseStoreAlteracoesLote {
   toggleModal: () => void;
 }
 
-export const useStoreAlteracoesLote = create<UseStoreAlteracoesLote>((set) => ({
+export const useStoreExportDatasys = create<UseStoreExportDatasys>((set) => ({
   id: null,
   modalOpen: false,
 
