@@ -39,17 +39,18 @@ const FiltersEquipamentos = ({ refetch }: { refetch: () => void }) => {
       collapsible
       className="p-2 border-2 dark:border-slate-800 rounded-lg "
     >
-      <AccordionItem value="item-1" className="border-0">
-        <AccordionTrigger className="py-1 hover:no-underline">
-          <div className="flex gap-3 items-center">
-            <span>Filtros</span>
-            <Button size={"xs"} onClick={handleClickFilter}>
-              Filtrar <FilterIcon size={12} className="ms-2" />
-            </Button>
-            <Button size={"xs"} onClick={handleResetFilter} variant="secondary">
-              Limpar <EraserIcon size={12} className="ms-2" />
-            </Button>
-          </div>
+      <AccordionItem value="item-1" className="relative border-0">
+        <div className="flex gap-3 items-center absolute start-16 top-1">
+          <Button size={"xs"} onClick={handleClickFilter}>
+            Aplicar <FilterIcon size={12} className="ms-2" />
+          </Button>
+          <Button size={"xs"} variant="secondary" onClick={handleResetFilter}>
+            Limpar <EraserIcon size={12} className="ms-2" />
+          </Button>
+        </div>
+
+        <AccordionTrigger className={`py-1 hover:no-underline`}>
+          <span className="">Filtros</span>
         </AccordionTrigger>
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">

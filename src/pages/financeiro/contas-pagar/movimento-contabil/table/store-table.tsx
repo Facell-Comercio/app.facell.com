@@ -9,25 +9,17 @@ export interface Pagination {
 type RowSelection = Record<number, boolean>;
 
 export interface Filters {
-  id_conta_bancaria?: string;
-  banco?: string;
   id_grupo_economico?: string;
-  fornecedor?: string;
-  id_titulo?: string;
-  num_doc?: string;
-  tipo_data?: string;
+  id_conta_bancaria?: string;
   range_data?: DateRange;
+  id_matriz?: string;
 }
 
 const initialFilters: Filters = {
   id_conta_bancaria: "",
-  fornecedor: "",
   id_grupo_economico: "",
-  banco: "",
-  id_titulo: "",
-  num_doc: "",
-  tipo_data: "data_pagamento",
   range_data: { from: undefined, to: undefined },
+  id_matriz: "",
 };
 
 export interface State {

@@ -36,6 +36,7 @@ interface IModalContaBancaria {
   handleSelecion: (item: ItemContaBancariaProps) => void;
   onOpenChange: () => void;
   id_matriz?: string | null;
+  id_grupo_economico?: string;
 }
 
 export type ItemContaBancariaProps = {
@@ -67,6 +68,7 @@ const ModalContasBancarias = ({
     pageSize: 15,
     pageIndex: 0,
   });
+
   const initialFilters: Filters = {
     id_grupo_economico: "",
     descricao: "",
