@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Download } from "lucide-react";
 import { useStoreExportDatasys } from "../export-datasys/store";
 import { useStoreTablePagar } from "../table/store-table";

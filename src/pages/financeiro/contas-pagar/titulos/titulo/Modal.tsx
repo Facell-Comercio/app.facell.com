@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { useRef } from "react";
 import FormTituloPagar from "./Form";
 import { TituloSchemaProps } from "./form-data";

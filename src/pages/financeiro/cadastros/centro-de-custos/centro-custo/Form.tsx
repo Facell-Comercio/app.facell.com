@@ -2,7 +2,7 @@ import FormInput from "@/components/custom/FormInput";
 import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
 import FormSwitch from "@/components/custom/FormSwitch";
 import { Form } from "@/components/ui/form";
-import { useCentroCustos } from "@/hooks/useCentroCustos";
+import { useCentroCustos } from "@/hooks/financeiro/useCentroCustos";
 import { Contact } from "lucide-react";
 import { CentroCustosSchema } from "./Modal";
 import { useFormCentroCustosData } from "./form-data";

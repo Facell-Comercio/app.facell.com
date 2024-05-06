@@ -14,7 +14,7 @@ import {
   PaginationItem,
 } from "@/components/ui/pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useCentroCustos } from "@/hooks/useCentroCustos";
+import { useCentroCustos } from "@/hooks/financeiro/useCentroCustos";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState } from "react";

@@ -1,6 +1,6 @@
 
 import { api } from "@/lib/axios";
-import { BancoSchema } from "@/pages/financeiro/cadastros/components/bancos/bancos/Modal";
+import { BancoSchema } from "@/pages/financeiro/cadastros/bancos/banco/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 

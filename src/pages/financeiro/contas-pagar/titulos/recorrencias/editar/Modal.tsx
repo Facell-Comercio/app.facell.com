@@ -11,7 +11,7 @@ import { InputDate } from "@/components/custom/InputDate";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { useEffect, useState } from "react";
 import { useStoreEditarRecorrencias } from "./store";
 

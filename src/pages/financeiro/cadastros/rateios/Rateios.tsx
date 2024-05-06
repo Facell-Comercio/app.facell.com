@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { useRateios } from "@/hooks/useRateios";
+import { useRateios } from "@/hooks/financeiro/useRateios";
 import ModalRateios from "./rateio/Modal";
 import { useStoreRateios } from "./rateio/store";
 import { columnsTable } from "./table/columns";

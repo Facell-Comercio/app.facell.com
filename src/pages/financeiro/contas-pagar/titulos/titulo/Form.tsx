@@ -24,7 +24,7 @@ import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { normalizeCnpjNumber, normalizeCurrency } from "@/helpers/mask";
 import { useFilial } from "@/hooks/useFilial";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { api } from "@/lib/axios";
 import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
 import ModalFornecedores, {

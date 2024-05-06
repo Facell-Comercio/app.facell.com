@@ -8,7 +8,7 @@ import {
   normalizeCnpjNumber,
   normalizePhoneNumber,
 } from "@/helpers/mask";
-import { useFornecedores } from "@/hooks/useFornecedores";
+import { useFornecedores } from "@/hooks/financeiro/useFornecedores";
 import { api } from "@/lib/axios";
 import { Contact, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";

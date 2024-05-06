@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { useFornecedores } from "@/hooks/useFornecedores";
+import { useFornecedores } from "@/hooks/financeiro/useFornecedores";
 import ModalFornecedor from "./fornecedor/Modal";
 import { useStoreFornecedor } from "./fornecedor/store-fornecedor";
 import FilterFornecedores from "./table/Filters";

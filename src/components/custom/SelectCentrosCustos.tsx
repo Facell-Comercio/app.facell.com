@@ -1,4 +1,4 @@
-import { useCentroCustos } from "@/hooks/useCentroCustos";
+import { useCentroCustos } from "@/hooks/financeiro/useCentroCustos";
 import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
 

@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { useOrcamento } from "@/hooks/useOrcamento";
+import { useOrcamento } from "@/hooks/financeiro/useOrcamento";
 import { Plus } from "lucide-react";
 import ModalCadastro from "./cadastro/Modal";
 import ModalLogs from "./cadastro/ModalLogs";

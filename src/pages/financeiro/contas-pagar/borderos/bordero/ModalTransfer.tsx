@@ -8,7 +8,7 @@ import { Input } from "@/components/custom/FormInput";
 import { InputDate } from "@/components/custom/InputDate";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { useBordero } from "@/hooks/useBordero";
+import { useBordero } from "@/hooks/financeiro/useBordero";
 import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";

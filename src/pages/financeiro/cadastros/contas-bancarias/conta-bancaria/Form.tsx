@@ -3,7 +3,7 @@ import FormSelect from "@/components/custom/FormSelect";
 import FormSwitch from "@/components/custom/FormSwitch";
 import SelectFilial from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
-import { useContasBancarias } from "@/hooks/useContasBancarias";
+import { useContasBancarias } from "@/hooks/financeiro/useContasBancarias";
 import ModalBancos, {
   ItemBancos,
 } from "@/pages/financeiro/components/ModalBancos";

@@ -10,7 +10,7 @@ import {
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useFornecedores } from "@/hooks/useFornecedores";
+import { useFornecedores } from "@/hooks/financeiro/useFornecedores";
 import { useRef } from "react";
 import FormFornecedor from "./Form";
 import { useStoreFornecedor } from "./store-fornecedor";

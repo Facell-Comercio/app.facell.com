@@ -1,6 +1,6 @@
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
-import { useBancos } from "@/hooks/useBancos";
+import { useBancos } from "@/hooks/financeiro/useBancos";
 import { Contact } from "lucide-react";
 import { BancoSchema } from "./Modal";
 import { useFormBancoData } from "./form-data";

@@ -1,4 +1,4 @@
-import { useContasBancarias } from "@/hooks/useContasBancarias";
+import { useContasBancarias } from "@/hooks/financeiro/useContasBancarias";
 import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
 

@@ -15,6 +15,7 @@ import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.t
 import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
 import { useEffect } from "react";
 import { useAuthStore } from "./context/auth-store.tsx";
+import ExtratosPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
 
 const AppRoutes = () => {
   const user = useAuthStore(state=>state.user);
@@ -46,6 +47,7 @@ const AppRoutes = () => {
             <Route element={<ContasPagarPage />} path="contas-a-pagar" />
             <Route element={<ContasReceberPage />} path="contas-a-receber" />
             <Route element={<OrcamentoPage />} path="orcamento" />
+            <Route element={<ExtratosPage />} path="extrato" />
             <Route element={<CadastrosPage />} path="cadastros" />
           </Route>
 

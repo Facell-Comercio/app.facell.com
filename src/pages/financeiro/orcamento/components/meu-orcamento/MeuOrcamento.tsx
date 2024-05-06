@@ -2,7 +2,7 @@ import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { exportToExcel } from "@/helpers/importExportXLS";
-import { useOrcamento } from "@/hooks/useOrcamento";
+import { useOrcamento } from "@/hooks/financeiro/useOrcamento";
 import { api } from "@/lib/axios";
 import { Download } from "lucide-react";
 import ModalMeuOrcamento from "./orcamento/Modal";

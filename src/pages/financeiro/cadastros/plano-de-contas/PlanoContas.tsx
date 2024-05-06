@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { usePlanoContas } from "@/hooks/usePlanoConta";
+import { usePlanoContas } from "@/hooks/financeiro/usePlanoConta";
 import ModalPlanoContas from "./plano-conta/Modal";
 import { useStorePlanoContas } from "./plano-conta/store";
 import FiltersPlanoContas from "./table/Filters";

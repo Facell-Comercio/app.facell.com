@@ -6,7 +6,7 @@ import {
   checkUserDepartments,
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import Filters from "./FiltersTitulosPagar";
 import ModalAlteracoesLote from "./alteracao-lote/Modal";
 import ButtonEditTitulos from "./components/ButtonEditTitulos";

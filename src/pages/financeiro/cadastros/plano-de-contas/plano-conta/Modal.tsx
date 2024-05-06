@@ -10,7 +10,7 @@ import {
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePlanoContas } from "@/hooks/usePlanoConta";
+import { usePlanoContas } from "@/hooks/financeiro/usePlanoConta";
 import { useRef } from "react";
 import FormPlanoContas from "./Form";
 import { useStorePlanoContas } from "./store";

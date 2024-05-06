@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { exportToExcel } from "@/helpers/importExportXLS";
-import { useBordero } from "@/hooks/useBordero";
+import { useBordero } from "@/hooks/financeiro/useBordero";
 import { api } from "@/lib/axios";
 import { Download } from "lucide-react";
 import ModalBordero from "./bordero/Modal";

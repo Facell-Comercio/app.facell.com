@@ -17,7 +17,6 @@ const ContasPagarPage = () => {
             checkUserDepartments("FINANCEIRO")) && (
             <>
               <TabsTrigger value="bordero">Borderôs</TabsTrigger>
-              <TabsTrigger value="conciliacao">Conciliação</TabsTrigger>
               <TabsTrigger value="movimento-contabil">
                 Movimento Contábil
               </TabsTrigger>
@@ -30,7 +29,6 @@ const ContasPagarPage = () => {
         <TabsContent value="bordero">
           <Borderos />
         </TabsContent>
-        <TabsContent value="conciliacao"></TabsContent>
         <TabsContent value="movimento-contabil">
           <MovimentoContabil />
         </TabsContent>

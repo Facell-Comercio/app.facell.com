@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { exportToExcel } from "@/helpers/importExportXLS";
-import { useMovimentoContabil } from "@/hooks/useMovimentoContabil";
+import { useMovimentoContabil } from "@/hooks/financeiro/useMovimentoContabil";
 import { api } from "@/lib/axios";
 import { Download } from "lucide-react";
 import ModalMovimentoContabil from "./movimento/Modal";

@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { useEquipamentos } from "@/hooks/useEquipamentos";
+import { useEquipamentos } from "@/hooks/financeiro/useEquipamentos";
 import ModalEquipamento from "./equipamento/Modal";
 import { useStoreEquipamento } from "./equipamento/store";
 import FilterEquipamentos from "./table/Filters";

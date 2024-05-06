@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { useEffect, useState } from "react";
 import { useStoreTablePagar } from "../table/store-table";
 import { useStoreAlteracoesLote } from "./store";

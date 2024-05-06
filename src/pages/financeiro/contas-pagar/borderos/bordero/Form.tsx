@@ -7,7 +7,7 @@ import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeCurrency } from "@/helpers/mask";
-import { useBordero } from "@/hooks/useBordero";
+import { useBordero } from "@/hooks/financeiro/useBordero";
 import { api } from "@/lib/axios";
 import ModalContasBancarias, {
   ItemContaBancariaProps,

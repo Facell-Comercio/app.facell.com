@@ -33,7 +33,7 @@ import {
   normalizeFirstAndLastName,
   normalizeMes,
 } from "@/helpers/mask";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import {
   Check,
   Download,

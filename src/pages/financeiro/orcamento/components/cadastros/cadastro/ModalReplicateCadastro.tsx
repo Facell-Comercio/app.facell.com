@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import ModalButtons from "@/components/custom/ModalButtons";
 import { Form } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useOrcamento } from "@/hooks/useOrcamento";
+import { useOrcamento } from "@/hooks/financeiro/useOrcamento";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useRef, useState } from "react";
 import { cadastroSchemaProps, useFormCadastroData } from "./form-data";

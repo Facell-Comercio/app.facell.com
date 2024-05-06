@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Repeat2 } from "lucide-react";
 import { useStoreRecorrencias } from "../recorrencias/store";
-import { useTituloPagar } from "@/hooks/useTituloPagar";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 
 const ButtonRecorrencias = () => {
     const {data} = useTituloPagar().getRecorrencias({ filters: {}})

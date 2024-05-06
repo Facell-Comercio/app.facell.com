@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { useBancos } from "@/hooks/useBancos";
+import { useBancos } from "@/hooks/financeiro/useBancos";
 import ModalBanco from "./banco/Modal";
 import { useStoreBanco } from "./banco/store";
 import FilterBancos from "./table/Filters";

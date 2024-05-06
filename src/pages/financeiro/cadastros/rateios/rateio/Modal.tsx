@@ -10,7 +10,7 @@ import {
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRateios } from "@/hooks/useRateios";
+import { useRateios } from "@/hooks/financeiro/useRateios";
 import { useRef } from "react";
 import FormRateios from "./Form";
 import { useStoreRateios } from "./store";

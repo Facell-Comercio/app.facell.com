@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { useContasBancarias } from "@/hooks/useContasBancarias";
+import { useContasBancarias } from "@/hooks/financeiro/useContasBancarias";
 import ModalContaBancaria from "./conta-bancaria/Modal";
 import { useStoreContaBancaria } from "./conta-bancaria/store";
 import FiltersContasBancarias from "./table/Filters";

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import { useRateios } from "@/hooks/useRateios";
+import { useRateios } from "@/hooks/financeiro/useRateios";
 import { Fingerprint, Percent, Trash } from "lucide-react";
 import { RateiosSchema } from "./Modal";
 import { useFormRateioData } from "./form-data";

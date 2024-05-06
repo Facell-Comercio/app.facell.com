@@ -1,6 +1,6 @@
 import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
-import { useRateios } from "@/hooks/useRateios";
+import { useRateios } from "@/hooks/financeiro/useRateios";
 import {  TipoRateio } from "@/pages/financeiro/contas-pagar/titulos/titulo/store";
 
 type TSelectTipoRateio = {

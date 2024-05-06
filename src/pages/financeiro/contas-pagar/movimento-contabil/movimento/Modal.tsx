@@ -12,12 +12,12 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useBordero } from "@/hooks/useBordero";
+import { useBordero } from "@/hooks/financeiro/useBordero";
 import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
 import { Trash } from "lucide-react";
 import { useRef } from "react";
 import FormBordero from "./Form";
-import { useStoreBordero } from "./store";
+import { useStoreMovimentoContabil } from "./store";
 
 export type BorderoSchemaProps = {
   id: string;
@@ -40,13 +40,13 @@ const initialPropsBordero: BorderoSchemaProps = {
 };
 
 const ModalBordero = () => {
-  const modalOpen = useStoreBordero().modalOpen;
+  const modalOpen = useStoreMovimentoContabil().modalOpen;
 
-  const toggleModal = useStoreBordero().toggleModal;
+  const toggleModal = useStoreMovimentoContabil().toggleModal;
 
-  const editModal = useStoreBordero().editModal;
-  const modalEditing = useStoreBordero().modalEditing;
-  const id = useStoreBordero().id;
+  const editModal = useStoreMovimentoContabil().editModal;
+  const modalEditing = useStoreMovimentoContabil().modalEditing;
+  const id = useStoreMovimentoContabil().id;
   const formRef = useRef(null);
 
   const { data, isLoading } = useBordero().getOne(id);

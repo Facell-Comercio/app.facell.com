@@ -189,6 +189,13 @@ export const sidebarItems: SidebarItem[] = [
         visible: true,
       },
       {
+        name: "Extrato Bancário",
+        type: "link",
+        shortName: "EXT",
+        uri: "/financeiro/extrato",
+        visible: true,
+      },
+      {
         name: "Cadastros",
         type: "link",
         shortName: "C",

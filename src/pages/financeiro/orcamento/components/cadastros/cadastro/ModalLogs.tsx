@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useOrcamento } from "@/hooks/useOrcamento";
+import { useOrcamento } from "@/hooks/financeiro/useOrcamento";
 import { Search } from "lucide-react";
 import { useRef, useState } from "react";
 import RowVirtualizerLogs from "./RowVirtualizedLogs";
