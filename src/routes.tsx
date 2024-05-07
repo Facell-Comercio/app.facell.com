@@ -2,20 +2,22 @@ import { Route, Routes } from "react-router-dom";
 
 import App from "./App.tsx";
 import { checkUserPermission } from "./helpers/checkAuthorization.ts";
-import Home from "./pages/Home.tsx";
-import Login from "./pages/Login.tsx";
+import { useEffect } from "react";
+import { useAuthStore } from "./context/auth-store.tsx";
+
 import NotAuthorizedPage from "./pages/NotAuthorized.tsx";
-import PageNotFound from "./pages/NotFound.tsx";
-import Perfil from "./pages/Perfil.tsx";
+import NotFoundPage from "./pages/NotFound.tsx";
 import PrivateRoutes from "./pages/PrivateRoutes.tsx";
-import AdminPage from "./pages/admin/Page.tsx";
+
+import LoginPage from "./pages/Login.tsx";
+import HomePage from "./pages/Home.tsx";
+import PerfilPage from "./pages/Perfil.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.tsx";
 import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
-import { useEffect } from "react";
-import { useAuthStore } from "./context/auth-store.tsx";
-import ExtratosPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
+import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
+import AdminPage from "./pages/admin/Page.tsx";
 
 const AppRoutes = () => {
   const user = useAuthStore(state=>state.user);
@@ -29,8 +31,8 @@ const AppRoutes = () => {
       <Route element={<PrivateRoutes />}>
         <Route path="/" element={<App />}>
           {/* Páginas protegidas isoladas */}
-          <Route element={<Home />} path="/" />
-          <Route element={<Perfil />} path="/perfil" />
+          <Route element={<HomePage />} path="/" />
+          <Route element={<PerfilPage />} path="/perfil" />
 
           {/* T&D */}
 
@@ -47,7 +49,7 @@ const AppRoutes = () => {
             <Route element={<ContasPagarPage />} path="contas-a-pagar" />
             <Route element={<ContasReceberPage />} path="contas-a-receber" />
             <Route element={<OrcamentoPage />} path="orcamento" />
-            <Route element={<ExtratosPage />} path="extrato" />
+            <Route element={<ConciliacaoBancariaPage />} path="conciliacao-bancaria" />
             <Route element={<CadastrosPage />} path="cadastros" />
           </Route>
 
@@ -63,11 +65,11 @@ const AppRoutes = () => {
             path="administracao"
           />
 
-          <Route element={<PageNotFound />} path="*" />
+          <Route element={<NotFoundPage />} path="*" />
         </Route>
       </Route>
 
-      <Route element={<Login />} path="/login" />
+      <Route element={<LoginPage />} path="/login" />
     </Routes>
   );
 };

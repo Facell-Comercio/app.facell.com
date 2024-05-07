@@ -189,10 +189,10 @@ export const sidebarItems: SidebarItem[] = [
         visible: true,
       },
       {
-        name: "Extrato Bancário",
+        name: "Conciliação Bancária",
         type: "link",
-        shortName: "EXT",
-        uri: "/financeiro/extrato",
+        shortName: "CBK",
+        uri: "/financeiro/conciliacao-bancaria",
         visible: true,
       },
       {

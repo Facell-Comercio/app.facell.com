@@ -35,6 +35,7 @@ interface IModalContaBancaria {
   open: boolean;
   handleSelecion: (item: ItemContaBancariaProps) => void;
   onOpenChange: () => void;
+  closeOnSelection?: boolean;
   id_matriz?: string | null;
   id_grupo_economico?: string;
 }
@@ -62,6 +63,7 @@ const ModalContasBancarias = ({
   open,
   handleSelecion,
   onOpenChange,
+  closeOnSelection,
   id_matriz,
 }: IModalContaBancaria) => {
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -150,6 +152,9 @@ const ModalContasBancarias = ({
 
   function handleSelection(item: ItemContaBancariaProps) {
     handleSelecion(item);
+    if(closeOnSelection){
+      onOpenChange()
+    }
   }
 
   if (isLoading) return null;
@@ -159,9 +164,9 @@ const ModalContasBancarias = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Lista de plano de contas</DialogTitle>
+          <DialogTitle>Contas bancárias</DialogTitle>
           <DialogDescription>
-            Selecione um ao clicar no botão à direita.
+            Selecione uma ao clicar no botão à direita.
           </DialogDescription>
 
           <Accordion

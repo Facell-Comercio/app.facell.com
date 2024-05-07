@@ -18,12 +18,14 @@ interface DatePickerWithRangeProps
   className?: string;
   date?: DateRange;
   setDate?: (date: DateRange) => void;
+  disabled: boolean,
 }
 
 export function DatePickerWithRange({
   className,
   date,
   setDate,
+  disabled,
 }: DatePickerWithRangeProps) {
   // Não é necessário definir date e setDate no estado interno.
   // O código já recebe date e setDate das propriedades.
@@ -34,6 +36,7 @@ export function DatePickerWithRange({
         <PopoverTrigger asChild>
           <Button
             id="date"
+            disabled={disabled}
             variant={"outline"}
             className={cn(
               "w-[300px] justify-start text-left font-normal",
