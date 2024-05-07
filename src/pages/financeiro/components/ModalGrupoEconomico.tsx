@@ -88,7 +88,6 @@ const ModalGruposEconomicos = ({
   async function handlePaginationUp() {
     await new Promise((resolve) => {
       const newPage = ++pagination.pageIndex;
-      console.log(newPage);
       setPagination((prev) => ({ ...prev, pageIndex: newPage }));
       resolve(true);
     });

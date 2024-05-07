@@ -35,7 +35,7 @@ const FormCentroCustos = ({
     closeModal();
   };
 
-  console.log(form.formState.errors);
+  // console.log(form.formState.errors);
 
   return (
     <div className="max-w-full overflow-x-hidden">

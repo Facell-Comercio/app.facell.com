@@ -67,7 +67,7 @@ const MeuOrcamento = () => {
       exportToExcel(newArray, `meu-orcamento-${mes.toLowerCase()}-${ano}`);
       return newArray;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       toast({ title: "Erro na exportação", description: "Erro na exportação" });
     }
   }

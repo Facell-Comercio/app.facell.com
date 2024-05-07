@@ -71,7 +71,6 @@ const ModalExportDatasys = () => {
         }
       );
       const rows = response?.data || [];
-      console.log(rows);
 
       const formatedResponse = rows.map((row: ResponseExportDatasysProps) => {
         return {
@@ -102,8 +101,6 @@ const ModalExportDatasys = () => {
       );
       closeModal();
     } catch (err) {
-      console.log(err);
-
       toast({
         title: "Erro!",
         description: "Houve um problema no processo de exportação",

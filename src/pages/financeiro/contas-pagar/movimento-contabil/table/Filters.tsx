@@ -83,7 +83,7 @@ const FiltersMovimentoContabiluseStoreTableMovimentoContabil = ({
           value={filters.grupo_economico}
           className="flex-1 min-h-10 min-w-[20ch]"
           readOnly
-          placeholder="Selecione o grupo econômico..."
+          placeholder="Selecione o grupo..."
           onClick={() => setModalGrupoEconomicoOpen(true)}
         />
       </div>

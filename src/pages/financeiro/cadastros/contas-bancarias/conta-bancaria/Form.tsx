@@ -41,7 +41,7 @@ const FormContaBancaria = ({
   };
 
   const { form } = useFormContaBancariaData(data);
-  console.log(form.watch("id_tipo_conta"));
+  // console.log(form.watch("id_tipo_conta"));
 
   function handleSelectionBancos(item: ItemBancos) {
     form.setValue("id_banco", item.id);

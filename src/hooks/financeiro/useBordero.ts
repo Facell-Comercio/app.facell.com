@@ -54,7 +54,7 @@ export const useBordero = () => {
                 return api.put("/financeiro/contas-a-pagar/bordero/", {id, ...rest}).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
+                toast({variant:"success", title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
             onError(error: AxiosError) {
@@ -71,7 +71,7 @@ export const useBordero = () => {
                 return api.put("financeiro/contas-a-pagar/bordero/transfer", data).then((response)=>response.data)
             },
             onSuccess() {
-                toast({title: "Sucesso", description: "Transferência realizada com sucesso", duration: 3500})
+                toast({variant:"success",title: "Sucesso", description: "Transferência realizada com sucesso", duration: 3500})
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
             },
             onError(error: AxiosError) {
@@ -89,7 +89,7 @@ export const useBordero = () => {
             },
             onSuccess() {
                 queryClient.invalidateQueries({queryKey:['fin_bordero']}) 
-                toast({title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
+                toast({variant:"success",title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
             },
             onError(error: AxiosError) {
                 // @ts-expect-error "Vai funcionar"

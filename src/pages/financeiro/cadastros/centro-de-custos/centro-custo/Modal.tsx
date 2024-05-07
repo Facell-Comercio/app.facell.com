@@ -52,8 +52,6 @@ const ModalCentroCustos = () => {
     }
   }
 
-  console.log("NEW DATA: ", newData);
-
   function handleClickCancel() {
     editModal(false);
     closeModal();

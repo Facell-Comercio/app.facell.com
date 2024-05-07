@@ -246,7 +246,6 @@ const ModalRecorrencias = () => {
                             action={() => deleteRecorrencia(rec["id"])}
                           >
                             <Button
-                              onClick={() => console.log("Exluir")}
                               title="Excluir recorrência"
                               size={"xs"}
                               variant={"destructive"}

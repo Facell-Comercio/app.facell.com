@@ -37,20 +37,19 @@ function ModalTransfer({ data, id_matriz }: ModalTransferProps) {
   function handleSelectionContaBancaria(item: ItemContaBancariaProps) {
     setContaBancaria(item.descricao);
     setIdContaBancaria(item.id);
-    console.log(item.id);
 
     toggleModalContasBancarias();
   }
 
   function onSubmitData() {
     if (idContaBancaria && pagamento) {
-      console.log({
-        id_conta_bancaria: idContaBancaria,
-        date: pagamento,
-        titulos: data.map((titulo) => {
-          titulo.id_titulo, titulo.id_status;
-        }),
-      });
+      // console.log({
+      //   id_conta_bancaria: idContaBancaria,
+      //   date: pagamento,
+      //   titulos: data.map((titulo) => {
+      //     titulo.id_titulo, titulo.id_status;
+      //   }),
+      // });
 
       toggleModalTransfer();
       transferTitulos({

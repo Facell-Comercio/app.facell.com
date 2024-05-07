@@ -29,7 +29,7 @@ const FormRateios = ({
   const closeModal = useStoreRateios().closeModal;
 
   const { form, itens, appendItem, removeItem } = useFormRateioData(data);
-  console.log(form.formState.errors)
+  // console.log(form.formState.errors)
 
   const onSubmitData = (newData: RateiosSchema) => {
     const soma = newData.itens.reduce((cont, submitedData) => {

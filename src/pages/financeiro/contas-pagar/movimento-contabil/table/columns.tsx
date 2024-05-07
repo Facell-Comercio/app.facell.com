@@ -1,7 +1,6 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { normalizeCurrency } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { ReactNode } from "react";
 
@@ -11,7 +10,6 @@ export type RowMovimentoContabil = {
   select: ReactNode;
   id: string;
   descricao: string;
-  saldo_atual: string | number;
   banco: string;
   tipo: string;
   grupo_economico: string;
@@ -53,14 +51,6 @@ export const columnsTable: ColumnDef<RowMovimentoContabil>[] = [
     cell: (info) => {
       const descricao = info.getValue<string>();
       return <span>{descricao && descricao.toUpperCase()}</span>;
-    },
-  },
-  {
-    header: "SALDO ATUAL",
-    accessorKey: "saldo_atual",
-    cell: (info) => {
-      const saldo_atual = info.getValue<string>();
-      return <span>{saldo_atual && normalizeCurrency(saldo_atual)}</span>;
     },
   },
   {

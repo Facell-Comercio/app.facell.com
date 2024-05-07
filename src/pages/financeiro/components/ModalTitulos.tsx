@@ -48,7 +48,7 @@ interface IModalTitulos {
   id_matriz?: string;
   initialFilters?: {
     [key: string]: any;
-  }
+  };
 }
 
 export type TitulosProps = {
@@ -93,7 +93,6 @@ const ModalTitulos = ({
     pageSize: 15,
     pageIndex: 0,
   });
-  console.log('Inicial',initialFilters)
   const defaultFilters: Filters = {
     id: "",
     fornecedor: "",
@@ -121,11 +120,10 @@ const ModalTitulos = ({
     enabled: open,
   });
 
-
-  useEffect(()=>{
-    setFilters(prev=>({...prev, ...initialFilters}))
-    refetchTitulos()
-  }, [initialFilters])
+  useEffect(() => {
+    setFilters((prev) => ({ ...prev, ...initialFilters }));
+    refetchTitulos();
+  }, [initialFilters]);
 
   const pages = [...Array(data?.data?.pageCount || 0).keys()].map(
     (page) => page + 1
@@ -149,7 +147,7 @@ const ModalTitulos = ({
 
   async function handleClickResetFilters() {
     await new Promise((resolve) => {
-      setFilters(prev=>({...prev, ...defaultFilters}));
+      setFilters((prev) => ({ ...prev, ...defaultFilters }));
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
@@ -157,8 +155,8 @@ const ModalTitulos = ({
   }
 
   function handleRemoveAll() {
-    setTitulos([])
-    setIds([])
+    setTitulos([]);
+    setIds([]);
   }
   function handleSelectAll() {
     data?.data?.rows.forEach((item: TitulosProps) => {
@@ -282,7 +280,7 @@ const ModalTitulos = ({
                     <Input
                       placeholder="ID Título"
                       className="w-[20ch]"
-                      value={filters?.id || ''}
+                      value={filters?.id || ""}
                       onChange={(e) => {
                         setFilters({ ...filters, id: e.target.value });
                       }}
@@ -290,7 +288,7 @@ const ModalTitulos = ({
                     <Input
                       placeholder="Fornecedor"
                       className="max-w-[200px]"
-                      value={filters?.fornecedor || ''}
+                      value={filters?.fornecedor || ""}
                       onChange={(e) => {
                         setFilters({ ...filters, fornecedor: e.target.value });
                       }}
@@ -298,7 +296,7 @@ const ModalTitulos = ({
                     <Input
                       placeholder="Descrição"
                       className="w-[20ch]"
-                      value={filters?.descricao || ''}
+                      value={filters?.descricao || ""}
                       onChange={(e) => {
                         setFilters({ ...filters, descricao: e.target.value });
                       }}
@@ -306,7 +304,7 @@ const ModalTitulos = ({
                     <Input
                       placeholder="Nº Doc"
                       className="w-[20ch]"
-                      value={filters?.num_doc || ''}
+                      value={filters?.num_doc || ""}
                       onChange={(e) => {
                         setFilters({ ...filters, num_doc: e.target.value });
                       }}
@@ -328,7 +326,7 @@ const ModalTitulos = ({
           <div className="flex justify-between mt-4">
             <Button
               variant={"destructive"}
-              size={'sm'}
+              size={"sm"}
               onClick={() => handleRemoveAll()}
             >
               Remover Todos
@@ -336,14 +334,12 @@ const ModalTitulos = ({
 
             <Button
               variant={"outline"}
-              size={'sm'}
+              size={"sm"}
               onClick={() => handleSelectAll()}
             >
               Selecionar Todos
             </Button>
-
           </div>
-
         </DialogHeader>
 
         <ScrollArea className="h-96 rounded-md">
@@ -366,9 +362,10 @@ const ModalTitulos = ({
                 return (
                   <tr
                     key={"titulos:" + item.id_titulo + index}
-                    className={`bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-1 px-2 ${isSelected &&
+                    className={`bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-1 px-2 ${
+                      isSelected &&
                       "bg-primary-foreground dark:bg-primary-foreground"
-                      }`}
+                    }`}
                   >
                     <td className="text-xs p-1 text-center">
                       {" "}
@@ -412,11 +409,11 @@ const ModalTitulos = ({
 
         <div className="flex items-center justify-between gap-3 text-sm">
           <div className="flex items-center gap-3">
-            <Badge variant={'secondary'}>
+            <Badge variant={"secondary"}>
               <p className="mr-1">Qtde: </p>
               {data?.data.rows.length}
             </Badge>
-            <Badge variant={'secondary'}>
+            <Badge variant={"secondary"}>
               <p className="mr-1">Valor Total: </p>
               {normalizeCurrency(
                 data?.data.rows.reduce(
@@ -427,14 +424,14 @@ const ModalTitulos = ({
               )}
             </Badge>
           </div>
-          {titulos.length > 0 &&
+          {titulos.length > 0 && (
             <div className="flex items-center gap-3">
               Selecionado:
-              <Badge variant={'default'}>
+              <Badge variant={"default"}>
                 <p className="mr-1">Qtde: </p>
                 {titulos.length}
               </Badge>
-              <Badge variant={'default'}>
+              <Badge variant={"default"}>
                 <p className="mr-1">Valor: </p>
                 {normalizeCurrency(
                   titulos?.reduce(
@@ -445,8 +442,7 @@ const ModalTitulos = ({
                 )}
               </Badge>
             </div>
-          }
-
+          )}
         </div>
         <DialogFooter className="flex">
           <div className="flex items-center space-x-2">
@@ -504,7 +500,9 @@ const ModalTitulos = ({
               </PaginationItem>
             </PaginationContent>
           </Pagination>
-          <Button onClick={() => handleSelecion(titulos)}>Salvar seleção</Button>
+          <Button onClick={() => handleSelecion(titulos)}>
+            Salvar seleção
+          </Button>
           {/* <PaginationEllipsis /> */}
         </DialogFooter>
       </DialogContent>

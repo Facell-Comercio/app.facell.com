@@ -49,7 +49,6 @@ const ModalReplicateCadastro = () => {
 
   function onSubmitData(newData: cadastroSchemaProps) {
     newData.ref = `${refDate.ano}-${refDate.mes}-1`;
-    console.log(newData);
     insertOne(newData);
 
     closeReplicateModal();

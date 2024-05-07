@@ -23,8 +23,8 @@ import { formatarDataHora } from "@/helpers/format";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { normalizeCnpjNumber, normalizeCurrency } from "@/helpers/mask";
-import { useFilial } from "@/hooks/useFilial";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
+import { useFilial } from "@/hooks/useFilial";
 import { api } from "@/lib/axios";
 import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
 import ModalFornecedores, {
@@ -367,10 +367,11 @@ const FormTituloPagar = ({
           const result = importFromExcel(importedData);
 
           // @ts-ignore
-          const valorTotalRateio:number = result.reduce((acc, cur) => {
-            // @ts-ignore
-            return acc + cur.valor;
-          }, 0) || 0;
+          const valorTotalRateio: number =
+            result.reduce((acc, cur) => {
+              // @ts-ignore
+              return acc + cur.valor;
+            }, 0) || 0;
 
           setValue("update_rateio", true);
           form.resetField("itens_rateio", { defaultValue: [] });
@@ -380,11 +381,8 @@ const FormTituloPagar = ({
               (f: Filial) => f.nome === item?.filial
             )?.id;
 
-            const percentual_rateio_item = (
-              // @ts-ignore
-              (item?.valor / valorTotalRateio) *
-              100
-            ).toFixed(4);
+            const percentual_rateio_item = // @ts-ignore
+            ((item?.valor / valorTotalRateio) * 100).toFixed(4);
             // console.log(item.filial, id_filial_rateio_item,  item.valor, valorTotalRateio,percentual_rateio_item )
 
             addItemRateio({
@@ -606,7 +604,7 @@ const FormTituloPagar = ({
       id_novo_status: "3",
     });
   };
-  const handleClickCriarRecorrencia = async (e:any) => {
+  const handleClickCriarRecorrencia = async (e: any) => {
     try {
       e.preventDefault();
       const dados = form.getValues();
@@ -626,7 +624,7 @@ const FormTituloPagar = ({
         title: "Recorrência criada com sucesso!",
       });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast({
         variant: "destructive",
         title: "Erro ao tentar criar a recorrência!",
