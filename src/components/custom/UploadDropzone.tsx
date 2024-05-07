@@ -47,6 +47,10 @@ const generateAcceptObject = (mediaType: MediaType): Accept => {
             return {
                 'application/xml': ['.xml']
             };
+        case 'ofx':
+            return {
+                'application/x-ofx': ['.ofx']
+            };
         default:
             return {};
     }
@@ -70,7 +74,6 @@ const UploadDropzone = ({
             const result = await api.postForm('upload/pre-upload', {
                 file: acceptedFiles[0]
             })
-            console.log(result.data)
             const fileUrl = result?.data?.fileUrl;
             if (fileUrl) {
                 onUploadSuccess(fileUrl)

@@ -35,6 +35,7 @@ interface IModalContaBancaria {
   open: boolean;
   handleSelecion: (item: ItemContaBancariaProps) => void;
   onOpenChange: () => void;
+  closeOnSelection?: boolean;
   id_matriz?: string | null;
 }
 
@@ -61,6 +62,7 @@ const ModalContasBancarias = ({
   open,
   handleSelecion,
   onOpenChange,
+  closeOnSelection,
   id_matriz,
 }: IModalContaBancaria) => {
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -129,7 +131,6 @@ const ModalContasBancarias = ({
   async function handlePaginationUp() {
     await new Promise((resolve) => {
       const newPage = ++pagination.pageIndex;
-      console.log(newPage);
       setPagination((prev) => ({ ...prev, pageIndex: newPage }));
       resolve(true);
     });
@@ -149,6 +150,9 @@ const ModalContasBancarias = ({
 
   function handleSelection(item: ItemContaBancariaProps) {
     handleSelecion(item);
+    if(closeOnSelection){
+      onOpenChange()
+    }
   }
 
   if (isLoading) return null;
