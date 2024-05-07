@@ -17,8 +17,6 @@ const MovimentoContabil = () => {
   const rows = data?.data?.rows || [];
   const rowCount = data?.data?.rowCount || 0;
 
-  console.log("ROWS", rows);
-
   return (
     <div className="flex flex-col gap-3">
       <FiltersMovimentoContabil refetch={refetch} />

@@ -65,8 +65,6 @@ const ModalContaBancaria = () => {
     }
   }
 
-  console.log(newData);
-
   function handleClickCancel() {
     editModal(false);
     closeModal();

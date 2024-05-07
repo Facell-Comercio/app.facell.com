@@ -1,4 +1,3 @@
-import { DateRange } from "react-day-picker";
 import { create } from "zustand";
 
 export interface Pagination {
@@ -11,14 +10,20 @@ type RowSelection = Record<number, boolean>;
 export interface Filters {
   id_grupo_economico?: string;
   id_conta_bancaria?: string;
-  range_data?: DateRange;
+  conta_bancaria?: string;
+  grupo_economico?: string;
+  mes?: string;
+  ano?: string;
   id_matriz?: string;
 }
 
 const initialFilters: Filters = {
   id_conta_bancaria: "",
   id_grupo_economico: "",
-  range_data: { from: undefined, to: undefined },
+  conta_bancaria: "",
+  grupo_economico: "",
+  mes: "",
+  ano: "",
   id_matriz: "",
 };
 

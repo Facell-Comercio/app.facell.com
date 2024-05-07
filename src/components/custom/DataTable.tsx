@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
       // @ts-expect-error ignorado
       const result = callback(rowSelection);
       if (handleRowSelection) {
-        // @ts-ignore
+        // @ts-expect-error ignorado
         const ids = Object.keys(result).map((c) => data[c].id);
         handleRowSelection({ rowSelection: result, idSelection: ids });
       }
