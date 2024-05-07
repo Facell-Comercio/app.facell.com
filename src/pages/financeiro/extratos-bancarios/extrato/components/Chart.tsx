@@ -43,7 +43,7 @@ const Chart = ({data, isLoading}:{data: ChartData[], isLoading: boolean}) => {
                 <XAxis dataKey="data_transacao" />
                 <YAxis />
                 <Tooltip
-                    formatter={(value, props) => {
+                    formatter={(value, _, props) => {
                         // @ts-ignore
                         if (props?.format === 'currency') {
                             // @ts-ignore
