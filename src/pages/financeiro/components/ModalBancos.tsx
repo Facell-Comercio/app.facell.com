@@ -120,7 +120,7 @@ const ModalBancos = ({ open, handleSelecion, onOpenChange }: IModalBancos) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Lista de bancos</DialogTitle>
+          <DialogTitle>Bancos</DialogTitle>
           <DialogDescription>
             Selecione um ao clicar no botão à direita.
           </DialogDescription>

@@ -162,9 +162,9 @@ const ModalContasBancarias = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Lista de plano de contas</DialogTitle>
+          <DialogTitle>Contas bancárias</DialogTitle>
           <DialogDescription>
-            Selecione um ao clicar no botão à direita.
+            Selecione uma ao clicar no botão à direita.
           </DialogDescription>
 
           <Accordion

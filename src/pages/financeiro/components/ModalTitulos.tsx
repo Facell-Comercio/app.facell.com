@@ -250,7 +250,7 @@ const ModalTitulos = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex flex-col sm:max-w-[1000px]">
         <DialogHeader className="flex flex-1 w-full max-x-[80vw]">
-          <DialogTitle>Lista de titulos</DialogTitle>
+          <DialogTitle>Titulos a pagar</DialogTitle>
           <DialogDescription>
             Selecione um ao clicar no botão à direita.
           </DialogDescription>

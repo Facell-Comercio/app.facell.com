@@ -129,7 +129,7 @@ const ModalBorderos = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Lista de Bordero/Clientes</DialogTitle>
+          <DialogTitle>Borderos de pagamento</DialogTitle>
           <DialogDescription>
             Selecione um ao clicar no botão à direita.
           </DialogDescription>
