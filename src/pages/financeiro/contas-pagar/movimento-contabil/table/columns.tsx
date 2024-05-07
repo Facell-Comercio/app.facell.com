@@ -1,22 +1,22 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { normalizeCurrency } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
-import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
-import { useStoreMovimentoContabil } from "../movimento/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type RowMovimentoContabil = {
   select: ReactNode;
   id: string;
-  data_pagamento: string;
-  conta_bancaria: string;
+  descricao: string;
+  saldo_atual: string | number;
+  banco: string;
+  tipo: string;
+  grupo_economico: string;
+  filial: string;
 };
-
-const openModal = useStoreMovimentoContabil.getState().openModal;
 
 export const columnsTable: ColumnDef<RowMovimentoContabil>[] = [
   {
@@ -48,46 +48,51 @@ export const columnsTable: ColumnDef<RowMovimentoContabil>[] = [
     ),
   },
   {
-    header: "AÇÃO",
-    accessorKey: "id",
-    cell: (info) => (
-      <FileSearch2
-        className="text-blue-500 cursor-pointer"
-        onClick={() => openModal(info.getValue<number>().toString())}
-      />
-    ),
-    enableSorting: false,
-  },
-  {
-    header: "DATA PAGAMENTO",
-    accessorKey: "data_pagamento",
+    header: "DESCRIÇÃO",
+    accessorKey: "descricao",
     cell: (info) => {
-      const data_pagamento = info.getValue<string>();
-      return <span>{data_pagamento && normalizeDate(data_pagamento)}</span>;
+      const descricao = info.getValue<string>();
+      return <span>{descricao && descricao.toUpperCase()}</span>;
     },
   },
   {
-    header: "CONTA BANCÁRIA",
-    accessorKey: "conta_bancaria",
+    header: "SALDO ATUAL",
+    accessorKey: "saldo_atual",
     cell: (info) => {
-      const conta_bancaria = info.getValue<string>();
-      return <span>{conta_bancaria}</span>;
+      const saldo_atual = info.getValue<string>();
+      return <span>{saldo_atual && normalizeCurrency(saldo_atual)}</span>;
     },
   },
   {
-    header: "QUANTIDADE",
-    accessorKey: "qtde_titulos",
+    header: "BANCO",
+    accessorKey: "banco",
     cell: (info) => {
-      const qtde_titulos = info.getValue<string>();
-      return <span>{qtde_titulos}</span>;
+      const banco = info.getValue<string>() || 0;
+      return <span>{banco && banco.toUpperCase()}</span>;
     },
   },
   {
-    header: "VALOR TOTAL",
-    accessorKey: "valor_total",
+    header: "TIPO",
+    accessorKey: "tipo",
     cell: (info) => {
-      const valor_total = info.getValue<string>() || 0;
-      return <span>{normalizeCurrency(valor_total)}</span>;
+      const tipo = info.getValue<string>() || 0;
+      return <span>{tipo}</span>;
+    },
+  },
+  {
+    header: "GRUPO ECONÔMICO",
+    accessorKey: "grupo_economico",
+    cell: (info) => {
+      const grupo_economico = info.getValue<string>() || 0;
+      return <span>{grupo_economico && grupo_economico.toUpperCase()}</span>;
+    },
+  },
+  {
+    header: "FILIAL",
+    accessorKey: "filial",
+    cell: (info) => {
+      const filial = info.getValue<string>() || 0;
+      return <span>{filial && filial.toUpperCase()}</span>;
     },
   },
 ];

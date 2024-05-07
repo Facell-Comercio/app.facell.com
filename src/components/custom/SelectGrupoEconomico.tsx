@@ -37,7 +37,9 @@ const SelectGrupoEconomico = ({
         <SelectValue placeholder="Selecione o grupo" />
       </SelectTrigger>
       <SelectContent>
-        {showAll && <SelectItem value="all">TODOS</SelectItem>}
+        {showAll && gruposEconomicos && gruposEconomicos.length > 1 && (
+          <SelectItem value="all">TODOS</SelectItem>
+        )}
         {gruposEconomicos?.map((item: GrupoEconomico) => (
           <SelectItem
             className="text-left"
