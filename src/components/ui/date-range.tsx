@@ -18,7 +18,7 @@ interface DatePickerWithRangeProps
   className?: string;
   date?: DateRange;
   setDate?: (date: DateRange) => void;
-  disabled: boolean,
+  disabled?: boolean,
 }
 
 export function DatePickerWithRange({

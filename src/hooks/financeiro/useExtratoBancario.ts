@@ -39,6 +39,7 @@ export const useExtratoBancario = () => {
         }),
 
         update : () => useMutation({
+            // @ts-ignore
             mutationFn: ({id, ...rest}) => {
                 return api.put("/financeiro/extratos-bancarios/", {id, ...rest}).then((response)=>response.data)
             },
