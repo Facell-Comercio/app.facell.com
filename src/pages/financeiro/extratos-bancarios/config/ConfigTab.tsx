@@ -18,8 +18,8 @@ const ConfigTab = () => {
     const [modalContasOpen, setModalContasOpen] = useState<boolean>(false)
     const [contaBancaria, setContaBancaria] = useState<ContaBancaria | null>(null)
 
-    const toggleModalContasBancarias = ()=>{
-        setModalContasOpen(prev=>!prev)
+    const toggleModalContasBancarias = () => {
+        setModalContasOpen(prev => !prev)
     }
     const handleSelectionConta = (conta: ContaBancaria) => {
         setContaBancaria(conta)
@@ -52,9 +52,7 @@ const ConfigTab = () => {
                                         />
                                     </div>
                                     <Button variant={'outline'} onClick={toggleModalContasBancarias}><Settings2 size={18} className="me-2" /> Trocar</Button>
-
                                 </div>
-
                             )}
 
                             <ModalContasBancarias
@@ -62,15 +60,22 @@ const ConfigTab = () => {
                                 handleSelecion={handleSelectionConta}
                                 onOpenChange={toggleModalContasBancarias}
                                 closeOnSelection={true}
-                                open={modalContasOpen} />
+                                open={modalContasOpen}
+                            />
                         </div>
+                        {
+                            contaBancaria && (
+                                <>
+                                    <div>
+                                        <FormNovoPadrao conta={contaBancaria} />
+                                    </div>
+                                    <div>
+                                        <TablePadroes conta={contaBancaria} />
+                                    </div>
+                                </>
+                            )
+                        }
 
-                        <div>
-                            <FormNovoPadrao conta={contaBancaria} />
-                        </div>
-                        <div>
-                            <TablePadroes conta={contaBancaria}/>
-                        </div>
                     </div>
                 </AccordionContent>
             </AccordionItem>

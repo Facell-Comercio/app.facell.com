@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Edit, Trash } from "lucide-react";
 import { ContaBancaria } from "../../../extrato/components/context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import { FaSpinner } from "react-icons/fa6";
 import { useEffect, useState } from "react";
@@ -19,6 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { toast } from "@/components/ui/use-toast";
 
 export type TransacaoPadrao = {
     id: number,
@@ -27,13 +28,15 @@ export type TransacaoPadrao = {
     tipo_transacao: 'DEBIT' | 'CREDIT',
 }
 
-const TablePadroes = ({ conta }: { conta: ContaBancaria }) => {
+const TablePadroes = ({ conta }: { conta: ContaBancaria|null }) => {
+    const queryClient = useQueryClient()
+
     const initialRowEditing: TransacaoPadrao = { id: 0, descricao: '', id_conta_bancaria: 0, tipo_transacao: 'DEBIT' }
     const [rowEditing, setRowEditing] = useState<TransacaoPadrao>(initialRowEditing)
 
     const { data, isLoading, isError } = useQuery({
         enabled: !!conta,
-        queryKey: [`extratos-padroes-${conta?.id}`],
+        queryKey: [`transacao_padrao_${conta?.id}`],
         queryFn: () => api.get(`/financeiro/conciliacao-bancaria/transacao-padrao`, { params: { id_conta_bancaria: conta?.id } })
     })
 
@@ -43,13 +46,65 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria }) => {
     const handleClickCancelEdit = () => {
         setRowEditing(initialRowEditing)
     }
-    const handleClickSaveEdit = () => {
+    const [saving, setSaving] = useState<boolean>(false)
 
-        setRowEditing(initialRowEditing)
+    const handleClickSaveEdit = async () => {
+        try {
+            if (!conta?.id) {
+                throw new Error('Selecione a conta bancária!')
+            }
+            if (!rowEditing?.id) {
+                throw new Error('ID do padrão não identificado! Atualize a página')
+            }
+            if (!rowEditing?.descricao || rowEditing?.descricao?.length < 1) {
+                throw new Error('Preencha a descrição! No mínimo 1 caracter')
+            }
+            if (!rowEditing?.tipo_transacao || rowEditing?.tipo_transacao?.length < 1) {
+                throw new Error('Preencha o Tipo de transação! DEBIT ou CREDIT')
+            }
+
+            setSaving(true)
+            await api.put('/financeiro/conciliacao-bancaria/transacao-padrao', { id_padrao: rowEditing.id, descricao: rowEditing.descricao, tipo_transacao: rowEditing.tipo_transacao, id_conta_bancaria: conta?.id })
+
+            queryClient.invalidateQueries({
+                queryKey: [`transacao_padrao_${conta?.id}`]
+            })
+            setRowEditing(initialRowEditing)
+        } catch (error) {
+            toast({
+                title: 'Erro ao tentar salvar o padrão',
+                variant: 'destructive',
+                // @ts-ignore
+                description: error?.response?.data?.message || 'Tente novamente ao atualizar a página.'
+            })
+        } finally {
+            setSaving(false)
+        }
+
     }
 
-    const handleDeletePadrao = (id_padrao: number) => {
-        console.log(id_padrao)
+    
+
+    const [deleting, setDeleting] = useState<number | null>(null);
+    const handleDeletePadrao = async (id_padrao: number) => {
+        try {
+            setDeleting(id_padrao)
+            await api.delete('/financeiro/conciliacao-bancaria/transacao-padrao', {params:{id_padrao: id_padrao}})
+            queryClient.invalidateQueries({queryKey: [`transacao_padrao_${conta?.id}`]})
+            toast({
+                title: 'Padrão excluído',
+                variant: 'success',
+            })
+        } catch (error) {
+            toast({
+                title: 'Erro ao tentar excluir o padrão',
+                variant: 'destructive',
+                // @ts-ignore
+                description: error?.response?.data?.message || 'Tente novamente ao atualizar a página.'
+            })
+        }finally{
+            setDeleting(null)
+        }
     }
 
     if (isLoading) {
@@ -100,8 +155,8 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria }) => {
                                 {isRowEditing ?
                                     (
                                         <div className="flex gap-2">
-                                            <Button onClick={handleClickCancelEdit} variant={'secondary'} size={'sm'}>Cancelar</Button>
-                                            <Button onClick={handleClickSaveEdit} variant={'success'} size={'sm'}>Salvar</Button>
+                                            <Button disabled={saving} onClick={handleClickCancelEdit} variant={'secondary'} size={'sm'}>Cancelar</Button>
+                                            <Button disabled={saving} onClick={handleClickSaveEdit} variant={'success'} size={'sm'}>Salvar</Button>
                                         </div>
                                     ) :
                                     (
@@ -118,12 +173,13 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria }) => {
                                     }
                                 >
                                     <Button
+                                        disabled={deleting == row.id || saving}
                                         type="button"
                                         size={'sm'}
                                         className="h-9"
                                         variant={"destructive"}
                                     >
-                                        <Trash size={18} />
+                                        {deleting == row.id ?  <FaSpinner size={18} className="animate-spin"/> : <Trash size={18} />}
                                     </Button>
 
                                 </AlertPopUp>
