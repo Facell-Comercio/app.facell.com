@@ -194,7 +194,7 @@ const FormTituloPagar = ({
   });
 
   const calcularTotal = () => {
-    return witens.reduce((acc, curr) => acc + parseFloat(curr.valor), 0);
+    return witens?.reduce((acc, curr) => acc + parseFloat(curr.valor), 0) || 0;
   };
 
   useEffect(() => {
@@ -367,7 +367,7 @@ const FormTituloPagar = ({
           const result = importFromExcel(importedData);
 
           // @ts-ignore
-          const valorTotalRateio:number = result.reduce((acc, cur) => {
+          const valorTotalRateio:number = result?.reduce((acc, cur) => {
             // @ts-ignore
             return acc + cur.valor;
           }, 0) || 0;
