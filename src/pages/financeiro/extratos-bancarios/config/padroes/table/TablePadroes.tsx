@@ -5,8 +5,7 @@ import { ContaBancaria } from "../../../extrato/components/context";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import { FaSpinner } from "react-icons/fa6";
-import { useEffect, useState } from "react";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import { useState } from "react";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/ui/input";
 
@@ -15,7 +14,6 @@ import {
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
@@ -34,7 +32,7 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria|null }) => {
     const initialRowEditing: TransacaoPadrao = { id: 0, descricao: '', id_conta_bancaria: 0, tipo_transacao: 'DEBIT' }
     const [rowEditing, setRowEditing] = useState<TransacaoPadrao>(initialRowEditing)
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isLoading } = useQuery({
         enabled: !!conta,
         queryKey: [`transacao_padrao_${conta?.id}`],
         queryFn: () => api.get(`/financeiro/conciliacao-bancaria/transacao-padrao`, { params: { id_conta_bancaria: conta?.id } })
