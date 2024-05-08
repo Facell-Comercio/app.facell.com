@@ -56,7 +56,7 @@ function ReactTableVirtualized() {
         () => [
             {
                 accessorKey: 'data_transacao',
-                header: 'Data',
+                header: 'DATA',
                 cell: (info) => {
                     let value = formatDate(info.getValue<Date>(), 'dd/MM/yyyy')
                     return <div className="w-full text-center">{value}</div>
@@ -74,7 +74,7 @@ function ReactTableVirtualized() {
             },
             {
                 accessorKey: 'documento',
-                header: 'Doc',
+                header: 'DOC',
                 size: 120,
                 cell: (info) => {
                     let value = info.getValue<string>()
@@ -83,7 +83,7 @@ function ReactTableVirtualized() {
             },
             {
                 accessorKey: 'tipo_transacao',
-                header: 'Tipo',
+                header: 'TIPO',
                 size: 100,
                 cell: (info) => {
                     let valor = info.getValue<string>()
@@ -92,7 +92,7 @@ function ReactTableVirtualized() {
             },
             {
                 accessorKey: 'valor',
-                header: 'Valor',
+                header: 'VALOR',
                 size: 120,
                 cell: (info) => {
                     let valor = parseFloat(info.getValue<string>())
@@ -103,17 +103,17 @@ function ReactTableVirtualized() {
             },
             {
                 accessorKey: 'descricao',
-                header: 'Descrição',
+                header: 'DESCRIÇÃO',
                 size: 400,
             },
             {
                 accessorKey: 'nome_user',
-                header: 'Importado por',
+                header: 'IMPORTADO POR',
                 size: 200,
             },
             {
                 accessorKey: 'created_at',
-                header: 'Importado em',
+                header: 'IMPORTADO EM',
                 size: 120,
                 cell: (info) => {
                     let data = formatDate(info.getValue<Date>(), 'dd/MM/yyyy hh:mm')
