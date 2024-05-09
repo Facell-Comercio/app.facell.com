@@ -159,7 +159,7 @@ function ReactTableVirtualized() {
                 <div ref={parentRef} className="h-[500px] overflow-auto relative">
                     <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
                         <table className="grid text-nowrap text-xs">
-                            <thead className="grid sticky top-0 z-10 border bg-gray-800">
+                            <thead className="grid sticky top-0 z-10 border bg-slate-200 dark:bg-gray-800">
                                 {table.getHeaderGroups().map((headerGroup) => (
                                     <tr className="flex w-full" key={headerGroup.id}>
                                         {headerGroup.headers.map((header) => {
