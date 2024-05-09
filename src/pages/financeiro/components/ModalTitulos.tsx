@@ -46,6 +46,7 @@ interface IModalTitulos {
   handleSelecion: (item: TitulosProps[]) => void;
   onOpenChange: () => void;
   id_matriz?: string;
+  id_status?: string;
   initialFilters?: {
     [key: string]: any;
   };
@@ -85,6 +86,7 @@ const ModalTitulos = ({
   handleSelecion,
   onOpenChange,
   id_matriz,
+  id_status,
   initialFilters,
 }: IModalTitulos) => {
   const [ids, setIds] = useState<string[]>([]);
@@ -108,12 +110,12 @@ const ModalTitulos = ({
     isError,
     refetch: refetchTitulos,
   } = useQuery({
-    queryKey: ["modal-titulos", id_matriz, filters],
+    queryKey: ["modal-titulos", id_matriz, id_status],
     staleTime: 0,
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/titulo/titulos-bordero", {
         params: {
-          filters: { ...filters, id_matriz },
+          filters: { ...filters, id_matriz, id_status },
           pagination,
         },
       }),
@@ -258,21 +260,22 @@ const ModalTitulos = ({
             collapsible
             className="p-2 border-2 dark:border-slate-800 rounded-lg flex-1"
           >
-            <AccordionItem value="item-1" className="border-0">
-              <AccordionTrigger className="py-0.5 hover:no-underline">
-                <div className="flex gap-3 items-center">
-                  <span>Filtros</span>
-                  <Button size={"xs"} onClick={() => handleClickFilters()}>
-                    Filtrar <FilterIcon size={12} className="ms-2" />
-                  </Button>
-                  <Button
-                    size={"xs"}
-                    onClick={() => handleClickResetFilters()}
-                    variant="secondary"
-                  >
-                    Limpar <EraserIcon size={12} className="ms-2" />
-                  </Button>
-                </div>
+            <AccordionItem value="item-1" className="relative border-0">
+              <div className="flex gap-3 items-center absolute start-16 top-1">
+                <Button size={"xs"} onClick={() => handleClickFilters()}>
+                  Aplicar <FilterIcon size={12} className="ms-2" />
+                </Button>
+                <Button
+                  size={"xs"}
+                  variant="secondary"
+                  onClick={() => handleClickResetFilters()}
+                >
+                  Limpar <EraserIcon size={12} className="ms-2" />
+                </Button>
+              </div>
+
+              <AccordionTrigger className={`py-1 hover:no-underline`}>
+                <span className="">Filtros</span>
               </AccordionTrigger>
               <AccordionContent className="p-0 pt-3">
                 <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">

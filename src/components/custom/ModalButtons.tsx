@@ -9,6 +9,8 @@ interface ModalButtonsProps {
   edit?: () => void;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
   children?: ReactNode;
+  blockEdit?: boolean;
+  blockCancel?: boolean;
 }
 
 const ModalButtons = ({
@@ -18,6 +20,8 @@ const ModalButtons = ({
   edit,
   formRef,
   children: Children,
+  blockEdit,
+  blockCancel,
 }: ModalButtonsProps) => {
   return (
     <div className="flex flex-row-reverse w-full justify-between">
@@ -38,15 +42,17 @@ const ModalButtons = ({
       )}
       {id && modalEditing && edit && (
         <div className="flex gap-2 items-end justify-self-end	flex-wrap">
-          <Button
-            type={"button"}
-            size="lg"
-            variant={"secondary"}
-            onClick={cancel}
-          >
-            <Ban className="me-2 text-xl" />
-            Cancelar
-          </Button>
+          {!blockCancel && (
+            <Button
+              type={"button"}
+              size="lg"
+              variant={"secondary"}
+              onClick={cancel}
+            >
+              <Ban className="me-2 text-xl" />
+              Cancelar
+            </Button>
+          )}
           <Button
             type={"button"}
             size="lg"
@@ -60,7 +66,7 @@ const ModalButtons = ({
           </Button>
         </div>
       )}
-      {id && !modalEditing && edit && (
+      {id && !modalEditing && !blockEdit && edit && (
         <div className="flex gap-2 items-end justify-self-end	flex-wrap">
           <Button
             type={"button"}
@@ -76,15 +82,17 @@ const ModalButtons = ({
       )}
       {id && !modalEditing && !edit && (
         <div className="flex gap-2 items-end justify-self-end	flex-wrap">
-          <Button
-            type={"button"}
-            size="lg"
-            variant={"secondary"}
-            onClick={cancel}
-          >
-            <Ban className="me-2 text-xl" />
-            Cancelar
-          </Button>
+          {!blockCancel && (
+            <Button
+              type={"button"}
+              size="lg"
+              variant={"secondary"}
+              onClick={cancel}
+            >
+              <Ban className="me-2 text-xl" />
+              Cancelar
+            </Button>
+          )}
           <Button
             type={"button"}
             size="lg"

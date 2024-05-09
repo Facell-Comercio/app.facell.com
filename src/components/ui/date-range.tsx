@@ -18,7 +18,8 @@ interface DatePickerWithRangeProps
   className?: string;
   date?: DateRange;
   setDate?: (date: DateRange) => void;
-  disabled: boolean,
+  disabled?: boolean;
+  description?: string;
 }
 
 export function DatePickerWithRange({
@@ -26,6 +27,7 @@ export function DatePickerWithRange({
   date,
   setDate,
   disabled,
+  description,
 }: DatePickerWithRangeProps) {
   // Não é necessário definir date e setDate no estado interno.
   // O código já recebe date e setDate das propriedades.
@@ -54,7 +56,7 @@ export function DatePickerWithRange({
                 format(date.from, "dd/MM/yyyy")
               )
             ) : (
-              <span>Selecione o período</span>
+              <span>{description ? description : "Selecione o período"}</span>
             )}
           </Button>
         </PopoverTrigger>
