@@ -7,7 +7,6 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { MediaType } from "@/types/media-type";
-import UploadDropzone from "./UploadDropzone";
 import { Button } from "../ui/button";
 import { FileUpload } from "./FileUpload";
 import { useEffect, useState } from "react";

@@ -66,6 +66,7 @@ const ModalContasBancarias = ({
   closeOnSelection,
   id_matriz,
 }: IModalContaBancaria) => {
+  const [accordionOpen, setAccordionOpen] = useState<string>('item-1')
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
     pageIndex: 0,
@@ -172,10 +173,12 @@ const ModalContasBancarias = ({
           <Accordion
             type="single"
             collapsible
-            className="p-2 border-2 dark:border-slate-800 rounded-lg flex-1"
+            value={accordionOpen}
+            onValueChange={(e)=>setAccordionOpen(e)}
+            className="p-2 border dark:border-slate-800 rounded-lg flex-1"
           >
             <AccordionItem value="item-1" className="border-0">
-              <AccordionTrigger className="py-0.5 hover:no-underline">
+              <AccordionTrigger className="pb-2 hover:no-underline w-full text-left text-slate-500">
                 Filtros
               </AccordionTrigger>
               <AccordionContent className="p-0">
@@ -187,7 +190,7 @@ const ModalContasBancarias = ({
                     <Button
                       size={"sm"}
                       onClick={() => handleClickResetFilters()}
-                      variant="destructive"
+                      variant="secondary"
                     >
                       Limpar <EraserIcon size={12} className="ms-2" />
                     </Button>
@@ -236,7 +239,7 @@ const ModalContasBancarias = ({
                   {item.banco && item.banco.toUpperCase()}
                 </span>
                 <Button
-                  size={"sm"}
+                  size={"xs"}
                   onClick={() => {
                     handleSelection(item);
                   }}

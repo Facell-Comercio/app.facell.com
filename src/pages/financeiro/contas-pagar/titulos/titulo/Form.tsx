@@ -194,7 +194,7 @@ const FormTituloPagar = ({
   });
 
   const calcularTotal = () => {
-    return witens.reduce((acc, curr) => acc + parseFloat(curr.valor), 0);
+    return witens?.reduce((acc, curr) => acc + parseFloat(curr.valor), 0) || 0;
   };
 
   useEffect(() => {
@@ -368,7 +368,7 @@ const FormTituloPagar = ({
 
           // @ts-ignore
           const valorTotalRateio: number =
-            result.reduce((acc, cur) => {
+            result?.reduce((acc, cur) => {
               // @ts-ignore
               return acc + cur.valor;
             }, 0) || 0;
@@ -382,7 +382,7 @@ const FormTituloPagar = ({
             )?.id;
 
             const percentual_rateio_item = // @ts-ignore
-            ((item?.valor / valorTotalRateio) * 100).toFixed(4);
+              ((item?.valor / valorTotalRateio) * 100).toFixed(4);
             // console.log(item.filial, id_filial_rateio_item,  item.valor, valorTotalRateio,percentual_rateio_item )
 
             addItemRateio({

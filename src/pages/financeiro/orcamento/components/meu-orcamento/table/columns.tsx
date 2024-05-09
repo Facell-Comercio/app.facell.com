@@ -1,4 +1,4 @@
-"use client";
+
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { checkUserPermission } from "@/helpers/checkAuthorization";
