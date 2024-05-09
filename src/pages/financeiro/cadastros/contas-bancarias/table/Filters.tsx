@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useStoreTableContasBancarias } from "./store-table";
+import { useState } from "react";
 
 const FiltersContasBancarias = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableContasBancarias((state) => state.filters);
@@ -36,10 +37,13 @@ const FiltersContasBancarias = ({ refetch }: { refetch: () => void }) => {
     refetch();
   };
 
+   const [itemOpen, setItemOpen] = useState<string>('item-1')
   return (
     <Accordion
       type="single"
       collapsible
+      value={itemOpen}
+      onValueChange={(e)=>setItemOpen(e)}
       className="p-2 border-2 dark:border-slate-800 rounded-lg "
     >
       <AccordionItem value="item-1" className="relative border-0">
