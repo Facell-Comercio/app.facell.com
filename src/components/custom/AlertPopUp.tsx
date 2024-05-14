@@ -15,12 +15,21 @@ interface TAlert {
   description: string;
   children: JSX.Element;
   action: () => void;
+  className?: string;
 }
 
-const AlertPopUp = ({ title, description, children, action }: TAlert) => {
+const AlertPopUp = ({
+  title,
+  description,
+  children,
+  action,
+  className,
+}: TAlert) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger asChild className={className}>
+        {children}
+      </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>

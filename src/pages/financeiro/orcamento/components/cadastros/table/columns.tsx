@@ -1,5 +1,3 @@
-
-
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
@@ -24,11 +22,11 @@ export const columnsTable: ColumnDef<RowCadastro>[] = [
     header: "AÇÃO",
     cell: (info) => (
       <div title="Visualizar">
-      <FileSearch2
-        className="text-blue-500 cursor-pointer"
-        onClick={() => openModal(info.getValue<number>().toString())}
+        <FileSearch2
+          className="text-blue-500 cursor-pointer"
+          onClick={() => openModal(info.getValue<number>().toString())}
         />
-        </div>
+      </div>
     ),
   },
   {

@@ -1,10 +1,8 @@
-
-
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
+import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
 import { useStoreCentroCustos } from "../centro-custo/store";
-import { FileSearch2 } from "lucide-react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -34,14 +32,13 @@ export const columnsTable: ColumnDef<RowCentroCustos>[] = [
     ),
     enableSorting: false,
     cell: ({ row }) => (
-      <div className="px-1">
-        <input
-          type="checkbox"
+      <div className="flex items-center justify-center">
+        <Checkbox
           {...{
             checked: row.getIsSelected(),
             disabled: !row.getCanSelect(),
             indeterminate: row.getIsSomeSelected().toString(),
-            onChange: row.getToggleSelectedHandler(),
+            onCheckedChange: row.getToggleSelectedHandler(),
           }}
         />
       </div>
@@ -52,9 +49,9 @@ export const columnsTable: ColumnDef<RowCentroCustos>[] = [
     header: "ID",
     cell: (info) => (
       <FileSearch2
-      className="text-blue-500 cursor-pointer"
-      onClick={() => openModal(info.getValue<number>().toString())}
-    />
+        className="text-blue-500 cursor-pointer"
+        onClick={() => openModal(info.getValue<number>().toString())}
+      />
     ),
     sortDescFirst: true,
   },

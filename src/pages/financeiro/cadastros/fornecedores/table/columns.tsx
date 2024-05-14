@@ -1,5 +1,3 @@
-
-
 import { Checkbox } from "@/components/ui/checkbox";
 import { normalizeCnpjNumber } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
@@ -35,14 +33,13 @@ export const columnsTable: ColumnDef<RowFornecedor>[] = [
     ),
     enableSorting: false,
     cell: ({ row }) => (
-      <div className="px-1">
-        <input
-          type="checkbox"
+      <div className="flex items-center justify-center">
+        <Checkbox
           {...{
             checked: row.getIsSelected(),
             disabled: !row.getCanSelect(),
             indeterminate: row.getIsSomeSelected().toString(),
-            onChange: row.getToggleSelectedHandler(),
+            onCheckedChange: row.getToggleSelectedHandler(),
           }}
         />
       </div>

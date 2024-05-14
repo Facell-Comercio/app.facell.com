@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 interface ModalButtonsProps {
   id?: string | null;
   modalEditing?: boolean;
-  cancel: () => void;
+  cancel?: () => void;
   edit?: () => void;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
   children?: ReactNode;

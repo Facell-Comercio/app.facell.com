@@ -2,7 +2,7 @@
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
-import { ConciliacaoCPSchemaProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/components/Modal";
+import { ConciliacaoCPSchemaProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/components/ModalConciliar";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -25,7 +25,7 @@ export const useConciliacaoCP = () => {
             enabled: !!id,
             queryKey: ['fin_conciliacao_cp', id],
             queryFn: async () => {
-                console.log(`Buscando borderô com base no ID: ${id}`)
+                console.log(`Buscando conciliação com base no ID: ${id}`)
                 return await api.get(`/financeiro/conciliacao-cp/${id}`)
             },
         }),

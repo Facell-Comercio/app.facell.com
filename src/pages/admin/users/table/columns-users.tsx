@@ -1,20 +1,20 @@
-import { Checkbox } from "@/components/ui/checkbox"
-import { ColumnDef } from "@tanstack/react-table"
-import { ReactNode } from "react"
-import { UserSearch } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useStoreUser } from "../user/store"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ColumnDef } from "@tanstack/react-table";
+import { UserSearch } from "lucide-react";
+import { ReactNode } from "react";
+import { useStoreUser } from "../user/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type RowUsers = {
-  select: ReactNode
-  id: string
-  img_url?: string
-  nome: string
-}
+  select: ReactNode;
+  id: string;
+  img_url?: string;
+  nome: string;
+};
 
-const openModal = useStoreUser.getState().openModal
+const openModal = useStoreUser.getState().openModal;
 
 export const columnsTableUsers: ColumnDef<RowUsers>[] = [
   {
@@ -28,19 +28,17 @@ export const columnsTableUsers: ColumnDef<RowUsers>[] = [
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-
         />
       </div>
     ),
     cell: ({ row }) => (
-      <div className="px-1">
-        <input
-          type="checkbox"
+      <div className="flex items-center justify-center">
+        <Checkbox
           {...{
             checked: row.getIsSelected(),
             disabled: !row.getCanSelect(),
             indeterminate: row.getIsSomeSelected().toString(),
-            onChange: row.getToggleSelectedHandler(),
+            onCheckedChange: row.getToggleSelectedHandler(),
           }}
         />
       </div>
@@ -51,7 +49,12 @@ export const columnsTableUsers: ColumnDef<RowUsers>[] = [
     header: "AÇÃO",
     enableSorting: false,
     cell: (info) => (
-      <span className='font-semibold cursor-pointer text-blue-500' onClick={() => openModal(info.getValue<number>().toString())}>{<UserSearch />}</span>
+      <span
+        className="font-semibold cursor-pointer text-blue-500"
+        onClick={() => openModal(info.getValue<number>().toString())}
+      >
+        {<UserSearch />}
+      </span>
     ),
     sortDescFirst: true,
   },
@@ -62,7 +65,7 @@ export const columnsTableUsers: ColumnDef<RowUsers>[] = [
     cell: (info) => {
       return (
         <Avatar>
-          <AvatarImage src={`${info.getValue() || ''}`} alt="Usuário" />
+          <AvatarImage src={`${info.getValue() || ""}`} alt="Usuário" />
           <AvatarFallback></AvatarFallback>
         </Avatar>
       );
@@ -76,4 +79,4 @@ export const columnsTableUsers: ColumnDef<RowUsers>[] = [
       return <span>{nome}</span>;
     },
   },
-]
+];

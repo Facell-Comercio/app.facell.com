@@ -1,5 +1,3 @@
-
-
 import { Checkbox } from "@/components/ui/checkbox";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
@@ -34,14 +32,13 @@ export const columnsTable: ColumnDef<RowBordero>[] = [
     ),
     enableSorting: false,
     cell: ({ row }) => (
-      <div className="px-1">
-        <input
-          type="checkbox"
+      <div className="flex items-center justify-center">
+        <Checkbox
           {...{
             checked: row.getIsSelected(),
             disabled: !row.getCanSelect(),
             indeterminate: row.getIsSomeSelected().toString(),
-            onChange: row.getToggleSelectedHandler(),
+            onCheckedChange: row.getToggleSelectedHandler(),
           }}
         />
       </div>
@@ -51,10 +48,12 @@ export const columnsTable: ColumnDef<RowBordero>[] = [
     header: "AÇÃO",
     accessorKey: "id",
     cell: (info) => (
-      <FileSearch2
-        className="text-blue-500 cursor-pointer"
-        onClick={() => openModal(info.getValue<number>().toString())}
-      />
+      <div title="Ver Borderô">
+        <FileSearch2
+          className="text-blue-500 cursor-pointer"
+          onClick={() => openModal(info.getValue<number>().toString())}
+        />
+      </div>
     ),
     enableSorting: false,
   },

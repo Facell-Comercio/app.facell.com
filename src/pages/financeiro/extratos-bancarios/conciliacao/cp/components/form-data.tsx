@@ -1,20 +1,24 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { ConciliacaoCPSchemaProps } from "./Modal";
+import { ConciliacaoCPSchemaProps } from "./ModalConciliar";
 
 const schemaConciliacaoCP = z.object({
   // Identificador do plano de contas
   id: z.string().trim().optional(),
   titulos: z.array(
     z.object({
-      checked: z.coerce.boolean().optional(),
       id_titulo: z.coerce.string().trim().optional(),
-      descricao: z.string().trim().optional(),
-      nome_fornecedor: z.string().trim().optional(),
-      num_doc: z.string().optional(),
       valor: z.string().trim().optional(),
-      filial: z.string().trim().optional(),
+      tipo_baixa: z.string().trim().optional(),
+      valor_pago: z.string().optional(),
+    })
+  ),
+  transacoes: z.array(
+    z.object({
+      id_transacao: z.coerce.string().trim().optional(),
+      descricao: z.string().trim().optional(),
+      valor: z.string().trim().optional(),
     })
   ),
 });
@@ -26,7 +30,7 @@ export const useFormConciliacaoCPData = (data: ConciliacaoCPSchemaProps) => {
     values: data,
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields } = useFieldArray({
     control: form.control,
     name: "titulos",
   });
@@ -34,7 +38,5 @@ export const useFormConciliacaoCPData = (data: ConciliacaoCPSchemaProps) => {
   return {
     form,
     titulos: fields,
-    addTitulo: append,
-    removeTitulo: remove,
   };
 };

@@ -8,19 +8,12 @@ import { Button } from "@/components/ui/button";
 import { DatePickerWithRange } from "@/components/ui/date-range";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
-import { useStoreTableConciliacaoCP } from "./store-table";
+import { useStoreTableConciliacaoCP } from "./store-tables";
 
 const FiltersConciliacaoCP = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableConciliacaoCP((state) => state.filters);
@@ -92,44 +85,6 @@ const FiltersConciliacaoCP = ({ refetch }: { refetch: () => void }) => {
                 onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
                 // id_matriz={id_matriz || ""}
               />
-              <Input
-                placeholder="Descrição"
-                className="max-w-[200px]"
-                value={filters.descricao}
-                onChange={(e) => {
-                  setFilters({ descricao: e.target.value });
-                }}
-              />
-              <Input
-                placeholder="ID Transação"
-                className="max-w-[200px]"
-                value={filters.id_transacao}
-                onChange={(e) => {
-                  setFilters({ id_transacao: e.target.value });
-                }}
-              />
-              <Input
-                placeholder="Documento"
-                className="max-w-[200px]"
-                value={filters.documento}
-                onChange={(e) => {
-                  setFilters({ documento: e.target.value });
-                }}
-              />
-              <Select
-                value={filters.conciliado}
-                onValueChange={(conciliado) => {
-                  setFilters({ conciliado: conciliado });
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">Não Conciliado</SelectItem>
-                  <SelectItem value="1">Conciliado</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>

@@ -35,14 +35,13 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className="px-1">
-        <input
-          type="checkbox"
+      <div className="flex items-center justify-center">
+        <Checkbox
           {...{
             checked: row.getIsSelected(),
             disabled: !row.getCanSelect(),
             indeterminate: row.getIsSomeSelected().toString(),
-            onChange: row.getToggleSelectedHandler(),
+            onCheckedChange: row.getToggleSelectedHandler(),
           }}
         />
       </div>

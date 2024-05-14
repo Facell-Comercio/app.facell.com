@@ -28,6 +28,7 @@ interface IFormInput {
   iconLeft?: boolean;
   step?: string;
   inputClass?: string;
+  iconClass?: string;
 }
 
 import * as React from "react";
@@ -73,66 +74,71 @@ const FormInput = ({
   icon: Icon,
   iconLeft,
   step,
-  inputClass
+  inputClass,
+  iconClass,
 }: IFormInput) => {
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
-        <FormItem
-          className={`${type === "hidden" && "hidden"} ${className} flex-1`}
-        >
-          {label && <FormLabel className="text-nowrap">{label}</FormLabel>}
-          <FormControl className={`flex ${iconLeft && "flex-row-reverse"}`}>
-            <div>
-              <Input
-                ref={field.ref}
-                type={type || "text"}
-                name={field.name}
-                value={
-                  typeof fnMask === "function"
-                    ? fnMask(field.value)
-                    : field.value
-                }
-                placeholder={placeholder}
-                readOnly={readOnly}
-                disabled={
-                  typeof disabled === "undefined" ? field.disabled : disabled
-                }
-                onBlur={typeof onBlur == "undefined" ? field.onBlur : onBlur}
-                onChange={(event) => {
-                  field.onChange(event);
-                  if (typeof onChange === "function") {
-                    onChange(event);
+      render={({ field }) => {
+        return (
+          <FormItem
+            className={`${type === "hidden" && "hidden"} ${className} flex-1`}
+          >
+            {label && <FormLabel className="text-nowrap">{label}</FormLabel>}
+            <FormControl className={`flex ${iconLeft && "flex-row-reverse"}`}>
+              <div>
+                <Input
+                  ref={field.ref}
+                  type={type || "text"}
+                  name={field.name}
+                  value={
+                    typeof fnMask === "function"
+                      ? fnMask(field.value)
+                      : field.value
                   }
-                }}
-                min={min}
-                max={max}
-                step={step ? step : type === "number" ? "0.01" : undefined}
-                className={`${inputClass} ${
-                  Icon &&
-                  ` rounded-none ${iconLeft ? "rounded-r-md" : "rounded-l-md"}`
-                }`}
-              />
-              {Icon && (
-                <Button
-                  type={"button"}
-                  variant={"outline"}
-                  disabled={true}
-                  className={`flex items-center justify-center rounded-none p-2 ${
-                    iconLeft ? "rounded-l-md" : "rounded-r-md"
+                  placeholder={placeholder}
+                  readOnly={readOnly}
+                  disabled={
+                    typeof disabled === "undefined" ? field.disabled : disabled
+                  }
+                  onBlur={typeof onBlur == "undefined" ? field.onBlur : onBlur}
+                  onChange={(event) => {
+                    field.onChange(event);
+                    if (typeof onChange === "function") {
+                      onChange(event);
+                    }
+                  }}
+                  min={min}
+                  max={max}
+                  step={step ? step : type === "number" ? "0.01" : undefined}
+                  className={`${inputClass} ${
+                    Icon &&
+                    ` rounded-none ${
+                      iconLeft ? "rounded-r-md" : "rounded-l-md"
+                    }`
                   }`}
-                >
-                  <Icon size={18} />
-                </Button>
-              )}
-            </div>
-          </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
-          <FormMessage />
-        </FormItem>
-      )}
+                />
+                {Icon && (
+                  <Button
+                    type={"button"}
+                    variant={"outline"}
+                    disabled={true}
+                    className={`flex items-center justify-center rounded-none p-2 ${
+                      iconLeft ? "rounded-l-md" : `rounded-r-md `
+                    } ${iconClass}`}
+                  >
+                    <Icon size={18} />
+                  </Button>
+                )}
+              </div>
+            </FormControl>
+            {description && <FormDescription>{description}</FormDescription>}
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 };
