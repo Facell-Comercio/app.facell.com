@@ -43,7 +43,7 @@ import { DateRange } from "react-day-picker";
 
 interface IModalTitulos {
   open: boolean;
-  handleSelecion: (item: TitulosProps[]) => void;
+  handleSelection: (item: TitulosProps[]) => void;
   onOpenChange: () => void;
   id_matriz?: string;
   initialFilters?: {
@@ -82,7 +82,7 @@ type PaginationProps = {
 
 const ModalTitulos = ({
   open,
-  handleSelecion,
+  handleSelection,
   onOpenChange,
   id_matriz,
   initialFilters,
@@ -225,7 +225,7 @@ const ModalTitulos = ({
     refetchTitulos();
   }
 
-  function handleSelection(item: TitulosProps) {
+  function pushSelection(item: TitulosProps) {
     setTitulos([
       ...titulos,
       {
@@ -396,7 +396,7 @@ const ModalTitulos = ({
                         variant={"outline"}
                         className="p-1"
                         onClick={() => {
-                          handleSelection(item);
+                          pushSelection(item);
                         }}
                         disabled={isSelected}
                       >
@@ -504,7 +504,7 @@ const ModalTitulos = ({
               </PaginationItem>
             </PaginationContent>
           </Pagination>
-          <Button onClick={() => handleSelecion(titulos)}>Salvar seleção</Button>
+          <Button onClick={() => handleSelection(titulos)}>Salvar seleção</Button>
           {/* <PaginationEllipsis /> */}
         </DialogFooter>
       </DialogContent>

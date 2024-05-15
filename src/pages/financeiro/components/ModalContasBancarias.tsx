@@ -33,7 +33,7 @@ import { useState } from "react";
 
 interface IModalContaBancaria {
   open: boolean;
-  handleSelecion: (item: ItemContaBancariaProps) => void;
+  handleSelection: (item: ItemContaBancariaProps) => void;
   onOpenChange: () => void;
   closeOnSelection?: boolean;
   id_matriz?: string | null;
@@ -61,7 +61,7 @@ interface Filters {
 
 const ModalContasBancarias = ({
   open,
-  handleSelecion,
+  handleSelection,
   onOpenChange,
   closeOnSelection,
   id_matriz,
@@ -151,8 +151,8 @@ const ModalContasBancarias = ({
     refetchContaBancaria();
   }
 
-  function handleSelection(item: ItemContaBancariaProps) {
-    handleSelecion(item);
+  function pushSelection(item: ItemContaBancariaProps) {
+    handleSelection(item);
     if(closeOnSelection){
       onOpenChange()
     }
@@ -241,7 +241,7 @@ const ModalContasBancarias = ({
                 <Button
                   size={"xs"}
                   onClick={() => {
-                    handleSelection(item);
+                    pushSelection(item);
                   }}
                 >
                   Selecionar

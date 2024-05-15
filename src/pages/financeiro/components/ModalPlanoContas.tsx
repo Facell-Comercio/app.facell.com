@@ -21,7 +21,7 @@ import { useRef, useState } from "react";
 
 interface IModalPlanoContas {
   open: boolean;
-  handleSelecion: (item: ItemPlanoContas) => void;
+  handleSelection: (item: ItemPlanoContas) => void;
   onOpenChange: () => void;
   id_matriz?: string | null;
   id_grupo_economico?: string | null;
@@ -42,7 +42,7 @@ type PaginationProps = {
 
 const ModalPlanoContas = ({
   open,
-  handleSelecion,
+  handleSelection,
   onOpenChange,
   id_matriz,
   id_grupo_economico,
@@ -119,8 +119,8 @@ const ModalPlanoContas = ({
     refetchPlanoContas();
   }
 
-  function handleSelection(item: ItemPlanoContas) {
-    handleSelecion(item);
+  function pushSelection(item: ItemPlanoContas) {
+    handleSelection(item);
   }
 
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -164,7 +164,7 @@ const ModalPlanoContas = ({
               <Button
                 size={"sm"}
                 onClick={() => {
-                  handleSelection(item);
+                  pushSelection(item);
                 }}
               >
                 Selecionar

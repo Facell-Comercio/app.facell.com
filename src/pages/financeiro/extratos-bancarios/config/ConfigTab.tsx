@@ -57,7 +57,7 @@ const ConfigTab = () => {
 
                             <ModalContasBancarias
                                 //@ts-ignore 
-                                handleSelecion={handleSelectionConta}
+                                handleSelection={handleSelectionConta}
                                 onOpenChange={toggleModalContasBancarias}
                                 closeOnSelection={true}
                                 open={modalContasOpen}

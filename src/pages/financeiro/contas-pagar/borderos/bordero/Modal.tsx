@@ -89,7 +89,7 @@ const ModalBordero = () => {
     }
   }
 
-  // function handleSelectionBorderos(item: BorderoProps) {
+  // function pushSelectionBorderos(item: BorderoProps) {
   //   if (checkedTitulos.length) {
   //     const transferredData = {
   //       new_id: item.id,

@@ -90,7 +90,7 @@ const FormMeuOrcamento = ({
                     />
                   </span>
                   <ModalCentrosCustos
-                    handleSelecion={handleSelectionCentroCustos}
+                    handleSelection={handleSelectionCentroCustos}
                     // @ts-expect-error 'Ignore, vai funcionar..'
                     onOpenChange={setModalCentrosCustoOpen}
                     open={modalCentrosCustoOpen}
@@ -116,7 +116,7 @@ const FormMeuOrcamento = ({
                     onOpenChange={() =>
                       setModalPlanoContasOpen((prev: boolean) => !prev)
                     }
-                    handleSelecion={handleSelectionPlanoContas}
+                    handleSelection={handleSelectionPlanoContas}
                   />
                   <FormInput
                     type="number"

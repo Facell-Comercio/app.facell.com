@@ -21,7 +21,7 @@ import { usePermissoes } from "@/hooks/usePermissoes";
 
 interface IModalPermissoes {
     open: boolean,
-    handleSelecion: (item: CentroCustos) => void
+    handleSelection: (item: CentroCustos) => void
     onOpenChange: () => void
     closeOnSelection?: boolean
 }
@@ -31,7 +31,7 @@ type PaginationProps = {
     pageIndex: number
 }
 
-const ModalPermissoes = ({ open, handleSelecion, onOpenChange, closeOnSelection }: IModalPermissoes) => {
+const ModalPermissoes = ({ open, handleSelection, onOpenChange, closeOnSelection }: IModalPermissoes) => {
     const [search, setSearch] = useState<string>('')
     const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 0 })
 
@@ -75,12 +75,12 @@ const ModalPermissoes = ({ open, handleSelecion, onOpenChange, closeOnSelection 
         })
     }
 
-    function handleSelection(item: CentroCustos) {
+    function pushSelection(item: CentroCustos) {
         if(closeOnSelection){
             // @ts-ignore 'vai funcionar...'
             onOpenChange(prev=>!prev)
         }
-        handleSelecion(item)
+        handleSelection(item)
     }
 
     const searchRef = useRef<HTMLInputElement | null>(null)
@@ -113,7 +113,7 @@ const ModalPermissoes = ({ open, handleSelecion, onOpenChange, closeOnSelection 
                         .map((item: CentroCustos) => (
                             <div key={`listaPermissao.${item.id}`} className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2">
                                 <span className="w-full">{item.nome}</span>
-                                <Button size={"sm"} onClick={() => { handleSelection(item) }}>Selecionar</Button>
+                                <Button size={"sm"} onClick={() => { pushSelection(item) }}>Selecionar</Button>
                             </div>
                         ))}
                 </ScrollArea>

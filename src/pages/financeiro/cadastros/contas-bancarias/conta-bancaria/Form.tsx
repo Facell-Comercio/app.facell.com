@@ -107,7 +107,7 @@ const FormContaBancaria = ({
                     onOpenChange={() =>
                       setModalBancosOpen((prev: boolean) => !prev)
                     }
-                    handleSelecion={handleSelectionBancos}
+                    handleSelection={handleSelectionBancos}
                   />
                 </div>
               </div>

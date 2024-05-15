@@ -3,17 +3,12 @@ import FormDateInput from "@/components/custom/FormDate";
 import FormFileUpload from "@/components/custom/FormFileUpload";
 import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
-import SelectFilial from "@/components/custom/SelectFilial";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
-import SelectTipoRateio from "@/components/custom/SelectTipoRateio";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Form, FormItem, FormLabel } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import {
   checkUserDepartments,
@@ -21,51 +16,42 @@ import {
 } from "@/helpers/checkAuthorization";
 import { formatarDataHora } from "@/helpers/format";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
-import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
-import { normalizeCnpjNumber, normalizeCurrency } from "@/helpers/mask";
-import { useFilial } from "@/hooks/useFilial";
+import { normalizeCnpjNumber } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { api } from "@/lib/axios";
-import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
 import ModalFornecedores, {
   ItemFornecedor,
 } from "@/pages/financeiro/components/ModalFornecedores";
-import ModalPlanoContas, {
-  ItemPlanoContas,
-} from "@/pages/financeiro/components/ModalPlanoContas";
-import { Filial } from "@/types/filial-type";
-import { CentroCustos } from "@/types/financeiro/centro-custos-type";
+
 import { useQueryClient } from "@tanstack/react-query";
+import { TbCurrencyReal } from "react-icons/tb";
 import {
-  ArrowDown,
   Ban,
   Check,
   Contact,
-  Divide,
-  Download,
   FileIcon,
   FileText,
   History,
-  List,
   Pen,
-  Percent,
-  Plus,
   Repeat2,
   Save,
-  Trash,
   Undo2,
-  Upload,
   X,
 } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { useWatch } from "react-hook-form";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
 import {
   calcularDataPrevisaoPagamento,
   formatarHistorico,
   getVencimentoMinimo,
 } from "./helper";
-import { ItemRateio, initialPropsTitulo, useStoreTitulo } from "./store";
+import { initialPropsTitulo, useStoreTitulo } from "./store";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SecaoRateio from "./components/form/rateio/SecaoRateio";
+import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
+import ModalFilial from "@/pages/financeiro/components/ModalFilial";
+import { Filial } from "@/types/filial-type";
 
 const FormTituloPagar = ({
   id,
@@ -85,10 +71,6 @@ const FormTituloPagar = ({
 
   const [modalFornecedorOpen, setModalFornecedorOpen] =
     useState<boolean>(false);
-  const [modalPlanoContasOpen, setModalPlanoContasOpen] =
-    useState<boolean>(false);
-  const [modalCentrosCustosOpen, setModalCentrosCustosOpen] =
-    useState<boolean>(false);
 
   const titulo =
     {
@@ -96,8 +78,6 @@ const FormTituloPagar = ({
       update_itens: false,
       update_rateio: false,
     } || initialPropsTitulo;
-
-  console.log(data);
 
   // * [ VERIFICAÇÕES ]
   const status = titulo?.status || "";
@@ -110,7 +90,7 @@ const FormTituloPagar = ({
       status !== "Aprovado" &&
       status !== "Negado" &&
       status !== "Pago");
-  const canChangeParcelas = canEdit && !id;
+
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
@@ -124,282 +104,25 @@ const FormTituloPagar = ({
   console.log("ERRORS:", errors);
 
   // * [ WATCHES ]
-  const valor = useWatch({ name: "valor", control: form.control });
-  const id_filial = useWatch({ name: "id_filial", control: form.control });
-  const id_matriz = useWatch({ name: "id_matriz", control: form.control });
   const id_grupo_economico = useWatch({
     name: "id_grupo_economico",
+    control: form.control,
+  });
+  const id_matriz = useWatch({
+    name: "id_matriz",
     control: form.control,
   });
   const id_forma_pagamento = useWatch({
     name: "id_forma_pagamento",
     control: form.control,
   });
-  const id_centro_custo = useWatch({
-    name: "id_centro_custo",
-    control: form.control,
-  });
-  const witens = useWatch({ name: "itens", control: form.control });
-  const parcelas = useWatch({ name: "num_parcelas", control: form.control });
-  const parcela = useWatch({ name: "parcela", control: form.control });
 
   // * [ DATA PREVISTA ]
   const onChangeDataVencimento = (data_venc: Date) => {
     // setar a data para o data_prevista
-    const data_prevista = calcularDataPrevisaoPagamento(data_venc);
-    setValue("data_prevista", data_prevista.toString());
+    const data_prevista = calcularDataPrevisaoPagamento(data_venc).toISOString();
+    setValue("data_prevista", data_prevista);
   };
-
-  // * [ FILIAL ]
-  // Ao alterar a filial:
-  async function handleChangeFilial(novo_id_filial: string) {
-    if (novo_id_filial) {
-      api
-        .get(`filial/${novo_id_filial}`)
-        .then((data) => {
-          const novaFilial = data.data;
-
-          if (id_grupo_economico != novaFilial.id_grupo_economico) {
-            setValue("id_grupo_economico", novaFilial.id_grupo_economico);
-            setValue("id_matriz", novaFilial.id_matriz);
-
-            setValue("id_centro_custo", "");
-            setValue("centro_custo", "");
-            form.resetField("itens", { defaultValue: [] });
-            form.resetField("itens_rateio", { defaultValue: [] });
-          }
-        })
-        .catch(() => {
-          toast({
-            variant: "destructive",
-            title: "Erro!",
-            description: "Não foi possível receber os dados da Filial",
-          });
-        });
-    }
-  }
-  const { data: responseFiliais } = useFilial().getAll({
-    filters: { id_grupo_economico: id_grupo_economico },
-  });
-  const filiais = responseFiliais?.data?.rows;
-
-  // * [ITENS DO TÍTULO]
-  const {
-    fields: itens,
-    append: addItem,
-    remove: removeItem,
-  } = useFieldArray({
-    control: form.control,
-    name: "itens",
-  });
-
-  const calcularTotal = () => {
-    return witens?.reduce((acc, curr) => acc + parseFloat(curr.valor), 0) || 0;
-  };
-
-  useEffect(() => {
-    const updatedValue = normalizeCurrency(calcularTotal());
-    form.setValue("valor", updatedValue);
-  }, [witens]);
-
-  function handleAddItem() {
-    if (!novoItemIdPlanoContasRef.current) return;
-    if (!novoItemPlanoContasRef.current) return;
-    if (!novoItemValorRef.current) return;
-
-    if (!id_centro_custo) {
-      toast({
-        variant: "destructive",
-        title: "Erro!",
-        description: "Selecione o centro de custo!",
-      });
-      return;
-    }
-
-    const idPlanoConta = novoItemIdPlanoContasRef.current.value;
-    const planoConta = novoItemPlanoContasRef.current.value;
-    const valor = parseFloat(novoItemValorRef.current.value);
-    if (!valor) {
-      toast({
-        variant: "destructive",
-        title: "Corrija o valor",
-        description: "Não pode ser zerado",
-      });
-      return;
-    }
-    if (!idPlanoConta) {
-      toast({
-        variant: "destructive",
-        title: "Erro!",
-        description: "Selecione um plano de contas",
-      });
-      return;
-    }
-    const checkIfExistis = itens.findIndex(
-      (item) => item.id_plano_conta == idPlanoConta
-    );
-    if (checkIfExistis !== -1) {
-      toast({
-        variant: "destructive",
-        title: "Erro!",
-        description: "Plano de contas já foi selecionado!",
-      });
-      return;
-    }
-    setValue("update_itens", true);
-    addItem({
-      id_plano_conta: idPlanoConta,
-      valor: valor.toFixed(2),
-      plano_conta: planoConta,
-    });
-    novoItemIdPlanoContasRef.current.value = "";
-    novoItemPlanoContasRef.current.value = "";
-    novoItemValorRef.current.value = "";
-  }
-
-  function handleRemoveItem(index: number) {
-    setValue("update_itens", true);
-    removeItem(index);
-  }
-  function handleChangeItemValue() {
-    setValue("update_itens", true);
-  }
-
-  // * [ RATEIO ]
-  const rateio_manual = !!+form.watch("rateio_manual");
-  const canEditRateio = canEdit && modalEditing;
-  const canEditItensRateio = canEdit && modalEditing && rateio_manual;
-
-  const fileImportRateioRef = useRef<HTMLInputElement | null>(null);
-
-  const {
-    fields: itensRateio,
-    append: addItemRateio,
-    remove: removeItemRateio,
-  } = useFieldArray({
-    control: form.control,
-    name: "itens_rateio",
-  });
-
-  async function handleChangeRateio(novo_id_rateio: string) {
-    if (novo_id_rateio) {
-      setValue("update_rateio", true);
-      api
-        .get(`financeiro/rateios/${novo_id_rateio}`, {
-          params: { id_grupo_economico: id_grupo_economico },
-        })
-        .then(async (data) => {
-          const novoRateio = data.data;
-          const itensNovoRateio = novoRateio.itens;
-
-          await new Promise((resolve) => {
-            form.resetField("itens_rateio", { defaultValue: [] });
-            resolve("success");
-          });
-
-          if (novoRateio.manual) {
-            addItemRateio({
-              id_filial: `${id_filial}`,
-              percentual: "100.00",
-            });
-          }
-
-          itensNovoRateio?.forEach((item: ItemRateio) => {
-            addItemRateio({
-              id_filial: String(item.id_filial || ""),
-              percentual: String(item.percentual || "0.00"),
-            });
-          });
-
-          setValue("rateio_manual", !!novoRateio.manual);
-        })
-        .catch(() => {
-          toast({
-            variant: "destructive",
-            title: "Erro!",
-            description: "Não foi possível receber os dados do novo rateio",
-          });
-        });
-    }
-  }
-
-  function handleAddItemRateio() {
-    setValue("update_rateio", true);
-    addItemRateio({ id_filial: "", percentual: "0.00" });
-  }
-
-  function handleRemoveItemRateio(index: number) {
-    setValue("update_rateio", true);
-    removeItemRateio(index);
-  }
-
-  function handleClickExportarRateio() {
-    const json: any = [];
-    itensRateio.forEach((item: ItemRateio) => {
-      const obj: any = {};
-      obj.filial =
-        filiais?.find(
-          (f: { id: string; nome: string }) => f.id == item.id_filial
-        )?.nome || "Não identificada";
-      obj.percentual = parseFloat(item.percentual);
-      // @ts-ignore
-      obj.valor = (parseFloat(item.percentual) / 100) * parseFloat(valor || 0);
-      json.push(obj);
-    });
-    exportToExcel(json, `rateio-${id ? "titulo-" + id : "novo-titulo"}`);
-  }
-
-  function handleClickImportarRateio() {
-    fileImportRateioRef?.current?.click();
-  }
-
-  function handleChangeImportarRateio() {
-    if (fileImportRateioRef?.current) {
-      const file =
-        fileImportRateioRef.current.files &&
-        fileImportRateioRef.current.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(file);
-        reader.onload = async (e) => {
-          const importedData = e.target?.result;
-
-          const result = importFromExcel(importedData);
-
-          // @ts-ignore
-          const valorTotalRateio:number = result?.reduce((acc, cur) => {
-            // @ts-ignore
-            return acc + cur.valor;
-          }, 0) || 0;
-
-          setValue("update_rateio", true);
-          form.resetField("itens_rateio", { defaultValue: [] });
-          result?.forEach((item) => {
-            const id_filial_rateio_item = filiais.find(
-              // @ts-ignore
-              (f: Filial) => f.nome === item?.filial
-            )?.id;
-
-            const percentual_rateio_item = (
-              // @ts-ignore
-              (item?.valor / valorTotalRateio) *
-              100
-            ).toFixed(4);
-            // console.log(item.filial, id_filial_rateio_item,  item.valor, valorTotalRateio,percentual_rateio_item )
-
-            addItemRateio({
-              id_filial: String(id_filial_rateio_item),
-              percentual: String(percentual_rateio_item),
-            });
-          });
-        };
-      }
-    }
-  }
-
-  function handleChangeItemRateio() {
-    setValue("update_rateio", true);
-  }
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
@@ -436,7 +159,7 @@ const FormTituloPagar = ({
       );
       setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
-    } catch (error) {}
+    } catch (error) { }
   }
 
   // * [ ANEXOS ]
@@ -464,56 +187,6 @@ const FormTituloPagar = ({
           "O arquivo pode ter sido excluído, mas não foi possível remover o anexo da solicitação, tente excluir novamente mais tarde!",
       });
     }
-  }
-
-  // * [ PLANO DE CONTAS ]
-  // Controle de plano de contas
-  function showModalPlanoContas() {
-    if (!id_matriz) {
-      toast({
-        variant: "destructive",
-        title: "Erro!",
-        description: "Selecione primeiro a filial!",
-      });
-      return;
-    }
-    if (!canEdit) {
-      return;
-    }
-    setModalPlanoContasOpen(true);
-  }
-  const novoItemPlanoContasRef = useRef<HTMLInputElement | null>(null);
-  const novoItemIdPlanoContasRef = useRef<HTMLInputElement | null>(null);
-  const novoItemValorRef = useRef<HTMLInputElement | null>(null);
-
-  function handleSelectionPlanoContas(item: ItemPlanoContas) {
-    if (!novoItemPlanoContasRef?.current) return;
-    if (!novoItemIdPlanoContasRef?.current) return;
-
-    novoItemPlanoContasRef.current.value = `${item.codigo} - ${item.descricao}`;
-    novoItemIdPlanoContasRef.current.value = item.id;
-    setModalPlanoContasOpen(false);
-  }
-
-  // * [ CENTRO DE CUSTOS ]
-  function showModalCentrosCustos() {
-    if (!id_matriz) {
-      toast({
-        variant: "destructive",
-        title: "Erro!",
-        description: "Selecione primeiro a filial!",
-      });
-      return;
-    }
-    if (!canEdit) {
-      return;
-    }
-    setModalCentrosCustosOpen(true);
-  }
-  function handleSelectionCentroCusto(item: CentroCustos) {
-    setValue("id_centro_custo", `${item.id}`);
-    setValue("centro_custo", item.nome);
-    setModalCentrosCustosOpen(false);
   }
 
   // * [ FORMA DE PAGAMENTO ]
@@ -544,19 +217,8 @@ const FormTituloPagar = ({
 
   useEffect(() => {
     if (insertOneSuccess) {
-      if (parcelas === parcela) {
-        closeModal();
-      } else {
-        const qtde_parcelas = parseInt(parcelas || "1");
-        const parcela_atual = parseInt(parcela || "1");
-        if (qtde_parcelas > parcela_atual) {
-          const proxima_parcela = parcela_atual + 1;
-          setValue("parcela", String(proxima_parcela));
-          setValue("data_vencimento", "");
-          setValue("data_prevista", "");
-        }
-      }
-      console.log("INSERIU COM SUCESSO!");
+      closeModal();
+
       if (titulo.id_recorrencia) {
         queryClient.invalidateQueries({ queryKey: ["fin_cp_rec"] });
       }
@@ -606,7 +268,7 @@ const FormTituloPagar = ({
       id_novo_status: "3",
     });
   };
-  const handleClickCriarRecorrencia = async (e:any) => {
+  const handleClickCriarRecorrencia = async (e: any) => {
     try {
       e.preventDefault();
       const dados = form.getValues();
@@ -635,29 +297,36 @@ const FormTituloPagar = ({
       });
     }
   };
+
   // ! FIM - ACTIONS //////////////////////////////////////
+  const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
+  const handleSelectionFilial = (item: Filial) => {
+    setValue('id_filial', String(item.id));
+    setValue('id_grupo_economico', String(item.id_grupo_economico));
+    setValue('id_matriz', String(item.id_matriz));
+
+    setValue('filial', String(item.nome));
+  }
+  const showModalFilial = () => {
+    setModalFilialOpen(true)
+  }
 
   return (
     <div className="max-w-full  overflow-hidden">
-      <ModalPlanoContas
-        open={canEdit && modalPlanoContasOpen && !!id_matriz}
+      <ModalFilial
+        open={modalFilialOpen}
+        handleSelection={handleSelectionFilial}
+        onOpenChange={setModalFilialOpen}
+        id_grupo_economico={id_grupo_economico}
         id_matriz={id_matriz}
-        tipo="Despesa"
-        onOpenChange={() => setModalPlanoContasOpen((prev) => !prev)}
-        handleSelecion={handleSelectionPlanoContas}
-      />
-
-      <ModalCentrosCustos
-        handleSelecion={handleSelectionCentroCusto}
-        id_matriz={id_matriz}
-        // @ts-expect-error 'Vai funcionar'
-        onOpenChange={setModalCentrosCustosOpen}
-        open={canEdit && modalCentrosCustosOpen && !!id_matriz}
-        closeOnSelection={true}
+        closeOnSelection
       />
 
       <Form {...form}>
-        <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
+        <form ref={formRef} onSubmit={(e) => {
+          e.stopPropagation()
+          form.handleSubmit(onSubmit)
+        }}>
           <ScrollArea className="flex flex-col max-w-full max-h-[70vh] overflow-hidden">
             {titulo?.status && (
               <div className="flex-1 py-2">
@@ -671,23 +340,18 @@ const FormTituloPagar = ({
               </div>
             )}
 
-            <ScrollArea className="flex-1 overflow-auto pe-3">
-              <div className="max-w-full flex flex-col lg:flex-row gap-5">
+            <ScrollArea className="overflow-y-auto pe-3">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3">
                 {/* Primeira coluna */}
-                <div className="flex flex-1 flex-col gap-3 shrink-0">
+                <div className="flex flex-col flex-wrap gap-3 ">
                   {/* Dados do Fornecedor */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3">
                       <Contact />{" "}
-                      <span className="text-lg font-bold ">Fornecedor</span>
-                      <Button
-                        disabled={disabled}
-                        type="button"
-                        onClick={showModalFornecedor}
-                        size={"sm"}
-                      >
-                        Selecionar
-                      </Button>
+                      <span className="text-lg font-bold">Fornecedor</span>
+
+                    </div>
+                    <div>
                       {errors.id_fornecedor?.message && (
                         <span className="rounded-md flex-1 px-3 text-white bg-destructive">
                           {errors.id_fornecedor?.message}
@@ -696,38 +360,38 @@ const FormTituloPagar = ({
                     </div>
 
                     <div className="flex flex-wrap gap-3 items-end">
-                      <FormInput
-                        type="hidden"
-                        readOnly={true}
-                        name="id_filial"
-                        control={form.control}
-                      />
-                      <FormInput
-                        className="flex-1 min-w-[18ch]"
-                        name="cnpj_fornecedor"
-                        readOnly={true}
-                        label="CPF/CNPJ"
-                        fnMask={normalizeCnpjNumber}
-                        control={form.control}
-                      />
-                      <FormInput
-                        className="flex-1 min-w-[50ch] shrink-0"
-                        name="nome_fornecedor"
-                        readOnly={true}
-                        label="Nome do fornecedor"
-                        control={form.control}
-                      />
+                      <span onClick={showModalFornecedor}>
+                        <FormInput
+                          className="flex-1 min-w-[18ch]"
+                          name="cnpj_fornecedor"
+                          readOnly={true}
+                          label="CPF/CNPJ"
+                          fnMask={normalizeCnpjNumber}
+                          placeholder="SELECIONE O FORNECEDOR"
+                          control={form.control}
+                        />
+                      </span>
+                      <span onClick={showModalFornecedor}>
+                        <FormInput
+                          className="flex-1 min-w-[40ch] shrink-0"
+                          name="nome_fornecedor"
+                          placeholder="SELECIONE O FORNECEDOR"
+                          readOnly={true}
+                          label="Nome do fornecedor"
+                          control={form.control}
+                        />
+                      </span>
+
                       <SelectFormaPagamento
                         label="Forma de pagamento"
                         name="id_forma_pagamento"
                         control={form.control}
                         disabled={disabled}
-                        className="flex-1"
+                        className="min-w-[15ch]"
                       />
                       <div
-                        className={`${
-                          showPix ? "flex flex-1" : "hidden"
-                        } gap-3 flex-wrap`}
+                        className={`${showPix ? "flex flex-1" : "hidden"
+                          } gap-3 flex-wrap`}
                       >
                         <SelectTipoChavePix
                           control={form.control}
@@ -747,9 +411,8 @@ const FormTituloPagar = ({
                       </div>
                       {/* Dados bancários do fornecedor */}
                       <div
-                        className={`${
-                          showDadosBancarios ? "flex" : "hidden"
-                        } gap-3 flex-wrap`}
+                        className={`${showDadosBancarios ? "flex flex-1" : "hidden"
+                          } gap-3 flex-wrap`}
                       >
                         <FormInput
                           label="Favorecido"
@@ -824,7 +487,7 @@ const FormTituloPagar = ({
                       </div>
                       <ModalFornecedores
                         open={canEdit && modalFornecedorOpen}
-                        handleSelecion={handleSelectionFornecedor}
+                        handleSelection={handleSelectionFornecedor}
                         onOpenChange={() =>
                           setModalFornecedorOpen((prev) => !prev)
                         }
@@ -840,399 +503,127 @@ const FormTituloPagar = ({
                         Dados da solicitação
                       </span>
                     </div>
-                    <div className="flex gap-3 flex-wrap items-end">
-                      <FormSelect
-                        disabled={disabled}
-                        name="id_tipo_solicitacao"
-                        label={"Tipo de solicitação"}
-                        control={form.control}
-                        className="flex-1 min-w-[32ch]"
-                        options={[
-                          { value: "1", label: "Com nota fiscal" },
-                          {
-                            value: "2",
-                            label: "Antecipado / Nota fiscal futura",
-                          },
-                          { value: "3", label: "Sem nota fiscal" },
-                        ]}
-                      />
 
-                      <SelectFilial
-                        disabled={disabled}
-                        name="id_filial"
-                        label="Filial"
-                        className="flex-1 min-w-[40ch]"
-                        control={form.control}
-                        onChange={handleChangeFilial}
-                      />
-
-                      <FormInput
-                        name="id_centro_custo"
-                        type={"hidden"}
-                        control={form.control}
-                      />
-
-                      <FormItem className="flex-1">
-                        <div className="flex flex-1 justify-between items-end">
-                          <FormLabel>Centro de custo</FormLabel>
-                        </div>
-
-                        <Button
-                          type="button"
+                    <div className="grid gap-3 flex-wrap items-end">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        <FormSelect
                           disabled={disabled}
-                          variant={"ghost"}
-                          onClick={showModalCentrosCustos}
-                          className="flex flex-1 p-0"
-                        >
+                          name="id_tipo_solicitacao"
+                          label={"Tipo de solicitação"}
+                          control={form.control}
+                          className="flex-1 min-w-[32ch]"
+                          options={[
+                            { value: "1", label: "Com nota fiscal" },
+                            {
+                              value: "2",
+                              label: "Antecipado / Nota fiscal futura",
+                            },
+                            { value: "3", label: "Sem nota fiscal" },
+                          ]}
+                        />
+
+                        <span onClick={showModalFilial}>
                           <FormInput
-                            readOnly={true}
-                            name="centro_custo"
+                            readOnly={readOnly}
+                            name="filial"
+                            label="Filial"
+                            placeholder="SELECIONE A FILIAL"
                             control={form.control}
-                            className={"flex-1 min-w-[40ch]"}
+                            inputClass="min-w-[350px]"
                           />
-                        </Button>
-                        {errors.id_centro_custo && (
-                          <Badge variant={"destructive"}>
-                            {errors.id_centro_custo?.message}
-                          </Badge>
-                        )}
-                      </FormItem>
-
-                      <FormInput
-                        readOnly={!canChangeParcelas}
-                        name="num_parcelas"
-                        type={"number"}
-                        label="Número de parcelas"
-                        step="1"
-                        min={1}
-                        max={365}
-                        control={form.control}
-                      />
-
-                      <FormInput
-                        readOnly={true}
-                        name="parcela"
-                        type={"number"}
-                        label="Parcela"
-                        step="1"
-                        control={form.control}
-                      />
-
-                      <FormDateInput
-                        disabled={disabled}
-                        name="data_emissao"
-                        label="Data de emissão"
-                        control={form.control}
-                      />
-                      <FormDateInput
-                        disabled={disabled}
-                        name="data_vencimento"
-                        label="Data de vencimento"
-                        min={getVencimentoMinimo(isMaster)}
-                        control={form.control}
-                        onChange={onChangeDataVencimento}
-                      />
-
-                      <FormDateInput
-                        disabled={!isMaster || disabled}
-                        name="data_prevista"
-                        label="Previsão de Pagamento"
-                        control={form.control}
-                      />
-
-                      <FormInput
-                        readOnly={readOnly}
-                        name="num_doc"
-                        label="Núm. Doc."
-                        className="max-w-[15ch]"
-                        control={form.control}
-                      />
-
-                      <FormItem className="w-[20ch] text-center">
-                        <FormLabel>Valor Total</FormLabel>
-                        <Input
-                          readOnly={true}
-                          className="text-end"
-                          value={normalizeCurrency(calcularTotal())}
-                          {...form.register("valor")}
-                        />
-                      </FormItem>
-
-                      <FormInput
-                        readOnly={readOnly}
-                        className="min-w-[400px] flex-1"
-                        name="descricao"
-                        label="Descrição do pagamento"
-                        control={form.control}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Itens da solicitação */}
-                  <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                    <div className="flex gap-2 mb-3 items-center">
-                      <List />{" "}
-                      <span className="text-lg font-bold ">
-                        Itens da Solicitação
-                      </span>
-                      {errors.itens?.message && (
-                        <Badge variant={"destructive"}>
-                          {errors.itens?.message}
-                        </Badge>
-                      )}
-                    </div>
-                    {canEdit && modalEditing && (
-                      <>
-                        <div className="flex gap-3 mb-3 rounded-md items-end">
-                          {/* Plano contas */}
-                          <Input
-                            type="hidden"
-                            ref={novoItemIdPlanoContasRef}
-                            readOnly={true}
-                            name="id_plano_contas"
-                          />
-                          <FormItem className="w-full">
-                            <div className="flex justify-between items-end">
-                              <FormLabel>Plano de Contas</FormLabel>
-                            </div>
-                            <Button
-                              type="button"
-                              variant={"ghost"}
-                              onClick={showModalPlanoContas}
-                              className="w-full p-0"
-                            >
-                              <Input
-                                ref={novoItemPlanoContasRef}
-                                className="w-full"
-                                readOnly={true}
-                                placeholder="Selecione o plano de contas"
-                              />
-                            </Button>
-                          </FormItem>
-                          <FormItem>
-                            <div className="flex justify-between items-end">
-                              <FormLabel>Valor</FormLabel>
-                            </div>
-                            <Input
-                              type="number"
-                              ref={novoItemValorRef}
-                              className="max-w-40 text-end"
-                            />
-                          </FormItem>
-
-                          <Button
-                            className="ms-auto"
-                            type="button"
-                            onClick={handleAddItem}
-                          >
-                            <ArrowDown size={18} className="me-2" /> Add item
-                          </Button>
-                        </div>
-                        <Separator className="my-4 bg-gray-900" />
-                      </>
-                    )}
-                    <div className="flex gap-3">
-                      <table className="w-full">
-                        <thead>
-                          <tr>
-                            <th className="text-center pl-2">Item</th>
-                            <th className="text-left pl-2">Plano de contas</th>
-                            <th className="text-center pl-2">Valor</th>
-                            {canEdit && modalEditing && (
-                              <th className="text-left max-w-[20ch]">Ação</th>
-                            )}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {itens?.map((item, index) => (
-                            <tr key={item.id}>
-                              <td className="mt-1 text-center flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                                {index + 1}
-                              </td>
-                              <td className="p-1 w-full">
-                                <FormInput
-                                  className="w-full"
-                                  readOnly={true}
-                                  name={`itens.${index}.plano_conta`}
-                                  control={form.control}
-                                />
-                              </td>
-                              <td className="p-1">
-                                <FormInput
-                                  type="number"
-                                  className="min-w-40 text-center"
-                                  readOnly={readOnly}
-                                  name={`itens.${index}.valor`}
-                                  inputClass="text-end pe-3"
-                                  control={form.control}
-                                  onChange={handleChangeItemValue}
-                                  min={0.1}
-                                />
-                              </td>
-                              {canEdit && modalEditing && (
-                                <td>
-                                  <Button
-                                    type="button"
-                                    variant="destructive"
-                                    className="w-full"
-                                    onClick={() => {
-                                      if (itens.length === 1) {
-                                        toast({
-                                          variant: "destructive",
-                                          title: "Ops!",
-                                          description:
-                                            "Tem que ter pelo menos um item na solicitação!",
-                                        });
-                                        return;
-                                      }
-                                      handleRemoveItem(index);
-                                    }}
-                                  >
-                                    <Trash size={18} />
-                                  </Button>
-                                </td>
-                              )}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  {/* Rateio de filiais */}
-                  <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                    <div className="flex gap-2 mb-3 items-center">
-                      <Divide />{" "}
-                      <span className="text-lg font-bold ">
-                        Dados do rateio
-                      </span>
-                      {errors.itens_rateio?.message && (
-                        <Badge variant={"destructive"}>
-                          {errors.itens_rateio?.message}
-                        </Badge>
-                      )}
-                    </div>
-
-                    <div className="flex gap-3 flex-wrap items-end">
-                      <SelectTipoRateio
-                        label="Tipo de rateio"
-                        name="id_rateio"
-                        disabled={disabled}
-                        id_grupo_economico={id_grupo_economico}
-                        control={form.control}
-                        onChange={handleChangeRateio}
-                      />
-
-                      <div className="flex items-center gap-3">
-                        <Button
-                          onClick={handleClickExportarRateio}
-                          variant={"success"}
-                        >
-                          <Download size={18} className="me-2" /> Exportar
-                          Padrão
-                        </Button>
-
-                        <input
-                          className="hidden"
-                          type="file"
-                          ref={fileImportRateioRef}
-                          onChange={handleChangeImportarRateio}
-                        />
-                        {canEditRateio && rateio_manual && (
-                          <Button
-                            onClick={handleClickImportarRateio}
-                            variant={"tertiary"}
-                          >
-                            <Upload size={18} className="me-2" /> Importar
-                            Rateio
-                          </Button>
-                        )}
+                        </span>
                       </div>
-                    </div>
 
-                    <div className="flex justify-between items-baseline mt-3">
-                      <span className="text-md font-medium">
-                        Itens do rateio
-                      </span>
-                      {canEditRateio && rateio_manual && (
-                        <Button type="button" onClick={handleAddItemRateio}>
-                          <Plus size={18} className="me-2" /> Novo item Rateio
-                        </Button>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-3 mt-3">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th className="text-left pl-2">Filial</th>
-                            <th className="text-center pl-2">Percentual</th>
-                            {canEditItensRateio && (
-                              <th className="text-left max-w-[20ch]">Ação</th>
-                            )}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {itensRateio?.map((item, index) => (
-                            <tr key={item.id}>
-                              <td className="p-1 w-full">
-                                <SelectFilial
-                                  name={`itens_rateio.${index}.id_filial`}
-                                  id_grupo_economico={id_grupo_economico}
-                                  disabled={!canEditItensRateio}
-                                  control={form.control}
-                                />
-                              </td>
-                              <td className="p-1 min-w-40">
-                                <FormInput
-                                  type="number"
-                                  readOnly={!canEditItensRateio}
-                                  name={`itens_rateio.${index}.percentual`}
-                                  control={form.control}
-                                  inputClass="text-end pe-3"
-                                  icon={Percent}
-                                  step="0.0001"
-                                  min={0.0001}
-                                  max={100}
-                                  onChange={handleChangeItemRateio}
-                                />
-                              </td>
-                              {canEditItensRateio && (
-                                <td>
-                                  <Button
-                                    type="button"
-                                    variant="destructive"
-                                    className=""
-                                    onClick={() => {
-                                      handleRemoveItemRateio(index);
-                                    }}
-                                  >
-                                    <Trash size={18} />
-                                  </Button>
-                                </td>
-                              )}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                      <div className="mt-2 text-muted-foreground">
-                        <span>Total percentual: </span>
-                        {itensRateio
-                          .reduce((acc, curr) => {
-                            return acc + parseFloat(curr.percentual);
-                          }, 0)
-                          .toFixed(2)
-                          .replace(".", ",")}
-                        %
+                      <div className="grid grid-cols-4 gap-1">
+                        <FormDateInput
+                          disabled={disabled}
+                          name="data_emissao"
+                          label="Data de emissão"
+                          control={form.control}
+                        />
+                        <FormDateInput
+                          disabled={disabled}
+                          name="data_vencimento"
+                          label="Data de vencimento"
+                          min={getVencimentoMinimo(isMaster)}
+                          control={form.control}
+                          onChange={onChangeDataVencimento}
+                        />
+
+                        <FormDateInput
+                          disabled={!isMaster || disabled}
+                          name="data_prevista"
+                          label="Previsão de Pagamento"
+                          control={form.control}
+                        />
+
+                        <FormInput
+                          readOnly={readOnly}
+                          name="num_doc"
+                          label="Núm. Doc."
+                          className={'w-full'}
+                          control={form.control}
+                        />
+                      </div>
+
+                      <div className="grid gap-3 grid-cols-[20ch_minmax(50ch,_1fr)]">
+                        <FormInput
+                          control={form.control}
+                          inputClass="max-w-[20ch] text-left"
+                          name="valor"
+                          type="number"
+                          iconLeft
+                          icon={TbCurrencyReal}
+                          label="Valor Total"
+                        />
+
+                        <FormInput
+                          readOnly={readOnly}
+                          className="min-w-[400px] flex-1"
+                          name="descricao"
+                          label="Descrição do pagamento"
+                          control={form.control}
+                        />
                       </div>
                     </div>
                   </div>
 
-                  {/* Histórico da solicitação */}
+                  {/* Abas Vencimentos / Rateio entre filiais */}
+                  <Tabs defaultValue="vencimentos" className="">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="vencimentos">Vencimentos</TabsTrigger>
+                      <TabsTrigger value="rateio">Rateio da solicitação</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="vencimentos">
+                      <SecaoVencimentos
+                        id={id}
+                        form={form}
+                        canEdit={canEdit}
+                        modalEditing={modalEditing}
+                        disabled={disabled}
+                        readOnly={readOnly}
+                      />
+                    </TabsContent>
+
+                    <TabsContent value="rateio">
+                      <SecaoRateio
+                        id={id}
+                        form={form}
+                        disabled={disabled}
+                        canEdit={canEdit}
+                        modalEditing={modalEditing}
+
+                      />
+                    </TabsContent>
+                  </Tabs>
+
+                  {/* Histórico */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3">
                       <History />{" "}
                       <span className="text-lg font-bold ">
-                        Histórico do título
+                        Histórico
                       </span>
                     </div>
                     <div className="flex flex-col gap-3 overflow-auto max-h-72">
@@ -1325,7 +716,7 @@ const FormTituloPagar = ({
                 status !== "Solicitado" &&
                 status !== "Pago" &&
                 (isMaster === true &&
-                (status === "Aprovado" || status === "Negado")
+                  (status === "Aprovado" || status === "Negado")
                   ? true
                   : false) && (
                   <ButtonMotivation

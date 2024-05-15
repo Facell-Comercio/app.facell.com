@@ -22,7 +22,7 @@ import { useFilial } from "@/hooks/useFilial";
 
 interface IModalFiliais {
     open: boolean,
-    handleSelecion: (item: Filial) => void
+    handleSelection: (item: Filial) => void
     onOpenChange: () => void
     closeOnSelection?: boolean
 }
@@ -32,7 +32,7 @@ type PaginationProps = {
     pageIndex: number
 }
 
-const ModalFiliais = ({ open, handleSelecion, onOpenChange, closeOnSelection }: IModalFiliais) => {
+const ModalFiliais = ({ open, handleSelection, onOpenChange, closeOnSelection }: IModalFiliais) => {
     const [search, setSearch] = useState<string>('')
     const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 0 })
 
@@ -76,12 +76,12 @@ const ModalFiliais = ({ open, handleSelecion, onOpenChange, closeOnSelection }: 
         })
     }
 
-    function handleSelection(item: Filial) {
+    function pushSelection(item: Filial) {
         if(closeOnSelection){
             // @ts-ignore 'vai funcionar...'
             onOpenChange(prev=>!prev)
         }
-        handleSelecion(item)
+        handleSelection(item)
     }
 
     const searchRef = useRef<HTMLInputElement | null>(null)
@@ -112,7 +112,7 @@ const ModalFiliais = ({ open, handleSelecion, onOpenChange, closeOnSelection }: 
                             <div key={`filial.${item.id}`} className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2">
                                 <span>{item?.grupo_economico}</span>
                                 <span>{item.nome}</span>
-                                <Button size={"sm"} onClick={() => { handleSelection(item) }}>Selecionar</Button>
+                                <Button size={"sm"} onClick={() => { pushSelection(item) }}>Selecionar</Button>
                             </div>
                         ))}
                 </ScrollArea>

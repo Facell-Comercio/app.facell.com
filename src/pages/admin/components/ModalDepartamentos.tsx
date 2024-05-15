@@ -22,7 +22,7 @@ import { Departamento } from "@/types/departamento-type";
 
 interface IModalDepartamentos {
     open: boolean,
-    handleSelecion: (item: Departamento) => void
+    handleSelection: (item: Departamento) => void
     onOpenChange: () => void
     closeOnSelection?: boolean
 }
@@ -32,7 +32,7 @@ type PaginationProps = {
     pageIndex: number
 }
 
-const ModalDepartamentos = ({ open, handleSelecion, onOpenChange, closeOnSelection }: IModalDepartamentos) => {
+const ModalDepartamentos = ({ open, handleSelection, onOpenChange, closeOnSelection }: IModalDepartamentos) => {
     const [search, setSearch] = useState<string>('')
     const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 0 })
 
@@ -76,12 +76,12 @@ const ModalDepartamentos = ({ open, handleSelecion, onOpenChange, closeOnSelecti
         })
     }
 
-    function handleSelection(item: Departamento) {
+    function pushSelection(item: Departamento) {
         if(closeOnSelection){
             // @ts-ignore 'vai funcionar...'
             onOpenChange(prev=>!prev)
         }
-        handleSelecion(item)
+        handleSelection(item)
     }
 
     const searchRef = useRef<HTMLInputElement | null>(null)
@@ -112,7 +112,7 @@ const ModalDepartamentos = ({ open, handleSelecion, onOpenChange, closeOnSelecti
                             <div key={`departamento.${item.id}`} className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2">
                                 <span>{item?.grupo_economico}</span>
                                 <span>{item.nome}</span>
-                                <Button size={"sm"} onClick={() => { handleSelection(item) }}>Selecionar</Button>
+                                <Button size={"sm"} onClick={() => { pushSelection(item) }}>Selecionar</Button>
                             </div>
                         ))}
                 </ScrollArea>

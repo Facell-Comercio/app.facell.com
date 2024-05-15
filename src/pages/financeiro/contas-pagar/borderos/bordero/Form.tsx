@@ -219,7 +219,7 @@ const FormBordero = ({
                   </div>
                   <ModalContasBancarias
                     open={modalEditing && modalContaBancariaOpen}
-                    handleSelecion={handleSelectionContaBancaria}
+                    handleSelection={handleSelectionContaBancaria}
                     onOpenChange={() =>
                       setModalContaBancariaOpen((prev) => !prev)
                     }
@@ -292,7 +292,7 @@ const FormBordero = ({
                     )}
                     <ModalTitulos
                       open={modalEditing && modalTituloOpen}
-                      handleSelecion={handleSelectionTitulo}
+                      handleSelection={handleSelectionTitulo}
                       onOpenChange={() => setModalTituloOpen((prev) => !prev)}
                       id_matriz={id_matriz || ""}
                       initialFilters={{

@@ -310,7 +310,7 @@ const FormCadastro = ({
     <div className="flex flex-col gap-4 max-w-full overflow-x-hidden p-2">
       <Form {...form}>
         <ModalCentrosCustos
-          handleSelecion={handleSelectionCentroCustos}
+          handleSelection={handleSelectionCentroCustos}
           // @ts-expect-error 'Ignore, vai funcionar..'
           onOpenChange={setModalCentrosCustoOpen}
           open={modalCentrosCustoOpen}
@@ -450,7 +450,7 @@ const FormCadastro = ({
             onOpenChange={() =>
               setModalPlanoContasOpen((prev: boolean) => !prev)
             }
-            handleSelecion={handleSelectionPlanoContas}
+            handleSelection={handleSelectionPlanoContas}
           />
           <Input
             className="flex-1"

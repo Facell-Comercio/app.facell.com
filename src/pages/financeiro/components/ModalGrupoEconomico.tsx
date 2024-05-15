@@ -20,7 +20,7 @@ import { useState } from "react";
 
 interface IModalGrupoEconomico {
   open: boolean;
-  handleSelecion: (item: ItemGrupoEconomicoProps) => void;
+  handleSelection: (item: ItemGrupoEconomicoProps) => void;
   onOpenChange: () => void;
   id_matriz?: string | null;
 }
@@ -40,7 +40,7 @@ type PaginationProps = {
 
 const ModalGruposEconomicos = ({
   open,
-  handleSelecion,
+  handleSelection,
   onOpenChange,
   id_matriz,
 }: IModalGrupoEconomico) => {
@@ -106,8 +106,8 @@ const ModalGruposEconomicos = ({
     refetchGrupoEconomico();
   }
 
-  function handleSelection(item: ItemGrupoEconomicoProps) {
-    handleSelecion(item);
+  function pushSelection(item: ItemGrupoEconomicoProps) {
+    handleSelection(item);
   }
 
   if (isLoading) return null;
@@ -134,7 +134,7 @@ const ModalGruposEconomicos = ({
                 <Button
                   size={"sm"}
                   onClick={() => {
-                    handleSelection(item);
+                    pushSelection(item);
                   }}
                 >
                   Selecionar

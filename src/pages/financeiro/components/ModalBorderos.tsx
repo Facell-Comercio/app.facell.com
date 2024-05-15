@@ -23,7 +23,7 @@ import { useRef, useState } from "react";
 
 interface IModalBorderos {
   open: boolean;
-  handleSelecion: (item: BorderoProps) => void;
+  handleSelection: (item: BorderoProps) => void;
   onOpenChange: () => void;
   id_matriz?: string;
   id_bordero?: string;
@@ -44,7 +44,7 @@ type PaginationProps = {
 
 const ModalBorderos = ({
   open,
-  handleSelecion,
+  handleSelection,
   onOpenChange,
   id_matriz,
   id_bordero,
@@ -89,8 +89,8 @@ const ModalBorderos = ({
     });
     fetchBordero();
   }
-  function handleSelection(item: BorderoProps) {
-    handleSelecion(item);
+  function pushSelection(item: BorderoProps) {
+    handleSelection(item);
   }
   async function handlePaginationChange(index: number) {
     await new Promise((resolve) => {
@@ -167,7 +167,7 @@ const ModalBorderos = ({
                 <Button
                   size={"sm"}
                   onClick={() => {
-                    handleSelection(item);
+                    pushSelection(item);
                   }}
                 >
                   Selecionar

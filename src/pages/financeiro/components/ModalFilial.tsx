@@ -14,31 +14,35 @@ import {
   PaginationItem,
 } from "@/components/ui/pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { normalizeCnpjNumber } from "@/helpers/mask";
 import { api } from "@/lib/axios";
+import { Filial } from "@/types/filial-type";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 
-interface IModalBancos {
+interface IModalFilial {
   open: boolean;
-  handleSelection: (item: ItemBancos) => void;
-  onOpenChange: () => void;
-  id?: string | null;
+  handleSelection: (item: Filial) => void;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
+  id_matriz?: string | null;
+  id_grupo_economico?: string | null;
+  closeOnSelection?: boolean;
 }
-
-export type ItemBancos = {
-  id: string;
-  codigo: string;
-  nome: string;
-  tipo: string;
-};
 
 type PaginationProps = {
   pageSize: number;
   pageIndex: number;
 };
 
-const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
+const ModalFilial = ({
+  open,
+  handleSelection,
+  onOpenChange,
+  id_matriz,
+  id_grupo_economico,
+  closeOnSelection,
+}: IModalFilial) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -49,12 +53,15 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
     data,
     isLoading,
     isError,
-    refetch: refetchBancos,
+    refetch: refetchFilial,
   } = useQuery({
-    queryKey: ["fin_bancos"],
+    queryKey: ["filiais", id_matriz],
     queryFn: async () =>
-      await api.get("financeiro/bancos", {
-        params: { filters: { termo: search }, pagination },
+      await api.get("filial", {
+        params: {
+          filters: { termo: search, id_matriz, id_grupo_economico },
+          pagination,
+        },
       }),
     enabled: open,
   });
@@ -77,14 +84,14 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
-    refetchBancos();
+    refetchFilial();
   }
   async function handlePaginationChange(index: number) {
     await new Promise((resolve) => {
       setPagination((prev) => ({ ...prev, pageIndex: index }));
       resolve(true);
     });
-    refetchBancos();
+    refetchFilial();
   }
   async function handlePaginationUp() {
     await new Promise((resolve) => {
@@ -93,7 +100,7 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
       setPagination((prev) => ({ ...prev, pageIndex: newPage }));
       resolve(true);
     });
-    refetchBancos();
+    refetchFilial();
   }
   async function handlePaginationDown() {
     await new Promise((resolve) => {
@@ -104,11 +111,14 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
       }));
       resolve(true);
     });
-    refetchBancos();
+    refetchFilial();
   }
 
-  function pushSelection(item: ItemBancos) {
+  function pushSelection(item: Filial) {
     handleSelection(item);
+    if(closeOnSelection){
+      onOpenChange(false)
+    }
   }
 
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -120,9 +130,9 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Bancos</DialogTitle>
+          <DialogTitle>Lista de filiais</DialogTitle>
           <DialogDescription>
-            Selecione um ao clicar no botão à direita.
+            Selecione ao clicar no botão à direita.
           </DialogDescription>
 
           <div className="flex gap-3">
@@ -141,13 +151,13 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
         </DialogHeader>
 
         <ScrollArea className="h-72 w-full rounded-md border p-3">
-          {data?.data?.rows.map((item: ItemBancos, index: number) => (
+          {data?.data?.rows.map((item: Filial, index: number) => (
             <div
-              key={"bancos:" + item.id + index}
+              key={"modal_filial_item:" + index}
               className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2"
             >
               <span>
-                {item.codigo} - {item.nome}
+                {item.grupo_economico} - {item.nome} - {normalizeCnpjNumber(item.cnpj)}
               </span>
               <Button
                 size={"sm"}
@@ -167,7 +177,7 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
               <PaginationItem>
                 <Button
                   variant={"outline"}
-                  disabled={pagination.pageIndex === 1}
+                  disabled={pagination.pageIndex === 0}
                   onClick={handlePaginationDown}
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -190,7 +200,7 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
               <PaginationItem>
                 <Button
                   variant={"outline"}
-                  disabled={pagination.pageIndex === pages.length}
+                  disabled={pagination.pageIndex === pages.length - 1}
                   onClick={handlePaginationUp}
                 >
                   <ChevronRight className="h-4 w-4" />
@@ -206,4 +216,4 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
   );
 };
 
-export default ModalBancos;
+export default ModalFilial;

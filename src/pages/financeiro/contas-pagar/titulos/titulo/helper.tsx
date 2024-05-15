@@ -8,7 +8,7 @@ export const getVencimentoMinimo = (isMaster: boolean) => {
   return dataAtual;
 }
 
-export const calcularDataPrevisaoPagamento = (data_venc: Date) => {
+export const calcularDataPrevisaoPagamento = (data_venc: Date | string) => {
   let dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
 
   const dataAtual = startOfDay(new Date());

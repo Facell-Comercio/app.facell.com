@@ -153,13 +153,13 @@ const FiltersMovimentoContabiluseStoreTableMovimentoContabil = ({
       </Button>
       <ModalContasBancarias
         open={modalContaBancariaOpen}
-        handleSelecion={handleSelectionContaBancaria}
+        handleSelection={handleSelectionContaBancaria}
         onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
         id_matriz={filters.id_matriz}
       />
       <ModalGruposEconomicos
         open={modalGrupoEconomicoOpen}
-        handleSelecion={handleSelectionGrupoEconomico}
+        handleSelection={handleSelectionGrupoEconomico}
         onOpenChange={() => setModalGrupoEconomicoOpen((prev) => !prev)}
       />
     </section>

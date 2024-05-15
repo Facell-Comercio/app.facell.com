@@ -21,7 +21,7 @@ import { useRef, useState } from "react";
 
 interface IModalCentrosCustos {
   open: boolean;
-  handleSelecion: (item: CentroCustos) => void;
+  handleSelection: (item: CentroCustos) => void;
   onOpenChange: (value: boolean) => boolean;
   closeOnSelection?: boolean;
   id_matriz?: string | null;
@@ -35,7 +35,7 @@ type PaginationProps = {
 
 const ModalCentrosCustos = ({
   open,
-  handleSelecion,
+  handleSelection,
   onOpenChange,
   closeOnSelection,
   id_matriz,
@@ -95,12 +95,12 @@ const ModalCentrosCustos = ({
     });
   }
 
-  function handleSelection(item: CentroCustos) {
+  function pushSelection(item: CentroCustos) {
     if (closeOnSelection) {
       // @ts-expect-error 'vai funcionar...'
       onOpenChange((prev) => !prev);
     }
-    handleSelecion(item);
+    handleSelection(item);
   }
 
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -148,7 +148,7 @@ const ModalCentrosCustos = ({
               <Button
                 size={"sm"}
                 onClick={() => {
-                  handleSelection(item);
+                  pushSelection(item);
                 }}
               >
                 Selecionar
