@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { checkIsPIX, checkIsTransferenciaBancaria } from "./helper";
+import { checkIsPIX, checkIsTransferenciaBancaria } from "./helpers/helper";
 
 export const vencimentoSchema = z.object({
   id: z.string().optional(),

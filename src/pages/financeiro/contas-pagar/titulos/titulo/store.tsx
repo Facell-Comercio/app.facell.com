@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { TituloSchemaProps } from "./form-data";
-import { calcularDataPrevisaoPagamento } from "./helper";
+import { calcularDataPrevisaoPagamento } from "./helpers/helper";
 
 export interface ItemRateioTitulo {
   id?: string;

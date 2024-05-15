@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { calcularDataPrevisaoPagamento } from "../../../helper";
+import { calcularDataPrevisaoPagamento } from "../../../helpers/helper";
 
 export interface State {
     indexFieldArray?: number,

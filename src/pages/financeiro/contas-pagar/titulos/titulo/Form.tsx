@@ -26,6 +26,7 @@ import ModalFornecedores, {
 import { useQueryClient } from "@tanstack/react-query";
 import { TbCurrencyReal } from "react-icons/tb";
 import {
+  AlertTriangle,
   Ban,
   Check,
   Contact,
@@ -45,13 +46,14 @@ import {
   calcularDataPrevisaoPagamento,
   formatarHistorico,
   getVencimentoMinimo,
-} from "./helper";
+} from "./helpers/helper";
 import { initialPropsTitulo, useStoreTitulo } from "./store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
 import ModalFilial from "@/pages/financeiro/components/ModalFilial";
 import { Filial } from "@/types/filial-type";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 
 const FormTituloPagar = ({
   id,
@@ -116,6 +118,10 @@ const FormTituloPagar = ({
     name: "id_forma_pagamento",
     control: form.control,
   });
+  const valorTotalTitulo = parseFloat(useWatch({
+    name: "valor",
+    control: form.control,
+  }) || '0');
 
   // * [ DATA PREVISTA ]
   const onChangeDataVencimento = (data_venc: Date) => {
@@ -312,7 +318,7 @@ const FormTituloPagar = ({
   }
 
   return (
-    <div className="max-w-full  overflow-hidden">
+    <div className="max-w-full  overflow-auto zoom-in-50">
       <ModalFilial
         open={modalFilialOpen}
         handleSelection={handleSelectionFilial}
@@ -327,7 +333,7 @@ const FormTituloPagar = ({
           e.stopPropagation()
           form.handleSubmit(onSubmit)
         }}>
-          <ScrollArea className="flex flex-col max-w-full max-h-[70vh] overflow-hidden">
+          <ScrollArea className="flex flex-col max-w-full max-h-[70vh] overflow-auto">
             {titulo?.status && (
               <div className="flex-1 py-2">
                 <div
@@ -340,10 +346,10 @@ const FormTituloPagar = ({
               </div>
             )}
 
-            <ScrollArea className="overflow-y-auto pe-3">
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3">
+            <ScrollArea className="overflow-auto pe-3">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 flex-shrink-0 flex-grow-0">
                 {/* Primeira coluna */}
-                <div className="flex flex-col flex-wrap gap-3 ">
+                <div className="flex flex-col flex-wrap gap-3 flex-shrink-0 flex-grow-0">
                   {/* Dados do Fornecedor */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3">
@@ -524,7 +530,7 @@ const FormTituloPagar = ({
 
                         <span onClick={showModalFilial}>
                           <FormInput
-                            readOnly={readOnly}
+                            readOnly={true}
                             name="filial"
                             label="Filial"
                             placeholder="SELECIONE A FILIAL"
@@ -589,34 +595,45 @@ const FormTituloPagar = ({
                   </div>
 
                   {/* Abas Vencimentos / Rateio entre filiais */}
-                  <Tabs defaultValue="vencimentos" className="">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="vencimentos">Vencimentos</TabsTrigger>
-                      <TabsTrigger value="rateio">Rateio da solicitação</TabsTrigger>
-                    </TabsList>
+                  {
+                    valorTotalTitulo > 0 && !!id_matriz ? (
+                      < Tabs defaultValue="vencimentos" className="">
+                        <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger value="vencimentos">Vencimentos</TabsTrigger>
+                          <TabsTrigger value="rateio">Rateio da solicitação</TabsTrigger>
+                        </TabsList>
 
-                    <TabsContent value="vencimentos">
-                      <SecaoVencimentos
-                        id={id}
-                        form={form}
-                        canEdit={canEdit}
-                        modalEditing={modalEditing}
-                        disabled={disabled}
-                        readOnly={readOnly}
-                      />
-                    </TabsContent>
+                        <TabsContent value="vencimentos">
+                          <SecaoVencimentos
+                            id={id}
+                            form={form}
+                            canEdit={canEdit}
+                            modalEditing={modalEditing}
+                            disabled={disabled}
+                            readOnly={readOnly}
+                          />
+                        </TabsContent>
 
-                    <TabsContent value="rateio">
-                      <SecaoRateio
-                        id={id}
-                        form={form}
-                        disabled={disabled}
-                        canEdit={canEdit}
-                        modalEditing={modalEditing}
+                        <TabsContent value="rateio">
+                          <SecaoRateio
+                            id={id}
+                            form={form}
+                            disabled={disabled}
+                            canEdit={canEdit}
+                            modalEditing={modalEditing}
 
-                      />
-                    </TabsContent>
-                  </Tabs>
+                          />
+                        </TabsContent>
+                      </Tabs>
+
+                    ) : (
+                      <Alert variant='destructive'>
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>{valorTotalTitulo > 0 ? 'Selecione a filial!' : 'Preencha o valor!'}</AlertTitle>
+                      </Alert>
+                    )
+                  }
+
 
                   {/* Histórico */}
                   <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
@@ -790,7 +807,7 @@ const FormTituloPagar = ({
           </div>
         </form>
       </Form>
-    </div>
+    </div >
   );
 };
 

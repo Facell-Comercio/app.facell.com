@@ -15,6 +15,7 @@ import { normalizeCurrency } from "@/helpers/mask";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { ModalVencimento } from "./ModalVencimento";
 import { useStoreVencimento } from "./context";
+import { ModalGerarVencimentos } from "./GerarVencimentos";
 
 type SecaoVencimentosProps = {
     id?: string | null,
@@ -145,7 +146,8 @@ const SecaoVencimentos = ({
                     </Badge>
                 )}
                 {canEdit && modalEditing && (
-                    <div className="ms-auto">
+                    <div className="ms-auto flex gap-3 items-center">
+                        <ModalGerarVencimentos control={form.control}/>
                         <BtnNovoVencimento />
                     </div>
                 )}

@@ -53,7 +53,6 @@ const SecaoRateio = ({
     const fileImportRateioRef = useRef<HTMLInputElement | null>(null);
 
     const {
-        fields: itensRateio,
         append: addItemRateio,
         remove: removeItemRateio,
     } = useFieldArray({
@@ -111,7 +110,11 @@ const SecaoRateio = ({
             {
                 accessorKey: 'plano_conta',
                 header: 'PLANO DE CONTAS',
-                size: 300,
+                cell: (info) => {
+                    let text = info.getValue<string>()
+                    return <div className={`w-full  px-2 text-end`}>{text?.substring(0,50)}</div>
+                },
+                size: 250,
             },
             {
                 accessorKey: 'valor',
@@ -128,7 +131,7 @@ const SecaoRateio = ({
                 header: 'PERCENTUAL',
                 size: 80,
                 cell: (info) => {
-                    let valor = parseFloat(info.getValue<string>())
+                    let valor = (parseFloat(info.getValue<string>()) * 100).toFixed(4) + '%'
 
                     return <div className={`w-full  px-2 text-center`}>{valor}</div>
                 }
@@ -203,7 +206,7 @@ const SecaoRateio = ({
 
     function handleClickExportarRateio() {
         const json: any = [];
-        itensRateio.forEach((item: ItemRateioTitulo) => {
+        witens_rateio.forEach((item: ItemRateioTitulo) => {
             const obj: any = {};
             obj.filial =
                 filiais?.find(
@@ -352,7 +355,7 @@ const SecaoRateio = ({
                 <div className="flex items-center gap-3">
                     <div className="mt-2 text-muted-foreground">
                         <span>Total: R$ </span>
-                        {itensRateio
+                        {witens_rateio
                             .reduce((acc, curr) => {
                                 return acc + parseFloat(curr.valor);
                             }, 0)
@@ -361,9 +364,10 @@ const SecaoRateio = ({
                     </div>
                     <div className="mt-2 text-muted-foreground">
                         <span>Percentual: </span>
-                        {itensRateio
+                        {witens_rateio
                             .reduce((acc, curr) => {
-                                return acc + parseFloat(curr.percentual);
+                                let val = parseFloat(curr.percentual) * 100;
+                                return acc + val;
                             }, 0)
                             .toFixed(2)
                             .replace(".", ",")}

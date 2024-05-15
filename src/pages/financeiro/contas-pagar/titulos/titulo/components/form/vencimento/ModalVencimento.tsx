@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Control, useFieldArray, useForm, useWatch } from "react-hook-form"
 
 import z from 'zod'
-import { calcularDataPrevisaoPagamento } from "../../../helper"
+import { calcularDataPrevisaoPagamento } from "../../../helpers/helper"
 import FormInput from "@/components/custom/FormInput"
 import FormDateInput from "@/components/custom/FormDate"
 import { useEffect } from "react"
@@ -20,8 +20,9 @@ import { initialStateVencimento, useStoreVencimento } from "./context"
 import { Plus, Save } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { normalizeCurrency } from "@/helpers/mask"
+import { Form } from "@/components/ui/form"
 
-export function ModalVencimento({control: controlTitulo}:{control: Control<TituloSchemaProps>}) {
+export function ModalVencimento({ control: controlTitulo }: { control: Control<TituloSchemaProps> }) {
     const vencimento = useStoreVencimento().vencimento
     const indexFieldArray = useStoreVencimento().indexFieldArray
 
@@ -30,7 +31,7 @@ export function ModalVencimento({control: controlTitulo}:{control: Control<Titul
 
     const form = useForm({
         resolver: zodResolver(vencimentoSchema),
-        values: {...vencimento} || {...initialStateVencimento.vencimento},
+        values: { ...vencimento } || { ...initialStateVencimento.vencimento },
     })
 
     const {
@@ -49,8 +50,8 @@ export function ModalVencimento({control: controlTitulo}:{control: Control<Titul
         name: 'vencimentos',
         control: controlTitulo,
     })
-    
-    const { formState: {errors}} = form;
+
+    const { formState: { errors } } = form;
 
     const data_vencimento = form.watch('data_vencimento')
 
@@ -59,35 +60,35 @@ export function ModalVencimento({control: controlTitulo}:{control: Control<Titul
     }, [data_vencimento])
     const isUpdate = !!vencimento.id
 
-    const onSubmit = (data:  z.infer<typeof vencimentoSchema>)=>{
-        if(isUpdate){
-            if(indexFieldArray === undefined){
-                toast({title: 'Vencimento não identificado, feche e abra novamente o popup', variant: 'destructive'})
-            }else{
+    const onSubmit = (data: z.infer<typeof vencimentoSchema>) => {
+        if (isUpdate) {
+            if (indexFieldArray === undefined) {
+                toast({ title: 'Vencimento não identificado, feche e abra novamente o popup', variant: 'destructive' })
+            } else {
 
-                const totalPrevisto = vencimentos.filter((_:any, index:number)=>index != indexFieldArray).reduce((acc:number, curr: {valor:string})=>{return acc+parseFloat(curr.valor)},0) + parseFloat(data.valor)
+                const totalPrevisto = vencimentos.filter((_: any, index: number) => index != indexFieldArray).reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
                 const dif = totalPrevisto - parseFloat(valorTotalTitulo)
                 console.log('DIF', dif)
-                if(dif > 0){
+                if (dif > 0) {
                     const difFormatada = normalizeCurrency(dif);
                     toast({
                         variant: 'destructive', title: `O valor do vencimento excede o valor total em ${difFormatada}.`
                     })
                     return
                 }
-                updateVencimento(indexFieldArray, {...data})
+                updateVencimento(indexFieldArray, { ...data })
             }
-        }else{
-            const totalPrevisto = vencimentos.reduce((acc:number, curr: {valor:string})=>{return acc+parseFloat(curr.valor)},0) + parseFloat(data.valor)
+        } else {
+            const totalPrevisto = vencimentos.reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
             const dif = totalPrevisto - parseFloat(valorTotalTitulo)
-                console.log('DIF', dif)
-                if(dif > 0){
-                    const difFormatada = normalizeCurrency(dif);
-                    toast({
-                        variant: 'destructive', title: `O valor do vencimento excede o valor total em ${difFormatada}.`
-                    })
-                    return
-                }
+            console.log('DIF', dif)
+            if (dif > 0) {
+                const difFormatada = normalizeCurrency(dif);
+                toast({
+                    variant: 'destructive', title: `O valor do vencimento excede o valor total em ${difFormatada}.`
+                })
+                return
+            }
             addVencimento({
                 id: new Date().getTime().toString(),
                 data_vencimento: String(data.data_vencimento),
@@ -99,51 +100,60 @@ export function ModalVencimento({control: controlTitulo}:{control: Control<Titul
         form.reset()
         toggleModal()
     }
-    
+
     return (
         <Dialog open={modalOpen} onOpenChange={toggleModal}>
             <DialogContent className="sm:max-w-[50vw]">
-                <form {...form} onSubmit={form.handleSubmit(onSubmit)}>
-                <DialogHeader>
-                    <DialogTitle>{isUpdate ? 'Editar Vencimento' : 'Adicionar Vencimento'}</DialogTitle>
-                    <DialogDescription>
-                        Você precisa informar uma data de vencimento e um valor
-                    </DialogDescription>
-                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <DialogHeader>
+                            <DialogTitle>{isUpdate ? 'Editar Vencimento' : 'Adicionar Vencimento'}</DialogTitle>
+                            <DialogDescription>
+                                Você precisa informar uma data de vencimento e um valor
+                            </DialogDescription>
+                        </DialogHeader>
 
-                    <div className="flex gap-3 p-3 flex-wrap max-w-full">
-                        <FormDateInput
-                            name="data_vencimento"
-                            label="Vencimento"
-                            control={form.control}
-                        />
-                        <FormDateInput
-                            name="data_prevista"
-                            label="Prevista"
-                            control={form.control}
-                            disabled={true}
-                        />
+                        <div className="flex flex-col gap-3 p-3 max-w-full mb-3">
+                            <div className="flex gap-3">
+                                <FormDateInput
+                                    name="data_vencimento"
+                                    label="Vencimento"
+                                    control={form.control}
+                                />
+                                <FormDateInput
+                                    name="data_prevista"
+                                    label="Prevista"
+                                    control={form.control}
+                                    disabled={true}
+                                />
 
-                        <FormInput
-                            name="valor"
-                            type="number"
-                            label="Valor"
-                            inputClass="w-[20ch]"
-                            control={form.control}
-                        />
+                                <FormInput
+                                    name="valor"
+                                    type="number"
+                                    label="Valor"
+                                    inputClass="w-[20ch]"
+                                    control={form.control}
+                                />
+                            </div>
 
-                        <FormInput
-                            name="linha_digitavel"
-                            label="Linha digitável"
-                            inputClass="w-[80ch]"
-                            control={form.control}
-                        />
-                    </div>
+                            <FormInput
+                                name="linha_digitavel"
+                                label="Linha digitável"
+                                control={form.control}
+                            />
+                        </div>
 
-                <DialogFooter>
-                    <Button variant={isUpdate ? 'success' : 'default'} type="submit" >{isUpdate ? <span className="flex gap-2"><Save size={18} />Salvar</span> : <span className="flex gap-2"><Plus size={18} />Adicionar</span>}</Button>
-                </DialogFooter>
-                </form>
+                        <DialogFooter>
+                            <Button variant={isUpdate ? 'success' : 'default'} type="submit" >
+                                {
+                                    isUpdate ?
+                                        <span className="flex gap-2"><Save size={18} />Salvar</span> :
+                                        <span className="flex gap-2"><Plus size={18} />Adicionar</span>
+                                }
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog >
     )

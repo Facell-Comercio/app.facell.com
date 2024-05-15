@@ -110,7 +110,7 @@ export function Sidebar() {
                   }}
                   to={(item.type === "link" && item.uri) || "#"}
                   className={`${!sidebarOpen && "justify-center"}  ${item.type === "title" ? "text-primary" : " light:text-slate-300"
-                    } text-base flex items-center gap-x-4  rounded-md ${item.spacing ? "mt-6" : "mt-1"} ${item.type !== "title" && "hover:bg-blue-200 dark:hover:bg-blue-800 cursor-pointer"}
+                    } text-sm flex items-center gap-x-4  rounded-md ${item.spacing ? "mt-6" : "mt-1"} ${item.type !== "title" && "hover:bg-blue-200 dark:hover:bg-blue-800 cursor-pointer"}
               ${(itemActive?.parentIndex === itemIndex || (itemActive?.index === itemIndex && itemActive.sub === false)) && "text-white  bg-blue-800 duration-300"}
               `}
                 >
@@ -132,7 +132,7 @@ export function Sidebar() {
                           {item.name}
                         </div>
                       )}
-                      <span className={`${!sidebarOpen && "hidden"} ${item.type === "title" && "uppercase"} text-base font-semibold`}>{item.name}</span>
+                      <span className={`${!sidebarOpen && "hidden"} ${item.type === "title" && "uppercase"} text-sm font-normal`}>{item.name}</span>
                     </div>
                     {item.children && sidebarOpen && <BsChevronDown className={`${itemActive?.index == itemIndex && "rotate-90 duration-300"}`} onClick={() => { }} />}
                   </div>
@@ -158,7 +158,7 @@ export function Sidebar() {
                               setItemActive({ sub: true, index: subitemIndex, parentIndex: itemIndex });
                             }}
                           >
-                            <span className="text-base font-semibold ">{sidebarOpen ? subitem.name : subitem.shortName}</span>
+                            <span className="text-sm font-normal ">{sidebarOpen ? subitem.name : subitem.shortName}</span>
 
                             {!sidebarOpen && (
                               <div

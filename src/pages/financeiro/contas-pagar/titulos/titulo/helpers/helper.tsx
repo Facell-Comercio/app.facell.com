@@ -1,5 +1,5 @@
 import { checkFeriado } from "@/helpers/checkFeriado";
-import { addDays, subDays, startOfDay, isMonday, isThursday, isSaturday, isSunday } from "date-fns";
+import { addDays, subDays, startOfDay, isMonday, isThursday, isSaturday, isSunday, isWeekend } from "date-fns";
 
 export const getVencimentoMinimo = (isMaster: boolean) => {
   if (isMaster) return undefined;
@@ -7,6 +7,15 @@ export const getVencimentoMinimo = (isMaster: boolean) => {
   dataAtual.setDate(dataAtual.getDate())
   return dataAtual;
 }
+
+export const proximoDiaUtil = (data: Date | string)=>{
+  let proximoDiaUtil = data;
+  while (isWeekend(proximoDiaUtil)) {
+    proximoDiaUtil = addDays(proximoDiaUtil, 1);
+  }
+  return proximoDiaUtil;
+}
+
 
 export const calcularDataPrevisaoPagamento = (data_venc: Date | string) => {
   let dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
