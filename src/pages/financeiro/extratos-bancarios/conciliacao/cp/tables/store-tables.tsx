@@ -2,7 +2,13 @@ import { RowSelectionState } from "@tanstack/react-table";
 import { DateRange } from "react-day-picker";
 import { create } from "zustand";
 import { TitulosConciliarProps } from "./TitulosConciliar";
-import { TransacaoConciliarProps } from "./TransacoesConciliar";
+import { TransacoesConciliadasProps } from "./TransacoesConciliadas";
+import { TransacoesConciliarProps } from "./TransacoesConciliar";
+
+export interface Pagination {
+  pageIndex: number;
+  pageSize: number;
+}
 
 type RowSelection = Record<number, boolean>;
 
@@ -13,7 +19,7 @@ type HandleRowSelectioTitulosProps = {
 
 type HandleRowSelectionTransacoesProps = {
   rowSelection: RowSelectionState;
-  transacoesSelection: TransacaoConciliarProps[];
+  transacoesSelection: TransacoesConciliarProps[];
 };
 
 type FiltersSearchProps = {
@@ -53,22 +59,38 @@ interface UseStoreTableConciliacaoCP {
   rowTitulosSelection: RowSelection;
   rowTransacoesSelection: RowSelection;
   titulosSelection: TitulosConciliarProps[];
-  transacoesSelection: TransacaoConciliarProps[];
+  transacoesSelection: TransacoesConciliarProps[];
   filters: Filters;
+  tipoConciliacao?: "manual" | "automatica";
+  data_pagamento?: string;
+  canSelect: boolean;
+  showAccordion?: boolean;
+  pagination: Pagination;
 
   openModal: (id: string) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
+  handleTitulosSelection: (titulo: TitulosConciliarProps) => void;
+  handleTransacoesSelection: (transacao: TransacoesConciliadasProps) => void;
   toggleModal: () => void;
   setFiltersSearch: (filters: FiltersSearchProps) => void;
 
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
 
+  setTipoConciliacao: (tipo: "manual" | "automatica") => void;
+  resetTipoConciliacao: () => void;
+
   handleRowTitulosSelection: (data: HandleRowSelectioTitulosProps) => void;
   handleRowTransacoesSelection: (
     data: HandleRowSelectionTransacoesProps
   ) => void;
+  resetSelections: () => void;
+  setCanSelect: (bool: boolean) => void;
+  setShowAccordion: (bool: boolean) => void;
+  setDataPagamento: (data?: string) => void;
+
+  setPagination: (pagination: Pagination) => void;
 }
 
 export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
@@ -77,12 +99,17 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
     modalEditing: false,
     modalOpen: false,
     filtersSearch: initialFiltersSearch,
+    tipoConciliacao: undefined,
+    canSelect: false,
+    showAccordion: false,
 
     isAllSelected: false,
     rowTitulosSelection: {},
     rowTransacoesSelection: {},
     titulosSelection: [],
     transacoesSelection: [],
+    data_pagamento: undefined,
+    pagination: { pageIndex: 0, pageSize: 15 },
 
     // Filters
     filters: initialFilters,
@@ -94,9 +121,50 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
       set({ filters: initialFilters });
     },
 
+    setTipoConciliacao: (novoTipo) =>
+      set({
+        tipoConciliacao: novoTipo,
+      }),
+    resetTipoConciliacao: () => {
+      set({ tipoConciliacao: undefined });
+    },
+
     openModal: (id: string) => set({ modalOpen: true, id }),
     closeModal: () => set({ modalOpen: false }),
     editModal: (bool) => set({ modalEditing: bool }),
+    handleTitulosSelection: (titulo) =>
+      set((state) => {
+        const tituloExists = state.titulosSelection
+          .map((titulo) => titulo.id_titulo)
+          .includes(titulo.id_titulo);
+        if (tituloExists) {
+          return {
+            titulosSelection: state.titulosSelection.filter(
+              (selectedTitulo) => selectedTitulo.id_titulo !== titulo.id_titulo
+            ),
+          };
+        } else {
+          return { titulosSelection: [...state.titulosSelection, titulo] };
+        }
+      }),
+    handleTransacoesSelection: (transacao) =>
+      set((state) => {
+        const transacaoExists = state.transacoesSelection
+          .map((transacao) => transacao.id_transacao)
+          .includes(transacao.id_transacao);
+        if (transacaoExists) {
+          return {
+            transacoesSelection: state.transacoesSelection.filter(
+              (selectedTitulo) =>
+                selectedTitulo.id_transacao !== transacao.id_transacao
+            ),
+          };
+        } else {
+          return {
+            transacoesSelection: [...state.transacoesSelection, transacao],
+          };
+        }
+      }),
     toggleModal: () =>
       set(() => ({
         modalOpen: false,
@@ -116,5 +184,20 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
         rowTransacoesSelection: data.rowSelection,
         transacoesSelection: data.transacoesSelection,
       }),
+    resetSelections: () =>
+      set({
+        rowTitulosSelection: {},
+        rowTransacoesSelection: {},
+        titulosSelection: [],
+        transacoesSelection: [],
+        canSelect: false,
+      }),
+    setCanSelect: (bool) => set({ canSelect: bool }),
+    setShowAccordion: (bool) => set({ showAccordion: bool }),
+    setDataPagamento: (dataPagamento) =>
+      set({
+        data_pagamento: dataPagamento,
+      }),
+    setPagination: (pagination) => set({ pagination }),
   })
 );

@@ -9,41 +9,39 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { sliceString } from "@/helpers/mask";
+import { normalizeFirstAndLastName } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { formatDate } from "date-fns";
 import { FileSearch2 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useStoreConciliacaoCP } from "../components/store";
 
-export type TitulosConciliadosProps = {
-  id_conciliacao?: string;
-  id_titulo: string;
-  num_doc: string;
-  valor: string;
-  nome_fornecedor: string;
-  descricao: string;
-  filial: string;
-  data_pagamento: string;
-  valor_pago?: string;
-  tipo_baixa?: string;
+export type ConciliacoesProps = {
+  id: string;
+  data_conciliacao: string;
+  tipo: string;
+  transacoes: number;
+  valor_transacoes: number;
+  pagamentos: number;
+  valor_pagamentos: number;
+  responsavel: string;
 };
 
-interface RowVirtualizerTitulosConciliadosProps {
-  data: TitulosConciliadosProps[];
+interface RowVirtualizerConciliacoesProps {
+  data: ConciliacoesProps[];
 }
 
-const ReactTableVirtualized: React.FC<
-  RowVirtualizerTitulosConciliadosProps
-> = ({ data }) => {
+const ReactTableVirtualized: React.FC<RowVirtualizerConciliacoesProps> = ({
+  data,
+}) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const openModal = useStoreConciliacaoCP.getState().openModal;
 
-  const columns = useMemo<ColumnDef<TitulosConciliadosProps>[]>(
+  const columns = useMemo<ColumnDef<ConciliacoesProps>[]>(
     () => [
       {
         header: "AÇÃO",
-        accessorKey: "id_conciliacao",
+        accessorKey: "id",
         cell: (info) => (
           <div
             title="Ver conciliação"
@@ -62,17 +60,8 @@ const ReactTableVirtualized: React.FC<
         size: 40,
       },
       {
-        accessorKey: "id_titulo",
-        header: "ID",
-        size: 60,
-        cell: (info) => {
-          let value = info.getValue<number>();
-          return <div className="w-full text-center">{value}</div>;
-        },
-      },
-      {
-        accessorKey: "data_pagamento",
-        header: "PAGAMENTO",
+        accessorKey: "data_conciliacao",
+        header: "CONCILIAÇÃO",
         cell: (info) => {
           let value = formatDate(
             new Date(info.getValue<Date | string>()),
@@ -80,15 +69,45 @@ const ReactTableVirtualized: React.FC<
           );
           return <div className="w-full text-center">{value}</div>;
         },
-        size: 80,
+        size: 100,
       },
       {
-        accessorKey: "valor",
-        header: "VALOR",
-        size: 80,
-
+        accessorKey: "tipo",
+        header: "TIPO",
+        size: 100,
         cell: (info) => {
-          let valor = parseFloat(info.getValue<string>()).toLocaleString(
+          let value = info.getValue<number>();
+          return <div className="w-full text-center">{value}</div>;
+        },
+      },
+      {
+        accessorKey: "valor_transacoes",
+        header: "VALOR TRANSAÇÕES",
+        size: 100,
+        cell: (info) => {
+          const valor = parseFloat(info.getValue<string>()).toLocaleString(
+            "pt-BR",
+            {
+              style: "decimal",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }
+          );
+
+          return (
+            <div className="flex w-full justify-between">
+              <span>R$</span>
+              <span>{valor}</span>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "valor_pagamentos",
+        header: "VALOR PAGAMENTOS",
+        size: 200,
+        cell: (info) => {
+          const valor = parseFloat(info.getValue<string>()).toLocaleString(
             "pt-BR",
             {
               style: "decimal",
@@ -107,27 +126,15 @@ const ReactTableVirtualized: React.FC<
       },
 
       {
-        accessorKey: "descricao",
-        header: "DESCRIÇÃO",
-        size: 350,
+        accessorKey: "responsavel",
+        header: "RESPONSÁVEL",
+        size: 200,
         cell: (info) => {
-          let valor = sliceString(info.getValue<string>(), 50);
+          const valor = normalizeFirstAndLastName(
+            info.getValue<string>().toUpperCase() || ""
+          );
           return <div>{valor}</div>;
         },
-      },
-      {
-        accessorKey: "nome_fornecedor",
-        header: "FORNECEDOR",
-        size: 280,
-        cell: (info) => {
-          let valor = sliceString(info.getValue<string>(), 40);
-          return <div>{valor}</div>;
-        },
-      },
-      {
-        accessorKey: "filial",
-        header: "FILIAL",
-        size: 220,
       },
     ],
     []
@@ -170,18 +177,18 @@ const ReactTableVirtualized: React.FC<
         >
           {data.length > 0 ? (
             <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-              <table className="grid text-nowrap text-xs">
+              <table className="grid text-nowrap text-xs hover:">
                 <thead className="grid sticky top-0 z-10 border-y bg-background">
                   {table.getHeaderGroups().map((headerGroup, index) => (
                     <tr
                       className="flex w-full"
-                      key={"tituloConciliado thead" + headerGroup.id + index}
+                      key={"transacaoConciliada thead" + headerGroup.id + index}
                     >
                       {headerGroup.headers.map((header, index) => {
                         return (
                           <th
                             className="py-2"
-                            key={"tituloConciliado th" + header.id + index}
+                            key={"transacaoConciliada th" + header.id + index}
                             colSpan={header.colSpan}
                             style={{ width: header.getSize() }}
                           >
@@ -222,10 +229,12 @@ const ReactTableVirtualized: React.FC<
                   {virtualizer.getVirtualItems().map((virtualRow, index) => {
                     const row = rows[
                       virtualRow.index
-                    ] as Row<TitulosConciliadosProps>;
+                    ] as Row<ConciliacoesProps>;
                     return (
                       <tr
-                        key={"tituloConciliado tr" + virtualRow.index + index}
+                        key={
+                          "transacaoConciliada tr" + virtualRow.index + index
+                        }
                         style={{
                           display: "flex",
                           position: "absolute",
@@ -238,7 +247,7 @@ const ReactTableVirtualized: React.FC<
                           return (
                             <td
                               className="flex items-center p-2 "
-                              key={"tituloConciliado td" + cell.id + index}
+                              key={"transacaoConciliada td" + cell.id + index}
                               style={{
                                 display: "flex",
                                 width: cell.column.getSize(),
@@ -259,7 +268,7 @@ const ReactTableVirtualized: React.FC<
             </div>
           ) : (
             <div className="h-full w-full flex items-center justify-center">
-              Nenhum título encontrado
+              Nenhuma transação encontrada
             </div>
           )}
         </div>
@@ -268,12 +277,12 @@ const ReactTableVirtualized: React.FC<
   );
 };
 
-const TitulosConciliados = ({
+const Conciliacoes = ({
   data,
   isLoading,
   isError,
 }: {
-  data: TitulosConciliadosProps[];
+  data: ConciliacoesProps[];
   isLoading: boolean;
   isError: boolean;
 }) => {
@@ -283,8 +292,6 @@ const TitulosConciliados = ({
   if (isLoading) {
     return (
       <div className="flex flex-col gap-2">
-        <Skeleton className="w-100 h-8" />
-        <Skeleton className="h-16" />
         <div className="flex flex-col w-full gap-2">
           <Skeleton className="h-6 w-full" />
           <Skeleton className="h-6 w-full" />
@@ -315,4 +322,4 @@ const TitulosConciliados = ({
   );
 };
 
-export default TitulosConciliados;
+export default Conciliacoes;

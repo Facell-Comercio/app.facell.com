@@ -15,17 +15,21 @@ import { checkUserPermission } from "@/helpers/checkAuthorization";
 import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
 // import { useStoreConciliacaoCP } from "@/pages/financeiro/extratos-bancarios/conciliacao/conciliacaocp/store";
 import { HandCoins, X } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { TitulosConciliarProps } from "../tables/TitulosConciliar";
-import { TransacaoConciliarProps } from "../tables/TransacoesConciliar";
+import { TransacoesConciliarProps } from "../tables/TransacoesConciliar";
 import { useStoreTableConciliacaoCP } from "../tables/store-tables";
 import FormConciliacaoCP from "./Form";
 import { useStoreConciliacaoCP } from "./store";
 
 export type ConciliacaoCPSchemaProps = {
   id?: string;
-  transacoes: TransacaoConciliarProps[];
+  transacoes: TransacoesConciliarProps[];
   titulos: TitulosConciliarProps[];
+  data_pagamento?: string;
+  data_conciliacao?: string;
+  responsavel?: string;
+  tipo?: string;
 };
 
 const ModalConciliarCP = () => {
@@ -41,8 +45,8 @@ const ModalConciliarCP = () => {
 
   const { data, isLoading } = useConciliacaoCP().getOne(id);
 
-  const { mutate: deleteConciliacaoCP } =
-    useConciliacaoCP().deleteConciliacaoCP();
+  const { mutate: deleteConciliacao, isSuccess } =
+    useConciliacaoCP().deleteConciliacao();
   const newData: ConciliacaoCPSchemaProps & Record<string, any> =
     {} as ConciliacaoCPSchemaProps & Record<string, any>;
 
@@ -81,9 +85,14 @@ const ModalConciliarCP = () => {
   //   toggleModalConciliarCPs();
   // }
 
-  function excluirConciliacaoCP() {
-    deleteConciliacaoCP({ id, titulos: data?.data.titulos });
-    toggleModal();
+  useEffect(() => {
+    if (isSuccess) {
+      toggleModal();
+    }
+  }, [isSuccess]);
+
+  async function excluirConciliacaoCP() {
+    deleteConciliacao(id);
   }
 
   return (
@@ -94,7 +103,7 @@ const ModalConciliarCP = () => {
             {id ? `Conciliação: ${id}` : "Nova Conciliação"}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[70vh] max-w-full">
+        <ScrollArea className="max-h-[75vh] max-w-full">
           {modalOpen && !isLoading ? (
             <FormConciliacaoCP id={id} data={newData} formRef={formRef} />
           ) : (

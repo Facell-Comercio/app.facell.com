@@ -11,12 +11,13 @@ import {
 } from "@tanstack/react-table";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { normalizeCurrency } from "@/helpers/mask";
+import { sliceString } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { formatDate } from "date-fns";
 import { useMemo, useRef, useState } from "react";
+import { useStoreTableConciliacaoCP } from "./store-tables";
 
-export type TransacaoConciliarProps = {
+export type TransacoesConciliarProps = {
   id_conciliacao?: string;
   id?: string;
   id_transacao: string;
@@ -27,18 +28,21 @@ export type TransacaoConciliarProps = {
   data_transacao: string;
 };
 
-interface RowVirtualizerTransacaoConciliarProps {
-  data: TransacaoConciliarProps[];
+interface RowVirtualizerTransacoesConciliarProps {
+  data: TransacoesConciliarProps[];
   rowSelection: RowSelectionState;
   handleRowSelection: (data: any) => void;
+  transacoesSelection: String[];
 }
 
 const ReactTableVirtualized: React.FC<
-  RowVirtualizerTransacaoConciliarProps
-> = ({ data, rowSelection, handleRowSelection }) => {
+  RowVirtualizerTransacoesConciliarProps
+> = ({ data, rowSelection, handleRowSelection, transacoesSelection }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const handleTransacoesSelection =
+    useStoreTableConciliacaoCP.getState().handleTransacoesSelection;
 
-  const columns = useMemo<ColumnDef<TransacaoConciliarProps>[]>(
+  const columns = useMemo<ColumnDef<TransacoesConciliarProps>[]>(
     () => [
       {
         id: "select",
@@ -46,8 +50,8 @@ const ReactTableVirtualized: React.FC<
           <div className="flex items-center justify-center">
             <Checkbox
               checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && "indeterminate")
+                data.length == transacoesSelection.length ||
+                (transacoesSelection.length > 0 && "indeterminate")
               }
               onCheckedChange={(value) =>
                 table.toggleAllPageRowsSelected(!!value)
@@ -55,59 +59,93 @@ const ReactTableVirtualized: React.FC<
             />
           </div>
         ),
-        cell: ({ row }) => (
-          <div className="flex items-center justify-center">
-            <Checkbox
-              {...{
-                checked: row.getIsSelected(),
-                disabled: !row.getCanSelect(),
-                indeterminate: row.getIsSomeSelected().toString(),
-                onCheckedChange: row.getToggleSelectedHandler(),
-              }}
-            />
-          </div>
-        ),
+        cell: ({ row }) => {
+          return (
+            <div className="flex items-center justify-center">
+              <Checkbox
+                {...{
+                  checked: transacoesSelection.includes(
+                    row.original.id_transacao
+                  ),
+                  disabled: !row.getCanSelect(),
+                  indeterminate: row.getIsSomeSelected().toString(),
+                }}
+                onCheckedChange={() => {
+                  handleTransacoesSelection({
+                    ...row.original,
+                  });
+                  row.getToggleSelectedHandler();
+                }}
+              />
+            </div>
+          );
+        },
         size: 30,
       },
       {
-        accessorKey: "id_transacao",
-        header: "ID",
-        size: 70,
+        accessorKey: "doc",
+        header: "DOC",
+        size: 100,
         cell: (info) => {
           let value = info.getValue<number>();
           return <div className="w-full text-center">{value}</div>;
         },
       },
       {
-        accessorKey: "descricao",
-        header: "DESCRIÇÃO",
-        size: 350,
-      },
-      {
-        accessorKey: "doc",
-        header: "DOC",
-        size: 100,
+        accessorKey: "data_transacao",
+        header: "TRANSAÇÃO",
+        cell: (info) => {
+          let value = formatDate(
+            new Date(info.getValue<Date | string>()),
+            "dd/MM/yyyy"
+          );
+          return <div className="w-full text-center">{value}</div>;
+        },
+        size: 80,
       },
       {
         accessorKey: "valor",
         header: "VALOR",
         size: 100,
         cell: (info) => {
-          let valor = parseFloat(info.getValue<string>());
-          return <div>{normalizeCurrency(valor)}</div>;
+          let valor = parseFloat(info.getValue<string>()).toLocaleString(
+            "pt-BR",
+            {
+              style: "decimal",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }
+          );
+
+          return (
+            <div className="flex w-full justify-between">
+              <span>R$</span>
+              <span>{valor}</span>
+            </div>
+          );
+        },
+      },
+
+      {
+        accessorKey: "descricao",
+        header: "DESCRIÇÃO",
+        size: 350,
+        cell: (info) => {
+          let valor = sliceString(info.getValue<string>(), 50);
+          return <div>{valor}</div>;
         },
       },
       {
-        accessorKey: "data_transacao",
-        header: "TRANSAÇÃO",
+        accessorKey: "id_transacao",
+        header: "ID",
+        size: 100,
         cell: (info) => {
-          let value = formatDate(info.getValue<Date>(), "dd/MM/yyyy");
+          let value = info.getValue<number>();
           return <div className="w-full text-center">{value}</div>;
         },
-        size: 80,
       },
     ],
-    []
+    [transacoesSelection]
   );
 
   const table = useReactTable({
@@ -162,65 +200,66 @@ const ReactTableVirtualized: React.FC<
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="overflow-hidden border pr-2">
+      <div className="overflow-hidden border">
         <div
           ref={parentRef}
-          className="h-[500px] overflow-auto scroll-thin relative"
+          className="h-[500px] overflow-auto scroll-thin relative bg-background"
         >
-          <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-            <table className="grid text-nowrap text-xs hover:">
-              <thead className="grid sticky top-0 z-10 border bg-gray-800">
-                {table.getHeaderGroups().map((headerGroup, index) => (
-                  <tr
-                    className="flex w-full"
-                    key={"transacaoConciliar thead" + headerGroup.id + index}
-                  >
-                    {headerGroup.headers.map((header, index) => {
-                      return (
-                        <th
-                          className="py-2"
-                          key={"transacaoConciliar th" + header.id + index}
-                          colSpan={header.colSpan}
-                          style={{ width: header.getSize() }}
-                        >
-                          {header.isPlaceholder ? null : (
-                            <div
-                              {...{
-                                className: header.column.getCanSort()
-                                  ? "cursor-pointer select-none"
-                                  : "",
-                                onClick:
-                                  header.column.getToggleSortingHandler(),
-                              }}
-                            >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                              {{
-                                asc: " 🔼",
-                                desc: " 🔽",
-                              }[header.column.getIsSorted() as string] ?? null}
-                            </div>
-                          )}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </thead>
-              <tbody
-                style={{
-                  display: "grid",
-                  height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-                  position: "relative", //needed for absolute positioning of rows
-                }}
-              >
-                {data.length > 0 ? (
-                  virtualizer.getVirtualItems().map((virtualRow, index) => {
+          {data.length > 0 ? (
+            <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
+              <table className="grid text-nowrap text-xs hover:">
+                <thead className="grid sticky top-0 z-10 border-y bg-background">
+                  {table.getHeaderGroups().map((headerGroup, index) => (
+                    <tr
+                      className="flex w-full"
+                      key={"transacaoConciliar thead" + headerGroup.id + index}
+                    >
+                      {headerGroup.headers.map((header, index) => {
+                        return (
+                          <th
+                            className="py-2"
+                            key={"transacaoConciliar th" + header.id + index}
+                            colSpan={header.colSpan}
+                            style={{ width: header.getSize() }}
+                          >
+                            {header.isPlaceholder ? null : (
+                              <div
+                                {...{
+                                  className: header.column.getCanSort()
+                                    ? "cursor-pointer select-none"
+                                    : "",
+                                  onClick:
+                                    header.column.getToggleSortingHandler(),
+                                }}
+                              >
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                                {{
+                                  asc: " 🔼",
+                                  desc: " 🔽",
+                                }[header.column.getIsSorted() as string] ??
+                                  null}
+                              </div>
+                            )}
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody
+                  style={{
+                    display: "grid",
+                    height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
+                    position: "relative", //needed for absolute positioning of rows
+                  }}
+                >
+                  {virtualizer.getVirtualItems().map((virtualRow, index) => {
                     const row = rows[
                       virtualRow.index
-                    ] as Row<TransacaoConciliarProps>;
+                    ] as Row<TransacoesConciliarProps>;
                     return (
                       <tr
                         key={"transacaoConciliar tr" + virtualRow.index + index}
@@ -230,11 +269,12 @@ const ReactTableVirtualized: React.FC<
                           transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
                           width: "100%",
                         }}
+                        className="bg-background"
                       >
                         {row.getVisibleCells().map((cell, index) => {
                           return (
                             <td
-                              className="flex items-center p-2 border-b"
+                              className="flex items-center p-2 "
                               key={"transacaoConciliar td" + cell.id + index}
                               style={{
                                 display: "flex",
@@ -250,15 +290,15 @@ const ReactTableVirtualized: React.FC<
                         })}
                       </tr>
                     );
-                  })
-                ) : (
-                  <tr className="flex w-full items-center p-6">
-                    <td>Nenhum título a exibir...</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="h-full w-full flex items-center justify-center bg-background">
+              Nenhuma transação encontrada
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -270,12 +310,14 @@ const TransacoesConciliar = ({
   isLoading,
   isError,
   rowSelection,
+  transacoesSelection,
   handleRowSelection,
 }: {
-  data: TransacaoConciliarProps[];
+  data: TransacoesConciliarProps[];
   isLoading: boolean;
   isError: boolean;
   rowSelection: RowSelectionState;
+  transacoesSelection: String[];
   handleRowSelection: (data: any) => void;
 }) => {
   // @ts-ignore
@@ -301,7 +343,7 @@ const TransacoesConciliar = ({
 
   if (isError) {
     return (
-      <div className="text-red-500">
+      <div className="text-red-500 text-center p-1">
         Ocorreu um erro ao tentar buscar os dados!
       </div>
     );
@@ -313,6 +355,7 @@ const TransacoesConciliar = ({
         data={rows}
         rowSelection={rowSelection}
         handleRowSelection={handleRowSelection}
+        transacoesSelection={transacoesSelection}
       />
     </div>
   );

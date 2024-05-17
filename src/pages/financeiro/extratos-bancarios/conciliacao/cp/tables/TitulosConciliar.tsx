@@ -11,12 +11,14 @@ import {
 } from "@tanstack/react-table";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { normalizeCurrency } from "@/helpers/mask";
+import { sliceString } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { formatDate } from "date-fns";
 import { useMemo, useRef, useState } from "react";
+import { useStoreTableConciliacaoCP } from "./store-tables";
 
 export type TitulosConciliarProps = {
+  id_conciliacao?: string;
   id_titulo: string;
   num_doc: string;
   valor: string;
@@ -24,13 +26,14 @@ export type TitulosConciliarProps = {
   descricao: string;
   filial: string;
   data_pagamento: string;
-  valor_pagar?: string;
+  valor_pago?: string;
   tipo_baixa?: string;
 };
 
 interface RowVirtualizerTitulosConciliarProps {
   data: TitulosConciliarProps[];
   rowSelection: RowSelectionState;
+  titulosSelection: String[];
   handleRowSelection: (data: any) => void;
 }
 
@@ -38,38 +41,51 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
   data,
   rowSelection,
   handleRowSelection,
+  titulosSelection,
 }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-
+  const handleTitulosSelection =
+    useStoreTableConciliacaoCP.getState().handleTitulosSelection;
   const columns = useMemo<ColumnDef<TitulosConciliarProps>[]>(
     () => [
       {
         id: "select",
-        header: ({ table }) => (
-          <div className="flex items-center justify-center">
-            <Checkbox
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && "indeterminate")
-              }
-              onCheckedChange={(value) =>
-                table.toggleAllPageRowsSelected(!!value)
-              }
-            />
-          </div>
-        ),
-        cell: ({ row }) => (
-          <div className="flex items-center justify-center">
-            <Checkbox
-              {...{
-                checked: row.getIsSelected(),
-                disabled: !row.getCanSelect(),
-                indeterminate: row.getIsSomeSelected().toString(),
-                onCheckedChange: row.getToggleSelectedHandler(),
-              }}
-            />
-          </div>
-        ),
+        header: ({ table }) => {
+          return (
+            <div className="flex items-center justify-center">
+              <Checkbox
+                checked={
+                  data.length == titulosSelection.length ||
+                  (titulosSelection.length > 0 && "indeterminate")
+                }
+                onCheckedChange={(value) =>
+                  table.toggleAllPageRowsSelected(!!value)
+                }
+              />
+            </div>
+          );
+        },
+        cell: ({ row }) => {
+          return (
+            <div className="flex items-center justify-center">
+              <Checkbox
+                {...{
+                  checked: titulosSelection.includes(row.original.id_titulo),
+                  disabled: !row.getCanSelect(),
+                  indeterminate: row.getIsSomeSelected().toString(),
+                }}
+                onCheckedChange={() => {
+                  handleTitulosSelection({
+                    ...row.original,
+                    valor_pago: row.original.valor,
+                    tipo_baixa: "PADRÃO",
+                  });
+                  row.getToggleSelectedHandler();
+                }}
+              />
+            </div>
+          );
+        },
         size: 30,
       },
       {
@@ -82,40 +98,66 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
         },
       },
       {
-        accessorKey: "descricao",
-        header: "DESCRIÇÃO",
-        size: 350,
-      },
-      {
-        accessorKey: "nome_fornecedor",
-        header: "FORNECEDOR",
-        size: 300,
+        accessorKey: "data_pagamento",
+        header: "PAGAMENTO",
+        cell: (info) => {
+          let value = formatDate(
+            new Date(info.getValue<Date | string>()),
+            "dd/MM/yyyy"
+          );
+          return <div className="w-full text-center">{value}</div>;
+        },
+        size: 80,
       },
       {
         accessorKey: "valor",
         header: "VALOR",
         size: 80,
+
         cell: (info) => {
-          let valor = parseFloat(info.getValue<string>());
-          return <div>{normalizeCurrency(valor)}</div>;
+          let valor = parseFloat(info.getValue<string>()).toLocaleString(
+            "pt-BR",
+            {
+              style: "decimal",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }
+          );
+
+          return (
+            <div className="flex w-full justify-between">
+              <span>R$</span>
+              <span>{valor}</span>
+            </div>
+          );
+        },
+      },
+
+      {
+        accessorKey: "descricao",
+        header: "DESCRIÇÃO",
+        size: 350,
+        cell: (info) => {
+          let valor = sliceString(info.getValue<string>(), 50);
+          return <div>{valor}</div>;
+        },
+      },
+      {
+        accessorKey: "nome_fornecedor",
+        header: "FORNECEDOR",
+        size: 280,
+        cell: (info) => {
+          let valor = sliceString(info.getValue<string>(), 40);
+          return <div>{valor}</div>;
         },
       },
       {
         accessorKey: "filial",
         header: "FILIAL",
-        size: 300,
-      },
-      {
-        accessorKey: "data_pagamento",
-        header: "PAGAMENTO",
-        cell: (info) => {
-          let value = formatDate(info.getValue<Date>(), "dd/MM/yyyy");
-          return <div className="w-full text-center">{value}</div>;
-        },
-        size: 80,
+        size: 220,
       },
     ],
-    []
+    [titulosSelection]
   );
 
   const table = useReactTable({
@@ -142,8 +184,9 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
           filial: data[+c].filial,
           tipo_baixa: "PADRÃO",
           valor_pago: data[+c].valor,
+          data_pagamento: data[+c].data_pagamento,
         }));
-        console.log(titulos);
+        console.log(titulos, result);
 
         handleRowSelection({
           rowSelection: result,
@@ -174,59 +217,60 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
       <div className="overflow-hidden border">
         <div
           ref={parentRef}
-          className="h-[500px] overflow-auto scroll-thin relative"
+          className="h-[500px] overflow-auto scroll-thin relative bg-background"
         >
-          <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-            <table className="grid text-nowrap text-xs ">
-              <thead className="grid sticky top-0 z-10 border bg-gray-800">
-                {table.getHeaderGroups().map((headerGroup, index) => (
-                  <tr
-                    className="flex w-full"
-                    key={"tituloConciliar thead" + headerGroup.id + index}
-                  >
-                    {headerGroup.headers.map((header, index) => {
-                      return (
-                        <th
-                          className="py-2"
-                          key={"tituloConciliar th" + header.id + index}
-                          colSpan={header.colSpan}
-                          style={{ width: header.getSize() }}
-                        >
-                          {header.isPlaceholder ? null : (
-                            <div
-                              {...{
-                                className: header.column.getCanSort()
-                                  ? "cursor-pointer select-none"
-                                  : "",
-                                onClick:
-                                  header.column.getToggleSortingHandler(),
-                              }}
-                            >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                              {{
-                                asc: " 🔼",
-                                desc: " 🔽",
-                              }[header.column.getIsSorted() as string] ?? null}
-                            </div>
-                          )}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </thead>
-              <tbody
-                style={{
-                  display: "grid",
-                  height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-                  position: "relative", //needed for absolute positioning of rows
-                }}
-              >
-                {data.length > 0 ? (
-                  virtualizer.getVirtualItems().map((virtualRow, index) => {
+          {data.length > 0 ? (
+            <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
+              <table className="grid text-nowrap text-xs ">
+                <thead className="grid sticky top-0 z-10 border-y bg-background">
+                  {table.getHeaderGroups().map((headerGroup, index) => (
+                    <tr
+                      className="flex w-full"
+                      key={"tituloConciliar thead" + headerGroup.id + index}
+                    >
+                      {headerGroup.headers.map((header, index) => {
+                        return (
+                          <th
+                            className="py-2"
+                            key={"tituloConciliar th" + header.id + index}
+                            colSpan={header.colSpan}
+                            style={{ width: header.getSize() }}
+                          >
+                            {header.isPlaceholder ? null : (
+                              <div
+                                {...{
+                                  className: header.column.getCanSort()
+                                    ? "cursor-pointer select-none"
+                                    : "",
+                                  onClick:
+                                    header.column.getToggleSortingHandler(),
+                                }}
+                              >
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                                {{
+                                  asc: " 🔼",
+                                  desc: " 🔽",
+                                }[header.column.getIsSorted() as string] ??
+                                  null}
+                              </div>
+                            )}
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody
+                  style={{
+                    display: "grid",
+                    height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
+                    position: "relative", //needed for absolute positioning of rows
+                  }}
+                >
+                  {virtualizer.getVirtualItems().map((virtualRow, index) => {
                     const row = rows[
                       virtualRow.index
                     ] as Row<TitulosConciliarProps>;
@@ -240,11 +284,12 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
                           transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
                           width: "100%",
                         }}
+                        className="bg-background"
                       >
                         {row.getVisibleCells().map((cell, index) => {
                           return (
                             <td
-                              className="flex virtualRows-center p-2 border-b"
+                              className="flex items-center p-2"
                               key={"tituloConciliar td" + cell.id + index}
                               style={{
                                 display: "flex",
@@ -260,15 +305,15 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
                         })}
                       </tr>
                     );
-                  })
-                ) : (
-                  <tr className="flex w-full items-center p-6">
-                    <td>Nenhum título a exibir...</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="h-full w-full flex items-center justify-center">
+              Nenhum título encontrado
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -280,12 +325,14 @@ const TitulosConciliar = ({
   isLoading,
   isError,
   rowSelection,
+  titulosSelection,
   handleRowSelection,
 }: {
   data: TitulosConciliarProps[];
   isLoading: boolean;
   isError: boolean;
   rowSelection: RowSelectionState;
+  titulosSelection: String[];
   handleRowSelection: (data: any) => void;
 }) => {
   // @ts-ignore
@@ -313,7 +360,7 @@ const TitulosConciliar = ({
 
   if (isError) {
     return (
-      <div className="text-red-500">
+      <div className="text-red-500 text-center p-1">
         Ocorreu um erro ao tentar buscar os dados!
       </div>
     );
@@ -325,6 +372,7 @@ const TitulosConciliar = ({
         data={rows}
         rowSelection={rowSelection}
         handleRowSelection={handleRowSelection}
+        titulosSelection={titulosSelection}
       />
     </div>
   );

@@ -19,7 +19,7 @@ export const ItemCP = ({
   return (
     <AccordionItem
       value={value}
-      className="relative last:border-0 border-b dark:border-slate-800"
+      className="relative last:border-0 border-b bg-background"
     >
       <AccordionTrigger className={`py-1 hover:no-underline`}>
         <span className="">{title}</span>

@@ -110,3 +110,13 @@ export const normalizeFirstAndLastName = (nomeCompleto: string) => {
         return arrayMes[+mes-1].toLocaleLowerCase()
     }
   }
+
+  export const sliceString = (texto:string, maxWidth:number) => {
+    if (texto.length > maxWidth) {
+        const ultimaPosicaoEspaco = texto.lastIndexOf(' ', maxWidth);
+        const textoCortado = ultimaPosicaoEspaco === -1 ? texto.slice(0, maxWidth) : texto.slice(0, ultimaPosicaoEspaco);
+        return textoCortado + '...';
+    } else {
+        return texto;
+    }
+}

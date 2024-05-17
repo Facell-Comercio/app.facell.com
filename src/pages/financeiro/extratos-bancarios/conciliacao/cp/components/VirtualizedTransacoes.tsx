@@ -3,16 +3,14 @@ import * as React from "react";
 import { Input } from "@/components/custom/FormInput";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { TransacoesConciliadasProps } from "../tables/TransacoesConciliadas";
+import { TransacoesConciliarProps } from "../tables/TransacoesConciliar";
 
 interface VirtualizerTransacoesProps {
-  data: TransacoesConciliadasProps[];
-  form: any;
+  data: TransacoesConciliarProps[];
 }
 
 const VirtualizedTransacoes: React.FC<VirtualizerTransacoesProps> = ({
   data,
-  form,
 }) => {
   const parentElement = React.useRef(null);
 
@@ -26,78 +24,76 @@ const VirtualizedTransacoes: React.FC<VirtualizerTransacoesProps> = ({
   });
 
   return (
-    <section className=" overflow-auto scroll-thin ">
-      <div className="flex gap-1 font-medium text-xs px-1 w-full sticky top-0 z-10">
-        <p className="min-w-16 text-center">ID</p>
-        <p className="min-w-64">Descrição</p>
-        <p className="min-w-32 text-center">Doc</p>
-        <p className="min-w-32 text-center">Valor</p>
-        <p className="min-w-32 text-center">Transação</p>
+    <section
+      ref={parentElement}
+      className="h-[52vh] w-full overflow-auto scroll-thin"
+    >
+      <div className="flex gap-1 font-medium text-xs px-1 w-full sticky top-0 z-10 bg-background">
+        <p className="min-w-16 text-center bg-background">ID</p>
+        <p className="min-w-64 pl-2 bg-background">Descrição</p>
+        <p className="min-w-24 text-center bg-background">Doc</p>
+        <p className="min-w-28 pl-2 bg-background">Valor</p>
+        <p className="min-w-28 text-center bg-background">Transação</p>
       </div>
       <div
-        ref={parentElement}
-        className="pe-2 h-[400px] w-full border-green-500"
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          width: "100%",
+          position: "relative",
+        }}
       >
-        <div
-          style={{
-            height: `${virtualizer.getTotalSize()}px`,
-            width: "100%",
-            position: "relative",
-          }}
-        >
-          {virtualizer.getVirtualItems().map((item, index) => {
-            return (
-              <div
-                // ref={virtualizer.measureElement}
-                key={item.index}
-                data-index={index}
-                className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
-                  virtualizer.getVirtualItems().length == 0 && "hidden"
-                }`}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: `${item.size}px`,
-                  transform: `translateY(${item.start}px)`,
-                }}
-              >
-                <Input
-                  className="text-xs w-16 h-8 p-2 text-center"
-                  value={data[item.index].id_transacao || ""}
-                  readOnly={true}
-                />
-                <Input
-                  className="text-xs min-w-64 h-8 p-2"
-                  value={data[item.index].descricao}
-                  readOnly={true}
-                />
-                <Input
-                  className="text-xs min-w-32 h-8 p-2 text-center"
-                  value={data[item.index].doc}
-                  readOnly={true}
-                />
-                <Input
-                  className="text-xs w-32 h-8 p-2 text-center"
-                  value={
-                    data[item.index].valor &&
-                    normalizeCurrency(data[item.index].valor)
-                  }
-                  readOnly={true}
-                />
-                <Input
-                  className="text-xs min-w-32 h-8 p-2 text-center"
-                  value={
-                    data[item.index].data_transacao &&
-                    normalizeDate(data[item.index].data_transacao)
-                  }
-                  readOnly={true}
-                />
-              </div>
-            );
-          })}
-        </div>
+        {virtualizer.getVirtualItems().map((item, index) => {
+          return (
+            <div
+              // ref={virtualizer.measureElement}
+              key={item.index}
+              data-index={index}
+              className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
+                virtualizer.getVirtualItems().length == 0 && "hidden"
+              }`}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: `${item.size}px`,
+                transform: `translateY(${item.start}px)`,
+              }}
+            >
+              <Input
+                className="text-xs w-16 h-8 p-2 text-center"
+                value={data[item.index].id_transacao || ""}
+                readOnly={true}
+              />
+              <Input
+                className="text-xs min-w-64 h-8 p-2"
+                value={data[item.index].descricao}
+                readOnly={true}
+              />
+              <Input
+                className="text-xs w-24 h-8 p-2 text-center"
+                value={data[item.index].doc}
+                readOnly={true}
+              />
+              <Input
+                className="text-xs w-28 h-8 p-2"
+                value={
+                  data[item.index].valor &&
+                  normalizeCurrency(data[item.index].valor)
+                }
+                readOnly={true}
+              />
+              <Input
+                className="text-xs w-28 h-8 p-2 text-center"
+                value={
+                  data[item.index].data_transacao &&
+                  normalizeDate(data[item.index].data_transacao)
+                }
+                readOnly={true}
+              />
+            </div>
+          );
+        })}
       </div>
     </section>
   );

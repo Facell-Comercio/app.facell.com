@@ -1,9 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Form } from "@/components/ui/form";
-import { List } from "lucide-react";
+import { Fingerprint, List } from "lucide-react";
 import { useState } from "react";
 
 // Componentes
+import { Input } from "@/components/custom/FormInput";
 import {
   Card,
   CardContent,
@@ -11,7 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { normalizeCurrency } from "@/helpers/mask";
+import { toast } from "@/components/ui/use-toast";
+import {
+  normalizeCurrency,
+  normalizeDate,
+  normalizeFirstAndLastName,
+} from "@/helpers/mask";
+import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
+import { useStoreTableConciliacaoCP } from "../tables/store-tables";
 import { ConciliacaoCPSchemaProps } from "./ModalConciliar";
 import { default as VirtualizedTitulos } from "./VirtualizedTitulos";
 import VirtualizedTransacoes from "./VirtualizedTransacoes";
@@ -26,93 +34,128 @@ const FormConciliacaoCP = ({
   data: ConciliacaoCPSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  // console.log("RENDER - ConciliacaoCPs:", id);
-  // const { mutate: insertOne } = useConciliacaoCP().insertOne();
-  // const { mutate: update } = useConciliacaoCP().update();
-  // const { mutate: transferTitulos } = useConciliacaoCP().transferTitulos();
+  console.log("RENDER - ConciliacaoCPs:", id);
+  const { mutate: conciliacaoManual } = useConciliacaoCP().conciliacaoManual();
 
   const closeModal = useStoreConciliacaoCP().closeModal;
+
+  const [resetSelections, data_pagamento] = useStoreTableConciliacaoCP(
+    (state) => [state.resetSelections, state.data_pagamento]
+  );
 
   useState<boolean>(false);
 
   const { form, titulos } = useFormConciliacaoCPData(data);
   const transacoes = data.transacoes;
 
-  const totalTitulos = titulos.reduce(
-    (acc, val) => acc + parseFloat(val.valor_pago || "0"),
-    0
-  );
+  const totalTitulos = form
+    .watch("titulos")
+    .reduce((acc, val) => acc + parseFloat(val.valor_pago || "0"), 0);
   const totalTransacoes = transacoes.reduce(
     (acc, val) => acc + parseFloat(val.valor),
     0
   );
 
   function onSubmitData(newData: ConciliacaoCPSchemaProps) {
-    // const filteredData: ConciliacaoCPSchemaProps = {
-    //   id: newData.id,
-    //   titulos: newData.titulos?.filter(
-    //     (titulo: TitulosConciliarProps) =>
-    //       !data.titulos.find((obj) => obj.id_titulo == titulo.id_titulo)
-    //   ),
-    // };
-
-    // console.log(filteredData);
+    if (totalTitulos !== totalTransacoes) {
+      toast({
+        title: "Valores incorretos!",
+        description: "O total dos títulos e das transações não são iguais",
+        variant: "warning",
+      });
+      return;
+    }
     console.log(newData);
 
-    // update(filteredData);
-
+    conciliacaoManual({ ...newData, data_pagamento: data_pagamento });
+    resetSelections();
     closeModal();
   }
 
   return (
     <Form {...form}>
-      <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
+      <form
+        ref={formRef}
+        onSubmit={form.handleSubmit(onSubmitData)}
+        className="flex flex-col gap-2"
+      >
         {/* Dados dos títulos conciliados*/}
+        {!!id && (
+          <div className="flex flex-col flex-1 w-full p-3 bg-slate-200 dark:bg-blue-950 rounded-lg relative">
+            <div className="flex items-center gap-2 mb-3 justify-between">
+              <span className="flex gap-2 items-center">
+                <Fingerprint />{" "}
+                <span className="text-lg font-bold ">Dados da Conciliação</span>
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="text-sm font-medium mb-2">Responsável</label>
+                <Input
+                  value={normalizeFirstAndLastName(
+                    data.responsavel?.toUpperCase() || ""
+                  )}
+                  className="flex-1"
+                  readOnly
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-sm font-medium mb-2">
+                  Tipo de Conciliação
+                </label>
+                <Input value={data.tipo} className="flex-1" readOnly />
+              </div>
+              <div className="flex-1">
+                <label className="text-sm font-medium mb-2">
+                  Data da Conciliação
+                </label>
+                <Input
+                  value={normalizeDate(data.data_conciliacao || "")}
+                  className="flex-1"
+                  readOnly
+                />
+              </div>
+            </div>
+          </div>
+        )}
         <div className="flex flex-col flex-1 w-full p-3 bg-slate-200 dark:bg-blue-950 rounded-lg relative">
           <div className="flex items-center gap-2 mb-3 justify-between">
             <span className="flex gap-2 items-center">
               <List />{" "}
-              <span className="text-lg font-bold ">Títulos e Transações</span>
+              <span className="text-lg font-bold ">
+                Pagamentos e Transações
+              </span>
             </span>
           </div>
-
           <div className="w-full grid grid-cols-2 gap-2 relative">
-            <Card className="flex flex-col h-full">
+            <Card className="flex flex-col">
               <CardHeader className="p-2">
                 <CardTitle className="text-md text-center font-medium">
-                  Títulos a Pagar
+                  Pagamentos
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-1">
-                {titulos?.length > 0 && (
-                  <VirtualizedTitulos
-                    canEdit={!!id}
-                    data={titulos}
-                    form={form}
-                  />
-                )}
+                <VirtualizedTitulos canEdit={!!id} data={titulos} form={form} />
               </CardContent>
               <CardFooter className="flex justify-end p-2 align-botton">
-                <Badge>
+                <Badge variant={"secondary"}>
                   <p className="me-1">Valor Total: </p>
                   {normalizeCurrency(totalTitulos)}
                 </Badge>
               </CardFooter>
             </Card>
 
-            <Card className="flex flex-col h-full">
+            <Card className="flex flex-col">
               <CardHeader className="p-2">
                 <CardTitle className="text-md text-center font-medium">
-                  Transações Bancárias
+                  Transações
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-1">
-                {transacoes?.length > 0 && (
-                  <VirtualizedTransacoes data={transacoes} form={form} />
-                )}
+                <VirtualizedTransacoes data={transacoes} />
               </CardContent>
               <CardFooter className="flex p-2 mt-auto align-botton">
-                <Badge>
+                <Badge variant={"secondary"}>
                   <p className="me-1">Valor Total: </p>
                   {normalizeCurrency(totalTransacoes)}
                 </Badge>

@@ -52,7 +52,7 @@ export const SearchComponent = ({
   return (
     <div className="flex m-0 mt-0 gap-2 max-w-[50ch]">
       <Input
-        className="h-6 m-0 text-xs"
+        className="h-6 m-0 text-xs border-0"
         ref={searchRef}
         type="search"
         placeholder="Buscar..."
