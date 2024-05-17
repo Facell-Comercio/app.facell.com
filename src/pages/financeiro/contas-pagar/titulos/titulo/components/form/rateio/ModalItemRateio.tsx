@@ -190,7 +190,7 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
         }
     }, [id_grupo_economico, id_centro_custo, id_plano_conta])
 
-    const valorTotalItens = itens_rateio.filter((_, index:number)=> isUpdate ? index != indexFieldArray : true).reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0)
+    const valorTotalItens = itens_rateio.filter((_:any, index:number)=> isUpdate ? index != indexFieldArray : true).reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0)
     const previsaoConsumoOrcamento = 
     itens_rateio
     .filter((i:ItemRateioTitulo, index:number)=>i.id_centro_custo == id_centro_custo && i.id_plano_conta == id_plano_conta && isUpdate ? index != indexFieldArray : true)

@@ -12,15 +12,17 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Control, useFieldArray, useForm, useWatch } from "react-hook-form"
 
 import z from 'zod'
-import { calcularDataPrevisaoPagamento } from "../../../helpers/helper"
+import { calcularDataPrevisaoPagamento, proximoDiaUtil } from "../../../helpers/helper"
 import FormInput from "@/components/custom/FormInput"
 import FormDateInput from "@/components/custom/FormDate"
 import { useEffect, useState } from "react"
 import { TituloSchemaProps, vencimentoSchema } from "../../../form-data"
-import { Play, Plus } from "lucide-react"
+import { ListPlus, Play, Plus } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { normalizeCurrency } from "@/helpers/mask"
 import { Form } from "@/components/ui/form"
+import { VencimentoTitulo } from "../../../store"
+import { addMonths } from "date-fns"
 
 export function ModalGerarVencimentos({ control: controlTitulo }: { control: Control<TituloSchemaProps> }) {
     // WATCH TÍTULO:
@@ -36,10 +38,11 @@ export function ModalGerarVencimentos({ control: controlTitulo }: { control: Con
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     const schema = z.object({
-        data_vencimento: z.string(),
-        parcelas: z.string(),
-        valor: z.string(),
+        data_vencimento: z.coerce.date(),
+        parcelas: z.coerce.number().min(1, 'Parcela precisa ser >= 1'),
+        valor: z.coerce.number().min(0.01, 'Valor precisa ser >= R$ 0,01'),
     })
+
     const initialValues =
     {
         data_vencimento: new Date().toISOString(),
@@ -50,7 +53,7 @@ export function ModalGerarVencimentos({ control: controlTitulo }: { control: Con
     // * FORM GERAÇÃO DE VENCIMENTOS
     const form = useForm({
         resolver: zodResolver(schema),
-        defaultValues: {...initialValues},
+        defaultValues: { ...initialValues },
     })
 
     const {
@@ -66,35 +69,64 @@ export function ModalGerarVencimentos({ control: controlTitulo }: { control: Con
         erros_gerar_vencimentos: errors
     })
 
-    const onSubmit = (data: z.infer<typeof vencimentoSchema>) => {
-        return;
+    type GeradorVencimentos = {
+        data_vencimento: string,
+        parcelas: string,
+        valor: string,
+    }
 
-        const totalPrevisto = vencimentos.reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
-        const dif = totalPrevisto - parseFloat(valorTotalTitulo)
-        console.log('DIF', dif)
-        if (dif > 0) {
-            const difFormatada = normalizeCurrency(dif);
+    const onSubmit = (data: GeradorVencimentos) => {
+        let dataVencimento = data.data_vencimento || new Date();
+        let valorParcela = parseFloat(data.valor) || 0
+        let qtdeParcelas = parseFloat(data.parcelas) || 0
+
+        const valorTotalParcelas = valorParcela * qtdeParcelas;
+        const totalVencimentos = vencimentos?.reduce((acc: number, curr: VencimentoTitulo) => { return acc + parseFloat(curr.valor) }, 0);
+        const totalTitulo = parseFloat(valorTotalTitulo)
+
+        const excesso = (totalVencimentos + valorTotalParcelas) - totalTitulo;
+        if (excesso > 0) {
             toast({
-                variant: 'destructive', title: `O valor do vencimento excede o valor total em ${difFormatada}.`
+                variant: 'destructive',
+                title: `Impedimento`,
+                description: `O valor total seria excedido em ${normalizeCurrency(excesso)}`
             })
             return
         }
-        addVencimento({
-            id: new Date().getTime().toString(),
-            data_vencimento: String(data.data_vencimento),
-            data_prevista: String(data.data_prevista),
-            valor: data.valor,
-            linha_digitavel: data.linha_digitavel,
-        })
+        for (let p = 0; p < qtdeParcelas; p++) {
+            let obj = {
+                id: new Date().getTime().toString(),
+                data_vencimento: '',
+                data_prevista: '',
+                valor: valorParcela.toString(),
+                linha_digitavel: ''
+            }
 
-        form.reset()
+            // gerar uma data de vencimento e previsão
+            if(p == 0){
+                obj.data_vencimento = data.data_vencimento,
+                obj.data_prevista = calcularDataPrevisaoPagamento(data.data_vencimento).toISOString()
+            }else{
+                obj.data_vencimento = proximoDiaUtil(addMonths(dataVencimento, p)).toString()
+                obj.data_prevista = calcularDataPrevisaoPagamento(obj.data_vencimento).toISOString()
+            }
+
+            // incluir um item ao fieldArray
+            addVencimento(obj)
+        }
         setModalOpen(false)
+        toast({
+            variant: 'success',
+            title: `Geração realizada`,
+        })
+        setModalOpen(false)
+        form.reset()
     }
 
     return (
         <Dialog open={modalOpen} onOpenChange={setModalOpen}>
             <DialogTrigger asChild>
-                <Button variant="tertiary"><Plus size={18} /><Plus size={18} /> Gerar Vencimentos</Button>
+                <Button variant="tertiary" size={'sm'} ><ListPlus size={18} className="me-2"/> Gerar Vencimentos</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[50vw]">
                 <Form {...form}>
@@ -102,7 +134,7 @@ export function ModalGerarVencimentos({ control: controlTitulo }: { control: Con
                         <DialogHeader>
                             <DialogTitle>Gerar Vencimentos</DialogTitle>
                             <DialogDescription>
-                                Defina o primeiro vencimento, quantidade de parcelas e valor da parcela e os vencimentos serão gerados automaticamente. <br/>Caso o valor de uma das parcelas seja diferente, você pode gerar essa parcela diferente manualmente.
+                                Defina o primeiro vencimento, quantidade de parcelas e valor da parcela e os vencimentos serão gerados automaticamente. <br />Caso o valor de uma das parcelas seja diferente, você pode gerar essa parcela diferente manualmente.
                             </DialogDescription>
                         </DialogHeader>
 

@@ -16,6 +16,7 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import { ModalVencimento } from "./ModalVencimento";
 import { useStoreVencimento } from "./context";
 import { ModalGerarVencimentos } from "./GerarVencimentos";
+import RemoverVencimentos from "./RemoverVencimentos";
 
 type SecaoVencimentosProps = {
     id?: string | null,
@@ -37,7 +38,6 @@ const SecaoVencimentos = ({
 }: SecaoVencimentosProps) => {
 
     const {
-        fields: vencimentos,
         remove: removeVencimento,
     } = useFieldArray({
         control: form.control,
@@ -95,6 +95,7 @@ const SecaoVencimentos = ({
                 accessorKey: 'data_vencimento',
                 header: 'VENCIMENTO',
                 cell: (info) => {
+                    console.log(info.getValue())
                     let value = formatDate(info.getValue<Date>(), 'dd/MM/yyyy')
                     return <div className="w-full text-center">{value}</div>
                 },
@@ -147,6 +148,7 @@ const SecaoVencimentos = ({
                 )}
                 {canEdit && modalEditing && (
                     <div className="ms-auto flex gap-3 items-center">
+                        <RemoverVencimentos form={form}/>
                         <ModalGerarVencimentos control={form.control}/>
                         <BtnNovoVencimento />
                     </div>

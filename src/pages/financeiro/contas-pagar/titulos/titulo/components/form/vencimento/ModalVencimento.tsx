@@ -32,6 +32,7 @@ export function ModalVencimento({ control: controlTitulo }: { control: Control<T
     const form = useForm({
         resolver: zodResolver(vencimentoSchema),
         values: { ...vencimento } || { ...initialStateVencimento.vencimento },
+        defaultValues: { ...initialStateVencimento.vencimento }
     })
 
     const {
@@ -68,7 +69,6 @@ export function ModalVencimento({ control: controlTitulo }: { control: Control<T
 
                 const totalPrevisto = vencimentos.filter((_: any, index: number) => index != indexFieldArray).reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
                 const dif = totalPrevisto - parseFloat(valorTotalTitulo)
-                console.log('DIF', dif)
                 if (dif > 0) {
                     const difFormatada = normalizeCurrency(dif);
                     toast({
@@ -81,7 +81,6 @@ export function ModalVencimento({ control: controlTitulo }: { control: Control<T
         } else {
             const totalPrevisto = vencimentos.reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
             const dif = totalPrevisto - parseFloat(valorTotalTitulo)
-            console.log('DIF', dif)
             if (dif > 0) {
                 const difFormatada = normalizeCurrency(dif);
                 toast({

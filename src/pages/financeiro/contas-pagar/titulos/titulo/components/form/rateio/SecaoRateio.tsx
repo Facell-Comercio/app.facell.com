@@ -1,7 +1,7 @@
 import SelectTipoRateio from "@/components/custom/SelectTipoRateio";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/lib/axios";
-import { Divide, Download, Pen, Plus, Trash, Upload } from "lucide-react";
+import { Divide, Download, Pen, Trash, Upload } from "lucide-react";
 import { useMemo, useRef } from "react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { TituloSchemaProps } from "../../../form-data";
@@ -11,13 +11,14 @@ import { useFilial } from "@/hooks/useFilial";
 import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { Button } from "@/components/ui/button";
 import { ModalItemRateio } from "./ModalItemRateio";
-import { BtnNovoItemRateio } from "./NovoItemRateio";
+import { BtnNovoItemRateio } from "./BtnNovoItemRateio";
 import { DataVirtualTableHeaderFixed } from "@/components/custom/DataVirtualTableHeaderFixed";
 import { ColumnDef } from "@tanstack/react-table";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { useStoreRateio } from "./context";
-import { formatDate } from "date-fns";
 import { normalizeCurrency } from "@/helpers/mask";
+import RemoverItensRateio from "./BtnRemoverItensRateio";
+import { BtnPadronizarAlocacao } from "./BtnPadronizarAlocacao";
 
 type SecaoRateioProps = {
     id?: string | null,
@@ -38,7 +39,8 @@ const SecaoRateio = ({
 
     const { data } = useFilial().getAll()
     //^ WATCHES
-    const valor = form.watch("valor");
+    const valorTotalTitulo = form.watch("valor");
+    const nome_filial = form.watch('filial')
     const filiais = data?.data
     const id_filial = form.watch('id_filial')
     const id_grupo_economico = form.watch('id_grupo_economico')
@@ -49,7 +51,7 @@ const SecaoRateio = ({
     const rateio_manual = !!+form.watch("rateio_manual");
     const canEditRateio = canEdit && modalEditing;
     const canEditItensRateio = canEdit && modalEditing && rateio_manual;
-
+    console.log({ canEditItensRateio, canEdit, modalEditing, rateio_manual })
     const fileImportRateioRef = useRef<HTMLInputElement | null>(null);
 
     const {
@@ -73,9 +75,9 @@ const SecaoRateio = ({
                     const index = info.row.index
                     return (
                         <div className="w-full flex items-center justify-center gap-2">
-                            <Button onClick={()=>{
-                                updateItemRateio({index, itemRateio: witens_rateio[index]})
-                            }} type="button" variant="warning" size={'xs'}><Pen size={18}/></Button>
+                            <Button onClick={() => {
+                                updateItemRateio({ index, itemRateio: witens_rateio[index] })
+                            }} type="button" variant="warning" size={'xs'}><Pen size={18} /></Button>
 
                             <AlertPopUp
                                 title="Deseja realmente remover o item do rateio?"
@@ -112,7 +114,7 @@ const SecaoRateio = ({
                 header: 'PLANO DE CONTAS',
                 cell: (info) => {
                     let text = info.getValue<string>()
-                    return <div className={`w-full  px-2 text-end`}>{text?.substring(0,50)}</div>
+                    return <div className={`w-full  px-2 text-end`}>{text?.substring(0, 50)}</div>
                 },
                 size: 250,
             },
@@ -140,10 +142,6 @@ const SecaoRateio = ({
         [witens_rateio],
     )
 
-    const valor_total = witens_rateio.reduce((acc, curr) => {
-        return acc + parseFloat(curr.valor)
-    }, 0)
-
     async function handleChangeRateio(novo_id_rateio: string) {
         if (novo_id_rateio) {
             setValue("update_rateio", true);
@@ -156,32 +154,45 @@ const SecaoRateio = ({
                     const itensNovoRateio = novoRateio.itens;
 
                     await new Promise((resolve) => {
+                        // @ts-ignore
                         form.resetField("itens_rateio", { defaultValue: [] });
                         resolve("success");
                     });
+                    const novos_itens: ItemRateioTitulo[] = []
 
                     if (novoRateio.manual) {
-                        addItemRateio({
+                        novos_itens.push({
+                            id: new Date().getTime().toString(),
                             id_filial: `${id_filial}`,
+                            filial: nome_filial,
                             id_centro_custo: '',
                             centro_custo: '',
                             id_plano_conta: '',
                             plano_conta: '',
-                            percentual: "100.00",
-                            valor: '0',
+                            percentual: "1",
+                            valor: valorTotalTitulo,
                         });
+
+                    } else {
+                        itensNovoRateio.forEach((item: ItemRateioTitulo) => {
+                            let percent = parseFloat(item.percentual) / 100
+                            novos_itens.push({
+                                id: new Date().getTime().toString(),
+                                id_filial: `${item.id_filial || ""}`,
+                                filial: item.filial,
+                                percentual: `${percent || "0.00"}`,
+                                valor: `${parseFloat(valorTotalTitulo) * percent || '0'}`,
+                                id_centro_custo: '',
+                                centro_custo: '',
+                                id_plano_conta: '',
+                                plano_conta: '',
+                            });
+                        });
+
                     }
 
-                    itensNovoRateio?.forEach((item: ItemRateioTitulo) => {
-                        addItemRateio({
-                            id_filial: String(item.id_filial || ""),
-                            percentual: String(item.percentual || "0.00"),
-                            valor: '0',
-                            id_centro_custo: '',
-                            id_plano_conta: '',
-                        });
-                    });
-
+                    // @ts-ignore
+                    setValue('itens_rateio', novos_itens)
                     setValue("rateio_manual", !!novoRateio.manual);
                 })
                 .catch(() => {
@@ -192,11 +203,6 @@ const SecaoRateio = ({
                     });
                 });
         }
-    }
-
-    function handleAddItemRateio() {
-        setValue("update_rateio", true);
-        addItemRateio({ id_filial: "", percentual: "0.00", id_centro_custo: '', id_plano_conta: '', valor: '0' });
     }
 
     function handleRemoveItemRateio(index: number) {
@@ -244,6 +250,7 @@ const SecaoRateio = ({
                     }, 0) || 0;
 
                     setValue("update_rateio", true);
+                    // @ts-ignore
                     form.resetField("itens_rateio", { defaultValue: [] });
                     // @ts-ignore
                     result?.forEach((item: ItemRateioTitulo) => {
@@ -272,19 +279,17 @@ const SecaoRateio = ({
         }
     }
 
-    function handleChangeItemRateio() {
-        setValue("update_rateio", true);
-    }
-
     return (
         <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-            <ModalItemRateio control={form.control} canEdit={canEdit}/>
+            <ModalItemRateio control={form.control} canEdit={canEdit} />
             <div className="flex gap-2 mb-3 items-center">
                 <Divide />
                 <span className="text-lg font-bold ">
                     Definição do rateio
                 </span>
-                <div className="ms-auto">
+                <div className="ms-auto flex gap-3">
+                    <BtnPadronizarAlocacao form={form} canEditItensRateio={canEditItensRateio} />
+                    <RemoverItensRateio form={form} canEditItensRateio={canEditItensRateio} />
                     <BtnNovoItemRateio control={form.control} />
                 </div>
 
@@ -339,11 +344,6 @@ const SecaoRateio = ({
                 <span className="text-md font-medium">
                     Itens do rateio
                 </span>
-                {canEditRateio && rateio_manual && (
-                    <Button type="button" onClick={handleAddItemRateio}>
-                        <Plus size={18} className="me-2" /> Novo item Rateio
-                    </Button>
-                )}
             </div>
             <div className="flex flex-col gap-3 mt-3 max-w-screen-md">
                 <DataVirtualTableHeaderFixed

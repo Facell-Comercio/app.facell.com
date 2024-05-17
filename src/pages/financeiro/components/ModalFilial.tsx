@@ -18,7 +18,7 @@ import { normalizeCnpjNumber } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import { Filial } from "@/types/filial-type";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 
 interface IModalFilial {
@@ -139,6 +139,7 @@ const ModalFilial = ({
             <Input
               ref={searchRef}
               type="search"
+              className="h-9"
               placeholder="Buscar..."
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -146,7 +147,7 @@ const ModalFilial = ({
                 }
               }}
             />
-            <Button onClick={() => handleSearch()}>Procurar</Button>
+            <Button type="button" variant={'tertiary'} size={'sm'} onClick={() => handleSearch()}><Search size={18} className="me-2"/> Procurar</Button>
           </div>
         </DialogHeader>
 
@@ -154,13 +155,13 @@ const ModalFilial = ({
           {data?.data?.rows.map((item: Filial, index: number) => (
             <div
               key={"modal_filial_item:" + index}
-              className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2"
+              className="flex gap-1 items-center bg-secondary text-secondary-foreground justify-between mb-1 border rounded-md p-2"
             >
-              <span>
+              <span className="text-sm">
                 {item.grupo_economico} - {item.nome} - {normalizeCnpjNumber(item.cnpj)}
               </span>
               <Button
-                size={"sm"}
+                size={"xs"}
                 onClick={() => {
                   pushSelection(item);
                 }}

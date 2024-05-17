@@ -24,6 +24,6 @@ export function BtnNovoItemRateio({ control }: { control: Control<any> }) {
     const disabled = !id_filial || (!!id_rateio && !rateio_manual);
 
     return (
-        <Button disabled={disabled} type="button" onClick={newItemRateio}><Plus size={18} className="me-2" /> Adicionar Item</Button>
+        <Button disabled={disabled} type="button" size={'sm'} onClick={newItemRateio}><Plus size={18} className="me-2" /> Add Item</Button>
     )
 }

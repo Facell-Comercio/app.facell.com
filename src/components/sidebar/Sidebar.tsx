@@ -84,7 +84,7 @@ export function Sidebar() {
           <button
             onClick={handleToggleSidebar}
             className={`z-30 flex items-center p-1.5 absolute ${sidebarOpen ? "right-2" : "right-30"
-              } sm:-right-4 bottom-8 sm:bottom-auto sm:top-12 rounded-full shadow-lg bg-blue-100 hover:bg-blue-100 dark:bg-blue-700 dark:hover:bg-blue-800 `}
+              } sm:-right-4 bottom-8 sm:bottom-auto sm:top-12 rounded-full shadow-lg bg-primary text-primary-foreground `}
           >
             {sidebarOpen ? <ChevronLeft /> : <ChevronRight />}
             <span className="sm:hidden text-sm">Menu</span>
@@ -110,8 +110,8 @@ export function Sidebar() {
                   }}
                   to={(item.type === "link" && item.uri) || "#"}
                   className={`${!sidebarOpen && "justify-center"}  ${item.type === "title" ? "text-primary" : " light:text-slate-300"
-                    } text-sm flex items-center gap-x-4  rounded-md ${item.spacing ? "mt-6" : "mt-1"} ${item.type !== "title" && "hover:bg-blue-200 dark:hover:bg-blue-800 cursor-pointer"}
-              ${(itemActive?.parentIndex === itemIndex || (itemActive?.index === itemIndex && itemActive.sub === false)) && "text-white  bg-blue-800 duration-300"}
+                    } text-sm flex items-center gap-x-4  rounded-md ${item.spacing ? "mt-6" : "mt-1"} ${item.type !== "title" && "hover:bg-primary hover:text-primary-foreground  cursor-pointer"}
+              ${(itemActive?.parentIndex === itemIndex || (itemActive?.index === itemIndex && itemActive.sub === false)) && "bg-primary text-primary-foreground duration-300"}
               `}
                 >
                   <div
@@ -127,7 +127,7 @@ export function Sidebar() {
                       {item?.shortName && <div className="flex items-center justify-center">{item.shortName}</div>}
                       {!sidebarOpen && (
                         <div
-                          className={`absolute left-full rounded-md px-2 py-1 ml-6 text-nowrap bg-blue-100 text-blue-800 text-sm opacity-20 invisible -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
+                          className={`absolute left-full rounded-md px-2 py-1 ml-6 text-nowrap bg-primary text-primary-foreground text-sm opacity-20 invisible -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
                         >
                           {item.name}
                         </div>
@@ -150,9 +150,9 @@ export function Sidebar() {
                         }} key={subitemIndex} to={(subitem.type === "link" && subitem.uri) || "#"}>
                           <li
                             className={`
-                        group flex ml-3 mt-1 px-2 py-2 rounded cursor-pointer text-slate-500 hover:text-white hover:bg-blue-800
+                        group flex ml-3 mt-1 px-2 py-2 rounded cursor-pointer
                         ${sidebarOpen ? "" : "justify-center"}
-                        ${itemActive?.parentIndex === itemIndex && itemActive?.sub === true && itemActive?.index === subitemIndex && " bg-blue-800 text-white"}
+                        ${itemActive?.parentIndex === itemIndex && itemActive?.sub === true && itemActive?.index === subitemIndex && " bg-primary text-primary-foreground"}
                         `}
                             onClick={() => {
                               setItemActive({ sub: true, index: subitemIndex, parentIndex: itemIndex });

@@ -597,35 +597,36 @@ const FormTituloPagar = ({
                   {/* Abas Vencimentos / Rateio entre filiais */}
                   {
                     valorTotalTitulo > 0 && !!id_matriz ? (
-                      < Tabs defaultValue="vencimentos" className="">
-                        <TabsList className="grid w-full grid-cols-2">
-                          <TabsTrigger value="vencimentos">Vencimentos</TabsTrigger>
-                          <TabsTrigger value="rateio">Rateio da solicitação</TabsTrigger>
-                        </TabsList>
+                      <div>
+                        <Tabs defaultValue="vencimentos" className="max-w-full">
+                          <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="vencimentos">Vencimentos</TabsTrigger>
+                            <TabsTrigger value="rateio">Rateio da solicitação</TabsTrigger>
+                          </TabsList>
 
-                        <TabsContent value="vencimentos">
-                          <SecaoVencimentos
-                            id={id}
-                            form={form}
-                            canEdit={canEdit}
-                            modalEditing={modalEditing}
-                            disabled={disabled}
-                            readOnly={readOnly}
-                          />
-                        </TabsContent>
+                          <TabsContent value="vencimentos">
+                            <SecaoVencimentos
+                              id={id}
+                              form={form}
+                              canEdit={canEdit}
+                              modalEditing={modalEditing}
+                              disabled={disabled}
+                              readOnly={readOnly}
+                            />
+                          </TabsContent>
 
-                        <TabsContent value="rateio">
-                          <SecaoRateio
-                            id={id}
-                            form={form}
-                            disabled={disabled}
-                            canEdit={canEdit}
-                            modalEditing={modalEditing}
+                          <TabsContent value="rateio">
+                            <SecaoRateio
+                              id={id}
+                              form={form}
+                              disabled={disabled}
+                              canEdit={canEdit}
+                              modalEditing={modalEditing}
 
-                          />
-                        </TabsContent>
-                      </Tabs>
-
+                            />
+                          </TabsContent>
+                        </Tabs>
+                      </div>
                     ) : (
                       <Alert variant='destructive'>
                         <AlertTriangle className="h-4 w-4" />

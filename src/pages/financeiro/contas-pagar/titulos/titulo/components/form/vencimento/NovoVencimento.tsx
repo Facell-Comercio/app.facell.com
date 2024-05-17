@@ -7,6 +7,6 @@ export function BtnNovoVencimento() {
     const newVencimento = useStoreVencimento().newVencimento
 
     return (
-        <Button type="button" onClick={newVencimento}><Plus size={18} className="me-2"/> Novo Vencimento</Button>
+        <Button type="button" size={'sm'} onClick={newVencimento}><Plus size={18} className="me-2"/> Add Vencimento</Button>
     )
 }
