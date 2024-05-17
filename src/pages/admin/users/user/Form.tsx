@@ -213,7 +213,7 @@ const FormUsers = ({
   return (
     <div className="max-w-full ">
       <ModalFiliais
-        handleSelecion={handleSelectFilial}
+        handleSelection={handleSelectFilial}
         // @ts-expect-error 'Ignore, vai funcionar...'
         onOpenChange={setOpenModalFiliais}
         open={openModalFiliais}
@@ -221,7 +221,7 @@ const FormUsers = ({
         />
 
       <ModalDepartamentos
-        handleSelecion={handleSelectDepartamento}
+        handleSelection={handleSelectDepartamento}
         // @ts-expect-error 'Ignore, vai funcionar...'
         onOpenChange={setOpenModalDepartamentos}
         open={openModalDepartamentos}
@@ -229,7 +229,7 @@ const FormUsers = ({
       />
 
       <ModalCentrosCustos
-        handleSelecion={handleSelectCentroCusto}
+        handleSelection={handleSelectCentroCusto}
         // @ts-expect-error 'Ignore, vai funcionar...'
         onOpenChange={setOpenModalCentrosCusto}
         open={openModalCentrosCusto}
@@ -237,7 +237,7 @@ const FormUsers = ({
         />
 
       <ModalPermissoes
-        handleSelecion={handleSelectPermissao}
+        handleSelection={handleSelectPermissao}
         // @ts-expect-error 'Ignore, vai funcionar...'
         onOpenChange={setOpenModalPermissoes}
         open={openModalPermissoes}

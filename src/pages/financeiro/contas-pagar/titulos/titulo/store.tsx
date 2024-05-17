@@ -1,21 +1,28 @@
 import { create } from "zustand";
 import { TituloSchemaProps } from "./form-data";
-import { calcularDataPrevisaoPagamento } from "./helper";
+import { calcularDataPrevisaoPagamento } from "./helpers/helper";
 
 export interface ItemRateioTitulo {
   id?: string;
   id_rateio?: string;
   id_filial: string;
   filial?: string;
+  id_centro_custo:string;
+  centro_custo?: string;
+  id_plano_conta:string;
+  plano_conta?:string;
   percentual: string;
-  ordem?: string;
+  valor: string;
 }
 
-export interface ItemTitulo {
+export interface VencimentoTitulo {
   id?: string;
-  id_plano_conta: string;
-  plano_conta?: string;
+  data_vencimento: string;
+  data_prevista: string;
   valor: string;
+  valor_pago?: string;
+  data_pagamento?: string,
+  tipo_baixa?: 'PADRÃO' | 'PARCIAL' | 'COM DESCONTO' | 'COM ACRÉSCIMO'
 }
 
 export interface Historico {
@@ -37,20 +44,19 @@ export const initialPropsTitulo: TituloSchemaProps = {
   // Pagamento
   // forma_pagamento: "",
 
-  data_emissao: new Date().toString(),
-  data_vencimento: new Date().toString(),
+  data_emissao: new Date().toISOString(),
+  data_vencimento: new Date().toISOString(),
   data_pagamento: "",
-  data_prevista: calcularDataPrevisaoPagamento(new Date()).toString(),
+  data_prevista: calcularDataPrevisaoPagamento(new Date()).toISOString(),
 
   valor: "0",
   descricao: "",
 
-  // Parcelamento
-  num_parcelas: "1",
-  parcela: "1",
-
   // Filial
   id_filial: "",
+  filial: '',
+  id_matriz: '',
+  id_grupo_economico: '',
 
   // Solicitante
   id_solicitante: "",
@@ -73,8 +79,8 @@ export const initialPropsTitulo: TituloSchemaProps = {
   chave_pix: "",
 
   // Itens
-  itens: [],
-  update_itens: true,
+  vencimentos: [],
+  update_vencimentos: true,
 
   // rateio
   update_rateio: false,

@@ -21,7 +21,7 @@ import { useRef, useState } from "react";
 
 interface IModalPermissoes {
   open: boolean;
-  handleSelecion: (item: CentroCustos) => void;
+  handleSelection: (item: CentroCustos) => void;
   onOpenChange: () => void;
   closeOnSelection?: boolean;
 }
@@ -33,7 +33,7 @@ type PaginationProps = {
 
 const ModalPermissoes = ({
   open,
-  handleSelecion,
+  handleSelection,
   onOpenChange,
   closeOnSelection,
 }: IModalPermissoes) => {
@@ -90,12 +90,12 @@ const ModalPermissoes = ({
     });
   }
 
-  function handleSelection(item: CentroCustos) {
+  function pushSelection(item: CentroCustos) {
     if (closeOnSelection) {
       // @ts-ignore 'vai funcionar...'
       onOpenChange((prev) => !prev);
     }
-    handleSelecion(item);
+    handleSelection(item);
   }
 
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -141,7 +141,7 @@ const ModalPermissoes = ({
               <Button
                 size={"sm"}
                 onClick={() => {
-                  handleSelection(item);
+                  pushSelection(item);
                 }}
               >
                 Selecionar

@@ -121,7 +121,7 @@ function ModalTransfer({ data, id_matriz }: ModalTransferProps) {
       </Dialog>
       <ModalContasBancarias
         open={modalContasBancariasOpen}
-        handleSelecion={handleSelectionContaBancaria}
+        handleSelection={handleSelectionContaBancaria}
         onOpenChange={toggleModalContasBancarias}
         id_matriz={id_matriz || ""}
       />

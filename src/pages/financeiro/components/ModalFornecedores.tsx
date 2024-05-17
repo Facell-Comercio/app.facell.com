@@ -23,7 +23,7 @@ import { normalizeCnpjNumber } from "@/helpers/mask";
 
 interface IModalFornecedores {
     open: boolean,
-    handleSelecion: (item: ItemFornecedor) => void
+    handleSelection: (item: ItemFornecedor) => void
     onOpenChange: () => void
 }
 
@@ -51,7 +51,7 @@ type PaginationProps = {
     pageIndex: number
 }
 
-const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornecedores) => {
+const ModalFornecedores = ({ open, handleSelection, onOpenChange }: IModalFornecedores) => {
     const [search, setSearch] = useState<string>("")
     const [pagination, setPagination] = useState<PaginationProps>({ pageSize: 15, pageIndex: 0 })
 
@@ -79,8 +79,8 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
         })
         fetchFornecedores()
     }
-    function handleSelection(item: ItemFornecedor) {
-        handleSelecion(item)
+    function pushSelection(item: ItemFornecedor) {
+        handleSelection(item)
     }
     async function handlePaginationChange(index: number) {
         await new Promise((resolve) => {
@@ -132,7 +132,7 @@ const ModalFornecedores = ({ open, handleSelecion, onOpenChange }: IModalFornece
                         .map((item: ItemFornecedor) => (
                             <div key={'forn:' + item.id} className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2">
                                 <span>{normalizeCnpjNumber(item.cnpj)} - {item.nome} {item.razao && ' - ' + item.razao}</span>
-                                <Button size={"sm"} onClick={() => { handleSelection(item) }}>Selecionar</Button>
+                                <Button size={"sm"} onClick={() => { pushSelection(item) }}>Selecionar</Button>
                             </div>
                         ))}
                 </ScrollArea>

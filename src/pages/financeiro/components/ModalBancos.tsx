@@ -21,7 +21,7 @@ import { useRef, useState } from "react";
 
 interface IModalBancos {
   open: boolean;
-  handleSelecion: (item: ItemBancos) => void;
+  handleSelection: (item: ItemBancos) => void;
   onOpenChange: () => void;
   id?: string | null;
 }
@@ -38,7 +38,7 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalBancos = ({ open, handleSelecion, onOpenChange }: IModalBancos) => {
+const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -106,8 +106,8 @@ const ModalBancos = ({ open, handleSelecion, onOpenChange }: IModalBancos) => {
     refetchBancos();
   }
 
-  function handleSelection(item: ItemBancos) {
-    handleSelecion(item);
+  function pushSelection(item: ItemBancos) {
+    handleSelection(item);
   }
 
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -151,7 +151,7 @@ const ModalBancos = ({ open, handleSelecion, onOpenChange }: IModalBancos) => {
               <Button
                 size={"sm"}
                 onClick={() => {
-                  handleSelection(item);
+                  pushSelection(item);
                 }}
               >
                 Selecionar

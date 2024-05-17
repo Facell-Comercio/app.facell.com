@@ -73,7 +73,7 @@ const FormSelect = ({
             >
               <FormControl>
                 <SelectTrigger className={className}>
-                  <SelectValue placeholder={"Selecione"} />
+                  <SelectValue placeholder={placeholder || "Selecione"} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>

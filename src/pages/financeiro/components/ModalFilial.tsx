@@ -14,40 +14,35 @@ import {
   PaginationItem,
 } from "@/components/ui/pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { normalizeCnpjNumber } from "@/helpers/mask";
 import { api } from "@/lib/axios";
+import { Filial } from "@/types/filial-type";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { Check, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 
-interface IModalPlanoContas {
+interface IModalFilial {
   open: boolean;
-  handleSelection: (item: ItemPlanoContas) => void;
-  onOpenChange: () => void;
+  handleSelection: (item: Filial) => void;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
   id_matriz?: string | null;
   id_grupo_economico?: string | null;
-  tipo?: "Despesa" | "Receita";
+  closeOnSelection?: boolean;
 }
-
-export type ItemPlanoContas = {
-  id: string;
-  codigo: string;
-  descricao: string;
-  tipo: string;
-};
 
 type PaginationProps = {
   pageSize: number;
   pageIndex: number;
 };
 
-const ModalPlanoContas = ({
+const ModalFilial = ({
   open,
   handleSelection,
   onOpenChange,
   id_matriz,
   id_grupo_economico,
-  tipo,
-}: IModalPlanoContas) => {
+  closeOnSelection,
+}: IModalFilial) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -58,13 +53,13 @@ const ModalPlanoContas = ({
     data,
     isLoading,
     isError,
-    refetch: refetchPlanoContas,
+    refetch: refetchFilial,
   } = useQuery({
-    queryKey: ["plano_contas", id_matriz],
+    queryKey: ["filiais", id_matriz],
     queryFn: async () =>
-      await api.get("financeiro/plano-contas", {
+      await api.get("filial", {
         params: {
-          filters: { termo: search, id_matriz, id_grupo_economico, tipo },
+          filters: { termo: search, id_matriz, id_grupo_economico },
           pagination,
         },
       }),
@@ -89,22 +84,23 @@ const ModalPlanoContas = ({
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
-    refetchPlanoContas();
+    refetchFilial();
   }
   async function handlePaginationChange(index: number) {
     await new Promise((resolve) => {
       setPagination((prev) => ({ ...prev, pageIndex: index }));
       resolve(true);
     });
-    refetchPlanoContas();
+    refetchFilial();
   }
   async function handlePaginationUp() {
     await new Promise((resolve) => {
       const newPage = ++pagination.pageIndex;
+      console.log(newPage);
       setPagination((prev) => ({ ...prev, pageIndex: newPage }));
       resolve(true);
     });
-    refetchPlanoContas();
+    refetchFilial();
   }
   async function handlePaginationDown() {
     await new Promise((resolve) => {
@@ -115,11 +111,14 @@ const ModalPlanoContas = ({
       }));
       resolve(true);
     });
-    refetchPlanoContas();
+    refetchFilial();
   }
 
-  function pushSelection(item: ItemPlanoContas) {
+  function pushSelection(item: Filial) {
     handleSelection(item);
+    if(closeOnSelection){
+      onOpenChange(false)
+    }
   }
 
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -131,15 +130,16 @@ const ModalPlanoContas = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Lista de plano de contas</DialogTitle>
+          <DialogTitle>Lista de filiais</DialogTitle>
           <DialogDescription>
-            Selecione um ao clicar no botão à direita.
+            Selecione ao clicar no botão à direita.
           </DialogDescription>
 
           <div className="flex gap-3">
             <Input
               ref={searchRef}
               type="search"
+              className="h-9"
               placeholder="Buscar..."
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -147,21 +147,21 @@ const ModalPlanoContas = ({
                 }
               }}
             />
-            <Button onClick={() => handleSearch()}>Procurar</Button>
+            <Button type="button" variant={'tertiary'} size={'sm'} onClick={() => handleSearch()}><Search size={18} className="me-2"/> Procurar</Button>
           </div>
         </DialogHeader>
 
         <ScrollArea className="h-72 w-full rounded-md border p-3">
-          {data?.data?.rows.map((item: ItemPlanoContas, index: number) => (
+          {data?.data?.rows.map((item: Filial, index: number) => (
             <div
-              key={"plano_contas:" + item.id + index}
-              className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2"
+              key={"modal_filial_item:" + index}
+              className="flex gap-1 items-center bg-secondary text-secondary-foreground justify-between mb-1 border rounded-md p-2"
             >
-              <span>
-                {item.codigo} - {item.descricao}
+              <span className="text-sm">
+                {item.grupo_economico} - {item.nome} - {normalizeCnpjNumber(item.cnpj)}
               </span>
               <Button
-                size={"sm"}
+                size={"xs"}
                 onClick={() => {
                   pushSelection(item);
                 }}
@@ -217,4 +217,4 @@ const ModalPlanoContas = ({
   );
 };
 
-export default ModalPlanoContas;
+export default ModalFilial;

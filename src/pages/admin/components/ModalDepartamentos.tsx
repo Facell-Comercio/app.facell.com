@@ -21,7 +21,7 @@ import { useRef, useState } from "react";
 
 interface IModalDepartamentos {
   open: boolean;
-  handleSelecion: (item: Departamento) => void;
+  handleSelection: (item: Departamento) => void;
   onOpenChange: () => void;
   closeOnSelection?: boolean;
 }
@@ -33,7 +33,7 @@ type PaginationProps = {
 
 const ModalDepartamentos = ({
   open,
-  handleSelecion,
+  handleSelection,
   onOpenChange,
   closeOnSelection,
 }: IModalDepartamentos) => {
@@ -90,12 +90,12 @@ const ModalDepartamentos = ({
     });
   }
 
-  function handleSelection(item: Departamento) {
+  function pushSelection(item: Departamento) {
     if (closeOnSelection) {
       // @ts-ignore 'vai funcionar...'
       onOpenChange((prev) => !prev);
     }
-    handleSelecion(item);
+    handleSelection(item);
   }
 
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -138,7 +138,7 @@ const ModalDepartamentos = ({
               <Button
                 size={"sm"}
                 onClick={() => {
-                  handleSelection(item);
+                  pushSelection(item);
                 }}
               >
                 Selecionar

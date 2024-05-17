@@ -56,7 +56,7 @@ const Filters = ({refetch, isFetching}:{refetch: ()=>void, isFetching: boolean})
 
             <ModalContasBancarias
                 //@ts-ignore 
-                handleSelecion={handleSelectionContaBancaria}
+                handleSelection={handleSelectionContaBancaria}
                 onOpenChange={toggleModal}
                 closeOnSelection={true}
                 open={modalOpen} />

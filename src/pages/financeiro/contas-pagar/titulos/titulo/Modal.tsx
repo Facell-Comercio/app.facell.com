@@ -10,7 +10,7 @@ import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { useRef } from "react";
 import FormTituloPagar from "./Form";
 import { TituloSchemaProps } from "./form-data";
-import { calcularDataPrevisaoPagamento } from "./helper";
+import { calcularDataPrevisaoPagamento } from "./helpers/helper";
 import {
   Historico,
   ItemRateioTitulo,
@@ -119,7 +119,7 @@ const ModalTituloPagar = () => {
             {!!id && !recorrencia ? `Solicitação: ${id}` : "Nova Solicitação"}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="min-h-[70vh]">
+        <ScrollArea className="min-h-[70vh] overflow-auto">
           {modalOpen && !isLoading ? (
             <FormTituloPagar
               id={!!id && !recorrencia ? id : ""}
