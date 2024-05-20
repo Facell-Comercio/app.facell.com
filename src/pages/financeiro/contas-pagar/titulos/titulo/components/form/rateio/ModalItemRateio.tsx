@@ -190,28 +190,40 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
         }
     }, [id_grupo_economico, id_centro_custo, id_plano_conta])
 
-    const valorTotalItens = itens_rateio.filter((_:any, index:number)=> isUpdate ? index != indexFieldArray : true).reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0)
-    const previsaoConsumoOrcamento = 
-    itens_rateio
-    .filter((i:ItemRateioTitulo, index:number)=>i.id_centro_custo == id_centro_custo && i.id_plano_conta == id_plano_conta && isUpdate ? index != indexFieldArray : true)
-    .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0)
+    const valorTotalItens = itens_rateio
+        .filter((_: any, index: number) => isUpdate ? index != indexFieldArray : true)
+        .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0)
 
-    const saldoFuturoOrcamento = valorOrcamento - previsaoConsumoOrcamento
+    const previsaoConsumoOrcamento = itens_rateio
+        .filter((i: ItemRateioTitulo, index: number) => {
+            if (
+                i.id_centro_custo == id_centro_custo
+                && i.id_plano_conta == id_plano_conta
+            ) {
+                if (isUpdate ? index != indexFieldArray : true) {
+                    return true
+                }
+            }
+            return false
+        })
+        .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + valor
+
+    const saldoFuturoOrcamento = valorOrcamento - previsaoConsumoOrcamento < 0 ? 0 : valorOrcamento - previsaoConsumoOrcamento;
     const valorExcessoOrcamento = valor - saldoFuturoOrcamento
     const excedeOrcamento = valorExcessoOrcamento > 0
-    
+
     const valorExcessoTitulo = (valor + valorTotalItens) - valorTotalTitulo;
     const excedeTotalTitulo = valorExcessoTitulo > 0;
 
     useEffect(() => {
-        if(!valor || valor <= 0){
+        if (!valor || valor <= 0) {
             setFeedback({
                 variant: 'destructive',
                 title: 'Preencha o valor',
             })
             return
         }
-        if(!percentual || percentual <= 0){
+        if (!percentual || percentual <= 0) {
             setFeedback({
                 variant: 'destructive',
                 title: 'Preencha o percentual',
@@ -236,16 +248,32 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
         }
 
         setFeedback({
-            variant:'success',
+            variant: 'success',
             title: 'Tudo certo'
         })
 
     }, [percentual, valor, valorOrcamento])
 
-    const btnDisabled = excedeOrcamento || excedeTotalTitulo ||  valorOrcamento <= 0 || !valor || valor <= 0 || !percentual || percentual <= 0;
+    const btnDisabled = excedeOrcamento || excedeTotalTitulo || valorOrcamento <= 0 || !valor || valor <= 0 || !percentual || percentual <= 0;
 
     const onSubmit = (data: z.infer<typeof rateioSchema>) => {
         try {
+            // verificar se já existe mesma filial + centro + plano
+            if (!isUpdate) {
+                const duplicatas = itens_rateio
+                    .filter((i: ItemRateioTitulo) =>
+                        i.id_centro_custo == id_centro_custo
+                        && i.id_plano_conta == data.id_plano_conta
+                        && i.id_filial == data.id_filial)
+                if (duplicatas.length > 0) {
+                    setFeedback({
+                        variant: 'destructive', title: 'Item duplicado!',
+                        description: `Já existe um item com FILIAL: '${data.filial}', CENTRO DE CUSTO: '${data.centro_custo}' e PLANO DE CONTAS: '${data.plano_conta}'`
+                    })
+                    return
+                }
+            }
+
             const valor = parseFloat(data.valor)
             const percentual = parseFloat(data.percentual)
 
@@ -260,7 +288,10 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
                     toast({ title: 'Vencimento não identificado, feche e abra novamente o popup', variant: 'destructive' })
                 } else {
 
-                    const totalPrevisto = itens_rateio.filter((_: any, index: number) => index != indexFieldArray).reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
+                    const totalPrevisto = 
+                    itens_rateio
+                    .filter((_: any, index: number) => index != indexFieldArray)
+                    .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
                     const dif = totalPrevisto - parseFloat(valorTotalTitulo)
 
                     if (dif > 0) {
@@ -270,7 +301,7 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
                         })
                         return
                     }
-                    updateItemRateio(indexFieldArray, { ...data })
+                    updateItemRateio(indexFieldArray, { ...data, percentual: parseFloat(data.percentual) * 100 })
                 }
             } else {
                 const totalPrevisto = itens_rateio.reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
@@ -292,7 +323,7 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
                     id_plano_conta: String(data.id_plano_conta),
                     plano_conta: String(data.plano_conta),
                     valor: String(data.valor),
-                    percentual: String(data.percentual),
+                    percentual: String(parseFloat(data.percentual) * 100),
                 })
             }
             formItemRateio.reset()
@@ -306,12 +337,12 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
         }
     }
 
-    const handleChangeValor = (e:ChangeEvent<HTMLInputElement>)=>{
+    const handleChangeValor = (e: ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value || '0'
         const percent = (parseFloat(val) / valorTotalTitulo * 100).toFixed(4)
         formItemRateio.setValue('percentual', percent)
     }
-    const handleChangePercentual = (e:ChangeEvent<HTMLInputElement>)=>{
+    const handleChangePercentual = (e: ChangeEvent<HTMLInputElement>) => {
         const percent = e.target.value || '0'
         const novoValor = (parseFloat(percent) / 100 * valorTotalTitulo).toFixed(2)
         formItemRateio.setValue('valor', novoValor)
@@ -333,6 +364,7 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
                     open={canEdit && modalPlanoContasOpen && !!id_matriz}
                     id_matriz={id_matriz}
                     tipo="Despesa"
+                    // @ts-ignore
                     onOpenChange={setModalPlanoContasOpen}
                     handleSelection={handleSelectionPlanoContas}
                 />
@@ -384,9 +416,9 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
                                 />
                             </span>
 
-                            <div className="flex gap-3 text-secondary">
-                                <span className="">Saldo Orçamento</span>
-                                <span className="">{normalizeCurrency(saldoFuturoOrcamento)}</span>
+                            <div className="flex gap-3 text-muted-foreground">
+                                <span>Saldo Orçamento</span>
+                                <span>{normalizeCurrency(saldoFuturoOrcamento)}</span>
                             </div>
 
                             <div className="flex gap-3">

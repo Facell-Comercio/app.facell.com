@@ -36,9 +36,8 @@ export const schemaTitulo = z.object({
   id_tipo_solicitacao: z.coerce.string({ required_error: 'Campo obrigatório' }).min(1, { message: 'Selecione o Tipo de Solicitação!' }),
   id_forma_pagamento: z.coerce.string({ required_error: 'Campo obrigatório' }).min(1, { message: 'Selecione a Forma de Pagamento!' }),
 
+  id_solicitante: z.string().optional(),
   filial: z.string().optional(),
-  centro_custo: z.string().optional(),
-  id_centro_custo: z.string().trim().min(1, { message: 'Selecione o Centro de Custo!' }),
 
   // Fornecedor
   cnpj_fornecedor: z.string().optional(),
@@ -63,7 +62,7 @@ export const schemaTitulo = z.object({
   data_vencimento: z.string(),
   data_prevista: z.string(),
 
-  num_doc: z.string({ required_error: 'Campo obrigatório' }),
+  num_doc: z.string({ message: 'Campo obrigatório' }).min(1, {message: 'Campo obrigatório'}),
   valor: z.coerce.string().min(0.01, 'Preencha o valor'),
 
   descricao: z
@@ -73,15 +72,15 @@ export const schemaTitulo = z.object({
   update_vencimentos: z.boolean(),
   vencimentos: z.array(
     vencimentoSchema
-  ).nonempty({ message: 'Inclua ao menos um vencimento à solicitação!' }),
+  ).optional(),
 
   // Rateio:
-  id_rateio: z.string({ required_error: 'Campo obrigatório' }),
+  id_rateio: z.string().optional(),
   update_rateio: z.boolean(),
   rateio_manual: z.coerce.boolean(),
   itens_rateio: z.array(
    rateioSchema
-  ).nonempty({ message: 'Defina corretamente o rateio!' }),
+  ).optional(),
 
   historico: z.array(z.object({
     id: z.string(),
@@ -99,7 +98,14 @@ export const schemaTitulo = z.object({
   url_txt: z.string().optional(),
 
 })
-  // Cobra Agência e Conta
+    //^ Validar se vencimentos == valor total
+  .refine(data => (data.vencimentos?.reduce((acc,curr)=>{return acc + parseFloat(curr.valor)},0) || 0) == parseFloat(data.valor),
+    { path: ['vencimentos'], message: 'O valor dos vencimentos precisa bater com o valor total da solicitação.' })
+    //^ Validar se rateio == valor total
+  .refine(data => (data.itens_rateio?.reduce((acc,curr)=>{return acc + parseFloat(curr.valor)},0) || 0) == parseFloat(data.valor),
+  { path: ['itens_rateio'], message: 'O valor total do rateio precisa bater com o valor total da solicitação.' })
+  
+  //^ Cobra Agência e Conta
   .refine(data => checkIsTransferenciaBancaria(data.id_forma_pagamento) ? !!data.agencia : true,
     { path: ['agencia'], message: 'Obrigatório para esta forma de pagamento.' })
   .refine(data => checkIsTransferenciaBancaria(data.id_forma_pagamento) ? !!data.conta : true,
@@ -197,7 +203,8 @@ export const useFormTituloData = (data: TituloSchemaProps) => {
   const form = useForm<TituloSchemaProps>({
     resolver: zodResolver(schemaTitulo),
     defaultValues: data,
-    values: data
+    values: data,
+    mode: 'all'
   });
   return {
     form

@@ -58,16 +58,15 @@ export function ModalGerarVencimentos({ control: controlTitulo }: { control: Con
 
     const {
         append: addVencimento,
-        update: updateVencimento,
     } = useFieldArray({
         control: controlTitulo,
         name: "vencimentos",
     });
 
-    const { formState: { errors } } = form;
-    console.log({
-        erros_gerar_vencimentos: errors
-    })
+    // const { formState: { errors } } = form;
+    // console.log({
+    //     erros_gerar_vencimentos: errors
+    // })
 
     type GeradorVencimentos = {
         data_vencimento: string,
@@ -81,7 +80,7 @@ export function ModalGerarVencimentos({ control: controlTitulo }: { control: Con
         let qtdeParcelas = parseFloat(data.parcelas) || 0
 
         const valorTotalParcelas = valorParcela * qtdeParcelas;
-        const totalVencimentos = vencimentos?.reduce((acc: number, curr: VencimentoTitulo) => { return acc + parseFloat(curr.valor) }, 0);
+        const totalVencimentos = vencimentos?.reduce((acc: number, curr: VencimentoTitulo) => { return acc + parseFloat(curr.valor) }, 0) || 0;
         const totalTitulo = parseFloat(valorTotalTitulo)
 
         const excesso = (totalVencimentos + valorTotalParcelas) - totalTitulo;

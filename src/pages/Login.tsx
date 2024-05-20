@@ -12,6 +12,7 @@ import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/context/auth-store";
 import { useState } from "react";
 import { api } from "@/lib/axios";
+import { FaSpinner } from "react-icons/fa6";
 
 const formSchema = z.object({
   email: z.string(),
@@ -104,7 +105,7 @@ const Login = () => {
           {loginError && <ErrorAlert message={loginError} />}
 
           <Button type="submit" variant="destructive" disabled={loginLoading}>
-            {loginLoading ? 'Entrando' : 'Entrar'}
+            {loginLoading ? <span className="flex gap-2"><FaSpinner size={18} className="animate-spin"/> Entrando</span> : 'Entrar'}
           </Button>
         </form>
       </Form>

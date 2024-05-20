@@ -46,7 +46,6 @@ export const initialPropsTitulo: TituloSchemaProps = {
 
   data_emissao: new Date().toISOString(),
   data_vencimento: new Date().toISOString(),
-  data_pagamento: "",
   data_prevista: calcularDataPrevisaoPagamento(new Date()).toISOString(),
 
   valor: "0",
@@ -83,8 +82,8 @@ export const initialPropsTitulo: TituloSchemaProps = {
   update_vencimentos: true,
 
   // rateio
-  update_rateio: false,
-  rateio_manual: false,
+  update_rateio: true,
+  rateio_manual: true,
   id_rateio: "",
   itens_rateio: [],
 

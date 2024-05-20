@@ -45,7 +45,7 @@ export interface Actions {
 
 export const useStoreRateio = create<State & Actions>((set) => ({
     ...initialStateRateio,
-    newItemRateio: ()=>set(({itemRateio: {...initialStateRateio.itemRateio}, modalOpen: true})),
+    newItemRateio: ()=>set(({itemRateio: {...initialStateRateio.itemRateio}, indexFieldArray: -1, modalOpen: true})),
     updateItemRateio: (data:UpdateItemRateioProps) => {
         set({ itemRateio: { ...data.itemRateio }, indexFieldArray: data.index, modalOpen: true }) 
     },

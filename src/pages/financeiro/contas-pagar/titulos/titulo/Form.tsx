@@ -24,6 +24,12 @@ import ModalFornecedores, {
 } from "@/pages/financeiro/components/ModalFornecedores";
 
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ModalFilial from "@/pages/financeiro/components/ModalFilial";
 import { Filial } from "@/types/filial-type";
@@ -43,8 +49,7 @@ import {
   X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useWatch } from "react-hook-form";
-import { TbCurrencyReal } from "react-icons/tb";
+import { SubmitHandler, useWatch } from "react-hook-form";
 import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
@@ -103,7 +108,7 @@ const FormTituloPagar = ({
     setValue,
     formState: { errors },
   } = form;
-  console.log("ERRORS:", errors);
+  console.log("ERROS_TITULO:", errors);
 
   // * [ WATCHES ]
   const id_grupo_economico = useWatch({
@@ -211,11 +216,16 @@ const FormTituloPagar = ({
   const { mutate: update, isSuccess: updateSuccess } =
     useTituloPagar().update();
 
-  const onSubmit = async (data: TituloSchemaProps) => {
+  const onSubmit: SubmitHandler<TituloSchemaProps> = async (data) => {
+    console.log("OnSubmit", data);
     if (!id) {
+      console.log("Inserindo Titulo:", data);
       insertOne(data);
     }
-    if (id) update(data);
+    if (id) {
+      console.log("Atualizando Titulo:", data);
+      update(data);
+    }
   };
 
   useEffect(() => {
@@ -321,7 +331,7 @@ const FormTituloPagar = ({
   };
 
   return (
-    <div className="max-w-full  overflow-auto zoom-in-50">
+    <div className="max-w-screen-xl overflow-auto zoom-in-50">
       <ModalFilial
         open={modalFilialOpen}
         handleSelection={handleSelectionFilial}
@@ -332,13 +342,7 @@ const FormTituloPagar = ({
       />
 
       <Form {...form}>
-        <form
-          ref={formRef}
-          onSubmit={(e) => {
-            e.stopPropagation();
-            form.handleSubmit(onSubmit);
-          }}
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} method="POST">
           <ScrollArea className="flex flex-col max-w-full max-h-[70vh] overflow-auto">
             {titulo?.status && (
               <div className="flex-1 py-2">
@@ -361,13 +365,13 @@ const FormTituloPagar = ({
                     <div className="flex gap-2 mb-3">
                       <Contact />{" "}
                       <span className="text-lg font-bold">Fornecedor</span>
-                    </div>
-                    <div>
-                      {errors.id_fornecedor?.message && (
-                        <span className="rounded-md flex-1 px-3 text-white bg-destructive">
-                          {errors.id_fornecedor?.message}
-                        </span>
-                      )}
+                      <div>
+                        {errors.id_fornecedor?.message && (
+                          <Badge variant={"destructive"}>
+                            {errors.id_fornecedor?.message}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex flex-wrap gap-3 items-end">
@@ -607,10 +611,38 @@ const FormTituloPagar = ({
                       <Tabs defaultValue="vencimentos" className="max-w-full">
                         <TabsList className="grid w-full grid-cols-2">
                           <TabsTrigger value="vencimentos">
-                            Vencimentos
+                            <div className="flex gap-3">
+                              <span>Vencimentos</span>
+                              {errors.vencimentos?.message && (
+                                <Popover>
+                                  <PopoverTrigger>
+                                    <Badge variant={"destructive"}>
+                                      Atenção
+                                    </Badge>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="bg-destructive text-destructive-foreground">
+                                    {errors.vencimentos.message}
+                                  </PopoverContent>
+                                </Popover>
+                              )}
+                            </div>
                           </TabsTrigger>
                           <TabsTrigger value="rateio">
-                            Rateio da solicitação
+                            <div className="flex gap-3">
+                              <span>Rateio da solicitação</span>
+                              {errors.itens_rateio?.message && (
+                                <Popover>
+                                  <PopoverTrigger>
+                                    <Badge variant={"destructive"}>
+                                      Atenção
+                                    </Badge>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="bg-destructive text-destructive-foreground">
+                                    {errors.itens_rateio.message}
+                                  </PopoverContent>
+                                </Popover>
+                              )}
+                            </div>
                           </TabsTrigger>
                         </TabsList>
 
@@ -737,7 +769,8 @@ const FormTituloPagar = ({
               </div>
             </ScrollArea>
           </ScrollArea>
-          <div className="flex justify-between items-center mt-4">
+
+          <div className="max-w-full flex justify-between items-center mt-4">
             <div className="flex gap-3 items-center">
               {id &&
                 status !== "Solicitado" &&
