@@ -30,7 +30,9 @@ html, body{
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --success: 142, 71%, 45%;
+    --success-foreground: 210 40% 98%;
     --warning: 25, 95%, 53%;
+    --warning-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96.1%;
@@ -55,7 +57,9 @@ html, body{
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --success: 142, 76%, 36%;
+    --success-foreground: 0 0% 100%;
     --warning: 21, 90%, 48%;
+    --warning-foreground: 0 0% 100%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 217.2 32.6% 17.5%;

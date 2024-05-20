@@ -34,7 +34,7 @@ const ModalTituloPagar = () => {
   const { data, isLoading } = useTituloPagar().getOne(id);
 
   const titulo = data?.data.titulo;
-  const itens = data?.data.itens;
+  const vencimentos = data?.data.vencimentos;
   const itens_rateio = data?.data.itens_rateio;
   const historico = data?.data.historico;
 
@@ -48,8 +48,8 @@ const ModalTituloPagar = () => {
     });
   }
 
-  if (itens) {
-    itens.forEach((objeto: any) => {
+  if (vencimentos) {
+    vencimentos.forEach((objeto: any) => {
       Object.keys(objeto).forEach((propriedade) => {
         if (objeto[propriedade] === null) {
           objeto[propriedade] = "";
@@ -103,12 +103,12 @@ const ModalTituloPagar = () => {
       data_prevista: calcularDataPrevisaoPagamento(
         new Date(recorrencia.data_vencimento)
       ),
-      itens,
+      vencimentos,
       itens_rateio,
       id_recorrencia: recorrencia.id,
     };
   } else if (id) {
-    modalData = { ...titulo, itens, itens_rateio, historico };
+    modalData = { ...titulo, vencimentos, itens_rateio, historico };
   }
 
   return (

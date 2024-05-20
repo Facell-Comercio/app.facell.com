@@ -57,6 +57,7 @@ const SecaoVencimentos = ({
     }
 
     const updateVencimento = useStoreVencimento().updateVencimento
+    const canEditVencimentos = canEdit && modalEditing;
 
     const columns = useMemo<ColumnDef<VencimentoTitulo>[]>(
         () => [
@@ -66,26 +67,30 @@ const SecaoVencimentos = ({
                 cell: (info) => {
                     const index = info.row.index
                     return (
+
                         <div className="w-full flex items-center justify-center gap-2">
-                            <Button onClick={()=>{
-                                updateVencimento({index, vencimento: wvencimentos[index]})
-                            }} type="button" variant="warning" size={'xs'}><Pen size={18}/></Button>
+                            {canEditVencimentos && (
+                                <>
+                                    <Button onClick={() => {
+                                        updateVencimento({ index, vencimento: wvencimentos[index] })
+                                    }} type="button" variant="warning" size={'xs'}><Pen size={18} /></Button>
 
-                            <AlertPopUp
-                                title="Deseja realmente remover o vencimento?"
-                                description=""
-                                action={() => handleRemoveVencimento(index)}
-                                children={
-                                    <Button
-                                        type="button"
-                                        variant="destructive"
-                                        size={'xs'}
-                                    >
-                                        <Trash size={18} />
-                                    </Button>
-                                }
-                            />
-
+                                    <AlertPopUp
+                                        title="Deseja realmente remover o vencimento?"
+                                        description=""
+                                        action={() => handleRemoveVencimento(index)}
+                                        children={
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size={'xs'}
+                                            >
+                                                <Trash size={18} />
+                                            </Button>
+                                        }
+                                    />
+                                </>
+                            )}
                         </div>
                     )
                 },
@@ -95,7 +100,6 @@ const SecaoVencimentos = ({
                 accessorKey: 'data_vencimento',
                 header: 'VENCIMENTO',
                 cell: (info) => {
-                    console.log(info.getValue())
                     let value = formatDate(info.getValue<Date>(), 'dd/MM/yyyy')
                     return <div className="w-full text-center">{value}</div>
                 },
@@ -129,7 +133,7 @@ const SecaoVencimentos = ({
         [wvencimentos],
     )
 
-    const valor_total = wvencimentos.reduce((acc, curr) => {
+    const valor_total = wvencimentos?.reduce((acc, curr) => {
         return acc + parseFloat(curr.valor)
     }, 0)
 
@@ -141,15 +145,10 @@ const SecaoVencimentos = ({
                 <span className="text-lg font-bold ">
                     Vencimentos
                 </span>
-                {errors.vencimentos?.message && (
-                    <Badge variant={"destructive"}>
-                        {errors.vencimentos?.message}
-                    </Badge>
-                )}
                 {canEdit && modalEditing && (
                     <div className="ms-auto flex gap-3 items-center">
-                        <RemoverVencimentos form={form}/>
-                        <ModalGerarVencimentos control={form.control}/>
+                        <RemoverVencimentos form={form} />
+                        <ModalGerarVencimentos control={form.control} />
                         <BtnNovoVencimento />
                     </div>
                 )}

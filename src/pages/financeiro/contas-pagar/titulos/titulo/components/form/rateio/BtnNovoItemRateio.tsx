@@ -3,7 +3,7 @@ import { useStoreRateio } from "./context"
 import { Plus } from "lucide-react"
 import { Control, useWatch } from "react-hook-form"
 
-export function BtnNovoItemRateio({ control }: { control: Control<any> }) {
+export function BtnNovoItemRateio({ control, canEdit }: { control: Control<any>, canEdit: boolean }) {
 
     const id_filial = useWatch({
         name: 'id_filial',
@@ -21,7 +21,7 @@ export function BtnNovoItemRateio({ control }: { control: Control<any> }) {
     })
 
     const newItemRateio = useStoreRateio().newItemRateio
-    const disabled = !id_filial || (!!id_rateio && !rateio_manual);
+    const disabled = !canEdit || !id_filial || (!!id_rateio && !rateio_manual);
 
     return (
         <Button disabled={disabled} type="button" size={'sm'} onClick={newItemRateio}><Plus size={18} className="me-2" /> Add Item</Button>

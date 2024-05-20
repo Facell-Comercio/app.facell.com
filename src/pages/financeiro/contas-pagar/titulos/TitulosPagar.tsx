@@ -19,6 +19,7 @@ import { columnsTable } from "./table/columns";
 import ModalTituloPagar from "./titulo/Modal";
 
 const TitulosPagar = () => {
+
   // console.log("RENDER - Section-Titulos");
   const isMaster =
     checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
