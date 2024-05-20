@@ -47,14 +47,14 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
     setModalContaBancariaOpen(false);
   }
 
-   const [itemOpen, setItemOpen] = useState<string>('item-1')
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
   return (
     <Accordion
       type="single"
       collapsible
       value={itemOpen}
-      onValueChange={(e)=>setItemOpen(e)}
-      className="p-2 border-2 dark:border-slate-800 rounded-lg "
+      onValueChange={(e) => setItemOpen(e)}
+      className="p-2 border dark:border-slate-800 rounded-lg "
     >
       <AccordionItem value="item-1" className="relative border-0">
         <div className="flex gap-3 items-center absolute start-16 top-1">
@@ -106,6 +106,14 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
                 value={filters.fornecedor}
                 onChange={(e) => {
                   setFilters({ fornecedor: e.target.value });
+                }}
+              />
+              <Input
+                placeholder="ID Vencimento"
+                className="w-[20ch]"
+                value={filters.id_vencimento}
+                onChange={(e) => {
+                  setFilters({ id_vencimento: e.target.value });
                 }}
               />
               <Input

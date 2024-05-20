@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import { useRef } from "react";
 import { useStoreTableFornecedor } from "./store-table";
 
@@ -30,8 +31,11 @@ const FilterFornecedores = ({ refetch }: { refetch: () => void }) => {
           }
         }}
       />
-      <Button onClick={() => handleSearch(searchRef.current?.value || "")}>
-        Procurar
+      <Button
+        variant={"tertiary"}
+        onClick={() => handleSearch(searchRef.current?.value || "")}
+      >
+        <Search size={18} className="me-2" /> Procurar
       </Button>
     </div>
   );

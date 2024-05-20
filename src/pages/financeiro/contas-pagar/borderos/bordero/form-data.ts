@@ -12,9 +12,10 @@ const schemaBorderos = z
   banco: z.string().optional(),
   data_pagamento: z.coerce.date({message: "Data Obrigatória"}),
   id_matriz: z.coerce.string().trim().optional(),
-  titulos: z.array(z.object({
+  vencimentos: z.array(z.object({
     checked: z.coerce.boolean().optional(),
     id_titulo: z.coerce.string().trim().optional(),
+    id_vencimento: z.coerce.string().trim().optional(),
     id_status: z.number(),
     status: z.string().optional(),
     previsao: z.string().trim().optional(),
@@ -23,7 +24,6 @@ const schemaBorderos = z
     num_doc: z.string().optional(),
     descricao: z.string().trim().optional(),
     filial: z.string().trim().optional(),
-    data_pagamento: z.coerce.date({message: "Data Obrigatória"}),
   }))
   
   });
@@ -37,13 +37,13 @@ export const useFormBorderoData =(data:BorderoSchemaProps)=>{
 
       const {fields, append, remove} = useFieldArray({
         control: form.control,
-        name: "titulos"
+        name: "vencimentos"
       })
 
     return {
         form,
-        titulos: fields,
-        addTitulo: append,
-        removeTitulo: remove,
+        vencimentos: fields,
+        addVencimento: append,
+        removeVencimento: remove,
     }
 }

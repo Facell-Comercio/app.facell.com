@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBordero } from "@/hooks/financeiro/useBordero";
-import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { Trash } from "lucide-react";
 import { useRef } from "react";
 import FormBordero from "./Form";
@@ -26,7 +26,7 @@ export type BorderoSchemaProps = {
   id_conta_bancaria: string;
   data_pagamento: string;
   id_matriz: string;
-  titulos: TitulosProps[];
+  vencimentos: VencimentosProps[];
 };
 
 const initialPropsBordero: BorderoSchemaProps = {
@@ -36,7 +36,7 @@ const initialPropsBordero: BorderoSchemaProps = {
   id_conta_bancaria: "",
   data_pagamento: "",
   id_matriz: "",
-  titulos: [],
+  vencimentos: [],
 };
 
 const ModalBordero = () => {
@@ -65,27 +65,30 @@ const ModalBordero = () => {
   }
 
   // ^ Observar se não ocorrerá nenhum erro com essa "gambiarra"
-  if (newData.titulos && newData.titulos.length > 0) {
-    const newTitulos = newData.titulos.map((titulo: TitulosProps) => {
-      return {
-        checked: titulo.checked,
-        id_titulo: titulo.id_titulo,
-        status: titulo.status,
-        previsao: titulo.previsao || "",
-        nome_fornecedor: titulo.nome_fornecedor,
-        valor_total: titulo.valor_total,
-        num_doc: titulo.num_doc || "",
-        descricao: titulo.descricao,
-        filial: titulo.filial,
-        data_pagamento: titulo.data_pagamento || "",
-        id_status: titulo.id_status || "",
-      };
-    });
+  if (newData.vencimentos && newData.vencimentos.length > 0) {
+    const newVencimento = newData.vencimentos.map(
+      (vencimento: VencimentosProps) => {
+        return {
+          checked: vencimento.checked,
+          id_vencimento: vencimento.id_vencimento,
+          id_titulo: vencimento.id_titulo,
+          status: vencimento.status,
+          previsao: vencimento.previsao || "",
+          nome_fornecedor: vencimento.nome_fornecedor,
+          valor_total: vencimento.valor_total,
+          num_doc: vencimento.num_doc || "",
+          descricao: vencimento.descricao,
+          filial: vencimento.filial,
+          data_pagamento: vencimento.data_pagamento || "",
+          id_status: vencimento.id_status || "",
+        };
+      }
+    );
 
-    if (newTitulos[0].id_titulo) {
-      newData.titulos = newTitulos;
+    if (newVencimento[0].id_titulo) {
+      newData.vencimentos = newVencimento;
     } else {
-      newData.titulos = [];
+      newData.vencimentos = [];
     }
   }
 
@@ -114,7 +117,7 @@ const ModalBordero = () => {
   }
 
   function excluirBordero() {
-    deleteBordero({ id, titulos: data?.data.titulos });
+    deleteBordero({ id, vencimentos: data?.data.vencimentos });
     toggleModal();
   }
 

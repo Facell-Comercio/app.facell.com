@@ -155,7 +155,7 @@ const ModalPlanoContas = ({
           {data?.data?.rows.map((item: ItemPlanoContas, index: number) => (
             <div
               key={"plano_contas:" + item.id + index}
-              className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2"
+              className="flex gap-1 items-center bg-secondary text-secondary-foreground justify-between mb-1 border rounded-md p-2"
             >
               <span>
                 {item.codigo} - {item.descricao}

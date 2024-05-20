@@ -12,17 +12,17 @@ import { useBordero } from "@/hooks/financeiro/useBordero";
 import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
-import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useState } from "react";
 import { useStoreBordero } from "./store";
 
 interface ModalTransferProps {
-  data: TitulosProps[];
+  data: VencimentosProps[];
   id_matriz: string;
 }
 
 function ModalTransfer({ data, id_matriz }: ModalTransferProps) {
-  const { mutate: transferTitulos } = useBordero().transferTitulos();
+  const { mutate: transferVencimentos } = useBordero().transferVencimentos();
 
   const [contaBancaria, setContaBancaria] = useState("");
   const [idContaBancaria, setIdContaBancaria] = useState("");
@@ -32,6 +32,7 @@ function ModalTransfer({ data, id_matriz }: ModalTransferProps) {
   const toggleModalTransfer = useStoreBordero().toggleModalTransfer;
   const toggleModalContasBancarias =
     useStoreBordero().toggleModalContasBancarias;
+  const toggleModal = useStoreBordero().toggleModal;
   const id = useStoreBordero().id;
 
   function handleSelectionContaBancaria(item: ItemContaBancariaProps) {
@@ -52,13 +53,14 @@ function ModalTransfer({ data, id_matriz }: ModalTransferProps) {
       // });
 
       toggleModalTransfer();
-      transferTitulos({
+      toggleModal();
+      transferVencimentos({
         id_conta_bancaria: idContaBancaria,
         date: pagamento,
-        titulos: data.map((titulo) => {
+        vencimentos: data.map((vencimento) => {
           return {
-            id_titulo: titulo.id_titulo,
-            id_status: titulo.id_status,
+            id_vencimento: vencimento.id_vencimento,
+            id_status: vencimento.id_status,
           };
         }),
       });

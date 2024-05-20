@@ -11,7 +11,6 @@ import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
 import { useEffect, useRef, useState } from "react";
 import FiltersConciliacaoCP from "./tables/Filters";
 import { ItemCP } from "./tables/ItemCP";
-import { SearchComponent } from "./tables/SearchComponent";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { DataTable } from "@/components/custom/DataTable";
@@ -26,6 +25,7 @@ import { FaSpinner } from "react-icons/fa6";
 import ModalConciliarCP from "./components/ModalConciliar";
 import { useStoreConciliacaoCP } from "./components/store";
 import { ConciliacoesProps } from "./tables/Conciliacoes";
+import { SearchComponent } from "./tables/SearchComponent copy";
 import TitulosConciliados, {
   TitulosConciliadosProps,
 } from "./tables/TitulosConciliados";
@@ -79,13 +79,10 @@ const ConciliacaoCP = () => {
     data: dataConciliacoes,
     refetch: refetchConciliacao,
     isLoading: isLoadingConciliacao,
-    isError: isErrorConciliacao,
   } = useConciliacaoCP().getConciliacoes({
     filters,
     pagination,
   });
-
-  console.log(dataConciliacoes?.data);
 
   const {
     mutate: conciliacaoAutomatica,
@@ -222,7 +219,6 @@ const ConciliacaoCP = () => {
   }, [isSuccess]);
   const searchRef = useRef<HTMLInputElement | null>(null);
 
-  console.log(transacoesSelection.map((transacao) => transacao.id_transacao));
   const [itemOpen, setItemOpen] = useState<string>("nao-conciliado");
   return (
     <div className="flex flex-col gap-3">

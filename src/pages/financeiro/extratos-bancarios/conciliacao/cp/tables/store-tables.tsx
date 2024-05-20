@@ -12,7 +12,7 @@ export interface Pagination {
 
 type RowSelection = Record<number, boolean>;
 
-type HandleRowSelectioTitulosProps = {
+type HandleRowSelectioVencimentosProps = {
   rowSelection: RowSelectionState;
   titulosSelection: TitulosConciliarProps[];
 };
@@ -81,7 +81,7 @@ interface UseStoreTableConciliacaoCP {
   setTipoConciliacao: (tipo: "manual" | "automatica") => void;
   resetTipoConciliacao: () => void;
 
-  handleRowTitulosSelection: (data: HandleRowSelectioTitulosProps) => void;
+  handleRowTitulosSelection: (data: HandleRowSelectioVencimentosProps) => void;
   handleRowTransacoesSelection: (
     data: HandleRowSelectionTransacoesProps
   ) => void;
@@ -174,7 +174,7 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
       set((state) => ({
         filtersSearch: { ...state.filtersSearch, ...novoFiltro },
       })),
-    handleRowTitulosSelection: (data: HandleRowSelectioTitulosProps) =>
+    handleRowTitulosSelection: (data: HandleRowSelectioVencimentosProps) =>
       set({
         rowTitulosSelection: data.rowSelection,
         titulosSelection: data.titulosSelection,

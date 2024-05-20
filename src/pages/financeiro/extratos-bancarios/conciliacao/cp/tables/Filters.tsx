@@ -113,7 +113,7 @@ const FiltersConciliacaoCP = ({
               />
               <ModalContasBancarias
                 open={modalContaBancariaOpen}
-                handleSelecion={handleSelectionContaBancaria}
+                handleSelection={handleSelectionContaBancaria}
                 onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
                 // id_matriz={id_matriz || ""}
               />

@@ -69,6 +69,8 @@ const ModalBorderos = ({
     enabled: open,
   });
 
+  console.log(data);
+
   const pages = [...Array(data?.data?.pageCount).keys()].map(
     (page) => page + 1
   );
@@ -155,7 +157,7 @@ const ModalBorderos = ({
             .map((item: BorderoProps) => (
               <div
                 key={"forn:" + item.id}
-                className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2"
+                className="flex gap-1 items-center bg-secondary text-secondary-foreground justify-between mb-1 border rounded-md p-2"
               >
                 <span>
                   {item.id}

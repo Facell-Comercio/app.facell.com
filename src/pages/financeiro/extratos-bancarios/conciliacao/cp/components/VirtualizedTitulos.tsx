@@ -7,13 +7,13 @@ import { normalizeCurrency } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { TitulosConciliarProps } from "../tables/TitulosConciliar";
 
-interface VirtualizerTitulosProps {
+interface VirtualizerVencimentosProps {
   data: TitulosConciliarProps[];
   form: any;
   canEdit: boolean;
 }
 
-const VirtualizedTitulos: React.FC<VirtualizerTitulosProps> = ({
+const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
   data,
   form,
   canEdit,

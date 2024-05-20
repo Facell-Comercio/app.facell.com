@@ -15,6 +15,7 @@ export interface Filters {
   id_grupo_economico?: string;
   fornecedor?: string;
   id_titulo?: string;
+  id_vencimento?: string;
   num_doc?: string;
   tipo_data?: string;
   range_data?: DateRange;
@@ -26,6 +27,7 @@ const initialFilters: Filters = {
   id_grupo_economico: "",
   banco: "",
   id_titulo: "",
+  id_vencimento: "",
   num_doc: "",
   tipo_data: "data_pagamento",
   range_data: { from: undefined, to: undefined },

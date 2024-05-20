@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBordero } from "@/hooks/financeiro/useBordero";
-import { TitulosProps } from "@/pages/financeiro/components/ModalTitulos";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalTitulos";
 import { Trash } from "lucide-react";
 import { useRef } from "react";
 import FormBordero from "./Form";
@@ -26,7 +26,7 @@ export type BorderoSchemaProps = {
   id_conta_bancaria: string;
   data_pagamento: string;
   id_matriz: string;
-  titulos: TitulosProps[];
+  titulos: VencimentosProps[];
 };
 
 const initialPropsBordero: BorderoSchemaProps = {
@@ -66,7 +66,7 @@ const ModalBordero = () => {
 
   // ^ Observar se não ocorrerá nenhum erro com essa "gambiarra"
   if (newData.titulos && newData.titulos.length > 0) {
-    const newTitulos = newData.titulos.map((titulo: TitulosProps) => {
+    const newTitulos = newData.titulos.map((titulo: VencimentosProps) => {
       return {
         checked: titulo.checked,
         id_titulo: titulo.id_titulo,

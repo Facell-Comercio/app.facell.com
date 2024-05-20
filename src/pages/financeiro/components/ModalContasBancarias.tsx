@@ -66,7 +66,7 @@ const ModalContasBancarias = ({
   closeOnSelection,
   id_matriz,
 }: IModalContaBancaria) => {
-  const [accordionOpen, setAccordionOpen] = useState<string>('item-1')
+  const [accordionOpen, setAccordionOpen] = useState<string>("item-1");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
     pageIndex: 0,
@@ -153,8 +153,8 @@ const ModalContasBancarias = ({
 
   function pushSelection(item: ItemContaBancariaProps) {
     handleSelection(item);
-    if(closeOnSelection){
-      onOpenChange()
+    if (closeOnSelection) {
+      onOpenChange();
     }
   }
 
@@ -174,7 +174,7 @@ const ModalContasBancarias = ({
             type="single"
             collapsible
             value={accordionOpen}
-            onValueChange={(e)=>setAccordionOpen(e)}
+            onValueChange={(e) => setAccordionOpen(e)}
             className="p-2 border dark:border-slate-800 rounded-lg flex-1"
           >
             <AccordionItem value="item-1" className="border-0">
@@ -231,7 +231,7 @@ const ModalContasBancarias = ({
             (item: ItemContaBancariaProps, index: number) => (
               <div
                 key={"plano_contas:" + item.id + index}
-                className="flex gap-1 items-center bg-blue-100 dark:bg-blue-700 justify-between mb-1 border rounded-md p-2"
+                className={`flex gap-1 items-center bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-2`}
               >
                 <span>
                   {item.grupo_economico && item.grupo_economico.toUpperCase()} -{" "}
@@ -240,6 +240,7 @@ const ModalContasBancarias = ({
                 </span>
                 <Button
                   size={"xs"}
+                  variant={"outline"}
                   onClick={() => {
                     pushSelection(item);
                   }}

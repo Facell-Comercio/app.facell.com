@@ -1,4 +1,3 @@
-import { exportToExcel } from "@/helpers/importExportXLS";
 import { api } from "@/lib/axios";
 
 import {
@@ -11,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
+import { exportToExcel } from "@/helpers/importExportXLS";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Download } from "lucide-react";
 import { useStoreExportDatasys } from "../export-datasys/store";
@@ -30,9 +30,13 @@ const ButtonExportTitulos = () => {
   ]);
 
   async function exportSolicitacao() {
-    const response = await api.get(`/financeiro/contas-a-pagar/titulo`, {
+    const response = await api.get(`/financeiro/contas-a-pagar/titulo/`, {
       params: { filters },
     });
+    console.log(filters);
+
+    console.log(response?.data?.rows);
+
     exportToExcel(response?.data?.rows || [], `solicitacoes`);
   }
 
