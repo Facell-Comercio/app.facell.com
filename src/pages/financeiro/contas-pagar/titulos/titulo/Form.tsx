@@ -6,7 +6,6 @@ import FormSelect from "@/components/custom/FormSelect";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
-import { TbCurrencyReal } from "react-icons/tb";
 
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
