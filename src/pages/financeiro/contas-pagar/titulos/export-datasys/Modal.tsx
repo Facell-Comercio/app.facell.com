@@ -26,6 +26,8 @@ type ExportDatasysProps = {
 };
 
 interface ResponseExportDatasysProps {
+  id_titulo?: string;
+  bar_code?: string;
   cnpj_loja: string;
   cnpj_fornecedor: string;
   documento: number;
@@ -76,13 +78,13 @@ const ModalExportDatasys = () => {
         return {
           "CNPJ Loja": row.cnpj_loja,
           "CPF / CNPJ Fornecedor": row.cnpj_fornecedor,
-          Documento: row.documento,
+          Documento: row.id_titulo,
           Emissão: normalizeDate(row.emissao),
           Vencimento: normalizeDate(row.vencimento),
           Valor: row.valor,
           "Tipo Documento": row.tipo_documento.toUpperCase(),
           Historico: row.historico.toUpperCase(),
-          BarCode: "",
+          BarCode: row.bar_code,
           "Centro de Custos": row.centro_custo.toUpperCase(),
           "Plano de Contas": row.plano_contas,
           "CNPJ Rateio": row.cnpj_rateio,

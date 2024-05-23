@@ -19,7 +19,7 @@ export const rateioSchema =  z.object({
   centro_custo: z.string().optional(),
   id_plano_conta: z.string(),
   plano_conta: z.string().optional(),
-  percentual: z.string().transform(value => String(parseFloat(value) / 100)),
+  percentual: z.coerce.string().transform(value => String(parseFloat(value) / 100)),
   valor: z.string(),
 })
 

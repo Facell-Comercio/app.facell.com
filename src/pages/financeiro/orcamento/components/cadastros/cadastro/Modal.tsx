@@ -78,7 +78,7 @@ const ModalCadastro = () => {
               </div>
             )}
           </ScrollArea>
-          <DialogFooter className="flex w-full gap-2 items-end flex-wrap">
+          <DialogFooter>
             <ModalButtons
               id={id}
               modalEditing={modalEditing}

@@ -35,7 +35,7 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
       className="h-[52vh] w-full overflow-auto scroll-thin"
     >
       <div className="flex gap-1 font-medium text-xs  w-full sticky top-0 z-10 bg-background">
-        <p className="min-w-16 text-center bg-background">ID</p>
+        <p className="min-w-20 text-center bg-background">ID Título</p>
         <p className="min-w-36 pl-2 bg-background">Descrição</p>
         <p className="min-w-36 pl-2 bg-background">Fornecedor</p>
         <p className="min-w-28 pl-2 bg-background">Valor</p>
@@ -67,12 +67,12 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
             { id: "COM ACRÉSCIMO", label: "Com Acréscimo" },
           ];
 
-          console.log(
-            form.formState.errors &&
-              form.formState.errors.titulos &&
-              form.formState.errors.titulos[item.index],
-            item.index
-          );
+          // console.log(
+          //   form.formState.errors &&
+          //     form.formState.errors.titulos &&
+          //     form.formState.errors.titulos[item.index],
+          //   item.index
+          // );
 
           return (
             <div
@@ -92,7 +92,7 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
               }}
             >
               <Input
-                className="text-xs w-16 h-8 p-2 text-center"
+                className="text-xs w-20 h-8 p-2 text-center"
                 value={data[item.index].id_titulo || ""}
                 readOnly={true}
               />

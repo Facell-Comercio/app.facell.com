@@ -135,12 +135,14 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
     handleTitulosSelection: (titulo) =>
       set((state) => {
         const tituloExists = state.titulosSelection
-          .map((titulo) => titulo.id_titulo)
-          .includes(titulo.id_titulo);
+          .map((vencimento) => vencimento.id_vencimento)
+          .includes(titulo.id_vencimento);
+
         if (tituloExists) {
           return {
             titulosSelection: state.titulosSelection.filter(
-              (selectedTitulo) => selectedTitulo.id_titulo !== titulo.id_titulo
+              (selectedTitulo) =>
+                selectedTitulo.id_vencimento !== titulo.id_vencimento
             ),
           };
         } else {

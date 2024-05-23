@@ -63,11 +63,11 @@ const ReactTableVirtualized: React.FC<
       },
       {
         accessorKey: "id_titulo",
-        header: "ID",
-        size: 60,
+        header: "ID TÍTULO",
+        size: 80,
         cell: (info) => {
           let value = info.getValue<number>();
-          return <div className="w-full text-center">{value}</div>;
+          return <div className="w-full text-center uppercase">{value}</div>;
         },
       },
       {

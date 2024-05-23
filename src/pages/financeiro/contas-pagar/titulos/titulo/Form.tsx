@@ -6,6 +6,8 @@ import FormSelect from "@/components/custom/FormSelect";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
+import { TbCurrencyReal } from "react-icons/tb";
+
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -334,6 +336,8 @@ const FormTituloPagar = ({
   const showModalFilial = () => {
     setModalFilialOpen(true);
   };
+
+  console.log(form.formState.errors);
 
   return (
     <div className="max-w-screen-xl overflow-auto zoom-in-50">
