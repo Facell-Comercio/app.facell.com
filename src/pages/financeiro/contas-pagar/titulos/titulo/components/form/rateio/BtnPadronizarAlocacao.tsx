@@ -85,7 +85,7 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
       plano_conta: 'SELECIONE'
     }
   })
-  const { errors } = formPadronizacao.formState
+  // const { errors } = formPadronizacao.formState
   // console.log('Erros padronizar alocação', errors)
 
   const id_centro_custo = formPadronizacao.watch('id_centro_custo')
@@ -105,7 +105,7 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
   }
 
   // * [ORÇAMENTO]
-  const valorTotalItens:number = itens_rateio?.reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) || 0
+  const valorTotalItens:number = (itens_rateio?.reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) || 0)
 
   const valorExcessoOrcamento = valorTotalItens - saldoOrcamento
   const excedeOrcamento = saldoOrcamento < valorTotalItens
@@ -176,10 +176,11 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
       // setar para todos os itens_rateio os dados de centro de custo e plano de contas
       const novos_itens:ItemRateioTitulo[] = [];
       itens_rateio?.forEach((item:ItemRateioTitulo)=>{
-        novos_itens.push({...item, ...data})
+        novos_itens.push({...item, percentual: String(parseFloat(item.percentual) * 100), ...data})
       })
       // @ts-ignore
       form.setValue('itens_rateio', novos_itens)
+      form.setValue('update_rateio', true)
 
       formPadronizacao.reset()
       setModalOpen(false)

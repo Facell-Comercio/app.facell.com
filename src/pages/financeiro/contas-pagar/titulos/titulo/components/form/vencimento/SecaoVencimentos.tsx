@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { DollarSign, Pen, Trash } from "lucide-react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { TituloSchemaProps } from "../../../form-data";
@@ -28,13 +27,9 @@ type SecaoVencimentosProps = {
 }
 
 const SecaoVencimentos = ({
-    id,
     form,
-    disabled,
     canEdit,
     modalEditing,
-    readOnly,
-
 }: SecaoVencimentosProps) => {
 
     const {
@@ -46,14 +41,12 @@ const SecaoVencimentos = ({
 
     const wvencimentos = form.watch('vencimentos')
 
-    const { setValue, formState: { errors } } = form;
+    const { setValue } = form;
+    // const { formState: { errors } } = form;
 
     function handleRemoveVencimento(index: number) {
         setValue("update_vencimentos", true);
         removeVencimento(index);
-    }
-    function handleChangeVencimento() {
-        setValue("update_vencimentos", true);
     }
 
     const updateVencimento = useStoreVencimento().updateVencimento
@@ -72,6 +65,7 @@ const SecaoVencimentos = ({
                             {canEditVencimentos && (
                                 <>
                                     <Button onClick={() => {
+                                        // @ts-ignore
                                         updateVencimento({ index, vencimento: wvencimentos[index] })
                                     }} type="button" variant="warning" size={'xs'}><Pen size={18} /></Button>
 
@@ -130,7 +124,7 @@ const SecaoVencimentos = ({
                 size: 400,
             },
         ],
-        [wvencimentos],
+        [wvencimentos, canEditVencimentos],
     )
 
     const valor_total = wvencimentos?.reduce((acc, curr) => {
@@ -139,7 +133,7 @@ const SecaoVencimentos = ({
 
     return (
         <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-            <ModalVencimento control={form.control} />
+            <ModalVencimento form={form} />
             <div className="flex gap-2 mb-3 items-center">
                 <DollarSign />
                 <span className="text-lg font-bold ">
@@ -148,7 +142,7 @@ const SecaoVencimentos = ({
                 {canEdit && modalEditing && (
                     <div className="ms-auto flex gap-3 items-center">
                         <RemoverVencimentos form={form} />
-                        <ModalGerarVencimentos control={form.control} />
+                        <ModalGerarVencimentos form={form} />
                         <BtnNovoVencimento />
                     </div>
                 )}
@@ -161,7 +155,7 @@ const SecaoVencimentos = ({
                 />
             </div>
             <div className="flex gap-3 mt-2 text-sm">
-                <span>Total Vencimentos: </span><span>{normalizeCurrency(valor_total)}</span>
+                <span>Total Vencimentos: </span><span>{normalizeCurrency(valor_total || 0)}</span>
             </div>
         </div>
 

@@ -36,6 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ModalFilial from "@/pages/financeiro/components/ModalFilial";
 import { Filial } from "@/types/filial-type";
 import { useQueryClient } from "@tanstack/react-query";
+import { TbCurrencyReal } from "react-icons/tb";
 import {
   AlertTriangle,
   Ban,
@@ -56,16 +57,14 @@ import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
 import {
-  calcularDataPrevisaoPagamento,
-  formatarHistorico,
-  getVencimentoMinimo,
+  formatarHistorico
 } from "./helpers/helper";
 import { initialPropsTitulo, useStoreTitulo } from "./store";
+import { FaSpinner } from "react-icons/fa6";
 
 const FormTituloPagar = ({
   id,
-  data,
-  formRef,
+  data
 }: {
   id: string | null | undefined;
   data: TituloSchemaProps;
@@ -84,7 +83,7 @@ const FormTituloPagar = ({
   const titulo =
     {
       ...data,
-      update_itens: false,
+      update_vencimentos: false,
       update_rateio: false,
     } || initialPropsTitulo;
 
@@ -113,6 +112,8 @@ const FormTituloPagar = ({
   console.log("ERROS_TITULO:", errors);
 
   // * [ WATCHES ]
+  const wfull = form.watch()
+  console.log(wfull)
   const id_grupo_economico = useWatch({
     name: "id_grupo_economico",
     control: form.control,
@@ -131,14 +132,6 @@ const FormTituloPagar = ({
       control: form.control,
     }) || "0"
   );
-
-  // * [ DATA PREVISTA ]
-  const onChangeDataVencimento = (data_venc: Date) => {
-    // setar a data para o data_prevista
-    const data_prevista =
-      calcularDataPrevisaoPagamento(data_venc).toISOString();
-    setValue("data_prevista", data_prevista);
-  };
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
@@ -175,7 +168,7 @@ const FormTituloPagar = ({
       );
       setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
-    } catch (error) {}
+    } catch (error) { }
   }
 
   // * [ ANEXOS ]
@@ -213,13 +206,25 @@ const FormTituloPagar = ({
     id_forma_pagamento === "8";
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
-  const { mutate: insertOne, isSuccess: insertOneSuccess } =
+  const [isSubmtting, setIsSubmitting] = useState<boolean>(false);
+
+  const { mutate: insertOne, isSuccess: insertOneSuccess, isPending: isPendingInsert } =
     useTituloPagar().insertOne();
-  const { mutate: update, isSuccess: updateSuccess } =
+  const { mutate: update, isSuccess: updateSuccess, isPending: isPendingUpdate } =
     useTituloPagar().update();
 
+  useEffect(() => {
+    if (isPendingInsert || isPendingUpdate) {
+      setIsSubmitting(true)
+    } else {
+      setIsSubmitting(false)
+    }
+  }, [isPendingInsert, isPendingUpdate])
+
   const onSubmit: SubmitHandler<TituloSchemaProps> = async (data) => {
-    console.log("OnSubmit", data);
+    console.log("%c OnSubmit", "color: blue; font-size: 20px;");
+    console.log(data)
+
     if (!id) {
       console.log("Inserindo Titulo:", data);
       insertOne(data);
@@ -409,9 +414,8 @@ const FormTituloPagar = ({
                         className="min-w-[15ch]"
                       />
                       <div
-                        className={`${
-                          showPix ? "flex flex-1" : "hidden"
-                        } gap-3 flex-wrap`}
+                        className={`${showPix ? "flex flex-1" : "hidden"
+                          } gap-3 flex-wrap`}
                       >
                         <SelectTipoChavePix
                           control={form.control}
@@ -431,9 +435,8 @@ const FormTituloPagar = ({
                       </div>
                       {/* Dados bancários do fornecedor */}
                       <div
-                        className={`${
-                          showDadosBancarios ? "flex flex-1" : "hidden"
-                        } gap-3 flex-wrap`}
+                        className={`${showDadosBancarios ? "flex flex-1" : "hidden"
+                          } gap-3 flex-wrap`}
                       >
                         <FormInput
                           label="Favorecido"
@@ -555,26 +558,11 @@ const FormTituloPagar = ({
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-4 gap-1">
+                      <div className="grid grid-cols-3 gap-3">
                         <FormDateInput
                           disabled={disabled}
                           name="data_emissao"
                           label="Data de emissão"
-                          control={form.control}
-                        />
-                        <FormDateInput
-                          disabled={disabled}
-                          name="data_vencimento"
-                          label="Data de vencimento"
-                          min={getVencimentoMinimo(isMaster)}
-                          control={form.control}
-                          onChange={onChangeDataVencimento}
-                        />
-
-                        <FormDateInput
-                          disabled={!isMaster || disabled}
-                          name="data_prevista"
-                          label="Previsão de Pagamento"
                           control={form.control}
                         />
 
@@ -585,18 +573,20 @@ const FormTituloPagar = ({
                           className={"w-full"}
                           control={form.control}
                         />
-                      </div>
 
-                      <div className="grid gap-3 grid-cols-[20ch_minmax(50ch,_1fr)]">
                         <FormInput
                           control={form.control}
-                          inputClass="max-w-[20ch] text-left"
+                          inputClass=" text-left"
                           name="valor"
                           type="number"
                           iconLeft
                           icon={TbCurrencyReal}
                           label="Valor Total"
                         />
+                      </div>
+
+                      <div className="grid gap-3 grid-cols-1">
+
 
                         <FormInput
                           readOnly={readOnly}
@@ -619,7 +609,7 @@ const FormTituloPagar = ({
                               <span>Vencimentos</span>
                               {errors.vencimentos?.message && (
                                 <Popover>
-                                  <PopoverTrigger>
+                                  <PopoverTrigger asChild>
                                     <Badge variant={"destructive"}>
                                       Atenção
                                     </Badge>
@@ -636,7 +626,7 @@ const FormTituloPagar = ({
                               <span>Rateio da solicitação</span>
                               {errors.itens_rateio?.message && (
                                 <Popover>
-                                  <PopoverTrigger>
+                                  <PopoverTrigger asChild>
                                     <Badge variant={"destructive"}>
                                       Atenção
                                     </Badge>
@@ -775,82 +765,88 @@ const FormTituloPagar = ({
           </ScrollArea>
 
           <div className="max-w-full flex justify-between items-center mt-4">
-            <div className="flex gap-3 items-center">
-              {id &&
-                status !== "Solicitado" &&
-                status !== "Pago" &&
-                (isMaster === true &&
-                (status === "Aprovado" || status === "Negado")
-                  ? true
-                  : false) && (
-                  <ButtonMotivation
-                    variant={"secondary"}
-                    size={"lg"}
-                    action={handleChangeVoltarSolicitado}
-                  >
-                    <Undo2 className="me-2" size={18} />
-                    Tornar solicitado
-                  </ButtonMotivation>
-                )}
-              {isMaster && id && status !== "Negado" && status !== "Pago" && (
-                <ButtonMotivation
-                  variant={"destructive"}
-                  size={"lg"}
-                  action={handleChangeNegar}
-                >
-                  <X className="me-2" size={18} />
-                  Negar
-                </ButtonMotivation>
-              )}
-              {isMaster && id && status !== "Aprovado" && status !== "Pago" && (
-                <Button
-                  type="button"
-                  variant={"success"}
-                  size={"lg"}
-                  onClick={handleChangeAprovar}
-                >
-                  <Check className="me-2" size={18} />
-                  Aprovar
-                </Button>
-              )}
-              {id && isMaster && (
-                <Button
-                  type="button"
-                  variant={"secondary"}
-                  size={"lg"}
-                  onClick={handleClickCriarRecorrencia}
-                >
-                  <Repeat2 className="me-2" size={18} />
-                  Criar Recorrência
-                </Button>
-              )}
-            </div>
-            <div className="flex gap-3 items-center">
-              {canEdit && modalEditing && (
-                <>
-                  <Button
-                    onClick={() => editModal(false)}
-                    size="lg"
-                    variant={"secondary"}
-                  >
-                    <Ban className="me-2" size={18} /> Cancelar
-                  </Button>
-                  <Button type="submit" size="lg" variant={"default"}>
-                    <Save className="me-2" size={18} />
-                    {id ? "Salvar" : "Solicitar"}
-                  </Button>
-                </>
-              )}
-              {canEdit && !modalEditing && (
-                <Button
-                  onClick={() => editModal(true)}
-                  size="lg"
-                  variant={"warning"}
-                >
-                  <Pen size={18} className="me-2" /> Editar
-                </Button>
-              )}
-            </div>
+            {isSubmtting ? (
+              <div className="flex gap-3 items-center"><span className="font-lg">Aguarde...</span> {<FaSpinner className="animate-spin"/>}</div>
+            ) : (
+              <>
+                <div className="flex gap-3 items-center">
+                  {id &&
+                    status !== "Solicitado" &&
+                    status !== "Pago" &&
+                    (isMaster === true &&
+                      (status === "Aprovado" || status === "Negado")
+                      ? true
+                      : false) && (
+                      <ButtonMotivation
+                        variant={"secondary"}
+                        size={"lg"}
+                        action={handleChangeVoltarSolicitado}
+                      >
+                        <Undo2 className="me-2" size={18} />
+                        Tornar solicitado
+                      </ButtonMotivation>
+                    )}
+                  {isMaster && id && status !== "Negado" && status !== "Pago" && (
+                    <ButtonMotivation
+                      variant={"destructive"}
+                      size={"lg"}
+                      action={handleChangeNegar}
+                    >
+                      <X className="me-2" size={18} />
+                      Negar
+                    </ButtonMotivation>
+                  )}
+                  {isMaster && id && status !== "Aprovado" && status !== "Pago" && (
+                    <Button
+                      type="button"
+                      variant={"success"}
+                      size={"lg"}
+                      onClick={handleChangeAprovar}
+                    >
+                      <Check className="me-2" size={18} />
+                      Aprovar
+                    </Button>
+                  )}
+                  {id && isMaster && (
+                    <Button
+                      type="button"
+                      variant={"secondary"}
+                      size={"lg"}
+                      onClick={handleClickCriarRecorrencia}
+                    >
+                      <Repeat2 className="me-2" size={18} />
+                      Criar Recorrência
+                    </Button>
+                  )}
+                </div>
+                <div className="flex gap-3 items-center">
+                  {canEdit && modalEditing && (
+                    <>
+                      <Button
+                        onClick={() => editModal(false)}
+                        size="lg"
+                        variant={"secondary"}
+                      >
+                        <Ban className="me-2" size={18} /> Cancelar
+                      </Button>
+                      <Button type="submit" size="lg" variant={"default"}>
+                        <Save className="me-2" size={18} />
+                        {id ? "Salvar" : "Solicitar"}
+                      </Button>
+                    </>
+                  )}
+                  {canEdit && !modalEditing && (
+                    <Button
+                      onClick={() => editModal(true)}
+                      size="lg"
+                      variant={"warning"}
+                    >
+                      <Pen size={18} className="me-2" /> Editar
+                    </Button>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </form>
       </Form>
