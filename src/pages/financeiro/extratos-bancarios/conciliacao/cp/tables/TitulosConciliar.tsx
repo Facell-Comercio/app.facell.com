@@ -17,7 +17,7 @@ import { formatDate } from "date-fns";
 import { useMemo, useRef, useState } from "react";
 import { useStoreTableConciliacaoCP } from "./store-tables";
 
-export type TitulosConciliarProps = {
+export type VencimentosConciliarProps = {
   id_conciliacao?: string;
   id_titulo: string;
   id_vencimento: string;
@@ -31,24 +31,21 @@ export type TitulosConciliarProps = {
   tipo_baixa?: string;
 };
 
-interface RowVirtualizerTitulosConciliarProps {
-  data: TitulosConciliarProps[];
+interface RowVirtualizerVencimentosConciliarProps {
+  data: VencimentosConciliarProps[];
   rowSelection: RowSelectionState;
-  titulosSelection: String[];
+  vencimentosSelection: String[];
   handleRowSelection: (data: any) => void;
 }
 
-const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
-  data,
-  rowSelection,
-  handleRowSelection,
-  titulosSelection,
-}) => {
+const ReactTableVirtualized: React.FC<
+  RowVirtualizerVencimentosConciliarProps
+> = ({ data, rowSelection, handleRowSelection, vencimentosSelection }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const handleTitulosSelection =
-    useStoreTableConciliacaoCP.getState().handleTitulosSelection;
+  const handlevencimentosSelection =
+    useStoreTableConciliacaoCP.getState().handlevencimentosSelection;
 
-  const columns = useMemo<ColumnDef<TitulosConciliarProps>[]>(
+  const columns = useMemo<ColumnDef<VencimentosConciliarProps>[]>(
     () => [
       {
         id: "select",
@@ -57,8 +54,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
             <div className="flex items-center justify-center">
               <Checkbox
                 checked={
-                  data.length == titulosSelection.length ||
-                  (titulosSelection.length > 0 && "indeterminate")
+                  data.length == vencimentosSelection.length ||
+                  (vencimentosSelection.length > 0 && "indeterminate")
                 }
                 onCheckedChange={(value) =>
                   table.toggleAllPageRowsSelected(!!value)
@@ -72,14 +69,14 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
             <div className="flex items-center justify-center">
               <Checkbox
                 {...{
-                  checked: titulosSelection.includes(
+                  checked: vencimentosSelection.includes(
                     row.original.id_vencimento
                   ),
                   disabled: !row.getCanSelect(),
                   indeterminate: row.getIsSomeSelected().toString(),
                 }}
                 onCheckedChange={() => {
-                  handleTitulosSelection({
+                  handlevencimentosSelection({
                     ...row.original,
                     valor_pago: row.original.valor,
                     tipo_baixa: "PADRÃO",
@@ -162,7 +159,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
         size: 220,
       },
     ],
-    [titulosSelection]
+    [vencimentosSelection]
   );
 
   const table = useReactTable({
@@ -195,7 +192,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
 
         handleRowSelection({
           rowSelection: result,
-          titulosSelection: titulos,
+          vencimentosSelection: titulos,
         });
       }
     },
@@ -278,7 +275,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
                   {virtualizer.getVirtualItems().map((virtualRow, index) => {
                     const row = rows[
                       virtualRow.index
-                    ] as Row<TitulosConciliarProps>;
+                    ] as Row<VencimentosConciliarProps>;
                     return (
                       <tr
                         key={"tituloConciliar tr" + virtualRow.index + index}
@@ -330,14 +327,14 @@ const TitulosConciliar = ({
   isLoading,
   isError,
   rowSelection,
-  titulosSelection,
+  vencimentosSelection,
   handleRowSelection,
 }: {
-  data: TitulosConciliarProps[];
+  data: VencimentosConciliarProps[];
   isLoading: boolean;
   isError: boolean;
   rowSelection: RowSelectionState;
-  titulosSelection: String[];
+  vencimentosSelection: String[];
   handleRowSelection: (data: any) => void;
 }) => {
   // @ts-ignore
@@ -377,7 +374,7 @@ const TitulosConciliar = ({
         data={rows}
         rowSelection={rowSelection}
         handleRowSelection={handleRowSelection}
-        titulosSelection={titulosSelection}
+        vencimentosSelection={vencimentosSelection}
       />
     </div>
   );

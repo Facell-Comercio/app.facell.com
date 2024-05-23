@@ -1,7 +1,7 @@
 import { RowSelectionState } from "@tanstack/react-table";
 import { DateRange } from "react-day-picker";
 import { create } from "zustand";
-import { TitulosConciliarProps } from "./TitulosConciliar";
+import { VencimentosConciliarProps } from "./TitulosConciliar";
 import { TransacoesConciliadasProps } from "./TransacoesConciliadas";
 import { TransacoesConciliarProps } from "./TransacoesConciliar";
 
@@ -14,7 +14,7 @@ type RowSelection = Record<number, boolean>;
 
 type HandleRowSelectioVencimentosProps = {
   rowSelection: RowSelectionState;
-  titulosSelection: TitulosConciliarProps[];
+  vencimentosSelection: VencimentosConciliarProps[];
 };
 
 type HandleRowSelectionTransacoesProps = {
@@ -56,9 +56,9 @@ interface UseStoreTableConciliacaoCP {
   modalOpen: boolean;
   filtersSearch: FiltersSearchProps | undefined;
   isAllSelected: boolean;
-  rowTitulosSelection: RowSelection;
+  rowVencimentosSelection: RowSelection;
   rowTransacoesSelection: RowSelection;
-  titulosSelection: TitulosConciliarProps[];
+  vencimentosSelection: VencimentosConciliarProps[];
   transacoesSelection: TransacoesConciliarProps[];
   filters: Filters;
   tipoConciliacao?: "manual" | "automatica";
@@ -70,7 +70,7 @@ interface UseStoreTableConciliacaoCP {
   openModal: (id: string) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
-  handleTitulosSelection: (titulo: TitulosConciliarProps) => void;
+  handlevencimentosSelection: (titulo: VencimentosConciliarProps) => void;
   handleTransacoesSelection: (transacao: TransacoesConciliadasProps) => void;
   toggleModal: () => void;
   setFiltersSearch: (filters: FiltersSearchProps) => void;
@@ -81,7 +81,9 @@ interface UseStoreTableConciliacaoCP {
   setTipoConciliacao: (tipo: "manual" | "automatica") => void;
   resetTipoConciliacao: () => void;
 
-  handleRowTitulosSelection: (data: HandleRowSelectioVencimentosProps) => void;
+  handlerowVencimentosSelection: (
+    data: HandleRowSelectioVencimentosProps
+  ) => void;
   handleRowTransacoesSelection: (
     data: HandleRowSelectionTransacoesProps
   ) => void;
@@ -104,9 +106,9 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
     showAccordion: false,
 
     isAllSelected: false,
-    rowTitulosSelection: {},
+    rowVencimentosSelection: {},
     rowTransacoesSelection: {},
-    titulosSelection: [],
+    vencimentosSelection: [],
     transacoesSelection: [],
     data_pagamento: undefined,
     pagination: { pageIndex: 0, pageSize: 15 },
@@ -132,21 +134,23 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
     openModal: (id: string) => set({ modalOpen: true, id }),
     closeModal: () => set({ modalOpen: false }),
     editModal: (bool) => set({ modalEditing: bool }),
-    handleTitulosSelection: (titulo) =>
+    handlevencimentosSelection: (titulo) =>
       set((state) => {
-        const tituloExists = state.titulosSelection
+        const tituloExists = state.vencimentosSelection
           .map((vencimento) => vencimento.id_vencimento)
           .includes(titulo.id_vencimento);
 
         if (tituloExists) {
           return {
-            titulosSelection: state.titulosSelection.filter(
+            vencimentosSelection: state.vencimentosSelection.filter(
               (selectedTitulo) =>
                 selectedTitulo.id_vencimento !== titulo.id_vencimento
             ),
           };
         } else {
-          return { titulosSelection: [...state.titulosSelection, titulo] };
+          return {
+            vencimentosSelection: [...state.vencimentosSelection, titulo],
+          };
         }
       }),
     handleTransacoesSelection: (transacao) =>
@@ -176,10 +180,10 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
       set((state) => ({
         filtersSearch: { ...state.filtersSearch, ...novoFiltro },
       })),
-    handleRowTitulosSelection: (data: HandleRowSelectioVencimentosProps) =>
+    handlerowVencimentosSelection: (data: HandleRowSelectioVencimentosProps) =>
       set({
-        rowTitulosSelection: data.rowSelection,
-        titulosSelection: data.titulosSelection,
+        rowVencimentosSelection: data.rowSelection,
+        vencimentosSelection: data.vencimentosSelection,
       }),
     handleRowTransacoesSelection: (data: HandleRowSelectionTransacoesProps) =>
       set({
@@ -188,9 +192,9 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
       }),
     resetSelections: () =>
       set({
-        rowTitulosSelection: {},
+        rowVencimentosSelection: {},
         rowTransacoesSelection: {},
-        titulosSelection: [],
+        vencimentosSelection: [],
         transacoesSelection: [],
         canSelect: false,
       }),

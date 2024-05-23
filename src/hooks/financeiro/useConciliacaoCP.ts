@@ -2,15 +2,16 @@
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { ConciliacaoCPSchemaProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/components/ModalConciliar";
-import { TitulosConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/tables/TitulosConciliar";
+import { VencimentosConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/tables/TitulosConciliar";
 import { TransacoesConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/tables/TransacoesConciliar";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 interface ConciliacaoAutomaticaProps {
-    vencimentos: TitulosConciliarProps[],
+    vencimentos: VencimentosConciliarProps[],
     transacoes: TransacoesConciliarProps[],
+    id_conta_bancaria?: string
 }
 
 export const useConciliacaoCP = () => {

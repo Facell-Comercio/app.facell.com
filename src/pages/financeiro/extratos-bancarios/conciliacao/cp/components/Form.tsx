@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Form } from "@/components/ui/form";
 import { Fingerprint, List } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Componentes
 import { Input } from "@/components/custom/FormInput";
@@ -35,21 +35,39 @@ const FormConciliacaoCP = ({
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   console.log("RENDER - ConciliacaoCPs:", id);
-  const { mutate: conciliacaoManual } = useConciliacaoCP().conciliacaoManual();
+  const {
+    mutate: conciliacaoManual,
+    isPending,
+    isSuccess,
+  } = useConciliacaoCP().conciliacaoManual();
 
   const closeModal = useStoreConciliacaoCP().closeModal;
+  const editIsPending = useStoreConciliacaoCP().editIsPending;
 
-  const [resetSelections, data_pagamento] = useStoreTableConciliacaoCP(
-    (state) => [state.resetSelections, state.data_pagamento]
-  );
+  const [resetSelections, data_pagamento, id_conta_bancaria] =
+    useStoreTableConciliacaoCP((state) => [
+      state.resetSelections,
+      state.data_pagamento,
+      state.filters.id_conta_bancaria,
+    ]);
+
+  useEffect(() => {
+    editIsPending(isPending);
+    if (isSuccess) {
+      resetSelections();
+      closeModal();
+    }
+  }, [isPending, isSuccess]);
 
   useState<boolean>(false);
 
-  const { form, titulos } = useFormConciliacaoCPData(data);
+  const { form, vencimentos } = useFormConciliacaoCPData(data);
   const transacoes = data.transacoes;
 
-  const totalTitulos = form
-    .watch("titulos")
+  console.log(form.watch("vencimentos"));
+
+  const totalVencimentos = form
+    .watch("vencimentos")
     .reduce((acc, val) => acc + parseFloat(val.valor_pago || "0"), 0);
   const totalTransacoes = transacoes.reduce(
     (acc, val) => acc + parseFloat(val.valor),
@@ -57,7 +75,7 @@ const FormConciliacaoCP = ({
   );
 
   function onSubmitData(newData: ConciliacaoCPSchemaProps) {
-    if (totalTitulos !== totalTransacoes) {
+    if (totalVencimentos !== totalTransacoes) {
       toast({
         title: "Valores incorretos!",
         description: "O total dos títulos e das transações não são iguais",
@@ -67,9 +85,11 @@ const FormConciliacaoCP = ({
     }
     console.log(newData);
 
-    conciliacaoManual({ ...newData, data_pagamento: data_pagamento });
-    resetSelections();
-    closeModal();
+    conciliacaoManual({
+      ...newData,
+      data_pagamento: data_pagamento,
+      id_conta_bancaria,
+    });
   }
 
   return (
@@ -135,12 +155,16 @@ const FormConciliacaoCP = ({
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-1">
-                <VirtualizedTitulos canEdit={!!id} data={titulos} form={form} />
+                <VirtualizedTitulos
+                  canEdit={!!id}
+                  data={vencimentos}
+                  form={form}
+                />
               </CardContent>
               <CardFooter className="flex justify-end p-2 align-botton">
                 <Badge variant={"secondary"}>
                   <p className="me-1">Valor Total: </p>
-                  {normalizeCurrency(totalTitulos)}
+                  {normalizeCurrency(totalVencimentos)}
                 </Badge>
               </CardFooter>
             </Card>
