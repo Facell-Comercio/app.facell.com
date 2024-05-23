@@ -91,7 +91,7 @@ export const formatarHistorico = (descricao: string) => {
   return (
     <span className={`${cor}`}>{descricao?.split('\n').map((trecho, index) =>
       <>
-        <span key={'trecho.' + index + new Date().getTime()} className={`${trecho.includes('\t') ? 'ms-3' : ''}`}>{trecho}</span>
+        <span key={'trecho.' + index + Math.random()} className={`${trecho.includes('\t') ? 'ms-3' : ''}`}>{trecho}</span>
         <br />
       </>
     )}
