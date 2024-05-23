@@ -82,18 +82,6 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     },
   },
   {
-    header: "Previsão",
-    accessorKey: "data_prevista",
-    cell: (info) => {
-      const data = info.getValue<Date>();
-      return new Date(data).toLocaleString("pt-BR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    },
-  },
-  {
     header: "Fornecedor",
     accessorKey: "fornecedor",
     cell: (info) => {

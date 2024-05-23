@@ -34,7 +34,6 @@ export const useStoreVencimento = create<State & Actions>((set) => ({
     ...initialStateVencimento,
     newVencimento: ()=>set(({vencimento: {...initialStateVencimento.vencimento}, modalOpen: true})),
     updateVencimento: (data:UpdateVencimentoProps) => {
-        console.log('Atualizando', data)
         set({ vencimento: { ...data.vencimento }, indexFieldArray: data.index, modalOpen: true }) 
     },
     toggleModal: () => { set((state) => ({ modalOpen: !state.modalOpen })) },

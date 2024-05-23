@@ -8,11 +8,11 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Control, useFieldArray, useForm, useWatch } from "react-hook-form"
+import { UseFormReturn, useFieldArray, useForm, useWatch } from "react-hook-form"
 
 import z from 'zod'
 import FormInput from "@/components/custom/FormInput"
-import { rateioSchema } from "../../../form-data"
+import { TituloSchemaProps, rateioSchema } from "../../../form-data"
 import { initialStateRateio, useStoreRateio } from "./context"
 import { AlertCircle, Percent, Plus, Save } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
@@ -29,11 +29,11 @@ import { api } from "@/lib/axios"
 import { ItemRateioTitulo } from "../../../store"
 
 type ModalItemRateioProps = {
-    control: Control<any>,
+    form: UseFormReturn<TituloSchemaProps>,
     canEdit: boolean,
 }
 
-export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRateioProps) => {
+export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioProps) => {
     const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false)
     const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState<boolean>(false)
     const [modalCentrosCustosOpen, setModalCentrosCustosOpen] = useState<boolean>(false)
@@ -49,19 +49,19 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
     // Dados obtidos do Título:
     const id_matriz = useWatch({
         name: 'id_matriz',
-        control: controlTitulo,
+        control: formTitulo.control,
     })
     const id_grupo_economico = useWatch({
         name: 'id_grupo_economico',
-        control: controlTitulo,
+        control: formTitulo.control,
     })
     const valorTotalTitulo = useWatch({
         name: 'valor',
-        control: controlTitulo,
+        control: formTitulo.control,
     })
     const itens_rateio = useWatch({
         name: 'itens_rateio',
-        control: controlTitulo,
+        control: formTitulo.control,
     })
 
     // -------------------
@@ -82,7 +82,7 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
         append: addItemRateio,
         update: updateItemRateio,
     } = useFieldArray({
-        control: controlTitulo,
+        control: formTitulo.control,
         name: "itens_rateio",
     });
 
@@ -164,7 +164,8 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
     type FetchOrcamento = {
         id_grupo_economico: number | string,
         id_centro_custo: number | string,
-        id_plano_conta: number | string
+        id_plano_conta: number | string,
+        data_titulo?: Date | string,
     }
     const fetchOrcamento = async (props: FetchOrcamento) => {
         try {
@@ -182,20 +183,22 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
         }
     }
 
+    const data_titulo = formTitulo.watch('created_at')
+
     useEffect(() => {
         if (id_grupo_economico && id_centro_custo && id_plano_conta) {
-            fetchOrcamento({ id_grupo_economico, id_centro_custo, id_plano_conta })
+            fetchOrcamento({ id_grupo_economico, id_centro_custo, id_plano_conta, data_titulo: isUpdate ? data_titulo : undefined })
         } else {
             setValorOrcamento(0)
         }
     }, [id_grupo_economico, id_centro_custo, id_plano_conta])
 
-    const valorTotalItens = itens_rateio
-        .filter((_: any, index: number) => isUpdate ? index != indexFieldArray : true)
-        .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0)
+    const valorTotalItens = (itens_rateio
+    ?.filter((_: any, index: number) => isUpdate ? index != indexFieldArray : true)
+        .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) || 0)
 
-    const previsaoConsumoOrcamento = itens_rateio
-        .filter((i: ItemRateioTitulo, index: number) => {
+    const previsaoConsumoOrcamento = (itens_rateio
+    ?.filter((i: ItemRateioTitulo, index: number) => {
             if (
                 i.id_centro_custo == id_centro_custo
                 && i.id_plano_conta == id_plano_conta
@@ -206,13 +209,13 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
             }
             return false
         })
-        .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + valor
+        .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) || 0) + valor
 
     const saldoFuturoOrcamento = valorOrcamento - previsaoConsumoOrcamento < 0 ? 0 : valorOrcamento - previsaoConsumoOrcamento;
     const valorExcessoOrcamento = valor - saldoFuturoOrcamento
     const excedeOrcamento = valorExcessoOrcamento > 0
 
-    const valorExcessoTitulo = (valor + valorTotalItens) - valorTotalTitulo;
+    const valorExcessoTitulo = (valor + valorTotalItens) - parseFloat(valorTotalTitulo);
     const excedeTotalTitulo = valorExcessoTitulo > 0;
 
     useEffect(() => {
@@ -261,10 +264,10 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
             // verificar se já existe mesma filial + centro + plano
             if (!isUpdate) {
                 const duplicatas = itens_rateio
-                    .filter((i: ItemRateioTitulo) =>
+                    ?.filter((i: ItemRateioTitulo) =>
                         i.id_centro_custo == id_centro_custo
                         && i.id_plano_conta == data.id_plano_conta
-                        && i.id_filial == data.id_filial)
+                        && i.id_filial == data.id_filial) || []
                 if (duplicatas.length > 0) {
                     setFeedback({
                         variant: 'destructive', title: 'Item duplicado!',
@@ -289,9 +292,9 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
                 } else {
 
                     const totalPrevisto = 
-                    itens_rateio
-                    .filter((_: any, index: number) => index != indexFieldArray)
-                    .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
+                    (itens_rateio
+                    ?.filter((_: any, index: number) => index != indexFieldArray)
+                    .reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) || 0) + parseFloat(data.valor)
                     const dif = totalPrevisto - parseFloat(valorTotalTitulo)
 
                     if (dif > 0) {
@@ -301,10 +304,10 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
                         })
                         return
                     }
-                    updateItemRateio(indexFieldArray, { ...data, percentual: parseFloat(data.percentual) * 100 })
+                    updateItemRateio(indexFieldArray, { ...data, percentual: String(parseFloat(data.percentual) * 100) })
                 }
             } else {
-                const totalPrevisto = itens_rateio.reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) + parseFloat(data.valor)
+                const totalPrevisto = (itens_rateio?.reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) || 0) + parseFloat(data.valor)
                 const dif = totalPrevisto - parseFloat(valorTotalTitulo)
 
                 if (dif > 0) {
@@ -326,6 +329,7 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
                     percentual: String(parseFloat(data.percentual) * 100),
                 })
             }
+            formTitulo.setValue('update_rateio', true)
             formItemRateio.reset()
             toggleModal()
         } catch (error: any) {
@@ -339,12 +343,12 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
 
     const handleChangeValor = (e: ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value || '0'
-        const percent = (parseFloat(val) / valorTotalTitulo * 100).toFixed(4)
+        const percent = (parseFloat(val) / parseFloat(valorTotalTitulo) * 100).toFixed(4)
         formItemRateio.setValue('percentual', percent)
     }
     const handleChangePercentual = (e: ChangeEvent<HTMLInputElement>) => {
         const percent = e.target.value || '0'
-        const novoValor = (parseFloat(percent) / 100 * valorTotalTitulo).toFixed(2)
+        const novoValor = (parseFloat(percent) / 100 * parseFloat(valorTotalTitulo)).toFixed(2)
         formItemRateio.setValue('valor', novoValor)
     }
 
@@ -379,7 +383,14 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
                 />
 
                 <Form {...formItemRateio}>
-                    <form onSubmit={formItemRateio.handleSubmit(onSubmit)}>
+                    <form 
+                         onSubmit={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            // @ts-ignore
+                            formItemRateio.handleSubmit(onSubmit)()
+                        }}
+                    >
                         <DialogHeader>
                             <DialogTitle>{isUpdate ? 'Editar Item' : 'Adicionar Item'}</DialogTitle>
                             <DialogDescription>
@@ -418,6 +429,10 @@ export const ModalItemRateio = ({ control: controlTitulo, canEdit }: ModalItemRa
 
                             <div className="flex gap-3 text-muted-foreground">
                                 <span>Saldo Orçamento</span>
+                                <span>{normalizeCurrency(valorOrcamento)}</span>
+                            </div>
+                            <div className="flex gap-3 text-muted-foreground">
+                                <span>Saldo Orçamento - Futuro</span>
                                 <span>{normalizeCurrency(saldoFuturoOrcamento)}</span>
                             </div>
 

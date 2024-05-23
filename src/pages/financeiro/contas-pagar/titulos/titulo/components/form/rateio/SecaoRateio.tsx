@@ -1,5 +1,4 @@
 import SelectTipoRateio from "@/components/custom/SelectTipoRateio";
-import { Badge } from "@/components/ui/badge";
 import { api } from "@/lib/axios";
 import { Divide, Download, Pen, Trash, Upload } from "lucide-react";
 import { useMemo, useRef } from "react";
@@ -43,7 +42,8 @@ const SecaoRateio = ({
     const id_filial = form.watch('id_filial')
     const id_grupo_economico = form.watch('id_grupo_economico')
 
-    const { setValue, formState: { errors } } = form;
+    const { setValue } = form;
+    // const { formState: { errors } } = form;
 
     // * [ RATEIO ]
     const rateio_manual = !!+form.watch("rateio_manual");
@@ -141,7 +141,7 @@ const SecaoRateio = ({
                 }
             },
         ],
-        [witens_rateio, rateio_manual, canEdit],
+        [witens_rateio, rateio_manual, canEditRateio],
     )
 
     async function handleChangeRateio(novo_id_rateio: string) {
@@ -171,7 +171,7 @@ const SecaoRateio = ({
                             centro_custo: '',
                             id_plano_conta: '',
                             plano_conta: '',
-                            percentual: "1",
+                            percentual: "100",
                             valor: valorTotalTitulo,
                         });
 
@@ -182,7 +182,7 @@ const SecaoRateio = ({
                                 id: new Date().getTime().toString(),
                                 id_filial: `${item.id_filial || ""}`,
                                 filial: item.filial,
-                                percentual: `${percent || "0.00"}`,
+                                percentual: `${percent * 100 || "0.00"}`,
                                 valor: `${parseFloat(valorTotalTitulo) * percent || '0'}`,
                                 id_centro_custo: '',
                                 centro_custo: '',
@@ -336,7 +336,7 @@ const SecaoRateio = ({
 
     return (
         <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-            <ModalItemRateio control={form.control} canEdit={canEditRateio} />
+            <ModalItemRateio form={form} canEdit={canEditItensRateio} />
             <div className="flex gap-2 mb-3 items-center">
                 <Divide />
                 <span className="text-lg font-bold ">
@@ -345,7 +345,7 @@ const SecaoRateio = ({
                 <div className="ms-auto flex gap-3">
                     <BtnPadronizarAlocacao form={form} canEdit={canEditRateio} />
                     <RemoverItensRateio form={form} canEditItensRateio={canEditItensRateio} />
-                    <BtnNovoItemRateio control={form.control} canEdit={canEditRateio} />
+                    <BtnNovoItemRateio control={form.control} canEditRateio={canEditItensRateio} />
                 </div>
 
             </div>

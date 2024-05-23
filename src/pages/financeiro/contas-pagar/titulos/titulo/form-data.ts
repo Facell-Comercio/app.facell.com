@@ -58,9 +58,8 @@ export const schemaTitulo = z.object({
   dv_conta: z.string().optional(),
 
   // Outros
+  created_at: z.coerce.date().optional(),
   data_emissao: z.string(),
-  data_vencimento: z.string(),
-  data_prevista: z.string(),
 
   num_doc: z.string({ message: 'Campo obrigatório' }).min(1, {message: 'Campo obrigatório'}),
   valor: z.coerce.string().min(0.01, 'Preencha o valor'),

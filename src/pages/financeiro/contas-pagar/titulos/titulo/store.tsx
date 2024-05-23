@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { TituloSchemaProps } from "./form-data";
-import { calcularDataPrevisaoPagamento } from "./helpers/helper";
 
 export interface ItemRateioTitulo {
   id?: string;
@@ -35,8 +34,6 @@ export interface Historico {
 export const initialPropsTitulo: TituloSchemaProps = {
   id_tipo_solicitacao: "1",
   id_status: "1",
-  id_centro_custo: "",
-  centro_custo: "",
   id_forma_pagamento: "1",
 
   num_doc: "",
@@ -45,8 +42,6 @@ export const initialPropsTitulo: TituloSchemaProps = {
   // forma_pagamento: "",
 
   data_emissao: new Date().toISOString(),
-  data_vencimento: new Date().toISOString(),
-  data_prevista: calcularDataPrevisaoPagamento(new Date()).toISOString(),
 
   valor: "0",
   descricao: "",

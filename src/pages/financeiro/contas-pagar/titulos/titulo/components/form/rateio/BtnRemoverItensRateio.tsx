@@ -13,7 +13,7 @@ type RemoverItensRateioProps = {
 
 const RemoverItensRateio = ({ form, canEditItensRateio }: RemoverItensRateioProps) => {
     const handleRemoverItensRateio = () => {
-        form.setValue('update_vencimentos', true)
+        form.setValue('update_rateio', true)
         // @ts-ignore
         form.setValue('itens_rateio', [])
     }

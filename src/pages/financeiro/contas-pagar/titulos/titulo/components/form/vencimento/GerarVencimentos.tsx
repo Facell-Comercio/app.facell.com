@@ -9,30 +9,30 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Control, useFieldArray, useForm, useWatch } from "react-hook-form"
+import { UseFormReturn, useFieldArray, useForm, useWatch } from "react-hook-form"
 
 import z from 'zod'
 import { calcularDataPrevisaoPagamento, proximoDiaUtil } from "../../../helpers/helper"
 import FormInput from "@/components/custom/FormInput"
 import FormDateInput from "@/components/custom/FormDate"
-import { useEffect, useState } from "react"
-import { TituloSchemaProps, vencimentoSchema } from "../../../form-data"
-import { ListPlus, Play, Plus } from "lucide-react"
+import { useState } from "react"
+import { TituloSchemaProps } from "../../../form-data"
+import { ListPlus, Play } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { normalizeCurrency } from "@/helpers/mask"
 import { Form } from "@/components/ui/form"
 import { VencimentoTitulo } from "../../../store"
 import { addMonths } from "date-fns"
 
-export function ModalGerarVencimentos({ control: controlTitulo }: { control: Control<TituloSchemaProps> }) {
+export function ModalGerarVencimentos({ form: formTitulo }: { form: UseFormReturn<TituloSchemaProps> }) {
     // WATCH TÍTULO:
     const valorTotalTitulo = useWatch({
         name: 'valor',
-        control: controlTitulo,
+        control: formTitulo.control,
     })
     const vencimentos = useWatch({
         name: 'vencimentos',
-        control: controlTitulo,
+        control: formTitulo.control,
     })
 
     const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -59,7 +59,7 @@ export function ModalGerarVencimentos({ control: controlTitulo }: { control: Con
     const {
         append: addVencimento,
     } = useFieldArray({
-        control: controlTitulo,
+        control: formTitulo.control,
         name: "vencimentos",
     });
 
@@ -80,7 +80,7 @@ export function ModalGerarVencimentos({ control: controlTitulo }: { control: Con
         let qtdeParcelas = parseFloat(data.parcelas) || 0
 
         const valorTotalParcelas = valorParcela * qtdeParcelas;
-        const totalVencimentos = vencimentos?.reduce((acc: number, curr: VencimentoTitulo) => { return acc + parseFloat(curr.valor) }, 0) || 0;
+        const totalVencimentos = (vencimentos?.reduce((acc: number, curr: VencimentoTitulo) => { return acc + parseFloat(curr.valor) }, 0) || 0);
         const totalTitulo = parseFloat(valorTotalTitulo)
 
         const excesso = (totalVencimentos + valorTotalParcelas) - totalTitulo;
@@ -113,6 +113,7 @@ export function ModalGerarVencimentos({ control: controlTitulo }: { control: Con
             // incluir um item ao fieldArray
             addVencimento(obj)
         }
+        formTitulo.setValue('update_vencimentos', true)
         setModalOpen(false)
         toast({
             variant: 'success',
