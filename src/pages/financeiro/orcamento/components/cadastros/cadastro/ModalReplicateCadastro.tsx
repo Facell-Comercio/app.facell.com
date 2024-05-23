@@ -66,12 +66,12 @@ const ModalReplicateCadastro = () => {
         open={modalReplicateOpen}
         onOpenChange={() => handleClickCancel()}
       >
-        <DialogContent>
+        <DialogContent className="max-w-xl">
           <ScrollArea className="max-h-[80vh]">
             {modalReplicateOpen && !isLoading ? (
               <Form {...form}>
                 <div className="flex justify-between text-lg font-medium">
-                  <span>
+                  <span className="text-base">
                     {newData.grupo_economico
                       ? `Budget: ${mes}/${ano} - ${newData.grupo_economico}`
                       : "Novo Budget"}

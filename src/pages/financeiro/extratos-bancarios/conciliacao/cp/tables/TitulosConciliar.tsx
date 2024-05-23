@@ -20,6 +20,7 @@ import { useStoreTableConciliacaoCP } from "./store-tables";
 export type TitulosConciliarProps = {
   id_conciliacao?: string;
   id_titulo: string;
+  id_vencimento: string;
   num_doc: string;
   valor: string;
   nome_fornecedor: string;
@@ -46,6 +47,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
   const [sorting, setSorting] = useState<SortingState>([]);
   const handleTitulosSelection =
     useStoreTableConciliacaoCP.getState().handleTitulosSelection;
+
   const columns = useMemo<ColumnDef<TitulosConciliarProps>[]>(
     () => [
       {
@@ -70,7 +72,9 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
             <div className="flex items-center justify-center">
               <Checkbox
                 {...{
-                  checked: titulosSelection.includes(row.original.id_titulo),
+                  checked: titulosSelection.includes(
+                    row.original.id_vencimento
+                  ),
                   disabled: !row.getCanSelect(),
                   indeterminate: row.getIsSomeSelected().toString(),
                 }}
@@ -80,6 +84,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
                     valor_pago: row.original.valor,
                     tipo_baixa: "PADRÃO",
                   });
+
                   row.getToggleSelectedHandler();
                 }}
               />
@@ -90,8 +95,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
       },
       {
         accessorKey: "id_titulo",
-        header: "ID",
-        size: 60,
+        header: "ID TÍTULO",
+        size: 80,
         cell: (info) => {
           let value = info.getValue<number>();
           return <div className="w-full text-center">{value}</div>;
@@ -178,6 +183,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
       if (handleRowSelection) {
         const titulos = Object.keys(result).map((c: string) => ({
           id_titulo: data[+c].id_titulo,
+          id_vencimento: data[+c].id_vencimento,
           descricao: data[+c].descricao,
           nome_fornecedor: data[+c].nome_fornecedor,
           valor: data[+c].valor,
@@ -186,7 +192,6 @@ const ReactTableVirtualized: React.FC<RowVirtualizerTitulosConciliarProps> = ({
           valor_pago: data[+c].valor,
           data_pagamento: data[+c].data_pagamento,
         }));
-        console.log(titulos, result);
 
         handleRowSelection({
           rowSelection: result,

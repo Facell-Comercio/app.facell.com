@@ -25,7 +25,7 @@ import { FaSpinner } from "react-icons/fa6";
 import ModalConciliarCP from "./components/ModalConciliar";
 import { useStoreConciliacaoCP } from "./components/store";
 import { ConciliacoesProps } from "./tables/Conciliacoes";
-import { SearchComponent } from "./tables/SearchComponent copy";
+import { SearchComponent } from "./tables/SearchComponent";
 import TitulosConciliados, {
   TitulosConciliadosProps,
 } from "./tables/TitulosConciliados";
@@ -131,6 +131,7 @@ const ConciliacaoCP = () => {
         ? titulo.data_pagamento.toString() === dataPagamento
         : titulo
     );
+
   const filteredTitulosConciliados = titulosConciliados.filter(
     (titulo: TitulosConciliadosProps) =>
       titulo.id_titulo.toString().includes(searchFilters.tituloConciliado) ||
@@ -307,7 +308,7 @@ const ConciliacaoCP = () => {
                       rowSelection={rowTitulosSelection}
                       handleRowSelection={handleRowTitulosSelection}
                       titulosSelection={titulosSelection.map(
-                        (titulo) => titulo.id_titulo
+                        (titulo) => titulo.id_vencimento
                       )}
                     />
                   </CardContent>

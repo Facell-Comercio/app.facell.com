@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { ptBR } from "date-fns/locale";
 import { useState } from "react";
 
 type InputDateProps = {
@@ -43,6 +44,7 @@ export function InputDate({
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
         <Calendar
+          locale={ptBR}
           mode="single"
           selected={date}
           onSelect={(e) => {

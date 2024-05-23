@@ -100,7 +100,7 @@ export function DataTable<TData, TValue>({
                   <TableHead
                     key={header.id}
                     onClick={() => header.column.toggleSorting()}
-                    className="text-nowrap cursor-pointer"
+                    className="text-nowrap cursor-pointer text-xs"
                   >
                     {header.isPlaceholder ? null : (
                       <div>
@@ -131,7 +131,7 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="text-xs">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -153,9 +153,7 @@ export function DataTable<TData, TValue>({
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"
-                >
-                  
-                </TableCell>
+                ></TableCell>
               )}
             </TableRow>
           )}

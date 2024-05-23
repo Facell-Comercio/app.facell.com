@@ -11,15 +11,12 @@ import { toast } from "@/components/ui/use-toast";
 import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { useOrcamento } from "@/hooks/financeiro/useOrcamento";
 import { api } from "@/lib/axios";
-import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
-import ModalPlanoContas, {
-  ItemPlanoContas,
-} from "@/pages/financeiro/components/ModalPlanoContas";
-import { CentroCustos } from "@/types/financeiro/centro-custos-type";
-import { ChevronDown, Download, Eye, Plus, Search, Upload } from "lucide-react";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { Download, Eye, Plus, Search, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { dataFormatada } from "./Modal";
+import ModalInsert from "./ModalInsert";
 import RowVirtualizerFixed, { itemContaProps } from "./RowVirtualizedFixed";
 import { cadastroSchemaProps, useFormCadastroData } from "./form-data";
 import { useStoreCadastro } from "./store";
@@ -47,22 +44,26 @@ const FormCadastro = ({
   const { mutate: update } = useOrcamento().update();
   const { mutate: deleteItemBudget } = useOrcamento().deleteItemBudget();
 
-  const openLogsModal = useStoreCadastro().openLogsModal;
-  const closeModal = useStoreCadastro().closeModal;
-  const editModal = useStoreCadastro().editModal;
-  const modalEditing = useStoreCadastro().modalEditing;
+  const [
+    openLogsModal,
+    closeModal,
+    editModal,
+    modalEditing,
+    openInsertModal,
+    closeInsertModal,
+    modalInsertOpen,
+  ] = useStoreCadastro((state) => [
+    state.openLogsModal,
+    state.closeModal,
+    state.editModal,
+    state.modalEditing,
+    state.openInsertModal,
+    state.closeInsertModal,
+    state.modalInsertOpen,
+  ]);
   const { form, contas, appendConta, removeConta } = useFormCadastroData(data);
-  const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
-  const [modalCentrosCustoOpen, setModalCentrosCustoOpen] = useState(false);
-  const [insertContaIsOpen, setInsertContaIsOpen] = useState(false);
   const [filter, setFilter] = useState("");
-  const [newConta, setNewConta] = useState({
-    centro_custo: "",
-    plano_contas: "",
-    id_centro_custo: "",
-    id_plano_contas: "",
-    valor: "",
-  });
+
   const [refDate, setRefDate] = useState({
     mes: (new Date().getMonth() + 1).toString(),
     ano: new Date().getFullYear().toString(),
@@ -173,14 +174,7 @@ const FormCadastro = ({
         valor: newConta.valor.toString(),
       });
 
-      setInsertContaIsOpen(false);
-      setNewConta({
-        centro_custo: "",
-        plano_contas: "",
-        id_centro_custo: "",
-        id_plano_contas: "",
-        valor: "",
-      });
+      closeInsertModal();
     } catch (e: any) {
       if (!isImported) {
         toast({
@@ -193,24 +187,6 @@ const FormCadastro = ({
   function removeItemConta(index: number, id?: string) {
     if (id) deleteItemBudget(id);
     removeConta(index);
-  }
-
-  function handleSelectionCentroCustos(item: CentroCustos) {
-    setNewConta({
-      ...newConta,
-      centro_custo: item.nome,
-      id_centro_custo: item.id,
-    });
-    setModalCentrosCustoOpen(false);
-  }
-
-  function handleSelectionPlanoContas(item: ItemPlanoContas) {
-    setNewConta({
-      ...newConta,
-      plano_contas: item.codigo + " - " + item.descricao,
-      id_plano_contas: item.id,
-    });
-    setModalPlanoContasOpen(false);
   }
 
   const handleChangeImportButton = (
@@ -307,17 +283,8 @@ const FormCadastro = ({
   // console.log(form.formState.errors);
 
   return (
-    <div className="flex flex-col gap-4 max-w-full overflow-x-hidden p-2">
+    <div className="flex flex-col gap-4 max-w-full max-h-[90vh] overflow-hidden p-2">
       <Form {...form}>
-        <ModalCentrosCustos
-          handleSelection={handleSelectionCentroCustos}
-          // @ts-expect-error 'Ignore, vai funcionar..'
-          onOpenChange={setModalCentrosCustoOpen}
-          open={modalCentrosCustoOpen}
-          id_grupo_economico={id_grupo_economico}
-          closeOnSelection={true}
-        />
-
         <div className="flex justify-between text-lg font-medium">
           <span>
             {data.grupo_economico
@@ -335,13 +302,15 @@ const FormCadastro = ({
           <div className="flex gap-2">
             {!!data.id_grupo_economico && (
               <Button
+                size={"sm"}
+                className="text-sm"
                 variant={"outline"}
                 type={"button"}
                 onClick={() =>
                   exportedFilteredData(contas, data.grupo_economico || "")
                 }
               >
-                <Download className="me-2" size={20} />
+                <Download className="me-2" size={18} />
                 Exportar
               </Button>
             )}
@@ -353,8 +322,8 @@ const FormCadastro = ({
                   fileInputRef.current && fileInputRef.current.click()
                 }
               >
-                <Button variant={"outline"}>
-                  <Upload className="me-2" size={20} />
+                <Button size={"sm"} className="text-sm" variant={"outline"}>
+                  <Upload className="me-2" size={18} />
                   Importar
                   <input
                     type="file"
@@ -366,11 +335,31 @@ const FormCadastro = ({
                 </Button>
               </AlertPopUp>
             )}
-            <Button variant={"outline"} onClick={() => openLogsModal(id || "")}>
-              <Eye className="me-2" size={20} />
+            <Button
+              size={"sm"}
+              className="text-sm"
+              variant={"outline"}
+              onClick={() => openLogsModal(id || "")}
+            >
+              <Eye className="me-2" size={18} />
               Visualizar Alterações
             </Button>
           </div>
+          {id_grupo_economico && modalEditing && (
+            <Button
+              size={"sm"}
+              className="text-xs"
+              type="button"
+              onClick={() => {
+                console.log(modalInsertOpen);
+
+                openInsertModal();
+              }}
+            >
+              <Plus className="me-2" strokeWidth={2} size={18} />
+              Nova conta
+            </Button>
+          )}
         </div>
 
         {/* Seleção de grupo, mes e ano */}
@@ -410,69 +399,12 @@ const FormCadastro = ({
           </div>
         )}
 
-        <div className="flex justify-end">
-          {id_grupo_economico && modalEditing && (
-            <Button type="button" onClick={() => setInsertContaIsOpen(true)}>
-              <Plus className="me-2" strokeWidth={2} />
-              Nova conta
-            </Button>
-          )}
-        </div>
-        <div
-          className={`flex gap-3 ${
-            !insertContaIsOpen
-              ? "opacity-0 transition-all -translate-x-1 duration-500 ease-in-out hidden"
-              : "opacity-100"
-          }`}
-        >
-          <span
-            className="flex-1"
-            onClick={() => setModalCentrosCustoOpen(true)}
-          >
-            <Input
-              placeholder="Centro de Custos"
-              defaultValue={newConta.centro_custo && newConta.centro_custo}
-            />
-          </span>
-          <span
-            className="flex-1"
-            onClick={() => setModalPlanoContasOpen(true)}
-          >
-            <Input
-              placeholder="Plano de contas"
-              defaultValue={newConta.plano_contas && newConta.plano_contas}
-            />
-          </span>
-          <ModalPlanoContas
-            open={modalPlanoContasOpen}
-            id_grupo_economico={id_grupo_economico}
-            tipo="Despesa"
-            onOpenChange={() =>
-              setModalPlanoContasOpen((prev: boolean) => !prev)
-            }
-            handleSelection={handleSelectionPlanoContas}
-          />
-          <Input
-            className="flex-1"
-            type="number"
-            placeholder="Valor"
-            value={newConta.valor}
-            step={"0.01"}
-            onChange={(e) =>
-              setNewConta({ ...newConta, valor: e.target.value })
-            }
-          />
-          <Button onClick={() => addNewConta(newConta)}>
-            <ChevronDown className="me-2" />
-            Inserir
-          </Button>
-        </div>
-
         {/* Pesquisar conta */}
         <div className={`${!contas.length ? "hidden" : "flex"} gap-3`}>
           <Input
             ref={searchRef}
             type="search"
+            className="h-9 text-sm"
             placeholder="Pesquisar..."
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -481,43 +413,48 @@ const FormCadastro = ({
             }}
           />
           <Button
+            size={"sm"}
+            className="text-xs"
             variant={"tertiary"}
             onClick={() => setFilter(searchRef.current?.value || "")}
           >
-            <Search className="me-2" />
+            <Search className="me-2" size={18} />
             Pesquisar conta
           </Button>
         </div>
 
-        <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
-          <div
-            className={`w-full flex flex-col gap-2 ${
-              !contas.length && "hidden"
-            }`}
-          >
-            {/* Inserção de nova conta */}
-            <header className={`flex gap-2 w-[98%] mx-auto pr-3 font-medium`}>
-              <span className={`flex-1 ${!modalEditing ? "pr-32" : "pr-6"}`}>
-                Centro de Custos
-              </span>
-              <span className={`w-5/12 ${!modalEditing ? "pr-4" : "ml-4"}`}>
-                Plano de Contas
-              </span>
-              <span className={`flex-1 ${!modalEditing ? "pl-2" : "pl-3"}`}>
-                Valor
-              </span>
-              <span className="w-1/12"></span>
-            </header>
+        <ScrollArea>
+          <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
+            <div
+              className={`w-full flex flex-col gap-1 ${
+                !contas.length && "hidden"
+              }`}
+            >
+              {/* Inserção de nova conta */}
+              <header
+                className={`flex gap-1 w-full mx-auto font-medium text-sm`}
+              >
+                <span className={`flex-1 `}>Centro de Custos</span>
+                <span className={`flex-1 w-5/12 `}>Plano de Contas</span>
+                <span className={`flex-1 `}>Valor</span>
+                {modalEditing && <span className="w-16"></span>}
+              </header>
 
-            <RowVirtualizerFixed
-              data={filteredContas()}
-              form={form}
-              modalEditing={modalEditing}
-              removeItem={removeItemConta}
-            />
-          </div>
-        </form>
+              <RowVirtualizerFixed
+                id={id || ""}
+                data={filteredContas()}
+                form={form}
+                modalEditing={modalEditing}
+                removeItem={removeItemConta}
+              />
+            </div>
+          </form>
+        </ScrollArea>
       </Form>
+      <ModalInsert
+        addNewConta={addNewConta}
+        id_grupo_economico={id_grupo_economico}
+      />
     </div>
   );
 };

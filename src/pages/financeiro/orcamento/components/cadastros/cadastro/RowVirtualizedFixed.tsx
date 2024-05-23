@@ -16,6 +16,7 @@ export interface itemContaProps {
   valor_inicial?: string;
 }
 interface RowVirtualizerFixedProps {
+  id: string;
   data: itemContaProps[];
   form: any;
   removeItem: (index: number, id?: string) => void;
@@ -23,6 +24,7 @@ interface RowVirtualizerFixedProps {
 }
 
 const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
+  id,
   data,
   form,
   removeItem,
@@ -35,14 +37,16 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
   const virtualizer = useVirtualizer({
     count,
     getScrollElement: () => parentElement.current,
-    estimateSize: () => 44,
+    estimateSize: () => 36,
     overscan: 10,
   });
 
   return (
     <div
       ref={parentElement}
-      className="pe-2 h-[300px] w-full overflow-auto"
+      className={`pe-2 ${
+        !!id ? "min-h-[290px]" : "min-h-[100px]"
+      } max-h-[50vh] w-full overflow-auto scroll-thin`}
       // style={{
       //   height: `300px`,
       //   width: `100%`,
@@ -69,7 +73,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
               // ref={virtualizer.measureElement}
               key={item.index}
               data-index={index}
-              className="flex gap-2 py-1 pl-1"
+              className="flex gap-1 py-1"
               style={{
                 position: "absolute",
                 top: 0,
@@ -80,18 +84,18 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
               }}
             >
               <Input
-                className="flex-1"
+                className="flex-1 h-8 text-xs"
                 value={data[item.index].centro_custo}
                 readOnly={true}
               />
               <Input
-                className="w-5/12"
+                className="flex-1 min-w-5/12 h-8 text-xs"
                 value={data[item.index].plano_contas}
                 readOnly={true}
               />
               <FormInput
                 type="number"
-                className="flex-1"
+                inputClass="flex-1 h-8 text-xs"
                 name={`contas.${item.index}.valor`}
                 control={form.control}
                 readOnly={!modalEditing}
@@ -105,10 +109,11 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
                 {modalEditing ? (
                   <Button
                     type="button"
-                    className="w-1/12"
+                    size={"xs"}
+                    className="w-16 h-8"
                     variant={"destructive"}
                   >
-                    <Trash />
+                    <Trash size={18} />
                   </Button>
                 ) : (
                   <></>
