@@ -14,7 +14,6 @@ type TransferDataProps = {
 
 export const useBordero = () => {
     const queryClient = useQueryClient()
-    let idUpdate = 0;
     return ({
         getAll : ({ pagination, filters }: GetAllParams) => useQuery({
             queryKey: ['fin_borderos', pagination],
@@ -26,7 +25,6 @@ export const useBordero = () => {
             enabled: !!id,
             queryKey: ['fin_borderos', id],
             queryFn: async () => {
-                console.log(`Buscando borderô com base no ID: ${id}`)
                 return await api.get(`/financeiro/contas-a-pagar/bordero/${id}`)
             },
         }),
@@ -34,7 +32,6 @@ export const useBordero = () => {
         insertOne : () => useMutation({
             mutationFn: async(data:BorderoSchemaProps
             ) => {
-                console.log("Criando novo borderô:")            
                 return api.post("/financeiro/contas-a-pagar/bordero", data).then((response)=>response.data)
             },
             onSuccess() {
@@ -45,14 +42,11 @@ export const useBordero = () => {
                 // @ts-expect-error "Vai funcionar"
                 const errorMessage = error.response?.data.message||error.message
                 toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
-                console.log(errorMessage);
             },
         }),
 
         update : () => useMutation({
             mutationFn: async({id, ...rest}:BorderoSchemaProps) => {
-                console.log(`Atualizando borderô com base no ID: ${id}`)    
-                idUpdate = +id        
                 return api.put("/financeiro/contas-a-pagar/bordero/", {id, ...rest}).then((response)=>response.data)
             },
             onSuccess() {
@@ -63,13 +57,11 @@ export const useBordero = () => {
                 // @ts-expect-error "Vai funcionar"
                 const errorMessage = error.response?.data.message||error.message
                 toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
-                console.log(errorMessage);
             }
         }),
 
         transferVencimentos : () => useMutation({
             mutationFn: async(data:{id_conta_bancaria: string, date: Date, vencimentos: TransferDataProps[]}) => {
-                console.log(`Realizando tranferência de títulos`)            
                 return api.put("financeiro/contas-a-pagar/bordero/transfer", data).then((response)=>response.data)
             },
             onSuccess() {
@@ -80,13 +72,11 @@ export const useBordero = () => {
                 // @ts-expect-error "Vai funcionar"
                 const errorMessage = error.response?.data.message||error.message
                 toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
-                console.log(errorMessage);
             },
         }),
             
         deleteVencimento :() => useMutation({
             mutationFn: (id: string|null|undefined|number) => {
-                console.log(`Deletando conta com base no ID`)            
                 return api.delete(`/financeiro/contas-a-pagar/bordero/titulo/${id}`).then((response)=>response.data)
             },
             onSuccess(_,id) {                
@@ -98,14 +88,12 @@ export const useBordero = () => {
                 // @ts-expect-error "Vai funcionar"
                 const errorMessage = error.response?.data.message||error.message
                 toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
-                console.log(errorMessage);
             },
         }),
 
         deleteBordero :() => useMutation({
             mutationFn: (params:{id: string|null|undefined|number, vencimentos:VencimentosProps[]}) => {
                 const {id, vencimentos} = params;
-                console.log(`Deletando conta com base no ID`)            
                 return api.delete(`/financeiro/contas-a-pagar/bordero/${id}`, {data:vencimentos}).then((response)=>response.data)
             },
             onSuccess() {
@@ -116,7 +104,6 @@ export const useBordero = () => {
                 // @ts-expect-error "Vai funcionar"
                 const errorMessage = error.response?.data.message||error.message
                 toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
-                console.log(errorMessage);
             },
         }),
 })}

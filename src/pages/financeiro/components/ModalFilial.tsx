@@ -18,7 +18,7 @@ import { normalizeCnpjNumber } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import { Filial } from "@/types/filial-type";
 import { useQuery } from "@tanstack/react-query";
-import { Check, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 
 interface IModalFilial {

@@ -8,7 +8,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { FormSubmitHandler, UseFormReturn, useFieldArray, useForm, useWatch } from "react-hook-form"
+import { UseFormReturn, useFieldArray, useForm, useWatch } from "react-hook-form"
 
 import z from 'zod'
 import { calcularDataPrevisaoPagamento } from "../../../helpers/helper"

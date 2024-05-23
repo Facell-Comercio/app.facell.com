@@ -26,7 +26,7 @@ export type BorderoSchemaProps = {
   id_conta_bancaria: string;
   data_pagamento: string;
   id_matriz: string;
-  titulos: VencimentosProps[];
+  vencimentos: VencimentosProps[];
 };
 
 const initialPropsBordero: BorderoSchemaProps = {
@@ -36,7 +36,7 @@ const initialPropsBordero: BorderoSchemaProps = {
   id_conta_bancaria: "",
   data_pagamento: "",
   id_matriz: "",
-  titulos: [],
+  vencimentos: [],
 };
 
 const ModalBordero = () => {
@@ -64,28 +64,28 @@ const ModalBordero = () => {
     }
   }
 
-  // ^ Observar se não ocorrerá nenhum erro com essa "gambiarra"
-  if (newData.titulos && newData.titulos.length > 0) {
-    const newTitulos = newData.titulos.map((titulo: VencimentosProps) => {
+  if (newData.vencimentos && newData.vencimentos.length > 0) {
+    const newVencimentos = newData.vencimentos.map((vencimento: VencimentosProps) => {
       return {
-        checked: titulo.checked,
-        id_titulo: titulo.id_titulo,
-        status: titulo.status,
-        previsao: titulo.previsao || "",
-        nome_fornecedor: titulo.nome_fornecedor,
-        valor_total: titulo.valor_total,
-        num_doc: titulo.num_doc || "",
-        descricao: titulo.descricao,
-        filial: titulo.filial,
-        data_pagamento: titulo.data_pagamento || "",
-        id_status: titulo.id_status || "",
+        id: vencimento.id,
+        checked: vencimento.checked,
+        id_titulo: vencimento.id_titulo,
+        status: vencimento.status,
+        previsao: vencimento.previsao || "",
+        nome_fornecedor: vencimento.nome_fornecedor,
+        valor_total: vencimento.valor_total,
+        num_doc: vencimento.num_doc || "",
+        descricao: vencimento.descricao,
+        filial: vencimento.filial,
+        data_pagamento: vencimento.data_pagamento || "",
+        id_status: vencimento.id_status || "",
       };
     });
 
-    if (newTitulos[0].id_titulo) {
-      newData.titulos = newTitulos;
+    if (newVencimentos[0].id_titulo) {
+      newData.vencimentos = newVencimentos;
     } else {
-      newData.titulos = [];
+      newData.vencimentos = [];
     }
   }
 
@@ -114,7 +114,7 @@ const ModalBordero = () => {
   }
 
   function excluirBordero() {
-    deleteBordero({ id, titulos: data?.data.titulos });
+    deleteBordero({ id, vencimentos: data?.data.vencimentos });
     toggleModal();
   }
 
