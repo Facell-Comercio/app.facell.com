@@ -11,13 +11,13 @@ import PrivateRoutes from "./pages/PrivateRoutes.tsx";
 
 import LoginPage from "./pages/Login.tsx";
 import HomePage from "./pages/Home.tsx";
-import PerfilPage from "./pages/Perfil.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.tsx";
 import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
 import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
 import AdminPage from "./pages/admin/Page.tsx";
+import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
 
 const AppRoutes = () => {
   const user = useAuthStore(state=>state.user);
@@ -32,7 +32,7 @@ const AppRoutes = () => {
         <Route path="/" element={<App />}>
           {/* Páginas protegidas isoladas */}
           <Route element={<HomePage />} path="/" />
-          <Route element={<PerfilPage />} path="/perfil" />
+          <Route element={<PageDashboard/>} path="/dashboard"/>
 
           {/* T&D */}
 
