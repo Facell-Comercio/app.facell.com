@@ -10,17 +10,13 @@ export const PainelContasPagar = () => {
   const [
     paginationNegadas,
     paginationSemNota,
-    paginationRecorrencia,
     setPaginationNegadas,
     setPaginationSemNota,
-    setPaginationRecorrencia,
   ] = useStoreTablePainel((state) => [
     state.paginationNegadas,
     state.paginationSemNota,
-    state.paginationRecorrencia,
     state.setPaginationNegadas,
     state.setPaginationSemNota,
-    state.setPaginationRecorrencia,
   ]);
 
   const { data: dataSemNota, isLoading: isLoadingSemNota } =
