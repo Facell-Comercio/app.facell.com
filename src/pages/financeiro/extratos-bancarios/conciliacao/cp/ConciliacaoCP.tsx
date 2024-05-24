@@ -95,10 +95,6 @@ const ConciliacaoCP = () => {
   const titulosConciliados = data?.data?.titulosConciliados || [];
   const transacoesConciliadas = data?.data?.transacoesConciliadas || [];
 
-  console.log("CONCILIAR", titulosConciliar, transacoesConciliar);
-
-  console.log("CONCILIADOS", titulosConciliados, transacoesConciliadas);
-
   const [searchFilters, setSearchFilters] = useState({
     tituloConciliar: "",
     tituloConciliado: "",

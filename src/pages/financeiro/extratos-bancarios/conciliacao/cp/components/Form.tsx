@@ -64,8 +64,6 @@ const FormConciliacaoCP = ({
   const { form, vencimentos } = useFormConciliacaoCPData(data);
   const transacoes = data.transacoes;
 
-  console.log(form.watch("vencimentos"));
-
   const totalVencimentos = form
     .watch("vencimentos")
     .reduce((acc, val) => acc + parseFloat(val.valor_pago || "0"), 0);
@@ -83,7 +81,7 @@ const FormConciliacaoCP = ({
       });
       return;
     }
-    console.log(newData);
+    // console.log(newData, "CONCILIADO");
 
     conciliacaoManual({
       ...newData,
@@ -148,13 +146,13 @@ const FormConciliacaoCP = ({
             </span>
           </div>
           <div className="w-full grid grid-cols-2 gap-2 relative">
-            <Card className="flex flex-col">
+            <Card className="flex flex-col  overflow-hidden">
               <CardHeader className="p-2">
                 <CardTitle className="text-md text-center font-medium">
                   Pagamentos
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-1">
+              <CardContent className="p-1 overflow-hidden">
                 <VirtualizedTitulos
                   canEdit={!!id}
                   data={vencimentos}

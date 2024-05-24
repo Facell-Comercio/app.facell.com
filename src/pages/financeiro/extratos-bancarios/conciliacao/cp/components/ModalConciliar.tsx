@@ -68,8 +68,6 @@ const ModalConciliarCP = () => {
     newData.transacoes = transacoesSelection;
   }
 
-  console.log(newData, "DADOS NOVOS");
-
   // function handleSelectionConciliacaoCPs(item: ConciliacaoCPProps) {
   //   if (checkedTitulos.length) {
   //     const transferredData = {

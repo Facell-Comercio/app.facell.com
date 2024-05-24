@@ -52,6 +52,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useWatch } from "react-hook-form";
 import { FaSpinner } from "react-icons/fa6";
+import { TbCurrencyReal } from "react-icons/tb";
 import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";

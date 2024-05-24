@@ -31,9 +31,8 @@ export const useConciliacaoCP = () => {
 
         getOne : (id: string | null | undefined) => useQuery({
             enabled: !!id,
-            queryKey: ['fin_conciliacao_cp', id],
+            queryKey: [`fin_conciliacao_cp:${id}`, id],
             queryFn: async () => {
-                console.log(`Buscando conciliação com base no ID: ${id}`)
                 return await api.get(`/financeiro/conciliacao-cp/${id}`)
             },
         }),
@@ -41,7 +40,6 @@ export const useConciliacaoCP = () => {
         conciliacaoManual : () => useMutation({
             mutationFn: async (data:ConciliacaoCPSchemaProps
             ) => {
-                console.log("Criando uma nova conciliação:")            
                 return api.post("/financeiro/conciliacao-cp", data).then((response)=>response.data)
             },
             onSuccess() {
@@ -53,14 +51,12 @@ export const useConciliacaoCP = () => {
                 // @ts-expect-error "Vai funcionar"
                 const errorMessage = error.response?.data.message||error.message
                 toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
-                console.log(errorMessage);
             },
         }),
 
         conciliacaoAutomatica : () => useMutation({
             mutationFn: async (data:ConciliacaoAutomaticaProps
             ) => {
-                console.log("Criando uma nova conciliação:")            
                 return api.post("/financeiro/conciliacao-cp/automatica", data).then((response)=>response.data)
             },
             onSuccess() {
@@ -71,13 +67,11 @@ export const useConciliacaoCP = () => {
                 // @ts-expect-error "Vai funcionar"
                 const errorMessage = error.response?.data.message||error.message
                 toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
-                console.log(errorMessage);
             },
         }),
 
         deleteConciliacao :() => useMutation({
             mutationFn: async (id: string|null|undefined|number) => {
-                console.log(`Deletando conta com base no ID`)            
                 return api.delete(`/financeiro/conciliacao-cp/${id}`).then((response)=>response.data)
             },
             onSuccess() {
@@ -89,7 +83,6 @@ export const useConciliacaoCP = () => {
                 // @ts-expect-error "Vai funcionar"
                 const errorMessage = error.response?.data.message||error.message
                 toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
-                console.log(errorMessage);
             },
         }),
 })}
