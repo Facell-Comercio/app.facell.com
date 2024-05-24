@@ -39,10 +39,11 @@ interface ResponseExportDatasysProps {
   centro_custo: string;
   plano_contas: string;
   cnpj_rateio: string;
-  valor_rateio: string | number;
+  valor_rateio: string;
   banco_pg: string | null;
   data_pg: string | null; // A data_pg pode ser uma string ou null
   nome_fornecedor: string;
+  percentual: string;
 }
 
 const ModalExportDatasys = () => {
@@ -76,22 +77,25 @@ const ModalExportDatasys = () => {
 
       const formatedResponse = rows.map((row: ResponseExportDatasysProps) => {
         return {
-          "CNPJ Loja": row.cnpj_loja,
-          "CPF / CNPJ Fornecedor": row.cnpj_fornecedor,
-          Documento: row.id_titulo,
-          Emissão: normalizeDate(row.emissao),
-          Vencimento: normalizeDate(row.vencimento),
-          Valor: row.valor,
-          "Tipo Documento": row.tipo_documento.toUpperCase(),
-          Historico: row.historico.toUpperCase(),
-          BarCode: row.bar_code,
-          "Centro de Custos": row.centro_custo.toUpperCase(),
-          "Plano de Contas": row.plano_contas,
-          "CNPJ Rateio": row.cnpj_rateio,
-          "Valor Rateio": row.valor_rateio,
+          "CNPJ LOJA": row.cnpj_loja,
+          "CPF / CNPJ FORNECEDOR": row.cnpj_fornecedor,
+          DOCUMENTO: row.id_titulo,
+          EMISSÃO: normalizeDate(row.emissao),
+          VENCIMENTO: normalizeDate(row.vencimento),
+          VALOR: row.valor,
+          "TIPO DOCUMENTO": row.tipo_documento.toUpperCase(),
+          HISTÓRICO: row.historico.toUpperCase(),
+          BARCODE: row.bar_code,
+          "CENTRO DE CUSTOS": row.centro_custo.toUpperCase(),
+          "PLANO DE CONTAS": row.plano_contas,
+          "CNPJ RATEIO": row.cnpj_rateio,
+          "VALOR RATEIO": (
+            parseFloat(row.valor_rateio) * parseFloat(row.percentual)
+          ).toFixed(2),
           "BANCO PG": row.data_pg && row.data_pg.toUpperCase(),
           "DATA PG": row.data_pg && normalizeDate(row.data_pg),
-          "Nome Fornecedor": row.nome_fornecedor.toUpperCase(),
+          "NOME FORNECEDOR": row.nome_fornecedor.toUpperCase(),
+          PERCENTUAL: parseFloat(row.percentual),
         };
       });
       exportToExcel(

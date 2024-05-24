@@ -16,7 +16,7 @@ import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
 // import { useStoreConciliacaoCP } from "@/pages/financeiro/extratos-bancarios/conciliacao/conciliacaocp/store";
 import { HandCoins, X } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { TitulosConciliarProps } from "../tables/TitulosConciliar";
+import { VencimentosConciliarProps } from "../tables/TitulosConciliar";
 import { TransacoesConciliarProps } from "../tables/TransacoesConciliar";
 import { useStoreTableConciliacaoCP } from "../tables/store-tables";
 import FormConciliacaoCP from "./Form";
@@ -25,11 +25,12 @@ import { useStoreConciliacaoCP } from "./store";
 export type ConciliacaoCPSchemaProps = {
   id?: string;
   transacoes: TransacoesConciliarProps[];
-  titulos: TitulosConciliarProps[];
+  vencimentos: VencimentosConciliarProps[];
   data_pagamento?: string;
   data_conciliacao?: string;
   responsavel?: string;
   tipo?: string;
+  id_conta_bancaria?: string;
 };
 
 const ModalConciliarCP = () => {
@@ -38,7 +39,9 @@ const ModalConciliarCP = () => {
   const toggleModal = useStoreConciliacaoCP().toggleModal;
 
   const id = useStoreConciliacaoCP().id;
-  const titulosSelection = useStoreTableConciliacaoCP().titulosSelection;
+  const isPending = useStoreConciliacaoCP().isPending;
+  const vencimentosSelection =
+    useStoreTableConciliacaoCP().vencimentosSelection;
   const transacoesSelection = useStoreTableConciliacaoCP().transacoesSelection;
   const formRef = useRef(null);
   const isMaster = checkUserPermission("MASTER");
@@ -61,7 +64,7 @@ const ModalConciliarCP = () => {
   }
 
   if (!id) {
-    newData.titulos = titulosSelection;
+    newData.vencimentos = vencimentosSelection;
     newData.transacoes = transacoesSelection;
   }
 
@@ -137,13 +140,14 @@ const ModalConciliarCP = () => {
               type={"submit"}
               size="lg"
               className="dark:text-white"
+              disabled={isPending}
               onClick={() => {
                 // @ts-ignore "Funciona"
                 formRef.current && formRef.current.requestSubmit();
               }}
             >
               <HandCoins className="me-2" />
-              Conciliar
+              {isPending ? "Conciliando..." : "Conciliar"}
             </Button>
           )}
         </DialogFooter>

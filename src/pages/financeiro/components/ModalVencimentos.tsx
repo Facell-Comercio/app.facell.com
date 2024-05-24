@@ -118,7 +118,7 @@ const ModalVencimentos = ({
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/titulo/vencimentos-bordero", {
         params: {
-          filters: { id_matriz, id_status },
+          filters: { ...filters, id_matriz, id_status },
           pagination,
         },
       }),

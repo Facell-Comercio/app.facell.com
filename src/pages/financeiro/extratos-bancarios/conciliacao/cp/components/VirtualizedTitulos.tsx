@@ -3,12 +3,12 @@ import * as React from "react";
 import FormInput, { Input } from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
 import { InputDate } from "@/components/custom/InputDate";
-import { normalizeCurrency } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { TitulosConciliarProps } from "../tables/TitulosConciliar";
+import { VencimentosConciliarProps } from "../tables/TitulosConciliar";
 
 interface VirtualizerVencimentosProps {
-  data: TitulosConciliarProps[];
+  data: VencimentosConciliarProps[];
   form: any;
   canEdit: boolean;
 }
@@ -32,13 +32,14 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
   return (
     <section
       ref={parentElement}
-      className="h-[52vh] w-full overflow-auto scroll-thin"
+      className="h-[45vh] w-full overflow-auto scroll-thin"
     >
       <div className="flex gap-1 font-medium text-xs  w-full sticky top-0 z-10 bg-background">
         <p className="min-w-20 text-center bg-background">ID Título</p>
+        <p className="min-w-28 text-center bg-background">Transação</p>
+        <p className="min-w-28 pl-2 bg-background">Valor</p>
         <p className="min-w-36 pl-2 bg-background">Descrição</p>
         <p className="min-w-36 pl-2 bg-background">Fornecedor</p>
-        <p className="min-w-28 pl-2 bg-background">Valor</p>
         <p className="min-w-36 pl-2 bg-background">Filial</p>
         <p className="min-w-32 text-center bg-background">Tipo Baixa</p>
         <p className="min-w-28 pl-2 bg-background">Valor Pago</p>
@@ -54,7 +55,7 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
         }}
       >
         {virtualizer.getVirtualItems().map((item, index) => {
-          const tipo = form.watch(`titulos.${item.index}.tipo_baixa`);
+          const tipo = form.watch(`vencimentos.${item.index}.tipo_baixa`);
           const valor = parseFloat(data[item.index].valor);
           type TipoBaixaProps = {
             id: number | string;
@@ -97,13 +98,11 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
                 readOnly={true}
               />
               <Input
-                className="text-xs min-w-36 h-8 p-2"
-                value={data[item.index].descricao}
-                readOnly={true}
-              />
-              <Input
-                className="text-xs min-w-36 h-8 p-2"
-                value={data[item.index].nome_fornecedor}
+                className="text-xs w-28 h-8 p-2 text-center"
+                value={
+                  data[item.index].data_pagamento &&
+                  normalizeDate(data[item.index].data_pagamento)
+                }
                 readOnly={true}
               />
               <Input
@@ -116,11 +115,22 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
               />
               <Input
                 className="text-xs min-w-36 h-8 p-2"
+                value={data[item.index].descricao}
+                readOnly={true}
+              />
+              <Input
+                className="text-xs min-w-36 h-8 p-2"
+                value={data[item.index].nome_fornecedor}
+                readOnly={true}
+              />
+
+              <Input
+                className="text-xs min-w-36 h-8 p-2"
                 value={data[item.index].filial}
                 readOnly={true}
               />
               <FormSelect
-                name={`titulos.${item.index}.tipo_baixa`}
+                name={`vencimentos.${item.index}.tipo_baixa`}
                 className="text-xs w-32 h-8"
                 control={form.control}
                 disabled={canEdit}
@@ -129,14 +139,14 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
                   label: tipo_baixa.label,
                 }))}
                 onChange={() =>
-                  form.setValue(`titulos.${item.index}.valor_pago`, valor)
+                  form.setValue(`vencimentos.${item.index}.valor_pago`, valor)
                 }
               />
               <FormInput
                 type="number"
                 inputClass="text-xs flex-1 w-28 h-8"
                 readOnly={tipo == "PADRÃO" || canEdit}
-                name={`titulos.${item.index}.valor_pago`}
+                name={`vencimentos.${item.index}.valor_pago`}
                 control={form.control}
                 min={tipo === "COM ACRÉSCIMO" ? valor : 0}
                 max={tipo !== "COM ACRÉSCIMO" ? valor : valor * 1000}
@@ -146,13 +156,13 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
                   disabled={tipo !== "PARCIAL"}
                   className={`h-8 min-w-44 ${
                     form.formState.errors &&
-                    form.formState.errors.titulos &&
-                    form.formState.errors.titulos[item.index] &&
+                    form.formState.errors.vencimentos &&
+                    form.formState.errors.vencimentos[item.index] &&
                     "border border-red-600"
                   }`}
-                  value={form.watch(`titulos.${item.index}.data_prevista`)}
+                  value={form.watch(`vencimentos.${item.index}.data_prevista`)}
                   onChange={(e: Date) =>
-                    form.setValue(`titulos.${item.index}.data_prevista`, e)
+                    form.setValue(`vencimentos.${item.index}.data_prevista`, e)
                   }
                 />
               )}

@@ -35,7 +35,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ModalFilial from "@/pages/financeiro/components/ModalFilial";
 import { Filial } from "@/types/filial-type";
 import { useQueryClient } from "@tanstack/react-query";
-import { TbCurrencyReal } from "react-icons/tb";
 import {
   AlertTriangle,
   Ban,
@@ -52,18 +51,17 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useWatch } from "react-hook-form";
+import { FaSpinner } from "react-icons/fa6";
+import { TbCurrencyReal } from "react-icons/tb";
 import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
-import {
-  formatarHistorico
-} from "./helpers/helper";
+import { formatarHistorico } from "./helpers/helper";
 import { initialPropsTitulo, useStoreTitulo } from "./store";
-import { FaSpinner } from "react-icons/fa6";
 
 const FormTituloPagar = ({
   id,
-  data
+  data,
 }: {
   id: string | null | undefined;
   data: TituloSchemaProps;
@@ -111,8 +109,8 @@ const FormTituloPagar = ({
   console.log("ERROS_TITULO:", errors);
 
   // * [ WATCHES ]
-  const wfull = form.watch()
-  console.log(wfull)
+  const wfull = form.watch();
+  console.log(wfull);
   const id_grupo_economico = useWatch({
     name: "id_grupo_economico",
     control: form.control,
@@ -167,7 +165,7 @@ const FormTituloPagar = ({
       );
       setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
-    } catch (error) { }
+    } catch (error) {}
   }
 
   // * [ ANEXOS ]
@@ -207,22 +205,28 @@ const FormTituloPagar = ({
   // ! [ ACTIONS ] //////////////////////////////////////////////
   const [isSubmtting, setIsSubmitting] = useState<boolean>(false);
 
-  const { mutate: insertOne, isSuccess: insertOneSuccess, isPending: isPendingInsert } =
-    useTituloPagar().insertOne();
-  const { mutate: update, isSuccess: updateSuccess, isPending: isPendingUpdate } =
-    useTituloPagar().update();
+  const {
+    mutate: insertOne,
+    isSuccess: insertOneSuccess,
+    isPending: isPendingInsert,
+  } = useTituloPagar().insertOne();
+  const {
+    mutate: update,
+    isSuccess: updateSuccess,
+    isPending: isPendingUpdate,
+  } = useTituloPagar().update();
 
   useEffect(() => {
     if (isPendingInsert || isPendingUpdate) {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
     } else {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }, [isPendingInsert, isPendingUpdate])
+  }, [isPendingInsert, isPendingUpdate]);
 
   const onSubmit: SubmitHandler<TituloSchemaProps> = async (data) => {
     console.log("%c OnSubmit", "color: blue; font-size: 20px;");
-    console.log(data)
+    console.log(data);
 
     if (!id) {
       console.log("Inserindo Titulo:", data);
@@ -413,8 +417,9 @@ const FormTituloPagar = ({
                         className="min-w-[15ch]"
                       />
                       <div
-                        className={`${showPix ? "flex flex-1" : "hidden"
-                          } gap-3 flex-wrap`}
+                        className={`${
+                          showPix ? "flex flex-1" : "hidden"
+                        } gap-3 flex-wrap`}
                       >
                         <SelectTipoChavePix
                           control={form.control}
@@ -434,8 +439,9 @@ const FormTituloPagar = ({
                       </div>
                       {/* Dados bancários do fornecedor */}
                       <div
-                        className={`${showDadosBancarios ? "flex flex-1" : "hidden"
-                          } gap-3 flex-wrap`}
+                        className={`${
+                          showDadosBancarios ? "flex flex-1" : "hidden"
+                        } gap-3 flex-wrap`}
                       >
                         <FormInput
                           label="Favorecido"
@@ -585,8 +591,6 @@ const FormTituloPagar = ({
                       </div>
 
                       <div className="grid gap-3 grid-cols-1">
-
-
                         <FormInput
                           readOnly={readOnly}
                           className="min-w-[400px] flex-1"
@@ -765,7 +769,10 @@ const FormTituloPagar = ({
 
           <div className="max-w-full flex justify-between items-center mt-4">
             {isSubmtting ? (
-              <div className="flex gap-3 items-center"><span className="font-lg">Aguarde...</span> {<FaSpinner className="animate-spin"/>}</div>
+              <div className="flex gap-3 items-center">
+                <span className="font-lg">Aguarde...</span>{" "}
+                {<FaSpinner className="animate-spin" />}
+              </div>
             ) : (
               <>
                 <div className="flex gap-3 items-center">
@@ -773,7 +780,7 @@ const FormTituloPagar = ({
                     status !== "Solicitado" &&
                     status !== "Pago" &&
                     (isMaster === true &&
-                      (status === "Aprovado" || status === "Negado")
+                    (status === "Aprovado" || status === "Negado")
                       ? true
                       : false) && (
                       <ButtonMotivation
@@ -785,27 +792,33 @@ const FormTituloPagar = ({
                         Tornar solicitado
                       </ButtonMotivation>
                     )}
-                  {isMaster && id && status !== "Negado" && status !== "Pago" && (
-                    <ButtonMotivation
-                      variant={"destructive"}
-                      size={"lg"}
-                      action={handleChangeNegar}
-                    >
-                      <X className="me-2" size={18} />
-                      Negar
-                    </ButtonMotivation>
-                  )}
-                  {isMaster && id && status !== "Aprovado" && status !== "Pago" && (
-                    <Button
-                      type="button"
-                      variant={"success"}
-                      size={"lg"}
-                      onClick={handleChangeAprovar}
-                    >
-                      <Check className="me-2" size={18} />
-                      Aprovar
-                    </Button>
-                  )}
+                  {isMaster &&
+                    id &&
+                    status !== "Negado" &&
+                    status !== "Pago" && (
+                      <ButtonMotivation
+                        variant={"destructive"}
+                        size={"lg"}
+                        action={handleChangeNegar}
+                      >
+                        <X className="me-2" size={18} />
+                        Negar
+                      </ButtonMotivation>
+                    )}
+                  {isMaster &&
+                    id &&
+                    status !== "Aprovado" &&
+                    status !== "Pago" && (
+                      <Button
+                        type="button"
+                        variant={"success"}
+                        size={"lg"}
+                        onClick={handleChangeAprovar}
+                      >
+                        <Check className="me-2" size={18} />
+                        Aprovar
+                      </Button>
+                    )}
                   {id && isMaster && (
                     <Button
                       type="button"

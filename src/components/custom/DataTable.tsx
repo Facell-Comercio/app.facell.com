@@ -89,6 +89,7 @@ export function DataTable<TData, TValue>({
     manualPagination: true,
   });
 
+  //^ Foi adicionada a class scroll-thin no componente de Table
   return (
     <div className="rounded-md border">
       <Table>
@@ -123,7 +124,7 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="scroll-thin">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -159,14 +160,21 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-
       {/* Pagination */}
       <div className="flex items-center justify-between py-2 px-3">
-        <div className="flex-1 text-sm text-muted-foreground">
+        <div
+          className={`flex-1 text-sm text-muted-foreground ${
+            !handleRowSelection && "hidden"
+          }`}
+        >
           {table.getFilteredSelectedRowModel().rows.length} de{" "}
           {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 items-center space-x-6 lg:space-x-8">
+        <div
+          className={`flex flex-col sm:flex-row gap-3 items-center ${
+            !handleRowSelection && "w-full justify-between"
+          } space-x-6 lg:space-x-8`}
+        >
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium">Linhas por página</p>
             <Select

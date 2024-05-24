@@ -30,7 +30,7 @@ import TitulosConciliados, {
   TitulosConciliadosProps,
 } from "./tables/TitulosConciliados";
 import TitulosConciliar, {
-  TitulosConciliarProps,
+  VencimentosConciliarProps,
 } from "./tables/TitulosConciliar";
 import TransacoesConciliadas, {
   TransacoesConciliadasProps,
@@ -45,11 +45,11 @@ const ConciliacaoCP = () => {
   console.log("RENDER - Section ConciliacaoCP");
   const [
     filters,
-    rowTitulosSelection,
-    handleRowTitulosSelection,
+    rowVencimentosSelection,
+    handlerowVencimentosSelection,
     rowTransacoesSelection,
     handleRowTransacoesSelection,
-    titulosSelection,
+    vencimentosSelection,
     transacoesSelection,
     setDataPagamento,
     dataPagamento,
@@ -58,11 +58,11 @@ const ConciliacaoCP = () => {
     setPagination,
   ] = useStoreTableConciliacaoCP((state) => [
     state.filters,
-    state.rowTitulosSelection,
-    state.handleRowTitulosSelection,
+    state.rowVencimentosSelection,
+    state.handlerowVencimentosSelection,
     state.rowTransacoesSelection,
     state.handleRowTransacoesSelection,
-    state.titulosSelection,
+    state.vencimentosSelection,
     state.transacoesSelection,
     state.setDataPagamento,
     state.data_pagamento,
@@ -104,21 +104,21 @@ const ConciliacaoCP = () => {
   });
 
   useEffect(() => {
-    if (titulosSelection.length === 1) {
-      setDataPagamento(titulosSelection[0].data_pagamento);
+    if (vencimentosSelection.length === 1) {
+      setDataPagamento(vencimentosSelection[0].data_pagamento);
     } else if (transacoesSelection.length === 1) {
       setDataPagamento(transacoesSelection[0].data_transacao);
     } else if (
-      titulosSelection.length === 0 &&
+      vencimentosSelection.length === 0 &&
       transacoesSelection.length === 0
     ) {
       setDataPagamento();
     }
-  }, [titulosSelection, transacoesSelection]);
+  }, [vencimentosSelection, transacoesSelection]);
 
   const filteredTitulosConciliar = titulosConciliar
     .filter(
-      (titulo: TitulosConciliarProps) =>
+      (titulo: VencimentosConciliarProps) =>
         titulo.id_titulo.toString().includes(searchFilters.tituloConciliar) ||
         titulo.descricao.toString().includes(searchFilters.tituloConciliar) ||
         titulo.filial.toString().includes(searchFilters.tituloConciliar) ||
@@ -126,7 +126,7 @@ const ConciliacaoCP = () => {
           .toString()
           .includes(searchFilters.tituloConciliar)
     )
-    .filter((titulo: TitulosConciliarProps) =>
+    .filter((titulo: VencimentosConciliarProps) =>
       dataPagamento
         ? titulo.data_pagamento.toString() === dataPagamento
         : titulo
@@ -179,14 +179,14 @@ const ConciliacaoCP = () => {
   );
 
   const totalTitulos = titulosConciliar.reduce(
-    (acc: number, val: TitulosConciliarProps) => acc + +val.valor,
+    (acc: number, val: VencimentosConciliarProps) => acc + +val.valor,
     0
   );
   const totalTransacoes = transacoesConciliar.reduce(
     (acc: number, val: TransacoesConciliarProps) => acc + +val.valor,
     0
   );
-  const totalSelectedTitulos = titulosSelection.reduce(
+  const totalSelectedTitulos = vencimentosSelection.reduce(
     (acc, val) => acc + +val.valor,
     0
   );
@@ -250,7 +250,7 @@ const ConciliacaoCP = () => {
                   variant={"outline"}
                   onClick={() => {
                     if (
-                      !titulosSelection.length ||
+                      !vencimentosSelection.length ||
                       !transacoesSelection.length
                     ) {
                       toast({
@@ -273,6 +273,7 @@ const ConciliacaoCP = () => {
                     conciliacaoAutomatica({
                       vencimentos: filteredTitulosConciliar,
                       transacoes: filteredTransacoesConciliar,
+                      id_conta_bancaria: filters.id_conta_bancaria,
                     });
                   }}
                 >
@@ -293,7 +294,7 @@ const ConciliacaoCP = () => {
               <section className="grid grid-cols-2 max-w-full gap-2 grid-nowrap">
                 <Card className="grid-nowrap overflow-y border-0 bg-secondary">
                   <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md">Títulos</CardTitle>
+                    <CardTitle className="text-md">Vencimentos</CardTitle>
                     <SearchComponent
                       searchFilters={searchFilters}
                       setSearchFilters={setSearchFilters}
@@ -305,9 +306,9 @@ const ConciliacaoCP = () => {
                       data={filteredTitulosConciliar}
                       isLoading={isLoading}
                       isError={isError}
-                      rowSelection={rowTitulosSelection}
-                      handleRowSelection={handleRowTitulosSelection}
-                      titulosSelection={titulosSelection.map(
+                      rowSelection={rowVencimentosSelection}
+                      handleRowSelection={handlerowVencimentosSelection}
+                      vencimentosSelection={vencimentosSelection.map(
                         (titulo) => titulo.id_vencimento
                       )}
                     />
@@ -370,7 +371,7 @@ const ConciliacaoCP = () => {
               <section className="grid grid-cols-2 max-w-full gap-2 grid-nowrap">
                 <Card className="h-full grid-nowrap overflow-y border-0 bg-secondary">
                   <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md">Títulos</CardTitle>
+                    <CardTitle className="text-md">Vencimentos</CardTitle>
                     <SearchComponent
                       searchFilters={searchFilters}
                       setSearchFilters={setSearchFilters}

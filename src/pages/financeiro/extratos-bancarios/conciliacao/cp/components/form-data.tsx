@@ -6,9 +6,10 @@ import { ConciliacaoCPSchemaProps } from "./ModalConciliar";
 const schemaConciliacaoCP = z.object({
   // Identificador do plano de contas
   id: z.string().trim().optional(),
-  titulos: z.array(
+  vencimentos: z.array(
     z
       .object({
+        id_vencimento: z.coerce.string().trim().optional(),
         id_titulo: z.coerce.string().trim().optional(),
         valor: z.coerce.string().trim().optional(),
         tipo_baixa: z.string().trim(),
@@ -38,11 +39,11 @@ export const useFormConciliacaoCPData = (data: ConciliacaoCPSchemaProps) => {
 
   const { fields } = useFieldArray({
     control: form.control,
-    name: "titulos",
+    name: "vencimentos",
   });
 
   return {
     form,
-    titulos: fields,
+    vencimentos: fields,
   };
 };
