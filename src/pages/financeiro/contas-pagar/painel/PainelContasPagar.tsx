@@ -36,7 +36,7 @@ export const PainelContasPagar = () => {
   const rowCountNegadas = dataNegadas?.data?.rowCount || 0;
 
   return (
-    <div className="painel gap-3">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
       <ItemPainel title="Solicitações Negadas" qtde={rowCountNegadas}>
         <DataTable
           pagination={paginationNegadas}

@@ -23,9 +23,7 @@ export const ItemPainel = ({
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className={`px-3 ${className} h-full`}>
-        {children}
-      </CardContent>
+      <CardContent className={`px-3 ${className}`}>{children}</CardContent>
     </Card>
   );
 };
