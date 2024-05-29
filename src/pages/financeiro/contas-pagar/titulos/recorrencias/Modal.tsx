@@ -44,8 +44,7 @@ import {
   Trash,
 } from "lucide-react";
 import { useStoreTitulo } from "../titulo/store";
-import ModalEditarRecorrencias from "./editar/Modal";
-import { useStoreEditarRecorrencias } from "./editar/store";
+import ModalEditarRecorrencias from "./ModalEditarRecorrencia";
 import { useStoreRecorrencias } from "./store";
 
 type recorrenciaProps = {
@@ -55,7 +54,6 @@ type recorrenciaProps = {
   data_vencimento: string;
   valor: string;
   descricao: string;
-  centro_custo: string;
   grupo_economico: string;
   criador: string;
   id_titulo: string;
@@ -63,13 +61,23 @@ type recorrenciaProps = {
 };
 
 const ModalRecorrencias = () => {
-  const modalOpen = useStoreRecorrencias().modalOpen;
-  const resetFilters = useStoreRecorrencias().resetFilters;
-  const setFilters = useStoreRecorrencias().setFilters;
-  const filters = useStoreRecorrencias().filters;
+  const [
+    modalOpen,
+    filters,
+    closeModal,
+    setFilters,
+    resetFilters,
+    openModalEditRecorrencia,
+  ] = useStoreRecorrencias((state) => [
+    state.modalOpen,
+    state.filters,
+    state.closeModal,
+    state.setFilters,
+    state.resetFilters,
+    state.openModalEditRecorrencia,
+  ]);
+
   const openModal = useStoreTitulo.getState().openModal;
-  const openModalEditarTitulo = useStoreEditarRecorrencias.getState().openModal;
-  const closeModal = useStoreRecorrencias().closeModal;
 
   const { data, isLoading, refetch } = useTituloPagar().getRecorrencias({
     filters,
@@ -97,7 +105,6 @@ const ModalRecorrencias = () => {
         "DATA VENCIMENTO": normalizeDate(row.data_vencimento),
         VALOR: row.valor,
         DESCRICAO: row.descricao,
-        CENTRO_CUSTO: row.centro_custo,
         "GRUPO ECONOMICO": row.grupo_economico,
         CRIADOR: normalizeFirstAndLastName(row.criador),
       });
@@ -193,9 +200,6 @@ const ModalRecorrencias = () => {
                       Descrição
                     </TableHead>
                     <TableHead className="text-start text-sm min-w-[15ch] px-2 py-1">
-                      Centro de Custo
-                    </TableHead>
-                    <TableHead className="text-start text-sm min-w-[15ch] px-2 py-1">
                       Grupo Econômico
                     </TableHead>
                     <TableHead className="text-start text-sm min-w-[15ch] px-2 py-1">
@@ -221,10 +225,10 @@ const ModalRecorrencias = () => {
                               title="Nova solicitação"
                               size={"xs"}
                               onClick={() => {
-                                closeModal();
                                 openModal(rec["id_titulo"], {
                                   data_vencimento: rec["data_vencimento"],
                                   id: rec["id"],
+                                  valor: rec["valor"],
                                 });
                               }}
                             >
@@ -232,7 +236,13 @@ const ModalRecorrencias = () => {
                             </Button>
                           )}
                           <Button
-                            onClick={() => openModalEditarTitulo(rec["id"])}
+                            onClick={() =>
+                              openModalEditRecorrencia(
+                                rec["id"],
+                                new Date(rec["data_vencimento"]),
+                                parseFloat(rec["valor"])
+                              )
+                            }
                             title="Editar recorrência"
                             size={"xs"}
                             variant={"warning"}
@@ -255,28 +265,25 @@ const ModalRecorrencias = () => {
                             </Button>
                           </AlertPopUp>
                         </TableCell>
-                        <TableCell className="text-xs p-2">
+                        <TableCell className="text-xs uppercase p-2">
                           {rec["fornecedor"]}
                         </TableCell>
-                        <TableCell className="text-xs p-2">
+                        <TableCell className="text-xs uppercase p-2">
                           {rec["filial"]}
                         </TableCell>
-                        <TableCell className="text-xs p-2 text-center">
+                        <TableCell className="text-xs uppercase p-2 text-center">
                           {normalizeDate(rec["data_vencimento"])}
                         </TableCell>
-                        <TableCell className="text-xs p-2 text-center">
+                        <TableCell className="text-xs uppercase p-2 text-center">
                           {normalizeCurrency(rec["valor"])}
                         </TableCell>
-                        <TableCell className="text-xs p-2">
+                        <TableCell className="text-xs uppercase p-2">
                           {rec["descricao"]}
                         </TableCell>
-                        <TableCell className="text-xs p-2">
-                          {rec["centro_custo"]}
-                        </TableCell>
-                        <TableCell className="text-xs p-2">
+                        <TableCell className="text-xs uppercase p-2">
                           {rec["grupo_economico"]}
                         </TableCell>
-                        <TableCell className="text-xs p-2">
+                        <TableCell className="text-xs uppercase p-2">
                           {normalizeFirstAndLastName(rec["criador"])}
                         </TableCell>
                       </TableRow>

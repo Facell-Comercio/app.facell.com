@@ -34,7 +34,7 @@ const ModalTituloPagar = () => {
   const { data, isLoading } = useTituloPagar().getOne(id);
 
   const titulo = data?.data.titulo;
-  const vencimentos = data?.data.vencimentos;
+  let vencimentos = data?.data.vencimentos || [];
   const itens_rateio = data?.data.itens_rateio;
   const historico = data?.data.historico;
 
@@ -48,7 +48,7 @@ const ModalTituloPagar = () => {
     });
   }
 
-  if (vencimentos) {
+  if (vencimentos && vencimentos.length > 0) {
     vencimentos.forEach((objeto: any) => {
       Object.keys(objeto).forEach((propriedade) => {
         if (objeto[propriedade] === null) {
@@ -59,6 +59,17 @@ const ModalTituloPagar = () => {
       });
     });
   }
+  if (recorrencia) {
+    vencimentos = [];
+    vencimentos.push({
+      data_vencimento: recorrencia.data_vencimento,
+      data_prevista: calcularDataPrevisaoPagamento(
+        new Date(recorrencia.data_vencimento)
+      ),
+      valor: recorrencia.valor,
+      linha_digitavel: "",
+    });
+  }
 
   if (itens_rateio) {
     itens_rateio.forEach((objeto: any) => {
@@ -67,6 +78,13 @@ const ModalTituloPagar = () => {
           objeto[propriedade] = "";
         } else if (typeof objeto[propriedade] === "number") {
           objeto[propriedade] = objeto[propriedade].toString();
+        }
+        if (propriedade == "valor") {
+          objeto[propriedade] =
+            (
+              (parseFloat(objeto["percentual"]) / 100) *
+              parseFloat(recorrencia?.valor || "0")
+            ).toFixed(2) || "0";
         }
       });
     });
@@ -98,14 +116,16 @@ const ModalTituloPagar = () => {
       url_txt: "",
       url_xml: "",
       url_xml_nota: "",
+      valor: recorrencia.valor,
       data_vencimento: recorrencia.data_vencimento,
-      data_emissao: new Date(),
+      data_emissao: new Date().toISOString(),
       data_prevista: calcularDataPrevisaoPagamento(
         new Date(recorrencia.data_vencimento)
       ),
       vencimentos,
       itens_rateio,
       id_recorrencia: recorrencia.id,
+      created_at: undefined,
     };
   } else if (id) {
     modalData = { ...titulo, vencimentos, itens_rateio, historico };
@@ -113,13 +133,13 @@ const ModalTituloPagar = () => {
 
   return (
     <Dialog open={modalOpen} onOpenChange={closeModal}>
-      <DialogContent>
+      <DialogContent className="min-w-[96vw] xl:min-w-1 ">
         <DialogHeader>
           <DialogTitle>
             {!!id && !recorrencia ? `Solicitação: ${id}` : "Nova Solicitação"}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="min-h-[70vh] overflow-auto">
+        <ScrollArea className="min-h-[80vh] sm:min-h-[70vh] overflow-auto">
           {modalOpen && !isLoading ? (
             <FormTituloPagar
               id={!!id && !recorrencia ? id : ""}

@@ -15,6 +15,17 @@ interface UseStoreRecorrencias {
   modalOpen: boolean;
   filters: Filters;
 
+  modalEditRecorrenciaOpen: boolean;
+  data_vencimento?: Date;
+  valor?: number;
+
+  openModalEditRecorrencia: (
+    id: string,
+    data_vencimento: Date,
+    valor: number
+  ) => void;
+  closeModalEditRecorrencia: () => void;
+
   openModal: (id: string) => void;
   closeModal: () => void;
   toggleModal: () => void;
@@ -27,6 +38,10 @@ export const useStoreRecorrencias = create<UseStoreRecorrencias>((set) => ({
   id: null,
   modalOpen: false,
   filters: initialFilters,
+
+  modalEditRecorrenciaOpen: false,
+  data_vencimento: undefined,
+  valor: undefined,
 
   openModal: (id: string) => set({ modalOpen: true, id }),
   closeModal: () => set({ modalOpen: false }),
@@ -43,4 +58,16 @@ export const useStoreRecorrencias = create<UseStoreRecorrencias>((set) => ({
   resetFilters: () => {
     set({ filters: initialFilters });
   },
+
+  openModalEditRecorrencia: (
+    id: string,
+    data_vencimento: Date,
+    valor: number
+  ) => set({ modalEditRecorrenciaOpen: true, id, data_vencimento, valor }),
+  closeModalEditRecorrencia: () =>
+    set({
+      modalEditRecorrenciaOpen: false,
+      data_vencimento: undefined,
+      valor: undefined,
+    }),
 }));

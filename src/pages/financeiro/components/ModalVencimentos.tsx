@@ -1,3 +1,4 @@
+import { ModalComponent } from "@/components/custom/ModalComponent";
 import SelectFilial from "@/components/custom/SelectFilial";
 import {
   Accordion,
@@ -11,34 +12,16 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ChevronLeft,
-  ChevronRight,
-  EraserIcon,
-  FilterIcon,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { EraserIcon, FilterIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 interface IModalVencimentos {
@@ -106,13 +89,14 @@ const ModalVencimentos = ({
     id_filial: "",
   };
 
+  const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const [filters, setFilters] = useState(initialFilters);
 
-  const {
-    data,
-    isError,
-    refetch: refetchVencimentos,
-  } = useQuery({
+  const setInputRef = (key: string, element: HTMLInputElement | null) => {
+    if (inputsRef.current) inputsRef.current[key] = element;
+  };
+
+  const { data, isError, isLoading, refetch } = useQuery({
     queryKey: ["modal-vencimentos", id_matriz, id_status],
     staleTime: 0,
     queryFn: async () =>
@@ -127,37 +111,42 @@ const ModalVencimentos = ({
 
   useEffect(() => {
     setFilters((prev) => ({ ...prev, ...initialFilters }));
-    refetchVencimentos();
+    refetch();
   }, [initialFilters]);
 
-  const pages = [...Array(data?.data?.pageCount || 0).keys()].map(
-    (page) => page + 1
-  );
-  const arrayPages = pages.filter((i) => {
-    if (i === 1 || i === pages.length) {
-      return true;
-    } else if (i >= pagination.pageIndex - 2 && i <= pagination.pageIndex + 2) {
-      return true;
-    }
-    return false;
-  });
-
-  async function handleClickFilters() {
+  async function handleClickFilter() {
     await new Promise((resolve) => {
+      if (inputsRef.current) {
+        setFilters((prev) => ({
+          ...prev,
+          id_vencimento: inputsRef.current["id_vencimento"]?.value || "",
+          id_titulo: inputsRef.current["id_titulo"]?.value || "",
+          fornecedor: inputsRef.current["fornecedor"]?.value || "",
+          descricao: inputsRef.current["descricao"]?.value || "",
+          num_doc: inputsRef.current["num_doc"]?.value || "",
+        }));
+        console.log(filters);
+      }
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
-    refetchVencimentos();
+    refetch();
   }
 
   async function handleClickResetFilters() {
     await new Promise((resolve) => {
       setFilters((prev) => ({ ...prev, ...defaultFilters }));
+      Object.keys(inputsRef.current).forEach((key) => {
+        if (inputsRef.current[key]) {
+          inputsRef.current[key]!.value = "";
+        }
+      });
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
-    refetchVencimentos();
+    refetch();
   }
+  console.log(filters);
 
   function handleRemoveAll() {
     setTitulos([]);
@@ -192,43 +181,6 @@ const ModalVencimentos = ({
     });
   }
 
-  async function handlePaginationChange(index: number) {
-    await new Promise((resolve) => {
-      setPagination((prev) => ({ ...prev, pageIndex: index }));
-      resolve(true);
-    });
-    refetchVencimentos();
-  }
-  async function handlePaginationUp() {
-    await new Promise((resolve) => {
-      const newPage = ++pagination.pageIndex;
-      setPagination((prev) => ({ ...prev, pageIndex: newPage }));
-      resolve(true);
-    });
-    refetchVencimentos();
-  }
-  async function handlePaginationDown() {
-    await new Promise((resolve) => {
-      const newPage = --pagination.pageIndex;
-      setPagination((prev) => ({
-        ...prev,
-        pageIndex: newPage <= 0 ? 0 : newPage,
-      }));
-      resolve(true);
-    });
-    refetchVencimentos();
-  }
-  async function handlePaginationSize(value: string) {
-    await new Promise((resolve) => {
-      setPagination((prev) => ({
-        ...prev,
-        pageSize: Number(value),
-      }));
-      resolve(true);
-    });
-    refetchVencimentos();
-  }
-
   function pushSelection(item: VencimentosProps) {
     setTitulos([
       ...titulos,
@@ -251,23 +203,79 @@ const ModalVencimentos = ({
 
   if (isError) return <p>Ocorreu um erro ao tentar buscar os vencimentos</p>;
 
+  const pageCount = (data && data.data.pageCount) || 0;
+
+  const ButtonSaveSelection = () => {
+    return (
+      <Button onClick={() => handleSelection(titulos)}>Salvar seleção</Button>
+    );
+  };
+
+  const Info = () => {
+    return (
+      <div className="flex items-center justify-between gap-3 text-sm">
+        <div className="flex items-center gap-3">
+          <Badge variant={"secondary"}>
+            <p className="mr-1">Qtde: </p>
+            {data?.data.rows.length}
+          </Badge>
+          <Badge variant={"secondary"}>
+            <p className="mr-1">Valor Total: </p>
+            {normalizeCurrency(
+              data?.data.rows.reduce(
+                (acc: number, titulo: VencimentosProps) =>
+                  acc + +titulo.valor_total,
+                0
+              ) || 0
+            )}
+          </Badge>
+        </div>
+        {titulos.length > 0 && (
+          <div className="flex items-center gap-3">
+            Selecionado:
+            <Badge variant={"default"}>
+              <p className="mr-1">Qtde: </p>
+              {titulos.length}
+            </Badge>
+            <Badge variant={"default"}>
+              <p className="mr-1">Valor: </p>
+              {normalizeCurrency(
+                titulos?.reduce(
+                  (acc: number, titulo: VencimentosProps) =>
+                    acc + +titulo.valor_total,
+                  0
+                ) || 0
+              )}
+            </Badge>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  if (isLoading) return null;
+  if (isError) return null;
+  if (!open) return null;
+
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex flex-col sm:max-w-[1000px]">
-        <DialogHeader className="flex flex-1 w-full max-x-[80vw]">
-          <DialogTitle>Vencimentos a pagar</DialogTitle>
+        <DialogHeader>
+          <DialogTitle>Vencimentos a pagar COPY</DialogTitle>
           <DialogDescription>
-            Selecione um ao clicar no botão à direita.
+            Selecione ao clicar no botão à direita.
           </DialogDescription>
-
           <Accordion
             type="single"
             collapsible
+            value={itemOpen}
+            onValueChange={(e) => setItemOpen(e)}
             className="p-2 border dark:border-slate-800 rounded-lg flex-1"
           >
             <AccordionItem value="item-1" className="relative border-0">
               <div className="flex gap-3 items-center absolute start-16 top-1">
-                <Button size={"xs"} onClick={() => handleClickFilters()}>
+                <Button size={"xs"} onClick={() => handleClickFilter()}>
                   Aplicar <FilterIcon size={12} className="ms-2" />
                 </Button>
                 <Button
@@ -288,45 +296,27 @@ const ModalVencimentos = ({
                     <Input
                       placeholder="ID Vencimento"
                       className="w-[20ch]"
-                      value={filters?.id_vencimento || ""}
-                      onChange={(e) => {
-                        setFilters({
-                          ...filters,
-                          id_vencimento: e.target.value,
-                        });
-                      }}
+                      ref={(el) => setInputRef("id_vencimento", el)}
                     />
                     <Input
                       placeholder="ID Título"
                       className="w-[20ch]"
-                      value={filters?.id_titulo || ""}
-                      onChange={(e) => {
-                        setFilters({ ...filters, id_titulo: e.target.value });
-                      }}
+                      ref={(el) => setInputRef("id_titulo", el)}
                     />
                     <Input
                       placeholder="Fornecedor"
                       className="max-w-[200px]"
-                      value={filters?.fornecedor || ""}
-                      onChange={(e) => {
-                        setFilters({ ...filters, fornecedor: e.target.value });
-                      }}
+                      ref={(el) => setInputRef("fornecedor", el)}
                     />
                     <Input
                       placeholder="Descrição"
                       className="w-[20ch]"
-                      value={filters?.descricao || ""}
-                      onChange={(e) => {
-                        setFilters({ ...filters, descricao: e.target.value });
-                      }}
+                      ref={(el) => setInputRef("descricao", el)}
                     />
                     <Input
                       placeholder="Nº Doc"
                       className="w-[20ch]"
-                      value={filters?.num_doc || ""}
-                      onChange={(e) => {
-                        setFilters({ ...filters, num_doc: e.target.value });
-                      }}
+                      ref={(el) => setInputRef("num_doc", el)}
                     />
                     <SelectFilial
                       id_matriz={id_matriz}
@@ -341,27 +331,18 @@ const ModalVencimentos = ({
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-
-          <div className="flex justify-between mt-4">
-            <Button
-              variant={"destructive"}
-              size={"sm"}
-              onClick={() => handleRemoveAll()}
-            >
-              Remover Todos
-            </Button>
-
-            <Button
-              variant={"outline"}
-              size={"sm"}
-              onClick={() => handleSelectAll()}
-            >
-              Selecionar Todos
-            </Button>
-          </div>
         </DialogHeader>
-
-        <ScrollArea className="h-96 rounded-md">
+        <ModalComponent
+          pageCount={pageCount}
+          refetch={refetch}
+          pagination={pagination}
+          setPagination={setPagination}
+          multiSelection
+          buttonSaveSelection={ButtonSaveSelection}
+          info={Info}
+          handleRemoveAll={handleRemoveAll}
+          handleSelectAll={handleSelectAll}
+        >
           <table className="w-full border p-1">
             <thead>
               <tr className="text-sm">
@@ -414,8 +395,8 @@ const ModalVencimentos = ({
                     <td className="text-center p-1">
                       <Button
                         size={"xs"}
-                        variant={"outline"}
                         className="p-1"
+                        variant={"outline"}
                         onClick={() => {
                           pushSelection(item);
                         }}
@@ -429,106 +410,7 @@ const ModalVencimentos = ({
               })}
             </tbody>
           </table>
-        </ScrollArea>
-
-        <div className="flex items-center justify-between gap-3 text-sm">
-          <div className="flex items-center gap-3">
-            <Badge variant={"secondary"}>
-              <p className="mr-1">Qtde: </p>
-              {data?.data.rows.length}
-            </Badge>
-            <Badge variant={"secondary"}>
-              <p className="mr-1">Valor Total: </p>
-              {normalizeCurrency(
-                data?.data.rows.reduce(
-                  (acc: number, titulo: VencimentosProps) =>
-                    acc + +titulo.valor_total,
-                  0
-                ) || 0
-              )}
-            </Badge>
-          </div>
-          {titulos.length > 0 && (
-            <div className="flex items-center gap-3">
-              Selecionado:
-              <Badge variant={"default"}>
-                <p className="mr-1">Qtde: </p>
-                {titulos.length}
-              </Badge>
-              <Badge variant={"default"}>
-                <p className="mr-1">Valor: </p>
-                {normalizeCurrency(
-                  titulos?.reduce(
-                    (acc: number, titulo: VencimentosProps) =>
-                      acc + +titulo.valor_total,
-                    0
-                  ) || 0
-                )}
-              </Badge>
-            </div>
-          )}
-        </div>
-        <DialogFooter className="flex">
-          <div className="flex items-center space-x-2">
-            <Select
-              value={`${pagination.pageSize}`}
-              onValueChange={handlePaginationSize}
-            >
-              <SelectTrigger className="h-8 w-[80px]">
-                <SelectValue placeholder={pagination.pageSize} />
-              </SelectTrigger>
-              <SelectContent side="top">
-                {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-sm font-medium min-w-fit">Linhas por página</p>
-          </div>
-
-          <Pagination className="items-center">
-            <PaginationContent>
-              <PaginationItem>
-                <Button
-                  variant={"outline"}
-                  disabled={pagination.pageIndex === 0}
-                  onClick={handlePaginationDown}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-              </PaginationItem>
-              {arrayPages.map((i) => {
-                return (
-                  <PaginationItem key={i}>
-                    <Button
-                      variant={
-                        i - 1 === pagination.pageIndex ? "default" : "ghost"
-                      }
-                      onClick={() => handlePaginationChange(i - 1)}
-                    >
-                      {i}
-                    </Button>
-                  </PaginationItem>
-                );
-              })}
-              <PaginationItem>
-                <Button
-                  variant={"outline"}
-                  disabled={pagination.pageIndex === pages.length - 1}
-                  onClick={handlePaginationUp}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-          <Button onClick={() => handleSelection(titulos)}>
-            Salvar seleção
-          </Button>
-          {/* <PaginationEllipsis /> */}
-        </DialogFooter>
+        </ModalComponent>
       </DialogContent>
     </Dialog>
   );

@@ -1,10 +1,10 @@
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { useOrcamento } from "@/hooks/financeiro/useOrcamento";
-import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
-import ModalPlanoContas, {
+import ModalCentrosCustos from "@/pages/financeiro/components/ModalCentrosCustos";
+import ModalPlanosContas, {
   ItemPlanoContas,
-} from "@/pages/financeiro/components/ModalPlanoContas";
+} from "@/pages/financeiro/components/ModalPlanosContas";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
 import { useState } from "react";
 import { MeuOrcamentoSchema, useFormMeuOrcamentoData } from "./form-data";
@@ -85,6 +85,7 @@ const FormMeuOrcamento = ({
                     <FormInput
                       className="w-full"
                       name="centro_custo_entrada"
+                      placeholder="Selecione o centro de custo"
                       label="Centro de Custo de Entrada"
                       control={form.control}
                     />
@@ -106,10 +107,11 @@ const FormMeuOrcamento = ({
                       className="w-full"
                       name="conta_entrada"
                       label="Para Essa Conta"
+                      placeholder="Selecione a conta"
                       control={form.control}
                     />
                   </span>
-                  <ModalPlanoContas
+                  <ModalPlanosContas
                     open={modalPlanoContasOpen}
                     id_grupo_economico={data.id_grupo_economico}
                     tipo="Despesa"
@@ -123,6 +125,9 @@ const FormMeuOrcamento = ({
                     className="flex-1 max-w-[20ch]"
                     name="valor_transferido"
                     label="Valor a Transferir"
+                    placeholder={(+data.disponivel)
+                      .toFixed(2)
+                      .replace(".", ",")}
                     min={0.1}
                     max={+data.disponivel}
                     control={form.control}

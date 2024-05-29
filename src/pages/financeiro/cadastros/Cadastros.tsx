@@ -21,7 +21,7 @@ const CadastrosPage = () => {
     <div className="flex p-4">
       <Tabs defaultValue="fornecedores" className="w-full">
         <TabsList className="w-full justify-start flex h-auto">
-          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-2 md:p-0 h-auto">
+          <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
             <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
             {(checkUserDepartments("FINANCEIRO") ||
               checkUserPermission("MASTER")) && (
@@ -51,7 +51,10 @@ const CadastrosPage = () => {
               checkUserPermission("MASTER")) && (
               <TabsTrigger value="rateios">Rateios</TabsTrigger>
             )}
-            <ScrollBar orientation="horizontal" />
+            <ScrollBar
+              orientation="horizontal"
+              thumbColor="dark:bg-slate-400 bg-gray-450"
+            />
           </ScrollArea>
         </TabsList>
         <TabsContent value="fornecedores">

@@ -12,8 +12,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useStoreTableMeuOrcamento } from "./store-table";
 import { useState } from "react";
+import { useStoreTableMeuOrcamento } from "./store-table";
 
 const FilterMeuOrcamento = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableMeuOrcamento((state) => state.filters);
@@ -30,14 +30,14 @@ const FilterMeuOrcamento = ({ refetch }: { refetch: () => void }) => {
     refetch();
   };
 
-   const [itemOpen, setItemOpen] = useState<string>('item-1')
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
   return (
     <Accordion
       type="single"
       collapsible
       value={itemOpen}
-      onValueChange={(e)=>setItemOpen(e)}
-      className="p-2 border-2 dark:border-slate-800 rounded-lg "
+      onValueChange={(e) => setItemOpen(e)}
+      className="p-2 border dark:border-slate-800 rounded-lg "
     >
       <AccordionItem value="item-1" className="relative border-0">
         <div className="flex gap-3 items-center absolute start-16 top-1">

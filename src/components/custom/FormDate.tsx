@@ -28,7 +28,8 @@ type FormDateProps = {
   disabled?: boolean;
   max?: Date;
   min?: Date;
-  onChange?: (date:Date)=>void
+  onChange?: (date: Date) => void;
+  className?: string;
 };
 
 const FormDateInput = ({
@@ -40,13 +41,16 @@ const FormDateInput = ({
   max,
   min,
   onChange,
+  className,
 }: FormDateProps) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col flex-1 min-w-[18ch] justify-end">
+        <FormItem
+          className={`flex flex-col flex-1 min-w-[18ch] justify-end ${className}`}
+        >
           {label && <FormLabel>{label}</FormLabel>}
           <Popover>
             <PopoverTrigger asChild>
@@ -82,13 +86,13 @@ const FormDateInput = ({
                   }
                 }}
                 disabled={(date) => {
-                  if(min && date < min){
+                  if (min && date < min) {
                     return true;
                   }
-                  if(max && date > max){
+                  if (max && date > max) {
                     return true;
                   }
-                  return date < new Date("1900-01-01")
+                  return date < new Date("1900-01-01");
                 }}
                 initialFocus
               />

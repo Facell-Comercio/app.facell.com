@@ -306,6 +306,19 @@ const FormBordero = ({
                       Adicionar
                     </Button>
                   )}
+                  {/* <ModalVencimentos
+                    open={modalEditing && modalVencimentoOpen}
+                    handleSelection={handleSelectionVencimento}
+                    onOpenChange={() => setModalVencimentoOpen((prev) => !prev)}
+                    id_matriz={id_matriz || ""}
+                    initialFilters={{
+                      tipo_data: "data_prevista",
+                      range_data: {
+                        from: data_pagamento,
+                        to: data_pagamento,
+                      },
+                    }}
+                  /> */}
                   <ModalVencimentos
                     open={modalEditing && modalVencimentoOpen}
                     handleSelection={handleSelectionVencimento}

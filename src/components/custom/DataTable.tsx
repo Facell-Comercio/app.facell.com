@@ -163,7 +163,7 @@ export function DataTable<TData, TValue>({
       {/* Pagination */}
       <div className="flex items-center justify-between py-2 px-3">
         <div
-          className={`flex-1 text-sm text-muted-foreground ${
+          className={`flex-1 text-xs sm:text-sm text-muted-foreground ${
             !handleRowSelection && "hidden"
           }`}
         >
@@ -171,12 +171,14 @@ export function DataTable<TData, TValue>({
           {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
         </div>
         <div
-          className={`flex flex-col sm:flex-row gap-3 items-center ${
+          className={`flex flex-row gap-3 items-center ${
             !handleRowSelection && "w-full justify-between"
-          } space-x-6 lg:space-x-8`}
+          } sm:space-x-6 lg:space-x-8`}
         >
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Linhas por página</p>
+          <div className="flex items-center space-x-0 sm:space-x-2">
+            <p className="text-xs sm:text-sm font-medium hidden sm:inline-block">
+              Linhas por página
+            </p>
             <Select
               value={`${
                 table.getState().pagination.pageSize?.toString() || ""
@@ -185,7 +187,7 @@ export function DataTable<TData, TValue>({
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger className="h-8 w-[70px]">
+              <SelectTrigger className="h-8 text-xs sm:text-sm w-[70px]">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -199,7 +201,7 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           </div>
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+          <div className="flex sm:w-[100px] items-center justify-center text-xs sm:text-sm font-medium">
             Página {table.getState().pagination.pageIndex + 1} de{" "}
             {table.getPageCount()}
           </div>

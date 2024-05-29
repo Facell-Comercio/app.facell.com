@@ -6,10 +6,10 @@ export interface ItemRateioTitulo {
   id_rateio?: string;
   id_filial: string;
   filial?: string;
-  id_centro_custo:string;
+  id_centro_custo: string;
   centro_custo?: string;
-  id_plano_conta:string;
-  plano_conta?:string;
+  id_plano_conta: string;
+  plano_conta?: string;
   percentual: string;
   valor: string;
 }
@@ -20,8 +20,8 @@ export interface VencimentoTitulo {
   data_prevista: string;
   valor: string;
   valor_pago?: string;
-  data_pagamento?: string,
-  tipo_baixa?: 'PADRÃO' | 'PARCIAL' | 'COM DESCONTO' | 'COM ACRÉSCIMO'
+  data_pagamento?: string;
+  tipo_baixa?: "PADRÃO" | "PARCIAL" | "COM DESCONTO" | "COM ACRÉSCIMO";
 }
 
 export interface Historico {
@@ -48,9 +48,9 @@ export const initialPropsTitulo: TituloSchemaProps = {
 
   // Filial
   id_filial: "",
-  filial: '',
-  id_matriz: '',
-  id_grupo_economico: '',
+  filial: "",
+  id_matriz: "",
+  id_grupo_economico: "",
 
   // Solicitante
   id_solicitante: "",
@@ -93,7 +93,8 @@ export const initialPropsTitulo: TituloSchemaProps = {
 
 type RecorrenciaProps = {
   id: string;
-  data_vencimento: string;
+  data_vencimento: string | Date;
+  valor: string;
 };
 
 interface useStoreTitulo {

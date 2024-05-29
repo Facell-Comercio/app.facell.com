@@ -156,6 +156,7 @@ const FiltersMovimentoContabiluseStoreTableMovimentoContabil = ({
         handleSelection={handleSelectionContaBancaria}
         onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
         id_matriz={filters.id_matriz}
+        id_grupo_economico={filters.id_grupo_economico}
       />
       <ModalGruposEconomicos
         open={modalGrupoEconomicoOpen}

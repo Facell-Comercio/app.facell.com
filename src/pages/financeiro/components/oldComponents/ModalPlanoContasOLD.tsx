@@ -19,7 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState } from "react";
 
-interface IModalPlanoContas {
+interface IModalPlanoContasOLD {
   open: boolean;
   handleSelection: (item: ItemPlanoContas) => void;
   onOpenChange: () => void;
@@ -40,14 +40,14 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalPlanoContas = ({
+const ModalPlanoContasOLD = ({
   open,
   handleSelection,
   onOpenChange,
   id_matriz,
   id_grupo_economico,
   tipo,
-}: IModalPlanoContas) => {
+}: IModalPlanoContasOLD) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -217,4 +217,4 @@ const ModalPlanoContas = ({
   );
 };
 
-export default ModalPlanoContas;
+export default ModalPlanoContasOLD;
