@@ -1,10 +1,9 @@
-import ilustration from '@/assets/ilustrations/undraw_building_websites.svg';
+import ilustration from '@/assets/ilustrations/undraw_page_not_found.svg';
 
 const PageNotFound = () => {
     return ( <div className="flex flex-col gap-3 justify-center items-center h-full">
 
-        <h1 className='font-bold text-xl'>Ops!</h1>
-        <p>A página está em manutenção...</p>
+        <p className='text-xl font-semibold text-red-500'>Página não encontrada</p>
         
         <img src={ilustration} className='w-96 my-8'/>
     </div> );
