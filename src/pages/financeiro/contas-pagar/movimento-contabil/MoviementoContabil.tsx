@@ -1,6 +1,5 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { useMovimentoContabil } from "@/hooks/financeiro/useMovimentoContabil";
-import ModalMovimentoContabil from "./movimento/Modal";
 import FiltersMovimentoContabil from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTableMovimentoContabil } from "./table/store-table";
@@ -30,8 +29,6 @@ const MovimentoContabil = () => {
           isLoading={isLoading}
         />
       )}
-
-      <ModalMovimentoContabil />
     </div>
   );
 };

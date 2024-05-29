@@ -12,10 +12,10 @@ import { useStoreCadastro } from "./store";
 import { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
-import ModalPlanoContas, {
+import ModalCentrosCustos from "@/pages/financeiro/components/ModalCentrosCustos";
+import ModalPlanosContas, {
   ItemPlanoContas,
-} from "@/pages/financeiro/components/ModalPlanoContas";
+} from "@/pages/financeiro/components/ModalPlanosContas";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -46,6 +46,7 @@ const ModalInsert = ({ addNewConta, id_grupo_economico }: ModalInsertProps) => {
 
   const modalInsertOpen = useStoreCadastro().modalInsertOpen;
   const closeInsertModal = useStoreCadastro().closeInsertModal;
+  console.log("MODAL ABERTO", modalInsertOpen);
 
   function handleSelectionPlanoContas(item: ItemPlanoContas) {
     setNewConta({
@@ -119,7 +120,7 @@ const ModalInsert = ({ addNewConta, id_grupo_economico }: ModalInsertProps) => {
                   defaultValue={newConta.plano_contas && newConta.plano_contas}
                 />
               </div>
-              <ModalPlanoContas
+              <ModalPlanosContas
                 open={modalPlanoContasOpen}
                 id_grupo_economico={id_grupo_economico}
                 tipo="Despesa"

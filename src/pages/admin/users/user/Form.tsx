@@ -1,24 +1,24 @@
+import FormFileUpload from "@/components/custom/FormFileUpload";
 import FormInput from "@/components/custom/FormInput";
 import FormSwitch from "@/components/custom/FormSwitch";
+import SectionItems from "@/components/custom/SectionItems";
 import { Button } from "@/components/ui/button";
 import { Form, FormLabel } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { useUsers } from "@/hooks/useUsers";
-import { Fingerprint } from "lucide-react";
-import { UserFormData, useFormUserData } from "./form-data";
-import { useStoreUser } from "./store";
-import FormFileUpload from "@/components/custom/FormFileUpload";
-import { useFieldArray } from "react-hook-form";
-import SectionItems from "@/components/custom/SectionItems";
-import ModalCentrosCustos from "../../components/ModalCentrosCustos";
-import ModalFiliais from "../../components/ModalFiliais";
-import ModalDepartamentos from "../../components/ModalDepartamentos";
-import ModalPermissoes from "../../components/ModalPermissoes";
-import { useState } from "react";
-import { Filial } from "@/types/filial-type";
 import { Departamento } from "@/types/departamento-type";
+import { Filial } from "@/types/filial-type";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
 import { Permissao } from "@/types/permissao-type";
+import { Fingerprint } from "lucide-react";
+import { useState } from "react";
+import { useFieldArray } from "react-hook-form";
+import ModalCentrosCustos from "../../../financeiro/components/ModalCentrosCustos";
+import ModalDepartamentos from "../../components/ModalDepartamentos";
+import ModalFiliais from "../../components/ModalFiliais";
+import ModalPermissoes from "../../components/ModalPermissoes";
+import { UserFormData, useFormUserData } from "./form-data";
+import { useStoreUser } from "./store";
 
 const FormUsers = ({
   id,
@@ -29,7 +29,6 @@ const FormUsers = ({
   data: UserFormData;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-
   const { mutate: insertOne } = useUsers().insertOne();
   const { mutate: update } = useUsers().update();
 
@@ -39,25 +38,41 @@ const FormUsers = ({
 
   const { form } = useFormUserData(data);
 
-  const { fields: filiais, append: addFilial, remove: removeFilial } = useFieldArray({
-    name: 'filiais',
-    control: form.control
-  })
+  const {
+    fields: filiais,
+    append: addFilial,
+    remove: removeFilial,
+  } = useFieldArray({
+    name: "filiais",
+    control: form.control,
+  });
 
-  const { fields: departamentos, append: addDepartamento, remove: removeDepartamento } = useFieldArray({
-    name: 'departamentos',
-    control: form.control
-  })
+  const {
+    fields: departamentos,
+    append: addDepartamento,
+    remove: removeDepartamento,
+  } = useFieldArray({
+    name: "departamentos",
+    control: form.control,
+  });
 
-  const { fields: permissoes, append: addPermissao, remove: removePermissao } = useFieldArray({
-    name: 'permissoes',
-    control: form.control
-  })
+  const {
+    fields: permissoes,
+    append: addPermissao,
+    remove: removePermissao,
+  } = useFieldArray({
+    name: "permissoes",
+    control: form.control,
+  });
 
-  const { fields: centros_custo, append: addCentroCusto, remove: removeCentroCusto } = useFieldArray({
-    name: 'centros_custo',
-    control: form.control
-  })
+  const {
+    fields: centros_custo,
+    append: addCentroCusto,
+    remove: removeCentroCusto,
+  } = useFieldArray({
+    name: "centros_custo",
+    control: form.control,
+  });
 
   const onSubmitData = (newData: UserFormData) => {
     if (id) update(newData);
@@ -65,150 +80,240 @@ const FormUsers = ({
 
     editModal(false);
     closeModal();
-  }
+  };
 
-  const [openModalFiliais, setOpenModalFiliais] = useState<boolean>(false)
-  const [openModalDepartamentos, setOpenModalDepartamentos] = useState<boolean>(false)
-  const [openModalCentrosCusto, setOpenModalCentrosCusto] = useState<boolean>(false)
-  const [openModalPermissoes, setOpenModalPermissoes] = useState<boolean>(false)
+  const [openModalFiliais, setOpenModalFiliais] = useState<boolean>(false);
+  const [openModalDepartamentos, setOpenModalDepartamentos] =
+    useState<boolean>(false);
+  const [openModalCentrosCusto, setOpenModalCentrosCusto] =
+    useState<boolean>(false);
+  const [openModalPermissoes, setOpenModalPermissoes] =
+    useState<boolean>(false);
 
   const handleClickAddFilial = () => {
-    setOpenModalFiliais(true)
-  }
+    setOpenModalFiliais(true);
+  };
   const handleClickAddDepartamento = () => {
-    setOpenModalDepartamentos(true)
-  }
+    setOpenModalDepartamentos(true);
+  };
   const handleClickAddCentroCustos = () => {
-    setOpenModalCentrosCusto(true)
-  }
+    setOpenModalCentrosCusto(true);
+  };
   const handleClickAddPermissao = () => {
-    setOpenModalPermissoes(true)
-  }
+    setOpenModalPermissoes(true);
+  };
 
   const handleSelectFilial = (filial: Filial) => {
     // verifica se o cara já possui
-    const indexFilial = filiais?.findIndex(f => f.id_filial == filial.id)
+    const indexFilial = filiais?.findIndex((f) => f.id_filial == filial.id);
     if (indexFilial === -1) {
       // setar a filial
-      form.setValue('updateFiliais', true)
+      form.setValue("updateFiliais", true);
       // @ts-ignore
-      addFilial({ id: '', id_filial: filial.id, id_user: id, nome: filial.nome })
+      addFilial({
+        id: "",
+        id_filial: filial.id || "",
+        id_user: id || "",
+        nome: filial.nome,
+      });
     } else {
       toast({
-        title: 'Não foi possível adicionar!',
-        description: 'A filial já consta na lista'
-      })
+        title: "Não foi possível adicionar!",
+        description: "A filial já consta na lista",
+      });
     }
-  }
+  };
 
   const handleSelectDepartamento = (departamento: Departamento) => {
     // verifica se o cara já possui
-    const indexDepartamento = departamentos?.findIndex(f => f.id_departamento == departamento.id)
+    const indexDepartamento = departamentos?.findIndex(
+      (f) => f.id_departamento == departamento.id
+    );
     if (indexDepartamento === -1) {
       // setar a departamento
-      form.setValue('updateDepartamentos', true)
+      form.setValue("updateDepartamentos", true);
       // @ts-ignore
-      addDepartamento({ id: '', id_departamento: departamento.id, id_user: id, nome: departamento.nome })
+      addDepartamento({
+        id: "",
+        id_departamento: departamento.id || "",
+        id_user: id || "",
+        nome: departamento.nome,
+      });
     } else {
       toast({
-        title: 'Não foi possível adicionar!',
-        description: 'O departamento já consta na lista'
-      })
+        title: "Não foi possível adicionar!",
+        description: "O departamento já consta na lista",
+      });
     }
-  }
+  };
 
   const handleSelectCentroCusto = (centro_custo: CentroCustos) => {
     // verifica se o cara já possui
-    const indexCentroCusto = centros_custo?.findIndex(f => f.id_centro_custo == centro_custo.id)
+    const indexCentroCusto = centros_custo?.findIndex(
+      (f) => f.id_centro_custo == centro_custo.id
+    );
     if (indexCentroCusto === -1) {
       // setar a centro_custos
-      form.setValue('updateCentrosCusto', true)
+      form.setValue("updateCentrosCusto", true);
       // @ts-ignore
-      addCentroCusto({ id: '', id_centro_custo: centro_custo.id, id_user: id, nome: centro_custo.nome })
+      addCentroCusto({
+        id: "",
+        id_centro_custo: centro_custo.id || "",
+        id_user: id || "",
+        nome: centro_custo.nome,
+      });
     } else {
       toast({
-        title: 'Não foi possível adicionar!',
-        description: 'O centro de custos já consta na lista'
-      })
+        title: "Não foi possível adicionar!",
+        description: "O centro de custos já consta na lista",
+      });
     }
-  }
+  };
 
   const handleSelectPermissao = (permissao: Permissao) => {
     // verifica se o cara já possui
-    const indexPermissao = permissoes?.findIndex(f => f.id_permissao == permissao.id)
+    const indexPermissao = permissoes?.findIndex(
+      (f) => f.id_permissao == permissao.id
+    );
     if (indexPermissao === -1) {
       // setar a permissao
-      form.setValue('updatePermissoes', true)
+      form.setValue("updatePermissoes", true);
       // @ts-ignore
-      addPermissao({ id: '', id_permissao: permissao.id, id_user: id, nome: permissao.nome })
+      addPermissao({
+        id: "",
+        id_permissao: permissao.id || "",
+        id_user: id || "",
+        nome: permissao.nome,
+      });
     } else {
       toast({
-        title: 'Não foi possível adicionar!',
-        description: 'A permissao já consta na lista'
-      })
+        title: "Não foi possível adicionar!",
+        description: "A permissao já consta na lista",
+      });
     }
-  }
+  };
 
   const handleActiveChangeArray = (chave: keyof UserFormData) => {
-    form.setValue(chave, true)
-  }
+    form.setValue(chave, true);
+  };
 
   const filiaisContent = filiais.map((filial, index) => (
-    <div key={`filial.${index}`} className="flex justify-between items-center rounded-lg bg-blue-800 p-2">
+    <div
+      key={`filial.${index}`}
+      className="flex justify-between items-center rounded-lg bg-blue-800 p-2"
+    >
       <p>{filial.nome}</p>
       <div className="flex items-center gap-3">
-        <div onClick={() => handleActiveChangeArray('updateFiliais')}>
-          <FormSwitch control={form.control} name={`filiais.${index}.gestor`} label="Gestor" disabled={!modalEditing} />
+        <div onClick={() => handleActiveChangeArray("updateFiliais")}>
+          <FormSwitch
+            control={form.control}
+            name={`filiais.${index}.gestor`}
+            label="Gestor"
+            disabled={!modalEditing}
+          />
         </div>
-        {modalEditing && <Button type="button" variant={'destructive'} size={'sm'} onClick={() => {
-          handleActiveChangeArray('updateFiliais')
-          removeFilial(index)
-        }}>Excluir</Button>}
+        {modalEditing && (
+          <Button
+            type="button"
+            variant={"destructive"}
+            size={"sm"}
+            onClick={() => {
+              handleActiveChangeArray("updateFiliais");
+              removeFilial(index);
+            }}
+          >
+            Excluir
+          </Button>
+        )}
       </div>
     </div>
-  ))
+  ));
 
   const departamentosContent = departamentos.map((departamento, index) => (
-    <div key={`departamento.${index}`} className="flex justify-between items-center rounded-lg bg-blue-800 p-2">
+    <div
+      key={`departamento.${index}`}
+      className="flex justify-between items-center rounded-lg bg-blue-800 p-2"
+    >
       <p>{departamento.nome}</p>
       <div className="flex items-center gap-3">
-        <div onClick={() => handleActiveChangeArray('updateDepartamentos')}>
-          <FormSwitch control={form.control} name={`departamentos.${index}.gestor`} label="Gestor" disabled={!modalEditing} />
+        <div onClick={() => handleActiveChangeArray("updateDepartamentos")}>
+          <FormSwitch
+            control={form.control}
+            name={`departamentos.${index}.gestor`}
+            label="Gestor"
+            disabled={!modalEditing}
+          />
         </div>
-        {modalEditing && <Button type="button" variant={'destructive'} size={'sm'} onClick={() => {
-          handleActiveChangeArray('updateDepartamentos')
-          removeDepartamento(index)
-        }}>Excluir</Button>}
+        {modalEditing && (
+          <Button
+            type="button"
+            variant={"destructive"}
+            size={"sm"}
+            onClick={() => {
+              handleActiveChangeArray("updateDepartamentos");
+              removeDepartamento(index);
+            }}
+          >
+            Excluir
+          </Button>
+        )}
       </div>
     </div>
-  ))
+  ));
 
   const centrosCustoContent = centros_custo.map((centro_custo, index) => (
-    <div key={`centro_custo.${index}`} className="flex justify-between items-center rounded-lg bg-blue-800 p-2">
+    <div
+      key={`centro_custo.${index}`}
+      className="flex justify-between items-center rounded-lg bg-blue-800 p-2"
+    >
       <p>{centro_custo.nome}</p>
       <div className="flex items-center gap-3">
-        <div onClick={() => handleActiveChangeArray('updateCentrosCusto')}>
-          <FormSwitch control={form.control} disabled={!modalEditing} name={`centros_custo.${index}.gestor`} label="Gestor" />
+        <div onClick={() => handleActiveChangeArray("updateCentrosCusto")}>
+          <FormSwitch
+            control={form.control}
+            disabled={!modalEditing}
+            name={`centros_custo.${index}.gestor`}
+            label="Gestor"
+          />
         </div>
-        {modalEditing && <Button type="button" variant={'destructive'} size={'sm'} onClick={() => {
-          handleActiveChangeArray('updateCentrosCusto')
-          removeCentroCusto(index)
-        }}>Excluir</Button>}
+        {modalEditing && (
+          <Button
+            type="button"
+            variant={"destructive"}
+            size={"sm"}
+            onClick={() => {
+              handleActiveChangeArray("updateCentrosCusto");
+              removeCentroCusto(index);
+            }}
+          >
+            Excluir
+          </Button>
+        )}
       </div>
     </div>
-  ))
+  ));
 
   const permissoesContent = permissoes.map((permissao, index) => (
-    <div key={`permissao.${index}`} className="flex justify-between items-center rounded-lg bg-blue-800 p-2">
+    <div
+      key={`permissao.${index}`}
+      className="flex justify-between items-center rounded-lg bg-blue-800 p-2"
+    >
       <p>{permissao.nome}</p>
-      {modalEditing && <Button type="button" variant={'destructive'} size={'sm'} onClick={() => {
-        handleActiveChangeArray('updatePermissoes')
-        removePermissao(index)
-      }}>Excluir</Button>}
+      {modalEditing && (
+        <Button
+          type="button"
+          variant={"destructive"}
+          size={"sm"}
+          onClick={() => {
+            handleActiveChangeArray("updatePermissoes");
+            removePermissao(index);
+          }}
+        >
+          Excluir
+        </Button>
+      )}
     </div>
-  ))
-
-
+  ));
 
   return (
     <div className="max-w-full ">
@@ -218,7 +323,7 @@ const FormUsers = ({
         onOpenChange={setOpenModalFiliais}
         open={openModalFiliais}
         closeOnSelection={false}
-        />
+      />
 
       <ModalDepartamentos
         handleSelection={handleSelectDepartamento}
@@ -234,7 +339,7 @@ const FormUsers = ({
         onOpenChange={setOpenModalCentrosCusto}
         open={openModalCentrosCusto}
         closeOnSelection={false}
-        />
+      />
 
       <ModalPermissoes
         handleSelection={handleSelectPermissao}
@@ -244,14 +349,9 @@ const FormUsers = ({
         closeOnSelection={false}
       />
 
-
       <Form {...form}>
         <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
-          <FormInput
-            name="id"
-            type="hidden"
-            control={form.control}
-          />
+          <FormInput name="id" type="hidden" control={form.control} />
 
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
             {/* Primeira coluna */}
@@ -273,9 +373,7 @@ const FormUsers = ({
                 </div>
 
                 <div className="flex flex-col gap-3">
-
                   <div className="flex flex-wrap gap-3 items-end">
-
                     <div className="flex flex-col justify-end gap-2 overflow-hidden">
                       <FormLabel>Foto</FormLabel>
                       <div className="w-24">
@@ -287,7 +385,6 @@ const FormUsers = ({
                         />
                       </div>
                     </div>
-
 
                     <FormInput
                       className="flex-1 min-w-[50ch]"
@@ -306,52 +403,92 @@ const FormUsers = ({
                     />
                   </div>
 
-                  <h2 className="mt-2 font-bold text-md">Restrições de acesso</h2>
+                  <h2 className="mt-2 font-bold text-md">
+                    Restrições de acesso
+                  </h2>
                   {/* Filiais de acesso */}
                   <SectionItems
-                    title='Filiais de acesso'
-                    btnAdd={modalEditing ? <Button type="button" size={'sm'} onClick={(e) => {
-                      e.stopPropagation()
-                      handleClickAddFilial()
-                    }}>Adicionar Filial</Button> : undefined}
+                    title="Filiais de acesso"
+                    btnAdd={
+                      modalEditing ? (
+                        <Button
+                          type="button"
+                          size={"sm"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleClickAddFilial();
+                          }}
+                        >
+                          Adicionar Filial
+                        </Button>
+                      ) : undefined
+                    }
                     itemsLength={filiais.length}
                     content={filiaisContent}
                   />
 
                   {/* Departamentos de acesso */}
                   <SectionItems
-                    title='Departamentos de acesso'
-                    btnAdd={modalEditing ? <Button type="button" size={'sm'} onClick={(e) => {
-                      e.stopPropagation()
-                      handleClickAddDepartamento()
-                    }}>Adicionar Departamento</Button> : undefined}
+                    title="Departamentos de acesso"
+                    btnAdd={
+                      modalEditing ? (
+                        <Button
+                          type="button"
+                          size={"sm"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleClickAddDepartamento();
+                          }}
+                        >
+                          Adicionar Departamento
+                        </Button>
+                      ) : undefined
+                    }
                     itemsLength={departamentos.length}
                     content={departamentosContent}
                   />
 
                   {/* Centros de custo */}
                   <SectionItems
-                    title='Centros de custo'
-                    btnAdd={modalEditing ? <Button type="button" size={'sm'} onClick={(e) => {
-                      e.stopPropagation()
-                      handleClickAddCentroCustos()
-                    }}>Adicionar Centro Custo</Button> : undefined}
+                    title="Centros de custo"
+                    btnAdd={
+                      modalEditing ? (
+                        <Button
+                          type="button"
+                          size={"sm"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleClickAddCentroCustos();
+                          }}
+                        >
+                          Adicionar Centro Custo
+                        </Button>
+                      ) : undefined
+                    }
                     itemsLength={centros_custo.length}
                     content={centrosCustoContent}
                   />
 
                   {/* Permissões especiais */}
                   <SectionItems
-                    title='Permissões especiais'
-                    btnAdd={modalEditing ? <Button type="button" size={'sm'} onClick={(e) => {
-                      e.stopPropagation()
-                      handleClickAddPermissao()
-                    }}>Adicionar Permissão</Button> : undefined}
+                    title="Permissões especiais"
+                    btnAdd={
+                      modalEditing ? (
+                        <Button
+                          type="button"
+                          size={"sm"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleClickAddPermissao();
+                          }}
+                        >
+                          Adicionar Permissão
+                        </Button>
+                      ) : undefined
+                    }
                     itemsLength={permissoes.length}
                     content={permissoesContent}
                   />
-
-
                 </div>
               </div>
             </div>

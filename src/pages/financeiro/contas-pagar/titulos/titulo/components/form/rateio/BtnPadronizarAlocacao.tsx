@@ -1,4 +1,6 @@
-import { Button, ButtonProps } from "@/components/ui/button"
+import FormInput from "@/components/custom/FormInput";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button, ButtonProps } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,88 +10,103 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { UseFormReturn, useForm, useWatch } from "react-hook-form";
-import { TituloSchemaProps } from "../../../form-data";
-import { AlertCircle, ArrowsUpFromLine } from "lucide-react";
-import ModalPlanoContas, { ItemPlanoContas } from "@/pages/financeiro/components/ModalPlanoContas";
-import ModalCentrosCustos from "@/pages/admin/components/ModalCentrosCustos";
-import { forwardRef, useEffect, useState } from "react";
+import { Form } from "@/components/ui/form";
+import { toast } from "@/components/ui/use-toast";
+import { normalizeCurrency } from "@/helpers/mask";
+import { api } from "@/lib/axios";
+import ModalCentrosCustos from "@/pages/financeiro/components/ModalCentrosCustos";
+import ModalPlanosContas, {
+  ItemPlanoContas,
+} from "@/pages/financeiro/components/ModalPlanosContas";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, ArrowsUpFromLine } from "lucide-react";
+import { forwardRef, useEffect, useState } from "react";
+import { UseFormReturn, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
-import { Form } from "@/components/ui/form";
-import { normalizeCurrency } from "@/helpers/mask";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { toast } from "@/components/ui/use-toast";
-import FormInput from "@/components/custom/FormInput";
-import { api } from "@/lib/axios";
+import { TituloSchemaProps } from "../../../form-data";
 import { ItemRateioTitulo } from "../../../store";
 
-
 type PadronizarAlocacaoProps = {
-  form: UseFormReturn<TituloSchemaProps>,
-  canEdit?: boolean,
-  disabled?: boolean,
-}
+  form: UseFormReturn<TituloSchemaProps>;
+  canEdit?: boolean;
+  disabled?: boolean;
+};
 
-const ButtonAction = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-  return (
-    <Button {...props} ref={ref} variant="tertiary" size="sm" className="group">
-      <ArrowsUpFromLine size={18} className="me-2 group-hover:rotate-180 transition-all" />
-      Padronizar Alocação
-    </Button>
-  );
-});
+const ButtonAction = forwardRef<HTMLButtonElement, ButtonProps>(
+  (props, ref) => {
+    return (
+      <Button
+        {...props}
+        ref={ref}
+        variant="tertiary"
+        size="sm"
+        className="group"
+      >
+        <ArrowsUpFromLine
+          size={18}
+          className="me-2 group-hover:rotate-180 transition-all"
+        />
+        Padronizar Alocação
+      </Button>
+    );
+  }
+);
 
-export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps) {
-  const [modalOpen, setModalOpen] = useState<boolean>(false)
+export function BtnPadronizarAlocacao({
+  form,
+  canEdit,
+}: PadronizarAlocacaoProps) {
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  const id_matriz = form.watch('id_matriz')
-  const id_grupo_economico = form.watch('id_grupo_economico')
+  const id_matriz = form.watch("id_matriz");
+  const id_grupo_economico = form.watch("id_grupo_economico");
 
-  const [modalCentrosCustosOpen, setModalCentrosCustosOpen] = useState<boolean>(false);
-  const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState<boolean>(false);
-  const [saldoOrcamento, setSaldoOrcamento] = useState<number>(0)
+  const [modalCentrosCustosOpen, setModalCentrosCustosOpen] =
+    useState<boolean>(false);
+  const [modalPlanoContasOpen, setModalPlanoContasOpen] =
+    useState<boolean>(false);
+  const [saldoOrcamento, setSaldoOrcamento] = useState<number>(0);
 
   type Feedback = {
-    variant?: "success" | "warning" | "destructive" | "default" | null,
-    title: string,
-    description?: string,
-  }
-  const [feedback, setFeedback] = useState<Feedback | null>(null)
+    variant?: "success" | "warning" | "destructive" | "default" | null;
+    title: string;
+    description?: string;
+  };
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
 
   const itens_rateio = useWatch({
-    name: 'itens_rateio',
+    name: "itens_rateio",
     control: form.control,
-  })
+  });
 
   const padronizacaoSchema = z.object({
     id_centro_custo: z.coerce.string(),
     centro_custo: z.coerce.string(),
     id_plano_conta: z.coerce.string(),
     plano_conta: z.coerce.string(),
-  })
+  });
 
   const formPadronizacao = useForm({
     resolver: zodResolver(padronizacaoSchema),
     values: {
-      id_centro_custo: '',
-      centro_custo: 'SELECIONE',
-      id_plano_conta: '',
-      plano_conta: 'SELECIONE'
+      id_centro_custo: "",
+      centro_custo: "SELECIONE",
+      id_plano_conta: "",
+      plano_conta: "SELECIONE",
     },
     defaultValues: {
-      id_centro_custo: '',
-      centro_custo: 'SELECIONE',
-      id_plano_conta: '',
-      plano_conta: 'SELECIONE'
-    }
-  })
+      id_centro_custo: "",
+      centro_custo: "SELECIONE",
+      id_plano_conta: "",
+      plano_conta: "SELECIONE",
+    },
+  });
   // const { errors } = formPadronizacao.formState
   // console.log('Erros padronizar alocação', errors)
 
-  const id_centro_custo = formPadronizacao.watch('id_centro_custo')
-  const id_plano_conta = formPadronizacao.watch('id_plano_conta')
+  const id_centro_custo = formPadronizacao.watch("id_centro_custo");
+  const id_plano_conta = formPadronizacao.watch("id_plano_conta");
 
   function handleSelectionCentroCusto(item: CentroCustos) {
     formPadronizacao.setValue("id_centro_custo", item.id);
@@ -105,102 +122,115 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
   }
 
   // * [ORÇAMENTO]
-  const valorTotalItens:number = (itens_rateio?.reduce((acc: number, curr: { valor: string }) => { return acc + parseFloat(curr.valor) }, 0) || 0)
+  const valorTotalItens: number =
+    itens_rateio?.reduce((acc: number, curr: { valor: string }) => {
+      return acc + parseFloat(curr.valor);
+    }, 0) || 0;
 
-  const valorExcessoOrcamento = valorTotalItens - saldoOrcamento
-  const excedeOrcamento = saldoOrcamento < valorTotalItens
+  const valorExcessoOrcamento = valorTotalItens - saldoOrcamento;
+  const excedeOrcamento = saldoOrcamento < valorTotalItens;
 
   type FetchOrcamento = {
-    id_grupo_economico: number | string,
-    id_centro_custo: number | string,
-    id_plano_conta: number | string
-}
+    id_grupo_economico: number | string;
+    id_centro_custo: number | string;
+    id_plano_conta: number | string;
+  };
   const fetchOrcamento = async (props: FetchOrcamento) => {
     try {
-      const result = await api.get('/financeiro/orcamento/find-account', { params: { ...props } })
-      const contaOrcamento = result.data
-      const valOrcamento = parseFloat(contaOrcamento.saldo)
-      setSaldoOrcamento(valOrcamento)
+      const result = await api.get("/financeiro/orcamento/find-account", {
+        params: { ...props },
+      });
+      const contaOrcamento = result.data;
+      const valOrcamento = parseFloat(contaOrcamento.saldo);
+      setSaldoOrcamento(valOrcamento);
     } catch (error) {
       toast({
-        variant: 'destructive', title: 'Erro ao buscar valor do orçamento',
+        variant: "destructive",
+        title: "Erro ao buscar valor do orçamento",
         // @ts-ignore
-        description: error?.response?.data?.message || error.message
-      })
-      setSaldoOrcamento(0)
+        description: error?.response?.data?.message || error.message,
+      });
+      setSaldoOrcamento(0);
     }
-  }
+  };
 
   useEffect(() => {
     if (id_grupo_economico && id_centro_custo && id_plano_conta) {
-      fetchOrcamento({ id_grupo_economico, id_centro_custo, id_plano_conta })
+      fetchOrcamento({ id_grupo_economico, id_centro_custo, id_plano_conta });
     } else {
-      setSaldoOrcamento(0)
+      setSaldoOrcamento(0);
     }
-  }, [id_centro_custo, id_plano_conta])
+  }, [id_centro_custo, id_plano_conta]);
   useEffect(() => {
     if (!id_centro_custo) {
       setFeedback({
-        variant: 'destructive',
-        title: 'Preencha o valor',
-      })
-      return
+        variant: "destructive",
+        title: "Preencha o valor",
+      });
+      return;
     }
     if (!id_plano_conta) {
       setFeedback({
-        variant: 'destructive',
-        title: 'Preencha o percentual',
-      })
-      return
+        variant: "destructive",
+        title: "Preencha o percentual",
+      });
+      return;
     }
     if (excedeOrcamento) {
       setFeedback({
-        variant: 'destructive',
-        title: 'Orçamento excedido!',
-        description: `O valor excede o orçamento em ${normalizeCurrency(valorExcessoOrcamento)}`
-      })
-      return
+        variant: "destructive",
+        title: "Orçamento excedido!",
+        description: `O valor excede o orçamento em ${normalizeCurrency(
+          valorExcessoOrcamento
+        )}`,
+      });
+      return;
     }
 
     setFeedback({
-      variant: 'success',
-      title: 'Tudo certo'
-    })
-
-  }, [id_centro_custo, id_plano_conta, saldoOrcamento])
-
+      variant: "success",
+      title: "Tudo certo",
+    });
+  }, [id_centro_custo, id_plano_conta, saldoOrcamento]);
 
   const onSubmit = (data: z.infer<typeof padronizacaoSchema>) => {
     try {
-
       // setar para todos os itens_rateio os dados de centro de custo e plano de contas
-      const novos_itens:ItemRateioTitulo[] = [];
-      itens_rateio?.forEach((item:ItemRateioTitulo)=>{
-        novos_itens.push({...item, percentual: String(parseFloat(item.percentual) * 100), ...data})
-      })
+      const novos_itens: ItemRateioTitulo[] = [];
+      itens_rateio?.forEach((item: ItemRateioTitulo) => {
+        novos_itens.push({
+          ...item,
+          percentual: String(parseFloat(item.percentual) * 100),
+          ...data,
+        });
+      });
       // @ts-ignore
-      form.setValue('itens_rateio', novos_itens)
-      form.setValue('update_rateio', true)
+      form.setValue("itens_rateio", novos_itens);
+      form.setValue("update_rateio", true);
 
-      formPadronizacao.reset()
-      setModalOpen(false)
+      formPadronizacao.reset();
+      setModalOpen(false);
     } catch (error: any) {
       toast({
-        variant: 'destructive', title: 'Ops!',
-        description: error.message
-      })
-
+        variant: "destructive",
+        title: "Ops!",
+        description: error.message,
+      });
     }
-  }
+  };
 
   const btnDisabled = saldoOrcamento < valorTotalItens;
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
-        <ButtonAction disabled={!canEdit || itens_rateio?.length === 0}  type="button" onClick={() => {
-          setModalOpen(true)
-        }} />
+        <ButtonAction
+          disabled={!canEdit || itens_rateio?.length === 0}
+          type="button"
+          onClick={() => {
+            setModalOpen(true);
+          }}
+        />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <Form {...formPadronizacao}>
@@ -208,12 +238,14 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
             <DialogHeader>
               <DialogTitle>Padronização de Alocação</DialogTitle>
               <DialogDescription>
-                Todos os itens do rateio receberão o mesmo centro de custos e plano de contas.
-                <br />Validaremos o saldo de orçamento para o total dos itens.
+                Todos os itens do rateio receberão o mesmo centro de custos e
+                plano de contas.
+                <br />
+                Validaremos o saldo de orçamento para o total dos itens.
               </DialogDescription>
             </DialogHeader>
 
-            <ModalPlanoContas
+            <ModalPlanosContas
               open={modalPlanoContasOpen && !!id_matriz}
               id_matriz={id_matriz}
               tipo="Despesa"
@@ -262,29 +294,26 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
               </div>
 
               <div className="flex gap-3">
-                {
-                  feedback && (
-                    <Alert variant={feedback.variant}>
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>{feedback.title}</AlertTitle>
-                      {feedback.description &&
-                        <AlertDescription>
-                          {feedback.description}
-                        </AlertDescription>
-                      }
-                    </Alert>
-                  )
-                }
-
+                {feedback && (
+                  <Alert variant={feedback.variant}>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>{feedback.title}</AlertTitle>
+                    {feedback.description && (
+                      <AlertDescription>
+                        {feedback.description}
+                      </AlertDescription>
+                    )}
+                  </Alert>
+                )}
               </div>
             </div>
 
             <DialogFooter>
-              <ButtonAction disabled={btnDisabled} type={'submit'} />
+              <ButtonAction disabled={btnDisabled} type={"submit"} />
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

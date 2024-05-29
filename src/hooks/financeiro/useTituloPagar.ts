@@ -4,7 +4,7 @@ import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
 import { AlteracaoLoteSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/alteracao-lote/Modal";
 import { ExportAnexosProps } from "@/pages/financeiro/contas-pagar/titulos/components/ButtonExportarTitulos";
-import { EditRecorrenciaProps } from "@/pages/financeiro/contas-pagar/titulos/recorrencias/editar/Modal";
+import { EditRecorrenciaProps } from "@/pages/financeiro/contas-pagar/titulos/recorrencias/ModalEditarRecorrencia";
 import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/titulo/form-data";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -117,8 +117,8 @@ export const useTituloPagar = () => {
         },
     })
     const changeRecorrencia = () => useMutation({
-        mutationFn: async ({id,data_vencimento}:EditRecorrenciaProps) => {
-            return await api.put(`/financeiro/contas-a-pagar/titulo/recorrencias/${id}`, {data_vencimento}).then((response) => response.data)
+        mutationFn: async ({id,data_vencimento, valor}:EditRecorrenciaProps) => {
+            return await api.put(`/financeiro/contas-a-pagar/titulo/recorrencias/${id}`, {data_vencimento, valor}).then((response) => response.data)
         },
         onSuccess() {
             toast({ variant: 'success', title: 'Sucesso!', description: 'Alterações realizadas com sucesso!' })

@@ -2,21 +2,28 @@ import { DataTable } from "@/components/custom/DataTable";
 import { usePainel } from "@/hooks/financeiro/usePainel";
 import ModalTituloPagar from "../titulos/titulo/Modal";
 import { ItemPainel } from "./components/ItemPainel";
-import { BlocoRecorrenciasPendentes } from "./recorrencias-pendentes/BlocoRecorrenciasPendentes";
-import { columnsTableNegadas, columnsTableSemNota } from "./table/columns";
+import {
+  columnsTableNegadas,
+  columnsTableRecorrencias,
+  columnsTableSemNota,
+} from "./table/columns";
 import { useStoreTablePainel } from "./table/store-table";
 
 export const PainelContasPagar = () => {
   const [
     paginationNegadas,
     paginationSemNota,
+    paginationRecorrencias,
     setPaginationNegadas,
     setPaginationSemNota,
+    setPaginationRecorrencias,
   ] = useStoreTablePainel((state) => [
     state.paginationNegadas,
     state.paginationSemNota,
+    state.paginationRecorrencias,
     state.setPaginationNegadas,
     state.setPaginationSemNota,
+    state.setPaginationRecorrencias,
   ]);
 
   const { data: dataSemNota, isLoading: isLoadingSemNota } =
@@ -35,8 +42,16 @@ export const PainelContasPagar = () => {
   const rowsNegadas = dataNegadas?.data?.rows || [];
   const rowCountNegadas = dataNegadas?.data?.rowCount || 0;
 
-  return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+  const { data: dataRecorrencias, isLoading: isLoadingRecorrencias } =
+    usePainel().getAllRecorrenciasPendentes({
+      pagination: paginationRecorrencias,
+    });
+
+  const rowsRecorrencias = dataRecorrencias?.data?.rows || [];
+  const rowCountRecorrencias = dataRecorrencias?.data?.rowCount || 0;
+
+  return rowCountSemNota || rowCountNegadas || rowCountRecorrencias ? (
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 ">
       <ItemPainel title="Solicitações Negadas" qtde={rowCountNegadas}>
         <DataTable
           pagination={paginationNegadas}
@@ -57,8 +72,21 @@ export const PainelContasPagar = () => {
           isLoading={isLoadingSemNota}
         />
       </ItemPainel>
-      <BlocoRecorrenciasPendentes />
+      <ItemPainel title="Recorrências Pendentes" qtde={rowCountRecorrencias}>
+        <DataTable
+          pagination={paginationRecorrencias}
+          setPagination={setPaginationRecorrencias}
+          data={rowsRecorrencias}
+          rowCount={rowCountRecorrencias}
+          columns={columnsTableRecorrencias}
+          isLoading={isLoadingRecorrencias}
+        />
+      </ItemPainel>
       <ModalTituloPagar />
+    </div>
+  ) : (
+    <div className="mt-36 h-full col-span-2 w-full flex items-center justify-center text-xs">
+      Sem Pendências
     </div>
   );
 };

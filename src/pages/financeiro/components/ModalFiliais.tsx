@@ -11,26 +11,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-import { normalizeDate } from "@/helpers/mask";
+import { normalizeCnpjNumber } from "@/helpers/mask";
 import { api } from "@/lib/axios";
+import { Filial } from "@/types/filial-type";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
-interface IModalBorderos {
+interface IModalFiliais {
   open: boolean;
-  handleSelection: (item: BorderoProps) => void;
-  onOpenChange: () => void;
-  id_matriz?: string;
-  id_bordero?: string;
+  handleSelection: (item: Filial) => void;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
+  id_matriz?: string | null;
+  id_grupo_economico?: string | null;
+  closeOnSelection?: boolean;
 }
 
-export type BorderoProps = {
-  id: string;
-  conta_bancaria?: string;
-  id_conta_bancaria: string;
-  data_pagamento: string;
-  id_matriz: string;
+type DataProps = {
+  description: string;
+  item: any;
 };
 
 type PaginationProps = {
@@ -38,13 +36,14 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalBorderos = ({
+const ModalFiliais = ({
   open,
   handleSelection,
   onOpenChange,
   id_matriz,
-  id_bordero,
-}: IModalBorderos) => {
+  id_grupo_economico,
+  closeOnSelection,
+}: IModalFiliais) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -52,13 +51,30 @@ const ModalBorderos = ({
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["fin_borderos", id_matriz],
+    queryKey: ["filiais", id_matriz],
     queryFn: async () =>
-      await api.get("financeiro/contas-a-pagar/bordero/", {
-        params: { filters: { termo: search, id_matriz }, pagination },
+      await api.get("filial", {
+        params: {
+          filters: { termo: search, id_matriz, id_grupo_economico },
+          pagination,
+        },
       }),
     enabled: open,
   });
+
+  const dataRows = data?.data?.rows.map((item: Filial) => ({
+    description: `${item.grupo_economico} - ${
+      item.nome
+    } - ${normalizeCnpjNumber(item.cnpj)}`,
+    item,
+  }));
+
+  function pushSelection(item: any) {
+    handleSelection(item);
+    if (onOpenChange !== undefined && closeOnSelection) {
+      onOpenChange(false);
+    }
+  }
 
   async function handleSearch(searchText: string) {
     await new Promise((resolve) => {
@@ -68,9 +84,6 @@ const ModalBorderos = ({
     });
     refetch();
   }
-  function pushSelection(item: BorderoProps) {
-    handleSelection(item);
-  }
 
   const pageCount = (data && data.data.pageCount) || 0;
   if (isLoading) return null;
@@ -79,43 +92,37 @@ const ModalBorderos = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[1000px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Borderos de pagamento</DialogTitle>
+          <DialogTitle>Lista de filiais</DialogTitle>
           <DialogDescription>
-            Selecione um ao clicar no botão à direita.
+            Selecione ao clicar no botão à direita.
           </DialogDescription>
 
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
-
         <ModalComponent
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}
           setPagination={setPagination}
         >
-          {data?.data?.rows
-            .filter((item: BorderoProps) => item.id != id_bordero)
-            .map((item: BorderoProps) => (
+          {dataRows &&
+            dataRows.map((row: DataProps, index: number) => (
               <ModalComponentRow
-                key={"borderoRow:" + item.id}
-                componentKey={"bordero:" + item.id}
+                key={"modal_filial_item_row:" + index + row.item}
+                componentKey={"modal_filial_item:" + index + row.item}
               >
                 <>
-                  <span>
-                    {item.id}
-                    {" - "}
-                    {item.conta_bancaria}
-                    {" - "}
-                    {normalizeDate(item.data_pagamento)}
+                  <span className="flex items-center text-sm">
+                    {row.description}
                   </span>
                   <Button
                     size={"xs"}
                     className="p-1"
                     variant={"outline"}
                     onClick={() => {
-                      pushSelection(item);
+                      pushSelection(row.item);
                     }}
                   >
                     Selecionar
@@ -129,4 +136,4 @@ const ModalBorderos = ({
   );
 };
 
-export default ModalBorderos;
+export default ModalFiliais;

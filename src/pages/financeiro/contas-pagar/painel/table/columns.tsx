@@ -13,6 +13,15 @@ export type RowTitulo = {
   descricao: string;
 };
 
+export type RowRecorrencia = {
+  id: string;
+  data_vencimento: Date;
+  valor: string;
+  fornecedor: string;
+  filial: string;
+  descricao: string;
+};
+
 const openModal = useStoreTitulo.getState().openModal;
 
 export const columnsTableSemNota: ColumnDef<RowTitulo>[] = [
@@ -175,14 +184,26 @@ export const columnsTableNegadas: ColumnDef<RowTitulo>[] = [
   },
 ];
 
-export const columnsTable: ColumnDef<RowTitulo>[] = [
+export const columnsTableRecorrencias: ColumnDef<RowRecorrencia>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
+    id: "id",
+    accessorKey: "id_titulo",
+    header: "ID TÍTULO",
     cell: (info) => (
       <span
-        className="font-semibold cursor-pointer text-blue-500"
-        onClick={() => openModal(info.getValue<string>())}
+        className="font-semibold cursor-pointer text-blue-500 text-center"
+        onClick={() => {
+          const id_titulo = info.getValue<string>();
+          const id = info.cell.row.original.id;
+          const data_vencimento = info.cell.row.original.data_vencimento;
+          const valor = info.cell.row.original.valor;
+          openModal(id_titulo, {
+            data_vencimento,
+            id,
+            valor,
+          });
+          console.log(id_titulo);
+        }}
       >
         {info.getValue<string>()}
       </span>
@@ -190,8 +211,8 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     enableSorting: false,
   },
   {
-    header: "Solicitação",
-    accessorKey: "created_at",
+    header: "DATA VENCIMENTO",
+    accessorKey: "data_vencimento",
     cell: (info) => {
       const data = info.getValue<Date>();
       return new Date(data).toLocaleString("pt-BR", {
@@ -202,33 +223,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     },
   },
   {
-    header: "Fornecedor",
-    accessorKey: "fornecedor",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <div title={label} className="block truncate max-w-96">
-          {label}
-        </div>
-      );
-    },
-  },
-
-  {
-    id: "descricao",
-    accessorKey: "descricao",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <div title={label} className="block truncate max-w-96">
-          {label}
-        </div>
-      );
-    },
-    header: "Descrição",
-  },
-  {
-    header: "Valor",
+    header: "VALOR",
     accessorKey: "valor",
     cell: (info) => (
       <span className="block text-right text-nowrap">
@@ -242,8 +237,48 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     ),
   },
   {
-    header: "Solicitante",
-    accessorKey: "solicitante",
+    header: "FORNECEDOR",
+    accessorKey: "fornecedor",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96">
+          {label}
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "filial",
+    header: "FILIAL",
+    accessorKey: "filial",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96">
+          {label}
+        </div>
+      );
+    },
+  },
+  {
+    id: "descricao",
+    header: "DESCRIÇÃO",
+    accessorKey: "descricao",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96">
+          {label}
+        </div>
+      );
+    },
+  },
+
+  {
+    header: "CRIADOR",
+    accessorKey: "criador",
     cell: (info) => {
       const label = info.getValue<string>();
       return (

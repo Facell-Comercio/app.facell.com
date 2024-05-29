@@ -9,13 +9,13 @@ export interface State {
   rowCount: number;
   paginationNegadas: Pagination;
   paginationSemNota: Pagination;
-  paginationRecorrencia: Pagination;
+  paginationRecorrencias: Pagination;
 }
 
 export interface Actions {
   setPaginationNegadas: (pagination: Pagination) => void;
   setPaginationSemNota: (pagination: Pagination) => void;
-  setPaginationRecorrencia: (pagination: Pagination) => void;
+  setPaginationRecorrencias: (pagination: Pagination) => void;
 }
 
 export const useStoreTablePainel = create<State & Actions>((set) => ({
@@ -24,12 +24,12 @@ export const useStoreTablePainel = create<State & Actions>((set) => ({
   // sorting: [],
   paginationNegadas: { pageIndex: 0, pageSize: 15 },
   paginationSemNota: { pageIndex: 0, pageSize: 15 },
-  paginationRecorrencia: { pageIndex: 0, pageSize: 15 },
+  paginationRecorrencias: { pageIndex: 0, pageSize: 15 },
 
   // Filters
 
   setPaginationNegadas: (pagination) => set({ paginationNegadas: pagination }),
   setPaginationSemNota: (pagination) => set({ paginationSemNota: pagination }),
-  setPaginationRecorrencia: (pagination) =>
-    set({ paginationRecorrencia: pagination }),
+  setPaginationRecorrencias: (pagination) =>
+    set({ paginationRecorrencias: pagination }),
 }));

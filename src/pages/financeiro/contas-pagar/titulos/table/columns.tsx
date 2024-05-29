@@ -87,7 +87,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label} className="block truncate max-w-96">
+        <div title={label} className="block truncate max-w-96 uppercase">
           {label}
         </div>
       );
@@ -100,7 +100,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label} className="block truncate max-w-96">
+        <div title={label} className="block truncate max-w-96 uppercase">
           {label}
         </div>
       );
@@ -127,7 +127,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label} className="block truncate max-w-96">
+        <div title={label} className="block truncate max-w-96 uppercase">
           {label}
         </div>
       );

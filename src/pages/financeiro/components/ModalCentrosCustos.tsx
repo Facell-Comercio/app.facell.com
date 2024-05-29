@@ -11,43 +11,41 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { api } from "@/lib/axios";
-import { useQuery } from "@tanstack/react-query";
+import { useCentroCustos } from "@/hooks/financeiro/useCentroCustos";
+import { CentroCustos } from "@/types/financeiro/centro-custos-type";
 import { useState } from "react";
 
-interface IModalBancos {
+interface IModalCentrosCustos {
   open: boolean;
-  handleSelection: (item: ItemBancos) => void;
-  onOpenChange: () => void;
-  id?: string | null;
+  handleSelection: (item: CentroCustos) => void;
+  onOpenChange: (value: boolean) => boolean;
+  closeOnSelection?: boolean;
+  id_matriz?: string | null;
+  id_grupo_economico?: string | null;
 }
-
-export type ItemBancos = {
-  id: string;
-  codigo: string;
-  nome: string;
-  tipo: string;
-};
 
 type PaginationProps = {
   pageSize: number;
   pageIndex: number;
 };
 
-const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
+const ModalCentrosCustos = ({
+  open,
+  handleSelection,
+  onOpenChange,
+  closeOnSelection,
+  id_matriz,
+  id_grupo_economico,
+}: IModalCentrosCustos) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
     pageIndex: 0,
   });
 
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["fin_bancos"],
-    queryFn: async () =>
-      await api.get("financeiro/bancos", {
-        params: { filters: { termo: search }, pagination },
-      }),
-    enabled: open,
+  const { data, isLoading, isError, refetch } = useCentroCustos().getAll({
+    pagination,
+    filters: { termo: search, id_matriz, id_grupo_economico },
   });
 
   async function handleSearch(searchText: string) {
@@ -56,10 +54,13 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
-    refetch();
   }
 
-  function pushSelection(item: ItemBancos) {
+  function pushSelection(item: CentroCustos) {
+    if (closeOnSelection) {
+      // @ts-expect-error 'vai funcionar...'
+      onOpenChange((prev) => !prev);
+    }
     handleSelection(item);
   }
 
@@ -72,29 +73,27 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Bancos</DialogTitle>
+          <DialogTitle>Lista de centros de custo</DialogTitle>
           <DialogDescription>
-            Selecione um ao clicar no botão à direita.
+            Selecione uma ao clicar no botão à direita.
           </DialogDescription>
 
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
-
         <ModalComponent
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}
           setPagination={setPagination}
         >
-          {data?.data?.rows.map((item: ItemBancos, index: number) => (
+          {data?.data?.rows.map((item: CentroCustos) => (
             <ModalComponentRow
-              key={"bancosRow:" + item.id + index}
-              componentKey={"bancos:" + item.id + index}
+              key={`centroCentroCustosRow.${item.id}`}
+              componentKey={`centroCentroCustos.${item.id}`}
             >
               <>
-                <span>
-                  {item.codigo} - {item.nome}
-                </span>
+                <span className="w-[40ch]">{item?.grupo_economico}</span>
+                <span className="w-full">{item.nome}</span>
                 <Button
                   size={"xs"}
                   className="p-1"
@@ -114,4 +113,4 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
   );
 };
 
-export default ModalBancos;
+export default ModalCentrosCustos;

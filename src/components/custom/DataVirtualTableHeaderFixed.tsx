@@ -6,17 +6,17 @@ import {
   Row,
   SortingState,
   useReactTable,
-} from '@tanstack/react-table'
+} from "@tanstack/react-table";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef, useState } from "react";
 
 type TableProps = {
-  data: any,
-  columns: ColumnDef<unknown, any>[]
-}
-export const DataVirtualTableHeaderFixed = ({data, columns}: TableProps)=>{
-  const [sorting, setSorting] = useState<SortingState>([])
+  data: any;
+  columns: ColumnDef<unknown, any>[];
+};
+export const DataVirtualTableHeaderFixed = ({ data, columns }: TableProps) => {
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data: data,
@@ -28,11 +28,11 @@ export const DataVirtualTableHeaderFixed = ({data, columns}: TableProps)=>{
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     // debugTable: true,
-  })
+  });
 
-  const { rows } = table.getRowModel()
+  const { rows } = table.getRowModel();
 
-  const parentRef = useRef<HTMLDivElement>(null)
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtualizer({
     count: rows.length,
@@ -40,16 +40,15 @@ export const DataVirtualTableHeaderFixed = ({data, columns}: TableProps)=>{
     estimateSize: () => 33,
     overscan: 10,
     measureElement:
-      typeof window !== 'undefined' &&
-        navigator.userAgent.indexOf('Firefox') === -1
-        ? element => element?.getBoundingClientRect().height
+      typeof window !== "undefined" &&
+      navigator.userAgent.indexOf("Firefox") === -1
+        ? (element) => element?.getBoundingClientRect().height
         : undefined,
-  })
+  });
 
   return (
     <div className="flex flex-col gap-3 overflow-hidden">
-      <div className="rounded-lg overflow-auto">
-
+      <div className="rounded-lg overflow-auto scroll-thin">
         <div ref={parentRef} className={`h-[200px] overflow-auto relative`}>
           <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
             <table className="grid text-nowrap text-xs">
@@ -68,44 +67,45 @@ export const DataVirtualTableHeaderFixed = ({data, columns}: TableProps)=>{
                             <div
                               {...{
                                 className: header.column.getCanSort()
-                                  ? 'cursor-pointer select-none w-full'
-                                  : 'w-full',
-                                onClick: header.column.getToggleSortingHandler(),
+                                  ? "cursor-pointer select-none w-full"
+                                  : "w-full",
+                                onClick:
+                                  header.column.getToggleSortingHandler(),
                               }}
                             >
                               {flexRender(
                                 header.column.columnDef.header,
-                                header.getContext(),
+                                header.getContext()
                               )}
                               {{
-                                asc: ' 🔼',
-                                desc: ' 🔽',
+                                asc: " 🔼",
+                                desc: " 🔽",
                               }[header.column.getIsSorted() as string] ?? null}
                             </div>
                           )}
                         </th>
-                      )
+                      );
                     })}
                   </tr>
                 ))}
               </thead>
               <tbody
                 style={{
-                  display: 'grid',
+                  display: "grid",
                   height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-                  position: 'relative', //needed for absolute positioning of rows
+                  position: "relative", //needed for absolute positioning of rows
                 }}
               >
-                {data?.length > 0 ?
+                {data?.length > 0 ? (
                   virtualizer.getVirtualItems().map((virtualRow) => {
-                    const row = rows[virtualRow.index] as Row<any>
+                    const row = rows[virtualRow.index] as Row<any>;
                     return (
                       <tr
                         key={row.id}
-                        className='flex absolute items-center  border-b border-gray-900'
+                        className="flex absolute items-center  border-b border-gray-900"
                         style={{
                           transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
-                          width: '100%',
+                          width: "100%",
                         }}
                       >
                         {row.getVisibleCells().map((cell) => {
@@ -117,30 +117,26 @@ export const DataVirtualTableHeaderFixed = ({data, columns}: TableProps)=>{
                                 width: cell.column.getSize(),
                               }}
                             >
-                              {
-                                flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext(),
-                                )}
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
                             </td>
-                          )
+                          );
                         })}
                       </tr>
-                    )
+                    );
                   })
-                  : (
-                    <tr className="flex w-full items-center p-6">
-                      <td>
-                        Nenhuma linha a exibir...
-                      </td>
-                    </tr>
-                  )}
-
+                ) : (
+                  <tr className="flex w-full items-center p-6">
+                    <td>Nenhuma linha a exibir...</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
-        </div >
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};

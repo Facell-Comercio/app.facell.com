@@ -1,3 +1,7 @@
+import {
+  ModalComponent,
+  ModalComponentRow,
+} from "@/components/custom/ModalComponent";
 import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
 import { AccordionItem } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -5,16 +9,10 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { api } from "@/lib/axios";
 import {
@@ -23,13 +21,8 @@ import {
   AccordionTrigger,
 } from "@radix-ui/react-accordion";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ChevronLeft,
-  ChevronRight,
-  EraserIcon,
-  FilterIcon,
-} from "lucide-react";
-import { useState } from "react";
+import { EraserIcon, FilterIcon } from "lucide-react";
+import { useRef, useState } from "react";
 
 interface IModalContaBancaria {
   open: boolean;
@@ -46,6 +39,7 @@ export type ItemContaBancariaProps = {
   descricao: string;
   banco: string;
   id_matriz: string;
+  id_grupo_economico?: string;
 };
 
 type PaginationProps = {
@@ -65,26 +59,25 @@ const ModalContasBancarias = ({
   onOpenChange,
   closeOnSelection,
   id_matriz,
+  id_grupo_economico,
 }: IModalContaBancaria) => {
-  const [accordionOpen, setAccordionOpen] = useState<string>("item-1");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
     pageIndex: 0,
   });
 
-  const initialFilters: Filters = {
+  const defaultFilters: Filters = {
     id_grupo_economico: "",
     descricao: "",
     banco: "",
   };
-  const [filters, setFilters] = useState(initialFilters);
+  const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
+  const [filters, setFilters] = useState(defaultFilters);
+  const setInputRef = (key: string, element: HTMLInputElement | null) => {
+    if (inputsRef.current) inputsRef.current[key] = element;
+  };
 
-  const {
-    data,
-    isLoading,
-    isError,
-    refetch: refetchContaBancaria,
-  } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["contas_bancarias", id_matriz],
     queryFn: async () =>
       await api.get("financeiro/contas-bancarias/", {
@@ -96,59 +89,34 @@ const ModalContasBancarias = ({
     enabled: open,
   });
 
-  const pages = [...Array(data?.data?.pageCount || 0).keys()].map(
-    (page) => page + 1
-  );
-  const arrayPages = pages.filter((i) => {
-    if (i === 1 || i === pages.length) {
-      return true;
-    } else if (i >= pagination.pageIndex - 2 && i <= pagination.pageIndex + 2) {
-      return true;
-    }
-    return false;
-  });
-
-  async function handleClickFilters() {
+  async function handleClickFilter() {
     await new Promise((resolve) => {
+      if (inputsRef.current) {
+        setFilters((prev) => ({
+          ...prev,
+          descricao: inputsRef.current["descricao"]?.value || "",
+          banco: inputsRef.current["banco"]?.value || "",
+        }));
+        console.log(filters);
+      }
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
-    refetchContaBancaria();
+    refetch();
   }
 
   async function handleClickResetFilters() {
     await new Promise((resolve) => {
-      setFilters(initialFilters);
+      setFilters((prev) => ({ ...prev, ...defaultFilters }));
+      Object.keys(inputsRef.current).forEach((key) => {
+        if (inputsRef.current[key]) {
+          inputsRef.current[key]!.value = "";
+        }
+      });
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
-    refetchContaBancaria();
-  }
-  async function handlePaginationChange(index: number) {
-    await new Promise((resolve) => {
-      setPagination((prev) => ({ ...prev, pageIndex: index }));
-      resolve(true);
-    });
-    refetchContaBancaria();
-  }
-  async function handlePaginationUp() {
-    await new Promise((resolve) => {
-      const newPage = ++pagination.pageIndex;
-      setPagination((prev) => ({ ...prev, pageIndex: newPage }));
-      resolve(true);
-    });
-    refetchContaBancaria();
-  }
-  async function handlePaginationDown() {
-    await new Promise((resolve) => {
-      const newPage = --pagination.pageIndex;
-      setPagination((prev) => ({
-        ...prev,
-        pageIndex: newPage <= 0 ? 0 : newPage,
-      }));
-      resolve(true);
-    });
-    refetchContaBancaria();
+    refetch();
   }
 
   function pushSelection(item: ItemContaBancariaProps) {
@@ -158,8 +126,12 @@ const ModalContasBancarias = ({
     }
   }
 
+  const pageCount = (data && data.data.pageCount) || 0;
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
+
   if (isLoading) return null;
   if (isError) return null;
+  if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -173,8 +145,8 @@ const ModalContasBancarias = ({
           <Accordion
             type="single"
             collapsible
-            value={accordionOpen}
-            onValueChange={(e) => setAccordionOpen(e)}
+            value={itemOpen}
+            onValueChange={(e) => setItemOpen(e)}
             className="p-2 border dark:border-slate-800 rounded-lg flex-1"
           >
             <AccordionItem value="item-1" className="border-0">
@@ -184,7 +156,7 @@ const ModalContasBancarias = ({
               <AccordionContent className="p-0">
                 <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
                   <div className="flex w-max space-x-4">
-                    <Button size={"sm"} onClick={() => handleClickFilters()}>
+                    <Button size={"sm"} onClick={() => handleClickFilter()}>
                       Filtrar <FilterIcon size={12} className="ms-2" />
                     </Button>
                     <Button
@@ -195,28 +167,26 @@ const ModalContasBancarias = ({
                       Limpar <EraserIcon size={12} className="ms-2" />
                     </Button>
 
-                    <SelectGrupoEconomico
-                      showAll
-                      value={filters.id_grupo_economico}
-                      onChange={(id_grupo_economico) => {
-                        setFilters({ id_grupo_economico: id_grupo_economico });
-                      }}
-                    />
+                    {!id_grupo_economico && (
+                      <SelectGrupoEconomico
+                        showAll
+                        value={filters.id_grupo_economico}
+                        onChange={(id_grupo_economico) => {
+                          setFilters({
+                            id_grupo_economico: id_grupo_economico,
+                          });
+                        }}
+                      />
+                    )}
                     <Input
                       placeholder="Descrição"
                       className="w-[20ch]"
-                      value={filters.descricao}
-                      onChange={(e) => {
-                        setFilters({ ...filters, descricao: e.target.value });
-                      }}
+                      ref={(el) => setInputRef("descricao", el)}
                     />
                     <Input
                       placeholder="Banco"
                       className="max-w-[200px]"
-                      value={filters.banco}
-                      onChange={(e) => {
-                        setFilters({ ...filters, banco: e.target.value });
-                      }}
+                      ref={(el) => setInputRef("banco", el)}
                     />
                   </div>
                   <ScrollBar orientation="horizontal" />
@@ -225,73 +195,39 @@ const ModalContasBancarias = ({
             </AccordionItem>
           </Accordion>
         </DialogHeader>
-
-        <ScrollArea className="h-72 w-full rounded-md border p-3">
+        <ModalComponent
+          pageCount={pageCount}
+          refetch={refetch}
+          pagination={pagination}
+          setPagination={setPagination}
+        >
           {data?.data?.rows.map(
             (item: ItemContaBancariaProps, index: number) => (
-              <div
-                key={"plano_contas:" + item.id + index}
-                className={`flex gap-1 items-center bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-2`}
+              <ModalComponentRow
+                key={"contasBancariasRow:" + item.id + index}
+                componentKey={"contasBancarias:" + item.id + index}
               >
-                <span>
-                  {item.grupo_economico && item.grupo_economico.toUpperCase()} -{" "}
-                  {item.descricao && item.descricao.toUpperCase()} -{" "}
-                  {item.banco && item.banco.toUpperCase()}
-                </span>
-                <Button
-                  size={"xs"}
-                  variant={"outline"}
-                  onClick={() => {
-                    pushSelection(item);
-                  }}
-                >
-                  Selecionar
-                </Button>
-              </div>
+                <>
+                  <span>
+                    {item.grupo_economico && item.grupo_economico.toUpperCase()}{" "}
+                    - {item.descricao && item.descricao.toUpperCase()} -{" "}
+                    {item.banco && item.banco.toUpperCase()}
+                  </span>
+                  <Button
+                    size={"xs"}
+                    className="p-1"
+                    variant={"outline"}
+                    onClick={() => {
+                      pushSelection(item);
+                    }}
+                  >
+                    Selecionar
+                  </Button>
+                </>
+              </ModalComponentRow>
             )
           )}
-        </ScrollArea>
-
-        <DialogFooter>
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <Button
-                  variant={"outline"}
-                  disabled={pagination.pageIndex === 0}
-                  onClick={handlePaginationDown}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-              </PaginationItem>
-              {arrayPages.map((i) => {
-                return (
-                  <PaginationItem key={i}>
-                    <Button
-                      variant={
-                        i - 1 === pagination.pageIndex ? "default" : "ghost"
-                      }
-                      onClick={() => handlePaginationChange(i - 1)}
-                    >
-                      {i}
-                    </Button>
-                  </PaginationItem>
-                );
-              })}
-              <PaginationItem>
-                <Button
-                  variant={"outline"}
-                  disabled={pagination.pageIndex === pages.length - 1}
-                  onClick={handlePaginationUp}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-
-          {/* <PaginationEllipsis /> */}
-        </DialogFooter>
+        </ModalComponent>
       </DialogContent>
     </Dialog>
   );

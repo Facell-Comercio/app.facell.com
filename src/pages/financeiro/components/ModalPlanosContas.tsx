@@ -15,17 +15,19 @@ import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-interface IModalBancos {
+interface IModalPlanosContas {
   open: boolean;
-  handleSelection: (item: ItemBancos) => void;
+  handleSelection: (item: ItemPlanoContas) => void;
   onOpenChange: () => void;
-  id?: string | null;
+  id_matriz?: string | null;
+  id_grupo_economico?: string | null;
+  tipo?: "Despesa" | "Receita";
 }
 
-export type ItemBancos = {
+export type ItemPlanoContas = {
   id: string;
   codigo: string;
-  nome: string;
+  descricao: string;
   tipo: string;
 };
 
@@ -34,7 +36,14 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
+const ModalPlanosContas = ({
+  open,
+  handleSelection,
+  onOpenChange,
+  id_matriz,
+  id_grupo_economico,
+  tipo,
+}: IModalPlanosContas) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -42,10 +51,13 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["fin_bancos"],
+    queryKey: ["plano_contas", id_matriz],
     queryFn: async () =>
-      await api.get("financeiro/bancos", {
-        params: { filters: { termo: search }, pagination },
+      await api.get("financeiro/plano-contas", {
+        params: {
+          filters: { termo: search, id_matriz, id_grupo_economico, tipo },
+          pagination,
+        },
       }),
     enabled: open,
   });
@@ -59,11 +71,12 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
     refetch();
   }
 
-  function pushSelection(item: ItemBancos) {
+  function pushSelection(item: ItemPlanoContas) {
     handleSelection(item);
   }
 
   const pageCount = (data && data.data.pageCount) || 0;
+
   if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
@@ -72,7 +85,7 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Bancos</DialogTitle>
+          <DialogTitle>Lista de plano de contas</DialogTitle>
           <DialogDescription>
             Selecione um ao clicar no botão à direita.
           </DialogDescription>
@@ -86,14 +99,14 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
           pagination={pagination}
           setPagination={setPagination}
         >
-          {data?.data?.rows.map((item: ItemBancos, index: number) => (
+          {data?.data?.rows.map((item: ItemPlanoContas, index: number) => (
             <ModalComponentRow
-              key={"bancosRow:" + item.id + index}
-              componentKey={"bancos:" + item.id + index}
+              key={"plano_contas_row:" + item.id + index}
+              componentKey={"plano_contas:" + item.id + index}
             >
               <>
                 <span>
-                  {item.codigo} - {item.nome}
+                  {item.codigo} - {item.descricao}
                 </span>
                 <Button
                   size={"xs"}
@@ -114,4 +127,4 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
   );
 };
 
-export default ModalBancos;
+export default ModalPlanosContas;

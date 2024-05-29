@@ -14,7 +14,7 @@ export const ItemPainel = ({
   qtde: number;
 }) => {
   return (
-    <Card className={`${!qtde && "hidden"}`}>
+    <Card className={`flex-grow-1 xl:last:odd:col-span-2 ${!qtde && "hidden"}`}>
       <CardHeader className="px-3 py-1.5">
         <CardTitle className="text-lg flex items-center justify-between">
           <span>{title}</span>{" "}

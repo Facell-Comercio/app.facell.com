@@ -16,4 +16,9 @@ export const usePainel = () => {
             queryFn: async () => { return await api.get(`/financeiro/contas-a-pagar/painel/sem-nota`, { params: { pagination } }) },
             placeholderData: keepPreviousData
         }),
+        getAllRecorrenciasPendentes : ({ pagination }: GetAllParams) => useQuery({
+            queryKey: ['fin_painel_recorrencias', pagination],
+            queryFn: async () => { return await api.get(`/financeiro/contas-a-pagar/painel/recorrencias`, { params: { pagination } }) },
+            placeholderData: keepPreviousData
+        }),
 })}

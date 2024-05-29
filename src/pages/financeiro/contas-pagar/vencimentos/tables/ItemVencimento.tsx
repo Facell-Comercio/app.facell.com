@@ -29,9 +29,11 @@ export const ItemVencimento = ({
     >
       <AccordionTrigger className={`py-2 hover:no-underline`}>
         <span className="flex gap-1">
-          <h3 className="mr-2">{title}</h3>
-          <Badge variant={"secondary"}>Qtde: {qtde}</Badge>
-          <Badge variant={"secondary"}>
+          <h3 className="mr-2 text-sm sm:text-base text-left">{title}</h3>
+          <Badge variant={"secondary"} className="text-xs">
+            Qtde: {qtde}
+          </Badge>
+          <Badge variant={"secondary"} className="text-xs">
             Valor Total: {normalizeCurrency(valorTotal)}
           </Badge>
         </span>

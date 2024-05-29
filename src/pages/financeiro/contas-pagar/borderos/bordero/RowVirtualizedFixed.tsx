@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentosOLD";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Minus } from "lucide-react";
 

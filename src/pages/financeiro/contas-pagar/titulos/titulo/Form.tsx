@@ -32,7 +32,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ModalFilial from "@/pages/financeiro/components/ModalFilial";
+import ModalFiliais from "@/pages/financeiro/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -69,11 +69,9 @@ const FormTituloPagar = ({
 }) => {
   const queryClient = useQueryClient();
 
-  // console.log(`RENDER ${++i} - Form, titulo:`, id);
   const modalEditing = useStoreTitulo().modalEditing;
   const editModal = useStoreTitulo().editModal;
   const closeModal = useStoreTitulo().closeModal;
-
   const [modalFornecedorOpen, setModalFornecedorOpen] =
     useState<boolean>(false);
 
@@ -106,11 +104,11 @@ const FormTituloPagar = ({
     setValue,
     formState: { errors },
   } = form;
-  console.log("ERROS_TITULO:", errors);
+  // console.log("ERROS_TITULO:", errors);
 
   // * [ WATCHES ]
-  const wfull = form.watch();
-  console.log(wfull);
+  // const wfull = form.watch();
+  // console.log(wfull);
   const id_grupo_economico = useWatch({
     name: "id_grupo_economico",
     control: form.control,
@@ -225,16 +223,15 @@ const FormTituloPagar = ({
   }, [isPendingInsert, isPendingUpdate]);
 
   const onSubmit: SubmitHandler<TituloSchemaProps> = async (data) => {
-    console.log("%c OnSubmit", "color: blue; font-size: 20px;");
-    console.log(data);
-
     if (!id) {
-      console.log("Inserindo Titulo:", data);
+      // console.log("Inserindo Titulo:", data);
       insertOne(data);
+      return;
     }
     if (id) {
-      console.log("Atualizando Titulo:", data);
+      // console.log("Atualizando Titulo:", data);
       update(data);
+      return;
     }
   };
 
@@ -249,7 +246,7 @@ const FormTituloPagar = ({
       closeModal();
 
       if (titulo.id_recorrencia) {
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_rec"] });
+        queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
       }
     }
   }, [insertOneSuccess]);
@@ -301,6 +298,13 @@ const FormTituloPagar = ({
     try {
       e.preventDefault();
       const dados = form.getValues();
+      // console.log(
+      //   "CRIAR RECORRENCIA",
+      //   dados.id,
+      //   dados.vencimentos && dados.vencimentos[0].data_vencimento,
+      //   dados.valor
+      // );
+
       // try {
       //   await schemaTitulo.parse(dados)
       // } catch (error) {
@@ -309,7 +313,10 @@ const FormTituloPagar = ({
       // }
 
       await api.post("financeiro/contas-a-pagar/titulo/criar-recorrencia", {
-        ...dados,
+        id: dados.id,
+        data_vencimento:
+          dados.vencimentos && dados.vencimentos[0].data_vencimento,
+        valor: dados.valor,
       });
       queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
       toast({
@@ -340,11 +347,12 @@ const FormTituloPagar = ({
     setModalFilialOpen(true);
   };
 
-  console.log(form.formState.errors);
-
   return (
-    <div className="max-w-screen-xl overflow-auto zoom-in-50">
-      <ModalFilial
+    <div
+      key={`${id}.${data.created_at}`}
+      className="max-w-screen-xl overflow-auto grid grid-cols-1 lg:grid-rows-[1fr_auto] lg:grid-cols-[1fr_auto]"
+    >
+      <ModalFiliais
         open={modalFilialOpen}
         handleSelection={handleSelectionFilial}
         onOpenChange={setModalFilialOpen}
@@ -354,8 +362,12 @@ const FormTituloPagar = ({
       />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} method="POST">
-          <ScrollArea className="flex flex-col max-w-full max-h-[70vh] overflow-auto">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          method="POST"
+          className="w-full grid grid-cols-1 lg:grid-rows-[1fr_auto] lg:grid-cols-[1fr_auto]"
+        >
+          <ScrollArea className="flex flex-col max-w-full max-h-[72vh] sm:max-h-[70vh] overflow-auto col-span-2">
             {titulo?.status && (
               <div className="flex-1 py-2">
                 <div
@@ -368,14 +380,14 @@ const FormTituloPagar = ({
               </div>
             )}
 
-            <ScrollArea className="overflow-auto pe-3">
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 flex-shrink-0 flex-grow-0">
+            <ScrollArea className="flex-1 overflow-auto pe-3">
+              <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 ">
                 {/* Primeira coluna */}
                 <div className="flex flex-col flex-wrap gap-3 flex-shrink-0 flex-grow-0">
                   {/* Dados do Fornecedor */}
-                  <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                  <div className="flex flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                     <div className="flex gap-2 mb-3">
-                      <Contact />{" "}
+                      <Contact />
                       <span className="text-lg font-bold">Fornecedor</span>
                       <div>
                         {errors.id_fornecedor?.message && (
@@ -400,7 +412,7 @@ const FormTituloPagar = ({
                       </span>
                       <span onClick={showModalFornecedor}>
                         <FormInput
-                          className="flex-1 min-w-[40ch] shrink-0"
+                          className="flex-1 min-w-[30ch] sm:min-w-[40ch] shrink-0"
                           name="nome_fornecedor"
                           placeholder="SELECIONE O FORNECEDOR"
                           readOnly={true}
@@ -414,7 +426,7 @@ const FormTituloPagar = ({
                         name="id_forma_pagamento"
                         control={form.control}
                         disabled={disabled}
-                        className="min-w-[15ch]"
+                        className="flex-1 min-w-[15ch]"
                       />
                       <div
                         className={`${
@@ -438,82 +450,82 @@ const FormTituloPagar = ({
                         />
                       </div>
                       {/* Dados bancários do fornecedor */}
-                      <div
-                        className={`${
-                          showDadosBancarios ? "flex flex-1" : "hidden"
-                        } gap-3 flex-wrap`}
-                      >
-                        <FormInput
-                          label="Favorecido"
-                          name="favorecido"
-                          control={form.control}
-                          readOnly={readOnly}
-                          inputClass="min-w-[40ch]"
-                          className="flex-1"
-                        />
+                      {showDadosBancarios && (
+                        <>
+                          <FormInput
+                            label="Favorecido"
+                            name="favorecido"
+                            control={form.control}
+                            readOnly={readOnly}
+                            inputClass="flex-1 min-w-[30ch] sm:min-w-[40ch]"
+                            className="flex-1"
+                          />
 
-                        <FormInput
-                          label="CNPJ Favorecido"
-                          name="cnpj_favorecido"
-                          control={form.control}
-                          readOnly={readOnly}
-                          fnMask={normalizeCnpjNumber}
-                          inputClass="min-w-[20ch]"
-                          className="flex-1"
-                        />
+                          <FormInput
+                            label="CNPJ Favorecido"
+                            name="cnpj_favorecido"
+                            control={form.control}
+                            readOnly={readOnly}
+                            fnMask={normalizeCnpjNumber}
+                            inputClass="min-w-[20ch]"
+                            className="flex-1"
+                          />
 
-                        <FormInput
-                          label="Cód. Banco"
-                          name="codigo_banco"
-                          className="min-w-[4ch]"
-                          control={form.control}
-                          readOnly={true}
-                        />
+                          <FormInput
+                            label="Cód. Banco"
+                            name="codigo_banco"
+                            className="min-w-[4ch]"
+                            control={form.control}
+                            readOnly={true}
+                          />
 
-                        <FormInput
-                          label="Banco"
-                          name="banco"
-                          className="min-w-fit"
-                          control={form.control}
-                          readOnly={true}
-                        />
+                          <FormInput
+                            label="Banco"
+                            name="banco"
+                            className="min-w-fit"
+                            control={form.control}
+                            readOnly={true}
+                          />
 
-                        <FormInput
-                          label="Agência"
-                          name="agencia"
-                          control={form.control}
-                          readOnly={true}
-                        />
+                          <FormInput
+                            label="Agência"
+                            name="agencia"
+                            control={form.control}
+                            readOnly={true}
+                          />
 
-                        <FormInput
-                          label="Dv. Ag."
-                          name="dv_agencia"
-                          className="min-w-[10ch]"
-                          control={form.control}
-                          readOnly={true}
-                        />
+                          <FormInput
+                            label="Dv. Ag."
+                            name="dv_agencia"
+                            className="min-w-[10ch]"
+                            control={form.control}
+                            readOnly={true}
+                          />
 
-                        <SelectTipoContaBancaria
-                          label="Tipo conta"
-                          name="id_tipo_conta"
-                          control={form.control}
-                        />
+                          <SelectTipoContaBancaria
+                            label="Tipo conta"
+                            name="id_tipo_conta"
+                            className="min-w-[15ch]"
+                            control={form.control}
+                          />
 
-                        <FormInput
-                          label="Conta"
-                          name="conta"
-                          control={form.control}
-                          readOnly={true}
-                        />
+                          <FormInput
+                            label="Conta"
+                            name="conta"
+                            control={form.control}
+                            readOnly={true}
+                          />
 
-                        <FormInput
-                          label="Dv. Conta"
-                          name="dv_conta"
-                          className="min-w-[10ch]"
-                          control={form.control}
-                          readOnly={true}
-                        />
-                      </div>
+                          <FormInput
+                            label="Dv. Conta"
+                            name="dv_conta"
+                            className="min-w-[10ch]"
+                            control={form.control}
+                            readOnly={true}
+                          />
+                        </>
+                      )}
+
                       <ModalFornecedores
                         open={canEdit && modalFornecedorOpen}
                         handleSelection={handleSelectionFornecedor}
@@ -563,19 +575,20 @@ const FormTituloPagar = ({
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-3">
+                      <div className="max-w-full flex flex-wrap gap-3">
                         <FormDateInput
                           disabled={disabled}
                           name="data_emissao"
                           label="Data de emissão"
                           control={form.control}
+                          className="flex-1 min-w-[15ch]"
                         />
 
                         <FormInput
                           readOnly={readOnly}
                           name="num_doc"
                           label="Núm. Doc."
-                          className={"w-full"}
+                          className={"flex-1 min-w-[15ch]"}
                           control={form.control}
                         />
 
@@ -587,24 +600,23 @@ const FormTituloPagar = ({
                           iconLeft
                           icon={TbCurrencyReal}
                           label="Valor Total"
+                          className="flex-1 min-w-[20ch]"
                         />
                       </div>
 
-                      <div className="grid gap-3 grid-cols-1">
-                        <FormInput
-                          readOnly={readOnly}
-                          className="min-w-[400px] flex-1"
-                          name="descricao"
-                          label="Descrição do pagamento"
-                          control={form.control}
-                        />
-                      </div>
+                      <FormInput
+                        readOnly={readOnly}
+                        className="flex-1 trunkate sm:min-w-[400px]"
+                        name="descricao"
+                        label="Descrição do pagamento"
+                        control={form.control}
+                      />
                     </div>
                   </div>
 
                   {/* Abas Vencimentos / Rateio entre filiais */}
                   {valorTotalTitulo > 0 && !!id_matriz ? (
-                    <div>
+                    <div className="max-w-full">
                       <Tabs defaultValue="vencimentos" className="max-w-full">
                         <TabsList className="grid w-full grid-cols-2">
                           <TabsTrigger value="vencimentos">
@@ -683,8 +695,8 @@ const FormTituloPagar = ({
                       <span className="text-lg font-bold ">Histórico</span>
                     </div>
                     <div className="flex flex-col gap-3 overflow-auto max-h-72">
-                      {data?.historico?.map((h) => (
-                        <p key={`hist.${h.id}`} className="text-xs">
+                      {data?.historico?.map((h, index) => (
+                        <p key={`hist.${h.id}.${index}`} className="text-xs">
                           {formatarDataHora(h.created_at)}:{" "}
                           {formatarHistorico(h.descricao)}
                         </p>
@@ -767,7 +779,7 @@ const FormTituloPagar = ({
             </ScrollArea>
           </ScrollArea>
 
-          <div className="max-w-full flex justify-between items-center mt-4">
+          <div className="max-w-full flex justify-between sm:items-center mt-4 gap-3 sm:gap-0 col-span-2">
             {isSubmtting ? (
               <div className="flex gap-3 items-center">
                 <span className="font-lg">Aguarde...</span>{" "}
@@ -775,7 +787,7 @@ const FormTituloPagar = ({
               </div>
             ) : (
               <>
-                <div className="flex gap-3 items-center">
+                <div className="flex flex-wrap gap-3 items-center">
                   {id &&
                     status !== "Solicitado" &&
                     status !== "Pago" &&
@@ -831,13 +843,14 @@ const FormTituloPagar = ({
                     </Button>
                   )}
                 </div>
-                <div className="flex gap-3 items-center">
+                <div className="flex gap-3 flex-wrap items-center">
                   {canEdit && modalEditing && (
                     <>
                       <Button
                         onClick={() => editModal(false)}
                         size="lg"
                         variant={"secondary"}
+                        className={!id ? "hidden" : ""}
                       >
                         <Ban className="me-2" size={18} /> Cancelar
                       </Button>

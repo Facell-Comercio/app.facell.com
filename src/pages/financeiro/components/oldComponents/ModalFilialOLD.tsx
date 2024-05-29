@@ -21,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 
-interface IModalFilial {
+interface IModalFilialOLD {
   open: boolean;
   handleSelection: (item: Filial) => void;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
@@ -35,14 +35,14 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalFilial = ({
+const ModalFilialOLD = ({
   open,
   handleSelection,
   onOpenChange,
   id_matriz,
   id_grupo_economico,
   closeOnSelection,
-}: IModalFilial) => {
+}: IModalFilialOLD) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -116,8 +116,8 @@ const ModalFilial = ({
 
   function pushSelection(item: Filial) {
     handleSelection(item);
-    if(closeOnSelection){
-      onOpenChange(false)
+    if (closeOnSelection) {
+      onOpenChange(false);
     }
   }
 
@@ -147,7 +147,14 @@ const ModalFilial = ({
                 }
               }}
             />
-            <Button type="button" variant={'tertiary'} size={'sm'} onClick={() => handleSearch()}><Search size={18} className="me-2"/> Procurar</Button>
+            <Button
+              type="button"
+              variant={"tertiary"}
+              size={"sm"}
+              onClick={() => handleSearch()}
+            >
+              <Search size={18} className="me-2" /> Procurar
+            </Button>
           </div>
         </DialogHeader>
 
@@ -158,7 +165,8 @@ const ModalFilial = ({
               className="flex gap-1 items-center bg-secondary text-secondary-foreground justify-between mb-1 border rounded-md p-2"
             >
               <span className="text-sm">
-                {item.grupo_economico} - {item.nome} - {normalizeCnpjNumber(item.cnpj)}
+                {item.grupo_economico} - {item.nome} -{" "}
+                {normalizeCnpjNumber(item.cnpj)}
               </span>
               <Button
                 size={"xs"}
@@ -217,4 +225,4 @@ const ModalFilial = ({
   );
 };
 
-export default ModalFilial;
+export default ModalFilialOLD;

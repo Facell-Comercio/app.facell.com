@@ -41,7 +41,7 @@ import {
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
-interface IModalTitulos {
+interface IModalVencimentosOLD {
   open: boolean;
   handleSelection: (item: VencimentosProps[]) => void;
   onOpenChange: () => void;
@@ -53,8 +53,8 @@ interface IModalTitulos {
 }
 
 export type VencimentosProps = {
-  id: string;
   checked?: boolean;
+  id_vencimento: string;
   id_titulo: string;
   id_status?: string;
   status: string;
@@ -68,7 +68,8 @@ export type VencimentosProps = {
 };
 
 interface Filters {
-  id?: string;
+  id_vencimento?: string;
+  id_titulo?: string;
   fornecedor?: string;
   descricao?: string;
   num_doc?: string;
@@ -82,14 +83,14 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalTitulos = ({
+const ModalVencimentosOLD = ({
   open,
   handleSelection,
   onOpenChange,
   id_matriz,
   id_status,
   initialFilters,
-}: IModalTitulos) => {
+}: IModalVencimentosOLD) => {
   const [ids, setIds] = useState<string[]>([]);
   const [titulos, setTitulos] = useState<VencimentosProps[]>([]);
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -97,7 +98,8 @@ const ModalTitulos = ({
     pageIndex: 0,
   });
   const defaultFilters: Filters = {
-    id: "",
+    id_vencimento: "",
+    id_titulo: "",
     fornecedor: "",
     descricao: "",
     num_doc: "",
@@ -109,14 +111,14 @@ const ModalTitulos = ({
   const {
     data,
     isError,
-    refetch: refetchTitulos,
+    refetch: refetchVencimentos,
   } = useQuery({
-    queryKey: ["modal-titulos", id_matriz, id_status],
+    queryKey: ["modal-vencimentos", id_matriz, id_status],
     staleTime: 0,
     queryFn: async () =>
-      await api.get("financeiro/contas-a-pagar/titulo/titulos-bordero", {
+      await api.get("financeiro/contas-a-pagar/titulo/vencimentos-bordero", {
         params: {
-          filters: { id_matriz, id_status },
+          filters: { ...filters, id_matriz, id_status },
           pagination,
         },
       }),
@@ -125,7 +127,7 @@ const ModalTitulos = ({
 
   useEffect(() => {
     setFilters((prev) => ({ ...prev, ...initialFilters }));
-    refetchTitulos();
+    refetchVencimentos();
   }, [initialFilters]);
 
   const pages = [...Array(data?.data?.pageCount || 0).keys()].map(
@@ -145,7 +147,7 @@ const ModalTitulos = ({
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
-    refetchTitulos();
+    refetchVencimentos();
   }
 
   async function handleClickResetFilters() {
@@ -154,7 +156,7 @@ const ModalTitulos = ({
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
-    refetchTitulos();
+    refetchVencimentos();
   }
 
   function handleRemoveAll() {
@@ -163,15 +165,15 @@ const ModalTitulos = ({
   }
   function handleSelectAll() {
     data?.data?.rows.forEach((item: VencimentosProps) => {
-      const isAlreadyInTitulos = titulos.some(
-        (existingItem) => existingItem.id_titulo === item.id_titulo
+      const isAlreadyInVencimentos = titulos.some(
+        (existingItem) => existingItem.id_vencimento === item.id_vencimento
       );
 
-      if (!isAlreadyInTitulos) {
-        setTitulos((prevTitulos) => [
-          ...prevTitulos,
+      if (!isAlreadyInVencimentos) {
+        setTitulos((prevVencimentos) => [
+          ...prevVencimentos,
           {
-            id: item.id,
+            id_vencimento: item.id_vencimento,
             id_titulo: item.id_titulo,
             id_status: item.id_status,
             status: item.status,
@@ -195,7 +197,7 @@ const ModalTitulos = ({
       setPagination((prev) => ({ ...prev, pageIndex: index }));
       resolve(true);
     });
-    refetchTitulos();
+    refetchVencimentos();
   }
   async function handlePaginationUp() {
     await new Promise((resolve) => {
@@ -203,7 +205,7 @@ const ModalTitulos = ({
       setPagination((prev) => ({ ...prev, pageIndex: newPage }));
       resolve(true);
     });
-    refetchTitulos();
+    refetchVencimentos();
   }
   async function handlePaginationDown() {
     await new Promise((resolve) => {
@@ -214,7 +216,7 @@ const ModalTitulos = ({
       }));
       resolve(true);
     });
-    refetchTitulos();
+    refetchVencimentos();
   }
   async function handlePaginationSize(value: string) {
     await new Promise((resolve) => {
@@ -224,14 +226,14 @@ const ModalTitulos = ({
       }));
       resolve(true);
     });
-    refetchTitulos();
+    refetchVencimentos();
   }
 
   function pushSelection(item: VencimentosProps) {
     setTitulos([
       ...titulos,
       {
-        id: item.id,
+        id_vencimento: item.id_vencimento,
         id_titulo: item.id_titulo,
         id_status: item.id_status,
         status: item.status,
@@ -247,13 +249,13 @@ const ModalTitulos = ({
     setIds([...ids, item.id_titulo.toString()]);
   }
 
-  if (isError) return <p>Ocorreu um erro ao tentar buscar os títulos</p>;
+  if (isError) return <p>Ocorreu um erro ao tentar buscar os vencimentos</p>;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex flex-col sm:max-w-[1000px]">
         <DialogHeader className="flex flex-1 w-full max-x-[80vw]">
-          <DialogTitle>Titulos a pagar</DialogTitle>
+          <DialogTitle>Vencimentos a pagar</DialogTitle>
           <DialogDescription>
             Selecione um ao clicar no botão à direita.
           </DialogDescription>
@@ -281,14 +283,25 @@ const ModalTitulos = ({
                 <span className="">Filtros</span>
               </AccordionTrigger>
               <AccordionContent className="p-0 pt-3">
-                <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
+                <ScrollArea className="whitespace-nowrap rounded-md pb-4">
                   <div className="flex w-max space-x-4">
+                    <Input
+                      placeholder="ID Vencimento"
+                      className="w-[20ch]"
+                      value={filters?.id_vencimento || ""}
+                      onChange={(e) => {
+                        setFilters({
+                          ...filters,
+                          id_vencimento: e.target.value,
+                        });
+                      }}
+                    />
                     <Input
                       placeholder="ID Título"
                       className="w-[20ch]"
-                      value={filters?.id || ""}
+                      value={filters?.id_titulo || ""}
                       onChange={(e) => {
-                        setFilters({ ...filters, id: e.target.value });
+                        setFilters({ ...filters, id_titulo: e.target.value });
                       }}
                     />
                     <Input
@@ -353,6 +366,7 @@ const ModalTitulos = ({
             <thead>
               <tr className="text-sm">
                 <th className="p-1">ID</th>
+                <th className="p-1">ID Título</th>
                 <th className="p-1">Fornecedor</th>
                 <th className="p-1">Descrição</th>
                 <th className="p-1">Previsão</th>
@@ -373,6 +387,10 @@ const ModalTitulos = ({
                       "bg-secondary/50 text-secondary-foreground/40"
                     }`}
                   >
+                    <td className="text-xs p-1 text-center">
+                      {" "}
+                      {item.id_vencimento}
+                    </td>
                     <td className="text-xs p-1 text-center">
                       {" "}
                       {item.id_titulo}
@@ -516,4 +534,4 @@ const ModalTitulos = ({
   );
 };
 
-export default ModalTitulos;
+export default ModalVencimentosOLD;
