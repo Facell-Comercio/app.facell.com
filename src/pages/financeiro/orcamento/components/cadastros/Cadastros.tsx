@@ -32,7 +32,7 @@ const Cadastros = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-end">
-        <Button variant={"default"} onClick={() => handleClickNewCadastro}>
+        <Button variant={"default"} onClick={handleClickNewCadastro}>
           <Plus size={18} className="me-2" /> Novo Orçamento
         </Button>
       </div>

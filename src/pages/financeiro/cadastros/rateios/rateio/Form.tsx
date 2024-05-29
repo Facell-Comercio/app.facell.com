@@ -153,32 +153,33 @@ const FormRateios = ({
                             key={item.id}
                           >
                             <SelectFilial
-                              className="min-w-32"
+                              className="min-w-32 h-9"
                               name={`itens.${index}.id_filial`}
                               disabled={!modalEditing}
-                              label="Filial"
                               control={form.control}
                               id_grupo_economico={id_grupo_economico}
                             />
                             <FormInput
                               type="number"
-                              className="flex-1 max-w-[20ch]"
+                              className="flex-1 max-w-[20ch] h-9"
                               readOnly={!modalEditing}
                               name={`itens.${index}.percentual`}
-                              label="Percentual"
                               control={form.control}
                               icon={Percent}
                               step={"0.0001"}
+                              inputClass="h-9"
+                              iconClass="h-9"
                               min={0.0001}
                               max={100}
                             />
                             <Button
                               type="button"
+                              size={"sm"}
                               variant={"destructive"}
                               disabled={!modalEditing}
                               onClick={() => removeItemRateio(index)}
                             >
-                              <Trash />
+                              <Trash size={18} />
                             </Button>
                           </div>
                         );

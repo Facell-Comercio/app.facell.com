@@ -228,6 +228,7 @@ const FormBordero = ({
                     readOnly
                     disabled={!modalEditing}
                     onClick={() => setModalContaBancariaOpen(true)}
+                    placeholder="Selecione a conta bancária"
                   />
                 </div>
                 <ModalContasBancarias
@@ -245,6 +246,7 @@ const FormBordero = ({
                     className="flex-1 max-h-10 mt-2"
                     readOnly
                     disabled={!modalEditing}
+                    placeholder="Defina a conta bancária"
                   />
                 </div>
                 <FormDateInput

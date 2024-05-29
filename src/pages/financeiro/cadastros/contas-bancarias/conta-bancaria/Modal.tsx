@@ -75,7 +75,7 @@ const ModalContaBancaria = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {id ? `Plano de Contas: ${id}` : "Novo Plano de Contas"}
+            {id ? `Conta Bancária: ${id}` : "Nova Conta Bancária"}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">

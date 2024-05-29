@@ -380,7 +380,7 @@ const FormTituloPagar = ({
               </div>
             )}
 
-            <ScrollArea className="flex-1 overflow-auto pe-3">
+            <ScrollArea className="flex-1 overflow-auto sm:pe-3">
               <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 ">
                 {/* Primeira coluna */}
                 <div className="flex flex-col flex-wrap gap-3 flex-shrink-0 flex-grow-0">
@@ -570,7 +570,7 @@ const FormTituloPagar = ({
                             label="Filial"
                             placeholder="SELECIONE A FILIAL"
                             control={form.control}
-                            inputClass="min-w-[350px]"
+                            inputClass="sm:min-w-[350px]"
                           />
                         </span>
                       </div>

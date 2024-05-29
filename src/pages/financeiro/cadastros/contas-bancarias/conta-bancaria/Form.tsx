@@ -82,23 +82,27 @@ const FormContaBancaria = ({
                     control={form.control}
                   />
                   <SelectFilial
-                    className="min-w-32"
+                    className="flex-1 min-w-32"
                     name="id_filial"
                     disabled={!modalEditing}
                     label="Filial"
                     control={form.control}
                   />
                   <FormInput
-                    name="id_banco"
+                    name="id_banco flex-1"
                     type="hidden"
                     control={form.control}
                   />
-                  <span onClick={() => setModalBancosOpen(true)}>
+                  <span
+                    onClick={() => setModalBancosOpen(true)}
+                    className="flex-1"
+                  >
                     <FormInput
                       className="flex-1 min-w-[40ch]"
                       name="banco"
                       readOnly={!modalEditing}
                       label="Banco"
+                      placeholder="Selecione o banco"
                       control={form.control}
                     />
                   </span>
