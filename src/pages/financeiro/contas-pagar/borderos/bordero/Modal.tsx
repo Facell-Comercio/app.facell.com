@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useBordero } from "@/hooks/financeiro/useBordero";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { Trash } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import FormBordero from "./Form";
 import { useStoreBordero } from "./store";
 
@@ -50,7 +50,7 @@ const ModalBordero = () => {
   const formRef = useRef(null);
 
   const { data, isLoading } = useBordero().getOne(id);
-  const { mutate: deleteBordero } = useBordero().deleteBordero();
+  const { mutate: deleteBordero, isSuccess } = useBordero().deleteBordero();
   const newData: BorderoSchemaProps & Record<string, any> =
     {} as BorderoSchemaProps & Record<string, any>;
 
@@ -76,11 +76,13 @@ const ModalBordero = () => {
           previsao: vencimento.previsao || "",
           nome_fornecedor: vencimento.nome_fornecedor,
           valor_total: vencimento.valor_total,
+          valor_pago: vencimento.valor_pago,
           num_doc: vencimento.num_doc || "",
           descricao: vencimento.descricao,
           filial: vencimento.filial,
           data_pagamento: vencimento.data_pagamento || "",
           id_status: vencimento.id_status || "",
+          can_remove: vencimento.can_remove,
         };
       }
     );
@@ -116,10 +118,16 @@ const ModalBordero = () => {
     editModal(false);
   }
 
-  function excluirBordero() {
+  async function excluirBordero() {
     deleteBordero({ id, vencimentos: data?.data.vencimentos });
-    toggleModal();
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      editModal(false);
+      toggleModal();
+    }
+  }, [isSuccess]);
 
   return (
     <Dialog open={modalOpen} onOpenChange={toggleModal}>

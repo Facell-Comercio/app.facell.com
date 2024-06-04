@@ -100,10 +100,7 @@ const ModalPlanosContas = ({
           setPagination={setPagination}
         >
           {data?.data?.rows.map((item: ItemPlanoContas, index: number) => (
-            <ModalComponentRow
-              key={"plano_contas_row:" + item.id + index}
-              componentKey={"plano_contas:" + item.id + index}
-            >
+            <ModalComponentRow key={"plano_contas_row:" + item.id + index}>
               <>
                 <span>
                   {item.codigo} - {item.descricao}

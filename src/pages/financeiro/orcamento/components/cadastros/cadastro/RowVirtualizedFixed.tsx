@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
-import FormInput, { Input } from "@/components/custom/FormInput";
+import { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Trash } from "lucide-react";
@@ -13,6 +13,7 @@ export interface itemContaProps {
   id_conta?: string;
   saldo?: string;
   realizado?: string;
+  valor?: string;
   valor_inicial?: string;
 }
 interface RowVirtualizerFixedProps {
@@ -63,15 +64,15 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
       >
         {virtualizer.getVirtualItems().map((item, index) => {
           let minValue = 0;
-
           if (data[item.index]?.realizado !== undefined) {
             minValue = Number(data[item.index].realizado);
           }
-
+          //^ Infelizmente haverá muita re-renderização em cada onChange do Input
+          //^ O FormInput não funcionou bem e nem consegui usar o useRef corretamente, os dados iniciais não eram salvos
           return (
             <div
               // ref={virtualizer.measureElement}
-              key={item.index}
+              key={`${item.index} `}
               data-index={index}
               className="flex gap-1 py-1"
               style={{
@@ -93,11 +94,13 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
                 value={data[item.index].plano_contas}
                 readOnly={true}
               />
-              <FormInput
+              <Input
                 type="number"
-                inputClass="flex-1 h-8 text-xs"
-                name={`contas.${item.index}.valor`}
-                control={form.control}
+                className="flex-1 h-8 text-xs"
+                value={data[item.index].valor}
+                onChange={(e) => {
+                  form.setValue(`contas.${item.index}.valor`, e.target.value);
+                }}
                 readOnly={!modalEditing}
                 min={minValue}
               />

@@ -37,6 +37,7 @@ interface IModalVencimentos {
 
 export type VencimentosProps = {
   checked?: boolean;
+  id?: string;
   id_vencimento: string;
   id_titulo: string;
   id_status?: string;
@@ -44,10 +45,12 @@ export type VencimentosProps = {
   previsao: string;
   nome_fornecedor: string;
   valor_total: string;
+  valor_pago?: string;
   num_doc: string;
   descricao: string;
   filial: string;
   data_pagamento?: string;
+  can_remove?: boolean;
 };
 
 interface Filters {

@@ -34,8 +34,11 @@ const ModalCadastro = () => {
   // const closeModal = useStoreCadastro().closeModal;
   const toggleModal = useStoreCadastro().toggleModal;
   const openReplicateModal = useStoreCadastro().openReplicateModal;
-  const modalEditing = useStoreCadastro((state) => state.modalEditing);
-  const editModal = useStoreCadastro((state) => state.editModal);
+  const [modalEditing, editModal, isPending] = useStoreCadastro((state) => [
+    state.modalEditing,
+    state.editModal,
+    state.isPending,
+  ]);
 
   const id = useStoreCadastro().id;
   const formRef = useRef(null);
@@ -85,11 +88,13 @@ const ModalCadastro = () => {
               edit={() => editModal(true)}
               cancel={handleClickCancel}
               formRef={formRef}
+              isLoading={isPending}
             >
               <Button
                 type={"submit"}
                 size="lg"
                 variant={"secondary"}
+                disabled={isPending}
                 className="dark:text-white justify-self-start	mx-3"
                 onClick={() => openReplicateModal(id || "")}
               >

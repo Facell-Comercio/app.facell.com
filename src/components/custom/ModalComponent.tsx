@@ -195,17 +195,12 @@ export const ModalComponent = ({
 };
 
 type ModalComponentRowProps = {
-  componentKey: string;
   children: JSX.Element;
 };
 
-export const ModalComponentRow = ({
-  componentKey,
-  children,
-}: ModalComponentRowProps) => {
+export const ModalComponentRow = ({ children }: ModalComponentRowProps) => {
   return (
     <div
-      key={componentKey}
       className={`flex items-center justify-between bg-secondary odd:bg-secondary/70 text-secondary-foreground mb-1 border rounded-md p-1 px-2`}
     >
       {children}

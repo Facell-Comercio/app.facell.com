@@ -141,7 +141,7 @@ const ReactTableVirtualized: React.FC<
         size: 350,
         cell: (info) => {
           let valor = sliceString(info.getValue<string>(), 50);
-          return <div>{valor}</div>;
+          return <div className="uppercase">{valor}</div>;
         },
       },
       {

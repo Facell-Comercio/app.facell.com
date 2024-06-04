@@ -23,15 +23,13 @@ export const useOrcamento = () => {
                 enabled: !!id,
                 queryKey: ['fin_orcamento', id],
                 queryFn: async () => {
-                    console.log(`Buscando orcamento com base no ID: ${id}`)
                     return await api.get(`/financeiro/orcamento/${id}`)
                 },
             }),
 
             insertOne : () => useMutation({
-                mutationFn: (data:cadastroSchemaProps) => {
-                    console.log("Criando novo orcamento:")            
-                    return api.post("/financeiro/orcamento", data).then((response)=>response.data)
+                mutationFn: async (data:cadastroSchemaProps) => {
+                    return await api.post("/financeiro/orcamento", data).then((response)=>response.data)
                 },
                 onSuccess() {
                     toast({title: "Sucesso", description: "Novo Orçamento Criado", duration: 3500})
@@ -46,9 +44,8 @@ export const useOrcamento = () => {
             }),
 
             update : () => useMutation({
-                mutationFn: (data:cadastroSchemaProps) => {
-                    console.log(`Atualizando meu orcamento com base no ID`)            
-                    return api.put("financeiro/orcamento", data).then((response)=>response.data)
+                mutationFn: async (data:cadastroSchemaProps) => {
+                    return await api.put("financeiro/orcamento", data).then((response)=>response.data)
                 },
                 onSuccess() {
                     toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
@@ -63,9 +60,8 @@ export const useOrcamento = () => {
             }),
 
             deleteItemBudget :() => useMutation({
-                mutationFn: (id: string|null|undefined|number) => {
-                    console.log(`Deletando conta com base no ID`)            
-                    return api.delete(`financeiro/orcamento/${id}`).then((response)=>response.data)
+                mutationFn: async (id: string|null|undefined|number) => {
+                    return await api.delete(`financeiro/orcamento/${id}`).then((response)=>response.data)
                 },
                 onSuccess() {
                     toast({title: "Sucesso", description: "Atualização Realizada", duration: 3500})
@@ -88,15 +84,13 @@ export const useOrcamento = () => {
                 enabled: !!id,
                 queryKey: ['fin_my_budget', id],
                 queryFn: async () => {
-                    console.log(`Buscando orcamento com base no ID: ${id}`)
                     return await api.get(`/financeiro/orcamento/my-budget/${id}`)
                 },
             }),
         
             transfer : () => useMutation({
-                mutationFn: (data:MeuOrcamentoSchema) => {
-                    console.log(`Atualizando meu orcamento com base no ID`)            
-                    return api.put("financeiro/orcamento/my-budget", data).then((response)=>response.data)
+                mutationFn: async (data:MeuOrcamentoSchema) => {
+                    return await api.put("financeiro/orcamento/my-budget", data).then((response)=>response.data)
                 },
                 onSuccess() {
                     toast({title: "Sucesso", description: "Tranferencia Realizada", duration: 3500})
@@ -116,12 +110,11 @@ export const useOrcamento = () => {
                 enabled: !!id,
                 queryKey: ['fin_orcamento_log', id],
                 queryFn: async () => {
-                    console.log(`Buscando logs de orcamento com base no ID: ${id}`)
                     return await api.get(`/financeiro/orcamento/logs/${id}`)
                 },
             }),
 
-            exportMyBudgets: ({filters}:GetAllParams) => api.get(`/financeiro/orcamento/my-budget`, { params: { filters } }),
+            exportMyBudgets: async({filters}:GetAllParams) => await api.get(`/financeiro/orcamento/my-budget`, { params: { filters } }),
         }
     )
 }

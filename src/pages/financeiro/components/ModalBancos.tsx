@@ -87,10 +87,7 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
           setPagination={setPagination}
         >
           {data?.data?.rows.map((item: ItemBancos, index: number) => (
-            <ModalComponentRow
-              key={"bancosRow:" + item.id + index}
-              componentKey={"bancos:" + item.id + index}
-            >
+            <ModalComponentRow key={"bancosRow:" + item.id + index}>
               <>
                 <span>
                   {item.codigo} - {item.nome}

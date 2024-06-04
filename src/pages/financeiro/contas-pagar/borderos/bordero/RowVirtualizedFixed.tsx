@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentosOLD";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Minus } from "lucide-react";
 
@@ -33,6 +33,8 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
     estimateSize: () => 36,
     overscan: 10,
   });
+
+  console.log(data);
 
   return (
     <section
@@ -76,6 +78,9 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
         <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
           Valor
         </p>
+        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
+          Valor Pago
+        </p>
         <p className="flex-1 min-w-32 bg-slate-200 dark:bg-blue-950">Filial</p>
         {modalEditing && (
           <p className="flex-1 max-w-[52px] bg-slate-200 dark:bg-blue-950">
@@ -91,7 +96,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
         }}
       >
         {virtualizer.getVirtualItems().map((item, index) => {
-          const disabled = data[item.index].id_status != "3" ? true : false;
+          const disabled = !data[item.index].can_remove ? true : false;
 
           return (
             <div
@@ -126,12 +131,12 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
               <Input
                 className="w-16 h-8 text-xs p-2 text-center"
                 value={data[item.index].id_vencimento || ""}
-                readOnly={true}
+                readOnly
               />
               <Input
                 className="w-[72px] h-8 text-xs p-2 text-center"
                 value={data[item.index].id_titulo || ""}
-                readOnly={true}
+                readOnly
               />
               <Input
                 className={`${generateStatusColor({
@@ -140,7 +145,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
                   text: true,
                 })} w-24 h-8 text-xs p-2 text-center`}
                 value={data[item.index].status || ""}
-                readOnly={true}
+                readOnly
               />
               <Input
                 className="w-24 h-8 text-xs p-2 text-center"
@@ -148,17 +153,17 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
                   data[item.index].previsao &&
                   normalizeDate(data[item.index].previsao || "")
                 }
-                readOnly={true}
+                readOnly
               />
               <Input
                 className="min-w-32 flex-1 h-8 text-xs p-2"
                 value={data[item.index].nome_fornecedor || ""}
-                readOnly={true}
+                readOnly
               />
               <Input
                 className="w-24 h-8 text-xs p-2 text-center"
                 value={data[item.index].num_doc || ""}
-                readOnly={true}
+                readOnly
               />
               <Input
                 className="w-32 h-8 text-xs p-2 text-end"
@@ -166,17 +171,22 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
                   data[item.index].valor_total &&
                   normalizeCurrency(data[item.index].valor_total)
                 }
-                readOnly={true}
+                readOnly
+              />
+              <Input
+                className="w-32 h-8 text-xs p-2 text-end"
+                value={normalizeCurrency(data[item.index].valor_pago || 0)}
+                readOnly
               />
               <Input
                 className="flex-1 min-w-32 h-8 text-xs p-2"
                 value={data[item.index].filial || ""}
-                readOnly={true}
+                readOnly
               />
               {/* <Input
               className="flex-1 h-8 text-xs p-2"
               value={data[item.index].data_pg||""}
-              readOnly={true}
+              readOnly
             /> */}
               <AlertPopUp
                 title="Deseja realmente remover?"

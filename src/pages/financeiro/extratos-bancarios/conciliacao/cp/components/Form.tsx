@@ -67,10 +67,11 @@ const FormConciliacaoCP = ({
   const totalVencimentos = form
     .watch("vencimentos")
     .reduce((acc, val) => acc + parseFloat(val.valor_pago || "0"), 0);
-  const totalTransacoes = transacoes.reduce(
-    (acc, val) => acc + parseFloat(val.valor),
-    0
+  const totalTransacoes = parseFloat(
+    transacoes.reduce((acc, val) => acc + parseFloat(val.valor), 0).toFixed(2)
   );
+
+  console.log(totalVencimentos, totalTransacoes);
 
   function onSubmitData(newData: ConciliacaoCPSchemaProps) {
     if (totalVencimentos !== totalTransacoes) {
@@ -81,7 +82,6 @@ const FormConciliacaoCP = ({
       });
       return;
     }
-    // console.log(newData, "CONCILIADO");
 
     conciliacaoManual({
       ...newData,

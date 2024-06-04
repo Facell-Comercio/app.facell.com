@@ -111,7 +111,6 @@ const ModalFiliais = ({
             dataRows.map((row: DataProps, index: number) => (
               <ModalComponentRow
                 key={"modal_filial_item_row:" + index + row.item}
-                componentKey={"modal_filial_item:" + index + row.item}
               >
                 <>
                   <span className="flex items-center text-sm">

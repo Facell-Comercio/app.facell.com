@@ -86,7 +86,7 @@ const FormBordero = ({
       ),
     };
     if (!id) insertOne(newData);
-    console.log(filteredData);
+    // console.log(filteredData);
 
     if (id) update(filteredData);
 

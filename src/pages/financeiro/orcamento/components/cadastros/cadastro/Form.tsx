@@ -12,12 +12,13 @@ import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { useOrcamento } from "@/hooks/financeiro/useOrcamento";
 import { api } from "@/lib/axios";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { Download, Eye, Plus, Search, Upload } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useWatch } from "react-hook-form";
+import { Download, Eye, ListPlus, Plus, Search, Upload } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useFieldArray, useWatch } from "react-hook-form";
 import { dataFormatada } from "./Modal";
 import ModalInsert from "./ModalInsert";
-import RowVirtualizerFixed, { itemContaProps } from "./RowVirtualizedFixed";
+import ModalMultiInsert from "./ModalMultiInsert";
+import RowVirtualizerFixed from "./RowVirtualizedFixed";
 import { cadastroSchemaProps, useFormCadastroData } from "./form-data";
 import { useStoreCadastro } from "./store";
 
@@ -27,7 +28,9 @@ export type newContaProps = {
   plano_contas: string;
   id_plano_contas: string;
   grupo_economico?: string;
+  realizado?: string;
   valor: string;
+  saldo?: string;
 };
 
 const FormCadastro = ({
@@ -40,8 +43,10 @@ const FormCadastro = ({
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   console.log("RENDER - Cadastro:", id);
-  const { mutate: insertOne } = useOrcamento().insertOne();
-  const { mutate: update } = useOrcamento().update();
+  const { mutate: insertOne, isSuccess: insertIsSuccess } =
+    useOrcamento().insertOne();
+  const { mutate: update, isSuccess: updateIsSuccess } =
+    useOrcamento().update();
   const { mutate: deleteItemBudget } = useOrcamento().deleteItemBudget();
 
   const [
@@ -51,7 +56,9 @@ const FormCadastro = ({
     modalEditing,
     openInsertModal,
     closeInsertModal,
-    modalInsertOpen,
+    openMultiInsertModal,
+    closeMultiInsertModal,
+    setIsPending,
   ] = useStoreCadastro((state) => [
     state.openLogsModal,
     state.closeModal,
@@ -59,11 +66,21 @@ const FormCadastro = ({
     state.modalEditing,
     state.openInsertModal,
     state.closeInsertModal,
-    state.modalInsertOpen,
+    state.openMultiInsertModal,
+    state.closeMultiInsertModal,
+    state.setIsPending,
   ]);
-  const { form, contas, appendConta, removeConta } = useFormCadastroData(data);
-  const [filter, setFilter] = useState("");
 
+  const { form } = useFormCadastroData(data);
+  const {
+    fields: contas,
+    append: appendConta,
+    remove: removeConta,
+    update: updateConta,
+  } = useFieldArray({ control: form.control, name: "contas" });
+  const wContas = useWatch({ name: "contas", control: form.control });
+
+  const [filter, setFilter] = useState("");
   const [refDate, setRefDate] = useState({
     mes: (new Date().getMonth() + 1).toString(),
     ano: new Date().getFullYear().toString(),
@@ -86,6 +103,16 @@ const FormCadastro = ({
     form.resetField("contas");
   }, [id_grupo_economico]);
 
+  useEffect(() => {
+    if (insertIsSuccess || updateIsSuccess) {
+      editModal(false);
+      closeModal();
+      setIsPending(false);
+    } else {
+      setIsPending(insertIsSuccess || updateIsSuccess);
+    }
+  }, [insertIsSuccess, updateIsSuccess]);
+
   function onSubmitData(data: cadastroSchemaProps) {
     const filteredData: cadastroSchemaProps = {
       id: data.id,
@@ -104,77 +131,61 @@ const FormCadastro = ({
     } else {
       insertOne(filteredData);
     }
-
-    editModal(false);
-    closeModal();
-  }
-
-  function filteredContas() {
-    const newArray: itemContaProps[] = [];
-    contas.forEach((item: itemContaProps) =>
-      newArray.push({
-        id: item.id,
-        centro_custo: item.centro_custo,
-        plano_contas: item.plano_contas,
-        id_conta: item.id_conta,
-        saldo: item.saldo,
-        realizado: item.realizado,
-        valor_inicial: item.valor_inicial,
-      })
-    );
-    return newArray.filter((conta) => {
-      if (filter) {
-        return (
-          conta.centro_custo?.includes(filter.toUpperCase()) ||
-          conta.plano_contas?.includes(filter.toUpperCase())
-        );
-      } else {
-        return conta;
-      }
-    });
   }
 
   function exportedFilteredData(data: any[], grupo_economico: string) {
-    const newArray: any[] = [];
-    data.forEach((item) =>
-      newArray.push({
-        grupo_economico: grupo_economico,
-        centro_custo: item.centro_custo,
-        plano_contas: item.plano_contas,
-        valor: parseFloat(item.valor.toString()),
-      })
-    );
+    const newArray = data.map((item) => ({
+      grupo_economico: grupo_economico,
+      centro_custo: item.centro_custo,
+      plano_contas: item.plano_contas,
+      valor: parseFloat(item.valor.toString()),
+    }));
     exportToExcel(newArray, "cadastro");
   }
 
-  function addNewConta(newConta: newContaProps, isImported?: boolean) {
+  async function addNewConta(newConta: newContaProps, isImported?: boolean) {
     try {
       const hasIds = newConta.id_centro_custo && newConta.id_plano_contas;
-      const isDuplicated =
-        contas.findIndex((conta) => {
-          const hasCentroCustos =
-            conta.id_centro_custo === newConta.id_centro_custo;
-          const hasPlanoContas =
-            conta.id_plano_contas === newConta.id_plano_contas;
+      const duplicatedIndex = wContas.findIndex((conta) => {
+        const hasCentroCustos =
+          conta.id_centro_custo === newConta.id_centro_custo;
+        const hasPlanoContas =
+          conta.id_plano_contas === newConta.id_plano_contas;
 
-          return hasCentroCustos && hasPlanoContas;
-        }) !== -1;
+        return hasCentroCustos && hasPlanoContas;
+      });
+      // console.log(newConta, duplicatedIndex);
 
-      if (isDuplicated) {
-        throw new Error("Item já existente");
+      if (duplicatedIndex !== -1) {
+        await new Promise((resolve) => {
+          updateConta(duplicatedIndex, {
+            ...wContas[duplicatedIndex],
+            ...newConta,
+            saldo: (
+              parseFloat(newConta.valor) -
+              parseFloat(wContas[duplicatedIndex].realizado || "0")
+            ).toFixed(2),
+            valor: newConta.valor.toString(),
+          });
+          resolve(true);
+        });
+        // console.log("ATUALIZAÇÃO", duplicatedIndex, {
+        //   ...newConta,
+        //   valor: newConta.valor.toString(),
+        // });
+
+        return;
       }
       if (!hasIds) {
         throw new Error("Selecione o centro de custo e o plano de contas");
       }
       appendConta({
-        centro_custo: newConta.centro_custo,
-        plano_contas: newConta.plano_contas,
-        id_centro_custo: newConta.id_centro_custo,
-        id_plano_contas: newConta.id_plano_contas,
+        ...newConta,
         valor: newConta.valor.toString(),
       });
 
       closeInsertModal();
+      closeMultiInsertModal();
     } catch (e: any) {
       if (!isImported) {
         toast({
@@ -218,6 +229,8 @@ const FormCadastro = ({
             });
             const { returnedIds, erros } = response.data;
 
+            // console.log(importFromExcel(importedData));
+
             importFromExcel(importedData).forEach(
               // @ts-expect-error "Vai funcionar"
               (item: newContaProps, index: number) => {
@@ -226,7 +239,7 @@ const FormCadastro = ({
                   plano_contas: item.plano_contas,
                   id_centro_custo: returnedIds[index].id_centro_custo,
                   id_plano_contas: returnedIds[index].id_plano_contas,
-                  valor: item.valor.toString(),
+                  valor: String(item.valor),
 
                   estado_centro_custo: erros[index].centro_custo,
                   estado_plano_contas: erros[index].plano_contas,
@@ -237,7 +250,7 @@ const FormCadastro = ({
                     plano_contas: item.plano_contas,
                     id_centro_custo: returnedIds[index].id_centro_custo,
                     id_plano_contas: returnedIds[index].id_plano_contas,
-                    valor: item.valor.toString(),
+                    valor: String(item.valor),
                   },
                   true
                 );
@@ -280,7 +293,18 @@ const FormCadastro = ({
     }
   };
 
-  // console.log(form.formState.errors);
+  const filteredContas = useMemo(() => {
+    return wContas.filter((conta) => {
+      if (filter) {
+        return (
+          conta.centro_custo?.includes(filter.toUpperCase()) ||
+          conta.plano_contas?.includes(filter.toUpperCase())
+        );
+      } else {
+        return conta;
+      }
+    });
+  }, [filter, JSON.stringify(wContas)]);
 
   return (
     <div className="flex flex-col gap-4 max-w-full max-h-[90vh] overflow-hidden p-2">
@@ -346,19 +370,29 @@ const FormCadastro = ({
             </Button>
           </div>
           {id_grupo_economico && modalEditing && (
-            <Button
-              size={"sm"}
-              className="text-xs"
-              type="button"
-              onClick={() => {
-                console.log(modalInsertOpen);
-
-                openInsertModal();
-              }}
-            >
-              <Plus className="me-2" strokeWidth={2} size={18} />
-              Nova conta
-            </Button>
+            <span className="flex gap-2">
+              <Button
+                size={"sm"}
+                className="text-xs"
+                variant="secondary"
+                onClick={() => {
+                  openMultiInsertModal();
+                }}
+              >
+                <ListPlus size={18} className="me-2" /> Adicionar Contas
+              </Button>
+              <Button
+                size={"sm"}
+                className="text-xs"
+                type="button"
+                onClick={() => {
+                  openInsertModal();
+                }}
+              >
+                <Plus className="me-2" strokeWidth={2} size={18} />
+                Nova conta
+              </Button>
+            </span>
           )}
         </div>
 
@@ -442,7 +476,7 @@ const FormCadastro = ({
 
               <RowVirtualizerFixed
                 id={id || ""}
-                data={filteredContas()}
+                data={filteredContas}
                 form={form}
                 modalEditing={modalEditing}
                 removeItem={removeItemConta}
@@ -450,11 +484,17 @@ const FormCadastro = ({
             </div>
           </form>
         </ScrollArea>
+        <ModalInsert
+          addNewConta={addNewConta}
+          id_grupo_economico={id_grupo_economico}
+        />
+        <ModalMultiInsert
+          addNewConta={addNewConta}
+          id_grupo_economico={id_grupo_economico}
+          // @ts-ignore somente um problema de tipagem requerida
+          data={wContas}
+        />
       </Form>
-      <ModalInsert
-        addNewConta={addNewConta}
-        id_grupo_economico={id_grupo_economico}
-      />
     </div>
   );
 };

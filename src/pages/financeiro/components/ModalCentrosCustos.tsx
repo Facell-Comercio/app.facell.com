@@ -87,10 +87,7 @@ const ModalCentrosCustos = ({
           setPagination={setPagination}
         >
           {data?.data?.rows.map((item: CentroCustos) => (
-            <ModalComponentRow
-              key={`centroCentroCustosRow.${item.id}`}
-              componentKey={`centroCentroCustos.${item.id}`}
-            >
+            <ModalComponentRow key={`centroCentroCustosRow.${item.id}`}>
               <>
                 <span className="w-[40ch]">{item?.grupo_economico}</span>
                 <span className="w-full">{item.nome}</span>

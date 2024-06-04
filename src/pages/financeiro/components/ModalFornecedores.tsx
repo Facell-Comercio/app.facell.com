@@ -108,10 +108,7 @@ const ModalFornecedores = ({
           setPagination={setPagination}
         >
           {data?.data?.rows.map((item: ItemFornecedor) => (
-            <ModalComponentRow
-              key={"fornKey:" + item.id}
-              componentKey={"forn:" + item.id}
-            >
+            <ModalComponentRow key={"fornKey:" + item.id}>
               <>
                 <span>
                   {normalizeCnpjNumber(item.cnpj)} - {item.nome}{" "}

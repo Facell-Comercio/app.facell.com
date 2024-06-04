@@ -205,10 +205,7 @@ const ModalContasBancarias = ({
         >
           {data?.data?.rows.map(
             (item: ItemContaBancariaProps, index: number) => (
-              <ModalComponentRow
-                key={"contasBancariasRow:" + item.id + index}
-                componentKey={"contasBancarias:" + item.id + index}
-              >
+              <ModalComponentRow key={"contasBancariasRow:" + item.id + index}>
                 <>
                   <span>
                     {item.grupo_economico && item.grupo_economico.toUpperCase()}{" "}
