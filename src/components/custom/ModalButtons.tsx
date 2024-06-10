@@ -65,6 +65,7 @@ const ModalButtons = ({
               type={"button"}
               size="lg"
               variant={"secondary"}
+              disabled={isLoading}
               onClick={cancel}
             >
               <Ban className="me-2 text-xl" />
@@ -120,6 +121,7 @@ const ModalButtons = ({
               type={"button"}
               size="lg"
               variant={"secondary"}
+              disabled={isLoading}
               onClick={cancel}
             >
               <Ban className="me-2 text-xl" />

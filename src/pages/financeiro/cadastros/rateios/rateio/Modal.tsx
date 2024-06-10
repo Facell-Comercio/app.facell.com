@@ -26,6 +26,7 @@ export interface RateiosSchema {
 }
 
 type RateioItens = {
+  id_item?: number;
   id_filial: string;
   percentual: string;
 };
@@ -45,6 +46,7 @@ const ModalRateios = () => {
   const closeModal = useStoreRateios().closeModal;
   const modalEditing = useStoreRateios().modalEditing;
   const editModal = useStoreRateios().editModal;
+  const isPending = useStoreRateios().isPending;
   const id = useStoreRateios().id;
   const formRef = useRef(null);
 
@@ -101,6 +103,7 @@ const ModalRateios = () => {
             edit={() => editModal(true)}
             cancel={handleClickCancel}
             formRef={formRef}
+            isLoading={isPending}
           />
         </DialogFooter>
       </DialogContent>

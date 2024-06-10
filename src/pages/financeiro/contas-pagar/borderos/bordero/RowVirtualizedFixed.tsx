@@ -34,8 +34,6 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
     overscan: 10,
   });
 
-  console.log(data);
-
   return (
     <section
       ref={parentElement}
