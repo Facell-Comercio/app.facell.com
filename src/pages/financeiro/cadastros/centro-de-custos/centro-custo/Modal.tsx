@@ -31,11 +31,15 @@ const initialPropsCentroCustos: CentroCustosSchema = {
 };
 
 const ModalCentroCustos = () => {
-  const modalOpen = useStoreCentroCustos().modalOpen;
-  const closeModal = useStoreCentroCustos().closeModal;
-  const modalEditing = useStoreCentroCustos().modalEditing;
-  const editModal = useStoreCentroCustos().editModal;
-  const id = useStoreCentroCustos().id;
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
+    useStoreCentroCustos((state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.modalEditing,
+      state.editModal,
+      state.isPending,
+      state.id,
+    ]);
   const formRef = useRef(null);
 
   const { data, isLoading } = useCentroCustos().getOne(id);
@@ -86,6 +90,7 @@ const ModalCentroCustos = () => {
             edit={() => editModal(true)}
             cancel={handleClickCancel}
             formRef={formRef}
+            isLoading={isPending}
           />
         </DialogFooter>
       </DialogContent>

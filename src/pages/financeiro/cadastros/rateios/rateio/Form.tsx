@@ -23,7 +23,6 @@ const FormRateios = ({
   data: RateiosSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - Rateio:", id);
   const {
     mutate: insertOne,
     isPending: insertIsPending,
@@ -48,7 +47,8 @@ const FormRateios = ({
     ]);
 
   const { form, itens, appendItem, removeItem } = useFormRateioData(data);
-  // console.log(form.formState.errors)
+  // ! Verificar a existênicia de erros
+  // console.log(form.formState.errors);
 
   function addNewRateio() {
     appendItem({
@@ -105,7 +105,7 @@ const FormRateios = ({
       editIsPending(false);
     } else if (updateIsError || insertIsError) {
       editIsPending(false);
-    } else {
+    } else if (updateIsPending || insertIsPending) {
       editIsPending(true);
     }
   }, [updateIsPending, insertIsPending]);

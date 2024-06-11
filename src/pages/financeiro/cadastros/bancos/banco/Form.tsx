@@ -2,6 +2,7 @@ import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { useBancos } from "@/hooks/financeiro/useBancos";
 import { Contact } from "lucide-react";
+import { useEffect } from "react";
 import { BancoSchema } from "./Modal";
 import { useFormBancoData } from "./form-data";
 import { useStoreBanco } from "./store";
@@ -15,23 +16,47 @@ const FormBanco = ({
   data: BancoSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - Fornecedor:", id);
-  const { mutate: insertOne } = useBancos().insertOne();
-  const { mutate: update } = useBancos().update();
-  const modalEditing = useStoreBanco().modalEditing;
-  const editModal = useStoreBanco().editModal;
-  const closeModal = useStoreBanco().closeModal;
+  const {
+    mutate: insertOne,
+    isPending: insertIsPending,
+    isSuccess: insertIsSuccess,
+    isError: insertIsError,
+  } = useBancos().insertOne();
+  const {
+    mutate: update,
+    isPending: updateIsPending,
+    isSuccess: updateIsSuccess,
+    isError: updateIsError,
+  } = useBancos().update();
+  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
+    useStoreBanco((state) => [
+      state.modalEditing,
+      state.editModal,
+      state.closeModal,
+      state.editIsPending,
+      state.isPending,
+    ]);
   const { form } = useFormBancoData(data);
 
   const onSubmitData = (data: BancoSchema) => {
     if (id) update(data);
     if (!id) insertOne(data);
-    console.log(data);
-
-    editModal(false);
-    closeModal();
+    // console.log(data);
   };
 
+  useEffect(() => {
+    if (updateIsSuccess || insertIsSuccess) {
+      editModal(false);
+      closeModal();
+      editIsPending(false);
+    } else if (updateIsError || insertIsError) {
+      editIsPending(false);
+    } else if (updateIsPending || insertIsPending) {
+      editIsPending(true);
+    }
+  }, [updateIsPending, insertIsPending]);
+
+  // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
 
   return (

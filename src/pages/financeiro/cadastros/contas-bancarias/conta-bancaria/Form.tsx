@@ -8,7 +8,7 @@ import ModalBancos, {
   ItemBancos,
 } from "@/pages/financeiro/components/ModalBancos";
 import { Fingerprint, Info } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ContaBancariaSchema } from "./Modal";
 import { useFormContaBancariaData } from "./form-data";
 import { useStoreContaBancaria } from "./store";
@@ -22,22 +22,34 @@ const FormContaBancaria = ({
   data: ContaBancariaSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - ContaBancaria:", id);
   const [modalBancosOpen, setModalBancosOpen] = useState<boolean>(false);
-  const { mutate: insertOne } = useContasBancarias().insertOne();
-  const { mutate: update } = useContasBancarias().update();
-  const modalEditing = useStoreContaBancaria().modalEditing;
-  const editModal = useStoreContaBancaria().editModal;
-  const closeModal = useStoreContaBancaria().closeModal;
+  const {
+    mutate: insertOne,
+    isPending: insertIsPending,
+    isSuccess: insertIsSuccess,
+    isError: insertIsError,
+  } = useContasBancarias().insertOne();
+  const {
+    mutate: update,
+    isPending: updateIsPending,
+    isSuccess: updateIsSuccess,
+    isError: updateIsError,
+  } = useContasBancarias().update();
+
+  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
+    useStoreContaBancaria((state) => [
+      state.modalEditing,
+      state.editModal,
+      state.closeModal,
+      state.editIsPending,
+      state.isPending,
+    ]);
 
   const onSubmitData = (data: ContaBancariaSchema) => {
-    console.log(data);
+    // console.log(data);
 
     if (id) update(data);
     if (!id) insertOne(data);
-
-    editModal(false);
-    closeModal();
   };
 
   const { form } = useFormContaBancariaData(data);
@@ -48,6 +60,21 @@ const FormContaBancaria = ({
     form.setValue("banco", item.codigo + " - " + item.nome);
     setModalBancosOpen(false);
   }
+
+  useEffect(() => {
+    if (updateIsSuccess || insertIsSuccess) {
+      editModal(false);
+      closeModal();
+      editIsPending(false);
+    } else if (updateIsError || insertIsError) {
+      editIsPending(false);
+    } else if (updateIsPending || insertIsPending) {
+      editIsPending(true);
+    }
+  }, [updateIsPending, insertIsPending]);
+
+  // ! Verificar a existênicia de erros
+  // console.log(form.formState.errors);
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-hidden">
@@ -66,7 +93,7 @@ const FormContaBancaria = ({
                   </div>
                   <FormSwitch
                     name="active"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Ativo"
                     control={form.control}
                   />
@@ -77,14 +104,14 @@ const FormContaBancaria = ({
                   <FormInput
                     className="flex-1 min-w-[40ch]"
                     name="descricao"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Descrição"
                     control={form.control}
                   />
                   <SelectFilial
                     className="flex-1 min-w-32"
                     name="id_filial"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Filial"
                     control={form.control}
                   />
@@ -100,7 +127,7 @@ const FormContaBancaria = ({
                     <FormInput
                       className="flex-1 min-w-[40ch]"
                       name="banco"
-                      readOnly={!modalEditing}
+                      readOnly={!modalEditing || isPending}
                       label="Banco"
                       placeholder="Selecione o banco"
                       control={form.control}
@@ -125,20 +152,20 @@ const FormContaBancaria = ({
                   <FormInput
                     className="flex-1 min-w-[5ch]"
                     label="Agência"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     name="agencia"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[5ch]"
                     name="dv_agencia"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Dígito Agência"
                     control={form.control}
                   />
                   <FormSelect
                     name="id_tipo_conta"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     control={form.control}
                     label={"Tipo de conta"}
                     className="flex-1 min-w-[20ch]"
@@ -150,14 +177,14 @@ const FormContaBancaria = ({
                   <FormInput
                     className="flex-1 min-w-[5ch]"
                     name="conta"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Conta"
                     control={form.control}
                   />
                   <FormInput
                     name="dv_conta"
                     className="flex-1 min-w-[5ch]"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Dígito Conta"
                     control={form.control}
                   />

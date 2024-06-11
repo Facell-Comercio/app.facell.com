@@ -2,13 +2,12 @@ import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { useFornecedores } from "@/hooks/financeiro/useFornecedores";
 import ModalFornecedor from "./fornecedor/Modal";
-import { useStoreFornecedor } from "./fornecedor/store-fornecedor";
+import { useStoreFornecedor } from "./fornecedor/store";
 import FilterFornecedores from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTableFornecedor } from "./table/store-table";
 
 const Fornecedores = () => {
-  console.log("RENDER - Section-Titulos");
   const [pagination, setPagination, filters] = useStoreTableFornecedor(
     (state) => [state.pagination, state.setPagination, state.filters]
   );

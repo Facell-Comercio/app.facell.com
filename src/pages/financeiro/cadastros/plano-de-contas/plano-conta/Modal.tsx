@@ -47,11 +47,15 @@ const initialPropsPlanoContas: PlanoContasSchema = {
 };
 
 const ModalPlanoContas = () => {
-  const modalOpen = useStorePlanoContas().modalOpen;
-  const closeModal = useStorePlanoContas().closeModal;
-  const modalEditing = useStorePlanoContas().modalEditing;
-  const editModal = useStorePlanoContas().editModal;
-  const id = useStorePlanoContas().id;
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
+    useStorePlanoContas((state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.modalEditing,
+      state.editModal,
+      state.isPending,
+      state.id,
+    ]);
   const formRef = useRef(null);
 
   const { data, isLoading } = usePlanoContas().getOne(id);
@@ -102,6 +106,7 @@ const ModalPlanoContas = () => {
             edit={() => editModal(true)}
             cancel={handleClickCancel}
             formRef={formRef}
+            isLoading={isPending}
           />
         </DialogFooter>
       </DialogContent>

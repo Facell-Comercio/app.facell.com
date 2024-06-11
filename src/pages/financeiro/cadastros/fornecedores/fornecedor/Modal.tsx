@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useFornecedores } from "@/hooks/financeiro/useFornecedores";
 import { useRef } from "react";
 import FormFornecedor from "./Form";
-import { useStoreFornecedor } from "./store-fornecedor";
+import { useStoreFornecedor } from "./store";
 
 export type FornecedorSchema = {
   id: string;
@@ -75,11 +75,15 @@ const initialPropsFornecedor: FornecedorSchema = {
 };
 
 const ModalFornecedor = () => {
-  const modalOpen = useStoreFornecedor().modalOpen;
-  const closeModal = useStoreFornecedor().closeModal;
-  const modalEditing = useStoreFornecedor().modalEditing;
-  const editModal = useStoreFornecedor().editModal;
-  const id = useStoreFornecedor().id;
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
+    useStoreFornecedor((state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.modalEditing,
+      state.editModal,
+      state.isPending,
+      state.id,
+    ]);
   const formRef = useRef(null);
 
   const { data, isLoading } = useFornecedores().getOne(id);
@@ -130,6 +134,7 @@ const ModalFornecedor = () => {
             edit={() => editModal(true)}
             cancel={handleClickCancel}
             formRef={formRef}
+            isLoading={isPending}
           />
         </DialogFooter>
       </DialogContent>

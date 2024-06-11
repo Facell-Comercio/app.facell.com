@@ -44,11 +44,15 @@ const initialPropsContaBancaria: ContaBancariaSchema = {
 };
 
 const ModalContaBancaria = () => {
-  const modalOpen = useStoreContaBancaria().modalOpen;
-  const closeModal = useStoreContaBancaria().closeModal;
-  const modalEditing = useStoreContaBancaria().modalEditing;
-  const editModal = useStoreContaBancaria().editModal;
-  const id = useStoreContaBancaria().id;
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
+    useStoreContaBancaria((state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.modalEditing,
+      state.editModal,
+      state.isPending,
+      state.id,
+    ]);
   const formRef = useRef(null);
 
   const { data, isLoading } = useContasBancarias().getOne(id);
@@ -99,6 +103,7 @@ const ModalContaBancaria = () => {
             edit={() => editModal(true)}
             cancel={handleClickCancel}
             formRef={formRef}
+            isLoading={isPending}
           />
         </DialogFooter>
       </DialogContent>

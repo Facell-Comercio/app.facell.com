@@ -8,7 +8,6 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableContasBancarias } from "./table/store-table";
 
 const ContasBancarias = () => {
-  console.log("RENDER - Section-Plano Contas");
   const [pagination, setPagination, filters] = useStoreTableContasBancarias(
     (state) => [state.pagination, state.setPagination, state.filters]
   );

@@ -42,12 +42,15 @@ const initialPropsRateios: RateiosSchema = {
 };
 
 const ModalRateios = () => {
-  const modalOpen = useStoreRateios().modalOpen;
-  const closeModal = useStoreRateios().closeModal;
-  const modalEditing = useStoreRateios().modalEditing;
-  const editModal = useStoreRateios().editModal;
-  const isPending = useStoreRateios().isPending;
-  const id = useStoreRateios().id;
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
+    useStoreRateios((state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.modalEditing,
+      state.editModal,
+      state.isPending,
+      state.id,
+    ]);
   const formRef = useRef(null);
 
   const { data, isLoading } = useRateios().getOne(id);

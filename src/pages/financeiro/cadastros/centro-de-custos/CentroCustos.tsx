@@ -8,7 +8,6 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableCentroCusto } from "./table/store-table";
 
 const CentroCustos = () => {
-  console.log("RENDER - Section-Titulos");
   const [pagination, setPagination, filters] = useStoreTableCentroCusto(
     (state) => [state.pagination, state.setPagination, state.filters]
   );

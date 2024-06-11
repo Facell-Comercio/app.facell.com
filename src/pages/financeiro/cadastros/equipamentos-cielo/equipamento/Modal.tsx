@@ -33,11 +33,15 @@ const initialPropsEquipamento: EquipamentoSchema = {
 };
 
 const ModalEquipamento = () => {
-  const modalOpen = useStoreEquipamento().modalOpen;
-  const closeModal = useStoreEquipamento().closeModal;
-  const modalEditing = useStoreEquipamento().modalEditing;
-  const editModal = useStoreEquipamento().editModal;
-  const id = useStoreEquipamento().id;
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
+    useStoreEquipamento((state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.modalEditing,
+      state.editModal,
+      state.isPending,
+      state.id,
+    ]);
   const formRef = useRef(null);
 
   const { data, isLoading } = useEquipamentos().getOne(id);
@@ -88,6 +92,7 @@ const ModalEquipamento = () => {
             edit={() => editModal(true)}
             cancel={handleClickCancel}
             formRef={formRef}
+            isLoading={isPending}
           />
         </DialogFooter>
       </DialogContent>

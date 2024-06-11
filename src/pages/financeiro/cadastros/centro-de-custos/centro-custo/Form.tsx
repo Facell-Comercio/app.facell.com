@@ -4,6 +4,7 @@ import FormSwitch from "@/components/custom/FormSwitch";
 import { Form } from "@/components/ui/form";
 import { useCentroCustos } from "@/hooks/financeiro/useCentroCustos";
 import { Contact } from "lucide-react";
+import { useEffect } from "react";
 import { CentroCustosSchema } from "./Modal";
 import { useFormCentroCustosData } from "./form-data";
 import { useStoreCentroCustos } from "./store";
@@ -17,24 +18,48 @@ const FormCentroCustos = ({
   data: CentroCustosSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - Fornecedor:", id);
-  const { mutate: insertOne } = useCentroCustos().insertOne();
-  const { mutate: update } = useCentroCustos().update();
-  const modalEditing = useStoreCentroCustos().modalEditing;
-  const editModal = useStoreCentroCustos().editModal;
-  const closeModal = useStoreCentroCustos().closeModal;
+  const {
+    mutate: insertOne,
+    isPending: insertIsPending,
+    isSuccess: insertIsSuccess,
+    isError: insertIsError,
+  } = useCentroCustos().insertOne();
+  const {
+    mutate: update,
+    isPending: updateIsPending,
+    isSuccess: updateIsSuccess,
+    isError: updateIsError,
+  } = useCentroCustos().update();
+  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
+    useStoreCentroCustos((state) => [
+      state.modalEditing,
+      state.editModal,
+      state.closeModal,
+      state.editIsPending,
+      state.isPending,
+    ]);
   const { form } = useFormCentroCustosData(data);
 
   const onSubmitData = (data: CentroCustosSchema) => {
-    console.log(data);
+    // console.log(data);
 
     if (id) update(data);
     if (!id) insertOne(data);
-
-    editModal(false);
-    closeModal();
   };
 
+  useEffect(() => {
+    if (updateIsSuccess || insertIsSuccess) {
+      editModal(false);
+      closeModal();
+      editIsPending(false);
+    } else if (updateIsError || insertIsError) {
+      editIsPending(false);
+    } else if (updateIsPending || insertIsPending) {
+      editIsPending(true);
+    }
+  }, [updateIsPending, insertIsPending]);
+
+  // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
 
   return (
@@ -54,7 +79,7 @@ const FormCentroCustos = ({
                   </div>
                   <FormSwitch
                     name="active"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Ativo"
                     control={form.control}
                   />
@@ -64,7 +89,7 @@ const FormCentroCustos = ({
                   <FormInput
                     className="flex-1 min-w-[20ch]"
                     name="nome"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Nome"
                     control={form.control}
                   />
@@ -72,7 +97,7 @@ const FormCentroCustos = ({
                     className="flex-1 min-w-32"
                     name="id_grupo_economico"
                     control={form.control}
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Grupo Econômico"
                   />
                 </div>

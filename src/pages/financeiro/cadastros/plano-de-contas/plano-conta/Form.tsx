@@ -5,6 +5,7 @@ import FormSwitch from "@/components/custom/FormSwitch";
 import { Form } from "@/components/ui/form";
 import { usePlanoContas } from "@/hooks/financeiro/usePlanoConta";
 import { Fingerprint, Info } from "lucide-react";
+import { useEffect } from "react";
 import { PlanoContasSchema } from "./Modal";
 import { useFormPlanoContaData } from "./form-data";
 import { useStorePlanoContas } from "./store";
@@ -18,24 +19,48 @@ const FormPlanoContas = ({
   data: PlanoContasSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - PlanoContas:", id);
-  const { mutate: insertOne } = usePlanoContas().insertOne();
-  const { mutate: update } = usePlanoContas().update();
-  const modalEditing = useStorePlanoContas().modalEditing;
-  const editModal = useStorePlanoContas().editModal;
-  const closeModal = useStorePlanoContas().closeModal;
+  const {
+    mutate: insertOne,
+    isPending: insertIsPending,
+    isSuccess: insertIsSuccess,
+    isError: insertIsError,
+  } = usePlanoContas().insertOne();
+  const {
+    mutate: update,
+    isPending: updateIsPending,
+    isSuccess: updateIsSuccess,
+    isError: updateIsError,
+  } = usePlanoContas().update();
+  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
+    useStorePlanoContas((state) => [
+      state.modalEditing,
+      state.editModal,
+      state.closeModal,
+      state.editIsPending,
+      state.isPending,
+    ]);
 
   const onSubmitData = (data: PlanoContasSchema) => {
-    console.log(data);
+    // console.log(data);
 
     if (id) update(data);
     if (!id) insertOne(data);
-
-    editModal(false);
-    closeModal();
   };
 
+  useEffect(() => {
+    if (updateIsSuccess || insertIsSuccess) {
+      editModal(false);
+      closeModal();
+      editIsPending(false);
+    } else if (updateIsError || insertIsError) {
+      editIsPending(false);
+    } else if (updateIsPending || insertIsPending) {
+      editIsPending(true);
+    }
+  }, [updateIsPending, insertIsPending]);
   const { form } = useFormPlanoContaData(data);
+  // ! Verificar a existênicia de erros
+  // console.log(form.formState.errors);
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-hidden">
@@ -54,7 +79,7 @@ const FormPlanoContas = ({
                   </div>
                   <FormSwitch
                     name="active"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Ativo"
                     control={form.control}
                   />
@@ -70,27 +95,27 @@ const FormPlanoContas = ({
                   <FormInput
                     className="flex-1 min-w-40"
                     name="codigo"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Código"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[40ch]"
                     name="descricao"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Descrição"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-40"
                     name="codigo_pai"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Código Pai"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[40ch]"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     name="descricao_pai"
                     label="Descrição Pai"
                     control={form.control}
@@ -106,14 +131,14 @@ const FormPlanoContas = ({
                 <div className="flex gap-3 flex-wrap">
                   <FormInput
                     className="flex-1 min-w-32"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     name="nivel"
                     label="Nível de Controle"
                     control={form.control}
                   />
                   <FormSelect
                     name="tipo"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     control={form.control}
                     label={"Tipo"}
                     className={"flex-1 min-w-[20ch]"}
@@ -125,13 +150,13 @@ const FormPlanoContas = ({
                   <FormSelectGrupoEconomico
                     className="min-w-32"
                     name="id_grupo_economico"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Grupo Econômico"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-44"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     name="codigo_conta_estorno"
                     label="Código Contra Estorno"
                     control={form.control}

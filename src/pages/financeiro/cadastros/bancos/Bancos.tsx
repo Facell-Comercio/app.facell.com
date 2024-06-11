@@ -8,7 +8,6 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableBancos } from "./table/store-table";
 
 const Bancos = () => {
-  console.log("RENDER - Section-Titulos");
   const [pagination, setPagination, filters] = useStoreTableBancos((state) => [
     state.pagination,
     state.setPagination,

@@ -7,7 +7,7 @@ const schemaEquipamento = z
   .object({
     // Dados Equipamento
   id: z.string().optional(),
-  active: z.boolean(),
+  active: z.coerce.boolean(),
   estabelecimento: z.string().min(2, "Digite o estabelecimento"),
   num_maquina: z.string().min(2, "Digite o número da máquina"),
   id_filial: z.string().min(1, "Adicione a filial"),
