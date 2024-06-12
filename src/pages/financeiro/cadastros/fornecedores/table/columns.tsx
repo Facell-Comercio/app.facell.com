@@ -1,8 +1,7 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { normalizeCnpjNumber } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { ReactNode } from "react";
-import { useStoreFornecedor } from "../fornecedor/store-fornecedor";
+import { useStoreFornecedor } from "../fornecedor/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -18,33 +17,6 @@ export type RowFornecedor = {
 const openModal = useStoreFornecedor.getState().openModal;
 
 export const columnsTable: ColumnDef<RowFornecedor>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="px-1">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        />
-      </div>
-    ),
-    enableSorting: false,
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          {...{
-            checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            indeterminate: row.getIsSomeSelected().toString(),
-            onCheckedChange: row.getToggleSelectedHandler(),
-          }}
-        />
-      </div>
-    ),
-  },
   {
     accessorKey: "id",
     header: "ID",

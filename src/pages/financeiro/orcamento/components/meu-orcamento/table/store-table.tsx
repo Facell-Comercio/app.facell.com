@@ -64,9 +64,13 @@ export const useStoreTableMeuOrcamento = create<State & Actions>((set) => ({
   setFilters: (novoFiltro) =>
     set((state) => ({
       filters: { ...state.filters, ...novoFiltro },
+      pagination: { pageIndex: 0, pageSize: 15 },
     })),
   resetFilters: () => {
-    set({ filters: initialFilters });
+    set({
+      filters: initialFilters,
+      pagination: { pageIndex: 0, pageSize: 15 },
+    });
   },
 
   setPagination: (pagination) => set({ pagination }),

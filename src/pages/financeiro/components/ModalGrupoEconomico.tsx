@@ -97,10 +97,7 @@ const ModalGruposEconomicos = ({
         >
           {data?.data?.rows.map(
             (item: ItemGrupoEconomicoProps, index: number) => (
-              <ModalComponentRow
-                key={"grupoEconomicoRow:" + item.id + index}
-                componentKey={"grupoEconomico:" + item.id + index}
-              >
+              <ModalComponentRow key={"grupoEconomicoRow:" + item.id + index}>
                 <>
                   <span>{item.nome && item.nome.toUpperCase()}</span>
                   <Button

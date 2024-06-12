@@ -63,7 +63,10 @@ export const normalizeDataDayOne = (dataString?: string) => {
 }
 
 export const normalizeDate = (data: string|Date) => data && format(data, "dd/MM/yyyy");
-export const normalizeCurrency = (data: string|number) => {
+export const normalizeCurrency = (data?: string|number) => {
+    if(!data){
+        return "R$ 0,00"
+    }
     if(typeof data === "string"){
         const valor = parseFloat(data)
         if(!valor)

@@ -149,24 +149,26 @@ const ModalContasBancarias = ({
             onValueChange={(e) => setItemOpen(e)}
             className="p-2 border dark:border-slate-800 rounded-lg flex-1"
           >
-            <AccordionItem value="item-1" className="border-0">
-              <AccordionTrigger className="pb-2 hover:no-underline w-full text-left text-slate-500">
-                Filtros
-              </AccordionTrigger>
-              <AccordionContent className="p-0">
-                <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
-                  <div className="flex w-max space-x-4">
-                    <Button size={"sm"} onClick={() => handleClickFilter()}>
-                      Filtrar <FilterIcon size={12} className="ms-2" />
-                    </Button>
-                    <Button
-                      size={"sm"}
-                      onClick={() => handleClickResetFilters()}
-                      variant="secondary"
-                    >
-                      Limpar <EraserIcon size={12} className="ms-2" />
-                    </Button>
+            <AccordionItem value="item-1" className="relative border-0">
+              <div className="flex gap-3 items-center absolute start-16 top-1">
+                <Button size={"xs"} onClick={() => handleClickFilter()}>
+                  Aplicar <FilterIcon size={12} className="ms-2" />
+                </Button>
+                <Button
+                  size={"xs"}
+                  variant="secondary"
+                  onClick={() => handleClickResetFilters()}
+                >
+                  Limpar <EraserIcon size={12} className="ms-2" />
+                </Button>
+              </div>
 
+              <AccordionTrigger className={`py-1 hover:no-underline`}>
+                <span className="">Filtros</span>
+              </AccordionTrigger>
+              <AccordionContent className="p-0 pt-3">
+                <ScrollArea className="whitespace-nowrap rounded-md pb-1 flex flex-wrap w-max max-w-full  ">
+                  <div className="flex gap-1 sm:gap-2 w-max">
                     {!id_grupo_economico && (
                       <SelectGrupoEconomico
                         showAll
@@ -203,10 +205,7 @@ const ModalContasBancarias = ({
         >
           {data?.data?.rows.map(
             (item: ItemContaBancariaProps, index: number) => (
-              <ModalComponentRow
-                key={"contasBancariasRow:" + item.id + index}
-                componentKey={"contasBancarias:" + item.id + index}
-              >
+              <ModalComponentRow key={"contasBancariasRow:" + item.id + index}>
                 <>
                   <span>
                     {item.grupo_economico && item.grupo_economico.toUpperCase()}{" "}

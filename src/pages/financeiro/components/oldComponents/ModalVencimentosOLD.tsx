@@ -53,8 +53,8 @@ interface IModalVencimentosOLD {
 }
 
 export type VencimentosProps = {
+  id: string;
   checked?: boolean;
-  id_vencimento: string;
   id_titulo: string;
   id_status?: string;
   status: string;

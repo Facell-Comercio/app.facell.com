@@ -2,7 +2,9 @@ import FormInput from "@/components/custom/FormInput";
 import FormSwitch from "@/components/custom/FormSwitch";
 import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
+import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
 import { Form } from "@/components/ui/form";
+import { toast } from "@/components/ui/use-toast";
 import {
   normalizeCepNumber,
   normalizeCnpjNumber,
@@ -15,8 +17,7 @@ import { useEffect, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { FornecedorSchema } from "./Modal";
 import { useFormFornecedorData } from "./form-data";
-import { useStoreFornecedor } from "./store-fornecedor";
-import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
+import { useStoreFornecedor } from "./store";
 
 const FormFornecedor = ({
   id,
@@ -27,18 +28,36 @@ const FormFornecedor = ({
   data: FornecedorSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - Fornecedor:", id);
-  const { mutate: insertOne } = useFornecedores().insertOne();
-  const { mutate: update } = useFornecedores().update();
-  const modalEditing = useStoreFornecedor().modalEditing;
-  const editModal = useStoreFornecedor().editModal;
-  const closeModal = useStoreFornecedor().closeModal;
+  const {
+    mutate: insertOne,
+    isPending: insertIsPending,
+    isSuccess: insertIsSuccess,
+    isError: insertIsError,
+  } = useFornecedores().insertOne();
+  const {
+    mutate: update,
+    isPending: updateIsPending,
+    isSuccess: updateIsSuccess,
+    isError: updateIsError,
+  } = useFornecedores().update();
+  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
+    useStoreFornecedor((state) => [
+      state.modalEditing,
+      state.editModal,
+      state.closeModal,
+      state.editIsPending,
+      state.isPending,
+    ]);
   const [cnpj, setCnpj] = useState<string>();
   const { form } = useFormFornecedorData(data);
 
   const watchFormaPagamento = useWatch({
     control: form.control,
     name: "id_forma_pagamento",
+  });
+  const watchTipoChavePix = useWatch({
+    control: form.control,
+    name: "id_tipo_chave_pix",
   });
 
   async function axiosGetCnpjData() {
@@ -57,7 +76,15 @@ const FormFornecedor = ({
       form.setValue("municipio", cnpjData.municipio);
       form.setValue("uf", cnpjData.uf);
     } catch (error) {
-      console.log(error);
+      // @ts-expect-error "Vai funcionar"
+      const errorMessage = error.response?.data.message || error.message;
+      console.log(errorMessage);
+      toast({
+        title: "Erro na consulta do fornecedor",
+        description: errorMessage,
+        variant: "destructive",
+        duration: 3500,
+      });
     }
   }
 
@@ -93,13 +120,46 @@ const FormFornecedor = ({
   };
 
   const onSubmitData = (data: FornecedorSchema) => {
-    if (id) update(data);
-    if (!id) insertOne(data);
-
-    editModal(false);
-    closeModal();
+    id && update(data);
+    !id && insertOne(data);
   };
 
+  function placeholderChavePix(tipoChavePix: string | number): string {
+    if (String(tipoChavePix) === "3") {
+      return "(00) 9999-9999";
+    }
+    if (String(tipoChavePix) === "4") {
+      return "111.222.333-44";
+    }
+    if (String(tipoChavePix) === "5") {
+      return "11.222.333/0001-44";
+    }
+    return "";
+  }
+
+  function fnMaskChavePix(tipoChavePix: string | number) {
+    if (String(tipoChavePix) === "3") {
+      return normalizePhoneNumber;
+    }
+    if (String(tipoChavePix) === "4" || String(tipoChavePix) === "5") {
+      return normalizeCnpjNumber;
+    }
+    return () => null;
+  }
+
+  useEffect(() => {
+    if (updateIsSuccess || insertIsSuccess) {
+      editModal(false);
+      closeModal();
+      editIsPending(false);
+    } else if (updateIsError || insertIsError) {
+      editIsPending(false);
+    } else if (updateIsPending || insertIsPending) {
+      editIsPending(true);
+    }
+  }, [updateIsPending, insertIsPending]);
+
+  // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
 
   return (
@@ -119,7 +179,7 @@ const FormFornecedor = ({
                   </div>
                   <FormSwitch
                     name="active"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Ativo"
                     control={form.control}
                   />
@@ -129,74 +189,77 @@ const FormFornecedor = ({
                   <FormInput
                     className="flex-1 min-w-[20ch]"
                     name="cnpj"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="CPF/CNPJ"
                     control={form.control}
                     onChange={(e) => handleChangeCnpj(e.target.value, "cnpj")}
                     onBlur={(e) => onBlurCnpj(e.target.value)}
+                    fnMask={normalizeCnpjNumber}
                   />
                   <FormInput
                     className="flex-1 min-w-[40ch] shrink-0"
                     name="nome"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Nome fantasia"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[15ch]"
                     name="telefone"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Telefone"
                     onChange={(e) => handleChangePhoneNumber(e.target.value)}
                     control={form.control}
+                    fnMask={normalizePhoneNumber}
                   />
                   <FormInput
                     className="flex-1 min-w-[30ch]"
                     name="razao"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Razão social"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[55ch]"
                     name="email"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Email"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[15ch]"
                     name="cep"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="CEP"
                     onChange={(e) => handleChangeCep(e.target.value)}
                     control={form.control}
+                    fnMask={normalizeCepNumber}
                   />
                   <FormInput
                     className="flex-1 min-w-[10ch]"
                     name="numero"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Número"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[25ch]"
                     name="bairro"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Bairro"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[25ch]"
                     name="municipio"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Municipio"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[5ch]"
                     name="uf"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="UF"
                     control={form.control}
                   />
@@ -208,11 +271,11 @@ const FormFornecedor = ({
                   <DollarSign />{" "}
                   <span className="text-lg font-bold ">Dados Bancários</span>
                 </div>
-                <div className="flex gap-3 flex-wrap items-center">
+                <div className="flex gap-3 flex-wrap ">
                   <SelectFormaPagamento
                     className="flex-1 min-w-[20ch]"
                     name="id_forma_pagamento"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Forma de pagamento"
                     control={form.control}
                   />
@@ -221,22 +284,24 @@ const FormFornecedor = ({
                     <SelectTipoChavePix
                       className="flex-1 min-w-[20ch]"
                       name="id_tipo_chave_pix"
-                      disabled={!modalEditing}
+                      disabled={!modalEditing || isPending}
                       label="Tipo de chave"
                       control={form.control}
                     />
                   )}
                   <FormInput
                     className="flex-1 min-w-[20ch]"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     type={watchFormaPagamento !== "4" ? "hidden" : ""}
                     name="chave_pix"
                     label="Chave PIX"
+                    placeholder={placeholderChavePix(watchTipoChavePix)}
                     control={form.control}
+                    fnMask={fnMaskChavePix(watchTipoChavePix)}
                   />
                   <FormInput
                     className="flex-1 min-w-[20ch]"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     name="cnpj_favorecido"
                     label="CPF/CNPJ Favorecido"
                     control={form.control}
@@ -247,7 +312,7 @@ const FormFornecedor = ({
                   />
                   <FormInput
                     className="flex-1 min-w-[40ch]"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     name="favorecido"
                     label="Favorecido"
                     control={form.control}
@@ -256,21 +321,21 @@ const FormFornecedor = ({
                   <div className="flex gap-3">
                     <FormInput
                       className="flex-1 min-w-[10ch]"
-                      readOnly={!modalEditing}
+                      readOnly={!modalEditing || isPending}
                       name="agencia"
                       label="Agência"
                       control={form.control}
                     />
                     <FormInput
                       className="flex-1 min-w-[5ch] max-w-[10ch]"
-                      readOnly={!modalEditing}
+                      readOnly={!modalEditing || isPending}
                       name="dv_agencia"
                       label="Dígito AG."
                       control={form.control}
                     />
 
                     <SelectTipoContaBancaria
-                      disabled={!modalEditing}
+                      disabled={!modalEditing || isPending}
                       control={form.control}
                       name="id_tipo_conta"
                       label="Tipo de Conta"
@@ -278,14 +343,14 @@ const FormFornecedor = ({
 
                     <FormInput
                       className="flex-1 min-w-[10ch]"
-                      readOnly={!modalEditing}
+                      readOnly={!modalEditing || isPending}
                       name="conta"
                       label="Conta"
                       control={form.control}
                     />
                     <FormInput
                       className="flex-1 min-w-[5ch] max-w-[10ch]"
-                      readOnly={!modalEditing}
+                      readOnly={!modalEditing || isPending}
                       name="dv_conta"
                       label="Digito. CT."
                       control={form.control}

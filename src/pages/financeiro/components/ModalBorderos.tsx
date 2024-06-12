@@ -98,10 +98,7 @@ const ModalBorderos = ({
           {data?.data?.rows
             .filter((item: BorderoProps) => item.id != id_bordero)
             .map((item: BorderoProps) => (
-              <ModalComponentRow
-                key={"borderoRow:" + item.id}
-                componentKey={"bordero:" + item.id}
-              >
+              <ModalComponentRow key={"borderoRow:" + item.id}>
                 <>
                   <span>
                     {item.id}

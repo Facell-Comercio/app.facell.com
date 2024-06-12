@@ -1,6 +1,6 @@
 import { normalizeDataDayOne } from "@/helpers/mask";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schemaCadastro = z
@@ -20,6 +20,7 @@ const schemaCadastro = z
       valor: z.coerce.string().min(1, "Obrigatório"),
       valor_inicial: z.coerce.string().optional(),
       saldo: z.coerce.string().optional(),
+      realizado: z.coerce.string().optional(),
     })).min(1, "Obrigatório"),
   });
 
@@ -33,15 +34,7 @@ export const useFormCadastroData =(data:cadastroSchemaProps)=>{
         values: data
       });
 
-    const {fields, append, remove} = useFieldArray({
-      control: form.control,
-      name: "contas"
-    })
-
     return {
         form,
-        contas: fields,
-        appendConta: append,
-        removeConta: remove
     }
 }

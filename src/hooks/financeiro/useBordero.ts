@@ -1,7 +1,8 @@
 
 import { toast } from "@/components/ui/use-toast";
+import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalTitulos";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/borderos/bordero/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -32,7 +33,7 @@ export const useBordero = () => {
         insertOne : () => useMutation({
             mutationFn: async(data:BorderoSchemaProps
             ) => {
-                return api.post("/financeiro/contas-a-pagar/bordero", data).then((response)=>response.data)
+                return await api.post("/financeiro/contas-a-pagar/bordero", data).then((response)=>response.data)
             },
             onSuccess() {
                 toast({variant:"success",title: "Sucesso", description: "Novo borderô criado", duration: 3500})
@@ -47,7 +48,7 @@ export const useBordero = () => {
 
         update : () => useMutation({
             mutationFn: async({id, ...rest}:BorderoSchemaProps) => {
-                return api.put("/financeiro/contas-a-pagar/bordero/", {id, ...rest}).then((response)=>response.data)
+                return await api.put("/financeiro/contas-a-pagar/bordero/", {id, ...rest}).then((response)=>response.data)
             },
             onSuccess() {
                 toast({variant:"success", title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
@@ -62,7 +63,7 @@ export const useBordero = () => {
 
         transferVencimentos : () => useMutation({
             mutationFn: async(data:{id_conta_bancaria: string, date: Date, vencimentos: TransferDataProps[]}) => {
-                return api.put("financeiro/contas-a-pagar/bordero/transfer", data).then((response)=>response.data)
+                return await api.put("financeiro/contas-a-pagar/bordero/transfer", data).then((response)=>response.data)
             },
             onSuccess() {
                 toast({variant:"success",title: "Sucesso", description: "Transferência realizada com sucesso", duration: 3500})
@@ -76,8 +77,8 @@ export const useBordero = () => {
         }),
             
         deleteVencimento :() => useMutation({
-            mutationFn: (id: string|null|undefined|number) => {
-                return api.delete(`/financeiro/contas-a-pagar/bordero/titulo/${id}`).then((response)=>response.data)
+            mutationFn: async (id: string|null|undefined|number) => {
+                return await api.delete(`/financeiro/contas-a-pagar/bordero/titulo/${id}`).then((response)=>response.data)
             },
             onSuccess(_,id) {                
                 queryClient.invalidateQueries({queryKey:['fin_borderos']}) 
@@ -92,9 +93,9 @@ export const useBordero = () => {
         }),
 
         deleteBordero :() => useMutation({
-            mutationFn: (params:{id: string|null|undefined|number, vencimentos:VencimentosProps[]}) => {
+            mutationFn: async (params:{id: string|null|undefined|number, vencimentos:VencimentosProps[]}) => {
                 const {id, vencimentos} = params;
-                return api.delete(`/financeiro/contas-a-pagar/bordero/${id}`, {data:vencimentos}).then((response)=>response.data)
+                return await api.delete(`/financeiro/contas-a-pagar/bordero/${id}`, {data:vencimentos}).then((response)=>response.data)
             },
             onSuccess() {
                 queryClient.invalidateQueries({queryKey:['fin_borderos']}) 
@@ -106,4 +107,32 @@ export const useBordero = () => {
                 toast({title: "Erro", description:errorMessage, duration: 3500, variant:"destructive"})
             },
         }),
+
+        downloadRemessa : () => useMutation({
+            mutationFn: async (id:string) => {
+                return await api
+                .get(`/financeiro/contas-a-pagar/bordero/remessa/${id}`, {
+                  responseType: "blob",
+                })
+                .then(async (response) => {
+                    downloadResponse(response);
+                })       
+                // })
+            },
+            onSuccess() {
+                toast({ variant: 'success', title: 'Sucesso!', description: 'Exportação de remessa realizada com sucesso!' })
+            },
+            onError: async (error) => {
+                // @ts-expect-error "Funciona"   
+                const errorText = await error.response.data.text();                
+                const errorJSON = JSON.parse(errorText);
+                
+                toast({ 
+                    variant: "destructive", 
+                    title: 'Ocorreu o seguinte erro', 
+                    description: errorJSON.message
+                });
+            },
+            
+        })
 })}

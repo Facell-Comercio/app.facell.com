@@ -26,10 +26,16 @@ export const useMovimentoContabil = () => {
         onSuccess() {
             toast({ variant: 'success', title: 'Sucesso!', description: 'Exportação de movimento contábil realizada com sucesso!' })
         },
-        onError(error) {
-            // @ts-expect-error "Funciona"
-            toast({ variant: "destructive", title: 'Ocorreu o seguinte erro', description: error?.response?.data?.message || error.message })
-            console.log(error);
+        onError: async (error)=> {
+            // @ts-expect-error "Funciona"   
+            const errorText = await error.response.data.text();
+            const errorJSON = JSON.parse(errorText);
+            
+            toast({ 
+                variant: "destructive", 
+                title: 'Ocorreu o seguinte erro', 
+                description: errorJSON.message
+            });
         },
     })
     return {

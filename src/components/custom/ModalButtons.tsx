@@ -1,5 +1,6 @@
 import { Ban, PenLine, Save } from "lucide-react";
 import { ReactNode } from "react";
+import { FaSpinner } from "react-icons/fa6";
 import { Button } from "../ui/button";
 
 interface ModalButtonsProps {
@@ -11,6 +12,7 @@ interface ModalButtonsProps {
   children?: ReactNode;
   blockEdit?: boolean;
   blockCancel?: boolean;
+  isLoading?: boolean;
 }
 
 const ModalButtons = ({
@@ -22,22 +24,38 @@ const ModalButtons = ({
   children: Children,
   blockEdit,
   blockCancel,
+  isLoading,
 }: ModalButtonsProps) => {
   return (
     <div className="flex flex-row-reverse w-full justify-between">
       {!id && (
         <div className="flex gap-2 items-end justify-self-end	flex-wrap">
-          <Button
-            type={"submit"}
-            size="lg"
-            className="dark:text-white"
-            onClick={() => {
-              formRef.current && formRef.current.requestSubmit();
-            }}
-          >
-            <Save className="me-2" />
-            Salvar
-          </Button>
+          {isLoading ? (
+            <Button
+              type={"submit"}
+              size="lg"
+              className="dark:text-white"
+              disabled
+              onClick={() => {
+                formRef.current && formRef.current.requestSubmit();
+              }}
+            >
+              <FaSpinner size={18} className="me-2 animate-spin" />
+              Salvando...
+            </Button>
+          ) : (
+            <Button
+              type={"submit"}
+              size="lg"
+              className="dark:text-white"
+              onClick={() => {
+                formRef.current && formRef.current.requestSubmit();
+              }}
+            >
+              <Save className="me-2" />
+              Salvar
+            </Button>
+          )}
         </div>
       )}
       {id && modalEditing && edit && (
@@ -47,23 +65,39 @@ const ModalButtons = ({
               type={"button"}
               size="lg"
               variant={"secondary"}
+              disabled={isLoading}
               onClick={cancel}
             >
               <Ban className="me-2 text-xl" />
               Cancelar
             </Button>
           )}
-          <Button
-            type={"button"}
-            size="lg"
-            className="dark:text-white"
-            onClick={() => {
-              formRef.current && formRef.current.requestSubmit();
-            }}
-          >
-            <Save className="me-2" />
-            Salvar
-          </Button>
+          {isLoading ? (
+            <Button
+              type={"submit"}
+              size="lg"
+              className="dark:text-white"
+              disabled
+              onClick={() => {
+                formRef.current && formRef.current.requestSubmit();
+              }}
+            >
+              <FaSpinner size={18} className="me-2 animate-spin" />
+              Salvando...
+            </Button>
+          ) : (
+            <Button
+              type={"submit"}
+              size="lg"
+              className="dark:text-white"
+              onClick={() => {
+                formRef.current && formRef.current.requestSubmit();
+              }}
+            >
+              <Save className="me-2" />
+              Salvar
+            </Button>
+          )}
         </div>
       )}
       {id && !modalEditing && !blockEdit && edit && (
@@ -87,23 +121,39 @@ const ModalButtons = ({
               type={"button"}
               size="lg"
               variant={"secondary"}
+              disabled={isLoading}
               onClick={cancel}
             >
               <Ban className="me-2 text-xl" />
               Cancelar
             </Button>
           )}
-          <Button
-            type={"button"}
-            size="lg"
-            className="dark:text-white"
-            onClick={() => {
-              formRef.current && formRef.current.requestSubmit();
-            }}
-          >
-            <Save className="me-2" />
-            Salvar
-          </Button>
+          {isLoading ? (
+            <Button
+              type={"submit"}
+              size="lg"
+              className="dark:text-white"
+              disabled
+              onClick={() => {
+                formRef.current && formRef.current.requestSubmit();
+              }}
+            >
+              <FaSpinner size={18} className="me-2 animate-spin" />
+              Salvando...
+            </Button>
+          ) : (
+            <Button
+              type={"submit"}
+              size="lg"
+              className="dark:text-white"
+              onClick={() => {
+                formRef.current && formRef.current.requestSubmit();
+              }}
+            >
+              <Save className="me-2" />
+              Salvar
+            </Button>
+          )}
         </div>
       )}
       {id && Children}

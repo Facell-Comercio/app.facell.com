@@ -46,7 +46,6 @@ const ModalInsert = ({ addNewConta, id_grupo_economico }: ModalInsertProps) => {
 
   const modalInsertOpen = useStoreCadastro().modalInsertOpen;
   const closeInsertModal = useStoreCadastro().closeInsertModal;
-  console.log("MODAL ABERTO", modalInsertOpen);
 
   function handleSelectionPlanoContas(item: ItemPlanoContas) {
     setNewConta({

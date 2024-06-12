@@ -28,11 +28,16 @@ const initialPropsBanco: BancoSchema = {
 };
 
 const ModalBanco = () => {
-  const modalOpen = useStoreBanco().modalOpen;
-  const closeModal = useStoreBanco().closeModal;
-  const modalEditing = useStoreBanco().modalEditing;
-  const editModal = useStoreBanco().editModal;
-  const id = useStoreBanco().id;
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
+    useStoreBanco((state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.modalEditing,
+      state.editModal,
+      state.isPending,
+      state.id,
+    ]);
+
   const formRef = useRef(null);
 
   const { data, isLoading } = useBancos().getOne(id);
@@ -81,6 +86,7 @@ const ModalBanco = () => {
             edit={() => editModal(true)}
             cancel={handleClickCancel}
             formRef={formRef}
+            isLoading={isPending}
           />
         </DialogFooter>
       </DialogContent>

@@ -201,7 +201,7 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           </div>
-          <div className="flex sm:w-[100px] items-center justify-center text-xs sm:text-sm font-medium">
+          <div className="flex items-center justify-center text-xs sm:text-sm font-medium">
             Página {table.getState().pagination.pageIndex + 1} de{" "}
             {table.getPageCount()}
           </div>

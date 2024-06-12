@@ -13,7 +13,7 @@ const schemaRateios = z
   id_grupo_economico: z.string().trim().toUpperCase().min(1, "Obrigatório"),
   manual: z.coerce.boolean(),
   itens: z.array(z.object({
-    id: z.string().trim().optional(),
+    id_item: z.coerce.string().trim().optional(),
     id_filial: z.coerce.string().trim().min(1, "Obrigatório"),
     percentual: z.string().transform(v=> parseFloat(v)/100)
   }))

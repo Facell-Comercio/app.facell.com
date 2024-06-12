@@ -1,4 +1,3 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
@@ -17,33 +16,6 @@ export type RowCentroCustos = {
 const openModal = useStoreCentroCustos.getState().openModal;
 
 export const columnsTable: ColumnDef<RowCentroCustos>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="px-1">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        />
-      </div>
-    ),
-    enableSorting: false,
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          {...{
-            checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            indeterminate: row.getIsSomeSelected().toString(),
-            onCheckedChange: row.getToggleSelectedHandler(),
-          }}
-        />
-      </div>
-    ),
-  },
   {
     accessorKey: "id",
     header: "ID",

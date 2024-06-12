@@ -47,6 +47,8 @@ const FormBordero = ({
   const { mutate: insertOne } = useBordero().insertOne();
   const { mutate: update } = useBordero().update();
   const { mutate: deleteVencimento } = useBordero().deleteVencimento();
+  const { mutate: downloadRemessa, isPending: isLoadingDownload } =
+    useBordero().downloadRemessa();
 
   const modalEditing = useStoreBordero().modalEditing;
   const editModal = useStoreBordero().editModal;
@@ -86,7 +88,7 @@ const FormBordero = ({
       ),
     };
     if (!id) insertOne(newData);
-    console.log(filteredData);
+    // console.log(filteredData);
 
     if (id) update(filteredData);
 
@@ -150,20 +152,6 @@ const FormBordero = ({
     setExporting("");
   }
 
-  async function exportRemessa(id: string) {
-    setExporting("remessa");
-    setTimeout(() => {
-      setExporting("");
-    }, 4000);
-
-    return;
-    const response = await api.put(
-      `/financeiro/contas-a-pagar/bordero/export-remessa`,
-      { data: [id] }
-    );
-    exportToExcel(response.data, `bordero-${id}`);
-  }
-
   // const data_pagamento = form.watch("data_pagamento");
   // console.log(form.formState.errors);
   // console.log(form.watch("vencimentos"), data.vencimentos);
@@ -190,12 +178,12 @@ const FormBordero = ({
                 {id && (
                   <div className="flex gap-3 items-center">
                     <Button
-                      disabled={!!exporting}
+                      disabled={isLoadingDownload}
                       variant={"outline"}
                       type={"button"}
-                      onClick={() => exportRemessa(id)}
+                      onClick={() => downloadRemessa(id)}
                     >
-                      {exporting == "remessa" ? (
+                      {isLoadingDownload ? (
                         <FaSpinner size={18} className="me-2 animate-spin" />
                       ) : (
                         <Download className="me-2" size={20} />
@@ -228,6 +216,7 @@ const FormBordero = ({
                     readOnly
                     disabled={!modalEditing}
                     onClick={() => setModalContaBancariaOpen(true)}
+                    placeholder="Selecione a conta bancária"
                   />
                 </div>
                 <ModalContasBancarias
@@ -245,6 +234,7 @@ const FormBordero = ({
                     className="flex-1 max-h-10 mt-2"
                     readOnly
                     disabled={!modalEditing}
+                    placeholder="Defina a conta bancária"
                   />
                 </div>
                 <FormDateInput

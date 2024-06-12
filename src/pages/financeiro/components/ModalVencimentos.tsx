@@ -37,6 +37,7 @@ interface IModalVencimentos {
 
 export type VencimentosProps = {
   checked?: boolean;
+  id?: string;
   id_vencimento: string;
   id_titulo: string;
   id_status?: string;
@@ -44,10 +45,12 @@ export type VencimentosProps = {
   previsao: string;
   nome_fornecedor: string;
   valor_total: string;
+  valor_pago?: string;
   num_doc: string;
   descricao: string;
   filial: string;
   data_pagamento?: string;
+  can_remove?: boolean;
 };
 
 interface Filters {
@@ -125,7 +128,6 @@ const ModalVencimentos = ({
           descricao: inputsRef.current["descricao"]?.value || "",
           num_doc: inputsRef.current["num_doc"]?.value || "",
         }));
-        console.log(filters);
       }
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
@@ -146,7 +148,6 @@ const ModalVencimentos = ({
     });
     refetch();
   }
-  console.log(filters);
 
   function handleRemoveAll() {
     setTitulos([]);
@@ -252,17 +253,17 @@ const ModalVencimentos = ({
       </div>
     );
   };
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
 
   if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
-  const [itemOpen, setItemOpen] = useState<string>("item-1");
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex flex-col sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Vencimentos a pagar COPY</DialogTitle>
+          <DialogTitle>Vencimentos a pagar</DialogTitle>
           <DialogDescription>
             Selecione ao clicar no botão à direita.
           </DialogDescription>
@@ -291,8 +292,8 @@ const ModalVencimentos = ({
                 <span className="">Filtros</span>
               </AccordionTrigger>
               <AccordionContent className="p-0 pt-3">
-                <ScrollArea className="whitespace-nowrap rounded-md pb-4">
-                  <div className="flex w-max space-x-4">
+                <ScrollArea className="whitespace-nowrap rounded-md pb-1 flex flex-wrap w-max max-w-full  ">
+                  <div className="flex gap-1 sm:gap-2 w-max">
                     <Input
                       placeholder="ID Vencimento"
                       className="w-[20ch]"
@@ -368,30 +369,32 @@ const ModalVencimentos = ({
                       "bg-secondary/50 text-secondary-foreground/40"
                     }`}
                   >
-                    <td className="text-xs p-1 text-center">
+                    <td className="text-xs text-nowrap p-1 text-center">
                       {" "}
                       {item.id_vencimento}
                     </td>
-                    <td className="text-xs p-1 text-center">
+                    <td className="text-xs text-nowrap p-1 text-center">
                       {" "}
                       {item.id_titulo}
                     </td>
-                    <td className="text-xs p-1">
+                    <td className="text-xs text-nowrap p-1">
                       {item.nome_fornecedor.slice(0, 20) +
                         (item.nome_fornecedor.length > 20 ? "..." : "")}
                     </td>
-                    <td className="text-xs p-1">
+                    <td className="text-xs text-nowrap p-1">
                       {item.descricao.slice(0, 30) +
                         (item.descricao.length > 30 ? "..." : "")}
                     </td>
-                    <td className="text-xs p-1 text-center">
+                    <td className="text-xs text-nowrap p-1 text-center">
                       {normalizeDate(item.previsao)}
                     </td>
-                    <td className="text-xs p-1 text-center">{item.num_doc}</td>
-                    <td className="text-xs p-1">
+                    <td className="text-xs text-nowrap p-1 text-center">
+                      {item.num_doc}
+                    </td>
+                    <td className="text-xs text-nowrap p-1">
                       {normalizeCurrency(item.valor_total)}
                     </td>
-                    <td className="text-xs p-1">{item.filial}</td>
+                    <td className="text-xs text-nowrap p-1">{item.filial}</td>
                     <td className="text-center p-1">
                       <Button
                         size={"xs"}

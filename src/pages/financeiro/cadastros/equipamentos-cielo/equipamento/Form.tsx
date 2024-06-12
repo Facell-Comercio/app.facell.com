@@ -4,6 +4,7 @@ import SelectFilial from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
 import { useEquipamentos } from "@/hooks/financeiro/useEquipamentos";
 import { Contact } from "lucide-react";
+import { useEffect } from "react";
 import { EquipamentoSchema } from "./Modal";
 import { useFormEquipamentoData } from "./form-data";
 import { useStoreEquipamento } from "./store";
@@ -17,24 +18,49 @@ const FormEquipamento = ({
   data: EquipamentoSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - Equipamento:", id);
-  const { mutate: insertOne } = useEquipamentos().insertOne();
-  const { mutate: update } = useEquipamentos().update();
-  const modalEditing = useStoreEquipamento().modalEditing;
-  const editModal = useStoreEquipamento().editModal;
-  const closeModal = useStoreEquipamento().closeModal;
+  const {
+    mutate: insertOne,
+    isPending: insertIsPending,
+    isSuccess: insertIsSuccess,
+    isError: insertIsError,
+  } = useEquipamentos().insertOne();
+  const {
+    mutate: update,
+    isPending: updateIsPending,
+    isSuccess: updateIsSuccess,
+    isError: updateIsError,
+  } = useEquipamentos().update();
+
+  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
+    useStoreEquipamento((state) => [
+      state.modalEditing,
+      state.editModal,
+      state.closeModal,
+      state.editIsPending,
+      state.isPending,
+    ]);
   const { form } = useFormEquipamentoData(data);
 
   const onSubmitData = (data: EquipamentoSchema) => {
-    console.log(data);
+    // console.log(data);
 
-    if (id) update(data);
-    if (!id) insertOne(data);
-
-    editModal(false);
-    closeModal();
+    id && update(data);
+    !id && insertOne(data);
   };
 
+  useEffect(() => {
+    if (updateIsSuccess || insertIsSuccess) {
+      editModal(false);
+      closeModal();
+      editIsPending(false);
+    } else if (updateIsError || insertIsError) {
+      editIsPending(false);
+    } else if (updateIsPending || insertIsPending) {
+      editIsPending(true);
+    }
+  }, [updateIsPending, insertIsPending]);
+
+  // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
 
   return (
@@ -54,7 +80,7 @@ const FormEquipamento = ({
                   </div>
                   <FormSwitch
                     name="active"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Ativo"
                     control={form.control}
                   />
@@ -64,21 +90,21 @@ const FormEquipamento = ({
                   <SelectFilial
                     className="min-w-32"
                     name="id_filial"
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     label="Filial"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[20ch]"
                     name="estabelecimento"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Estabelecimento"
                     control={form.control}
                   />
                   <FormInput
                     className="flex-1 min-w-[20ch]"
                     name="num_maquina"
-                    readOnly={!modalEditing}
+                    readOnly={!modalEditing || isPending}
                     label="Número da Máquina"
                     control={form.control}
                   />

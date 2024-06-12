@@ -8,7 +8,6 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableEquipamentos } from "./table/store-table";
 
 const EquipamentosCielo = () => {
-  console.log("RENDER - Section-Titulos");
   const [pagination, setPagination, filters] = useStoreTableEquipamentos(
     (state) => [state.pagination, state.setPagination, state.filters]
   );

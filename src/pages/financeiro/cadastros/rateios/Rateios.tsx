@@ -7,7 +7,6 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableRateios } from "./table/store-table";
 
 const Rateios = () => {
-  console.log("RENDER - Section-Rateios");
   const [pagination, setPagination, filters] = useStoreTableRateios((state) => [
     state.pagination,
     state.setPagination,
