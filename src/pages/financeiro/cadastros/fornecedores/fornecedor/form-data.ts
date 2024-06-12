@@ -86,17 +86,38 @@ const schemaFornecedor = z
       message: "Obrigatório para esta forma de pagamento.",
     }
   )
-
+  .refine(
+    (data) =>
+      checkIsPIX(data.id_forma_pagamento) &&
+      String(data.id_tipo_chave_pix) === "1"
+        ? String(data.chave_pix).length === 36 &&
+          data.chave_pix?.split("-").length === 5
+        : true,
+    {
+      path: ["chave_pix"],
+      message: "Formato de chave inválido",
+    }
+  )
+  .refine(
+    (data) =>
+      checkIsPIX(data.id_forma_pagamento) &&
+      String(data.id_tipo_chave_pix) === "2"
+        ? String(data.chave_pix).length < 77
+        : true,
+    {
+      path: ["chave_pix"],
+      message: "Tamanho da chave acima do permitido (77 caracteres)",
+    }
+  )
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) &&
       String(data.id_tipo_chave_pix) === "3"
-        ? String(normalizeNumberOnly(data.chave_pix)).length <= 11 &&
-          String(normalizeNumberOnly(data.chave_pix)).length >= 10
+        ? String(normalizeNumberOnly(data.chave_pix)).length === 11
         : true,
     {
       path: ["chave_pix"],
-      message: "Formato de chave inválido - (00) 9999-9999",
+      message: "Formato de chave inválido - (00) 98888-8888",
     }
   )
   .refine(

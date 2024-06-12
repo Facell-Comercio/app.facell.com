@@ -78,7 +78,7 @@ const FormFornecedor = ({
     } catch (error) {
       // @ts-expect-error "Vai funcionar"
       const errorMessage = error.response?.data.message || error.message;
-      console.log(errorMessage);
+      // console.log(errorMessage);
       toast({
         title: "Erro na consulta do fornecedor",
         description: errorMessage,
@@ -125,8 +125,14 @@ const FormFornecedor = ({
   };
 
   function placeholderChavePix(tipoChavePix: string | number): string {
+    if (String(tipoChavePix) === "1") {
+      return "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX";
+    }
+    if (String(tipoChavePix) === "2") {
+      return "exemplo@exemplo.com.br";
+    }
     if (String(tipoChavePix) === "3") {
-      return "(00) 9999-9999";
+      return "(00) 98888-8888";
     }
     if (String(tipoChavePix) === "4") {
       return "111.222.333-44";
@@ -144,7 +150,7 @@ const FormFornecedor = ({
     if (String(tipoChavePix) === "4" || String(tipoChavePix) === "5") {
       return normalizeCnpjNumber;
     }
-    return () => null;
+    return (tipoChavePix: string | number) => tipoChavePix;
   }
 
   useEffect(() => {
