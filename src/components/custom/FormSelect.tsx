@@ -98,19 +98,26 @@ const FormSelect = ({
     );
   }
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent>
-        {showAll && <SelectItem value="all">TODOS</SelectItem>}
-        {options?.map((item: Toption) => (
-          <SelectItem className="text-left" key={item.value} value={item.value}>
-            {item.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="flex flex-col space-y-2">
+      {label && <label className="text-sm font-medium">{label}</label>}
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className={`w-[180px] ${className}`}>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {showAll && <SelectItem value="all">TODOS</SelectItem>}
+          {options?.map((item: Toption) => (
+            <SelectItem
+              className="text-left"
+              key={item.value}
+              value={item.value}
+            >
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
 

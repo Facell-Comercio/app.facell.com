@@ -97,7 +97,7 @@ const ModalContasBancarias = ({
           descricao: inputsRef.current["descricao"]?.value || "",
           banco: inputsRef.current["banco"]?.value || "",
         }));
-        console.log(filters);
+        // console.log(filters);
       }
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
@@ -205,7 +205,9 @@ const ModalContasBancarias = ({
         >
           {data?.data?.rows.map(
             (item: ItemContaBancariaProps, index: number) => (
-              <ModalComponentRow key={"contasBancariasRow:" + item.id + index}>
+              <ModalComponentRow
+                key={`contasBancariasRow: ${item.id} ${index}`}
+              >
                 <>
                   <span>
                     {item.grupo_economico && item.grupo_economico.toUpperCase()}{" "}

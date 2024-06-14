@@ -26,7 +26,7 @@ interface UseStoreRecorrencias {
   ) => void;
   closeModalEditRecorrencia: () => void;
 
-  openModal: (id: string) => void;
+  openModal: () => void;
   closeModal: () => void;
   toggleModal: () => void;
 
@@ -43,7 +43,7 @@ export const useStoreRecorrencias = create<UseStoreRecorrencias>((set) => ({
   data_vencimento: undefined,
   valor: undefined,
 
-  openModal: (id: string) => set({ modalOpen: true, id }),
+  openModal: () => set({ modalOpen: true }),
   closeModal: () => set({ modalOpen: false }),
   toggleModal: () =>
     set((state) => ({

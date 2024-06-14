@@ -1,5 +1,7 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { usePainel } from "@/hooks/financeiro/usePainel";
+import ModalRecorrencias from "../titulos/recorrencias/Modal";
+import { useStoreRecorrencias } from "../titulos/recorrencias/store";
 import ModalTituloPagar from "../titulos/titulo/Modal";
 import { ItemPainel } from "./components/ItemPainel";
 import {
@@ -25,6 +27,8 @@ export const PainelContasPagar = () => {
     state.setPaginationSemNota,
     state.setPaginationRecorrencias,
   ]);
+
+  const openModalRecorrencias = useStoreRecorrencias().openModal;
 
   const { data: dataSemNota, isLoading: isLoadingSemNota } =
     usePainel().getAllNotasFiscaisPendentes({
@@ -72,7 +76,12 @@ export const PainelContasPagar = () => {
           isLoading={isLoadingSemNota}
         />
       </ItemPainel>
-      <ItemPainel title="Recorrências Pendentes" qtde={rowCountRecorrencias}>
+
+      <ItemPainel
+        title="Recorrências Pendentes"
+        qtde={rowCountRecorrencias}
+        fn={openModalRecorrencias}
+      >
         <DataTable
           pagination={paginationRecorrencias}
           setPagination={setPaginationRecorrencias}
@@ -83,6 +92,7 @@ export const PainelContasPagar = () => {
         />
       </ItemPainel>
       <ModalTituloPagar />
+      <ModalRecorrencias />
     </div>
   ) : (
     <div className="mt-36 h-full col-span-2 w-full flex items-center justify-center text-xs">

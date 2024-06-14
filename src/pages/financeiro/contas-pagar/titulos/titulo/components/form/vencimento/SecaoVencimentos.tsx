@@ -62,10 +62,10 @@ const SecaoVencimentos = ({
                 <>
                   <Button
                     onClick={() => {
-                      // @ts-ignore
                       updateVencimento({
                         index,
-                        vencimento: wvencimentos[index],
+                        // @ts-ignore
+                        vencimento: wvencimentos[index] || [],
                       });
                     }}
                     type="button"
@@ -90,7 +90,7 @@ const SecaoVencimentos = ({
             </div>
           );
         },
-        size: 80,
+        size: 100,
       },
       {
         accessorKey: "data_vencimento",
@@ -99,12 +99,12 @@ const SecaoVencimentos = ({
           let value = formatDate(info.getValue<Date>(), "dd/MM/yyyy");
           return <div className="w-full text-center">{value}</div>;
         },
-        size: 80,
+        size: 100,
       },
       {
         accessorKey: "data_prevista",
         header: "PREVISÃO",
-        size: 80,
+        size: 100,
         cell: (info) => {
           let value = formatDate(info.getValue<Date>(), "dd/MM/yyyy");
           return <div className="w-full text-center">{value}</div>;
@@ -123,7 +123,7 @@ const SecaoVencimentos = ({
       {
         accessorKey: "linha_digitavel",
         header: "LINHA DIGITÁVEL",
-        size: 400,
+        size: 430,
       },
     ],
     [wvencimentos, canEditVencimentos]
@@ -149,7 +149,7 @@ const SecaoVencimentos = ({
           </div>
         )}
       </div>
-      <div className="flex gap-3">
+      <div className="flex w-full gap-3">
         <DataVirtualTableHeaderFixed
           data={wvencimentos}
           // @ts-ignore

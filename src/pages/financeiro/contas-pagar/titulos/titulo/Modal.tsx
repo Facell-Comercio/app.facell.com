@@ -7,7 +7,6 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
-import { useRef } from "react";
 import FormTituloPagar from "./Form";
 import { TituloSchemaProps } from "./form-data";
 import { calcularDataPrevisaoPagamento } from "./helpers/helper";
@@ -29,13 +28,14 @@ const ModalTituloPagar = () => {
   const closeModal = useStoreTitulo().closeModal;
   const id = useStoreTitulo().id;
   const recorrencia = useStoreTitulo().recorrencia;
-  const formRef = useRef(null);
+  // const formRef = useRef(null);
 
   const { data, isLoading } = useTituloPagar().getOne(id);
 
   const titulo = data?.data.titulo;
   let vencimentos = data?.data.vencimentos || [];
   const itens_rateio = data?.data.itens_rateio;
+
   const historico = data?.data.historico;
 
   if (titulo && itens_rateio && historico) {
@@ -79,12 +79,9 @@ const ModalTituloPagar = () => {
         } else if (typeof objeto[propriedade] === "number") {
           objeto[propriedade] = objeto[propriedade].toString();
         }
+
         if (propriedade == "valor") {
-          objeto[propriedade] =
-            (
-              (parseFloat(objeto["percentual"]) / 100) *
-              parseFloat(recorrencia?.valor || "0")
-            ).toFixed(2) || "0";
+          objeto[propriedade] = parseFloat(objeto[propriedade]).toFixed(2);
         }
       });
     });
@@ -124,6 +121,7 @@ const ModalTituloPagar = () => {
       ),
       vencimentos,
       itens_rateio,
+      id_departamento: "",
       id_recorrencia: recorrencia.id,
       created_at: undefined,
     };
@@ -144,7 +142,7 @@ const ModalTituloPagar = () => {
             <FormTituloPagar
               id={!!id && !recorrencia ? id : ""}
               data={modalData}
-              formRef={formRef}
+              // formRef={formRef}
             />
           ) : (
             <ScrollArea>

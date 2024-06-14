@@ -34,7 +34,6 @@ const FormConciliacaoCP = ({
   data: ConciliacaoCPSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - ConciliacaoCPs:", id);
   const {
     mutate: conciliacaoManual,
     isPending,
@@ -70,8 +69,6 @@ const FormConciliacaoCP = ({
   const totalTransacoes = parseFloat(
     transacoes.reduce((acc, val) => acc + parseFloat(val.valor), 0).toFixed(2)
   );
-
-  console.log(totalVencimentos, totalTransacoes);
 
   function onSubmitData(newData: ConciliacaoCPSchemaProps) {
     if (totalVencimentos !== totalTransacoes) {

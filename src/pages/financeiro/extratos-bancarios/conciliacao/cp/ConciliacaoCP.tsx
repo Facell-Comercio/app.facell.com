@@ -42,7 +42,6 @@ import { columnsTable } from "./tables/columns";
 import { useStoreTableConciliacaoCP } from "./tables/store-tables";
 
 const ConciliacaoCP = () => {
-  console.log("RENDER - Section ConciliacaoCP");
   const [
     filters,
     rowVencimentosSelection,

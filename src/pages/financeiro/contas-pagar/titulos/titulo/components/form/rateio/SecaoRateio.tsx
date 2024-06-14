@@ -72,9 +72,9 @@ const SecaoRateio = ({
                 <>
                   <Button
                     onClick={() => {
-                      // @ts-ignore
                       updateItemRateio({
                         index,
+                        // @ts-ignore
                         itemRateio: witens_rateio[index],
                       });
                     }}
@@ -100,7 +100,7 @@ const SecaoRateio = ({
             </div>
           );
         },
-        size: 80,
+        size: 100,
       },
       {
         accessorKey: "filial",
@@ -128,6 +128,7 @@ const SecaoRateio = ({
         cell: (info) => {
           let valor = parseFloat(info.getValue<string>());
           let currency = normalizeCurrency(valor);
+
           return <div className={`w-full  px-2 text-end`}>{currency}</div>;
         },
       },
@@ -319,14 +320,13 @@ const SecaoRateio = ({
                 });
               }
             } catch (error) {
+              const errorMessage =
+                // @ts-expect-error "Vai funcionar"
+                error.response?.data.message || error.message;
               toast({
                 variant: "destructive",
                 title: "Erro ao tentar importar",
-                // @ts-ignore
-                description:
-                  error?.response?.data?.message ||
-                  error?.message ||
-                  "Erro desconhecido",
+                description: errorMessage || "Erro desconhecido",
               });
               return;
             }
@@ -404,7 +404,7 @@ const SecaoRateio = ({
       <div className="flex justify-between items-baseline mt-3">
         <span className="text-md font-medium">Itens do rateio</span>
       </div>
-      <div className="flex flex-col w-full gap-3 mt-3 max-w-screen-md">
+      <div className="flex flex-col w-full gap-3 mt-3 ">
         <DataVirtualTableHeaderFixed
           data={witens_rateio}
           // @ts-ignore

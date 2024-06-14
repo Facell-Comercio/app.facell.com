@@ -1,4 +1,5 @@
 import { normalizeNumberOnly } from "@/helpers/mask";
+import { checkEmail } from "@/helpers/validator";
 import {
   checkIsPIX,
   checkIsTransferenciaBancaria,
@@ -96,6 +97,17 @@ const schemaFornecedor = z
     {
       path: ["chave_pix"],
       message: "Formato de chave inválido",
+    }
+  )
+  .refine(
+    (data) =>
+      checkIsPIX(data.id_forma_pagamento) &&
+      String(data.id_tipo_chave_pix) === "2"
+        ? checkEmail(String(data.chave_pix))
+        : true,
+    {
+      path: ["chave_pix"],
+      message: "Formatação de email incorreta",
     }
   )
   .refine(

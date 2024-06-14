@@ -17,8 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useStoreTablePagar } from "./table/store-table";
 import { useState } from "react";
+import { useStoreTablePagar } from "./table/store-table";
 
 const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTablePagar((state) => state.filters);
@@ -35,14 +35,14 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
     refetch();
   };
 
-  const [itemOpen, setItemOpen] = useState<string>('item-1')
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
 
   return (
     <Accordion
       type="single"
       collapsible
       value={itemOpen}
-      onValueChange={(e)=>setItemOpen(e)}
+      onValueChange={(e) => setItemOpen(e)}
       className="p-2 border dark:border-slate-800 rounded-lg "
     >
       <AccordionItem value="item-1" className="relative border-0">
@@ -94,8 +94,8 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                   <SelectItem value="1">Solicitado</SelectItem>
                   <SelectItem value="2">Negado</SelectItem>
                   <SelectItem value="3">Aprovado</SelectItem>
-                  <SelectItem value="4">Pago</SelectItem>
-                  <SelectItem value="5">Cancelado</SelectItem>
+                  <SelectItem value="4">Pago Parcial</SelectItem>
+                  <SelectItem value="5">Pago</SelectItem>
                 </SelectContent>
               </Select>
 

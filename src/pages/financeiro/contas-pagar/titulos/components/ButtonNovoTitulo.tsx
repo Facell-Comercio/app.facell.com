@@ -10,7 +10,11 @@ const ButtonNovoTitulo = () => {
 
   return (
     <span
-      title={qtdPendencias > 0 ? `Você possui ${qtdPendencias} pendências` : ""}
+      title={
+        qtdPendencias > 0
+          ? `Você possui ${qtdPendencias} notas fiscais pendentes de envio`
+          : ""
+      }
     >
       <Button
         variant={"outline"}

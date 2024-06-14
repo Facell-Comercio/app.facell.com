@@ -48,10 +48,13 @@ export const DataVirtualTableHeaderFixed = ({ data, columns }: TableProps) => {
 
   return (
     <div className="flex flex-col gap-3 overflow-hidden">
-      <div className="rounded-lg overflow-auto scroll-thin">
-        <div ref={parentRef} className={`h-[200px] overflow-auto relative`}>
+      <div className="rounded-lg overflow-auto scroll-thin w-full">
+        <div
+          ref={parentRef}
+          className={`h-[200px] overflow-auto relative min-w-full`}
+        >
           <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-            <table className="grid text-nowrap text-xs">
+            <table className="grid text-nowrap text-xs w-full">
               <thead className="grid sticky top-0 z-10 border bg-slate-300 dark:bg-gray-900">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr className="flex w-full" key={headerGroup.id}>

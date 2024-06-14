@@ -24,6 +24,7 @@ import ModalFornecedores, {
   ItemFornecedor,
 } from "@/pages/financeiro/components/ModalFornecedores";
 
+import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -49,7 +50,7 @@ import {
   Undo2,
   X,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useWatch } from "react-hook-form";
 import { FaSpinner } from "react-icons/fa6";
 import { TbCurrencyReal } from "react-icons/tb";
@@ -65,7 +66,7 @@ const FormTituloPagar = ({
 }: {
   id: string | null | undefined;
   data: TituloSchemaProps;
-  formRef: React.MutableRefObject<HTMLFormElement | null>;
+  // formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   const queryClient = useQueryClient();
 
@@ -81,6 +82,7 @@ const FormTituloPagar = ({
       update_vencimentos: false,
       update_rateio: false,
     } || initialPropsTitulo;
+  // console.log(titulo);
 
   // * [ VERIFICAÇÕES ]
   const status = titulo?.status || "";
@@ -92,7 +94,8 @@ const FormTituloPagar = ({
     (isMaster &&
       status !== "Aprovado" &&
       status !== "Negado" &&
-      status !== "Pago");
+      status !== "Pago" &&
+      status !== "Pago Parcial");
 
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
@@ -104,7 +107,10 @@ const FormTituloPagar = ({
     setValue,
     formState: { errors },
   } = form;
-  // console.log("ERROS_TITULO:", errors);
+  // console.log(
+  //   "ERROS_TITULO:",
+  //   errors,
+  // );
 
   // * [ WATCHES ]
   // const wfull = form.watch();
@@ -381,7 +387,7 @@ const FormTituloPagar = ({
             )}
 
             <ScrollArea className="flex-1 overflow-auto sm:pe-3">
-              <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 ">
+              <div className="w-full grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 ">
                 {/* Primeira coluna */}
                 <div className="flex flex-col flex-wrap gap-3 flex-shrink-0 flex-grow-0">
                   {/* Dados do Fornecedor */}
@@ -392,7 +398,7 @@ const FormTituloPagar = ({
                       <div>
                         {errors.id_fornecedor?.message && (
                           <Badge variant={"destructive"}>
-                            {errors.id_fornecedor?.message}
+                            {errors.id_fornecedor?.message || ""}
                           </Badge>
                         )}
                       </div>
@@ -438,7 +444,7 @@ const FormTituloPagar = ({
                           name="id_tipo_chave_pix"
                           label="Tipo Chave PIX"
                           disabled={disabled}
-                          className="flex-1"
+                          className="flex-1 min-w-[20ch]"
                         />
 
                         <FormInput
@@ -446,7 +452,7 @@ const FormTituloPagar = ({
                           name="chave_pix"
                           control={form.control}
                           readOnly={readOnly}
-                          className="flex-1"
+                          className="flex-1 min-w-[20ch]"
                         />
                       </div>
                       {/* Dados bancários do fornecedor */}
@@ -571,6 +577,15 @@ const FormTituloPagar = ({
                             placeholder="SELECIONE A FILIAL"
                             control={form.control}
                             inputClass="sm:min-w-[350px]"
+                          />
+                        </span>
+                        <span className="lg:col-span-2 min-w-[20ch]">
+                          <SelectUserDepartamento
+                            label="Departamento"
+                            name="id_departamento"
+                            disabled={disabled}
+                            className="flex-1 w-full min-w-[20ch]"
+                            form={form}
                           />
                         </span>
                       </div>
@@ -708,7 +723,7 @@ const FormTituloPagar = ({
                 </div>
 
                 {/* Segunda coluna */}
-                <div className="max-w-full lg:max-w-[300px] flex shrink-0 flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
+                <div className="max-w-full flex-1 lg:max-w-[300px] flex shrink-0 flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
                   {/* Anexos */}
                   <div className="flex gap-2 font-bold mb-3">
                     <FileIcon /> <span>Anexos</span>
@@ -791,6 +806,7 @@ const FormTituloPagar = ({
                   {id &&
                     status !== "Solicitado" &&
                     status !== "Pago" &&
+                    status !== "Pago Parcial" &&
                     (isMaster === true &&
                     (status === "Aprovado" || status === "Negado")
                       ? true
@@ -807,7 +823,8 @@ const FormTituloPagar = ({
                   {isMaster &&
                     id &&
                     status !== "Negado" &&
-                    status !== "Pago" && (
+                    status !== "Pago" &&
+                    status !== "Pago Parcial" && (
                       <ButtonMotivation
                         variant={"destructive"}
                         size={"lg"}
@@ -820,7 +837,8 @@ const FormTituloPagar = ({
                   {isMaster &&
                     id &&
                     status !== "Aprovado" &&
-                    status !== "Pago" && (
+                    status !== "Pago" &&
+                    status !== "Pago Parcial" && (
                       <Button
                         type="button"
                         variant={"success"}

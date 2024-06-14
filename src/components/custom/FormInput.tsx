@@ -96,7 +96,7 @@ const FormInput = ({
                   value={
                     typeof fnMask === "function"
                       ? fnMask(field.value)
-                      : field.value
+                      : field.value || ""
                   }
                   placeholder={placeholder}
                   readOnly={readOnly}
