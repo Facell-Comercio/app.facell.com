@@ -436,7 +436,7 @@ const FormTituloPagar = ({
                       />
                       <div
                         className={`${
-                          showPix ? "flex flex-1" : "hidden"
+                          showPix ? "flex w-full" : "hidden"
                         } gap-3 flex-wrap`}
                       >
                         <SelectTipoChavePix

@@ -35,6 +35,7 @@ export const initialPropsTitulo: TituloSchemaProps = {
   id_tipo_solicitacao: "1",
   id_status: "1",
   id_forma_pagamento: "1",
+  id_departamento: "",
 
   num_doc: "",
 
@@ -103,10 +104,14 @@ interface useStoreTitulo {
   titulo: TituloSchemaProps;
   modalEditing: boolean;
   modalOpen: boolean;
+  modalAlteracaoLoteOpen: boolean;
 
   openModal: (id: string, recorrencia?: RecorrenciaProps) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
+
+  openAlteracaoLoteModal: () => void;
+  closeAlteracaoLoteModal: () => void;
 }
 
 export const useStoreTitulo = create<useStoreTitulo>((set) => ({
@@ -115,6 +120,7 @@ export const useStoreTitulo = create<useStoreTitulo>((set) => ({
   titulo: initialPropsTitulo,
   modalEditing: false,
   modalOpen: false,
+  modalAlteracaoLoteOpen: false,
 
   openModal: (id: string, recorrencia?: RecorrenciaProps) =>
     recorrencia
@@ -127,6 +133,9 @@ export const useStoreTitulo = create<useStoreTitulo>((set) => ({
       : set({ modalOpen: true, id: id, modalEditing: !id ? true : false }),
   closeModal: () => set({ modalOpen: false, recorrencia: undefined }),
   editModal: (bool) => set({ modalEditing: bool }),
+
+  openAlteracaoLoteModal: () => set({ modalAlteracaoLoteOpen: true }),
+  closeAlteracaoLoteModal: () => set({ modalAlteracaoLoteOpen: false }),
 }));
 
 // interface useStoreTitulo {

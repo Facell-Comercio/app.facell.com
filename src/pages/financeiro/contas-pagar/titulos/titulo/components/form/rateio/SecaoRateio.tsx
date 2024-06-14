@@ -167,8 +167,8 @@ const SecaoRateio = ({
           if (novoRateio.manual) {
             novos_itens.push({
               id: new Date().getTime().toString(),
-              id_filial: `${id_filial}`,
-              filial: nome_filial,
+              id_filial: "",
+              filial: "",
               id_centro_custo: "",
               centro_custo: "",
               id_plano_conta: "",
