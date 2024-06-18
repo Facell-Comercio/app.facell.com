@@ -57,7 +57,7 @@ import { TbCurrencyReal } from "react-icons/tb";
 import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
-import { formatarHistorico } from "./helpers/helper";
+import { checkIsPIX, checkIsTransferenciaBancaria, formatarHistorico } from "./helpers/helper";
 import { initialPropsTitulo, useStoreTitulo } from "./store";
 
 const FormTituloPagar = ({
@@ -200,11 +200,8 @@ const FormTituloPagar = ({
   }
 
   // * [ FORMA DE PAGAMENTO ]
-  const showPix = id_forma_pagamento === "4";
-  const showDadosBancarios =
-    id_forma_pagamento === "2" ||
-    id_forma_pagamento === "5" ||
-    id_forma_pagamento === "8";
+  const showPix = checkIsPIX(id_forma_pagamento);
+  const showDadosBancarios = checkIsTransferenciaBancaria(id_forma_pagamento);
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
   const [isSubmtting, setIsSubmitting] = useState<boolean>(false);
