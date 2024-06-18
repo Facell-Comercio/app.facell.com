@@ -6,19 +6,28 @@ import { Input } from "@/components/ui/input";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
 import SelectMes from "@/components/custom/SelectMes";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
 import { useOrcamento } from "@/hooks/financeiro/useOrcamento";
 import { api } from "@/lib/axios";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { Download, Eye, ListPlus, Plus, Search, Upload } from "lucide-react";
+import {
+  Download,
+  Eye,
+  ListPlus,
+  Plus,
+  Search,
+  Trash,
+  Upload,
+} from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { dataFormatada } from "./Modal";
 import ModalInsert from "./ModalInsert";
 import ModalMultiInsert from "./ModalMultiInsert";
-import RowVirtualizerFixed from "./RowVirtualizedFixed";
+import RowVirtualizerFixed, { itemContaProps } from "./RowVirtualizedFixed";
 import { cadastroSchemaProps, useFormCadastroData } from "./form-data";
 import { useStoreCadastro } from "./store";
 
@@ -72,13 +81,23 @@ const FormCadastro = ({
   ]);
 
   const { form } = useFormCadastroData(data);
+
   const {
     fields: contas,
     append: appendConta,
     remove: removeConta,
     update: updateConta,
+    replace: replaceContas,
   } = useFieldArray({ control: form.control, name: "contas" });
   const wContas = useWatch({ name: "contas", control: form.control });
+  const isAllChecked = useMemo(
+    () => wContas.every((conta) => conta.checked),
+    [wContas]
+  );
+  const isSomeChecked = useMemo(
+    () => wContas.some((conta) => conta.checked),
+    [wContas]
+  );
 
   const [filter, setFilter] = useState("");
   const [refDate, setRefDate] = useState({
@@ -122,9 +141,11 @@ const FormCadastro = ({
       contas: data.contas?.filter((conta) => {
         const hasId = conta.id_conta;
         const sameValue = conta.valor === conta.valor_inicial;
-        if (!hasId || !sameValue) return conta;
+        const sameActive = conta.active === conta.active_inicial;
+        if (!hasId || !sameValue || !sameActive) return conta;
       }),
     };
+    console.log(filteredData);
 
     if (id) {
       update(filteredData);
@@ -182,6 +203,7 @@ const FormCadastro = ({
       appendConta({
         ...newConta,
         valor: newConta.valor.toString(),
+        active: true,
       });
 
       closeInsertModal();
@@ -191,6 +213,7 @@ const FormCadastro = ({
         toast({
           title: "Erro ao realizar a inclusão",
           description: e.message,
+          variant: "destructive",
         });
       }
     }
@@ -220,6 +243,7 @@ const FormCadastro = ({
             title: "Sem grupo econômico",
             description:
               "Nenhum grupo econômico foi selecionado, antes de realizar a importação defina o grupo econômico",
+            variant: "warning",
           });
         } else if (centro_custo && plano_contas && valor) {
           try {
@@ -260,6 +284,7 @@ const FormCadastro = ({
             console.log("ERRO NA IMPORTAÇÃO ", err);
           } finally {
             toast({
+              variant: "success",
               title: "Importação realizada",
               description:
                 "As contas de mesmo grupo econômico foram importadas com sucesso",
@@ -284,6 +309,7 @@ const FormCadastro = ({
             title: "Arquivo incompleto",
             description:
               "O aquivo não pode ser importado, pois não tem todos os dados necessários",
+            variant: "warning",
           });
         }
         if (fileInputRef.current) {
@@ -291,6 +317,21 @@ const FormCadastro = ({
         }
       };
     }
+  };
+
+  const handleCheckedAll = (checked: boolean) => {
+    const newContas = wContas.map((conta) => ({
+      ...conta,
+      checked: checked,
+    }));
+    replaceContas(newContas);
+  };
+  const removeAllSelected = (checkedContas: itemContaProps[]) => {
+    const novasContas = wContas.filter((conta) => !conta.checked);
+    form.setValue("contas", novasContas);
+    checkedContas.forEach((conta) => {
+      if (conta.id_conta) deleteItemBudget(conta.id_conta);
+    });
   };
 
   const filteredContas = useMemo(() => {
@@ -370,7 +411,26 @@ const FormCadastro = ({
             </Button>
           </div>
           {id_grupo_economico && modalEditing && (
-            <span className="flex gap-2">
+            <div className="flex gap-2">
+              {isSomeChecked && (
+                <AlertPopUp
+                  title="Deseja realmente excluir as contas selecionadas?"
+                  description="Essa ação não pode ser desfeita. As contas serão excluídas definitivamente do servidor, podendo ser enviadas novamente."
+                  action={() => {
+                    removeAllSelected(wContas.filter((conta) => conta.checked));
+                  }}
+                >
+                  <Button
+                    size={"sm"}
+                    className="text-xs first-letter:flex"
+                    type="button"
+                    variant={"destructive"}
+                  >
+                    <Trash size={18} className="me-2" />
+                    Excluir Selecionados
+                  </Button>
+                </AlertPopUp>
+              )}
               <Button
                 size={"sm"}
                 className="text-xs"
@@ -392,7 +452,7 @@ const FormCadastro = ({
                 <Plus className="me-2" strokeWidth={2} size={18} />
                 Nova conta
               </Button>
-            </span>
+            </div>
           )}
         </div>
 
@@ -466,12 +526,21 @@ const FormCadastro = ({
             >
               {/* Inserção de nova conta */}
               <header
-                className={`flex gap-1 w-full mx-auto font-medium text-sm`}
+                className={`flex gap-1 w-full mx-auto font-medium text-sm pe-2`}
               >
-                <span className={`flex-1 `}>Centro de Custos</span>
-                <span className={`flex-1 w-5/12 `}>Plano de Contas</span>
-                <span className={`flex-1 `}>Valor</span>
-                {modalEditing && <span className="w-16"></span>}
+                <Checkbox
+                  className="w-6 h-6 me-1.5"
+                  checked={isAllChecked || (isSomeChecked && "indeterminate")}
+                  onCheckedChange={(e) => {
+                    handleCheckedAll(!!e.valueOf());
+                  }}
+                  disabled={!modalEditing}
+                />
+                <span className={`flex-1 ps-1`}>Centro de Custos</span>
+                <span className={`flex-1 w-5/12`}>Plano de Contas</span>
+                <span className={`flex-1`}>Valor</span>
+                <span className="w-12 p-3 me-1.5"></span>
+                {modalEditing && <span className="w-16 text-center"></span>}
               </header>
 
               <RowVirtualizerFixed
