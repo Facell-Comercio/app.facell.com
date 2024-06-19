@@ -45,6 +45,7 @@ export const useOrcamento = () => {
             title: "Sucesso",
             description: "Novo Orçamento Criado",
             duration: 3500,
+            variant: "success",
           });
           queryClient.invalidateQueries({ queryKey: ["fin_orcamento"] });
         },
@@ -72,6 +73,7 @@ export const useOrcamento = () => {
             title: "Sucesso",
             description: "Atualização Realizada",
             duration: 3500,
+            variant: "success",
           });
           queryClient.invalidateQueries({ queryKey: ["fin_orcamento"] });
         },
@@ -99,6 +101,7 @@ export const useOrcamento = () => {
             title: "Sucesso",
             description: "Atualização Realizada",
             duration: 3500,
+            variant: "success",
           });
         },
         onError(error: AxiosError) {
@@ -144,6 +147,7 @@ export const useOrcamento = () => {
             title: "Sucesso",
             description: "Tranferencia Realizada",
             duration: 3500,
+            variant: "success",
           });
 
           queryClient.invalidateQueries({ queryKey: ["fin_my_budget"] });

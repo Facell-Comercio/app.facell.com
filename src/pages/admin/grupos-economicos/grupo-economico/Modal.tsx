@@ -1,35 +1,30 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 // import { useStoreTitulo } from "./store-titulo";
 
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGrupoEconomico } from "@/hooks/useGrupoEconomico";
 import { useRef } from "react";
 import Form from "./Form";
-import { useStoreGrupoEconomico } from "./store";
 import { GrupoEconomicoFormData } from "./form-data";
-import { useGrupoEconomico } from "@/hooks/useGrupoEconomico";
+import { useStoreGrupoEconomico } from "./store";
 
 const initialProps: GrupoEconomicoFormData = {
   id: "",
-  id_matriz: '',
+  id_matriz: "",
   active: true,
-  apelido: '',
-  nome: ''
+  orcamento: true,
+  apelido: "",
+  nome: "",
 };
 
 const ModalDepartamento = () => {
-  const modalOpen = useStoreGrupoEconomico(state=>state.modalOpen);
-  const closeModal = useStoreGrupoEconomico(state=>state.closeModal);
-  const modalEditing = useStoreGrupoEconomico(state=>state.modalEditing);
-  const editModal = useStoreGrupoEconomico(state=>state.editModal);
-  const id = useStoreGrupoEconomico(state=>state.id);
+  const modalOpen = useStoreGrupoEconomico((state) => state.modalOpen);
+  const closeModal = useStoreGrupoEconomico((state) => state.closeModal);
+  const modalEditing = useStoreGrupoEconomico((state) => state.modalEditing);
+  const editModal = useStoreGrupoEconomico((state) => state.editModal);
+  const id = useStoreGrupoEconomico((state) => state.id);
   const formRef = useRef(null);
 
   const { data, isLoading } = useGrupoEconomico().getOne(id);
@@ -52,9 +47,6 @@ const ModalDepartamento = () => {
   return (
     <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{id ? `` : "Novo Grupo Econômico"}</DialogTitle>
-        </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
             <Form

@@ -3,6 +3,8 @@ import * as React from "react";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Toggle } from "@/components/ui/toggle";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Trash } from "lucide-react";
 
@@ -15,6 +17,9 @@ export interface itemContaProps {
   realizado?: string;
   valor?: string;
   valor_inicial?: string;
+  active: boolean;
+  active_inicial?: boolean;
+  checked?: boolean;
 }
 interface RowVirtualizerFixedProps {
   id: string;
@@ -38,7 +43,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
   const virtualizer = useVirtualizer({
     count,
     getScrollElement: () => parentElement.current,
-    estimateSize: () => 36,
+    estimateSize: () => 32,
     overscan: 10,
   });
 
@@ -74,7 +79,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
               // ref={virtualizer.measureElement}
               key={`${item.index} `}
               data-index={index}
-              className="flex gap-1 py-1"
+              className="flex items-center gap-1 py-1"
               style={{
                 position: "absolute",
                 top: 0,
@@ -84,26 +89,48 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
                 transform: `translateY(${item.start}px)`,
               }}
             >
+              <Checkbox
+                className="h-6 w-6 me-1.5"
+                checked={!!data[item.index].checked}
+                onCheckedChange={(value) => {
+                  form.setValue(`contas.${item.index}.checked`, !!value);
+                }}
+                disabled={!modalEditing}
+              />
               <Input
-                className="flex-1 h-8 text-xs"
+                className="flex-1 h-7 text-xs"
                 value={data[item.index].centro_custo}
                 readOnly={true}
               />
               <Input
-                className="flex-1 min-w-5/12 h-8 text-xs"
+                className="flex-1 min-w-5/12 h-7 text-xs"
                 value={data[item.index].plano_contas}
                 readOnly={true}
               />
               <Input
                 type="number"
-                className="flex-1 h-8 text-xs"
+                className="flex-1 h-7 text-xs"
                 value={data[item.index].valor}
                 onChange={(e) => {
                   form.setValue(`contas.${item.index}.valor`, e.target.value);
                 }}
                 readOnly={!modalEditing}
                 min={minValue}
+                step={"0.01"}
               />
+              <Toggle
+                variant={"check"}
+                className={`h-7 me-1.5`}
+                pressed={!!data[item.index].active}
+                onPressedChange={(value) => {
+                  form.setValue(`contas.${item.index}.active`, !!value);
+                }}
+                disabled={!modalEditing}
+              >
+                <span className="text-xs min-w-6 uppercase">
+                  {!!data[item.index].active ? "ON" : "OFF"}
+                </span>
+              </Toggle>{" "}
               <AlertPopUp
                 title="Deseja realmente excluir?"
                 description="Essa ação não pode ser desfeita. A conta será excluída definitivamente do servidor, podendo ser enviada novamente."
@@ -113,7 +140,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
                   <Button
                     type="button"
                     size={"xs"}
-                    className="w-16 h-8"
+                    className="w-16 h-7"
                     variant={"destructive"}
                   >
                     <Trash size={18} />
