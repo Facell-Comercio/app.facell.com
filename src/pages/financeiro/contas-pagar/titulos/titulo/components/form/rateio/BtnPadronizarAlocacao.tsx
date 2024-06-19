@@ -26,6 +26,7 @@ import { UseFormReturn, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { TituloSchemaProps } from "../../../form-data";
 import { ItemRateioTitulo } from "../../../store";
+import { checkIfValidateBudget } from "../../../helpers/helper";
 
 type PadronizarAlocacaoProps = {
   form: UseFormReturn<TituloSchemaProps>;
@@ -74,6 +75,7 @@ export function BtnPadronizarAlocacao({
     description?: string;
   };
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [validarOrcamento, setValidarOrcamento] = useState<boolean>(true);
 
   const itens_rateio = useWatch({
     name: "itens_rateio",
@@ -140,7 +142,12 @@ export function BtnPadronizarAlocacao({
       const result = await api.get("/financeiro/orcamento/find-account", {
         params: { ...props },
       });
+      console.log(result.data)
       const contaOrcamento = result.data;
+
+      const aplicarOrcamento = checkIfValidateBudget(contaOrcamento)
+      setValidarOrcamento(aplicarOrcamento)
+
       const valOrcamento = parseFloat(contaOrcamento.saldo);
       setSaldoOrcamento(valOrcamento);
     } catch (error) {
@@ -283,15 +290,20 @@ export function BtnPadronizarAlocacao({
                 />
               </span>
 
-              <div className="flex gap-3 text-muted-foreground">
-                <span>Saldo Orçamento</span>
-                <span>{normalizeCurrency(saldoOrcamento)}</span>
-              </div>
+              {validarOrcamento && (
+                <>
+                  <div className="flex gap-3 text-muted-foreground">
+                    <span>Saldo Orçamento</span>
+                    <span>{normalizeCurrency(saldoOrcamento)}</span>
+                  </div>
 
-              <div className="flex gap-3 text-muted-foreground">
-                <span>Será consumido</span>
-                <span>{normalizeCurrency(valorTotalItens)}</span>
-              </div>
+                  <div className="flex gap-3 text-muted-foreground">
+                    <span>Será consumido</span>
+                    <span>{normalizeCurrency(valorTotalItens)}</span>
+                  </div>
+                </>
+              )}
+
 
               <div className="flex gap-3">
                 {feedback && (

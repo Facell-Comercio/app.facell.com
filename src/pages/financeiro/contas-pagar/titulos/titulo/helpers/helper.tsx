@@ -121,3 +121,27 @@ export const formatarHistorico = (descricao: string) => {
     </span>
   );
 };
+
+type ContaOrcamento = {
+  grupoValidaOrcamento: boolean,
+  orcamentoValido?: boolean,
+  active?: boolean
+}
+export const checkIfValidateBudget = ({ grupoValidaOrcamento, orcamentoValido, active }: ContaOrcamento) => {
+  if (!grupoValidaOrcamento){
+    return false;
+  }
+  if(orcamentoValido === undefined){
+    return true
+  }
+  if(!orcamentoValido){
+    return false
+  }
+  if(active === undefined){
+    return true
+  }
+  if(!active){
+    return false
+  }
+  return true
+}
