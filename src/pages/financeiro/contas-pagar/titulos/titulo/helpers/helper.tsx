@@ -71,7 +71,7 @@ export const calcularDataPrevisaoPagamento = (data_venc: Date | string) => {
 };
 
 export const checkIsTransferenciaBancaria = (id_forma_pagamento: string) => {
-  const formasPagamentoQueExigemAgenciaConta = ["2", 2, "5", 5, "8", 8];
+  const formasPagamentoQueExigemAgenciaConta = ["2", 2, "5", 5];
   return formasPagamentoQueExigemAgenciaConta.includes(id_forma_pagamento);
 };
 
@@ -121,3 +121,27 @@ export const formatarHistorico = (descricao: string) => {
     </span>
   );
 };
+
+type ContaOrcamento = {
+  grupoValidaOrcamento: boolean,
+  orcamentoAtivo?: boolean,
+  active?: boolean
+}
+export const checkIfValidateBudget = ({ grupoValidaOrcamento, orcamentoAtivo, active }: ContaOrcamento) => {
+  if (!grupoValidaOrcamento){
+    return false;
+  }
+  if(orcamentoAtivo === undefined){
+    return true
+  }
+  if(!orcamentoAtivo){
+    return false
+  }
+  if(active === undefined){
+    return true
+  }
+  if(!active){
+    return false
+  }
+  return true
+}
