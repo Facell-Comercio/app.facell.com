@@ -183,7 +183,7 @@ export const ModalItemRateio = ({
         params: { ...props },
       });
       const contaOrcamento = result.data;
-      console.log(contaOrcamento)
+
       const aplicarOrcamento = checkIfValidateBudget(contaOrcamento)
       setValidarOrcamento(aplicarOrcamento)
 
@@ -267,7 +267,7 @@ export const ModalItemRateio = ({
       });
       return;
     }
-    if (excedeOrcamento) {
+    if (validarOrcamento && excedeOrcamento) {
       setFeedback({
         variant: "destructive",
         title: "Orçamento excedido!",
@@ -294,14 +294,16 @@ export const ModalItemRateio = ({
     });
   }, [percentual, valor, valorOrcamento]);
 
-  const btnDisabled =
-    excedeOrcamento ||
-    excedeTotalTitulo ||
-    valorOrcamento <= 0 ||
-    !valor ||
-    valor <= 0 ||
-    !percentual ||
-    percentual <= 0;
+  const btnDisabled = validarOrcamento &&
+    (
+      excedeOrcamento ||
+      excedeTotalTitulo ||
+      valorOrcamento <= 0 ||
+      !valor ||
+      valor <= 0 ||
+      !percentual ||
+      percentual <= 0
+    );
 
   const onSubmit = (data: z.infer<typeof rateioSchema>) => {
     try {

@@ -142,7 +142,7 @@ export function BtnPadronizarAlocacao({
       const result = await api.get("/financeiro/orcamento/find-account", {
         params: { ...props },
       });
-      console.log(result.data)
+
       const contaOrcamento = result.data;
 
       const aplicarOrcamento = checkIfValidateBudget(contaOrcamento)
@@ -183,7 +183,7 @@ export function BtnPadronizarAlocacao({
       });
       return;
     }
-    if (excedeOrcamento) {
+    if (validarOrcamento && excedeOrcamento) {
       setFeedback({
         variant: "destructive",
         title: "Orçamento excedido!",
@@ -226,7 +226,7 @@ export function BtnPadronizarAlocacao({
     }
   };
 
-  const btnDisabled = saldoOrcamento < valorTotalItens;
+  const btnDisabled = validarOrcamento && (saldoOrcamento < valorTotalItens);
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
