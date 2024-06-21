@@ -59,7 +59,7 @@ const ModalButtons = ({
         </div>
       )}
       {id && modalEditing && edit && (
-        <div className="flex gap-2 items-end justify-self-end	flex-wrap">
+        <div className="flex flex-col sm:flex-row gap-2 items-end justify-self-end	flex-wrap">
           {!blockCancel && (
             <Button
               type={"button"}
@@ -101,7 +101,7 @@ const ModalButtons = ({
         </div>
       )}
       {id && !modalEditing && !blockEdit && edit && (
-        <div className="flex gap-2 items-end justify-self-end	flex-wrap">
+        <div className="flex flex-col sm:flex-row gap-2 items-end justify-self-end	flex-wrap">
           <Button
             type={"button"}
             size="lg"
@@ -115,7 +115,7 @@ const ModalButtons = ({
         </div>
       )}
       {id && !modalEditing && !edit && (
-        <div className="flex gap-2 items-end justify-self-end	flex-wrap">
+        <div className="flex flex-col sm:flex-row gap-2 items-end justify-self-end	flex-wrap">
           {!blockCancel && (
             <Button
               type={"button"}

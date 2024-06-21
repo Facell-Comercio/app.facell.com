@@ -42,15 +42,22 @@ export type VencimentosProps = {
   id_titulo: string;
   id_status?: string;
   status: string;
+  forma_pagamento?: string;
+  id_dda?: string;
+  tipo_baixa?: string;
   previsao: string;
   nome_fornecedor: string;
   valor_total: string;
   valor_pago?: string;
+  data_prevista_pagamento?: string;
   num_doc: string;
   descricao: string;
   filial: string;
+  obs?: string;
   data_pagamento?: string;
+
   can_remove?: boolean;
+  updated?: boolean;
 };
 
 interface Filters {
@@ -163,16 +170,8 @@ const ModalVencimentos = ({
         setTitulos((prevVencimentos) => [
           ...prevVencimentos,
           {
-            id_vencimento: item.id_vencimento,
-            id_titulo: item.id_titulo,
-            id_status: item.id_status,
-            status: item.status,
-            filial: item.filial,
-            previsao: item.previsao,
-            nome_fornecedor: item.nome_fornecedor,
-            valor_total: item.valor_total,
+            ...item,
             num_doc: item.num_doc || "",
-            descricao: item.descricao,
             data_pagamento: item.data_pagamento || "",
           },
         ]);
@@ -186,16 +185,8 @@ const ModalVencimentos = ({
     setTitulos([
       ...titulos,
       {
-        id_vencimento: item.id_vencimento,
-        id_titulo: item.id_titulo,
-        id_status: item.id_status,
-        status: item.status,
-        filial: item.filial,
-        previsao: item.previsao,
-        nome_fornecedor: item.nome_fornecedor,
-        valor_total: item.valor_total,
+        ...item,
         num_doc: item.num_doc || "",
-        descricao: item.descricao,
         data_pagamento: item.data_pagamento || "",
       },
     ]);

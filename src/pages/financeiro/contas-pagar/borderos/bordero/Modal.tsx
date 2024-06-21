@@ -69,20 +69,15 @@ const ModalBordero = () => {
     const newVencimento = newData.vencimentos.map(
       (vencimento: VencimentosProps) => {
         return {
-          checked: vencimento.checked,
-          id_vencimento: vencimento.id_vencimento,
-          id_titulo: vencimento.id_titulo,
-          status: vencimento.status,
+          ...vencimento,
           previsao: vencimento.previsao || "",
-          nome_fornecedor: vencimento.nome_fornecedor,
-          valor_total: vencimento.valor_total,
-          valor_pago: vencimento.valor_pago,
+          valor_pago: vencimento.valor_pago || "0",
           num_doc: vencimento.num_doc || "",
-          descricao: vencimento.descricao,
-          filial: vencimento.filial,
+          id_dda: vencimento.id_dda || "",
+          tipo_baixa: vencimento.tipo_baixa || "",
           data_pagamento: vencimento.data_pagamento || "",
           id_status: vencimento.id_status || "",
-          can_remove: vencimento.can_remove,
+          obs: vencimento.obs || "",
         };
       }
     );
@@ -135,7 +130,7 @@ const ModalBordero = () => {
         <DialogHeader>
           <DialogTitle>{id ? `Borderô: ${id}` : "Novo Borderô"}</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[70vh]">
+        <ScrollArea className="max-h-[75vh]">
           {modalOpen && !isLoading ? (
             <FormBordero
               id={id}
@@ -157,27 +152,25 @@ const ModalBordero = () => {
             cancel={handleClickCancel}
             formRef={formRef}
           >
-            <div className="flex gap-2">
-              <AlertPopUp
-                title={"Deseja realmente excluir"}
-                description="Essa ação não pode ser desfeita. O borderô será excluído definitivamente do servidor."
-                action={() => {
-                  excluirBordero();
-                }}
+            <AlertPopUp
+              title={"Deseja realmente excluir"}
+              description="Essa ação não pode ser desfeita. O borderô será excluído definitivamente do servidor."
+              action={() => {
+                excluirBordero();
+              }}
+            >
+              <Button
+                type={"button"}
+                size="lg"
+                variant={"destructive"}
+                className={`text-white justify-self-start ${
+                  !modalEditing && "hidden"
+                }`}
               >
-                <Button
-                  type={"button"}
-                  size="lg"
-                  variant={"destructive"}
-                  className={`text-white justify-self-start ${
-                    !modalEditing && "hidden"
-                  }`}
-                >
-                  <Trash className="me-2" />
-                  Excluir Borderô
-                </Button>
-              </AlertPopUp>
-            </div>
+                <Trash className="me-2" />
+                Excluir Borderô
+              </Button>
+            </AlertPopUp>
           </ModalButtons>
         </DialogFooter>
       </DialogContent>
