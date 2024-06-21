@@ -9,9 +9,11 @@ import { useStoreBordero } from "./bordero/store";
 import FiltersBorderos from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTableBorderos } from "./table/store-table";
+import BtnOptionsDDA from "./components/BtnOptionsDDA";
+import { ModalDDA } from "./components/ModalDDA";
 
 const Borderos = () => {
-  console.log("RENDER - Section Borderos");
+
   const [pagination, setPagination, filters] = useStoreTableBorderos(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
@@ -39,14 +41,19 @@ const Borderos = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between">
-        <Button
-          variant={"outline"}
-          type={"button"}
-          onClick={() => exportBordero(rows.map((row: any) => row.id) || "")}
-        >
-          <Download className="me-2" size={20} />
-          Exportar
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant={"outline"}
+            type={"button"}
+            onClick={() => exportBordero(rows.map((row: any) => row.id) || "")}
+          >
+            <Download className="me-2" size={20} />
+            Exportar
+          </Button>
+
+          <BtnOptionsDDA />
+        </div>
+
         <Button variant={"secondary"} onClick={handleClickNewBorderos}>
           Novo Borderô
         </Button>
@@ -60,6 +67,7 @@ const Borderos = () => {
         columns={columnsTable}
         isLoading={isLoading}
       />
+      <ModalDDA />
       <ModalBordero />
     </div>
   );

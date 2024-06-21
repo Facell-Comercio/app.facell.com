@@ -16,6 +16,8 @@ interface TAlert {
   children: JSX.Element;
   action: () => void;
   className?: string;
+  open?: boolean;
+  onOpenChange?: ((open: boolean) => void) | undefined;
 }
 
 const AlertPopUp = ({
@@ -24,9 +26,11 @@ const AlertPopUp = ({
   children,
   action,
   className,
+  open,
+  onOpenChange,
 }: TAlert) => {
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild className={className}>
         {children}
       </AlertDialogTrigger>
