@@ -6,6 +6,7 @@ interface UseStoreBordero {
   modalOpen: boolean;
   modalTransferOpen: boolean;
   modalContasBancariasOpen: boolean;
+  isPending: boolean;
 
   openModal: (id: string) => void;
   closeModal: () => void;
@@ -13,6 +14,8 @@ interface UseStoreBordero {
   toggleModal: () => void;
   toggleModalContasBancarias: () => void;
   toggleModalTransfer: () => void;
+
+  editIsPending: (bool: boolean) => void;
 }
 
 export const useStoreBordero = create<UseStoreBordero>((set) => ({
@@ -21,6 +24,7 @@ export const useStoreBordero = create<UseStoreBordero>((set) => ({
   modalOpen: false,
   modalTransferOpen: false,
   modalContasBancariasOpen: false,
+  isPending: false,
 
   openModal: (id: string) => set({ modalOpen: true, id }),
   closeModal: () => set({ modalOpen: false }),
@@ -38,4 +42,9 @@ export const useStoreBordero = create<UseStoreBordero>((set) => ({
     set((state) => ({
       modalTransferOpen: !state.modalTransferOpen,
     })),
+
+  editIsPending: (bool: boolean) =>
+    set({
+      isPending: bool,
+    }),
 }));

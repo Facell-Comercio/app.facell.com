@@ -13,7 +13,6 @@ import BtnOptionsDDA from "./components/BtnOptionsDDA";
 import { ModalDDA } from "./components/ModalDDA";
 
 const Borderos = () => {
-
   const [pagination, setPagination, filters] = useStoreTableBorderos(
     (state) => [state.pagination, state.setPagination, state.filters]
   );

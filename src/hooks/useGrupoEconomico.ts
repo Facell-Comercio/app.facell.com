@@ -33,8 +33,8 @@ export const useGrupoEconomico = () => {
 
     insertOne: () =>
       useMutation({
-        mutationFn: (data: GrupoEconomicoFormData) => {
-          return api
+        mutationFn: async (data: GrupoEconomicoFormData) => {
+          return await api
             .post("grupo-economico", data)
             .then((response) => response.data);
         },
@@ -57,8 +57,8 @@ export const useGrupoEconomico = () => {
       }),
     update: () =>
       useMutation({
-        mutationFn: ({ id, ...rest }: GrupoEconomicoFormData) => {
-          return api
+        mutationFn: async ({ id, ...rest }: GrupoEconomicoFormData) => {
+          return await api
             .put("grupo-economico", { id, ...rest })
             .then((response) => response.data);
         },

@@ -11,28 +11,21 @@ import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
 
-import {
-  ArrowUpDown,
-  Download,
-  Fingerprint,
-  List,
-  Minus,
-  Plus,
-} from "lucide-react";
-import { useState } from "react";
+import { ArrowUpDown, Download, Fingerprint, Minus, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
 
 // Componentes
-import { Badge } from "@/components/ui/badge";
-import { normalizeCurrency } from "@/helpers/mask";
-import ModalVencimentos, {
-  VencimentosProps,
-} from "@/pages/financeiro/components/ModalVencimentos";
+import { Accordion } from "@/components/ui/accordion";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
+import { ItemVencimento } from "./ItemVencimento";
 import { BorderoSchemaProps } from "./Modal";
 import ModalTransfer from "./ModalTransfer";
-import RowVirtualizerFixed from "./RowVirtualizedFixed";
+import RowVirtualizerFixedErro from "./RowVirtualizedFixedErro";
+import RowVirtualizerFixedPagos from "./RowVirtualizedFixedPagos";
+import RowVirtualizerFixedPendentes from "./RowVirtualizedFixedPendentes";
 
 const FormBordero = ({
   id,
@@ -43,17 +36,37 @@ const FormBordero = ({
   data: BorderoSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  // console.log("RENDER - Borderos:", id);
-  const { mutate: insertOne } = useBordero().insertOne();
-  const { mutate: update } = useBordero().update();
+  const {
+    mutate: insertOne,
+    isPending: insertIsPending,
+    isSuccess: insertIsSuccess,
+    isError: insertIsError,
+  } = useBordero().insertOne();
+  const {
+    mutate: update,
+    isPending: updateIsPending,
+    isSuccess: updateIsSuccess,
+    isError: updateIsError,
+  } = useBordero().update();
   const { mutate: deleteVencimento } = useBordero().deleteVencimento();
   const { mutate: downloadRemessa, isPending: isLoadingDownload } =
     useBordero().downloadRemessa();
 
-  const modalEditing = useStoreBordero().modalEditing;
-  const editModal = useStoreBordero().editModal;
-  const closeModal = useStoreBordero().closeModal;
-  const toggleModalTransfer = useStoreBordero().toggleModalTransfer;
+  const [
+    modalEditing,
+    editModal,
+    closeModal,
+    editIsPending,
+    toggleModalTransfer,
+    isPending,
+  ] = useStoreBordero((state) => [
+    state.modalEditing,
+    state.editModal,
+    state.closeModal,
+    state.editIsPending,
+    state.toggleModalTransfer,
+    state.isPending,
+  ]);
 
   const [modalVencimentoOpen, setModalVencimentoOpen] =
     useState<boolean>(false);
@@ -69,7 +82,30 @@ const FormBordero = ({
   const id_matriz = form.watch("id_matriz");
   const data_pagamento = form.watch("data_pagamento");
   const wVencimentos = form.watch("vencimentos");
-
+  const wVencimentosPendentes = form
+    .watch("vencimentos")
+    .filter((v) => v.status === "pendente");
+  const wVencimentosPendentesValorTotal =
+    form
+      .watch("vencimentos")
+      .filter((v) => v.status === "pendente")
+      .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
+  const wVencimentosErro = form
+    .watch("vencimentos")
+    .filter((v) => v.status === "erro");
+  const wVencimentosErroValorTotal =
+    form
+      .watch("vencimentos")
+      .filter((v) => v.status === "erro")
+      .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
+  const wVencimentosPago = form
+    .watch("vencimentos")
+    .filter((v) => v.status === "pago");
+  const wVencimentosPagoValorTotal =
+    form
+      .watch("vencimentos")
+      .filter((v) => v.status === "pago")
+      .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
   const vencimentosChecked: VencimentosProps[] = form
     .watch("vencimentos")
     .filter((v) => v.checked);
@@ -81,10 +117,7 @@ const FormBordero = ({
       data_pagamento: newData.data_pagamento,
       id_matriz: newData.id_matriz,
       vencimentos: newData.vencimentos?.filter(
-        (vencimento: VencimentosProps) =>
-          !data.vencimentos.find(
-            (obj) => obj.id_vencimento == vencimento.id_vencimento
-          )
+        (vencimento: VencimentosProps) => vencimento.updated
       ),
     };
     if (!id) insertOne(newData);
@@ -96,8 +129,23 @@ const FormBordero = ({
     closeModal();
   }
 
+  useEffect(() => {
+    if (updateIsSuccess || insertIsSuccess) {
+      editModal(false);
+      closeModal();
+      editIsPending(false);
+    } else if (updateIsError || insertIsError) {
+      editIsPending(false);
+    } else if (updateIsPending || insertIsPending) {
+      editIsPending(true);
+    }
+  }, [updateIsPending, insertIsPending]);
+
   function handleSelectionVencimento(item: VencimentosProps[]) {
-    item.forEach((subItem: VencimentosProps) => addVencimento(subItem));
+    //^ Verificar se ele realmente está salvando como updated
+    item.forEach((subItem: VencimentosProps) =>
+      addVencimento({ ...subItem, updated: true })
+    );
     setModalVencimentoOpen(false);
   }
 
@@ -154,7 +202,10 @@ const FormBordero = ({
 
   // const data_pagamento = form.watch("data_pagamento");
   // console.log(form.formState.errors);
+  // console.log(form.watch("vencimentos"));
+
   // console.log(form.watch("vencimentos"), data.vencimentos);
+  const [itemOpen, setItemOpen] = useState<string>("a-pagar");
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-hidden">
@@ -168,10 +219,12 @@ const FormBordero = ({
           <div className="max-w-full grid grid-cols-1 gap-3 shrink-0">
             {/* Dados do Borderô */}
             <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-              <div className="flex justify-between mb-3">
-                <div className="flex gap-2">
+              <div className="flex gap-3 flex-wrap justify-between mb-3">
+                <div className="flex gap-2 items-center ">
                   <Fingerprint />{" "}
-                  <span className="text-lg font-bold ">Dados do Borderô</span>
+                  <span className="min-w-40 md:text-lg font-bold ">
+                    Dados do Borderô
+                  </span>
                 </div>
 
                 {/* Exportação */}
@@ -208,13 +261,13 @@ const FormBordero = ({
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <div className="flex flex-col justify-end flex-1">
+                <div className="flex flex-col justify-end flex-1 min-w-36">
                   <label className="text-sm font-medium">Conta Bancária</label>
                   <Input
                     value={form.watch("conta_bancaria")?.toUpperCase()}
                     className="flex-1 max-h-10 mt-2"
                     readOnly
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     onClick={() => setModalContaBancariaOpen(true)}
                     placeholder="Selecione a conta bancária"
                   />
@@ -227,18 +280,18 @@ const FormBordero = ({
                   }
                   id_matriz={id_matriz || ""}
                 />
-                <div className="flex flex-col justify-end flex-1">
+                <div className="flex flex-col justify-end flex-1 min-w-36">
                   <label className="text-sm font-medium">Banco</label>
                   <Input
                     value={form.watch("banco")?.toUpperCase()}
                     className="flex-1 max-h-10 mt-2"
                     readOnly
-                    disabled={!modalEditing}
+                    disabled={!modalEditing || isPending}
                     placeholder="Defina a conta bancária"
                   />
                 </div>
                 <FormDateInput
-                  disabled={!modalEditing}
+                  disabled={!modalEditing || isPending}
                   name="data_pagamento"
                   label="Data de Pagamento"
                   control={form.control}
@@ -247,7 +300,165 @@ const FormBordero = ({
             </div>
 
             {/* Titúlos do Borderô */}
-            <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+            <Accordion
+              type="single"
+              collapsible
+              value={itemOpen}
+              onValueChange={(e) => setItemOpen(e)}
+              className="px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg "
+            >
+              <ItemVencimento
+                title="A Pagar"
+                value="a-pagar"
+                className="flex-col"
+                qtde={wVencimentosPendentes.length}
+                valorTotal={wVencimentosPendentesValorTotal}
+              >
+                <div className="flex gap-2 flex-wrap justify-end">
+                  {id_conta_bancaria &&
+                    modalEditing &&
+                    vencimentosChecked.length > 0 && (
+                      <>
+                        <Button
+                          type={"button"}
+                          variant={"tertiary"}
+                          size={"sm"}
+                          className="text-white justify-self-start"
+                          onClick={() => toggleModalTransfer()}
+                        >
+                          <ArrowUpDown className="me-2" size={18} />
+                          Transferir de borderô
+                        </Button>
+                        <AlertPopUp
+                          title="Deseja realmente remover esses vencimentos?"
+                          description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
+                          action={() =>
+                            removeCheckedVencimentos(vencimentosChecked)
+                          }
+                        >
+                          <Button
+                            type={"button"}
+                            variant={"destructive"}
+                            size={"sm"}
+                            className="justify-self-start"
+                          >
+                            <Minus className="me-2" size={18} />
+                            Remover
+                          </Button>
+                        </AlertPopUp>
+                      </>
+                    )}
+                  {id_conta_bancaria && modalEditing && (
+                    <Button
+                      type="button"
+                      size={"sm"}
+                      onClick={() => setModalVencimentoOpen(true)}
+                    >
+                      <Plus className="me-2" strokeWidth={2} size={18} />
+                      Adicionar
+                    </Button>
+                  )}
+                </div>
+                {wVencimentosPendentes?.length > 0 && (
+                  <RowVirtualizerFixedPendentes
+                    data={wVencimentos}
+                    filteredData={wVencimentosPendentes}
+                    form={form}
+                    modalEditing={modalEditing && !isPending}
+                    removeItem={removeItemVencimentos}
+                  />
+                )}
+              </ItemVencimento>
+            </Accordion>
+
+            <Accordion
+              type="single"
+              collapsible
+              value={itemOpen}
+              onValueChange={(e) => setItemOpen(e)}
+              className="px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg "
+            >
+              <ItemVencimento
+                title="Com Erro"
+                value="erro"
+                className="flex-col"
+                qtde={wVencimentosErro.length}
+                valorTotal={wVencimentosErroValorTotal}
+              >
+                <div className="flex gap-2 flex-wrap justify-end">
+                  {id_conta_bancaria &&
+                    modalEditing &&
+                    vencimentosChecked.length > 0 && (
+                      <>
+                        <Button
+                          type={"button"}
+                          variant={"tertiary"}
+                          size={"sm"}
+                          className="text-white justify-self-start"
+                          onClick={() => toggleModalTransfer()}
+                        >
+                          <ArrowUpDown className="me-2" size={18} />
+                          Transferir de borderô
+                        </Button>
+                        <AlertPopUp
+                          title="Deseja realmente remover esses vencimentos?"
+                          description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
+                          action={() =>
+                            removeCheckedVencimentos(vencimentosChecked)
+                          }
+                        >
+                          <Button
+                            type={"button"}
+                            variant={"destructive"}
+                            size={"sm"}
+                            className="justify-self-start"
+                          >
+                            <Minus className="me-2" size={18} />
+                            Remover
+                          </Button>
+                        </AlertPopUp>
+                      </>
+                    )}
+                </div>
+                {wVencimentosErro.length > 0 && (
+                  <RowVirtualizerFixedErro
+                    data={wVencimentos}
+                    filteredData={wVencimentosErro}
+                    form={form}
+                    modalEditing={modalEditing && !isPending}
+                    removeItem={removeItemVencimentos}
+                  />
+                )}
+              </ItemVencimento>
+            </Accordion>
+
+            <Accordion
+              type="single"
+              collapsible
+              value={itemOpen}
+              onValueChange={(e) => setItemOpen(e)}
+              className="px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg "
+            >
+              <ItemVencimento
+                title="Pago"
+                value="pago"
+                className="flex-col"
+                qtde={wVencimentosPago.length}
+                valorTotal={wVencimentosPagoValorTotal}
+              >
+                {wVencimentosPago.length > 0 && (
+                  <RowVirtualizerFixedPagos
+                    data={wVencimentos}
+                    filteredData={wVencimentosPago}
+                    form={form}
+                    modalEditing={modalEditing && !isPending}
+                    removeItem={removeItemVencimentos}
+                  />
+                )}
+              </ItemVencimento>
+            </Accordion>
+
+            {/* <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
               <div className="flex items-center gap-2 mb-3 justify-between">
                 <span className="flex gap-2 items-center">
                   <List />{" "}
@@ -296,7 +507,7 @@ const FormBordero = ({
                       Adicionar
                     </Button>
                   )}
-                  {/* <ModalVencimentos
+                  <ModalVencimentos
                     open={modalEditing && modalVencimentoOpen}
                     handleSelection={handleSelectionVencimento}
                     onOpenChange={() => setModalVencimentoOpen((prev) => !prev)}
@@ -308,7 +519,7 @@ const FormBordero = ({
                         to: data_pagamento,
                       },
                     }}
-                  /> */}
+                  />
                   <ModalVencimentos
                     open={modalEditing && modalVencimentoOpen}
                     handleSelection={handleSelectionVencimento}
@@ -331,7 +542,7 @@ const FormBordero = ({
                       <RowVirtualizerFixed
                         data={wVencimentos}
                         form={form}
-                        modalEditing={modalEditing}
+                        modalEditing={modalEditing && !isPending}
                         removeItem={removeItemVencimentos}
                       />
                     )}
@@ -354,7 +565,7 @@ const FormBordero = ({
                   </div>
                 </>
               )}
-            </div>
+            </div> */}
           </div>
         </form>
         <ModalTransfer data={vencimentosChecked} id_matriz={id_matriz || ""} />
