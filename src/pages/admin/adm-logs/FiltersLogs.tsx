@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { DatePickerWithRange } from "@/components/ui/date-range";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
@@ -101,12 +102,12 @@ const FiltersLogs = ({ refetch }: { refetch: () => void }) => {
                 }}
               />
 
-              {/* <DatePickerWithRange
+              <DatePickerWithRange
                 date={filters.range_data}
                 setDate={(date) => {
                   setFilters({ range_data: date });
                 }}
-              /> */}
+              />
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>

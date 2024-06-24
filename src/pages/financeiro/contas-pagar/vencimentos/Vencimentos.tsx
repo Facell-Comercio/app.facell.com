@@ -7,6 +7,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useVencimentos } from "@/hooks/financeiro/useVencimentos";
 import { Edit } from "lucide-react";
 import ModalBordero from "../borderos/bordero/Modal";
+import ModalTituloPagar from "../titulos/titulo/Modal";
 import ModalAlteracoesVencimentosLote from "./components/ModalAlteracoesVencimentosLote";
 import FiltersVencimentos from "./tables/FiltersVencimentos";
 import { ItemVencimento } from "./tables/ItemVencimento";
@@ -42,8 +43,6 @@ const Vencimentos = () => {
     state.setPaginationPagos,
     state.openModal,
   ]);
-
-  console.log(idSelection);
 
   const {
     data: dataVencimentosAPagar,
@@ -179,6 +178,7 @@ const Vencimentos = () => {
         </ItemVencimento>
       </Accordion>
       <ModalBordero />
+      <ModalTituloPagar />
       <ModalAlteracoesVencimentosLote />
     </div>
   );
