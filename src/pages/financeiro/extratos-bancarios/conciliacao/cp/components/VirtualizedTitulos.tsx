@@ -1,22 +1,16 @@
 import * as React from "react";
 
-import FormInput, { Input } from "@/components/custom/FormInput";
-import FormSelect from "@/components/custom/FormSelect";
-import { InputDate } from "@/components/custom/InputDate";
-import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { Input } from "@/components/custom/FormInput";
+import { normalizeDate } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { VencimentosConciliarProps } from "../tables/TitulosConciliar";
 
 interface VirtualizerVencimentosProps {
   data: VencimentosConciliarProps[];
-  form: any;
-  canEdit: boolean;
 }
 
 const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
   data,
-  form,
-  canEdit,
 }) => {
   const parentElement = React.useRef(null);
 
@@ -35,17 +29,14 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
       className="h-[45vh] w-full overflow-auto scroll-thin"
     >
       <div className="flex gap-1 font-medium text-xs  w-full sticky top-0 z-10 bg-background">
+        <p className="min-w-24 text-center bg-background">ID Vencimento</p>
         <p className="min-w-20 text-center bg-background">ID Título</p>
         <p className="min-w-28 text-center bg-background">Transação</p>
-        <p className="min-w-28 pl-2 bg-background">Valor</p>
+        <p className="min-w-24 text-center bg-background">Tipo Baixa</p>
+        <p className="min-w-28 pl-2 bg-background">Valor Pago</p>
         <p className="min-w-36 pl-2 bg-background">Descrição</p>
         <p className="min-w-36 pl-2 bg-background">Fornecedor</p>
         <p className="min-w-36 pl-2 bg-background">Filial</p>
-        <p className="min-w-32 text-center bg-background">Tipo Baixa</p>
-        <p className="min-w-28 pl-2 bg-background">Valor Pago</p>
-        {!canEdit && (
-          <p className="min-w-44 pl-2 bg-background">Data Prevista</p>
-        )}
       </div>
       <div
         style={{
@@ -55,26 +46,6 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
         }}
       >
         {virtualizer.getVirtualItems().map((item, index) => {
-          const tipo = form.watch(`vencimentos.${item.index}.tipo_baixa`);
-          const valor = parseFloat(data[item.index].valor);
-          type TipoBaixaProps = {
-            id: number | string;
-            label: string;
-          };
-          const tipoBaixa: TipoBaixaProps[] = [
-            { id: "PADRÃO", label: "Total" },
-            { id: "PARCIAL", label: "Parcial" },
-            { id: "COM DESCONTO", label: "Com Desconto" },
-            { id: "COM ACRÉSCIMO", label: "Com Acréscimo" },
-          ];
-
-          // console.log(
-          //   form.formState.errors &&
-          //     form.formState.errors.titulos &&
-          //     form.formState.errors.titulos[item.index],
-          //   item.index
-          // );
-
           return (
             <div
               // ref={virtualizer.measureElement}
@@ -93,9 +64,14 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
               }}
             >
               <Input
+                className="text-xs w-24 h-8 p-2 text-center"
+                value={data[item.index].id_vencimento || ""}
+                readOnly
+              />
+              <Input
                 className="text-xs w-20 h-8 p-2 text-center"
                 value={data[item.index].id_titulo || ""}
-                readOnly={true}
+                readOnly
               />
               <Input
                 className="text-xs w-28 h-8 p-2 text-center"
@@ -103,69 +79,35 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
                   data[item.index].data_pagamento &&
                   normalizeDate(data[item.index].data_pagamento)
                 }
-                readOnly={true}
+                readOnly
               />
               <Input
-                className="text-xs w-28 h-8 p-2 center"
-                value={
-                  data[item.index].valor &&
-                  normalizeCurrency(data[item.index].valor)
-                }
-                readOnly={true}
+                className="text-xs w-24 h-8 p-2 text-center"
+                value={data[item.index].tipo_baixa || ""}
+                readOnly
               />
+              <Input
+                className="text-xs w-28 h-8 p-2"
+                value={data[item.index].valor_pago || ""}
+                readOnly
+              />
+
               <Input
                 className="text-xs min-w-36 h-8 p-2"
                 value={data[item.index].descricao}
-                readOnly={true}
+                readOnly
               />
               <Input
                 className="text-xs min-w-36 h-8 p-2"
                 value={data[item.index].nome_fornecedor}
-                readOnly={true}
+                readOnly
               />
 
               <Input
                 className="text-xs min-w-36 h-8 p-2"
                 value={data[item.index].filial}
-                readOnly={true}
+                readOnly
               />
-              <FormSelect
-                name={`vencimentos.${item.index}.tipo_baixa`}
-                className="text-xs w-32 h-8"
-                control={form.control}
-                disabled={canEdit}
-                options={tipoBaixa.map((tipo_baixa: TipoBaixaProps) => ({
-                  value: tipo_baixa.id.toString(),
-                  label: tipo_baixa.label,
-                }))}
-                onChange={() =>
-                  form.setValue(`vencimentos.${item.index}.valor_pago`, valor)
-                }
-              />
-              <FormInput
-                type="number"
-                inputClass="text-xs flex-1 w-28 h-8"
-                readOnly={tipo == "PADRÃO" || canEdit}
-                name={`vencimentos.${item.index}.valor_pago`}
-                control={form.control}
-                min={tipo === "COM ACRÉSCIMO" ? valor : 0}
-                max={tipo !== "COM ACRÉSCIMO" ? valor : valor * 1000}
-              />
-              {!canEdit && (
-                <InputDate
-                  disabled={tipo !== "PARCIAL"}
-                  className={`h-8 min-w-44 ${
-                    form.formState.errors &&
-                    form.formState.errors.vencimentos &&
-                    form.formState.errors.vencimentos[item.index] &&
-                    "border border-red-600"
-                  }`}
-                  value={form.watch(`vencimentos.${item.index}.data_prevista`)}
-                  onChange={(e: Date) =>
-                    form.setValue(`vencimentos.${item.index}.data_prevista`, e)
-                  }
-                />
-              )}
             </div>
           );
         })}

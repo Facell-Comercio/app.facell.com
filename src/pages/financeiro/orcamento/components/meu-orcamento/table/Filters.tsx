@@ -54,7 +54,7 @@ const FilterMeuOrcamento = ({ refetch }: { refetch: () => void }) => {
         </AccordionTrigger>
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
-            <div className="flex items-end w-max space-x-4 pb-1">
+            <div className="flex items-end w-max space-x-3 pb-1">
               <div>
                 <label className="text-sm font-medium">Mês</label>
                 <SelectMes

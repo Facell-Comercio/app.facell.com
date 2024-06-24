@@ -17,7 +17,6 @@ import { columnsTablePagos } from "./tables/columnsPagos";
 import { useStoreTableVencimentos } from "./tables/store";
 
 const Vencimentos = () => {
-  console.log("RENDER - Section Vencimentos");
   const [
     filters,
     rowSelection,

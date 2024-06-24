@@ -57,7 +57,11 @@ import { TbCurrencyReal } from "react-icons/tb";
 import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
-import { checkIsPIX, checkIsTransferenciaBancaria, formatarHistorico } from "./helpers/helper";
+import {
+  checkIsPIX,
+  checkIsTransferenciaBancaria,
+  formatarHistorico,
+} from "./helpers/helper";
 import { initialPropsTitulo, useStoreTitulo } from "./store";
 
 const FormTituloPagar = ({
@@ -606,12 +610,13 @@ const FormTituloPagar = ({
 
                         <FormInput
                           control={form.control}
-                          inputClass=" text-left"
+                          inputClass="text-left"
                           name="valor"
                           type="number"
                           iconLeft
                           icon={TbCurrencyReal}
                           label="Valor Total"
+                          disabled={disabled}
                           className="flex-1 min-w-[20ch]"
                         />
                       </div>

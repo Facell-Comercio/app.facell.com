@@ -62,7 +62,7 @@ const FiltersLogs = ({ refetch }: { refetch: () => void }) => {
 
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4 lg:pb-0">
-            <div className="flex w-max space-x-4">
+            <div className="flex w-max space-x-3">
               <Select
                 value={filters.level}
                 onValueChange={(level) => {

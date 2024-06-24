@@ -150,11 +150,7 @@ const FormConciliacaoCP = ({
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-1 overflow-hidden">
-                <VirtualizedTitulos
-                  canEdit={!!id}
-                  data={vencimentos}
-                  form={form}
-                />
+                <VirtualizedTitulos data={vencimentos} />
               </CardContent>
               <CardFooter className="flex justify-end p-2 align-botton">
                 <Badge variant={"secondary"}>

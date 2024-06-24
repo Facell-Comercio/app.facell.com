@@ -16,8 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useStoreTablePlanoContas } from "./store-table";
 import { useState } from "react";
+import { useStoreTablePlanoContas } from "./store-table";
 
 const FiltersPlanoContas = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTablePlanoContas((state) => state.filters);
@@ -34,13 +34,13 @@ const FiltersPlanoContas = ({ refetch }: { refetch: () => void }) => {
     refetch();
   };
 
-   const [itemOpen, setItemOpen] = useState<string>('item-1')
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
   return (
     <Accordion
       type="single"
       collapsible
       value={itemOpen}
-      onValueChange={(e)=>setItemOpen(e)}
+      onValueChange={(e) => setItemOpen(e)}
       className="p-2 border-2 dark:border-slate-800 rounded-lg "
     >
       <AccordionItem value="item-1" className="relative border-0">
@@ -58,7 +58,7 @@ const FiltersPlanoContas = ({ refetch }: { refetch: () => void }) => {
         </AccordionTrigger>
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
-            <div className="flex w-max space-x-4">
+            <div className="flex w-max space-x-3">
               <Input
                 placeholder="Código"
                 className="w-[80px]"

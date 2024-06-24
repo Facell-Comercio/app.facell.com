@@ -96,7 +96,7 @@ const FiltersConciliacaoCP = ({
         </AccordionTrigger>
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-1">
-            <div className="flex w-max space-x-4">
+            <div className="flex w-max space-x-3">
               <DatePickerWithRange
                 description="Período de transação"
                 date={filters.range_data}

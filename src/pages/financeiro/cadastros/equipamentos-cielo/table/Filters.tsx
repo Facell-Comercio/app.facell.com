@@ -16,8 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useStoreTableEquipamentos } from "./store-table";
 import { useState } from "react";
+import { useStoreTableEquipamentos } from "./store-table";
 
 const FiltersEquipamentos = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableEquipamentos((state) => state.filters);
@@ -34,13 +34,13 @@ const FiltersEquipamentos = ({ refetch }: { refetch: () => void }) => {
     refetch();
   };
 
-   const [itemOpen, setItemOpen] = useState<string>('item-1')
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
   return (
     <Accordion
       type="single"
       collapsible
       value={itemOpen}
-      onValueChange={(e)=>setItemOpen(e)}
+      onValueChange={(e) => setItemOpen(e)}
       className="p-2 border-2 dark:border-slate-800 rounded-lg "
     >
       <AccordionItem value="item-1" className="relative border-0">
@@ -58,7 +58,7 @@ const FiltersEquipamentos = ({ refetch }: { refetch: () => void }) => {
         </AccordionTrigger>
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
-            <div className="flex w-max space-x-4">
+            <div className="flex w-max space-x-3">
               <SelectFilial
                 value={filters.id_filial}
                 placeholder={"Selecione a filial"}

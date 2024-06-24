@@ -183,7 +183,7 @@ const ModalContasBancariasOLD = ({
               </AccordionTrigger>
               <AccordionContent className="p-0">
                 <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
-                  <div className="flex w-max space-x-4">
+                  <div className="flex w-max space-x-3">
                     <Button size={"sm"} onClick={() => handleClickFilters()}>
                       Filtrar <FilterIcon size={12} className="ms-2" />
                     </Button>
