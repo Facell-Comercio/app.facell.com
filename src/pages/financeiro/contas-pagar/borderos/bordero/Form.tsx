@@ -188,6 +188,7 @@ const FormBordero = ({
         description:
           "Não é possível remover do borderô vencimentos de títulos com status pago!",
         duration: 3500,
+        variant: "warning",
       });
     }
   }

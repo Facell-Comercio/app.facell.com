@@ -61,7 +61,7 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
 
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
-            <div className="flex w-max space-x-4">
+            <div className="flex w-max space-x-3">
               <Input
                 type="number"
                 placeholder="ID"
@@ -70,6 +70,7 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
                 onChange={(e) => {
                   setFilters({ id: e.target.value });
                 }}
+                min={0}
               />
 
               <SelectGrupoEconomico

@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useStoreTableRateios } from "./store-table";
 import { useState } from "react";
+import { useStoreTableRateios } from "./store-table";
 
 const FiltersRateios = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableRateios((state) => state.filters);
@@ -28,13 +28,13 @@ const FiltersRateios = ({ refetch }: { refetch: () => void }) => {
     refetch();
   };
 
-   const [itemOpen, setItemOpen] = useState<string>('item-1')
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
   return (
     <Accordion
       type="single"
       collapsible
       value={itemOpen}
-      onValueChange={(e)=>setItemOpen(e)}
+      onValueChange={(e) => setItemOpen(e)}
       className="p-2 border-2 dark:border-slate-800 rounded-lg "
     >
       <AccordionItem value="item-1" className="border-0">
@@ -43,7 +43,7 @@ const FiltersRateios = ({ refetch }: { refetch: () => void }) => {
         </AccordionTrigger>
         <AccordionContent className="p-0">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
-            <div className="flex w-max space-x-4">
+            <div className="flex w-max space-x-3">
               <Button onClick={handleClickFilter}>
                 Filtrar <FilterIcon size={12} className="ms-2" />
               </Button>

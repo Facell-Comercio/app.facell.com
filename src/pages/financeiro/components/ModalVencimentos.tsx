@@ -1,5 +1,4 @@
 import { ModalComponent } from "@/components/custom/ModalComponent";
-import SelectFilial from "@/components/custom/SelectFilial";
 import {
   Accordion,
   AccordionContent,
@@ -19,10 +18,12 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { api } from "@/lib/axios";
+import { Filial } from "@/types/filial-type";
 import { useQuery } from "@tanstack/react-query";
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
+import ModalFiliais from "./ModalFiliais";
 
 interface IModalVencimentos {
   open: boolean;
@@ -176,7 +177,7 @@ const ModalVencimentos = ({
           },
         ]);
 
-        setIds((prevIds) => [...prevIds, item.id_titulo.toString()]);
+        setIds((prevIds) => [...prevIds, item.id_vencimento.toString()]);
       }
     });
   }
@@ -190,7 +191,7 @@ const ModalVencimentos = ({
         data_pagamento: item.data_pagamento || "",
       },
     ]);
-    setIds([...ids, item.id_titulo.toString()]);
+    setIds([...ids, item.id_vencimento.toString()]);
   }
 
   if (isError) return <p>Ocorreu um erro ao tentar buscar os vencimentos</p>;
@@ -245,6 +246,13 @@ const ModalVencimentos = ({
     );
   };
   const [itemOpen, setItemOpen] = useState<string>("item-1");
+  const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
+  const [filial, setFilial] = useState<string>("");
+
+  function handleSelectFilial(filial: Filial) {
+    setFilters({ ...filters, id_filial: filial.id });
+    setFilial(filial.nome);
+  }
 
   if (isLoading) return null;
   if (isError) return null;
@@ -284,7 +292,7 @@ const ModalVencimentos = ({
               </AccordionTrigger>
               <AccordionContent className="p-0 pt-3">
                 <ScrollArea className="whitespace-nowrap rounded-md pb-1 flex flex-wrap w-max max-w-full  ">
-                  <div className="flex gap-1 sm:gap-2 w-max">
+                  <div className="flex gap-2 sm:gap-3 w-max">
                     <Input
                       placeholder="ID Vencimento"
                       className="w-[20ch]"
@@ -310,12 +318,12 @@ const ModalVencimentos = ({
                       className="w-[20ch]"
                       ref={(el) => setInputRef("num_doc", el)}
                     />
-                    <SelectFilial
-                      id_matriz={id_matriz}
-                      showAll
-                      onChange={(id_filial) => {
-                        setFilters({ ...filters, id_filial: id_filial });
-                      }}
+                    <Input
+                      placeholder="Filial"
+                      className="w-[30ch]"
+                      readOnly
+                      value={filial}
+                      onClick={() => setModalFilialOpen(true)}
                     />
                   </div>
                   <ScrollBar orientation="horizontal" />
@@ -351,7 +359,7 @@ const ModalVencimentos = ({
             </thead>
             <tbody>
               {data?.data?.rows.map((item: VencimentosProps, index: number) => {
-                const isSelected = ids.includes(item.id_titulo.toString());
+                const isSelected = ids.includes(item.id_vencimento.toString());
                 return (
                   <tr
                     key={"titulos:" + item.id_titulo + index}
@@ -405,6 +413,13 @@ const ModalVencimentos = ({
             </tbody>
           </table>
         </ModalComponent>
+        <ModalFiliais
+          open={modalFilialOpen}
+          handleSelection={handleSelectFilial}
+          onOpenChange={setModalFilialOpen}
+          id_matriz={id_matriz}
+          closeOnSelection
+        />
       </DialogContent>
     </Dialog>
   );

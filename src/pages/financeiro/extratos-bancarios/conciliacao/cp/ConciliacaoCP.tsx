@@ -258,6 +258,15 @@ const ConciliacaoCP = () => {
                           "É necessário que sejam selecionados no mínimo um título e uma transação bancária",
                         variant: "warning",
                       });
+                    } else if (
+                      totalSelectedTitulos !== totalSelectedTransacoes
+                    ) {
+                      toast({
+                        title: "Valores incorretos!",
+                        description:
+                          "O total dos títulos e das transações não são iguais",
+                        variant: "warning",
+                      });
                     } else {
                       openModal("");
                     }

@@ -168,7 +168,7 @@ const ModalContasBancarias = ({
               </AccordionTrigger>
               <AccordionContent className="p-0 pt-3">
                 <ScrollArea className="whitespace-nowrap rounded-md pb-1 flex flex-wrap w-max max-w-full  ">
-                  <div className="flex gap-1 sm:gap-2 w-max">
+                  <div className="flex gap-2 sm:gap-3 w-max">
                     {!id_grupo_economico && (
                       <SelectGrupoEconomico
                         showAll
