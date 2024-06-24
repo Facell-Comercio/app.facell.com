@@ -230,7 +230,7 @@ export const ModalDDA = () => {
                           <AlertPopUp
                             title="Deseja realmente vincular o boleto com o vencimento?"
                             description="A ação não poderá ser desfeita!"
-                            action={() => { handleClickVincular({ id_dda: row.item.id, id_vencimento: id_vencimento }) }}
+                            action={() => { handleClickVincular({ id_dda: row.item.id, id_vencimento: parseInt(id_vencimento) }) }}
                           >
                             <Button
                               size={"xs"}
