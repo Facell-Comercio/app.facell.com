@@ -8,7 +8,9 @@ interface UseStoreDDA {
   openModal: (filters: any) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
-  toggleModal: (open?: boolean)=>void
+  toggleModal: (open?: boolean)=>void;
+  setFilters: (newFilters: any)=>void
+  clearFilters: ()=>void
 }
 
 export const useStoreDDA = create<UseStoreDDA>((set) => ({
@@ -21,9 +23,12 @@ export const useStoreDDA = create<UseStoreDDA>((set) => ({
   openModal: (filters) => set({ modalOpen: true, filters }),
   closeModal: () => set({ modalOpen: false }),
   editModal: (bool) => set({ modalEditing: bool }),
-  toggleModal: (open) =>
-    set((state) => ({
+  toggleModal: (open) => {
+    return set((state) => ({
       modalOpen: open !== undefined ? open : !state.modalOpen,
       modalEditing: false,
-    })),
+    }))},
+    setFilters: (newFilters)=> set(prev=>({ filters: {...prev.filters, ...newFilters}})),
+    clearFilters: ()=>set(({ filters: {}}))
+  
 }));
