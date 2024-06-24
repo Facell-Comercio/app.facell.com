@@ -19,7 +19,9 @@ import { useStoreBordero } from "./store";
 
 // Componentes
 import { Accordion } from "@/components/ui/accordion";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
+import ModalVencimentos, {
+  VencimentosProps,
+} from "@/pages/financeiro/components/ModalVencimentos";
 import { ItemVencimento } from "./ItemVencimento";
 import { BorderoSchemaProps } from "./Modal";
 import ModalTransfer from "./ModalTransfer";
@@ -143,9 +145,21 @@ const FormBordero = ({
 
   function handleSelectionVencimento(item: VencimentosProps[]) {
     //^ Verificar se ele realmente está salvando como updated
-    item.forEach((subItem: VencimentosProps) =>
-      addVencimento({ ...subItem, updated: true })
+    const idsVencimentos: string[] = wVencimentos.map(
+      (vencimento) => vencimento.id_vencimento
     );
+    item.forEach((subItem: VencimentosProps) => {
+      const isNewId = idsVencimentos.includes(subItem.id_vencimento);
+      if (!isNewId) {
+        return addVencimento({
+          ...subItem,
+          updated: true,
+          valor_pago: "0",
+          can_remove: true,
+        });
+      }
+    });
+
     setModalVencimentoOpen(false);
   }
 
@@ -165,7 +179,7 @@ const FormBordero = ({
     id?: string,
     id_status?: string
   ) {
-    if (id_status != "4") {
+    if (id_status != "4" && id_status != "5") {
       deleteVencimento(id);
       removeVencimento(index);
     } else {
@@ -187,6 +201,17 @@ const FormBordero = ({
           .map((v) => v.id_vencimento)
           .includes(v.id_vencimento)
     );
+    wVencimentos.forEach((v) => {
+      if (
+        !checkedVencimentos
+          .map((v) => v.id_vencimento)
+          .includes(v.id_vencimento) &&
+        v.id_status != "4" &&
+        v.id_status != "5"
+      ) {
+        deleteVencimento(v.id_vencimento);
+      }
+    });
     form.setValue("vencimentos", novosVencimentos);
   }
 
@@ -208,7 +233,7 @@ const FormBordero = ({
   const [itemOpen, setItemOpen] = useState<string>("a-pagar");
 
   return (
-    <div className="max-w-full max-h-[90vh] overflow-hidden">
+    <div className="max-w-full sm:me-3 overflow-hidden">
       <Form {...form}>
         <form
           ref={formRef}
@@ -568,6 +593,19 @@ const FormBordero = ({
             </div> */}
           </div>
         </form>
+        <ModalVencimentos
+          open={modalEditing && modalVencimentoOpen}
+          handleSelection={handleSelectionVencimento}
+          onOpenChange={() => setModalVencimentoOpen((prev) => !prev)}
+          id_matriz={id_matriz || ""}
+          initialFilters={{
+            tipo_data: "data_prevista",
+            range_data: {
+              from: data_pagamento,
+              to: data_pagamento,
+            },
+          }}
+        />
         <ModalTransfer data={vencimentosChecked} id_matriz={id_matriz || ""} />
       </Form>
     </div>

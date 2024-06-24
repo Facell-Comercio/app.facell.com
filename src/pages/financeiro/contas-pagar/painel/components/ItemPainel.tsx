@@ -24,7 +24,12 @@ export const ItemPainel = ({
           <span className="flex gap-4">
             {title}
             {fn && (
-              <Button size={"xs"} variant={"secondary"} onClick={fn}>
+              <Button
+                size={"xs"}
+                variant={"secondary"}
+                onClick={fn}
+                className="text-slate-500 dark:text-white"
+              >
                 <Eye size={16} />
               </Button>
             )}
@@ -34,7 +39,7 @@ export const ItemPainel = ({
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className={`px-3 ${className}`}>{children}</CardContent>
+      <CardContent className={`px-3  ${className}`}>{children}</CardContent>
     </Card>
   );
 };

@@ -1,3 +1,4 @@
+import { DateRange } from "react-day-picker";
 import { create } from "zustand";
 
 export interface Filters {
@@ -5,7 +6,7 @@ export interface Filters {
   module?: string;
   origin?: string;
   method?: string;
-  // range_data?: DateRange;
+  range_data?: DateRange;
 }
 
 const initialFilters: Filters = {
@@ -13,7 +14,7 @@ const initialFilters: Filters = {
   module: "",
   origin: "",
   method: "",
-  // range_data: { from: undefined, to: undefined },
+  range_data: { from: undefined, to: undefined },
 };
 
 export interface State {

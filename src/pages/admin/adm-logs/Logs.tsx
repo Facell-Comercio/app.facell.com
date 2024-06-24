@@ -1,6 +1,7 @@
 // import { useStoreTitulo } from "./store-titulo";
 
 import { useLogs } from "@/hooks/useLogs";
+import { addDays, isWithinInterval } from "date-fns";
 import { useMemo, useState } from "react";
 import FilterLogs from "./FiltersLogs";
 import ModalLog from "./Modal";
@@ -28,6 +29,14 @@ const Logs = () => {
             : true) &&
           (!!filters.method
             ? data.method === String(filters.method).toUpperCase()
+            : true) &&
+          (!!filters.range_data?.from
+            ? isWithinInterval(new Date(data.date), {
+                start: filters.range_data?.from,
+                end: filters.range_data?.to
+                  ? addDays(filters.range_data?.to, 1)
+                  : addDays(filters.range_data?.from, 1),
+              })
             : true)
         );
       }),

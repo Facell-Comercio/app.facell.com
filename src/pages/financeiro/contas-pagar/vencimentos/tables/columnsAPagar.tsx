@@ -1,6 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ReactNode } from "react";
+import { useStoreTitulo } from "../../titulos/titulo/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -15,6 +16,8 @@ export type RowTitulo = {
   filial: string;
   descricao: string;
 };
+
+const openModal = useStoreTitulo.getState().openModal;
 
 export const columnsTableAPagar: ColumnDef<RowTitulo>[] = [
   {
@@ -47,14 +50,14 @@ export const columnsTableAPagar: ColumnDef<RowTitulo>[] = [
     id: "id_titulo",
     header: "ID TÍTULO",
     accessorKey: "id_titulo",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <span title={label} className="block truncate max-w-96">
-          {label}
-        </span>
-      );
-    },
+    cell: (info) => (
+      <span
+        className="flex font-semibold cursor-pointer text-blue-500 truncate max-w-96"
+        onClick={() => openModal(info.getValue<string>())}
+      >
+        {info.getValue<string>()}
+      </span>
+    ),
     enableSorting: false,
   },
   {

@@ -313,7 +313,7 @@ const ReactTableVirtualized: React.FC<
             </div>
           ) : (
             <div className="h-full w-full flex items-center justify-center">
-              Nenhum título encontrado
+              Nenhum vencimento encontrado
             </div>
           )}
         </div>

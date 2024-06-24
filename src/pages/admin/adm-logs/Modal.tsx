@@ -106,7 +106,7 @@ const ModalLog = ({ data }: ModalProps) => {
             <div className="flex gap-2 col-span-2 md:col-span-3 max-h-[40vh]">
               <span className="grid grid-cols-1 flex-1">
                 <label className="text-sm font-medium">Mensagem</label>
-                <code className="flex flex-col flex-1 gap-2 border p-2 rounded-md overflow-auto scroll-thin text-gray-400">
+                <code className="flex flex-col flex-1 gap-2 border p-2 rounded-md overflow-auto scroll-thin text-gray-500 dark:text-gray-400">
                   <p>
                     {data.data &&
                       data.data.message &&
