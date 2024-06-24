@@ -50,6 +50,7 @@ export const ModalComponent = ({
   handleRemoveAll,
   handleSelectAll,
 }: ModalComponentProps) => {
+
   const pages = [...Array(pageCount || 0).keys()].map((page) => page + 1);
   const arrayPages = pages.filter((i) => {
     if (i === 1 || i === pages.length) {
@@ -100,7 +101,7 @@ export const ModalComponent = ({
 
   return (
     <>
-      {handleRemoveAll && handleSelectAll && (
+      {multiSelection && handleRemoveAll && handleSelectAll && (
         <div className="flex justify-between">
           <Button
             variant={"destructive"}
@@ -129,7 +130,9 @@ export const ModalComponent = ({
         {children}
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
+      
       {Info && <Info />}
+
       <DialogFooter>
         {multiSelection && (
           <div className="flex items-center space-x-2">

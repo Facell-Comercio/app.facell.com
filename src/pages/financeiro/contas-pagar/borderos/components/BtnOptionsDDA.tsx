@@ -26,7 +26,7 @@ export type ExportAnexosProps = {
 const BtnOptionsDDA = () => {
   const queryClient = useQueryClient()
   const filters = useStoreDDA().filters
-  const toggleModal = useStoreDDA().toggleModal
+  const openModal = useStoreDDA().openModal
 
   const [processing, setProcessing] = useState({
     import: false, autovincular: false, export: false, limpeza: false,
@@ -35,7 +35,7 @@ const BtnOptionsDDA = () => {
 
   // * Acessar DDA
   const handleAcessarClick = ()=>{
-    toggleModal(true)
+    openModal({id_vencimento: null, filters: {vinculados: true, naoVinculados: true} })
   }
 
   // * Importação

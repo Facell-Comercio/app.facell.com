@@ -1,11 +1,15 @@
 import { create } from "zustand";
 
+type OpenModalParams = {
+  id_vencimento?: string | null,
+  filters?: any
+}
 interface UseStoreDDA {
-  id?: string | null;
+  id_vencimento?: string | null;
   modalEditing: boolean;
   modalOpen: boolean;
   filters: any,
-  openModal: (filters: any) => void;
+  openModal: (params: OpenModalParams) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
   toggleModal: (open?: boolean)=>void;
@@ -13,14 +17,21 @@ interface UseStoreDDA {
   clearFilters: ()=>void
 }
 
-export const useStoreDDA = create<UseStoreDDA>((set) => ({
-  modalEditing: false,
-  modalOpen: false,
-  modalTransferOpen: false,
-  modalContasBancariasOpen: false,
-  filters: {},
+const initialFilters = {
+  tipo_data: 'data_vencimento', 
+  vinculados: undefined, 
+  naoVinculados: undefined
+}
 
-  openModal: (filters) => set({ modalOpen: true, filters }),
+export const useStoreDDA = create<UseStoreDDA>((set) => ({
+  id_vencimento: null,
+  modalOpen: false,
+  modalEditing: false,
+  filters: {...initialFilters},
+
+  openModal: ({id_vencimento, filters: newFilters}) => {
+    return set(()=>({ modalOpen: true, id_vencimento: id_vencimento || null, filters: {...initialFilters, ...newFilters}  }))
+  },
   closeModal: () => set({ modalOpen: false }),
   editModal: (bool) => set({ modalEditing: bool }),
   toggleModal: (open) => {
@@ -29,6 +40,6 @@ export const useStoreDDA = create<UseStoreDDA>((set) => ({
       modalEditing: false,
     }))},
     setFilters: (newFilters)=> set(prev=>({ filters: {...prev.filters, ...newFilters}})),
-    clearFilters: ()=>set(({ filters: {}}))
+    clearFilters: ()=>set(({ filters: {...initialFilters}}))
   
 }));

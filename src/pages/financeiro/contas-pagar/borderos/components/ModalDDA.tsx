@@ -23,6 +23,9 @@ import { Input } from "@/components/ui/input";
 import { Eraser, Filter } from "lucide-react";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { toast } from "@/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import ModalVencimentos from "@/pages/financeiro/components/ModalVencimentos";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 type DataProps = {
   description: string;
@@ -34,33 +37,26 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-type ModalDDAprops = {
-  id_vencimento?: number,
-  vinculados?: boolean,
-  naoVinculados?: boolean,
-}
-
-export const ModalDDA = ({ id_vencimento, vinculados, naoVinculados }: ModalDDAprops) => {
+export const ModalDDA = () => {
+  const queryClient = useQueryClient()
+  const id_vencimento = useStoreDDA().id_vencimento
   const modalOpen = useStoreDDA().modalOpen
-  const toggleModal = useStoreDDA().toggleModal
   const filters = useStoreDDA().filters
+
+  const toggleModal = useStoreDDA().toggleModal
   const setFilters = useStoreDDA().setFilters
   const clearFilters = useStoreDDA().clearFilters
 
-  const initialFilters = {
-    tipo_data: 'data_vencimento', id_vencimento, vinculados, naoVinculados
-  }
-  useEffect(() => {
-    setFilters(initialFilters)
-  }, [])
-
   const resetFilters = () => {
     clearFilters()
-    setFilters({ ...initialFilters })
-    setTimeout(()=>{
+    setTimeout(() => {
       refetch()
     }, 300)
   }
+
+  useEffect(() => {
+
+  }, [filters])
 
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -70,39 +66,64 @@ export const ModalDDA = ({ id_vencimento, vinculados, naoVinculados }: ModalDDAp
   const { data, isLoading, isError, refetch } = useDDA().getAllDDA({ pagination, filters })
 
   const dataRows = data?.data?.rows.map((item: DDA) => ({
-    description: `${normalizeCnpjNumber(item.cnpj_filial)
+    description: `${item.id} - ${normalizeCnpjNumber(item.cnpj_filial)
       } - ${normalizeCnpjNumber(item.cnpj_fornecedor)} - ${formatDate(item.data_vencimento, 'dd/MM/yyyy')} - ${normalizeCurrency(item.valor)} - ${item.nome_fornecedor} - ${item.cod_barras}`,
     item,
   }));
 
-  const vincularDDA = async ({id_dda, id_vencimento}: VinculoDDAparams)=>{
+  const vincularDDA = async ({ id_dda, id_vencimento: idVencimento }: VinculoDDA) => {
     try {
-      await useDDA().vincularDDA({id_dda, id_vencimento})
+      if (!id_dda) {
+        throw new Error('ID DDA não informado!')
+      }
+      if (!idVencimento) {
+        throw new Error('ID Vencimento não informado!')
+      }
+      await useDDA().vincularDDA({ id_dda, id_vencimento: idVencimento })
       toast({
         variant: 'success',
         title: 'Vínculo do DDA com o Vencimento realizado!',
       })
-      toggleModal(false)
+      if (id_vencimento) {
+        toggleModal(false)
+        queryClient.invalidateQueries({ queryKey: ['fin_borderos'] })
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['fin_dda'] })
+
+      refetch()
       return true
     } catch (error) {
       toast({
         variant: 'destructive',
         title: 'Erro ao tentar vincular',
         // @ts-ignore
-        description: error?.response?.data?.message || error.message 
+        description: error?.response?.data?.message || error.message
       })
       return false
     }
   }
 
-  const handleClickVincular = async ({id_dda, id_vencimento}: VinculoDDAparams)=>{
-    await vincularDDA({id_dda, id_vencimento})
-    refetch()
-  }
-  const handleClickBuscarVencimento = ()=>{
-    
+  const handleClickVincular = async ({ id_dda, id_vencimento }: VinculoDDA) => {
+    const result = await vincularDDA({ id_dda, id_vencimento })
   }
 
+  const [modalVencimentosOpen, setModalVencimentosOpen] = useState<boolean>(false);
+  const [dialogDDAopen, setDialogDDAopen] = useState<boolean>(false);
+  type VinculoDDA = {
+    id_vencimento: number | null;
+    id_dda: number | null;
+  }
+  const [preVinculoDDA, setPreVinculoDDA] = useState<VinculoDDA>({ id_vencimento: null, id_dda: null })
+
+  const handleClickBuscarVencimento = ({ id_dda }: { id_dda: number }) => {
+    setPreVinculoDDA(prev => ({ ...prev, id_dda: id_dda }))
+    setModalVencimentosOpen(true)
+  }
+  const handleSelectVencimento = (vencimento: any) => {
+    setPreVinculoDDA(prev => ({ ...prev, id_vencimento: vencimento.id_vencimento }))
+    setDialogDDAopen(true)
+  }
 
 
   const pageCount = (data && data.data.pageCount) || 0;
@@ -113,6 +134,30 @@ export const ModalDDA = ({ id_vencimento, vinculados, naoVinculados }: ModalDDAp
   return (
     <Dialog open={modalOpen} onOpenChange={toggleModal}>
       <DialogContent>
+
+        <ModalVencimentos
+          multiSelection={false}
+          handleSelection={handleSelectVencimento}
+          open={modalVencimentosOpen}
+          // @ts-ignore
+          onOpenChange={setModalVencimentosOpen}
+        />
+
+        <AlertDialog open={dialogDDAopen} onOpenChange={setDialogDDAopen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Deseja realmente vincular?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Você está prestes a vincular o DDA ID: {preVinculoDDA.id_dda} com o Vencimento ID: {preVinculoDDA.id_vencimento}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => { vincularDDA(preVinculoDDA) }}>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         <DialogHeader>
           <DialogTitle>DDA - Lista de boletos</DialogTitle>
           <DialogDescription>
@@ -123,8 +168,8 @@ export const ModalDDA = ({ id_vencimento, vinculados, naoVinculados }: ModalDDAp
 
           <div className="flex gap-3">
             <div className="flex gap-2">
-              <Button size={'sm'} onClick={() => { refetch() }}><Filter size={18} className="me-2"/> Filtrar</Button>
-              <Button size={'sm'} variant={'secondary'} onClick={resetFilters}><Eraser size={18} className="me-2"/> Resetar</Button>
+              <Button size={'sm'} onClick={() => { refetch() }}><Filter size={18} className="me-2" /> Filtrar</Button>
+              <Button size={'sm'} variant={'secondary'} onClick={resetFilters}><Eraser size={18} className="me-2" /> Resetar</Button>
             </div>
             <div className="flex gap-3 max-w-[960px] overflow-auto scroll-thin">
               <SelectFilial className="min-w-[240px]"
@@ -134,8 +179,9 @@ export const ModalDDA = ({ id_vencimento, vinculados, naoVinculados }: ModalDDAp
                 }}
               />
 
-              <Select value={filters?.tipo_data || 'data_vencimento'} onValueChange={(val) => { console.log(val);
-              ; setFilters({ tipo_data: val }) }}>
+              <Select value={filters?.tipo_data || 'data_vencimento'} onValueChange={(val) => {
+                setFilters({ tipo_data: val })
+              }}>
                 <SelectTrigger>
                   <SelectValue></SelectValue>
                 </SelectTrigger>
@@ -152,9 +198,9 @@ export const ModalDDA = ({ id_vencimento, vinculados, naoVinculados }: ModalDDAp
                 }}
               />
 
-              <Input value={filters.nome_fornecedor || ''} onChange={(e)=>setFilters({ nome_fornecedor: e.target.value})} placeholder="NOME FORNECEDOR" className="min-w-[23ch]" />
+              <Input value={filters.nome_fornecedor || ''} onChange={(e) => setFilters({ nome_fornecedor: e.target.value })} placeholder="NOME FORNECEDOR" className="min-w-[23ch]" />
 
-              <Input value={filters.cod_barras || ''} onChange={(e)=>setFilters({ cod_barras: e.target.value})} placeholder="CÓD. BARRAS" className="min-w-[44ch]" />
+              <Input value={filters.cod_barras || ''} onChange={(e) => setFilters({ cod_barras: e.target.value })} placeholder="CÓD. BARRAS" className="min-w-[44ch]" />
 
             </div>
           </div>
@@ -184,14 +230,14 @@ export const ModalDDA = ({ id_vencimento, vinculados, naoVinculados }: ModalDDAp
                           <AlertPopUp
                             title="Deseja realmente vincular o boleto com o vencimento?"
                             description="A ação não poderá ser desfeita!"
-                            action={()=>{handleClickVincular({id_dda: row.item.id, id_vencimento: id_vencimento})}}
+                            action={() => { handleClickVincular({ id_dda: row.item.id, id_vencimento: id_vencimento }) }}
                           >
-                          <Button
-                            size={"xs"}
-                            variant={"warning"}
-                          >
-                            Vincular
-                          </Button>
+                            <Button
+                              size={"xs"}
+                              variant={"warning"}
+                            >
+                              Vincular
+                            </Button>
                           </AlertPopUp>
 
 
@@ -201,6 +247,7 @@ export const ModalDDA = ({ id_vencimento, vinculados, naoVinculados }: ModalDDAp
                           <Button
                             variant={'warning'}
                             size={'xs'}
+                            onClick={() => { handleClickBuscarVencimento({ id_dda: row.item.id }) }}
                           >Vincular</Button>
                         )
                     )

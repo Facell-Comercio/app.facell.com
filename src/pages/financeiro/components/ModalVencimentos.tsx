@@ -30,6 +30,7 @@ interface IModalVencimentos {
   onOpenChange: () => void;
   id_matriz?: string;
   id_status?: string;
+  multiSelection?: boolean;
   initialFilters?: {
     [key: string]: any;
   };
@@ -41,9 +42,10 @@ export type VencimentosProps = {
   id_vencimento: string;
   id_titulo: string;
   id_status?: string;
+  id_dda?: number;
+  id_forma_pagamento?: number,
   status: string;
   forma_pagamento?: string;
-  id_dda?: string;
   tipo_baixa?: string;
   previsao: string;
   nome_fornecedor: string;
@@ -55,7 +57,6 @@ export type VencimentosProps = {
   filial: string;
   obs?: string;
   data_pagamento?: string;
-
   can_remove?: boolean;
   updated?: boolean;
 };
@@ -83,6 +84,7 @@ const ModalVencimentos = ({
   id_matriz,
   id_status,
   initialFilters,
+  multiSelection,
 }: IModalVencimentos) => {
   const [ids, setIds] = useState<string[]>([]);
   const [titulos, setTitulos] = useState<VencimentosProps[]>([]);
@@ -191,6 +193,11 @@ const ModalVencimentos = ({
       },
     ]);
     setIds([...ids, item.id_titulo.toString()]);
+  }
+
+  function handleOneSelection(item:any){
+    handleSelection(item)
+    onOpenChange()
   }
 
   if (isError) return <p>Ocorreu um erro ao tentar buscar os vencimentos</p>;
@@ -329,7 +336,7 @@ const ModalVencimentos = ({
           refetch={refetch}
           pagination={pagination}
           setPagination={setPagination}
-          multiSelection
+          multiSelection={multiSelection}
           buttonSaveSelection={ButtonSaveSelection}
           info={Info}
           handleRemoveAll={handleRemoveAll}
@@ -355,10 +362,9 @@ const ModalVencimentos = ({
                 return (
                   <tr
                     key={"titulos:" + item.id_titulo + index}
-                    className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2 ${
-                      isSelected &&
+                    className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2 ${isSelected &&
                       "bg-secondary/50 text-secondary-foreground/40"
-                    }`}
+                      }`}
                   >
                     <td className="text-xs text-nowrap p-1 text-center">
                       {" "}
@@ -392,7 +398,12 @@ const ModalVencimentos = ({
                         className="p-1"
                         variant={"outline"}
                         onClick={() => {
-                          pushSelection(item);
+                          if (multiSelection) {
+                            pushSelection(item);
+                          } else {
+                            handleOneSelection(item)
+                          }
+
                         }}
                         disabled={isSelected}
                       >
