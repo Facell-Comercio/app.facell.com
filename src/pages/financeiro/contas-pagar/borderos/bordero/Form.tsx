@@ -397,92 +397,100 @@ const FormBordero = ({
               </ItemVencimento>
             </Accordion>
 
-            <Accordion
-              type="single"
-              collapsible
-              value={itemOpen}
-              onValueChange={(e) => setItemOpen(e)}
-              className="px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg "
-            >
-              <ItemVencimento
-                title="Com Erro"
-                value="erro"
-                className="flex-col"
-                qtde={wVencimentosErro.length}
-                valorTotal={wVencimentosErroValorTotal}
+            {wVencimentosPago.length >0 && (
+              <Accordion
+                type="single"
+                collapsible
+                value={itemOpen}
+                onValueChange={(e) => setItemOpen(e)}
+                className="px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg border-green-600"
               >
-                <div className="flex gap-2 flex-wrap justify-end">
-                  {id_conta_bancaria &&
-                    modalEditing &&
-                    vencimentosChecked.length > 0 && (
-                      <>
-                        <Button
-                          type={"button"}
-                          variant={"tertiary"}
-                          size={"sm"}
-                          className="text-white justify-self-start"
-                          onClick={() => toggleModalTransfer()}
-                        >
-                          <ArrowUpDown className="me-2" size={18} />
-                          Transferir de borderô
-                        </Button>
-                        <AlertPopUp
-                          title="Deseja realmente remover esses vencimentos?"
-                          description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
-                          action={() =>
-                            removeCheckedVencimentos(vencimentosChecked)
-                          }
-                        >
+                <ItemVencimento
+                  title="Pago"
+                  value="pago"
+                  className="flex-col"
+                  qtde={wVencimentosPago.length}
+                  valorTotal={wVencimentosPagoValorTotal}
+                >
+                  {wVencimentosPago.length > 0 && (
+                    <RowVirtualizerFixedPagos
+                      data={wVencimentos}
+                      filteredData={wVencimentosPago}
+                      form={form}
+                      modalEditing={modalEditing && !isPending}
+                      removeItem={removeItemVencimentos}
+                    />
+                  )}
+                </ItemVencimento>
+              </Accordion>
+            )}
+
+            {wVencimentosErro.length >0 && (
+              <Accordion
+                type="single"
+                collapsible
+                value={itemOpen}
+                onValueChange={(e) => setItemOpen(e)}
+                className={`px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg border-red-700`}
+              >
+                <ItemVencimento
+                  title="Com Erro"
+                  value="erro"
+                  className="flex-col"
+                  qtde={wVencimentosErro.length}
+                  valorTotal={wVencimentosErroValorTotal}
+                >
+                  <div className="flex gap-2 flex-wrap justify-end ">
+                    {id_conta_bancaria &&
+                      modalEditing &&
+                      vencimentosChecked.length > 0 && (
+                        <>
                           <Button
                             type={"button"}
-                            variant={"destructive"}
+                            variant={"tertiary"}
                             size={"sm"}
-                            className="justify-self-start"
+                            className="text-white justify-self-start"
+                            onClick={() => toggleModalTransfer()}
                           >
-                            <Minus className="me-2" size={18} />
-                            Remover
+                            <ArrowUpDown className="me-2" size={18} />
+                            Transferir de borderô
                           </Button>
-                        </AlertPopUp>
-                      </>
-                    )}
-                </div>
-                {wVencimentosErro.length > 0 && (
-                  <RowVirtualizerFixedErro
-                    data={wVencimentos}
-                    filteredData={wVencimentosErro}
-                    form={form}
-                    modalEditing={modalEditing && !isPending}
-                    removeItem={removeItemVencimentos}
-                  />
-                )}
-              </ItemVencimento>
-            </Accordion>
+                          <AlertPopUp
+                            title="Deseja realmente remover esses vencimentos?"
+                            description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
+                            action={() =>
+                              removeCheckedVencimentos(vencimentosChecked)
+                            }
+                          >
+                            <Button
+                              type={"button"}
+                              variant={"destructive"}
+                              size={"sm"}
+                              className="justify-self-start"
+                            >
+                              <Minus className="me-2" size={18} />
+                              Remover
+                            </Button>
+                          </AlertPopUp>
+                        </>
+                      )}
+                  </div>
+                  {wVencimentosErro.length > 0 && (
+                    <RowVirtualizerFixedErro
+                      data={wVencimentos}
+                      filteredData={wVencimentosErro}
+                      form={form}
+                      modalEditing={modalEditing && !isPending}
+                      removeItem={removeItemVencimentos}
+                    />
+                  )}
+                </ItemVencimento>
+              </Accordion>
 
-            <Accordion
-              type="single"
-              collapsible
-              value={itemOpen}
-              onValueChange={(e) => setItemOpen(e)}
-              className="px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg "
-            >
-              <ItemVencimento
-                title="Pago"
-                value="pago"
-                className="flex-col"
-                qtde={wVencimentosPago.length}
-                valorTotal={wVencimentosPagoValorTotal}
-              >
-                {wVencimentosPago.length > 0 && (
-                  <RowVirtualizerFixedPagos
-                    data={wVencimentos}
-                    filteredData={wVencimentosPago}
-                    form={form}
-                    modalEditing={modalEditing && !isPending}
-                    removeItem={removeItemVencimentos}
-                  />
-                )}
-              </ItemVencimento>
-            </Accordion>
+            )}
+
+
+
 
             {/* <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
               <div className="flex items-center gap-2 mb-3 justify-between">
