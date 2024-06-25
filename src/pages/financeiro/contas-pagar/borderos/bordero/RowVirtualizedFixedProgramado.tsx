@@ -157,7 +157,7 @@ const RowVirtualizerFixedProgramado: React.FC<
                 readOnly
               />
               <Input
-                className="min-w-56 h-8 text-xs p-2"
+                className="min-w-56 h-8 text-xs p-2 uppercase"
                 value={data[indexData].obs || ""}
                 readOnly
               />

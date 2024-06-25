@@ -266,7 +266,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                 )
               )}
               <Input
-                className="min-w-56 h-8 text-xs p-2 text-center"
+                className="min-w-56 h-8 text-xs p-2 text-center uppercase"
                 value={data[indexData].obs || ""}
                 readOnly
               />
