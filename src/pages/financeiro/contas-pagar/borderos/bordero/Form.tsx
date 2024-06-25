@@ -13,7 +13,7 @@ import ModalContasBancarias, {
 
 import { ArrowUpDown, Download, Fingerprint, Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FaSpinner } from "react-icons/fa6";
+import { FaPix, FaSpinner } from "react-icons/fa6";
 import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
 
@@ -53,6 +53,12 @@ const FormBordero = ({
   const { mutate: deleteVencimento } = useBordero().deleteVencimento();
   const { mutate: downloadRemessa, isPending: isLoadingDownload } =
     useBordero().downloadRemessa();
+  const [isLoadingPix, setIsLoadingPix] = useState(false);
+  useEffect(() => {
+    if (!isLoadingDownload) {
+      setIsLoadingPix(false);
+    }
+  }, [isLoadingDownload]);
 
   const [
     modalEditing,
@@ -257,12 +263,28 @@ const FormBordero = ({
                 {id && (
                   <div className="flex gap-3 items-center">
                     <Button
-                      disabled={isLoadingDownload}
+                      disabled={isLoadingDownload && isLoadingPix}
                       variant={"outline"}
                       type={"button"}
-                      onClick={() => downloadRemessa(id)}
+                      onClick={() => {
+                        setIsLoadingPix(true);
+                        downloadRemessa({ id, isPix: true });
+                      }}
                     >
-                      {isLoadingDownload ? (
+                      {isLoadingDownload && isLoadingPix ? (
+                        <FaSpinner size={18} className="me-2 animate-spin" />
+                      ) : (
+                        <FaPix className="me-2" size={20} />
+                      )}{" "}
+                      Exp. Remessa PIX
+                    </Button>
+                    <Button
+                      disabled={isLoadingDownload && !isLoadingPix}
+                      variant={"outline"}
+                      type={"button"}
+                      onClick={() => downloadRemessa({ id })}
+                    >
+                      {isLoadingDownload && !isLoadingPix ? (
                         <FaSpinner size={18} className="me-2 animate-spin" />
                       ) : (
                         <Download className="me-2" size={20} />
@@ -397,7 +419,7 @@ const FormBordero = ({
               </ItemVencimento>
             </Accordion>
 
-            {wVencimentosPago.length >0 && (
+            {wVencimentosPago.length > 0 && (
               <Accordion
                 type="single"
                 collapsible
@@ -425,7 +447,7 @@ const FormBordero = ({
               </Accordion>
             )}
 
-            {wVencimentosErro.length >0 && (
+            {wVencimentosErro.length > 0 && (
               <Accordion
                 type="single"
                 collapsible
@@ -486,11 +508,7 @@ const FormBordero = ({
                   )}
                 </ItemVencimento>
               </Accordion>
-
             )}
-
-
-
 
             {/* <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
               <div className="flex items-center gap-2 mb-3 justify-between">
