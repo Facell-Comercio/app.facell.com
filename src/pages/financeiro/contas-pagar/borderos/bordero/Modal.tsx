@@ -83,6 +83,7 @@ const ModalBordero = () => {
     );
 
     if (newVencimento[0].id_titulo) {
+      // @ts-ignore
       newData.vencimentos = newVencimento;
     } else {
       newData.vencimentos = [];

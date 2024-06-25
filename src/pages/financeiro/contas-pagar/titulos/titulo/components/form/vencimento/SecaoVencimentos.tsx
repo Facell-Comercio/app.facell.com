@@ -16,7 +16,6 @@ import { ModalGerarVencimentos } from "./GerarVencimentos";
 import { ModalVencimento } from "./ModalVencimento";
 import RemoverVencimentos from "./RemoverVencimentos";
 import { useStoreVencimento } from "./context";
-import { Input } from "@/components/ui/input";
 import { copyToClipboard } from "../../../helpers/helper";
 
 type SecaoVencimentosProps = {

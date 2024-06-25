@@ -11,7 +11,6 @@ import { MeuOrcamentoSchema, useFormMeuOrcamentoData } from "./form-data";
 import { useStoreMeuOrcamento } from "./store";
 
 const FormMeuOrcamento = ({
-  id,
   data,
   formRef,
 }: {
