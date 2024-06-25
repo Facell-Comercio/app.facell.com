@@ -23,8 +23,7 @@ export const useExtratoBancario = () => {
 
         insertOne : () => useMutation({
             mutationFn: (data
-            ) => {
-                console.log("Criando novo borderô:")            
+            ) => {          
                 return api.post("/financeiro/extratos-bancarios/", data).then((response)=>response.data)
             },
             onSuccess() {

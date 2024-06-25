@@ -26,7 +26,6 @@ export const useBancos = () => {
         enabled: !!id,
         queryKey: ["fin_bancos", id],
         queryFn: async () => {
-          console.log(`Buscando banco com base no ID: ${id}`);
           return await api.get(`/financeiro/bancos/${id}`);
         },
       }),

@@ -111,10 +111,8 @@ const FormTituloPagar = ({
     setValue,
     formState: { errors },
   } = form;
-  // console.log(
-  //   "ERROS_TITULO:",
-  //   errors,
-  // );
+  
+  console.log("ERROS_TITULO:",errors);
 
   // * [ WATCHES ]
   // const wfull = form.watch();
@@ -641,7 +639,7 @@ const FormTituloPagar = ({
                               <span>Vencimentos</span>
                               {errors.vencimentos?.message && (
                                 <Popover>
-                                  <PopoverTrigger asChild>
+                                  <PopoverTrigger>
                                     <Badge variant={"destructive"}>
                                       Atenção
                                     </Badge>
@@ -658,7 +656,7 @@ const FormTituloPagar = ({
                               <span>Rateio da solicitação</span>
                               {errors.itens_rateio?.message && (
                                 <Popover>
-                                  <PopoverTrigger asChild>
+                                  <PopoverTrigger>
                                     <Badge variant={"destructive"}>
                                       Atenção
                                     </Badge>

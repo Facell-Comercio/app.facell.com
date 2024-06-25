@@ -128,20 +128,30 @@ type ContaOrcamento = {
   active?: boolean
 }
 export const checkIfValidateBudget = ({ grupoValidaOrcamento, orcamentoAtivo, active }: ContaOrcamento) => {
-  if (!grupoValidaOrcamento){
+  if (!grupoValidaOrcamento) {
     return false;
   }
-  if(orcamentoAtivo === undefined){
+  if (orcamentoAtivo === undefined) {
     return true
   }
-  if(!orcamentoAtivo){
+  if (!orcamentoAtivo) {
     return false
   }
-  if(active === undefined){
+  if (active === undefined) {
     return true
   }
-  if(!active){
+  if (!active) {
     return false
   }
   return true
+}
+
+export const copyToClipboard = async (texto: string)=>{
+  let success = true
+  try {
+    await navigator.clipboard.writeText(texto);
+  } catch (err) {
+    success = false
+  }
+  return success
 }

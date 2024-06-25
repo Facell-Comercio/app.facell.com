@@ -28,7 +28,6 @@ export const useContasBancarias = () => {
         enabled: !!id,
         queryKey: ["fin_contas_bancarias", id],
         queryFn: async () => {
-          console.log(`Buscando plano de contas com base no ID: ${id}`);
           return await api.get(`financeiro/contas-bancarias/${id}`);
         },
       }),

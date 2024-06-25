@@ -5,7 +5,6 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableMovimentoContabil } from "./table/store-table";
 
 const MovimentoContabil = () => {
-  console.log("RENDER - Section MovimentoContabil");
   const [pagination, setPagination, filters] = useStoreTableMovimentoContabil(
     (state) => [state.pagination, state.setPagination, state.filters]
   );

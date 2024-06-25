@@ -85,7 +85,6 @@ export function ModalVencimento({
               return acc + parseFloat(curr.valor);
             }, 0) || 0) + parseFloat(data.valor);
         const dif = totalPrevisto - parseFloat(valorTotalTitulo);
-        console.log(indexFieldArray, totalPrevisto, dif, data.valor);
         if (dif > 0) {
           const difFormatada = normalizeCurrency(dif);
           toast({
@@ -115,7 +114,8 @@ export function ModalVencimento({
         data_vencimento: String(data.data_vencimento),
         data_prevista: String(data.data_prevista),
         valor: data.valor,
-        linha_digitavel: data.linha_digitavel,
+        cod_barras: data.cod_barras,
+        qr_code: data.qr_code,
       });
     }
     formTitulo.setValue("update_vencimentos", true);
@@ -169,8 +169,14 @@ export function ModalVencimento({
               </div>
 
               <FormInput
-                name="linha_digitavel"
-                label="Linha digitável"
+                name="cod_barras"
+                label="Código de Barras"
+                control={form.control}
+              />
+
+              <FormInput
+                name="qr_code"
+                label="PIX Copia e Cola"
                 control={form.control}
               />
             </div>

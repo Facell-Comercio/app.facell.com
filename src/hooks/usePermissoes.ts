@@ -24,7 +24,6 @@ export const usePermissoes = () => {
         enabled: !!id,
         queryKey: ["permissao", id],
         queryFn: async () => {
-          console.log(`Buscando título com base no ID: ${id}`);
           return await api.get(`/permissao/${id}`);
         },
       }),

@@ -246,12 +246,6 @@ const ModalMultiPlanosContas = ({
                       onChange={(e) => {
                         const value = e.target.value;
                         if (+value > 0) {
-                          console.log(
-                            "VALOR -> ",
-                            id_centro_custo,
-                            centro_custo
-                          );
-
                           addToMap(item.id, {
                             id_centro_custo: id_centro_custo,
                             centro_custo: centro_custo,

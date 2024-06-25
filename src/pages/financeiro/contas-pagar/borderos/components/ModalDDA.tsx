@@ -13,7 +13,7 @@ import {
 import { normalizeCnpjNumber, normalizeCurrency } from "@/helpers/mask";
 import { useEffect, useState } from "react";
 import { useStoreDDA } from "./storeDDA";
-import { VinculoDDAparams, useDDA } from "@/hooks/financeiro/useDDA";
+import { useDDA } from "@/hooks/financeiro/useDDA";
 import { DDA } from "@/types/financeiro/dda-type";
 import { formatDate } from "date-fns";
 import { DatePickerWithRange } from "@/components/ui/date-range";
@@ -63,7 +63,7 @@ export const ModalDDA = () => {
     pageIndex: 0,
   });
 
-  const { data, isLoading, isError, refetch } = useDDA().getAllDDA({ pagination, filters })
+  const { data, refetch } = useDDA().getAllDDA({ pagination, filters })
 
   const dataRows = data?.data?.rows.map((item: DDA) => ({
     description: `${item.id} - ${normalizeCnpjNumber(item.cnpj_filial)
@@ -105,7 +105,7 @@ export const ModalDDA = () => {
   }
 
   const handleClickVincular = async ({ id_dda, id_vencimento }: VinculoDDA) => {
-    const result = await vincularDDA({ id_dda, id_vencimento })
+    await vincularDDA({ id_dda, id_vencimento })
   }
 
   const [modalVencimentosOpen, setModalVencimentosOpen] = useState<boolean>(false);

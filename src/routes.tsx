@@ -30,6 +30,7 @@ const AppRoutes = () => {
     <Routes>
       <Route element={<PrivateRoutes />}>
         <Route path="/" element={<App />}>
+          <Route element={<NotAuthorizedPage />} path="/not-authorized" />
           {/* Páginas protegidas isoladas */}
           <Route element={<HomePage />} path="/" />
           <Route element={<PageDashboard/>} path="/dashboard"/>

@@ -36,8 +36,8 @@ const SecaoRateio = ({
 }: SecaoRateioProps) => {
   //^ WATCHES
   const valorTotalTitulo = form.watch("valor");
-  const nome_filial = form.watch("filial");
-  const id_filial = form.watch("id_filial");
+  // const nome_filial = form.watch("filial");
+  // const id_filial = form.watch("id_filial");
   const id_grupo_economico = form.watch("id_grupo_economico");
 
   const { setValue } = form;
@@ -235,7 +235,7 @@ const SecaoRateio = ({
           fileImportRateioRef.current.files[0];
         if (file) {
           const dataFiliais = await api.get("/filial", { params: {} });
-          console.log("Filiais query", dataFiliais);
+
           // @ts-ignore
           const filiais = dataFiliais?.data?.rows || [];
           if (filiais.length === 0) {
@@ -253,7 +253,7 @@ const SecaoRateio = ({
                 importFromExcel(importedData) || [];
 
               setValue("update_rateio", true);
-              console.log(rows);
+
               for (const row of rows) {
                 if (!row.id_filial && !row.filial) {
                   throw new Error(
@@ -337,11 +337,9 @@ const SecaoRateio = ({
       toast({
         variant: "destructive",
         title: "Erro ao tentar importar",
-        // @ts-ignore
         description:
-          error?.response?.data?.message ||
-          error?.message ||
-          "Erro desconhecido",
+        // @ts-ignore
+          error?.response?.data?.message || error?.message || "Erro desconhecido",
       });
     }
   }

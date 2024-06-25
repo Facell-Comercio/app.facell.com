@@ -8,8 +8,10 @@ export const vencimentoSchema = z.object({
   data_vencimento: z.coerce.string({ required_error: "Campo obrigatório" }),
   data_prevista: z.coerce.string({ required_error: "Campo obrigatório" }),
   valor: z.string().min(0),
-  linha_digitavel: z.string().optional(),
-});
+  cod_barras: z.string().optional(),
+  qr_code: z.string().optional().transform(v => v?.trim() || null),
+})
+
 
 export const rateioSchema = z.object({
   id: z.string().optional(),
@@ -174,7 +176,25 @@ export const schemaTitulo = z
       message: "Obrigatório para esta forma de pagamento.",
     }
   )
+  // ^ Validar se forma de pagamento for PIX Copia e Cola, cobrar o PIX Copia e Cola
+  .refine(
+    (data) => {
+      if (data.id_forma_pagamento == "8") {
+        if (!data.vencimentos || data.vencimentos.length === 0) {
+          return false
+        }
+        for (const v of data.vencimentos) {
+          if (!v.qr_code) {
+            return false;
+          }
+        }
+      }
+      return true
+    },
+    { path: ["vencimentos"], message: "Preencha o PIX Copia e Cola!" }
+  )
 
+  // ^ Validação de Anexos
   .refine(
     (data) => (data.id_tipo_solicitacao == "1" ? !!data.url_nota_fiscal : true),
     { path: ["url_nota_fiscal"], message: "Anexo Obrigatório!" }
@@ -224,7 +244,7 @@ export type TituloSchemaProps = z.infer<typeof schemaTitulo>;
 
 //   num_parcelas?: string;
 //   parcela?: string;
-//   linha_digitavel?: string | null;
+//   cod_barras?: string | null;
 
 //   // Fornecedor
 //   nome_fornecedor?: string;
