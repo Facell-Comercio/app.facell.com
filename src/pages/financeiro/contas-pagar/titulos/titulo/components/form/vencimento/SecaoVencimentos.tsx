@@ -10,12 +10,13 @@ import { DataVirtualTableHeaderFixed } from "@/components/custom/DataVirtualTabl
 import { normalizeCurrency } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { VencimentoTitulo } from "../../../store";
 import { ModalGerarVencimentos } from "./GerarVencimentos";
 import { ModalVencimento } from "./ModalVencimento";
 import RemoverVencimentos from "./RemoverVencimentos";
 import { useStoreVencimento } from "./context";
+import { copyToClipboard } from "../../../helpers/helper";
 
 type SecaoVencimentosProps = {
   id?: string | null;
@@ -44,6 +45,39 @@ const SecaoVencimentos = ({
   function handleRemoveVencimento(index: number) {
     setValue("update_vencimentos", true);
     removeVencimento(index);
+  }
+
+  
+  let timeoutCopyCodBarras: any;
+  const [indexCopyCodBarras, setIndexCopyCodBarras] = useState<number | null>(null)
+
+  const handleCopyCodBarras = async (index: number, codBarras: string) => {
+    const result = await copyToClipboard(codBarras)
+    if (result) {
+      setIndexCopyCodBarras(index)
+      if (timeoutCopyCodBarras) {
+        clearTimeout(timeoutCopyCodBarras)
+      }
+      timeoutCopyCodBarras = setTimeout(() => {
+        setIndexCopyCodBarras(null)
+      }, 5000);
+    }
+  }
+
+  let timeoutCopyQrCode: any;
+  const [indexCopyQrCode, setIndexCopyQrCode] = useState<number | null>(null)
+
+  const handleCopyQrCode = async (index: number, qrcode: string) => {
+    const result = await copyToClipboard(qrcode)
+    if (result) {
+      setIndexCopyQrCode(index)
+      if (timeoutCopyQrCode) {
+        clearTimeout(timeoutCopyQrCode)
+      }
+      timeoutCopyQrCode = setTimeout(() => {
+        setIndexCopyQrCode(null)
+      }, 5000);
+    }
   }
 
   const updateVencimento = useStoreVencimento().updateVencimento;
@@ -121,12 +155,31 @@ const SecaoVencimentos = ({
         },
       },
       {
-        accessorKey: "linha_digitavel",
-        header: "LINHA DIGITÁVEL",
-        size: 430,
+        accessorKey: "cod_barras",
+        header: "CÓDIGO DE BARRAS",
+        cell: (info) => {
+          const index = info.row.index;
+          let value = info.getValue<string>() || ''
+          let cod_barras = value || ''
+          return indexCopyCodBarras == index ? <span className="text-green-600 text-center">Copiado!</span> :
+            <span onClick={() => handleCopyCodBarras(index, value)} className="cursor-pointer">{cod_barras}</span>
+        },
+        size: 300,
+      },
+      {
+        accessorKey: "qr_code",
+        header: "PIX COPIA E COLA",
+        cell: (info) => {
+          const index = info.row.index;
+          let value = info.getValue<string>() || ''
+          let qrcode = value.substring(0, 20) || ''
+          return indexCopyQrCode == index ? <span className="text-green-600 text-center">Copiado!</span> :
+            <span onClick={() => handleCopyQrCode(index, value)} className="cursor-pointer">{qrcode}</span>
+        },
+        size: 150,
       },
     ],
-    [wvencimentos, canEditVencimentos]
+    [wvencimentos, canEditVencimentos, indexCopyCodBarras, indexCopyQrCode]
   );
 
   const valor_total = wvencimentos?.reduce((acc, curr) => {

@@ -69,8 +69,6 @@ const ModalBorderosOLD = ({
     enabled: open,
   });
 
-  console.log(data);
-
   const pages = [...Array(data?.data?.pageCount).keys()].map(
     (page) => page + 1
   );

@@ -98,7 +98,8 @@ export function ModalGerarVencimentos({ form: formTitulo }: { form: UseFormRetur
                 data_vencimento: '',
                 data_prevista: '',
                 valor: valorParcela.toString(),
-                linha_digitavel: ''
+                cod_barras: '',
+                qr_code: '',
             }
 
             // gerar uma data de vencimento e previsão

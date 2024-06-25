@@ -12,7 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { useDDA } from "@/hooks/financeiro/useDDA";
 import { useQueryClient } from "@tanstack/react-query";
-import { Download, Eraser, FileStack, Trash, Unplug, Upload } from "lucide-react";
+import { Download, FileStack, Trash, Unplug, Upload } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
 import { useStoreDDA } from "./storeDDA";
 import { FaSpinner } from "react-icons/fa6";

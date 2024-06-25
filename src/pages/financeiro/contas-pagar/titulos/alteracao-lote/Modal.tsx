@@ -48,7 +48,6 @@ const ModalAlteracoesLote = () => {
   const { mutate: changeTitulos } = useTituloPagar().changeTitulos();
 
   const alterarLote = async () => {
-    console.log(data.type === "status", data.status);
 
     if (idSelection.length === 0) {
       toast({

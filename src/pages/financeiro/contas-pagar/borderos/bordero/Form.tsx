@@ -77,7 +77,7 @@ const FormBordero = ({
 
   const [exporting, setExporting] = useState<string>("");
 
-  const { form, vencimentos, addVencimento, removeVencimento } =
+  const { form, addVencimento, removeVencimento } =
     useFormBorderoData(data);
 
   const id_conta_bancaria = form.watch("id_conta_bancaria");

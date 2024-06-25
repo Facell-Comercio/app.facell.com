@@ -67,7 +67,8 @@ const ModalTituloPagar = () => {
         new Date(recorrencia.data_vencimento)
       ),
       valor: recorrencia.valor,
-      linha_digitavel: "",
+      cod_barras: "",
+      qr_code: '',
     });
   }
 

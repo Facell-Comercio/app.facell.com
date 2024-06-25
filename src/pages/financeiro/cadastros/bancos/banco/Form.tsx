@@ -28,7 +28,7 @@ const FormBanco = ({
     isSuccess: updateIsSuccess,
     isError: updateIsError,
   } = useBancos().update();
-  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
+  const [modalEditing, editModal, closeModal, editIsPending] =
     useStoreBanco((state) => [
       state.modalEditing,
       state.editModal,

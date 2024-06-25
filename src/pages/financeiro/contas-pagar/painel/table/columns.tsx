@@ -202,7 +202,6 @@ export const columnsTableRecorrencias: ColumnDef<RowRecorrencia>[] = [
             id,
             valor,
           });
-          console.log(id_titulo);
         }}
       >
         {info.getValue<string>()}

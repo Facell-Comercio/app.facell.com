@@ -11,7 +11,6 @@ import { MeuOrcamentoSchema, useFormMeuOrcamentoData } from "./form-data";
 import { useStoreMeuOrcamento } from "./store";
 
 const FormMeuOrcamento = ({
-  id,
   data,
   formRef,
 }: {
@@ -19,7 +18,6 @@ const FormMeuOrcamento = ({
   data: MeuOrcamentoSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - MeuOrcamento:", id);
   const [modalCentrosCustoOpen, setModalCentrosCustoOpen] = useState(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState(false);
   const { mutate: transfer } = useOrcamento().transfer();

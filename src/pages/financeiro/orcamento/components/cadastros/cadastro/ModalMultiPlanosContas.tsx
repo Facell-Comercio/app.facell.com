@@ -210,10 +210,11 @@ const ModalMultiPlanosContas = ({
           multiSelection
         >
           {data?.data?.rows.map((item: ItemPlanoContas, index: number) => {
-            let minValue = 0;
-            if (getFromMap(item.id)?.realizado !== undefined) {
-              minValue = Number(getFromMap(item.id)?.realizado);
-            }
+            // var minValue = 0;
+            // if (getFromMap(item.id)?.realizado !== undefined) {
+            //   minValue = Number(getFromMap(item.id)?.realizado);
+            // }
+            
             const error =
               parseFloat(getFromMap(item.id)?.valor || "0") <
               parseFloat(getFromMap(item.id)?.realizado || "0");
@@ -246,12 +247,6 @@ const ModalMultiPlanosContas = ({
                       onChange={(e) => {
                         const value = e.target.value;
                         if (+value > 0) {
-                          console.log(
-                            "VALOR -> ",
-                            id_centro_custo,
-                            centro_custo
-                          );
-
                           addToMap(item.id, {
                             id_centro_custo: id_centro_custo,
                             centro_custo: centro_custo,

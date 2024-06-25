@@ -7,7 +7,8 @@ export interface State {
         id?: string,
         data_vencimento: string,
         data_prevista: string,
-        linha_digitavel?: string,
+        cod_barras?: string,
+        qr_code?: string,
     },
     modalOpen: boolean,
 }
@@ -18,11 +19,12 @@ export const initialStateVencimento = {
         id: '',
         data_vencimento: String(new Date()),
         data_prevista: String(calcularDataPrevisaoPagamento(new Date())),
-        linha_digitavel: '',
+        cod_barras: '',
+        qr_code: '',
     },
     modalOpen: false,
 }
-type UpdateVencimentoProps = { index?: number; vencimento: Pick<State['vencimento'], "data_prevista" | "data_vencimento" | "id" | "linha_digitavel"> }
+type UpdateVencimentoProps = { index?: number; vencimento: Pick<State['vencimento'], "data_prevista" | "data_vencimento" | "id" | "cod_barras" | 'qr_code'> }
 export interface Actions {
     newVencimento: () => void;
     updateVencimento: (data: UpdateVencimentoProps) => void;

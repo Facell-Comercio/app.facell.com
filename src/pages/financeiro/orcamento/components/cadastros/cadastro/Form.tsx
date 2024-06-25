@@ -51,7 +51,6 @@ const FormCadastro = ({
   data: cadastroSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  console.log("RENDER - Cadastro:", id);
   const { mutate: insertOne, isSuccess: insertIsSuccess } =
     useOrcamento().insertOne();
   const { mutate: update, isSuccess: updateIsSuccess } =
@@ -145,7 +144,6 @@ const FormCadastro = ({
         if (!hasId || !sameValue || !sameActive) return conta;
       }),
     };
-    console.log(filteredData);
 
     if (id) {
       update(filteredData);

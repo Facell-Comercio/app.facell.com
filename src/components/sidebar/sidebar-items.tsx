@@ -1,3 +1,4 @@
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { Settings } from "lucide-react";
 import { ReactNode } from "react";
 import {
@@ -31,21 +32,21 @@ export const sidebarItems: SidebarItem[] = [
     type: "link",
     icon: <BsFillSendFill />,
     uri: "/",
-    visible: true,
+    visible: false,
   },
   {
     name: "Chat",
     type: "link",
     icon: <BsFillChatLeftDotsFill />,
     uri: "/chat",
-    visible: true,
+    visible: false,
   },
   {
     name: "Dashboard",
     type: "link",
     icon: <BsFillBarChartFill />,
     uri: "/dashboard",
-    visible: true,
+    visible: false,
   },
   {
     name: "departamentos",
@@ -179,7 +180,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CR",
         uri: "/financeiro/contas-a-receber",
-        visible: true,
+        visible: false,
       },
       {
         name: "Orçamento",
@@ -193,7 +194,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CBK",
         uri: "/financeiro/conciliacao-bancaria",
-        visible: true,
+        visible: checkUserDepartments('FINANCEIRO') || checkUserPermission('MASTER'),
       },
       {
         name: "Cadastros",

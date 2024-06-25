@@ -11,7 +11,7 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableCadastro } from "./table/store-table";
 
 const Cadastros = () => {
-  console.log("RENDER - Section-Titulos");
+
   const [pagination, setPagination, filters] = useStoreTableCadastro(
     (state) => [state.pagination, state.setPagination, state.filters]
   );

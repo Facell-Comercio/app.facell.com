@@ -11,7 +11,6 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableMeuOrcamento } from "./table/store-table";
 
 const MeuOrcamento = () => {
-  console.log("RENDER - Section-Titulos");
   const [pagination, setPagination, filters] = useStoreTableMeuOrcamento(
     (state) => [state.pagination, state.setPagination, state.filters]
   );
