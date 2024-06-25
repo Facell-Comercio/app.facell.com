@@ -80,14 +80,14 @@ export const useBordero = () => {
             .put("/financeiro/contas-a-pagar/bordero/", { id, ...rest })
             .then((response) => response.data);
         },
-        onSuccess() {
+        onSuccess(_, { id }) {
           toast({
             variant: "success",
             title: "Sucesso",
             description: "Atualização realizada com sucesso",
             duration: 3500,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -228,5 +228,26 @@ export const useBordero = () => {
           });
         },
       }),
+
+    importRemessa: (files: FileList | null) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const form = new FormData();
+          if (files) {
+            for (let i = 0; i < files.length; i++) {
+              form.append("files", files[i]);
+            }
+          }
+          const result = await api.postForm(
+            "/financeiro/contas-a-pagar/bordero/import-retorno-remessa",
+            form
+          );
+          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          resolve(result.data);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
   };
 };

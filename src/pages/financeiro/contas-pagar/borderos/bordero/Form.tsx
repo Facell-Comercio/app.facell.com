@@ -13,7 +13,7 @@ import ModalContasBancarias, {
 
 import { ArrowUpDown, Download, Fingerprint, Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FaPix, FaSpinner } from "react-icons/fa6";
+import { FaSpinner } from "react-icons/fa6";
 import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
 
@@ -22,12 +22,14 @@ import { Accordion } from "@/components/ui/accordion";
 import ModalVencimentos, {
   VencimentosProps,
 } from "@/pages/financeiro/components/ModalVencimentos";
+import BtnOptionsRemessa from "./BtnOptionsRemessa";
 import { ItemVencimento } from "./ItemVencimento";
 import { BorderoSchemaProps } from "./Modal";
 import ModalTransfer from "./ModalTransfer";
 import RowVirtualizerFixedErro from "./RowVirtualizedFixedErro";
 import RowVirtualizerFixedPagos from "./RowVirtualizedFixedPagos";
 import RowVirtualizerFixedPendentes from "./RowVirtualizedFixedPendentes";
+import RowVirtualizerFixedProgramado from "./RowVirtualizedFixedProgramado";
 
 const FormBordero = ({
   id,
@@ -51,14 +53,6 @@ const FormBordero = ({
     isError: updateIsError,
   } = useBordero().update();
   const { mutate: deleteVencimento } = useBordero().deleteVencimento();
-  const { mutate: downloadRemessa, isPending: isLoadingDownload } =
-    useBordero().downloadRemessa();
-  const [isLoadingPix, setIsLoadingPix] = useState(false);
-  useEffect(() => {
-    if (!isLoadingDownload) {
-      setIsLoadingPix(false);
-    }
-  }, [isLoadingDownload]);
 
   const [
     modalEditing,
@@ -97,6 +91,14 @@ const FormBordero = ({
     form
       .watch("vencimentos")
       .filter((v) => v.status === "pendente")
+      .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
+  const wVencimentosProgramados = form
+    .watch("vencimentos")
+    .filter((v) => v.status === "programado");
+  const wVencimentosProgramadosValorTotal =
+    form
+      .watch("vencimentos")
+      .filter((v) => v.status === "programado")
       .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
   const wVencimentosErro = form
     .watch("vencimentos")
@@ -262,6 +264,23 @@ const FormBordero = ({
                 {/* Exportação */}
                 {id && (
                   <div className="flex gap-3 items-center">
+                    <BtnOptionsRemessa id={id} />
+                    {/* <Button
+                      disabled={isLoadingDownload && isLoadingPix}
+                      variant={"outline"}
+                      type={"button"}
+                      onClick={() => {
+                        setIsLoadingPix(true);
+                        downloadRemessa({ id, isPix: true });
+                      }}
+                    >
+                      {isLoadingDownload && isLoadingPix ? (
+                        <FaSpinner size={18} className="me-2 animate-spin" />
+                      ) : (
+                        <Upload className="me-2" size={20} />
+                      )}{" "}
+                      Retorno Remessa
+                    </Button>
                     <Button
                       disabled={isLoadingDownload && isLoadingPix}
                       variant={"outline"}
@@ -274,9 +293,9 @@ const FormBordero = ({
                       {isLoadingDownload && isLoadingPix ? (
                         <FaSpinner size={18} className="me-2 animate-spin" />
                       ) : (
-                        <FaPix className="me-2" size={20} />
+                        <Download className="me-2" size={20} />
                       )}{" "}
-                      Exp. Remessa PIX
+                      Remessa PIX
                     </Button>
                     <Button
                       disabled={isLoadingDownload && !isLoadingPix}
@@ -289,8 +308,8 @@ const FormBordero = ({
                       ) : (
                         <Download className="me-2" size={20} />
                       )}{" "}
-                      Exportar Remessa
-                    </Button>
+                      Remessa
+                    </Button> */}
                     <Button
                       disabled={!!exporting}
                       variant={"outline"}
@@ -419,6 +438,33 @@ const FormBordero = ({
               </ItemVencimento>
             </Accordion>
 
+            {wVencimentosProgramados.length > 0 && (
+              <Accordion
+                type="single"
+                collapsible
+                value={itemOpen}
+                onValueChange={(e) => setItemOpen(e)}
+                className="px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg border-yellow-600"
+              >
+                <ItemVencimento
+                  title="Programados"
+                  value="programados"
+                  className="flex-col"
+                  qtde={wVencimentosProgramados.length}
+                  valorTotal={wVencimentosProgramadosValorTotal}
+                >
+                  {wVencimentosProgramados.length > 0 && (
+                    <RowVirtualizerFixedProgramado
+                      data={wVencimentos}
+                      filteredData={wVencimentosProgramados}
+                      form={form}
+                      modalEditing={modalEditing && !isPending}
+                      removeItem={removeItemVencimentos}
+                    />
+                  )}
+                </ItemVencimento>
+              </Accordion>
+            )}
             {wVencimentosPago.length > 0 && (
               <Accordion
                 type="single"
@@ -428,8 +474,8 @@ const FormBordero = ({
                 className="px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg border-green-600"
               >
                 <ItemVencimento
-                  title="Pago"
-                  value="pago"
+                  title="Pagos"
+                  value="pagos"
                   className="flex-col"
                   qtde={wVencimentosPago.length}
                   valorTotal={wVencimentosPagoValorTotal}
@@ -456,7 +502,7 @@ const FormBordero = ({
                 className={`px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg border-red-700`}
               >
                 <ItemVencimento
-                  title="Com Erro"
+                  title="Erros"
                   value="erro"
                   className="flex-col"
                   qtde={wVencimentosErro.length}

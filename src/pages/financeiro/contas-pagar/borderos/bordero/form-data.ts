@@ -22,7 +22,7 @@ const schemaBorderos = z.object({
         forma_pagamento: z.string().optional(),
         tipo_baixa: z.string().optional(),
         data_prevista_parcial: z.date().optional(),
-        id_dda: z.string().optional(),
+        id_dda: z.coerce.string().optional(),
         previsao: z.string().trim().optional(),
         nome_fornecedor: z.string().trim().optional(),
         valor_total: z.string().trim().optional(),
