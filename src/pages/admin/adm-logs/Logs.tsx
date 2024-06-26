@@ -7,12 +7,19 @@ import FilterLogs from "./FiltersLogs";
 import ModalLog from "./Modal";
 import RowVirtualizedFixed, { Log } from "./RowVirtualizedFixed";
 import { useStoreLogs } from "./store";
+import { Button } from "@/components/ui/button";
+import { Eraser, Trash } from "lucide-react";
 
 const Logs = () => {
   const [toogleRefetch, setToogleRefetch] = useState(false);
   const filters = useStoreLogs().filters;
   const id = useStoreLogs().id;
   const { data, isFetched, isLoading, isError, refetch } = useLogs().getAll();
+  const { mutate, isPending } = useLogs().delete()
+
+  const handleDeleteLogs = async ()=>{
+    mutate()
+  }
 
   const filteredData: Log[] = useMemo(
     () =>
@@ -45,6 +52,9 @@ const Logs = () => {
 
   return (
     <div className="flex flex-col gap-3">
+      <div className="flex justify-end gap-3">
+        <Button disabled={isPending} onClick={handleDeleteLogs} variant={'destructive'} ><Trash size={18} className="me-2"/> Excluir Todos</Button>
+      </div>
       <FilterLogs
         refetch={() => {
           setToogleRefetch((state) => !state);
