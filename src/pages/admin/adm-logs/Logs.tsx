@@ -8,7 +8,7 @@ import ModalLog from "./Modal";
 import RowVirtualizedFixed, { Log } from "./RowVirtualizedFixed";
 import { useStoreLogs } from "./store";
 import { Button } from "@/components/ui/button";
-import { Eraser, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 
 const Logs = () => {
   const [toogleRefetch, setToogleRefetch] = useState(false);
