@@ -2,7 +2,6 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import { DataVirtualTableHeaderFixed } from "@/components/custom/DataVirtualTableHeaderFixed";
 import FormSwitch from "@/components/custom/FormSwitch";
 import { Button } from "@/components/ui/button";
-import { FilialUser } from "@/context/auth-store";
 import { ColumnDef } from "@tanstack/react-table";
 import { Trash } from "lucide-react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";

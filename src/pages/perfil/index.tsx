@@ -34,7 +34,7 @@ type CentroCustoProps = {
   nome: string;
 };
 const Perfil = () => {
-  const { data, isLoading } = useUsers().getOne("user");
+  const { data } = useUsers().getOne("user");
   const userData = data?.data;
 
   const openModal = useStorePerfil().openModal;

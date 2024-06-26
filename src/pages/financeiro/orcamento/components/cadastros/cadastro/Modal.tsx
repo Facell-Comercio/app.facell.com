@@ -24,7 +24,7 @@ export const initialPropsCadastro: cadastroSchemaProps = {
   id: "",
   id_grupo_economico: "",
   grupo_economico: "",
-  active: true,
+  active: 1,
   ref: dataFormatada,
   contas: [],
 };
