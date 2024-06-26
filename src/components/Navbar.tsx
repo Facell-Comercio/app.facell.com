@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/context/auth-store";
 import { useSidebar } from "@/context/sidebar-store";
 import { Bell, DoorOpen, MessageSquare, User } from "lucide-react";
+import { Link } from "react-router-dom";
 import ButtonFullScreen from "./custom/ButtonFullScreen";
 import LogoFacell from "./custom/LogoFacell";
 import { Badge } from "./ui/badge";
@@ -54,6 +55,15 @@ const Navbar = () => {
             <span className="sr-only">User</span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem className="w-full justify-start p-0 cursor-pointer">
+              <Link
+                to="/perfil"
+                className="flex gap-2 items-center px-2 py-1.5 w-full"
+              >
+                <User size={20} />
+                <span>Perfil</span>
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="w-full justify-start gap-2 cursor-pointer"
               onClick={() => logout()}

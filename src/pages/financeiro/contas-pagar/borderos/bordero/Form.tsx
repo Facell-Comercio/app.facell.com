@@ -77,8 +77,7 @@ const FormBordero = ({
 
   const [exporting, setExporting] = useState<string>("");
 
-  const { form, addVencimento, removeVencimento } =
-    useFormBorderoData(data);
+  const { form, addVencimento, removeVencimento } = useFormBorderoData(data);
 
   const id_conta_bancaria = form.watch("id_conta_bancaria");
   const id_matriz = form.watch("id_matriz");
@@ -555,115 +554,6 @@ const FormBordero = ({
                 </ItemVencimento>
               </Accordion>
             )}
-
-            {/* <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-              <div className="flex items-center gap-2 mb-3 justify-between">
-                <span className="flex gap-2 items-center">
-                  <List />{" "}
-                  <span className="text-lg font-bold ">
-                    Vencimentos a Pagar
-                  </span>
-                </span>
-                <div className="flex gap-2">
-                  {id_conta_bancaria &&
-                    modalEditing &&
-                    vencimentosChecked.length > 0 && (
-                      <>
-                        <Button
-                          type={"button"}
-                          variant={"tertiary"}
-                          className="text-white justify-self-start"
-                          onClick={() => toggleModalTransfer()}
-                        >
-                          <ArrowUpDown className="me-2" />
-                          Transferir de borderô
-                        </Button>
-                        <AlertPopUp
-                          title="Deseja realmente remover esses vencimentos?"
-                          description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
-                          action={() =>
-                            removeCheckedVencimentos(vencimentosChecked)
-                          }
-                        >
-                          <Button
-                            type={"button"}
-                            variant={"destructive"}
-                            className="justify-self-start"
-                          >
-                            <Minus className="me-2" />
-                            Remover
-                          </Button>
-                        </AlertPopUp>
-                      </>
-                    )}
-                  {id_conta_bancaria && modalEditing && (
-                    <Button
-                      type="button"
-                      onClick={() => setModalVencimentoOpen(true)}
-                    >
-                      <Plus className="me-2" strokeWidth={2} />
-                      Adicionar
-                    </Button>
-                  )}
-                  <ModalVencimentos
-                    open={modalEditing && modalVencimentoOpen}
-                    handleSelection={handleSelectionVencimento}
-                    onOpenChange={() => setModalVencimentoOpen((prev) => !prev)}
-                    id_matriz={id_matriz || ""}
-                    initialFilters={{
-                      tipo_data: "data_prevista",
-                      range_data: {
-                        from: data_pagamento,
-                        to: data_pagamento,
-                      },
-                    }}
-                  />
-                  <ModalVencimentos
-                    open={modalEditing && modalVencimentoOpen}
-                    handleSelection={handleSelectionVencimento}
-                    onOpenChange={() => setModalVencimentoOpen((prev) => !prev)}
-                    id_matriz={id_matriz || ""}
-                    initialFilters={{
-                      tipo_data: "data_prevista",
-                      range_data: {
-                        from: data_pagamento,
-                        to: data_pagamento,
-                      },
-                    }}
-                  />
-                </div>
-              </div>
-              {id_conta_bancaria && (
-                <>
-                  <div className="flex gap-3 flex-wrap overflow-auto scroll-thin">
-                    {vencimentos?.length > 0 && (
-                      <RowVirtualizerFixed
-                        data={wVencimentos}
-                        form={form}
-                        modalEditing={modalEditing && !isPending}
-                        removeItem={removeItemVencimentos}
-                      />
-                    )}
-                  </div>
-                  <div className="ms-2 mt-3 flex gap-2 items-center justify-between">
-                    <Badge variant={"info"}>
-                      <p className="me-1">Qtde: </p>
-                      {vencimentos.length}
-                    </Badge>
-                    <Badge variant={"info"}>
-                      <p className="me-1">Valor Total: </p>
-                      {normalizeCurrency(
-                        vencimentos.reduce(
-                          (acc, item: VencimentosProps) =>
-                            acc + +item.valor_total,
-                          0
-                        ) || 0
-                      )}
-                    </Badge>
-                  </div>
-                </>
-              )}
-            </div> */}
           </div>
         </form>
         <ModalVencimentos

@@ -9,6 +9,12 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
+type UserUpdateProps = {
+  id: string;
+  senha: string;
+  confirmaSenha: string;
+};
+
 export const useUsers = () => {
   const queryClient = useQueryClient();
   return {
@@ -22,7 +28,7 @@ export const useUsers = () => {
         },
       });
     },
-    getOne: (id: string | undefined) =>
+    getOne: (id?: string) =>
       useQuery({
         enabled: !!id,
         queryKey: [`user`, id],
@@ -40,6 +46,7 @@ export const useUsers = () => {
           toast({
             title: "Sucesso!",
             description: "Usuário inserido com sucesso.",
+            variant: "success",
           });
           queryClient.invalidateQueries({ queryKey: ["users"] });
         },
@@ -47,6 +54,7 @@ export const useUsers = () => {
           toast({
             title: "Ocorreu o seguinte erro",
             description: error.message,
+            variant: "destructive",
           });
           console.log(error);
         },
@@ -63,6 +71,7 @@ export const useUsers = () => {
           toast({
             title: "Sucesso!",
             description: "Usuário atualizado com sucesso.",
+            variant: "success",
           });
           queryClient.invalidateQueries({ queryKey: ["users"] });
           queryClient.invalidateQueries({ queryKey: ["user"] });
@@ -71,8 +80,34 @@ export const useUsers = () => {
           toast({
             title: "Ocorreu o seguinte erro",
             description: error.message,
+            variant: "destructive",
           });
           console.log(error);
+        },
+      }),
+
+    updatePassword: () =>
+      useMutation({
+        mutationFn: async ({ id, ...rest }: UserUpdateProps) => {
+          return await api
+            .put("auth/alterar-senha", { params: { id, ...rest } })
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          toast({
+            title: "Sucesso!",
+            description: "Senha atualizada com sucesso.",
+            variant: "success",
+          });
+          queryClient.invalidateQueries({ queryKey: ["users"] });
+          queryClient.invalidateQueries({ queryKey: ["user"] });
+        },
+        onError(error) {
+          toast({
+            title: "Ocorreu o seguinte erro",
+            description: error.message,
+            variant: "destructive",
+          });
         },
       }),
   };

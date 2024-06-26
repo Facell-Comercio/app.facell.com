@@ -1,31 +1,31 @@
 import { Route, Routes } from "react-router-dom";
 
-import App from "./App.tsx";
-import { checkUserPermission } from "./helpers/checkAuthorization.ts";
 import { useEffect } from "react";
+import App from "./App.tsx";
 import { useAuthStore } from "./context/auth-store.tsx";
+import { checkUserPermission } from "./helpers/checkAuthorization.ts";
 
 import NotAuthorizedPage from "./pages/NotAuthorized.tsx";
 import NotFoundPage from "./pages/NotFound.tsx";
 import PrivateRoutes from "./pages/PrivateRoutes.tsx";
 
-import LoginPage from "./pages/Login.tsx";
 import HomePage from "./pages/Home.tsx";
+import LoginPage from "./pages/Login.tsx";
+import RecuperarSenha from "./pages/RecuperarSenha.tsx";
+import AdminPage from "./pages/admin/Page.tsx";
+import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.tsx";
-import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
 import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
-import AdminPage from "./pages/admin/Page.tsx";
-import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
+import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
+import Perfil from "./pages/perfil/index.tsx";
 import { VideoAulaPage } from "./pages/treinamento/videoaula/Page.tsx";
 
 const AppRoutes = () => {
-  const user = useAuthStore(state=>state.user);
+  const user = useAuthStore((state) => state.user);
 
-  useEffect(()=>{
-
-  }, [user])
+  useEffect(() => {}, [user]);
 
   return (
     <Routes>
@@ -34,7 +34,7 @@ const AppRoutes = () => {
           <Route element={<NotAuthorizedPage />} path="/not-authorized" />
           {/* Páginas protegidas isoladas */}
           <Route element={<HomePage />} path="/" />
-          <Route element={<PageDashboard/>} path="/dashboard"/>
+          <Route element={<PageDashboard />} path="/dashboard" />
 
           {/* T&D */}
           <Route path="/treinamento/">
@@ -54,7 +54,10 @@ const AppRoutes = () => {
             <Route element={<ContasPagarPage />} path="contas-a-pagar" />
             <Route element={<ContasReceberPage />} path="contas-a-receber" />
             <Route element={<OrcamentoPage />} path="orcamento" />
-            <Route element={<ConciliacaoBancariaPage />} path="conciliacao-bancaria" />
+            <Route
+              element={<ConciliacaoBancariaPage />}
+              path="conciliacao-bancaria"
+            />
             <Route element={<CadastrosPage />} path="cadastros" />
           </Route>
 
@@ -70,11 +73,13 @@ const AppRoutes = () => {
             path="administracao"
           />
 
+          <Route element={<Perfil />} path="perfil" />
           <Route element={<NotFoundPage />} path="*" />
         </Route>
       </Route>
 
       <Route element={<LoginPage />} path="/login" />
+      <Route element={<RecuperarSenha />} path="/recuperar-senha" />
     </Routes>
   );
 };

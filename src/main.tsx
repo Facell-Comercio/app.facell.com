@@ -4,10 +4,11 @@ import "./index.css";
 
 import { BrowserRouter as Router } from "react-router-dom";
 
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { ThemeProvider } from "./providers/theme-provider.tsx";
 
+import { Toaster } from "./components/ui/toaster.tsx";
 import QueryClientProviderComponent from "./providers/query-provider.tsx";
 import AppRoutes from "./routes.tsx";
 
@@ -29,7 +30,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <AppRoutes />
       </ThemeProvider>
     </Router>
+    <Toaster />
     <ReactQueryDevtools initialIsOpen={true} />
   </QueryClientProviderComponent>
-
 );
