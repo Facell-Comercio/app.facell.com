@@ -4,8 +4,7 @@ import { z } from "zod";
 
 const schemaUser = z
   .object({
-  // Identificador do plano de contas
-  id: z.string().trim().optional(),
+  id: z.coerce.number().optional(),
   active: z.coerce.boolean(),
   email: z.string().toLowerCase().trim().email(),
   nome: z.string().trim().min(12, "A nome deve ter no mínimo 12 caracteres").toUpperCase(),
@@ -13,19 +12,19 @@ const schemaUser = z
 
   updateFiliais: z.boolean(),
   filiais: z.array(z.object({
-    id: z.string().trim().optional(),
+    id: z.string().trim(),
     id_filial: z.coerce.string().trim().min(1, "Obrigatório"),
-    id_user: z.string(),
+    id_user: z.coerce.number().optional(),
     nome: z.string().optional(),
     grupo_economico: z.string().optional(),
-    gestor: z.coerce.boolean()
+    gestor: z.coerce.boolean(),
   })),
 
   updateDepartamentos: z.boolean(),
   departamentos: z.array(z.object({
     id: z.string().trim().optional(),
     id_departamento: z.coerce.string().trim().min(1, "Obrigatório"),
-    id_user: z.string(),
+    id_user: z.coerce.number().optional(),
     nome: z.string().optional(),
     gestor: z.coerce.boolean()
   })),
@@ -34,7 +33,7 @@ const schemaUser = z
   centros_custo: z.array(z.object({
     id: z.string().trim().optional(),
     id_centro_custo: z.coerce.string().trim().min(1, "Obrigatório"),
-    id_user: z.string(),
+    id_user: z.coerce.number().optional(),
     nome: z.string().optional(),
     grupo_economico: z.string().optional(),
     gestor: z.coerce.boolean()
@@ -45,7 +44,7 @@ const schemaUser = z
     id: z.string().trim().optional(),
     id_permissao: z.coerce.string().trim().min(1, "Obrigatório"),
     nome: z.string().optional(),
-    id_user: z.string(),
+    id_user: z.coerce.number().optional(),
   })),
 });
 

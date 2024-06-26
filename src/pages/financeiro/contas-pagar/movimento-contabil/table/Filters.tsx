@@ -8,7 +8,7 @@ import ModalContasBancarias, {
 } from "@/pages/financeiro/components/ModalContasBancarias";
 import ModalGruposEconomicos, {
   ItemGrupoEconomicoProps,
-} from "@/pages/financeiro/components/ModalGrupoEconomico";
+} from "@/pages/admin/components/ModalGrupoEconomico";
 import { Download, EraserIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";

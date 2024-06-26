@@ -10,7 +10,7 @@ import {
 } from "@tanstack/react-query";
 
 type UserUpdateProps = {
-  id: string;
+  id: number | null;
   senha: string;
   confirmaSenha: string;
 };
@@ -28,7 +28,7 @@ export const useUsers = () => {
         },
       });
     },
-    getOne: (id?: string) =>
+    getOne: (id: number | null) =>
       useQuery({
         enabled: !!id,
         queryKey: [`user`, id],

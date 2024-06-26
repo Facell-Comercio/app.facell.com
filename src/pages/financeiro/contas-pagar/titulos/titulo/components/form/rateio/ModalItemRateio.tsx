@@ -22,7 +22,7 @@ import { toast } from "@/components/ui/use-toast";
 import { normalizeCurrency } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import ModalCentrosCustos from "@/pages/financeiro/components/ModalCentrosCustos";
-import ModalFiliais from "@/pages/financeiro/components/ModalFiliais";
+import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import ModalPlanosContas, {
   ItemPlanoContas,
 } from "@/pages/financeiro/components/ModalPlanosContas";

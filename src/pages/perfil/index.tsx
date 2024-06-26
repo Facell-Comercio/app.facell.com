@@ -5,6 +5,8 @@ import { useUsers } from "@/hooks/useUsers";
 import { Camera, Key } from "lucide-react";
 import ModalUpdateSenha from "./ModalUpdateSenha";
 import { useStorePerfil } from "./store";
+import { useAuthStore } from "@/context/auth-store";
+import { Navigate } from "react-router-dom";
 
 type PermissoesProps = {
   id: number;
@@ -34,7 +36,12 @@ type CentroCustoProps = {
   nome: string;
 };
 const Perfil = () => {
-  const { data } = useUsers().getOne("user");
+  const user = useAuthStore().user
+  if(!user?.id) {
+    return <Navigate to={'/login'}/>
+  };
+
+  const { data } = useUsers().getOne(parseInt(user.id));
   const userData = data?.data;
 
   const openModal = useStorePerfil().openModal;

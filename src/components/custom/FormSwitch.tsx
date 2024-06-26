@@ -9,10 +9,11 @@ interface IFormSwitch {
   label?: string, 
   disabled?: boolean, 
   className?: string, 
+  onChange?: (val:any)=>void
 }
 
 
-const FormSwitch = ({ name, control, label, className, disabled }: IFormSwitch) => {
+const FormSwitch = ({ name, control, label, className, disabled, onChange }: IFormSwitch) => {
   return (
     <FormField
               control={control}
@@ -23,7 +24,12 @@ const FormSwitch = ({ name, control, label, className, disabled }: IFormSwitch) 
                   <FormControl>
                     <Switch
                       checked={!!+field.value}
-                      onCheckedChange={field.onChange}
+                      onCheckedChange={(checked:boolean)=>{
+                        field.onChange(checked)
+                        if(onChange !== undefined){
+                          onChange(checked)
+                        }
+                      }}
                       disabled={disabled}
                       className='mt-0'
                       defaultChecked={true}

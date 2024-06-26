@@ -4,7 +4,7 @@ import { FaSpinner } from "react-icons/fa6";
 import { Button } from "../ui/button";
 
 interface ModalButtonsProps {
-  id?: string | null;
+  id?: number | string | null;
   modalEditing?: boolean;
   cancel?: () => void;
   edit?: () => void;

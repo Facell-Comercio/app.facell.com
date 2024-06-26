@@ -18,7 +18,7 @@ import { UserFormData } from "./form-data";
 import { Filial } from "@/types/filial-type";
 
 const initialProps: UserFormData = {
-  id: "",
+  id: undefined,
   active: true,
   nome: "",
   email: "",

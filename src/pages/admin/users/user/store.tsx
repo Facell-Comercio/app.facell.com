@@ -1,21 +1,21 @@
 import { create } from "zustand";
 
 interface useStoreUser {
-  id?: string;
+  id: number | null;
   modalEditing: boolean;
   modalOpen: boolean;
 
-  openModal: (id: string) => void;
+  openModal: (id: number | null) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
 }
 
 export const useStoreUser = create<useStoreUser>((set) => ({
-  id: '',
+  id: null,
   modalEditing: false,
   modalOpen: false,
 
-  openModal: (id: string) => set({ modalOpen: true, id: id }),
+  openModal: (id: number | null) => set({ modalOpen: true, id: id }),
   closeModal: () => set({ modalOpen: false }),
   editModal: (bool) => set({ modalEditing: bool }),
 }));

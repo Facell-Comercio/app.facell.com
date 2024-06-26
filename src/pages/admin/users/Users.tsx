@@ -19,7 +19,7 @@ const Users = () => {
   const editModal = useStoreUser().editModal;
 
   function handleClickNewUser() {
-    openModal("");
+    openModal(null);
     editModal(true);
   }
 

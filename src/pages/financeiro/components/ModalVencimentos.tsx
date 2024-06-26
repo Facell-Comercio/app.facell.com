@@ -23,7 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
-import ModalFiliais from "./ModalFiliais";
+import ModalFiliais from "../../admin/components/ModalFiliais";
 
 interface IModalVencimentos {
   open: boolean;

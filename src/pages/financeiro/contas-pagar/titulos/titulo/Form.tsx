@@ -33,7 +33,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ModalFiliais from "@/pages/financeiro/components/ModalFiliais";
+import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
 import { useQueryClient } from "@tanstack/react-query";
 import {

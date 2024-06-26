@@ -51,7 +51,7 @@ export const columnsTableUsers: ColumnDef<RowUsers>[] = [
     cell: (info) => (
       <span
         className="font-semibold cursor-pointer text-blue-500"
-        onClick={() => openModal(info.getValue<number>().toString())}
+        onClick={() => openModal(info.getValue<number>())}
       >
         {<UserSearch />}
       </span>

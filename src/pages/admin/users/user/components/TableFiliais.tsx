@@ -38,13 +38,12 @@ export const TableUserFiliais = ({ form, modalEditing }: TableProps) => {
       header: 'GESTOR',
       cell: (info) => {
         let index = info.row.index
-        return <div onClick={() => form.setValue("updateFiliais", true)}>
-          <FormSwitch
+        return <FormSwitch
             control={form.control}
             name={`filiais.${index}.gestor`}
             disabled={!modalEditing}
+            onChange={()=>{form.setValue("updateFiliais", true)}}
           />
-        </div>
       },
       size: 100,
     },

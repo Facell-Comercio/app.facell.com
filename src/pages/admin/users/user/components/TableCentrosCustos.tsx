@@ -8,9 +8,9 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { UserFormData } from "../form-data";
 import { UserCentroCusto } from "@/types/user-type";
 
-type TableProps = { 
-    form: UseFormReturn<UserFormData>, 
-    modalEditing: boolean 
+type TableProps = {
+    form: UseFormReturn<UserFormData>,
+    modalEditing: boolean
 }
 
 export const TableUserCentrosCustos = ({ form, modalEditing }: TableProps) => {
@@ -38,13 +38,12 @@ export const TableUserCentrosCustos = ({ form, modalEditing }: TableProps) => {
             header: 'GESTOR',
             cell: (info) => {
                 let index = info.row.index
-                return <div onClick={() => form.setValue("updateCentrosCusto", true)}>
-                <FormSwitch
-                  control={form.control}
-                  name={`centros_custo.${index}.gestor`}
-                  disabled={!modalEditing}
+                return <FormSwitch
+                    control={form.control}
+                    name={`centros_custo.${index}.gestor`}
+                    disabled={!modalEditing}
+                    onChange={() => { form.setValue("updateCentrosCusto", true) }}
                 />
-              </div>
             },
             size: 100,
         },
@@ -55,22 +54,22 @@ export const TableUserCentrosCustos = ({ form, modalEditing }: TableProps) => {
             cell: (info) => {
                 let index = info.row.index
                 return <AlertPopUp
-                title="Deseja realmente remover o centro de custo do usuário?"
-                description="Clique em salvar para persistir."
-                action={() => {
-                    form.setValue("updateCentrosCusto", true);
-                    remove(index);
-                }}
-              >
-                <Button
-                  size={"xs"}
-                  variant={"destructive"}
-                  disabled={!modalEditing}
+                    title="Deseja realmente remover o centro de custo do usuário?"
+                    description="Clique em salvar para persistir."
+                    action={() => {
+                        form.setValue("updateCentrosCusto", true);
+                        remove(index);
+                    }}
                 >
-                  <Trash size={18}/>
-                </Button>
-              </AlertPopUp>
-            
+                    <Button
+                        size={"xs"}
+                        variant={"destructive"}
+                        disabled={!modalEditing}
+                    >
+                        <Trash size={18} />
+                    </Button>
+                </AlertPopUp>
+
             }
         },
 

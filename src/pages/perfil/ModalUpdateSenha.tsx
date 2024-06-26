@@ -12,7 +12,7 @@ import { useRef } from "react";
 import { useStorePerfil } from "./store";
 
 type ModalUpdateSenhaProps = {
-  id: string;
+  id: number;
 };
 function ModalUpdateSenha({ id }: ModalUpdateSenhaProps) {
   const { mutate: updatePassword } = useUsers().updatePassword();
