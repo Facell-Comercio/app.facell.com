@@ -18,6 +18,7 @@ interface TAlert {
   className?: string;
   open?: boolean;
   onOpenChange?: ((open: boolean) => void) | undefined;
+  disabled?: boolean;
 }
 
 const AlertPopUp = ({
@@ -28,10 +29,11 @@ const AlertPopUp = ({
   className,
   open,
   onOpenChange,
+  disabled,
 }: TAlert) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogTrigger asChild className={className}>
+      <AlertDialogTrigger disabled={disabled} asChild className={className}>
         {children}
       </AlertDialogTrigger>
       <AlertDialogContent>

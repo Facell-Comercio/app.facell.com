@@ -6,6 +6,7 @@ import FormSelect from "@/components/custom/FormSelect";
 import { InputDate } from "@/components/custom/InputDate";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Toggle } from "@/components/ui/toggle";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -108,6 +109,9 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
         <p className="min-w-56 text-center bg-slate-200 dark:bg-blue-950">
           Observação
         </p>
+        <p className="flex-1 min-w-[88px] text-center bg-slate-200 dark:bg-blue-950">
+          Em Remessa
+        </p>
         {modalEditing && (
           <p className="flex-1 min-w-[52px] text-center bg-slate-200 dark:bg-blue-950">
             Ação
@@ -131,6 +135,8 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
           const disabled = !data[indexData].can_remove ? true : false;
           const tipo = form.watch(`vencimentos.${indexData}.tipo_baixa`);
           const valor = parseFloat(data[indexData].valor_total);
+          const emRemessa = data[indexData].remessa;
+
           return (
             <div
               // ref={virtualizer.measureElement}
@@ -270,6 +276,32 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                 value={data[indexData].obs || ""}
                 readOnly
               />
+
+              <AlertPopUp
+                title="Deseja realmente prosseguir?"
+                description={`O vencimento será marcado como ${
+                  !!emRemessa ? "fora" : "dentro"
+                } de uma remessa.`}
+                action={() => {
+                  form.setValue(`vencimentos.${indexData}.remessa`, !emRemessa);
+                  form.setValue(`vencimentos.${indexData}.updated`, true);
+                }}
+                disabled={!modalEditing}
+              >
+                <Toggle
+                  variant={"check"}
+                  className={`h-8 ${
+                    !!emRemessa &&
+                    "bg-green-600 hover:bg-green-700 text-success-foreground hover:text-success-foreground"
+                  }`}
+                  disabled={!modalEditing}
+                  pressed={!!emRemessa}
+                >
+                  <span className="text-xs min-w-16 uppercase">
+                    {!!emRemessa ? "SIM" : "NÃO"}
+                  </span>
+                </Toggle>
+              </AlertPopUp>
               <AlertPopUp
                 title="Deseja realmente remover?"
                 description="O vencimento será removido definitivamente deste borderô, podendo ser incluido novamente."

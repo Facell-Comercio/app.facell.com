@@ -33,6 +33,7 @@ const schemaBorderos = z.object({
 
         can_remove: z.coerce.boolean().optional(),
         updated: z.coerce.boolean().optional(),
+        remessa: z.coerce.number().optional(),
       })
       .refine(
         (data) =>

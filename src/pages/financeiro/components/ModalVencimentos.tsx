@@ -44,7 +44,7 @@ export type VencimentosProps = {
   id_titulo: string;
   id_status?: string;
   id_dda?: number;
-  id_forma_pagamento?: number,
+  id_forma_pagamento?: number;
   status: string;
   forma_pagamento?: string;
   tipo_baixa?: string;
@@ -58,8 +58,10 @@ export type VencimentosProps = {
   filial: string;
   obs?: string;
   data_pagamento?: string;
+
   can_remove?: boolean;
   updated?: boolean;
+  remessa?: boolean;
 };
 
 interface Filters {
@@ -196,9 +198,9 @@ const ModalVencimentos = ({
     setIds([...ids, item.id_vencimento.toString()]);
   }
 
-  function handleOneSelection(item:any){
-    handleSelection(item)
-    onOpenChange()
+  function handleOneSelection(item: any) {
+    handleSelection(item);
+    onOpenChange();
   }
 
   if (isError) return <p>Ocorreu um erro ao tentar buscar os vencimentos</p>;
@@ -370,9 +372,10 @@ const ModalVencimentos = ({
                 return (
                   <tr
                     key={"titulos:" + item.id_titulo + index}
-                    className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2 ${isSelected &&
+                    className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2 ${
+                      isSelected &&
                       "bg-secondary/50 text-secondary-foreground/40"
-                      }`}
+                    }`}
                   >
                     <td className="text-xs text-nowrap p-1 text-center">
                       {" "}
@@ -409,9 +412,8 @@ const ModalVencimentos = ({
                           if (multiSelection) {
                             pushSelection(item);
                           } else {
-                            handleOneSelection(item)
+                            handleOneSelection(item);
                           }
-
                         }}
                         disabled={isSelected}
                       >

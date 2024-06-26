@@ -6,6 +6,8 @@ import FormSelect from "@/components/custom/FormSelect";
 import { InputDate } from "@/components/custom/InputDate";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Toggle } from "@/components/ui/toggle";
+
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -25,7 +27,7 @@ const RowVirtualizerFixedPendentes: React.FC<
   RowVirtualizerFixedPendentesProps
 > = ({ data, filteredData, form, removeItem, modalEditing }) => {
   const parentElement = React.useRef(null);
-  const [openModalDDA] = useStoreDDA(state=>[state.openModal])
+  const [openModalDDA] = useStoreDDA((state) => [state.openModal]);
 
   const count = filteredData.length;
 
@@ -47,19 +49,19 @@ const RowVirtualizerFixedPendentes: React.FC<
     { id: "COM ACRÉSCIMO", label: "Com Acréscimo" },
   ];
 
-  const handleClickDDA = (id_vencimento:string)=>{
-    openModalDDA({id_vencimento, filters: { vinculados: false}})
-  }
+  const handleClickDDA = (id_vencimento: string) => {
+    openModalDDA({ id_vencimento, filters: { vinculados: false } });
+  };
 
   return (
     <section
       ref={parentElement}
       className="pe-2 h-[300px] w-full overflow-auto scroll-thin"
-    // style={{
-    //   height: `300px`,
-    //   width: `100%`,
-    //   overflow: 'auto',
-    // }}
+      // style={{
+      //   height: `300px`,
+      //   width: `100%`,
+      //   overflow: 'auto',
+      // }}
     >
       <div className="flex gap-1 font-medium text-sm w-full sticky top-0 z-10 bg-slate-200 dark:bg-blue-950 px-1">
         {modalEditing && (
@@ -91,7 +93,6 @@ const RowVirtualizerFixedPendentes: React.FC<
         <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">
           Nº Doc
         </p>
-
         <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
           Valor
         </p>
@@ -104,11 +105,15 @@ const RowVirtualizerFixedPendentes: React.FC<
         <p className="min-w-16 text-center bg-slate-200 dark:bg-blue-950">
           DDA
         </p>
+        <p className="flex-1 min-w-[88px] text-center bg-slate-200 dark:bg-blue-950">
+          Em Remessa
+        </p>
         {modalEditing && (
           <>
             <p className="min-w-44 text-center bg-slate-200 dark:bg-blue-950">
               Data Prevista Parcial
             </p>
+
             <p className="flex-1 min-w-[52px] text-center bg-slate-200 dark:bg-blue-950">
               Ação
             </p>
@@ -135,14 +140,16 @@ const RowVirtualizerFixedPendentes: React.FC<
           const valor = parseFloat(data[indexData].valor_total);
           const vinculoDDA = !!data[indexData].id_dda;
           const isBoleto = (data[indexData]?.id_forma_pagamento || null) == 1;
+          const emRemessa = data[indexData].remessa;
 
           return (
             <div
               // ref={virtualizer.measureElement}
               key={item.index}
               data-index={index}
-              className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${virtualizer.getVirtualItems().length == 0 && "hidden"
-                }`}
+              className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
+                virtualizer.getVirtualItems().length == 0 && "hidden"
+              }`}
               style={{
                 position: "absolute",
                 top: 0,
@@ -244,21 +251,70 @@ const RowVirtualizerFixedPendentes: React.FC<
               {/* DDA */}
               {isBoleto ? (
                 vinculoDDA ? (
-                  <Button disabled variant={'success'} size={'xs'} className="py-2 min-w-16">Vinculado</Button>
+                  <Button
+                    disabled
+                    variant={"success"}
+                    size={"xs"}
+                    className="py-2 min-w-16"
+                  >
+                    Vinculado
+                  </Button>
                 ) : (
-                  <Button onClick={()=>handleClickDDA(id_vencimento)} disabled={!modalEditing} variant={'warning'} size={'xs'} className="py-2 min-w-16">Vincular</Button>
+                  <Button
+                    onClick={() => handleClickDDA(id_vencimento)}
+                    disabled={!modalEditing}
+                    variant={"warning"}
+                    size={"xs"}
+                    className="py-2 min-w-16"
+                  >
+                    Vincular
+                  </Button>
                 )
-              ) : (<Button disabled variant={'outline'} size={'xs'} className="py-2 min-w-16">-</Button>)
-              }
+              ) : (
+                <Button
+                  disabled
+                  variant={"outline"}
+                  size={"xs"}
+                  className="py-2 min-w-16"
+                >
+                  -
+                </Button>
+              )}
+              <AlertPopUp
+                title="Deseja realmente prosseguir?"
+                description={`O vencimento será marcado como ${
+                  !!emRemessa ? "fora" : "dentro"
+                } de uma remessa.`}
+                action={() => {
+                  form.setValue(`vencimentos.${indexData}.remessa`, !emRemessa);
+                  form.setValue(`vencimentos.${indexData}.updated`, true);
+                }}
+                disabled={!modalEditing}
+              >
+                <Toggle
+                  variant={"check"}
+                  className={`h-8 ${
+                    !!emRemessa &&
+                    "bg-green-600 hover:bg-green-700 text-success-foreground hover:text-success-foreground"
+                  }`}
+                  disabled={!modalEditing}
+                  pressed={!!emRemessa}
+                >
+                  <span className="text-xs min-w-16 uppercase">
+                    {!!emRemessa ? "SIM" : "NÃO"}
+                  </span>
+                </Toggle>
+              </AlertPopUp>
 
               {modalEditing && !disabled && tipo === "PARCIAL" ? (
                 <InputDate
                   disabled={tipo !== "PARCIAL"}
-                  className={`h-8 min-w-44 ${form.formState.errors &&
+                  className={`h-8 min-w-44 ${
+                    form.formState.errors &&
                     form.formState.errors.vencimentos &&
                     form.formState.errors.vencimentos[indexData] &&
                     "border border-red-600"
-                    }`}
+                  }`}
                   value={form.watch(
                     `vencimentos.${indexData}.data_prevista_parcial`
                   )}
@@ -278,6 +334,7 @@ const RowVirtualizerFixedPendentes: React.FC<
                   />
                 )
               )}
+
               <AlertPopUp
                 title="Deseja realmente remover?"
                 description="O vencimento será removido definitivamente deste borderô, podendo ser incluido novamente."
