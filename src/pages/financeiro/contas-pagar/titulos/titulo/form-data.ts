@@ -8,10 +8,9 @@ export const vencimentoSchema = z.object({
   data_vencimento: z.coerce.string({ required_error: "Campo obrigatório" }),
   data_prevista: z.coerce.string({ required_error: "Campo obrigatório" }),
   valor: z.string().min(0),
-  cod_barras: z.string().optional(),
-  qr_code: z.string().optional().transform(v => v?.trim() || null),
+  cod_barras: z.string().optional().transform(v => v?.trim() || ''),
+  qr_code: z.string().optional().transform(v => v?.trim() || ''),
 })
-
 
 export const rateioSchema = z.object({
   id: z.string().optional(),

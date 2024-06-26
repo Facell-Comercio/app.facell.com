@@ -114,8 +114,8 @@ export function ModalVencimento({
         data_vencimento: String(data.data_vencimento),
         data_prevista: String(data.data_prevista),
         valor: data.valor,
-        cod_barras: data.cod_barras,
-        qr_code: data.qr_code,
+        cod_barras: data.cod_barras || '',
+        qr_code: data.qr_code || '',
       });
     }
     formTitulo.setValue("update_vencimentos", true);
