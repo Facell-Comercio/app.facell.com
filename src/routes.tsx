@@ -18,6 +18,7 @@ import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
 import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
 import AdminPage from "./pages/admin/Page.tsx";
 import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
+import { VideoAulaPage } from "./pages/treinamento/videoaula/Page.tsx";
 
 const AppRoutes = () => {
   const user = useAuthStore(state=>state.user);
@@ -36,6 +37,9 @@ const AppRoutes = () => {
           <Route element={<PageDashboard/>} path="/dashboard"/>
 
           {/* T&D */}
+          <Route path="/treinamento/">
+            <Route element={<VideoAulaPage />} path="videoaula" />
+          </Route>
 
           {/* Pessoal */}
 

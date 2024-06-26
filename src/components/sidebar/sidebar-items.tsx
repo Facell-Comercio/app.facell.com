@@ -1,5 +1,5 @@
 import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
-import { Settings } from "lucide-react";
+import { Play, Settings } from "lucide-react";
 import { ReactNode } from "react";
 import {
   BsFillBarChartFill,
@@ -87,15 +87,24 @@ export const sidebarItems: SidebarItem[] = [
   {
     name: "Treinamento",
     type: "label",
+    // type: "link",
     icon: <BsPersonVideo3 />,
     uri: "treinamento",
-    visible: false,
+    visible: true,
     children: [
+      {
+        name: "Videoaulas",
+        type: "link",
+        shortName: "V",
+        uri: "treinamento/videoaula",
+        visible: true,
+        icon: <Play />
+      },
       {
         name: "Cursos",
         type: "link",
         shortName: "C",
-        uri: "treinamentos/cursos",
+        uri: "treinamento/cursos",
         visible: false,
       },
     ],
@@ -246,7 +255,7 @@ export const sidebarItems: SidebarItem[] = [
   {
     name: "Administração",
     type: "link",
-    icon: <Settings />,
+    icon: <Settings size={16} />,
     uri: "/administracao",
     visible: true,
   },
