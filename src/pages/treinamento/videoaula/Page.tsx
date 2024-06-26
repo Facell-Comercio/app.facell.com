@@ -64,7 +64,7 @@ export const VideoAulaPage = () => {
         {secoes.map(secao=>(
             <section className="flex flex-col gap-3 flex-1">
                 <h2 className="text-xl font-bold">{secao.nome}</h2>
-                <article className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-5 overflow-auto scroll-thin pb-3">
+                <article className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 overflow-auto scroll-thin pb-3">
                     {secao.videos.map(video=>(
                         <div className="grid gap-3 border rounded-lg">
                             <YoutubeVideo url={video.url} />
