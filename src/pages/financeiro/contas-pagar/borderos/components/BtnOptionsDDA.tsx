@@ -13,7 +13,7 @@ import { exportToExcel } from "@/helpers/importExportXLS";
 import { useDDA } from "@/hooks/financeiro/useDDA";
 import { useQueryClient } from "@tanstack/react-query";
 import { Download, FileStack, Trash, Unplug, Upload } from "lucide-react";
-import { ChangeEvent, useRef, useState } from "react";
+import {  ChangeEvent, useRef, useState } from "react";
 import { useStoreDDA } from "./storeDDA";
 import { FaSpinner } from "react-icons/fa6";
 import AlertPopUp from "@/components/custom/AlertPopUp";
@@ -34,13 +34,15 @@ const BtnOptionsDDA = () => {
   const [alertLimpezaOpen, setAlertLimpezaOpen] = useState<boolean>(false)
 
   // * Acessar DDA
-  const handleAcessarClick = ()=>{
+  const handleAcessarClick = (e: React.MouseEvent<HTMLButtonElement>)=>{
+    e.stopPropagation()
     openModal({id_vencimento: null, filters: {vinculados: true, naoVinculados: true} })
   }
 
   // * Importação
   const fileRef = useRef<HTMLInputElement | null>(null)
-  const handleFileImportClick = () => {
+  const handleFileImportClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     if (fileRef.current) {
       fileRef.current.click()
     }
@@ -73,7 +75,8 @@ const BtnOptionsDDA = () => {
   }
 
   // * Export
-  const handleExportClick = async () => {
+  const handleExportClick = async (e:React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     setProcessing(prev => ({ ...prev, export: true }))
     try {
       const result = await useDDA().exportDDA(filters)
@@ -91,7 +94,8 @@ const BtnOptionsDDA = () => {
   }
 
   // * Limpeza de DDA
-  const handleLimpezaClick = async () => {
+  const handleLimpezaClick = async (e:React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     setAlertLimpezaOpen(true)
   }
   const handleLimpezaAction = async () => {
@@ -115,7 +119,8 @@ const BtnOptionsDDA = () => {
   }
 
   // * Autovincular DDA
-  const handleAutoVincularClick = async () => {
+  const handleAutoVincularClick = async (e:React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     setProcessing(prev => ({ ...prev, autovincular: true }))
     try {
       const result = await useDDA().autoVincularDDA()
@@ -167,6 +172,7 @@ const BtnOptionsDDA = () => {
             <DropdownMenuItem>
               <Button
                 disabled={processing.import}
+                title="Após importar arquivo de varredura DDA .RET, a autovinculação será realizada automaticamente..."
                 className="w-full" size={'sm'} variant={'tertiary'} onClick={handleFileImportClick}>
                 {processing.import ? <FaSpinner size={18} className="animate-spin me-2" /> : <Upload size={18} className="me-2" />} Importar
               </Button>
@@ -192,6 +198,7 @@ const BtnOptionsDDA = () => {
                 size={"sm"}
                 variant={"destructive"}
                 disabled={processing.limpeza}
+                title="Apaga todos os boletos do DDA que não estejam vinculados a Vencimentos e que sejam +30 dias inferior à data atual"
                 onClick={handleLimpezaClick}
               >
                 {processing.limpeza ? <FaSpinner size={18} className="animate-spin me-2" /> : <Trash size={18} />} Excluir não vinculados

@@ -115,7 +115,7 @@ const ModalBordero = () => {
   }
 
   async function excluirBordero() {
-    deleteBordero({ id, vencimentos: data?.data.vencimentos });
+    deleteBordero({ id });
   }
 
   useEffect(() => {

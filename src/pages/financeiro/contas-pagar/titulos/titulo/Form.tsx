@@ -38,6 +38,7 @@ import { Filial } from "@/types/filial-type";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   AlertTriangle,
+  Archive,
   Ban,
   Check,
   Contact,
@@ -89,18 +90,21 @@ const FormTituloPagar = ({
   // console.log(titulo);
 
   // * [ VERIFICAÇÕES ]
-  const status = titulo?.status || "";
+  const status = titulo?.status || "Solicitado";
+  const id_status = parseInt(titulo?.id_status) ?? 1;
+
   const isMaster =
     checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
-  const canEdit =
-    !id ||
-    status === "Solicitado" ||
-    (isMaster &&
-      status !== "Aprovado" &&
-      status !== "Negado" &&
-      status !== "Pago" &&
-      status !== "Pago Parcial");
+  // const canEdit =
+  //   !id ||
+  //   status === "Solicitado" ||
+  //   (isMaster &&
+  //     status !== "Aprovado" &&
+  //     status !== "Negado" &&
+  //     status !== "Pago" &&
+  //     status !== "Pago Parcial");
 
+  const canEdit = !id || status === "Solicitado" || (isMaster && id_status > 0 && id_status <= 2 );
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
@@ -282,6 +286,12 @@ const FormTituloPagar = ({
     }
   };
 
+  const handleClickArquivar = (motivo:string)=>{
+    changeStatusTitulo({
+      id_novo_status: "0",
+      motivo,
+    });
+  }
   const handleChangeVoltarSolicitado = (motivo: string) => {
     changeStatusTitulo({
       id_novo_status: "1",
@@ -803,28 +813,41 @@ const FormTituloPagar = ({
             ) : (
               <>
                 <div className="flex flex-wrap gap-3 items-center">
+                {id &&
+                    (status == "Solicitado" || status == "Negado")
+                     && (
+                      <ButtonMotivation
+                        title="Arquiva a solictação para sumir da vista."
+                        variant={"secondary"}
+                        size={"lg"}
+                        action={handleClickArquivar}
+                      >
+                        <Archive className="me-2" size={18} />
+                        Arquivar
+                      </ButtonMotivation>
+                    )}
                   {id &&
                     status !== "Solicitado" &&
-                    status !== "Pago" &&
-                    status !== "Pago Parcial" &&
+                    id_status < 4 &&
                     (isMaster === true &&
                     (status === "Aprovado" || status === "Negado")
                       ? true
                       : false) && (
                       <ButtonMotivation
+                        title="Volta o status da solicitação para 'Solicitado', possibilitando a edição..."
                         variant={"secondary"}
                         size={"lg"}
                         action={handleChangeVoltarSolicitado}
                       >
                         <Undo2 className="me-2" size={18} />
-                        Tornar solicitado
+                        Re-Solicitar
                       </ButtonMotivation>
                     )}
                   {isMaster &&
                     id &&
                     status !== "Negado" &&
-                    status !== "Pago" &&
-                    status !== "Pago Parcial" && (
+                    id_status > 0 && id_status < 4
+                     && (
                       <ButtonMotivation
                         variant={"destructive"}
                         size={"lg"}
@@ -837,8 +860,7 @@ const FormTituloPagar = ({
                   {isMaster &&
                     id &&
                     status !== "Aprovado" &&
-                    status !== "Pago" &&
-                    status !== "Pago Parcial" && (
+                    id_status > 0 && id_status < 4 && (
                       <Button
                         type="button"
                         variant={"success"}
@@ -849,9 +871,10 @@ const FormTituloPagar = ({
                         Aprovar
                       </Button>
                     )}
-                  {id && isMaster && (
+                  {id && id_status > 0 && (
                     <Button
                       type="button"
+                      title="Uma recorrência será criada com data para 1 mês após a data de vencimento desta solicitação."
                       variant={"secondary"}
                       size={"lg"}
                       onClick={handleClickCriarRecorrencia}
