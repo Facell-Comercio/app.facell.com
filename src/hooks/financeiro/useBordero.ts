@@ -1,7 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
 import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/borderos/bordero/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import {
@@ -166,13 +165,10 @@ export const useBordero = () => {
       useMutation({
         mutationFn: async (params: {
           id: string | null | undefined | number;
-          vencimentos: VencimentosProps[];
         }) => {
-          const { id, vencimentos } = params;
+          const { id } = params;
           return await api
-            .delete(`/financeiro/contas-a-pagar/bordero/${id}`, {
-              data: vencimentos,
-            })
+            .delete(`/financeiro/contas-a-pagar/bordero/${id}`)
             .then((response) => response.data);
         },
         onSuccess() {

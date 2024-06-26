@@ -17,14 +17,14 @@ type ButtonMotivationProps = ButtonProps & {
 }
 
 const ButtonMotivation = ({
-    children, action, variant, size,
+    children, action, variant, size, title
 
 }: ButtonMotivationProps) => {
     const [motivo, setMotivo] = useState<string>('');
     return (
         <AlertDialog>
             <AlertDialogTrigger type="button" asChild>
-                <Button type="button" variant={variant} size={size}>{children}</Button>
+                <Button title={title} type="button" variant={variant} size={size}>{children}</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>

@@ -98,6 +98,18 @@ export const useDDA = () => {
       })
     }
 
+    const desvincularDDA = (params: {id_dda: number})=>{
+      return new Promise(async(resolve, reject)=>{
+        try {
+          const result = await api.post('/financeiro/contas-a-pagar/dda/desvincular', {...params})
+          resolve(result.data)
+          
+        } catch (error) {
+          reject(error)
+        }
+      })
+    }
+
 
   return {
     getAllDDA,
@@ -106,5 +118,6 @@ export const useDDA = () => {
     limparDDA,
     autoVincularDDA,
     vincularDDA,
+    desvincularDDA,
   };
 };

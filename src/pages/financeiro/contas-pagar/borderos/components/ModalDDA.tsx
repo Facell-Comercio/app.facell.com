@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { normalizeCnpjNumber, normalizeCurrency } from "@/helpers/mask";
+import { normalizeCurrency } from "@/helpers/mask";
 import { useEffect, useState } from "react";
 import { useStoreDDA } from "./storeDDA";
 import { useDDA } from "@/hooks/financeiro/useDDA";
@@ -26,6 +26,8 @@ import { toast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import ModalVencimentos from "@/pages/financeiro/components/ModalVencimentos";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { copyToClipboard } from "../../titulos/titulo/helpers/helper";
+import { Badge } from "@/components/ui/badge";
 
 type DataProps = {
   description: string;
@@ -65,12 +67,6 @@ export const ModalDDA = () => {
 
   const { data, refetch } = useDDA().getAllDDA({ pagination, filters })
 
-  const dataRows = data?.data?.rows.map((item: DDA) => ({
-    description: `${item.id} - ${normalizeCnpjNumber(item.cnpj_filial)
-      } - ${normalizeCnpjNumber(item.cnpj_fornecedor)} - ${formatDate(item.data_vencimento, 'dd/MM/yyyy')} - ${normalizeCurrency(item.valor)} - ${item.nome_fornecedor} - ${item.cod_barras}`,
-    item,
-  }));
-
   const vincularDDA = async ({ id_dda, id_vencimento: idVencimento }: VinculoDDA) => {
     try {
       if (!id_dda) {
@@ -108,6 +104,36 @@ export const ModalDDA = () => {
     await vincularDDA({ id_dda, id_vencimento })
   }
 
+  const handleClickDesvincular = async ({id_dda}:{id_dda:number})=>{
+    try {
+      if (!id_dda) {
+        throw new Error('ID DDA não informado!')
+      }
+      await useDDA().desvincularDDA({ id_dda })
+      toast({
+        variant: 'success',
+        title: 'Boleto desvinculado do Vencimento!',
+      })
+      if (id_vencimento) {
+        toggleModal(false)
+        queryClient.invalidateQueries({ queryKey: ['fin_borderos'] })
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['fin_dda'] })
+
+      refetch()
+      return true
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao tentar vincular',
+        // @ts-ignore
+        description: error?.response?.data?.message || error.message
+      })
+      return false
+    }
+  }
+
   const [modalVencimentosOpen, setModalVencimentosOpen] = useState<boolean>(false);
   const [dialogDDAopen, setDialogDDAopen] = useState<boolean>(false);
   type VinculoDDA = {
@@ -125,6 +151,102 @@ export const ModalDDA = () => {
     setDialogDDAopen(true)
   }
 
+  const [qrCode, setQrCode] = useState<string | null>(null)
+  const handleCopyQrCode = async (qr_code: string) => {
+    const result = await copyToClipboard(qr_code)
+    if (result) {
+      setQrCode(qr_code)
+      setTimeout(() => {
+        setQrCode(null)
+      }, 3000)
+    }
+
+  }
+  const columns = [
+    {
+      id: 'id',
+      header: 'ID',
+      size: 40
+    },
+    {
+      id: 'cnpj_filial',
+      header: 'CNPJ FILIAL',
+      size: 115
+    },
+    {
+      id: 'cnpj_fornecedor',
+      header: 'CNPJ FORNECEDOR',
+      size: 115
+    },
+    {
+      id: 'data_emissao',
+      header: 'DATA EMISSÃO',
+      size: 80,
+      cell: (val: string) => formatDate(val, 'dd/MM/yyyy')
+    },
+    {
+      id: 'data_vencimento',
+      header: 'DATA VENCIMENTO',
+      size: 80,
+      cell: (val: string) => formatDate(val, 'dd/MM/yyyy')
+    },
+    {
+      id: 'documento',
+      header: 'DOCUMENTO',
+      size: 90
+    },
+    {
+      id: 'valor',
+      header: 'VALOR',
+      size: 90,
+      cell: (val: any) => normalizeCurrency(val)
+    },
+    {
+      id: 'nome_fornecedor',
+      header: 'NOME FORNECEDOR',
+      size: 200
+    },
+    {
+      id: 'cod_barras',
+      header: 'CÓD. BARRAS',
+      size: 320,
+      cell: (val: any) => {
+        if (qrCode === val) {
+          return <span className="text-green-600">Copiado!</span>
+        }
+        return <div onClick={() => handleCopyQrCode(val)} className="cursor-pointer overflow-auto scroll-thin">{val}</div>
+      }
+    },
+  ]
+
+
+  const header = <div className="flex items-center text-xs pt-4">{columns.map(col => <span className="text-center" style={{ width: col.size + 'px' }}>{col.header}</span>)}</div>
+
+  // const dataRows = data?.data?.rows.map((item: DDA) => ({
+  //   description: `${item.id} - ${normalizeCnpjNumber(item.cnpj_filial)
+  //     } - ${normalizeCnpjNumber(item.cnpj_fornecedor)} - ${formatDate(item.data_vencimento, 'dd/MM/yyyy')} - ${normalizeCurrency(item.valor)} - ${item.nome_fornecedor} - ${item.cod_barras}`,
+  //   item,
+  // }));
+  const rows = data?.data?.rows || []
+  const valorTotal = rows.reduce((acc:number, curr:{valor:string})=>acc + parseFloat(curr.valor),0)
+
+  const totalizador = <div className="flex gap-3">
+    <Badge variant={'secondary'}>Qtde: {rows.length}</Badge>
+    <Badge variant={'secondary'}>Total: {normalizeCurrency(valorTotal)}</Badge>
+  </div>
+
+
+  const dataRows = rows.map((item: DDA) => ({
+    description: columns.map(col => {
+      // @ts-ignore
+      let val = item[col.id]
+      if (col.cell !== undefined) {
+        val = col.cell(val)
+      }
+      return <span style={{ width: col.size }}>{val}</span>
+    }),
+    item: item
+  }))
 
   const pageCount = (data && data.data.pageCount) || 0;
   // if (isLoading) return null;
@@ -137,6 +259,7 @@ export const ModalDDA = () => {
 
         <ModalVencimentos
           multiSelection={false}
+          initialFilters={{ dda: false }}
           handleSelection={handleSelectVencimento}
           open={modalVencimentosOpen}
           // @ts-ignore
@@ -204,6 +327,8 @@ export const ModalDDA = () => {
 
             </div>
           </div>
+          {totalizador}
+          {header}
         </DialogHeader>
         <ModalComponent
           pageCount={pageCount}
@@ -211,50 +336,67 @@ export const ModalDDA = () => {
           pagination={pagination}
           setPagination={setPagination}
         >
-          {dataRows &&
-            dataRows.map((row: DataProps, index: number) => (
-              <ModalComponentRow
-                key={"modal_dda_item_row:" + index + row.item}
-              >
-                <>
-                  <span className="flex items-center text-sm" title={row.item.id_vencimento && 'Vinculado com vencimento: ' + String(row.item.id_vencimento)}>
-                    {row.description}
-                  </span>
-                  {row.item.id_vencimento ?
-                    (
-                      <Button variant={'success'} size={'xs'} disabled title={String(row.item.id_vencimento)}>Vinculado</Button>
-                    ) : (
-                      id_vencimento ?
+          <>
+
+            {dataRows &&
+              dataRows.map((row: DataProps, index: number) => (
+                <ModalComponentRow
+                  key={"modal_dda_item_row:" + index + row.item}
+                >
+                  <div className="flex gap-2 w-full">
+                    <div className="flex items-center text-sm flex-1" title={row.item.id_vencimento && 'Vinculado com vencimento: ' + String(row.item.id_vencimento)}>
+                      {row.description}
+                    </div>
+                    <div className="items-center flex">
+                      {row.item.id_vencimento ?
                         (
-                          // Esse botão vinculará o DDA escolhido com o id_vencimento recebido no parâmetro:
+                          row.item.status_vencimento == 'pago' ? 
+                          <Button variant={'success'} size={'xs'} disabled title={String(row.item.id_vencimento)}>Vinculado</Button>
+                          : 
                           <AlertPopUp
-                            title="Deseja realmente vincular o boleto com o vencimento?"
-                            description="A ação não poderá ser desfeita!"
-                            action={() => { handleClickVincular({ id_dda: row.item.id, id_vencimento: parseInt(id_vencimento) }) }}
-                          >
-                            <Button
-                              size={"xs"}
-                              variant={"warning"}
-                            >
-                              Vincular
-                            </Button>
-                          </AlertPopUp>
-
-
-                        ) :
-                        (
-                          // Esse botão abrirá um modal de vencimentos para seleção e vinculação:
-                          <Button
-                            variant={'warning'}
-                            size={'xs'}
-                            onClick={() => { handleClickBuscarVencimento({ id_dda: row.item.id }) }}
-                          >Vincular</Button>
+                                title="Deseja realmente desvincular o boleto do vencimento?"
+                                description="Você poderá vincular novamente..."
+                                action={()=>handleClickDesvincular({id_dda: row.item.id})}
+                              >
+                                <Button
+                                  size={"xs"}
+                                  variant={"destructive"}
+                                >
+                                  Desvincular
+                                </Button>
+                              </AlertPopUp>
+                        ) : (
+                          id_vencimento ?
+                            (
+                              // Esse botão vinculará o DDA escolhido com o id_vencimento recebido no parâmetro:
+                              <AlertPopUp
+                                title="Deseja realmente vincular o boleto com o vencimento?"
+                                description="A ação não poderá ser desfeita!"
+                                action={() => { handleClickVincular({ id_dda: row.item.id, id_vencimento: parseInt(id_vencimento) }) }}
+                              >
+                                <Button
+                                  size={"xs"}
+                                  variant={"warning"}
+                                >
+                                  Vincular
+                                </Button>
+                              </AlertPopUp>
+                            ) :
+                            (
+                              // Esse botão abrirá um modal de vencimentos para seleção e vinculação:
+                              <Button
+                                variant={'warning'}
+                                size={'xs'}
+                                onClick={() => { handleClickBuscarVencimento({ id_dda: row.item.id }) }}
+                              >Vincular</Button>
+                            )
                         )
-                    )
-                  }
-                </>
-              </ModalComponentRow>
-            ))}
+                      }
+                    </div>
+                  </div>
+                </ModalComponentRow>
+              ))}
+          </>
         </ModalComponent>
       </DialogContent>
     </Dialog>
