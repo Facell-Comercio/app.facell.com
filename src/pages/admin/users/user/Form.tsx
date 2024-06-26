@@ -1,7 +1,6 @@
 import FormFileUpload from "@/components/custom/FormFileUpload";
 import FormInput from "@/components/custom/FormInput";
 import FormSwitch from "@/components/custom/FormSwitch";
-import SectionItems from "@/components/custom/SectionItems";
 import { Button } from "@/components/ui/button";
 import { Form, FormLabel } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
@@ -19,6 +18,11 @@ import ModalFiliais from "../../components/ModalFiliais";
 import ModalPermissoes from "../../components/ModalPermissoes";
 import { UserFormData, useFormUserData } from "./form-data";
 import { useStoreUser } from "./store";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TableUserFiliais } from "./components/TableFiliais";
+import { TableUserCentrosCustos } from "./components/TableCentrosCustos";
+import { TableUserDepartamentos } from "./components/TableDepartamentos";
+import { TableUserPermissoes } from "./components/TablePermissoes";
 
 const FormUsers = ({
   id,
@@ -41,7 +45,6 @@ const FormUsers = ({
   const {
     fields: filiais,
     append: addFilial,
-    remove: removeFilial,
   } = useFieldArray({
     name: "filiais",
     control: form.control,
@@ -50,7 +53,6 @@ const FormUsers = ({
   const {
     fields: departamentos,
     append: addDepartamento,
-    remove: removeDepartamento,
   } = useFieldArray({
     name: "departamentos",
     control: form.control,
@@ -59,7 +61,6 @@ const FormUsers = ({
   const {
     fields: permissoes,
     append: addPermissao,
-    remove: removePermissao,
   } = useFieldArray({
     name: "permissoes",
     control: form.control,
@@ -68,7 +69,6 @@ const FormUsers = ({
   const {
     fields: centros_custo,
     append: addCentroCusto,
-    remove: removeCentroCusto,
   } = useFieldArray({
     name: "centros_custo",
     control: form.control,
@@ -90,18 +90,6 @@ const FormUsers = ({
   const [openModalPermissoes, setOpenModalPermissoes] =
     useState<boolean>(false);
 
-  const handleClickAddFilial = () => {
-    setOpenModalFiliais(true);
-  };
-  const handleClickAddDepartamento = () => {
-    setOpenModalDepartamentos(true);
-  };
-  const handleClickAddCentroCustos = () => {
-    setOpenModalCentrosCusto(true);
-  };
-  const handleClickAddPermissao = () => {
-    setOpenModalPermissoes(true);
-  };
 
   const handleSelectFilial = (filial: Filial) => {
     // verifica se o cara já possui
@@ -115,6 +103,7 @@ const FormUsers = ({
         id_filial: filial.id || "",
         id_user: id || "",
         nome: filial.nome,
+        grupo_economico: filial.grupo_economico
       });
     } else {
       toast({
@@ -161,6 +150,7 @@ const FormUsers = ({
         id_centro_custo: centro_custo.id || "",
         id_user: id || "",
         nome: centro_custo.nome,
+        grupo_economico: centro_custo.grupo_economico
       });
     } else {
       toast({
@@ -192,128 +182,6 @@ const FormUsers = ({
       });
     }
   };
-
-  const handleActiveChangeArray = (chave: keyof UserFormData) => {
-    form.setValue(chave, true);
-  };
-
-  const filiaisContent = filiais.map((filial, index) => (
-    <div
-      key={`filial.${index}`}
-      className="flex justify-between items-center rounded-lg bg-blue-800 p-2"
-    >
-      <p>{filial.nome}</p>
-      <div className="flex items-center gap-3">
-        <div onClick={() => handleActiveChangeArray("updateFiliais")}>
-          <FormSwitch
-            control={form.control}
-            name={`filiais.${index}.gestor`}
-            label="Gestor"
-            disabled={!modalEditing}
-          />
-        </div>
-        {modalEditing && (
-          <Button
-            type="button"
-            variant={"destructive"}
-            size={"sm"}
-            onClick={() => {
-              handleActiveChangeArray("updateFiliais");
-              removeFilial(index);
-            }}
-          >
-            Excluir
-          </Button>
-        )}
-      </div>
-    </div>
-  ));
-
-  const departamentosContent = departamentos.map((departamento, index) => (
-    <div
-      key={`departamento.${index}`}
-      className="flex justify-between items-center rounded-lg bg-blue-800 p-2"
-    >
-      <p>{departamento.nome}</p>
-      <div className="flex items-center gap-3">
-        <div onClick={() => handleActiveChangeArray("updateDepartamentos")}>
-          <FormSwitch
-            control={form.control}
-            name={`departamentos.${index}.gestor`}
-            label="Gestor"
-            disabled={!modalEditing}
-          />
-        </div>
-        {modalEditing && (
-          <Button
-            type="button"
-            variant={"destructive"}
-            size={"sm"}
-            onClick={() => {
-              handleActiveChangeArray("updateDepartamentos");
-              removeDepartamento(index);
-            }}
-          >
-            Excluir
-          </Button>
-        )}
-      </div>
-    </div>
-  ));
-
-  const centrosCustoContent = centros_custo.map((centro_custo, index) => (
-    <div
-      key={`centro_custo.${index}`}
-      className="flex justify-between items-center rounded-lg bg-blue-800 p-2"
-    >
-      <p>{centro_custo.nome}</p>
-      <div className="flex items-center gap-3">
-        <div onClick={() => handleActiveChangeArray("updateCentrosCusto")}>
-          <FormSwitch
-            control={form.control}
-            disabled={!modalEditing}
-            name={`centros_custo.${index}.gestor`}
-            label="Gestor"
-          />
-        </div>
-        {modalEditing && (
-          <Button
-            type="button"
-            variant={"destructive"}
-            size={"sm"}
-            onClick={() => {
-              handleActiveChangeArray("updateCentrosCusto");
-              removeCentroCusto(index);
-            }}
-          >
-            Excluir
-          </Button>
-        )}
-      </div>
-    </div>
-  ));
-
-  const permissoesContent = permissoes.map((permissao, index) => (
-    <div
-      key={`permissao.${index}`}
-      className="flex justify-between items-center rounded-lg bg-blue-800 p-2"
-    >
-      <p>{permissao.nome}</p>
-      {modalEditing && (
-        <Button
-          type="button"
-          variant={"destructive"}
-          size={"sm"}
-          onClick={() => {
-            handleActiveChangeArray("updatePermissoes");
-            removePermissao(index);
-          }}
-        >
-          Excluir
-        </Button>
-      )}
-    </div>
-  ));
 
   return (
     <div className="max-w-full ">
@@ -354,7 +222,7 @@ const FormUsers = ({
           <FormInput name="id" type="hidden" control={form.control} />
 
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
-            {/* Primeira coluna */}
+
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex justify-between mb-3">
@@ -403,95 +271,59 @@ const FormUsers = ({
                     />
                   </div>
 
-                  <h2 className="mt-2 font-bold text-md">
-                    Restrições de acesso
-                  </h2>
-                  {/* Filiais de acesso */}
-                  <SectionItems
-                    title="Filiais de acesso"
-                    btnAdd={
-                      modalEditing ? (
-                        <Button
-                          type="button"
-                          size={"sm"}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleClickAddFilial();
-                          }}
-                        >
-                          Adicionar Filial
-                        </Button>
-                      ) : undefined
-                    }
-                    itemsLength={filiais.length}
-                    content={filiaisContent}
-                  />
-
-                  {/* Departamentos de acesso */}
-                  <SectionItems
-                    title="Departamentos de acesso"
-                    btnAdd={
-                      modalEditing ? (
-                        <Button
-                          type="button"
-                          size={"sm"}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleClickAddDepartamento();
-                          }}
-                        >
-                          Adicionar Departamento
-                        </Button>
-                      ) : undefined
-                    }
-                    itemsLength={departamentos.length}
-                    content={departamentosContent}
-                  />
-
-                  {/* Centros de custo */}
-                  <SectionItems
-                    title="Centros de custo"
-                    btnAdd={
-                      modalEditing ? (
-                        <Button
-                          type="button"
-                          size={"sm"}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleClickAddCentroCustos();
-                          }}
-                        >
-                          Adicionar Centro Custo
-                        </Button>
-                      ) : undefined
-                    }
-                    itemsLength={centros_custo.length}
-                    content={centrosCustoContent}
-                  />
-
-                  {/* Permissões especiais */}
-                  <SectionItems
-                    title="Permissões especiais"
-                    btnAdd={
-                      modalEditing ? (
-                        <Button
-                          type="button"
-                          size={"sm"}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleClickAddPermissao();
-                          }}
-                        >
-                          Adicionar Permissão
-                        </Button>
-                      ) : undefined
-                    }
-                    itemsLength={permissoes.length}
-                    content={permissoesContent}
-                  />
                 </div>
               </div>
+
+              <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                <h2 className="mb-2 font-bold text-md">
+                  Restrições de acesso
+                </h2>
+
+                <Tabs defaultValue="filiais" className="w-full">
+                  <TabsList className="w-full justify-start" >
+                    <TabsTrigger value="filiais">Filiais</TabsTrigger>
+                    <TabsTrigger value="departamentos">Departamentos</TabsTrigger>
+                    <TabsTrigger value="centros-custo">Centros-custo</TabsTrigger>
+                    <TabsTrigger value="permissoes">Permissoes</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="filiais">
+                    <div>
+                      <div className="flex justify-end mb-2">
+                        <Button size={'sm'} onClick={() => setOpenModalFiliais(true)}>Adicionar</Button>
+                      </div>
+                      <TableUserFiliais form={form} modalEditing={modalEditing} />
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="centros-custo">
+                    <div>
+                      <div className="flex justify-end mb-2">
+                        <Button size={'sm'} onClick={() => setOpenModalCentrosCusto(true)}>Adicionar</Button>
+                      </div>
+                      <TableUserCentrosCustos form={form} modalEditing={modalEditing} />
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="departamentos">
+                    <div>
+                      <div className="flex justify-end mb-2">
+                        <Button size={'sm'} onClick={() => setOpenModalDepartamentos(true)}>Adicionar</Button>
+                      </div>
+                      <TableUserDepartamentos form={form} modalEditing={modalEditing} />
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="permissoes">
+                    <div>
+                      <div className="flex justify-end mb-2">
+                        <Button size={'sm'} onClick={() => setOpenModalPermissoes(true)}>Adicionar</Button>
+                      </div>
+                      <TableUserPermissoes form={form} modalEditing={modalEditing} />
+                    </div>
+                  </TabsContent>
+                </Tabs>
+
+              </div>
+
             </div>
+
           </div>
         </form>
       </Form>

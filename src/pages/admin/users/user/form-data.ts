@@ -17,6 +17,7 @@ const schemaUser = z
     id_filial: z.coerce.string().trim().min(1, "Obrigatório"),
     id_user: z.string(),
     nome: z.string().optional(),
+    grupo_economico: z.string().optional(),
     gestor: z.coerce.boolean()
   })),
 
@@ -35,6 +36,7 @@ const schemaUser = z
     id_centro_custo: z.coerce.string().trim().min(1, "Obrigatório"),
     id_user: z.string(),
     nome: z.string().optional(),
+    grupo_economico: z.string().optional(),
     gestor: z.coerce.boolean()
   })),
 

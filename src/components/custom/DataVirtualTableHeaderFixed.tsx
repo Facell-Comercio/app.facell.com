@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   ColumnDef,
   flexRender,
@@ -14,8 +15,9 @@ import { useRef, useState } from "react";
 type TableProps = {
   data: any;
   columns: ColumnDef<unknown, any>[];
+  className?: string;
 };
-export const DataVirtualTableHeaderFixed = ({ data, columns }: TableProps) => {
+export const DataVirtualTableHeaderFixed = ({ data, columns, className }: TableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
@@ -51,7 +53,7 @@ export const DataVirtualTableHeaderFixed = ({ data, columns }: TableProps) => {
       <div className="rounded-lg overflow-auto scroll-thin w-full">
         <div
           ref={parentRef}
-          className={`h-[200px] overflow-auto relative min-w-full`}
+          className={cn(`h-[200px] overflow-auto relative min-w-full`, className)}
         >
           <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
             <table className="grid text-nowrap text-xs w-full">
