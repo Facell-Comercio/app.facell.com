@@ -132,9 +132,11 @@ const FormCadastro = ({
   }, [insertIsSuccess, updateIsSuccess]);
 
   function onSubmitData(data: cadastroSchemaProps) {
+    console.log(!!+form.watch("active"), typeof !!+form.watch("active"));
+
     const filteredData: cadastroSchemaProps = {
       id: data.id,
-      active: !!+form.watch("active"),
+      active: form.watch("active"),
       id_grupo_economico: data.id_grupo_economico,
       ref: `${refDate.ano}-${refDate.mes}-1`,
       contas: data.contas?.filter((conta) => {

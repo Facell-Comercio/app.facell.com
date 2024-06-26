@@ -59,7 +59,7 @@ const RowVirtualizerFixedProgramado: React.FC<
         <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
           Valor
         </p>
-        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
+        {/* <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
           Valor Pago
         </p>
         <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
@@ -67,7 +67,7 @@ const RowVirtualizerFixedProgramado: React.FC<
         </p>
         <p className="min-w-56 text-center bg-slate-200 dark:bg-blue-950">
           Observação
-        </p>
+        </p> */}
       </div>
       <div
         style={{
@@ -146,7 +146,7 @@ const RowVirtualizerFixedProgramado: React.FC<
                 }
                 readOnly
               />
-              <Input
+              {/* <Input
                 className="w-32 h-8 text-xs p-2 text-end"
                 value={normalizeCurrency(data[indexData].valor_pago || 0)}
                 readOnly
@@ -160,7 +160,7 @@ const RowVirtualizerFixedProgramado: React.FC<
                 className="min-w-56 h-8 text-xs p-2 uppercase"
                 value={data[indexData].obs || ""}
                 readOnly
-              />
+              /> */}
             </div>
           );
         })}

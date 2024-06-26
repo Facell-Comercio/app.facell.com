@@ -6,6 +6,7 @@ import ModalPlanosContas, {
   ItemPlanoContas,
 } from "@/pages/financeiro/components/ModalPlanosContas";
 import { CentroCustos } from "@/types/financeiro/centro-custos-type";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { MeuOrcamentoSchema, useFormMeuOrcamentoData } from "./form-data";
 import { useStoreMeuOrcamento } from "./store";
@@ -48,34 +49,42 @@ const FormMeuOrcamento = ({
       <Form {...form}>
         <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
-            {/* Primeira coluna */}
-            <div className="flex flex-1 flex-col gap-3 shrink-0">
-              <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                <div className="flex flex-wrap gap-3">
+            <div className="flex flex-1 flex-col gap-1 shrink-0">
+              {/* Primeira coluna */}
+              <div className="flex flex-col gap-3 p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                <h3 className="text-lg font-medium">Conta de Saída</h3>
+                <div className="flex flex-wrap gap-3 ">
                   <FormInput
-                    className="flex-1"
+                    className="min-w-[30ch] sm:flex-1"
                     name="centro_custo_entrada"
                     readOnly={true}
-                    label="Centro de Custo de Saída"
+                    label="Centro de Custo"
                     control={form.control}
                   />
                   <FormInput
-                    className="flex-1 min-w-[40ch]"
+                    className="min-w-[30ch] sm:flex-1 sm:min-w-[40ch]"
                     name="conta_saida"
                     readOnly={true}
-                    label="Transferir dessa conta"
+                    label="Plano de Contas"
                     control={form.control}
                   />
                   <FormInput
                     type="number"
-                    className="flex-1 max-w-[20ch]"
+                    className="flex-1 w-full sm:max-w-[20ch]"
                     name="disponivel"
                     readOnly={true}
                     label="Valor Disponível"
                     control={form.control}
                   />
                 </div>
-                <div className="flex flex-wrap gap-3">
+              </div>
+              <div className="flex items-center justify-center w-full">
+                <ChevronDown size={30} />
+              </div>
+              {/* Segunda coluna */}
+              <div className="flex flex-col gap-3 p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                <h3 className="text-lg font-medium">Conta de Entrada</h3>
+                <div className="flex flex-wrap gap-3 min-w-[30ch]">
                   <span
                     className="flex-1"
                     onClick={() => setModalCentrosCustoOpen(true)}
@@ -84,7 +93,7 @@ const FormMeuOrcamento = ({
                       className="w-full"
                       name="centro_custo_entrada"
                       placeholder="Selecione o centro de custo"
-                      label="Centro de Custo de Entrada"
+                      label="Centro de Custo"
                       control={form.control}
                     />
                   </span>
@@ -98,13 +107,13 @@ const FormMeuOrcamento = ({
                   />
 
                   <span
-                    className="flex-1"
+                    className="flex-1 min-w-[30ch]"
                     onClick={() => setModalPlanoContasOpen(true)}
                   >
                     <FormInput
                       className="w-full"
                       name="conta_entrada"
-                      label="Para Essa Conta"
+                      label="Plano de Contas"
                       placeholder="Selecione a conta"
                       control={form.control}
                     />
@@ -120,7 +129,7 @@ const FormMeuOrcamento = ({
                   />
                   <FormInput
                     type="number"
-                    className="flex-1 max-w-[20ch]"
+                    className="flex-1 w-full sm:max-w-[20ch]"
                     name="valor_transferido"
                     label="Valor a Transferir"
                     placeholder={(+data.disponivel)
