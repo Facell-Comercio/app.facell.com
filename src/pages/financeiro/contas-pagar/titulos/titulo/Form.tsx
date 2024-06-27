@@ -64,7 +64,6 @@ import {
   formatarHistorico,
 } from "./helpers/helper";
 import { initialPropsTitulo, useStoreTitulo } from "./store";
-import { log } from "console";
 
 const FormTituloPagar = ({
   id,
