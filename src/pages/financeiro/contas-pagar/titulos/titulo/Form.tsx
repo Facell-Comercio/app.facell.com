@@ -333,7 +333,7 @@ const FormTituloPagar = ({
     });
   };
 
-  const handleClickCriarRecorrencia = async (e: any) => {
+  const handleClickCriarRecorrencia = async () => {
     try {
       // e.preventDefault();
       const dados = form.getValues();
