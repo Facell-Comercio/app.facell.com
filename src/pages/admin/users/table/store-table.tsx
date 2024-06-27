@@ -39,7 +39,7 @@ export const useStoreUsers = create<State & Actions>(set => ({
   // Table
   rowCount: 0,
 
-  pagination: { pageIndex: 0, pageSize: 5 },
+  pagination: { pageIndex: 0, pageSize: 10 },
   isAllSelected: false,
   rowSelection: {},
 

@@ -35,7 +35,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center">
         <Checkbox
           {...{
             checked: row.getIsSelected(),
@@ -51,13 +51,14 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     accessorKey: "id",
     header: "ID",
     cell: (info) => (
-      <span
-        className="font-semibold cursor-pointer text-blue-500"
+      <div
+        className="font-semibold cursor-pointer text-blue-500 rounded-lg"
         onClick={() => openModal(info.getValue<string>())}
       >
         {info.getValue<string>()}
-      </span>
+      </div>
     ),
+    size: 30,
     enableSorting: false,
   },
   {
