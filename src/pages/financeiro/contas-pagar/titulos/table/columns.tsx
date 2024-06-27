@@ -71,6 +71,14 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     },
   },
   {
+    header: "Forma Pgto",
+    accessorKey: "forma_pagamento",
+    cell: (info) => {
+      const text = info.getValue<string>();
+      return <span className="uppercase">{text}</span>;
+    },
+  },
+  {
     header: "Solicitação",
     accessorKey: "created_at",
     cell: (info) => {

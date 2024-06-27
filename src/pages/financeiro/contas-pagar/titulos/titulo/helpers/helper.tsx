@@ -26,7 +26,10 @@ export const proximoDiaUtil = (data: Date | string) => {
   return proximoDiaUtil;
 };
 
-export const calcularDataPrevisaoPagamento = (data_venc: Date | string) => {
+export const calcularDataPrevisaoPagamento = (
+  data_venc: Date | string,
+  formaPagamento: string
+) => {
   let dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
 
   const dataAtual = startOfDay(new Date());

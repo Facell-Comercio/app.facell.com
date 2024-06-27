@@ -24,6 +24,7 @@ import ModalFornecedores, {
   ItemFornecedor,
 } from "@/pages/financeiro/components/ModalFornecedores";
 
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -64,7 +65,6 @@ import {
   formatarHistorico,
 } from "./helpers/helper";
 import { initialPropsTitulo, useStoreTitulo } from "./store";
-import AlertPopUp from "@/components/custom/AlertPopUp";
 
 const FormTituloPagar = ({
   id,
@@ -98,7 +98,7 @@ const FormTituloPagar = ({
     formState: { errors },
   } = form;
 
-  console.log("ERROS_TITULO:", errors);
+  // console.log("ERROS_TITULO:", errors);
 
   // * [ WATCHES ]
   // const wfull = form.watch();
@@ -646,6 +646,7 @@ const FormTituloPagar = ({
                         readOnly={readOnly}
                         className="flex-1 trunkate sm:min-w-[400px]"
                         name="descricao"
+                        inputClass="uppercase"
                         label="Descrição do pagamento"
                         control={form.control}
                       />
@@ -888,7 +889,6 @@ const FormTituloPagar = ({
                     </AlertPopUp>
                   )}
                 </div>
-
 
                 <div className="flex gap-3 flex-wrap items-center">
                   {canEdit && modalEditing && (

@@ -15,7 +15,7 @@ const toggleVariants = cva(
         check:
           "bg-secondary hover:bg-secondary data-[state=on]:bg-success data-[state=on]:text-success-foreground",
         active:
-          "bg-destructive hover:bg-destructive data-[state=on]:bg-success data-[state=on]:text-success-foreground",
+          "text-white bg-destructive hover:bg-destructive data-[state=on]:bg-success data-[state=on]:text-success-foreground",
       },
       size: {
         default: "h-10 px-3",

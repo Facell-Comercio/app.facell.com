@@ -64,11 +64,12 @@ const ModalTituloPagar = () => {
     vencimentos.push({
       data_vencimento: recorrencia.data_vencimento,
       data_prevista: calcularDataPrevisaoPagamento(
-        new Date(recorrencia.data_vencimento)
+        new Date(recorrencia.data_vencimento),
+        "1"
       ),
       valor: recorrencia.valor,
       cod_barras: "",
-      qr_code: '',
+      qr_code: "",
     });
   }
 
@@ -118,7 +119,8 @@ const ModalTituloPagar = () => {
       data_vencimento: recorrencia.data_vencimento,
       data_emissao: new Date().toISOString(),
       data_prevista: calcularDataPrevisaoPagamento(
-        new Date(recorrencia.data_vencimento)
+        new Date(recorrencia.data_vencimento),
+        "1"
       ),
       vencimentos,
       itens_rateio,

@@ -8,9 +8,15 @@ export const vencimentoSchema = z.object({
   data_vencimento: z.coerce.string({ required_error: "Campo obrigatório" }),
   data_prevista: z.coerce.string({ required_error: "Campo obrigatório" }),
   valor: z.string().min(0),
-  cod_barras: z.string().optional().transform(v => v?.trim() || ''),
-  qr_code: z.string().optional().transform(v => v?.trim() || ''),
-})
+  cod_barras: z
+    .string()
+    .optional()
+    .transform((v) => v?.trim() || ""),
+  qr_code: z
+    .string()
+    .optional()
+    .transform((v) => v?.trim() || ""),
+});
 
 export const rateioSchema = z.object({
   id: z.string().optional(),
@@ -87,7 +93,8 @@ export const schemaTitulo = z
 
     descricao: z
       .string()
-      .min(10, { message: "Precisa conter mais que 10 caracteres" }),
+      .min(10, { message: "Precisa conter mais que 10 caracteres" })
+      .toUpperCase(),
 
     update_vencimentos: z.boolean(),
     vencimentos: z.array(vencimentoSchema).optional(),
@@ -180,7 +187,7 @@ export const schemaTitulo = z
     (data) => {
       if (data.id_forma_pagamento == "8") {
         if (!data.vencimentos || data.vencimentos.length === 0) {
-          return false
+          return false;
         }
         for (const v of data.vencimentos) {
           if (!v.qr_code) {
@@ -188,7 +195,7 @@ export const schemaTitulo = z
           }
         }
       }
-      return true
+      return true;
     },
     { path: ["vencimentos"], message: "Preencha o PIX Copia e Cola!" }
   )
