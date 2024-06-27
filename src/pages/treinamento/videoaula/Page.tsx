@@ -11,15 +11,13 @@ export const VideoAulaPage = () => {
             videos: [
                 {
                     id: 1,
-                    url: 'https://youtu.be/3-cWKDj6juc'
+                    title: 'Inicial',
+                    url: 'https://youtu.be/sB8ri9uv2Nk'
                 },
                 {
                     id: 2,
-                    url: 'https://youtu.be/3-cWKDj6juc'
-                },
-                {
-                    id: 3,
-                    url: 'https://youtu.be/3-cWKDj6juc'
+                    title: 'Administração',
+                    url: 'https://youtu.be/Ev1KRhtlxl4'
                 },
 
             ]
@@ -30,35 +28,8 @@ export const VideoAulaPage = () => {
             videos: [
                 {
                     id: 1,
-                    url: 'https://youtu.be/3-cWKDj6juc'
-                },
-                {
-                    id: 2,
-                    url: 'https://youtu.be/3-cWKDj6juc'
-                },
-                {
-                    id: 3,
-                    url: 'https://youtu.be/3-cWKDj6juc'
-                },
-                {
-                    id: 4,
-                    url: 'https://youtu.be/3-cWKDj6juc'
-                },
-                {
-                    id: 5,
-                    url: 'https://youtu.be/3-cWKDj6juc'
-                },
-                {
-                    id: 6,
-                    url: 'https://youtu.be/3-cWKDj6juc'
-                },
-                {
-                    id: 7,
-                    url: 'https://youtu.be/3-cWKDj6juc'
-                },
-                {
-                    id: 8,
-                    url: 'https://youtu.be/3-cWKDj6juc'
+                    title: 'Nova solicitação',
+                    url: 'https://youtu.be/Bt39e0dGwpc'
                 },
             ]
         },
