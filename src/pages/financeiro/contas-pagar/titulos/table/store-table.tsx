@@ -17,6 +17,7 @@ export interface Filters {
   range_data?: DateRange;
   descricao?: string;
   nome_user?: string;
+  nome_fornecedor?: string;
 }
 
 const initialFilters: Filters = {
@@ -27,6 +28,7 @@ const initialFilters: Filters = {
   range_data: { from: undefined, to: undefined },
   descricao: "",
   nome_user: undefined,
+  nome_fornecedor: undefined,
 };
 
 export interface State {

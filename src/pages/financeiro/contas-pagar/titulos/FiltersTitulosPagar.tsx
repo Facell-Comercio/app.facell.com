@@ -131,6 +131,20 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 onChange={(e) => setFilters({ descricao: e.target.value })}
                 placeholder="Descrição..."
               />
+
+              <Input
+                className="max-w-[200px]"
+                value={filters?.nome_fornecedor}
+                onChange={(e) => setFilters({ nome_fornecedor: e.target.value })}
+                placeholder="Nome Fornecedor..."
+              />
+
+              <Input
+                className="max-w-[200px]"
+                value={filters?.nome_user}
+                onChange={(e) => setFilters({ nome_user: e.target.value })}
+                placeholder="Nome Usuário..."
+              />
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>

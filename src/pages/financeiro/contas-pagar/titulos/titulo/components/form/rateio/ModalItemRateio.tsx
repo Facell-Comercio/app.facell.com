@@ -241,11 +241,9 @@ export const ModalItemRateio = ({
         return acc + parseFloat(curr.valor);
       }, 0) || 0) + valor;
 
-  const saldoFuturoOrcamento =
-    valorOrcamento - previsaoConsumoOrcamento < 0
-      ? 0
-      : valorOrcamento - previsaoConsumoOrcamento;
-  const valorExcessoOrcamento = valor - saldoFuturoOrcamento;
+  const saldoFuturoOrcamento = valorOrcamento - previsaoConsumoOrcamento;
+  const valorExcessoOrcamento = previsaoConsumoOrcamento - valorOrcamento;
+
   const excedeOrcamento = valorExcessoOrcamento > 0;
 
   const valorExcessoTitulo =
@@ -503,7 +501,7 @@ export const ModalItemRateio = ({
                     <span>{normalizeCurrency(valorOrcamento)}</span>
                   </div>
                   <div className="flex gap-3 text-muted-foreground">
-                    <span>Saldo Orçamento - Futuro</span>
+                    <span>Saldo Orçamento Futuro</span>
                     <span>{normalizeCurrency(saldoFuturoOrcamento)}</span>
                   </div>
                 </>

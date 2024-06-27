@@ -64,6 +64,7 @@ import {
   formatarHistorico,
 } from "./helpers/helper";
 import { initialPropsTitulo, useStoreTitulo } from "./store";
+import AlertPopUp from "@/components/custom/AlertPopUp";
 
 const FormTituloPagar = ({
   id,
@@ -331,23 +332,11 @@ const FormTituloPagar = ({
       id_novo_status: "3",
     });
   };
-  const handleClickCriarRecorrencia = async (e: any) => {
-    try {
-      e.preventDefault();
-      const dados = form.getValues();
-      // console.log(
-      //   "CRIAR RECORRENCIA",
-      //   dados.id,
-      //   dados.vencimentos && dados.vencimentos[0].data_vencimento,
-      //   dados.valor
-      // );
 
-      // try {
-      //   await schemaTitulo.parse(dados)
-      // } catch (error) {
-      //     form.trigger()
-      //     return;
-      // }
+  const handleClickCriarRecorrencia = async () => {
+    try {
+      // e.preventDefault();
+      const dados = form.getValues();
 
       await api.post("financeiro/contas-a-pagar/titulo/criar-recorrencia", {
         id: dados.id,
@@ -360,6 +349,7 @@ const FormTituloPagar = ({
         variant: "success",
         title: "Recorrência criada com sucesso!",
       });
+      return true;
     } catch (error) {
       // console.log(error);
       toast({
@@ -368,6 +358,7 @@ const FormTituloPagar = ({
         // @ts-ignore
         description: error.response?.data?.message || error.message,
       });
+      return false;
     }
   };
 
@@ -880,18 +871,25 @@ const FormTituloPagar = ({
                     </Button>
                   )}
                   {podeCriarRecorrencia && (
-                    <Button
-                      type="button"
-                      title="Uma recorrência será criada com data para 1 mês após a data de vencimento desta solicitação."
-                      variant={"secondary"}
-                      size={"lg"}
-                      onClick={handleClickCriarRecorrencia}
+                    <AlertPopUp
+                      title="Deseja realmente criar uma recorrência?"
+                      description="Será criada com data 1 mês após a data do primeiro vencimento da solicitação."
+                      action={handleClickCriarRecorrencia}
                     >
-                      <Repeat2 className="me-2" size={18} />
-                      Criar Recorrência
-                    </Button>
+                      <Button
+                        type="button"
+                        title="Uma recorrência será criada com data para 1 mês após a data de vencimento desta solicitação."
+                        variant={"secondary"}
+                        size={"lg"}
+                      >
+                        <Repeat2 className="me-2" size={18} />
+                        Criar Recorrência
+                      </Button>
+                    </AlertPopUp>
                   )}
                 </div>
+
+
                 <div className="flex gap-3 flex-wrap items-center">
                   {canEdit && modalEditing && (
                     <>
