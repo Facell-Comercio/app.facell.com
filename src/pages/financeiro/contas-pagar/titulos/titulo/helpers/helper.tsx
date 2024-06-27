@@ -71,7 +71,7 @@ export const calcularDataPrevisaoPagamento = (data_venc: Date | string) => {
 };
 
 export const checkIsTransferenciaBancaria = (id_forma_pagamento: string) => {
-  const formasPagamentoQueExigemAgenciaConta = ["2", 2, "5", 5];
+  const formasPagamentoQueExigemAgenciaConta = ["4", 4, "5", 5];
   return formasPagamentoQueExigemAgenciaConta.includes(id_forma_pagamento);
 };
 
@@ -123,35 +123,39 @@ export const formatarHistorico = (descricao: string) => {
 };
 
 type ContaOrcamento = {
-  grupoValidaOrcamento: boolean,
-  orcamentoAtivo?: boolean,
-  active?: boolean
-}
-export const checkIfValidateBudget = ({ grupoValidaOrcamento, orcamentoAtivo, active }: ContaOrcamento) => {
+  grupoValidaOrcamento: boolean;
+  orcamentoAtivo?: boolean;
+  active?: boolean;
+};
+export const checkIfValidateBudget = ({
+  grupoValidaOrcamento,
+  orcamentoAtivo,
+  active,
+}: ContaOrcamento) => {
   if (!grupoValidaOrcamento) {
     return false;
   }
   if (orcamentoAtivo === undefined) {
-    return true
+    return true;
   }
   if (!orcamentoAtivo) {
-    return false
+    return false;
   }
   if (active === undefined) {
-    return true
+    return true;
   }
   if (!active) {
-    return false
+    return false;
   }
-  return true
-}
+  return true;
+};
 
-export const copyToClipboard = async (texto: string)=>{
-  let success = true
+export const copyToClipboard = async (texto: string) => {
+  let success = true;
   try {
     await navigator.clipboard.writeText(texto);
   } catch (err) {
-    success = false
+    success = false;
   }
-  return success
-}
+  return success;
+};
