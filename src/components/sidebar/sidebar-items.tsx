@@ -257,6 +257,6 @@ export const sidebarItems: SidebarItem[] = [
     type: "link",
     icon: <Settings size={16} />,
     uri: "/administracao",
-    visible: true,
+    visible: checkUserPermission('MASTER'),
   },
 ];

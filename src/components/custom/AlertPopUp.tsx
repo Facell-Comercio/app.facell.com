@@ -14,7 +14,7 @@ interface TAlert {
   title: string;
   description: string;
   children: JSX.Element;
-  action: () => void;
+  action: any;
   className?: string;
   open?: boolean;
   onOpenChange?: ((open: boolean) => void) | undefined;
