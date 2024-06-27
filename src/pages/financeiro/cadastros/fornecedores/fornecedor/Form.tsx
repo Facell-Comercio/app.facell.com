@@ -67,6 +67,7 @@ const FormFornecedor = ({
       );
       form.setValue("nome", cnpjData.fantasia);
       form.setValue("telefone", cnpjData.telefone);
+
       form.setValue("razao", cnpjData.nome);
       form.setValue("email", cnpjData.email);
       form.setValue("cep", cnpjData.cep);
@@ -75,6 +76,8 @@ const FormFornecedor = ({
       form.setValue("bairro", cnpjData.bairro);
       form.setValue("municipio", cnpjData.municipio);
       form.setValue("uf", cnpjData.uf);
+      form.setValue("favorecido", cnpjData.fantasia);
+      form.setValue("cnpj_favorecido", cnpj || "");
     } catch (error) {
       // @ts-expect-error "Vai funcionar"
       const errorMessage = error.response?.data.message || error.message;
@@ -90,7 +93,7 @@ const FormFornecedor = ({
 
   useEffect(() => {
     handleChangeCnpj(data.cnpj, "cnpj");
-    handleChangePhoneNumber(data.telefone);
+    // handleChangePhoneNumber(data.telefone);
     handleChangeCep(data.cep);
     handleChangeCnpj(data.cnpj_favorecido, "cnpj_favorecido");
   }, []);
@@ -112,9 +115,9 @@ const FormFornecedor = ({
   ) => {
     form.setValue(type, normalizeCnpjNumber(value));
   };
-  const handleChangePhoneNumber = (value: string) => {
-    form.setValue("telefone", normalizePhoneNumber(value));
-  };
+  // const handleChangePhoneNumber = (value: string) => {
+  //   form.setValue("telefone", normalizePhoneNumber(value));
+  // };
   const handleChangeCep = (value: string) => {
     form.setValue("cep", normalizeCepNumber(value));
   };
@@ -214,9 +217,8 @@ const FormFornecedor = ({
                     name="telefone"
                     readOnly={!modalEditing || isPending}
                     label="Telefone"
-                    onChange={(e) => handleChangePhoneNumber(e.target.value)}
                     control={form.control}
-                    fnMask={normalizePhoneNumber}
+                    // fnMask={normalizePhoneNumber}
                   />
                   <FormInput
                     className="flex-1 min-w-[30ch]"
@@ -298,16 +300,6 @@ const FormFornecedor = ({
                   <FormInput
                     className="flex-1 min-w-[20ch]"
                     readOnly={!modalEditing || isPending}
-                    type={watchFormaPagamento !== "4" ? "hidden" : ""}
-                    name="chave_pix"
-                    label="Chave PIX"
-                    placeholder={placeholderChavePix(watchTipoChavePix)}
-                    control={form.control}
-                    fnMask={fnMaskChavePix(watchTipoChavePix)}
-                  />
-                  <FormInput
-                    className="flex-1 min-w-[20ch]"
-                    readOnly={!modalEditing || isPending}
                     name="cnpj_favorecido"
                     label="CPF/CNPJ Favorecido"
                     control={form.control}
@@ -315,6 +307,7 @@ const FormFornecedor = ({
                       handleChangeCnpj(e.target.value, "cnpj_favorecido")
                     }
                     onBlur={(e) => onBlurCnpj(e.target.value)}
+                    fnMask={normalizeCnpjNumber}
                   />
                   <FormInput
                     className="flex-1 min-w-[40ch]"
@@ -323,45 +316,60 @@ const FormFornecedor = ({
                     label="Favorecido"
                     control={form.control}
                   />
+                  {(watchFormaPagamento === "4" ||
+                    watchFormaPagamento === "5") && (
+                    <>
+                      <FormInput
+                        className="flex-1 min-w-[20ch]"
+                        readOnly={!modalEditing || isPending}
+                        type={watchFormaPagamento !== "4" ? "hidden" : ""}
+                        name="chave_pix"
+                        label="Chave PIX"
+                        placeholder={placeholderChavePix(watchTipoChavePix)}
+                        control={form.control}
+                        fnMask={fnMaskChavePix(watchTipoChavePix)}
+                      />
 
-                  <div className="flex gap-3">
-                    <FormInput
-                      className="flex-1 min-w-[10ch]"
-                      readOnly={!modalEditing || isPending}
-                      name="agencia"
-                      label="Agência"
-                      control={form.control}
-                    />
-                    <FormInput
-                      className="flex-1 min-w-[5ch] max-w-[10ch]"
-                      readOnly={!modalEditing || isPending}
-                      name="dv_agencia"
-                      label="Dígito AG."
-                      control={form.control}
-                    />
+                      <div className="flex gap-3">
+                        <FormInput
+                          className="flex-1 min-w-[10ch]"
+                          readOnly={!modalEditing || isPending}
+                          name="agencia"
+                          label="Agência"
+                          control={form.control}
+                        />
+                        <FormInput
+                          className="flex-1 min-w-[5ch] max-w-[10ch]"
+                          readOnly={!modalEditing || isPending}
+                          name="dv_agencia"
+                          label="Dígito AG."
+                          control={form.control}
+                        />
 
-                    <SelectTipoContaBancaria
-                      disabled={!modalEditing || isPending}
-                      control={form.control}
-                      name="id_tipo_conta"
-                      label="Tipo de Conta"
-                    />
+                        <SelectTipoContaBancaria
+                          disabled={!modalEditing || isPending}
+                          control={form.control}
+                          name="id_tipo_conta"
+                          label="Tipo de Conta"
+                        />
 
-                    <FormInput
-                      className="flex-1 min-w-[10ch]"
-                      readOnly={!modalEditing || isPending}
-                      name="conta"
-                      label="Conta"
-                      control={form.control}
-                    />
-                    <FormInput
-                      className="flex-1 min-w-[5ch] max-w-[10ch]"
-                      readOnly={!modalEditing || isPending}
-                      name="dv_conta"
-                      label="Digito. CT."
-                      control={form.control}
-                    />
-                  </div>
+                        <FormInput
+                          className="flex-1 min-w-[10ch]"
+                          readOnly={!modalEditing || isPending}
+                          name="conta"
+                          label="Conta"
+                          control={form.control}
+                        />
+                        <FormInput
+                          className="flex-1 min-w-[5ch] max-w-[10ch]"
+                          readOnly={!modalEditing || isPending}
+                          name="dv_conta"
+                          label="Digito. CT."
+                          control={form.control}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

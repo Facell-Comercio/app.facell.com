@@ -104,7 +104,10 @@ const FormTituloPagar = ({
   //     status !== "Pago" &&
   //     status !== "Pago Parcial");
 
-  const canEdit = !id || status === "Solicitado" || (isMaster && id_status > 0 && id_status <= 2 );
+  const canEdit =
+    !id ||
+    status === "Solicitado" ||
+    (isMaster && id_status > 0 && id_status <= 2);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
@@ -115,8 +118,8 @@ const FormTituloPagar = ({
     setValue,
     formState: { errors },
   } = form;
-  
-  console.log("ERROS_TITULO:",errors);
+
+  console.log("ERROS_TITULO:", errors);
 
   // * [ WATCHES ]
   // const wfull = form.watch();
@@ -286,12 +289,12 @@ const FormTituloPagar = ({
     }
   };
 
-  const handleClickArquivar = (motivo:string)=>{
+  const handleClickArquivar = (motivo: string) => {
     changeStatusTitulo({
       id_novo_status: "0",
       motivo,
     });
-  }
+  };
   const handleChangeVoltarSolicitado = (motivo: string) => {
     changeStatusTitulo({
       id_novo_status: "1",
@@ -386,7 +389,7 @@ const FormTituloPagar = ({
             {titulo?.status && (
               <div className="flex-1 py-2">
                 <div
-                  className={`py-1 text-center border text-md font-bold rounded-sm ${generateStatusColor(
+                  className={`py-1 text-white text-center border text-md font-bold rounded-sm ${generateStatusColor(
                     { status: titulo?.status || "", bg: true, text: true }
                   )}`}
                 >
@@ -585,7 +588,7 @@ const FormTituloPagar = ({
                             label="Filial"
                             placeholder="SELECIONE A FILIAL"
                             control={form.control}
-                            inputClass="sm:min-w-[350px]"
+                            inputClass="sm:min-w-[100px]"
                           />
                         </span>
                         <span className="lg:col-span-2 min-w-[20ch]">
@@ -813,19 +816,17 @@ const FormTituloPagar = ({
             ) : (
               <>
                 <div className="flex flex-wrap gap-3 items-center">
-                {id &&
-                    (status == "Solicitado" || status == "Negado")
-                     && (
-                      <ButtonMotivation
-                        title="Arquiva a solictação para sumir da vista."
-                        variant={"secondary"}
-                        size={"lg"}
-                        action={handleClickArquivar}
-                      >
-                        <Archive className="me-2" size={18} />
-                        Arquivar
-                      </ButtonMotivation>
-                    )}
+                  {id && (status == "Solicitado" || status == "Negado") && (
+                    <ButtonMotivation
+                      title="Arquiva a solictação para sumir da vista."
+                      variant={"secondary"}
+                      size={"lg"}
+                      action={handleClickArquivar}
+                    >
+                      <Archive className="me-2" size={18} />
+                      Arquivar
+                    </ButtonMotivation>
+                  )}
                   {id &&
                     status !== "Solicitado" &&
                     id_status < 4 &&
@@ -846,8 +847,8 @@ const FormTituloPagar = ({
                   {isMaster &&
                     id &&
                     status !== "Negado" &&
-                    id_status > 0 && id_status < 4
-                     && (
+                    id_status > 0 &&
+                    id_status < 4 && (
                       <ButtonMotivation
                         variant={"destructive"}
                         size={"lg"}
@@ -860,7 +861,8 @@ const FormTituloPagar = ({
                   {isMaster &&
                     id &&
                     status !== "Aprovado" &&
-                    id_status > 0 && id_status < 4 && (
+                    id_status > 0 &&
+                    id_status < 4 && (
                       <Button
                         type="button"
                         variant={"success"}
