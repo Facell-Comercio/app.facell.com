@@ -16,7 +16,7 @@ const OrcamentoPage = () => {
     <div className="flex p-4">
       <Tabs defaultValue="meu-orcamento" className="w-full">
         <TabsList className="w-full justify-start flex h-auto">
-          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-2 md:p-0 h-auto">
+          <ScrollArea className="w-fill whitespace-nowrap rounded-md h-auto">
             <TabsTrigger value="meu-orcamento">Acompanhamento</TabsTrigger>
             {(checkUserDepartments("FINANCEIRO") ||
               checkUserPermission("MASTER")) && (

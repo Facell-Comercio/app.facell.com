@@ -16,27 +16,27 @@ const schemaFornecedor = z
     active: z.coerce.boolean(),
     cnpj: z
       .string()
-      .refine((v) => v.trim() !== "", { message: "CPF/CNPJ inválido" })
+      .refine(
+        (v) =>
+          v.trim() !== "" &&
+          (normalizeNumberOnly(v).length === 11 ||
+            normalizeNumberOnly(v).length === 14),
+        { message: "CPF/CNPJ inválido" }
+      )
       .transform((v) => normalizeNumberOnly(v)),
     nome: z
       .string()
       .refine((v) => v.trim() !== "", { message: "Nome inválido" }),
-    telefone: z
-      .string()
-      .transform((v) => normalizeNumberOnly(v))
-      .optional(),
-    razao: z.string().optional(),
-    cep: z
-      .string()
-      .transform((v) => normalizeNumberOnly(v))
-      .optional(),
-    logradouro: z.string().optional(),
-    numero: z.string().optional(),
-    complemento: z.string().optional(),
-    bairro: z.string().optional(),
-    municipio: z.string().optional(),
-    uf: z.string().optional(),
-    email: z.string().optional(),
+    telefone: z.string().min(10, "Campo Obrigatório"),
+    razao: z.string(),
+    cep: z.string().transform((v) => normalizeNumberOnly(v)),
+    logradouro: z.string().min(3, "Campo Obrigatório"),
+    numero: z.string().min(1, "Campo Obrigatório"),
+    complemento: z.string().min(3, "Campo Obrigatório"),
+    bairro: z.string().min(3, "Campo Obrigatório"),
+    municipio: z.string().min(3, "Campo Obrigatório"),
+    uf: z.string().min(1, "Campo Obrigatório"),
+    email: z.string().email().min(3, "Campo Obrigatório"),
 
     // Dados Bancários
     id_forma_pagamento: z.string(),
@@ -50,9 +50,15 @@ const schemaFornecedor = z
     dv_conta: z.string().optional(),
     cnpj_favorecido: z
       .string()
-      .transform((v) => normalizeNumberOnly(v))
-      .optional(),
-    favorecido: z.string().optional(),
+      .refine(
+        (v) =>
+          v.trim() !== "" &&
+          (normalizeNumberOnly(v).length === 11 ||
+            normalizeNumberOnly(v).length === 14),
+        { message: "CPF/CNPJ inválido" }
+      )
+      .transform((v) => normalizeNumberOnly(v)),
+    favorecido: z.string().min(3, "Campo Obrigatório"),
   })
   //^ Cobra Agência e Conta
   .refine(

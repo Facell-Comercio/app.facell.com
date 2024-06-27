@@ -90,7 +90,6 @@ const FormTituloPagar = ({
     } || initialPropsTitulo;
   // console.log(titulo);
 
-
   // * [ FORM ]
   const { form } = useFormTituloData(titulo);
 
@@ -134,23 +133,30 @@ const FormTituloPagar = ({
   const isMaster =
     checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
 
-  const canEdit = !id || status === "Solicitado" || (isMaster && id_status > 0 && id_status <= 2);
+  const canEdit =
+    !id ||
+    status === "Solicitado" ||
+    (isMaster && id_status > 0 && id_status <= 2);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
   const podeArquivar = id && (status == "Solicitado" || status == "Negado");
 
-  const podeResolicitar = id &&
+  const podeResolicitar =
+    id &&
     status !== "Solicitado" &&
     (id_status < 3 ||
       (isMaster === true && status === "Aprovado" ? true : false));
 
-  const podeNegar = isMaster && id && status !== "Negado" && id_status > 0 && id_status < 4;
-  const podeAprovar = isMaster && id && status !== "Aprovado" && id_status > 0 && id_status < 4;
+  const podeNegar =
+    isMaster && id && status !== "Negado" && id_status > 0 && id_status < 4;
+  const podeAprovar =
+    isMaster && id && status !== "Aprovado" && id_status > 0 && id_status < 4;
   const podeCriarRecorrencia = id && id_status > 0;
 
-  const podeAnexarNotaFiscal = id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal)
-  const podeExcluirNotaFiscal = id_status < 3
+  const podeAnexarNotaFiscal =
+    id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal);
+  const podeExcluirNotaFiscal = id_status < 3;
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
@@ -187,7 +193,7 @@ const FormTituloPagar = ({
       );
       setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
-    } catch (error) { }
+    } catch (error) {}
   }
 
   // * [ ANEXOS ]
@@ -201,13 +207,16 @@ const FormTituloPagar = ({
   }) {
     try {
       if (id) {
-        const result = await api.post("financeiro/contas-a-pagar/titulo/update-anexo", {
-          campo,
-          fileUrl,
-          id,
-        });
+        const result = await api.post(
+          "financeiro/contas-a-pagar/titulo/update-anexo",
+          {
+            campo,
+            fileUrl,
+            id,
+          }
+        );
         // @ts-ignore
-        form.setValue(campo, result.data.fileUrl || '')
+        form.setValue(campo, result.data.fileUrl || "");
       }
     } catch (error) {
       toast({
@@ -305,7 +314,7 @@ const FormTituloPagar = ({
       id_novo_status: "0",
       motivo,
     });
-  }
+  };
   const handleChangeVoltarSolicitado = (motivo: string) => {
     changeStatusTitulo({
       id_novo_status: "1",
@@ -390,7 +399,7 @@ const FormTituloPagar = ({
             {titulo?.status && (
               <div className="flex-1 py-2">
                 <div
-                  className={`py-1 text-center border text-md font-bold rounded-sm ${generateStatusColor(
+                  className={`py-1 text-white text-center border text-md font-bold rounded-sm ${generateStatusColor(
                     { status: titulo?.status || "", bg: true, text: true }
                   )}`}
                 >
@@ -448,8 +457,9 @@ const FormTituloPagar = ({
                         className="flex-1 min-w-[15ch]"
                       />
                       <div
-                        className={`${showPix ? "flex w-full" : "hidden"
-                          } gap-3 flex-wrap`}
+                        className={`${
+                          showPix ? "flex w-full" : "hidden"
+                        } gap-3 flex-wrap`}
                       >
                         <SelectTipoChavePix
                           control={form.control}
@@ -588,7 +598,7 @@ const FormTituloPagar = ({
                             label="Filial"
                             placeholder="SELECIONE A FILIAL"
                             control={form.control}
-                            inputClass="sm:min-w-[350px]"
+                            inputClass="sm:min-w-[100px]"
                           />
                         </span>
                         <span className="lg:col-span-2 min-w-[20ch]">
@@ -760,9 +770,8 @@ const FormTituloPagar = ({
                     mediaType="pdf"
                     control={form.control}
                     onChange={(fileUrl: string) => {
-                      handleChangeFile({ fileUrl, campo: "url_nota_fiscal" })
-                    }
-                    }
+                      handleChangeFile({ fileUrl, campo: "url_nota_fiscal" });
+                    }}
                   />
                   <FormFileUpload
                     disabled={disabled}
@@ -840,17 +849,16 @@ const FormTituloPagar = ({
                       Re-Solicitar
                     </ButtonMotivation>
                   )}
-                  {podeNegar
-                    && (
-                      <ButtonMotivation
-                        variant={"destructive"}
-                        size={"lg"}
-                        action={handleChangeNegar}
-                      >
-                        <X className="me-2" size={18} />
-                        Negar
-                      </ButtonMotivation>
-                    )}
+                  {podeNegar && (
+                    <ButtonMotivation
+                      variant={"destructive"}
+                      size={"lg"}
+                      action={handleChangeNegar}
+                    >
+                      <X className="me-2" size={18} />
+                      Negar
+                    </ButtonMotivation>
+                  )}
                   {podeAprovar && (
                     <Button
                       type="button"

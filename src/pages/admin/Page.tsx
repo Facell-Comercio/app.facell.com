@@ -1,3 +1,4 @@
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Logs from "./adm-logs/Logs";
 import Departamentos from "./departamentos/Departamentos";
@@ -7,14 +8,22 @@ import Users from "./users/Users";
 
 const AdminPage = () => {
   return (
-    <div className="content p-5">
+    <div className="flex p-4">
       <Tabs defaultValue="users" className="w-full">
         <TabsList className="w-full justify-start">
-          <TabsTrigger value="users">Usuários</TabsTrigger>
-          <TabsTrigger value="departamentos">Departamentos</TabsTrigger>
-          <TabsTrigger value="filiais">Filiais</TabsTrigger>
-          <TabsTrigger value="gruposEconomicos">Grupos econômicos</TabsTrigger>
-          <TabsTrigger value="logs">Logs</TabsTrigger>
+          <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
+            <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="departamentos">Departamentos</TabsTrigger>
+            <TabsTrigger value="filiais">Filiais</TabsTrigger>
+            <TabsTrigger value="gruposEconomicos">
+              Grupos econômicos
+            </TabsTrigger>
+            <TabsTrigger value="logs">Logs</TabsTrigger>
+            <ScrollBar
+              orientation="horizontal"
+              thumbColor="dark:bg-slate-400 bg-gray-450"
+            />
+          </ScrollArea>
         </TabsList>
         <TabsContent value="users">
           <Users />
