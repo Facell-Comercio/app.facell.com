@@ -28,18 +28,21 @@ const schemaFornecedor = z
       .string()
       .refine((v) => v.trim() !== "", { message: "Nome inválido" }),
     telefone: z.string().min(10, "Campo Obrigatório"),
-    razao: z.string(),
-    cep: z.string().transform((v) => normalizeNumberOnly(v)),
+    razao: z.string().min(10, "Campo Obrigatório"),
+    cep: z
+      .string()
+      .min(9, "Campo Obrigatório")
+      .transform((v) => normalizeNumberOnly(v)),
     logradouro: z.string().min(3, "Campo Obrigatório"),
     numero: z.string().min(1, "Campo Obrigatório"),
     complemento: z.string().min(3, "Campo Obrigatório"),
     bairro: z.string().min(3, "Campo Obrigatório"),
     municipio: z.string().min(3, "Campo Obrigatório"),
     uf: z.string().min(1, "Campo Obrigatório"),
-    email: z.string().email().min(3, "Campo Obrigatório"),
+    email: z.string().email("Email Inválido").min(3, "Campo Obrigatório"),
 
     // Dados Bancários
-    id_forma_pagamento: z.string(),
+    id_forma_pagamento: z.string().min(1, "Campo Obrigatório"),
     id_tipo_chave_pix: z.string().optional(),
     id_banco: z.string().optional(),
     id_tipo_conta: z.string().optional(),
