@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react"
+import { Laptop, Moon, Sun } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -11,7 +11,11 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "@/providers/theme-provider"
 
 export function ToggleTheme({ className }: { className: string }) {
-  const { setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
+  const handleChangeTheme = (event: React.MouseEvent<HTMLButtonElement>, newTheme: string) => {
+    event.stopPropagation()
+    setTheme(newTheme)
+  }
 
   return (
     <DropdownMenu>
@@ -22,14 +26,29 @@ export function ToggleTheme({ className }: { className: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
+        <DropdownMenuItem className="p-1 ">
+          <Button
+            variant={theme == 'light' ? 'default' : 'outline'}
+            size={'sm'}
+            className="w-full"
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeTheme(e, 'light')}
+          ><Sun size={16} className="me-2" /> Light</Button>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
+        <DropdownMenuItem className="p-1 ">
+          <Button
+            variant={theme == 'dark' ? 'default' : 'outline'}
+            size={'sm'}
+            className="w-full"
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeTheme(e, 'dark')}
+          ><Moon size={16} className="me-2" /> Dark</Button>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
+        <DropdownMenuItem className="p-1 ">
+          <Button
+            variant={theme == 'system' ? 'default' : 'outline'}
+            size={'sm'}
+            className="w-full"
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeTheme(e, 'system')}
+          ><Laptop size={16} className="me-2" /> System</Button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
