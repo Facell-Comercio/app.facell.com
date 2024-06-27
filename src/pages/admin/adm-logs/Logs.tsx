@@ -9,6 +9,7 @@ import RowVirtualizedFixed, { Log } from "./RowVirtualizedFixed";
 import { useStoreLogs } from "./store";
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
+import AlertPopUp from "@/components/custom/AlertPopUp";
 
 const Logs = () => {
   const [toogleRefetch, setToogleRefetch] = useState(false);
@@ -17,7 +18,7 @@ const Logs = () => {
   const { data, isFetched, isLoading, isError, refetch } = useLogs().getAll();
   const { mutate, isPending } = useLogs().delete()
 
-  const handleDeleteLogs = async ()=>{
+  const handleDeleteLogs = async () => {
     mutate()
   }
 
@@ -39,11 +40,11 @@ const Logs = () => {
             : true) &&
           (!!filters.range_data?.from
             ? isWithinInterval(new Date(data.date), {
-                start: filters.range_data?.from,
-                end: filters.range_data?.to
-                  ? addDays(filters.range_data?.to, 1)
-                  : addDays(filters.range_data?.from, 1),
-              })
+              start: filters.range_data?.from,
+              end: filters.range_data?.to
+                ? addDays(filters.range_data?.to, 1)
+                : addDays(filters.range_data?.from, 1),
+            })
             : true)
         );
       }),
@@ -53,7 +54,19 @@ const Logs = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-end gap-3">
-        <Button disabled={isPending} onClick={handleDeleteLogs} variant={'destructive'} ><Trash size={18} className="me-2"/> Excluir Todos</Button>
+        <AlertPopUp
+          title="Deseja realmente prosseguir?"
+          description="Todos os logs serão excluídos e não será possível recuperar..."
+          action={handleDeleteLogs}
+        >
+          <Button
+            disabled={isPending}
+            size={"sm"}
+            variant={"destructive"}
+          >
+            <Trash size={18} className="me-2" /> Excluir Todos
+          </Button>
+        </AlertPopUp>
       </div>
       <FilterLogs
         refetch={() => {
