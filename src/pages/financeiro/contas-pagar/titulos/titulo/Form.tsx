@@ -64,6 +64,7 @@ import {
   formatarHistorico,
 } from "./helpers/helper";
 import { initialPropsTitulo, useStoreTitulo } from "./store";
+import { log } from "console";
 
 const FormTituloPagar = ({
   id,
@@ -89,24 +90,6 @@ const FormTituloPagar = ({
     } || initialPropsTitulo;
   // console.log(titulo);
 
-  // * [ VERIFICAÇÕES ]
-  const status = titulo?.status || "Solicitado";
-  const id_status = parseInt(titulo?.id_status) ?? 1;
-
-  const isMaster =
-    checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
-  // const canEdit =
-  //   !id ||
-  //   status === "Solicitado" ||
-  //   (isMaster &&
-  //     status !== "Aprovado" &&
-  //     status !== "Negado" &&
-  //     status !== "Pago" &&
-  //     status !== "Pago Parcial");
-
-  const canEdit = !id || status === "Solicitado" || (isMaster && id_status > 0 && id_status <= 2 );
-  const readOnly = !canEdit || !modalEditing;
-  const disabled = !canEdit || !modalEditing;
 
   // * [ FORM ]
   const { form } = useFormTituloData(titulo);
@@ -115,12 +98,16 @@ const FormTituloPagar = ({
     setValue,
     formState: { errors },
   } = form;
-  
-  console.log("ERROS_TITULO:",errors);
+
+  console.log("ERROS_TITULO:", errors);
 
   // * [ WATCHES ]
   // const wfull = form.watch();
   // console.log(wfull);
+  const url_nota_fiscal = useWatch({
+    name: "url_nota_fiscal",
+    control: form.control,
+  });
   const id_grupo_economico = useWatch({
     name: "id_grupo_economico",
     control: form.control,
@@ -139,6 +126,31 @@ const FormTituloPagar = ({
       control: form.control,
     }) || "0"
   );
+
+  // * [ VERIFICAÇÕES ]
+  const status = titulo?.status || "Solicitado";
+  const id_status = parseInt(titulo?.id_status) ?? 1;
+
+  const isMaster =
+    checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+
+  const canEdit = !id || status === "Solicitado" || (isMaster && id_status > 0 && id_status <= 2);
+  const readOnly = !canEdit || !modalEditing;
+  const disabled = !canEdit || !modalEditing;
+
+  const podeArquivar = id && (status == "Solicitado" || status == "Negado");
+
+  const podeResolicitar = id &&
+    status !== "Solicitado" &&
+    (id_status < 3 ||
+      (isMaster === true && status === "Aprovado" ? true : false));
+
+  const podeNegar = isMaster && id && status !== "Negado" && id_status > 0 && id_status < 4;
+  const podeAprovar = isMaster && id && status !== "Aprovado" && id_status > 0 && id_status < 4;
+  const podeCriarRecorrencia = id && id_status > 0;
+
+  const podeAnexarNotaFiscal = id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal)
+  const podeExcluirNotaFiscal = id_status < 3
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
@@ -175,7 +187,7 @@ const FormTituloPagar = ({
       );
       setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
-    } catch (error) {}
+    } catch (error) { }
   }
 
   // * [ ANEXOS ]
@@ -188,12 +200,14 @@ const FormTituloPagar = ({
     fileUrl?: string;
   }) {
     try {
-      if (id && !fileUrl) {
-        await api.post("financeiro/contas-a-pagar/titulo/update-anexo", {
+      if (id) {
+        const result = await api.post("financeiro/contas-a-pagar/titulo/update-anexo", {
           campo,
           fileUrl,
           id,
         });
+        // @ts-ignore
+        form.setValue(campo, result.data.fileUrl || '')
       }
     } catch (error) {
       toast({
@@ -286,7 +300,7 @@ const FormTituloPagar = ({
     }
   };
 
-  const handleClickArquivar = (motivo:string)=>{
+  const handleClickArquivar = (motivo: string) => {
     changeStatusTitulo({
       id_novo_status: "0",
       motivo,
@@ -444,9 +458,8 @@ const FormTituloPagar = ({
                         className="flex-1 min-w-[15ch]"
                       />
                       <div
-                        className={`${
-                          showPix ? "flex w-full" : "hidden"
-                        } gap-3 flex-wrap`}
+                        className={`${showPix ? "flex w-full" : "hidden"
+                          } gap-3 flex-wrap`}
                       >
                         <SelectTipoChavePix
                           control={form.control}
@@ -750,13 +763,15 @@ const FormTituloPagar = ({
                     }
                   />
                   <FormFileUpload
-                    disabled={disabled}
+                    disabled={!podeAnexarNotaFiscal}
+                    canDelete={podeExcluirNotaFiscal}
                     label="Nota fiscal"
                     name="url_nota_fiscal"
                     mediaType="pdf"
                     control={form.control}
-                    onChange={(fileUrl: string) =>
+                    onChange={(fileUrl: string) => {
                       handleChangeFile({ fileUrl, campo: "url_nota_fiscal" })
+                    }
                     }
                   />
                   <FormFileUpload
@@ -813,41 +828,30 @@ const FormTituloPagar = ({
             ) : (
               <>
                 <div className="flex flex-wrap gap-3 items-center">
-                {id &&
-                    (status == "Solicitado" || status == "Negado")
-                     && (
-                      <ButtonMotivation
-                        title="Arquiva a solictação para sumir da vista."
-                        variant={"secondary"}
-                        size={"lg"}
-                        action={handleClickArquivar}
-                      >
-                        <Archive className="me-2" size={18} />
-                        Arquivar
-                      </ButtonMotivation>
-                    )}
-                  {id &&
-                    status !== "Solicitado" &&
-                    id_status < 4 &&
-                    (isMaster === true &&
-                    (status === "Aprovado" || status === "Negado")
-                      ? true
-                      : false) && (
-                      <ButtonMotivation
-                        title="Volta o status da solicitação para 'Solicitado', possibilitando a edição..."
-                        variant={"secondary"}
-                        size={"lg"}
-                        action={handleChangeVoltarSolicitado}
-                      >
-                        <Undo2 className="me-2" size={18} />
-                        Re-Solicitar
-                      </ButtonMotivation>
-                    )}
-                  {isMaster &&
-                    id &&
-                    status !== "Negado" &&
-                    id_status > 0 && id_status < 4
-                     && (
+                  {podeArquivar && (
+                    <ButtonMotivation
+                      title="Arquiva a solictação para sumir da vista."
+                      variant={"secondary"}
+                      size={"lg"}
+                      action={handleClickArquivar}
+                    >
+                      <Archive className="me-2" size={18} />
+                      Arquivar
+                    </ButtonMotivation>
+                  )}
+                  {podeResolicitar && (
+                    <ButtonMotivation
+                      title="Volta o status da solicitação para 'Solicitado', possibilitando a edição..."
+                      variant={"secondary"}
+                      size={"lg"}
+                      action={handleChangeVoltarSolicitado}
+                    >
+                      <Undo2 className="me-2" size={18} />
+                      Re-Solicitar
+                    </ButtonMotivation>
+                  )}
+                  {podeNegar
+                    && (
                       <ButtonMotivation
                         variant={"destructive"}
                         size={"lg"}
@@ -857,21 +861,18 @@ const FormTituloPagar = ({
                         Negar
                       </ButtonMotivation>
                     )}
-                  {isMaster &&
-                    id &&
-                    status !== "Aprovado" &&
-                    id_status > 0 && id_status < 4 && (
-                      <Button
-                        type="button"
-                        variant={"success"}
-                        size={"lg"}
-                        onClick={handleChangeAprovar}
-                      >
-                        <Check className="me-2" size={18} />
-                        Aprovar
-                      </Button>
-                    )}
-                  {id && id_status > 0 && (
+                  {podeAprovar && (
+                    <Button
+                      type="button"
+                      variant={"success"}
+                      size={"lg"}
+                      onClick={handleChangeAprovar}
+                    >
+                      <Check className="me-2" size={18} />
+                      Aprovar
+                    </Button>
+                  )}
+                  {podeCriarRecorrencia && (
                     <Button
                       type="button"
                       title="Uma recorrência será criada com data para 1 mês após a data de vencimento desta solicitação."

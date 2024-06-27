@@ -78,7 +78,7 @@ export const schemaTitulo = z
 
     // Outros
     created_at: z.coerce.date().optional(),
-    data_emissao: z.string(),
+    data_emissao: z.coerce.string({ required_error: "Campo obrigatório" }),
 
     num_doc: z
       .string({ message: "Campo obrigatório" })

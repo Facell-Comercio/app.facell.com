@@ -11,6 +11,7 @@ interface FileUploadProps {
   value: string;
   mediaType: MediaType;
   disabled?: boolean;
+  canDelete?: boolean;
 }
 
 type ButtonFileDeleteProps = {
@@ -44,9 +45,12 @@ export const FileUpload = ({
   value,
   mediaType,
   disabled,
+  canDelete,
 }: FileUploadProps) => {
   // const fileType = value?.split(".").pop();
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  const canShowDeleteButton = !disabled || (canDelete !== undefined ? canDelete : false)
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -72,7 +76,7 @@ export const FileUpload = ({
       <div className="relative">
         <img src={value} alt="Upload" className="w-full h-auto rounded-lg" />
 
-        {!disabled && (
+        {canShowDeleteButton && (
           <ButtonFileDelete
             isDeleting={isDeleting}
             handleDelete={handleDelete}
@@ -94,7 +98,7 @@ export const FileUpload = ({
           <FileIcon className="shrink-0 h-6 w-6 fill-indigo-200 stroke-indigo-400" />
           {value}
         </a>
-        {!disabled && (
+        {canShowDeleteButton && (
           <ButtonFileDelete
             isDeleting={isDeleting}
             handleDelete={handleDelete}

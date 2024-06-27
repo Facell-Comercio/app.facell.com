@@ -11,10 +11,11 @@ interface FormFileUploadProps {
   disabled?: boolean
   className?: string
   mediaType: MediaType
+  canDelete?: boolean
   onChange?: (any: any) => void
 }
 
-const FormFileUpload = ({ name, mediaType, control, label, description, disabled, className, onChange }: FormFileUploadProps) => {
+const FormFileUpload = ({ canDelete, name, mediaType, control, label, description, disabled, className, onChange }: FormFileUploadProps) => {
   return (
     <FormField
       control={control}
@@ -24,6 +25,7 @@ const FormFileUpload = ({ name, mediaType, control, label, description, disabled
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             <FileUpload
+              canDelete={canDelete}
               value={field.value}
               onChange={(event) => {
                 if (typeof onChange === 'function') {
