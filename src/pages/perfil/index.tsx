@@ -6,8 +6,7 @@ import { useAuthStore } from "@/context/auth-store";
 import { useUsers } from "@/hooks/useUsers";
 import { api } from "@/lib/axios";
 import { useQueryClient } from "@tanstack/react-query";
-import { Camera, Key } from "lucide-react";
-import { useState } from "react";
+import { Camera, Key, User } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import ModalUpdateSenha from "./ModalUpdateSenha";
 import { useStorePerfil } from "./store";
@@ -41,7 +40,6 @@ type CentroCustoProps = {
 };
 const Perfil = () => {
   const queryClient = useQueryClient();
-  const [processing, setProcessing] = useState(false);
   const user = useAuthStore().user;
   if (!user?.id) {
     return <Navigate to={"/login"} />;
@@ -69,7 +67,7 @@ const Perfil = () => {
 
   async function updateImage(newUrl?: string | null) {
     console.log(newUrl);
-    await api.put("user/update-img/user", { img_url: newUrl });
+    await api.put(`user/update-img/${user?.id}`, { img_url: newUrl });
     queryClient.invalidateQueries({ queryKey: ["user"] });
     queryClient.invalidateQueries({ queryKey: ["user", user?.id || ""] });
   }
@@ -82,7 +80,17 @@ const Perfil = () => {
       <div className="flex flex-col lg:flex-row gap-6  w-full justify-between p-4">
         <div className="flex flex-col justify-between items-center gap-3">
           <span className="flex items-center justify-center w-40 h-40 border border-secondary rounded-full relative">
-            <img src={userData?.img_url || ""} className="w-36 rounded-full" />
+            {userData?.img_url ? (
+              <img
+                src={userData?.img_url || ""}
+                alt="Imagem de Perfil"
+                className="w-36 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-36 h-36 flex items-center justify-center rounded-full text-gray-400 bg-gray-200 dark:text-gray-200 dark:bg-gray-800">
+                <User size={80} className="opacity-35" />
+              </div>
+            )}
             <span
               onClick={() => openUploadModal()}
               className="flex items-center justify-center bg-primary text-primary-foreground hover:bg-blue-500 rounded-full w-10 h-10 b-1 absolute bottom-0 right-0"

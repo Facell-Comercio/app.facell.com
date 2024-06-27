@@ -50,7 +50,9 @@ const Navbar = () => {
             {user?.img_url ? (
               <img src={user.img_url} className=" w-10 h-10 rounded-sm" />
             ) : (
-              <User />
+              <span className="">
+                <User className="w-10 h-10 p-2 text-gray-400 bg-gray-200 dark:bg-gray-800 rounded-sm" />
+              </span>
             )}
             <span className="sr-only">User</span>
           </DropdownMenuTrigger>
