@@ -78,7 +78,7 @@ const Perfil = () => {
         Página de Perfil
       </h2>
       <div className="flex flex-col lg:flex-row gap-6  w-full justify-between p-4">
-        <div className="flex flex-col justify-between items-center gap-3">
+        <div className="flex flex-col items-center gap-5">
           <span className="flex items-center justify-center w-40 h-40 border border-secondary rounded-full relative">
             {userData?.img_url ? (
               <img
