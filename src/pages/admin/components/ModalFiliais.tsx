@@ -19,11 +19,13 @@ import { Dispatch, SetStateAction, useState } from "react";
 
 interface IModalFiliais {
   open: boolean;
-  handleSelection: (item: Filial) => void;
+  handleSelection?: (item: Filial) => void;
+  handleMultiSelection?: (item: Filial[]) => void;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   id_matriz?: string | null;
   id_grupo_economico?: string | null;
   closeOnSelection?: boolean;
+  multiSelection?: boolean;
 }
 
 type DataProps = {
@@ -39,11 +41,15 @@ type PaginationProps = {
 const ModalFiliais = ({
   open,
   handleSelection,
+  handleMultiSelection,
   onOpenChange,
   id_matriz,
   id_grupo_economico,
   closeOnSelection,
+  multiSelection,
 }: IModalFiliais) => {
+  const [ids, setIds] = useState<string[]>([]);
+  const [filiais, setFiliais] = useState<Filial[]>([]);
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -70,9 +76,22 @@ const ModalFiliais = ({
   }));
 
   function pushSelection(item: any) {
-    handleSelection(item);
-    if (onOpenChange !== undefined && closeOnSelection) {
-      onOpenChange(false);
+    if (multiSelection) {
+      const isAlreadyInVencimentos = ids.some((id) => parseInt(id) === item.id);
+      console.log(isAlreadyInVencimentos);
+
+      if (!isAlreadyInVencimentos) {
+        setIds((prevIds) => [...prevIds, String(item.id)]);
+        setFiliais((prevFiliais) => [...prevFiliais, item]);
+      } else {
+        setIds((prevIds) => prevIds.filter((id) => parseInt(id) !== item.id));
+        setFiliais((prevFiliais) => prevFiliais.filter((id) => id !== item.id));
+      }
+    } else {
+      handleSelection && handleSelection(item);
+      if (onOpenChange !== undefined && closeOnSelection) {
+        onOpenChange(false);
+      }
     }
   }
 
@@ -84,6 +103,41 @@ const ModalFiliais = ({
     });
     refetch();
   }
+
+  function handleRemoveAll() {
+    setFiliais([]);
+    setIds([]);
+  }
+  function handleSelectAll() {
+    data?.data?.rows.forEach((item: Filial) => {
+      const isAlreadyInVencimentos = filiais.some(
+        (existingItem) => existingItem.id === item.id
+      );
+
+      if (!isAlreadyInVencimentos) {
+        setFiliais((prevVencimentos) => [
+          ...prevVencimentos,
+          {
+            ...item,
+          },
+        ]);
+
+        setIds((prevIds) => [...prevIds, String(item.id)]);
+      }
+    });
+  }
+
+  const ButtonSaveSelection = () => {
+    return (
+      <Button
+        onClick={() => {
+          handleMultiSelection && handleMultiSelection(filiais);
+        }}
+      >
+        Salvar seleção
+      </Button>
+    );
+  };
 
   const pageCount = (data && data.data.pageCount) || 0;
   if (isLoading) return null;
@@ -106,29 +160,39 @@ const ModalFiliais = ({
           refetch={refetch}
           pagination={pagination}
           setPagination={setPagination}
+          multiSelection={multiSelection}
+          handleRemoveAll={handleRemoveAll}
+          handleSelectAll={handleSelectAll}
+          buttonSaveSelection={ButtonSaveSelection}
         >
           {dataRows &&
-            dataRows.map((row: DataProps, index: number) => (
-              <ModalComponentRow
-                key={"modal_filial_item_row:" + index + row.item}
-              >
-                <>
-                  <span className="flex items-center text-sm">
-                    {row.description}
-                  </span>
-                  <Button
-                    size={"xs"}
-                    className="p-1"
-                    variant={"outline"}
-                    onClick={() => {
-                      pushSelection(row.item);
-                    }}
-                  >
-                    Selecionar
-                  </Button>
-                </>
-              </ModalComponentRow>
-            ))}
+            dataRows.map((row: DataProps, index: number) => {
+              const isSelected = ids.includes(String(row.item.id));
+              return (
+                <ModalComponentRow
+                  key={"modal_filial_item_row:" + index + row.item}
+                >
+                  <>
+                    <span className="flex items-center text-sm">
+                      {row.description}
+                    </span>
+                    <Button
+                      size={"xs"}
+                      className={`p-1 ${
+                        isSelected &&
+                        "bg-primary hover:bg-primary hover:opacity-90"
+                      }`}
+                      variant={"outline"}
+                      onClick={() => {
+                        pushSelection(row.item);
+                      }}
+                    >
+                      {isSelected ? "Desmarcar" : "Selecionar"}
+                    </Button>
+                  </>
+                </ModalComponentRow>
+              );
+            })}
         </ModalComponent>
       </DialogContent>
     </Dialog>

@@ -1,3 +1,4 @@
+import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
 import {
   Accordion,
@@ -100,6 +101,14 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 </SelectContent>
               </Select>
 
+              <SelectFormaPagamento
+                className="flex-1 min-w-[20ch]"
+                placeholder="Forma de pagamento"
+                showAll
+                value={filters.id_forma_pagamento}
+                onChange={(e) => setFilters({ id_forma_pagamento: e })}
+              />
+
               <Select
                 value={filters.tipo_data}
                 onValueChange={(tipo_data) => {
@@ -135,7 +144,9 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
               <Input
                 className="max-w-[200px]"
                 value={filters?.nome_fornecedor}
-                onChange={(e) => setFilters({ nome_fornecedor: e.target.value })}
+                onChange={(e) =>
+                  setFilters({ nome_fornecedor: e.target.value })
+                }
                 placeholder="Nome Fornecedor..."
               />
 

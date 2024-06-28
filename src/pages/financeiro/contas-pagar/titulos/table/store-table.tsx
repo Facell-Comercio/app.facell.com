@@ -13,6 +13,7 @@ export interface Filters {
   id?: string;
   id_grupo_economico?: string;
   id_status?: string;
+  id_forma_pagamento?: string;
   tipo_data?: string;
   range_data?: DateRange;
   descricao?: string;
@@ -24,6 +25,7 @@ const initialFilters: Filters = {
   id: "",
   id_grupo_economico: "",
   id_status: "",
+  id_forma_pagamento: "",
   tipo_data: "data_vencimento",
   range_data: { from: undefined, to: undefined },
   descricao: "",

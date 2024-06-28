@@ -50,7 +50,6 @@ export const ModalComponent = ({
   handleRemoveAll,
   handleSelectAll,
 }: ModalComponentProps) => {
-
   const pages = [...Array(pageCount || 0).keys()].map((page) => page + 1);
   const arrayPages = pages.filter((i) => {
     if (i === 1 || i === pages.length) {
@@ -130,7 +129,7 @@ export const ModalComponent = ({
         {children}
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-      
+
       {Info && <Info />}
 
       <DialogFooter>
