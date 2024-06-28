@@ -113,6 +113,9 @@ export const useTituloPagar = () => {
         queryClient.invalidateQueries({
           queryKey: ["fin_cp_titulos_pendencias"],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["fin_cp_vencimentos_pagar"],
+        });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
@@ -143,6 +146,15 @@ export const useTituloPagar = () => {
         queryClient.invalidateQueries({ queryKey: ["fin_cp_titulo"] });
         queryClient.invalidateQueries({
           queryKey: ["fin_cp_titulos_pendencias"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["fin_cp_vencimentos_pagar"],
+        });
+        queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+        queryClient.invalidateQueries({ queryKey: ["fin_painel_negados"] });
+        queryClient.invalidateQueries({ queryKey: ["fin_painel_sem_nota"] });
+        queryClient.invalidateQueries({
+          queryKey: ["fin_painel_recorrencias"],
         });
       },
       onError(error) {
@@ -202,6 +214,7 @@ export const useTituloPagar = () => {
         queryClient.invalidateQueries({
           queryKey: ["fin_cp_titulos_pendencias"],
         });
+        queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"

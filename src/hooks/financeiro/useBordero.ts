@@ -59,6 +59,21 @@ export const useBordero = () => {
             duration: 3500,
           });
           queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagar"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_bordero"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagos"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_titulos"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_titulo"],
+          });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -87,6 +102,22 @@ export const useBordero = () => {
             duration: 3500,
           });
           queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
+          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagar"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_bordero"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagos"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_titulos"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_titulo"],
+          });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -119,6 +150,15 @@ export const useBordero = () => {
             duration: 3500,
           });
           queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagar"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_bordero"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagos"],
+          });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -140,8 +180,14 @@ export const useBordero = () => {
             .then((response) => response.data);
         },
         onSuccess(_, id) {
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
           queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
+          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagar"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_bordero"],
+          });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -173,6 +219,13 @@ export const useBordero = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagar"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_bordero"],
+          });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -239,6 +292,22 @@ export const useBordero = () => {
             form
           );
           queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagar"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_bordero"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagos"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_titulos"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_titulo"],
+          });
+
           resolve(result.data);
         } catch (error) {
           reject(error);

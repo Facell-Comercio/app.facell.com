@@ -80,6 +80,13 @@ export const useVencimentos = () => {
         queryClient.invalidateQueries({
           queryKey: ["fin_cp_vencimentos_pagar"],
         });
+        queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+        queryClient.invalidateQueries({
+          queryKey: ["fin_cp_titulos"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["fin_cp_titulo"],
+        });
       },
       onError(error) {
         toast({

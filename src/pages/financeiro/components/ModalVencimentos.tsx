@@ -21,17 +21,19 @@ import { api } from "@/lib/axios";
 import { Filial } from "@/types/filial-type";
 import { useQuery } from "@tanstack/react-query";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
 import ModalFiliais from "../../admin/components/ModalFiliais";
 
 interface IModalVencimentos {
   open: boolean;
-  handleSelection: (item: VencimentosProps[]) => void;
-  onOpenChange: () => void;
+  handleSelection?: (item: VencimentosProps) => void;
+  handleMultiSelection?: (item: VencimentosProps[]) => void;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
   id_matriz?: string;
   id_status?: string;
   multiSelection?: boolean;
+  closeOnSelection?: boolean;
   initialFilters?: {
     [key: string]: any;
   };
@@ -83,7 +85,9 @@ type PaginationProps = {
 const ModalVencimentos = ({
   open,
   handleSelection,
+  handleMultiSelection,
   onOpenChange,
+  closeOnSelection,
   id_matriz,
   id_status,
   initialFilters,
@@ -187,20 +191,39 @@ const ModalVencimentos = ({
   }
 
   function pushSelection(item: VencimentosProps) {
-    setTitulos([
-      ...titulos,
-      {
-        ...item,
-        num_doc: item.num_doc || "",
-        data_pagamento: item.data_pagamento || "",
-      },
-    ]);
-    setIds([...ids, item.id_vencimento.toString()]);
-  }
+    if (multiSelection) {
+      const isAlreadyInVencimentos = ids.some(
+        (id) => id === String(item.id_vencimento)
+      );
 
-  function handleOneSelection(item: any) {
-    handleSelection(item);
-    onOpenChange();
+      if (!isAlreadyInVencimentos) {
+        setTitulos([
+          ...titulos,
+          {
+            ...item,
+            num_doc: item.num_doc || "",
+            data_pagamento: item.data_pagamento || "",
+          },
+        ]);
+        setIds([...ids, item.id_vencimento.toString()]);
+      } else {
+        setTitulos((prevTitulos) =>
+          prevTitulos.filter(
+            (titulo) => titulo.id_vencimento !== item.id_vencimento
+          )
+        );
+        setIds((prevId) =>
+          prevId.filter((id) => {
+            return id !== String(item.id_vencimento);
+          })
+        );
+      }
+    } else {
+      handleSelection && handleSelection(item);
+      if (onOpenChange !== undefined && closeOnSelection) {
+        onOpenChange(false);
+      }
+    }
   }
 
   if (isError) return <p>Ocorreu um erro ao tentar buscar os vencimentos</p>;
@@ -209,7 +232,11 @@ const ModalVencimentos = ({
 
   const ButtonSaveSelection = () => {
     return (
-      <Button onClick={() => handleSelection(titulos)}>Salvar seleção</Button>
+      <Button
+        onClick={() => handleMultiSelection && handleMultiSelection(titulos)}
+      >
+        Salvar seleção
+      </Button>
     );
   };
 
@@ -406,18 +433,14 @@ const ModalVencimentos = ({
                     <td className="text-center p-1">
                       <Button
                         size={"xs"}
-                        className="p-1"
+                        className={`p-1 ${
+                          isSelected &&
+                          "bg-secondary hover:bg-secondary hover:opacity-90"
+                        }`}
                         variant={"outline"}
-                        onClick={() => {
-                          if (multiSelection) {
-                            pushSelection(item);
-                          } else {
-                            handleOneSelection(item);
-                          }
-                        }}
-                        disabled={isSelected}
+                        onClick={() => pushSelection(item)}
                       >
-                        {isSelected ? "Selecionado" : "Selecionar"}
+                        {isSelected ? "Desmarcar" : "Selecionar"}
                       </Button>
                     </td>
                   </tr>

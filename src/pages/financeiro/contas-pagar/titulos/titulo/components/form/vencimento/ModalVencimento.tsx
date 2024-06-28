@@ -49,10 +49,18 @@ export function ModalVencimento({
     name: "vencimentos",
   });
 
-  const valorTotalTitulo = useWatch({
-    name: "valor",
-    control: formTitulo.control,
-  });
+  const valorTotalTitulo = parseFloat(
+    useWatch({
+      name: "valor",
+      control: formTitulo.control,
+    })
+  );
+  const valorTotalVencimentos =
+    useWatch({
+      name: "vencimentos",
+      control: formTitulo.control,
+    })?.reduce((acc, vencimento) => parseFloat(vencimento.valor) + acc, 0) || 0;
+
   const vencimentos = useWatch({
     name: "vencimentos",
     control: formTitulo.control,
@@ -61,16 +69,19 @@ export function ModalVencimento({
   // const { formState: { errors } } = form;
 
   const data_vencimento = form.watch("data_vencimento");
+  // Exemplo de testes
+
+  //* Ao abrir o modal, caso não tenha um valor predefinido, irá setar como valor o que falta para completar o valor do título
+  useEffect(() => {
+    modalOpen &&
+      !(parseFloat(form.watch("valor")) > 0) &&
+      form.setValue("valor", `${valorTotalTitulo - valorTotalVencimentos}`);
+  }, [modalOpen]);
 
   useEffect(() => {
     form.setValue(
       "data_prevista",
-      String(
-        calcularDataPrevisaoPagamento(
-          data_vencimento,
-          formTitulo.watch("id_forma_pagamento")
-        )
-      )
+      String(calcularDataPrevisaoPagamento(data_vencimento))
     );
   }, [data_vencimento]);
   const isUpdate = !!vencimento.id;
@@ -89,7 +100,7 @@ export function ModalVencimento({
             .reduce((acc: number, curr: { valor: string }) => {
               return acc + parseFloat(curr.valor);
             }, 0) || 0) + parseFloat(data.valor);
-        const dif = totalPrevisto - parseFloat(valorTotalTitulo);
+        const dif = totalPrevisto - valorTotalTitulo;
         if (dif > 0) {
           const difFormatada = normalizeCurrency(dif);
           toast({
@@ -105,7 +116,7 @@ export function ModalVencimento({
         (vencimentos?.reduce((acc: number, curr: { valor: string }) => {
           return acc + parseFloat(curr.valor);
         }, 0) || 0) + parseFloat(data.valor);
-      const dif = totalPrevisto - parseFloat(valorTotalTitulo);
+      const dif = totalPrevisto - valorTotalTitulo;
       if (dif > 0) {
         const difFormatada = normalizeCurrency(dif);
         toast({

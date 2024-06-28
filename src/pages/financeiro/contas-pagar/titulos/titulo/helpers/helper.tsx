@@ -1,10 +1,11 @@
 import { checkFeriado } from "@/helpers/checkFeriado";
 import {
   addDays,
+  isFriday,
   isMonday,
   isSaturday,
   isSunday,
-  isThursday,
+  isWednesday,
   isWeekend,
   startOfDay,
   subDays,
@@ -26,17 +27,16 @@ export const proximoDiaUtil = (data: Date | string) => {
   return proximoDiaUtil;
 };
 
-export const calcularDataPrevisaoPagamento = (
-  data_venc: Date | string,
-  formaPagamento: string
-) => {
-  let dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
+export function calcularDataPrevisaoPagamento(data_venc: Date | string) {
+  const dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
 
   const dataAtual = startOfDay(new Date());
   let dataMinima = addDays(dataAtual, 2);
 
   while (
-    (!isMonday(dataMinima) && !isThursday(dataMinima)) ||
+    (!isMonday(dataMinima) &&
+      !isWednesday(dataMinima) &&
+      !isFriday(dataMinima)) ||
     checkFeriado(dataMinima)
   ) {
     dataMinima = addDays(dataMinima, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
@@ -49,7 +49,9 @@ export const calcularDataPrevisaoPagamento = (
     //então vou buscar a partir da data atual + 1 a próxima data de pagamento
     while (
       dataPagamento < dataMinima ||
-      (!isMonday(dataPagamento) && !isThursday(dataPagamento)) ||
+      (!isMonday(dataPagamento) &&
+        !isWednesday(dataPagamento) &&
+        !isFriday(dataPagamento)) ||
       checkFeriado(dataPagamento)
     ) {
       dataPagamento = addDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
@@ -63,7 +65,9 @@ export const calcularDataPrevisaoPagamento = (
       dataPagamento = addDays(dataPagamento, 1);
     }
     while (
-      (!isMonday(dataPagamento) && !isThursday(dataPagamento)) ||
+      (!isMonday(dataPagamento) &&
+        !isWednesday(dataPagamento) &&
+        !isFriday(dataPagamento)) ||
       checkFeriado(dataPagamento)
     ) {
       dataPagamento = subDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
@@ -71,7 +75,7 @@ export const calcularDataPrevisaoPagamento = (
   }
 
   return dataPagamento;
-};
+}
 
 export const checkIsTransferenciaBancaria = (id_forma_pagamento: string) => {
   const formasPagamentoQueExigemAgenciaConta = ["4", 4, "5", 5];

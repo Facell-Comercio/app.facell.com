@@ -46,7 +46,6 @@ export function ModalGerarVencimentos({
     name: "vencimentos",
     control: formTitulo.control,
   });
-  const formaPagamento = formTitulo.watch("id_forma_pagamento");
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -121,16 +120,14 @@ export function ModalGerarVencimentos({
       if (p == 0) {
         (obj.data_vencimento = data.data_vencimento),
           (obj.data_prevista = calcularDataPrevisaoPagamento(
-            data.data_vencimento,
-            formaPagamento
+            data.data_vencimento
           ).toISOString());
       } else {
         obj.data_vencimento = proximoDiaUtil(
           addMonths(dataVencimento, p)
         ).toString();
         obj.data_prevista = calcularDataPrevisaoPagamento(
-          obj.data_vencimento,
-          formaPagamento
+          obj.data_vencimento
         ).toISOString();
       }
 

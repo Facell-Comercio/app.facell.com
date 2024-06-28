@@ -155,6 +155,8 @@ const FormBordero = ({
     const idsVencimentos: string[] = wVencimentos.map(
       (vencimento) => vencimento.id_vencimento
     );
+    console.log(item);
+
     item.forEach((subItem: VencimentosProps) => {
       const isNewId = idsVencimentos.includes(subItem.id_vencimento);
       if (!isNewId) {
@@ -558,8 +560,9 @@ const FormBordero = ({
         </form>
         <ModalVencimentos
           open={modalEditing && modalVencimentoOpen}
-          handleSelection={handleSelectionVencimento}
-          onOpenChange={() => setModalVencimentoOpen((prev) => !prev)}
+          handleMultiSelection={handleSelectionVencimento}
+          multiSelection
+          onOpenChange={setModalVencimentoOpen}
           id_matriz={id_matriz || ""}
           initialFilters={{
             tipo_data: "data_prevista",

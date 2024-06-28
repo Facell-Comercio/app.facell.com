@@ -77,10 +77,9 @@ const ModalFiliais = ({
 
   function pushSelection(item: any) {
     if (multiSelection) {
-      const isAlreadyInVencimentos = ids.some((id) => parseInt(id) === item.id);
-      console.log(isAlreadyInVencimentos);
+      const isAlreadyInFiliais = ids.some((id) => parseInt(id) === item.id);
 
-      if (!isAlreadyInVencimentos) {
+      if (!isAlreadyInFiliais) {
         setIds((prevIds) => [...prevIds, String(item.id)]);
         setFiliais((prevFiliais) => [...prevFiliais, item]);
       } else {
@@ -110,11 +109,11 @@ const ModalFiliais = ({
   }
   function handleSelectAll() {
     data?.data?.rows.forEach((item: Filial) => {
-      const isAlreadyInVencimentos = filiais.some(
+      const isAlreadyInFiliais = filiais.some(
         (existingItem) => existingItem.id === item.id
       );
 
-      if (!isAlreadyInVencimentos) {
+      if (!isAlreadyInFiliais) {
         setFiliais((prevVencimentos) => [
           ...prevVencimentos,
           {
@@ -170,6 +169,11 @@ const ModalFiliais = ({
               const isSelected = ids.includes(String(row.item.id));
               return (
                 <ModalComponentRow
+                  className={
+                    isSelected
+                      ? "bg-secondary/50 text-secondary-foreground/40"
+                      : ""
+                  }
                   key={"modal_filial_item_row:" + index + row.item}
                 >
                   <>
@@ -180,7 +184,7 @@ const ModalFiliais = ({
                       size={"xs"}
                       className={`p-1 ${
                         isSelected &&
-                        "bg-primary hover:bg-primary hover:opacity-90"
+                        "bg-secondary hover:bg-secondary hover:opacity-90"
                       }`}
                       variant={"outline"}
                       onClick={() => {

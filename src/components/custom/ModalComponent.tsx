@@ -198,12 +198,16 @@ export const ModalComponent = ({
 
 type ModalComponentRowProps = {
   children: JSX.Element;
+  className?: string;
 };
 
-export const ModalComponentRow = ({ children }: ModalComponentRowProps) => {
+export const ModalComponentRow = ({
+  children,
+  className,
+}: ModalComponentRowProps) => {
   return (
     <div
-      className={`flex items-center justify-between bg-secondary odd:bg-secondary/70 text-secondary-foreground mb-1 border rounded-md p-1 px-2`}
+      className={`flex items-center justify-between bg-secondary odd:bg-secondary/70 text-secondary-foreground mb-1 border rounded-md p-1 px-2 ${className}`}
     >
       {children}
     </div>

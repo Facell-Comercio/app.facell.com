@@ -55,7 +55,13 @@ const ModalPlanosContas = ({
     queryFn: async () =>
       await api.get("financeiro/plano-contas", {
         params: {
-          filters: { termo: search, id_matriz, id_grupo_economico, tipo },
+          filters: {
+            termo: search,
+            id_matriz,
+            id_grupo_economico,
+            tipo,
+            onlyChildren: true, //Os planos de contas pais/mães não devem aparecer
+          },
           pagination,
         },
       }),

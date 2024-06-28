@@ -9,6 +9,7 @@ export interface State {
     data_prevista: string;
     cod_barras?: string;
     qr_code?: string;
+    valor: string;
   };
   modalOpen: boolean;
 }
@@ -18,9 +19,10 @@ export const initialStateVencimento = {
   vencimento: {
     id: "",
     data_vencimento: String(new Date()),
-    data_prevista: String(calcularDataPrevisaoPagamento(new Date(), "1")),
+    data_prevista: String(calcularDataPrevisaoPagamento(new Date())),
     cod_barras: "",
     qr_code: "",
+    valor: "",
   },
   modalOpen: false,
 };
@@ -28,7 +30,12 @@ type UpdateVencimentoProps = {
   index?: number;
   vencimento: Pick<
     State["vencimento"],
-    "data_prevista" | "data_vencimento" | "id" | "cod_barras" | "qr_code"
+    | "data_prevista"
+    | "data_vencimento"
+    | "id"
+    | "cod_barras"
+    | "qr_code"
+    | "valor"
   >;
 };
 export interface Actions {
