@@ -133,9 +133,6 @@ const FormBordero = ({
     // console.log(filteredData);
 
     if (id) update(filteredData);
-
-    editModal(false);
-    closeModal();
   }
 
   useEffect(() => {
