@@ -131,6 +131,52 @@ export const useBordero = () => {
         },
       }),
 
+    reverseManualPayment: () =>
+      useMutation({
+        mutationFn: async (id: string | null | undefined) => {
+          return await api
+            .put(
+              `/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`
+            )
+            .then((response) => response.data);
+        },
+        onSuccess(_, id) {
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+          queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
+          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagar"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_bordero"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagos"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_titulos"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_titulo"],
+          });
+        },
+        onError(error: AxiosError) {
+          // @ts-expect-error "Vai funcionar"
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
     transferVencimentos: () =>
       useMutation({
         mutationFn: async (data: {

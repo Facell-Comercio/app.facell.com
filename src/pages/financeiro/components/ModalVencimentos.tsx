@@ -62,6 +62,7 @@ export type VencimentosProps = {
   data_pagamento?: string;
 
   can_remove?: boolean;
+  can_modify?: boolean;
   updated?: boolean;
   remessa?: boolean;
 };

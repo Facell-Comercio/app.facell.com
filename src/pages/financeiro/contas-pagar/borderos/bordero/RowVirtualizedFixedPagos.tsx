@@ -1,7 +1,10 @@
 import * as React from "react";
 
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/custom/FormInput";
+import { Button } from "@/components/ui/button";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { useBordero } from "@/hooks/financeiro/useBordero";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
@@ -16,7 +19,10 @@ interface RowVirtualizerFixedPagosProps {
 const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
   data,
   filteredData,
+  modalEditing,
 }) => {
+  const { mutate: reverseManualPayment } = useBordero().reverseManualPayment();
+
   const parentElement = React.useRef(null);
 
   const count = filteredData.length;
@@ -69,6 +75,11 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
         <p className="min-w-56 text-center bg-slate-200 dark:bg-blue-950">
           Observação
         </p>
+        {modalEditing && (
+          <p className="min-w-[80px] text-center bg-slate-200 dark:bg-blue-950">
+            Ação
+          </p>
+        )}
       </div>
       <div
         style={{
@@ -162,6 +173,24 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
                 value={data[indexData].obs || ""}
                 readOnly
               />
+              {modalEditing && (
+                <AlertPopUp
+                  title="Deseja realmente desfazer?"
+                  description="O pagamento manual será desfeito, podendo ser realizado novamente."
+                  action={() =>
+                    reverseManualPayment(data[indexData].id_vencimento)
+                  }
+                >
+                  <Button
+                    disabled={!data[indexData].can_modify}
+                    type="button"
+                    className="h-8 text-xs"
+                    variant={"destructive"}
+                  >
+                    Desfazer
+                  </Button>
+                </AlertPopUp>
+              )}
             </div>
           );
         })}
