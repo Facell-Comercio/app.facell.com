@@ -35,7 +35,7 @@ const schemaFornecedor = z
       .transform((v) => normalizeNumberOnly(v)),
     logradouro: z.string().min(3, "Campo Obrigatório"),
     numero: z.string().min(1, "Campo Obrigatório"),
-    complemento: z.string().min(3, "Campo Obrigatório"),
+    complemento: z.string().optional(),
     bairro: z.string().min(3, "Campo Obrigatório"),
     municipio: z.string().min(3, "Campo Obrigatório"),
     uf: z.string().min(1, "Campo Obrigatório"),

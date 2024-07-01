@@ -50,6 +50,8 @@ const FormFornecedor = ({
     ]);
   const [cnpj, setCnpj] = useState<string>();
   const { form } = useFormFornecedorData(data);
+  const { errors } = form.formState
+  console.log({errors})
 
   const watchFormaPagamento = useWatch({
     control: form.control,
@@ -269,6 +271,13 @@ const FormFornecedor = ({
                     name="uf"
                     readOnly={!modalEditing || isPending}
                     label="UF"
+                    control={form.control}
+                  />
+                  <FormInput
+                    className="flex-1 min-w-[20ch]"
+                    name="complemento"
+                    readOnly={!modalEditing || isPending}
+                    label="Complemento"
                     control={form.control}
                   />
                 </div>
