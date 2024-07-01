@@ -44,7 +44,9 @@ const schemaFornecedor = z
     // Dados Bancários
     id_forma_pagamento: z.string().min(1, "Campo Obrigatório"),
     id_tipo_chave_pix: z.string().optional(),
-    id_banco: z.string().optional(),
+    id_banco: z.coerce.number().optional(),
+    banco: z.string().optional(),
+    codigo_banco: z.coerce.number().optional(),
     id_tipo_conta: z.string().optional(),
     chave_pix: z.string().optional(),
     agencia: z.string().optional(),
