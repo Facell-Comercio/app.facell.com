@@ -32,6 +32,7 @@ const schemaBorderos = z.object({
         filial: z.string().trim().optional(),
 
         can_remove: z.coerce.boolean().optional(),
+        can_modify: z.coerce.boolean().optional(),
         updated: z.coerce.boolean().optional(),
         remessa: z.coerce.number().optional(),
       })
