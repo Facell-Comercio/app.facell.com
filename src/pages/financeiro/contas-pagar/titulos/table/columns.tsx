@@ -87,6 +87,18 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     },
   },
   {
+    header: "Filial",
+    accessorKey: "filial",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
+  },
+  {
     header: "Fornecedor",
     accessorKey: "fornecedor",
     cell: (info) => {
