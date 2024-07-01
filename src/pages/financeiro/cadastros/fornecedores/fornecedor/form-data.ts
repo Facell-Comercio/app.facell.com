@@ -35,7 +35,7 @@ const schemaFornecedor = z
       .transform((v) => normalizeNumberOnly(v)),
     logradouro: z.string().min(3, "Campo Obrigatório"),
     numero: z.string().min(1, "Campo Obrigatório"),
-    complemento: z.string().min(3, "Campo Obrigatório"),
+    complemento: z.string().optional(),
     bairro: z.string().min(3, "Campo Obrigatório"),
     municipio: z.string().min(3, "Campo Obrigatório"),
     uf: z.string().min(1, "Campo Obrigatório"),
@@ -44,7 +44,9 @@ const schemaFornecedor = z
     // Dados Bancários
     id_forma_pagamento: z.string().min(1, "Campo Obrigatório"),
     id_tipo_chave_pix: z.string().optional(),
-    id_banco: z.string().optional(),
+    id_banco: z.coerce.number().optional(),
+    banco: z.string().optional(),
+    codigo_banco: z.coerce.number().optional(),
     id_tipo_conta: z.string().optional(),
     chave_pix: z.string().optional(),
     agencia: z.string().optional(),
@@ -63,20 +65,27 @@ const schemaFornecedor = z
       .transform((v) => normalizeNumberOnly(v)),
     favorecido: z.string().min(3, "Campo Obrigatório"),
   })
-  //^ Cobra Agência e Conta
+  //^ Cobra Banco Agência e Conta
+  .refine(
+    (data) =>
+      checkIsTransferenciaBancaria(data.id_forma_pagamento)
+        ? !!data.banco
+        : true,
+    { path: ["banco"], message: "Obrigatório." }
+  )
   .refine(
     (data) =>
       checkIsTransferenciaBancaria(data.id_forma_pagamento)
         ? !!data.agencia
         : true,
-    { path: ["agencia"], message: "Obrigatório para esta forma de pagamento." }
+    { path: ["agencia"], message: "Obrigatório." }
   )
   .refine(
     (data) =>
       checkIsTransferenciaBancaria(data.id_forma_pagamento)
         ? !!data.conta
         : true,
-    { path: ["conta"], message: "Obrigatório para esta forma de pagamento." }
+    { path: ["conta"], message: "Obrigatório." }
   )
 
   // Cobrança PIX
@@ -85,7 +94,7 @@ const schemaFornecedor = z
       checkIsPIX(data.id_forma_pagamento) ? !!data.id_tipo_chave_pix : true,
     {
       path: ["id_tipo_chave_pix"],
-      message: "Obrigatório para esta forma de pagamento.",
+      message: "Obrigatório.",
     }
   )
 
@@ -93,15 +102,15 @@ const schemaFornecedor = z
     (data) => (checkIsPIX(data.id_forma_pagamento) ? !!data.chave_pix : true),
     {
       path: ["chave_pix"],
-      message: "Obrigatório para esta forma de pagamento.",
+      message: "Obrigatório.",
     }
   )
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) &&
-      String(data.id_tipo_chave_pix) === "1"
+        String(data.id_tipo_chave_pix) === "1"
         ? String(data.chave_pix).length === 36 &&
-          data.chave_pix?.split("-").length === 5
+        data.chave_pix?.split("-").length === 5
         : true,
     {
       path: ["chave_pix"],
@@ -111,7 +120,7 @@ const schemaFornecedor = z
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) &&
-      String(data.id_tipo_chave_pix) === "2"
+        String(data.id_tipo_chave_pix) === "2"
         ? checkEmail(String(data.chave_pix))
         : true,
     {
@@ -122,7 +131,7 @@ const schemaFornecedor = z
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) &&
-      String(data.id_tipo_chave_pix) === "2"
+        String(data.id_tipo_chave_pix) === "2"
         ? String(data.chave_pix).length < 77
         : true,
     {
@@ -133,7 +142,7 @@ const schemaFornecedor = z
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) &&
-      String(data.id_tipo_chave_pix) === "3"
+        String(data.id_tipo_chave_pix) === "3"
         ? String(normalizeNumberOnly(data.chave_pix)).length === 11
         : true,
     {
@@ -144,7 +153,7 @@ const schemaFornecedor = z
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) &&
-      String(data.id_tipo_chave_pix) === "4"
+        String(data.id_tipo_chave_pix) === "4"
         ? String(normalizeNumberOnly(data.chave_pix)).length === 11
         : true,
     {
@@ -155,7 +164,7 @@ const schemaFornecedor = z
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) &&
-      String(data.id_tipo_chave_pix) === "5"
+        String(data.id_tipo_chave_pix) === "5"
         ? String(normalizeNumberOnly(data.chave_pix)).length === 14
         : true,
     {

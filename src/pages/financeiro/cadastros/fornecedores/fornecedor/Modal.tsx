@@ -33,6 +33,8 @@ export type FornecedorSchema = {
   id_forma_pagamento: string;
   id_tipo_chave_pix: string;
   id_banco: string;
+  banco?: string;
+  codigo_banco?:string;
   id_tipo_conta: string;
   chave_pix: string;
   agencia: string;

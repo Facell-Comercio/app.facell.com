@@ -18,6 +18,8 @@ import { useWatch } from "react-hook-form";
 import { FornecedorSchema } from "./Modal";
 import { useFormFornecedorData } from "./form-data";
 import { useStoreFornecedor } from "./store";
+import ModalBancos from "@/pages/financeiro/components/ModalBancos";
+import { BancoSchema } from "../../bancos/banco/Modal";
 
 const FormFornecedor = ({
   id,
@@ -50,6 +52,8 @@ const FormFornecedor = ({
     ]);
   const [cnpj, setCnpj] = useState<string>();
   const { form } = useFormFornecedorData(data);
+  const { errors } = form.formState
+  console.log({ errors })
 
   const watchFormaPagamento = useWatch({
     control: form.control,
@@ -170,9 +174,24 @@ const FormFornecedor = ({
 
   // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
+  const [openModalBanco, setOpenModalBanco] = useState<boolean>(false)
+  const handleSelectionBanco = (banco: BancoSchema) => {
+    form.setValue('id_banco', banco.id)
+    form.setValue('banco', banco.nome)
+    form.setValue('codigo_banco', banco.codigo)
+
+    setOpenModalBanco(false)
+  }
 
   return (
     <div className="max-w-full overflow-x-hidden">
+      <ModalBancos
+        handleSelection={handleSelectionBanco}
+        open={openModalBanco}
+        // @ts-ignore
+        onOpenChange={setOpenModalBanco}
+      />
+
       <Form {...form}>
         <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
@@ -218,7 +237,7 @@ const FormFornecedor = ({
                     readOnly={!modalEditing || isPending}
                     label="Telefone"
                     control={form.control}
-                    // fnMask={normalizePhoneNumber}
+                  // fnMask={normalizePhoneNumber}
                   />
                   <FormInput
                     className="flex-1 min-w-[30ch]"
@@ -271,6 +290,13 @@ const FormFornecedor = ({
                     label="UF"
                     control={form.control}
                   />
+                  <FormInput
+                    className="flex-1 min-w-[20ch]"
+                    name="complemento"
+                    readOnly={!modalEditing || isPending}
+                    label="Complemento"
+                    control={form.control}
+                  />
                 </div>
               </div>
 
@@ -287,16 +313,6 @@ const FormFornecedor = ({
                     label="Forma de pagamento"
                     control={form.control}
                   />
-
-                  {watchFormaPagamento === "4" && (
-                    <SelectTipoChavePix
-                      className="flex-1 min-w-[20ch]"
-                      name="id_tipo_chave_pix"
-                      disabled={!modalEditing || isPending}
-                      label="Tipo de chave"
-                      control={form.control}
-                    />
-                  )}
                   <FormInput
                     className="flex-1 min-w-[20ch]"
                     readOnly={!modalEditing || isPending}
@@ -318,58 +334,76 @@ const FormFornecedor = ({
                   />
                   {(watchFormaPagamento === "4" ||
                     watchFormaPagamento === "5") && (
-                    <>
-                      <FormInput
-                        className="flex-1 min-w-[20ch]"
-                        readOnly={!modalEditing || isPending}
-                        type={watchFormaPagamento !== "4" ? "hidden" : ""}
-                        name="chave_pix"
-                        label="Chave PIX"
-                        placeholder={placeholderChavePix(watchTipoChavePix)}
-                        control={form.control}
-                        fnMask={fnMaskChavePix(watchTipoChavePix)}
-                      />
+                      <>
+                        <div onClick={()=>setOpenModalBanco(true)}>
+                          <FormInput
+                            className="flex-1 min-w-[10ch]"
+                            readOnly={true}
+                            name="banco"
+                            label="Banco"
+                            placeholder="Selecione"
+                            control={form.control}
+                          />
+                        </div>
 
-                      <div className="flex gap-3">
-                        <FormInput
-                          className="flex-1 min-w-[10ch]"
-                          readOnly={!modalEditing || isPending}
-                          name="agencia"
-                          label="Agência"
-                          control={form.control}
-                        />
-                        <FormInput
-                          className="flex-1 min-w-[5ch] max-w-[10ch]"
-                          readOnly={!modalEditing || isPending}
-                          name="dv_agencia"
-                          label="Dígito AG."
-                          control={form.control}
-                        />
-
-                        <SelectTipoContaBancaria
+                        <SelectTipoChavePix
+                          className="flex-1 min-w-[20ch]"
+                          name="id_tipo_chave_pix"
                           disabled={!modalEditing || isPending}
+                          label="Tipo de chave"
                           control={form.control}
-                          name="id_tipo_conta"
-                          label="Tipo de Conta"
+                        />
+                        <FormInput
+                          className="flex-1 min-w-[20ch]"
+                          readOnly={!modalEditing || isPending}
+                          type={watchFormaPagamento !== "4" ? "hidden" : ""}
+                          name="chave_pix"
+                          label="Chave PIX"
+                          placeholder={placeholderChavePix(watchTipoChavePix)}
+                          control={form.control}
+                          fnMask={fnMaskChavePix(watchTipoChavePix)}
                         />
 
-                        <FormInput
-                          className="flex-1 min-w-[10ch]"
-                          readOnly={!modalEditing || isPending}
-                          name="conta"
-                          label="Conta"
-                          control={form.control}
-                        />
-                        <FormInput
-                          className="flex-1 min-w-[5ch] max-w-[10ch]"
-                          readOnly={!modalEditing || isPending}
-                          name="dv_conta"
-                          label="Digito. CT."
-                          control={form.control}
-                        />
-                      </div>
-                    </>
-                  )}
+                        <div className="flex gap-3">
+                          <FormInput
+                            className="flex-1 min-w-[10ch]"
+                            readOnly={!modalEditing || isPending}
+                            name="agencia"
+                            label="Agência"
+                            control={form.control}
+                          />
+                          <FormInput
+                            className="flex-1 min-w-[5ch] max-w-[10ch]"
+                            readOnly={!modalEditing || isPending}
+                            name="dv_agencia"
+                            label="Dígito AG."
+                            control={form.control}
+                          />
+
+                          <SelectTipoContaBancaria
+                            disabled={!modalEditing || isPending}
+                            control={form.control}
+                            name="id_tipo_conta"
+                            label="Tipo de Conta"
+                          />
+
+                          <FormInput
+                            className="flex-1 min-w-[10ch]"
+                            readOnly={!modalEditing || isPending}
+                            name="conta"
+                            label="Conta"
+                            control={form.control}
+                          />
+                          <FormInput
+                            className="flex-1 min-w-[5ch] max-w-[10ch]"
+                            readOnly={!modalEditing || isPending}
+                            name="dv_conta"
+                            label="Digito. CT."
+                            control={form.control}
+                          />
+                        </div>
+                      </>
+                    )}
                 </div>
               </div>
             </div>
