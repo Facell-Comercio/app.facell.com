@@ -341,6 +341,7 @@ const FormFornecedor = ({
                             readOnly={true}
                             name="banco"
                             label="Banco"
+                            placeholder="Selecione"
                             control={form.control}
                           />
                         </div>
