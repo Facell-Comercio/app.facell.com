@@ -276,7 +276,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
             </div>
           ) : (
             <div className="h-full w-full flex items-center justify-center">
-              Nenhum título encontrado
+              Nenhum log encontrado
             </div>
           )}
         </div>
