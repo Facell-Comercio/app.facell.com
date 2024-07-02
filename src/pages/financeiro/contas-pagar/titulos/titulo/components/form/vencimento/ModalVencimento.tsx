@@ -26,12 +26,15 @@ import z from "zod";
 import { TituloSchemaProps, vencimentoSchema } from "../../../form-data";
 import { calcularDataPrevisaoPagamento } from "../../../helpers/helper";
 import { initialStateVencimento, useStoreVencimento } from "./context";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { subDays } from "date-fns";
 
 export function ModalVencimento({
   form: formTitulo,
 }: {
   form: UseFormReturn<TituloSchemaProps>;
 }) {
+  const isMaster:boolean = checkUserPermission('MASTER') || checkUserDepartments('FINANCEIRO')
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
 
@@ -165,13 +168,14 @@ export function ModalVencimento({
                 <FormDateInput
                   name="data_vencimento"
                   label="Vencimento"
+                  min={!isMaster ? subDays(new Date(),1) : undefined}
                   control={form.control}
                 />
                 <FormDateInput
                   name="data_prevista"
                   label="Prevista"
                   control={form.control}
-                  disabled={true}
+                  disabled={!isMaster}
                 />
 
                 <FormInput

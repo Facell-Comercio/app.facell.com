@@ -26,9 +26,9 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
   return (
     <section
       ref={parentElement}
-      className="h-[45vh] w-full overflow-auto scroll-thin z-50"
+      className="h-[45vh] w-full overflow-auto scroll-thin z-[100]"
     >
-      <div className="flex gap-1 font-medium text-xs w-full sticky top-0 z-50 bg-background">
+      <div className="flex gap-1 font-medium text-xs w-full sticky top-0 z-[100] bg-background">
         <p className="min-w-24 text-center bg-background">ID Vencimento</p>
         <p className="min-w-20 text-center bg-background">ID Título</p>
         <p className="min-w-28 text-center bg-background">Transação</p>
@@ -49,7 +49,7 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
           return (
             <div
               // ref={virtualizer.measureElement}
-              key={item.index}
+              key={`${item.index}-${index}`}
               data-index={index}
               className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
                 virtualizer.getVirtualItems().length == 0 && "hidden"
