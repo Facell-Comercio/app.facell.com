@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useRef } from "react";
 import { Button } from "../ui/button";
 import { DialogFooter } from "../ui/dialog";
 import {
@@ -6,7 +7,6 @@ import {
   PaginationContent,
   PaginationItem,
 } from "../ui/pagination";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -51,6 +51,7 @@ export const ModalComponent = ({
   handleSelectAll,
 }: ModalComponentProps) => {
   const pages = [...Array(pageCount || 0).keys()].map((page) => page + 1);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const arrayPages = pages.filter((i) => {
     if (i === 1 || i === pages.length) {
       return true;
@@ -66,6 +67,9 @@ export const ModalComponent = ({
       resolve(true);
     });
     refetch();
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
   async function handlePaginationUp() {
     await new Promise((resolve) => {
@@ -74,6 +78,9 @@ export const ModalComponent = ({
       resolve(true);
     });
     refetch();
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
   async function handlePaginationDown() {
     await new Promise((resolve) => {
@@ -85,6 +92,9 @@ export const ModalComponent = ({
       resolve(true);
     });
     refetch();
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
 
   async function handlePaginationSize(value: string) {
@@ -119,16 +129,14 @@ export const ModalComponent = ({
           </Button>
         </div>
       )}
-      <ScrollArea
+      <section
+        ref={scrollAreaRef}
         className={
-          multiSelection
-            ? "h-[60vh] sm:h-96 rounded-md border p-1"
-            : "h-[60vh] sm:h-72 w-full rounded-md border p-1"
+          "h-[60vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin z-50"
         }
       >
         {children}
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      </section>
 
       {Info && <Info />}
 

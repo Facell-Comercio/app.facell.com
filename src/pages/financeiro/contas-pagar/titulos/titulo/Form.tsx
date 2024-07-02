@@ -376,553 +376,545 @@ const FormTituloPagar = ({
   };
 
   return (
-    <div
-      key={`${id}.${data.created_at}`}
-      className="max-w-screen-xl overflow-auto grid grid-cols-1 lg:grid-rows-[1fr_auto] lg:grid-cols-[1fr_auto]"
-    >
-      <ModalFiliais
-        open={modalFilialOpen}
-        handleSelection={handleSelectionFilial}
-        onOpenChange={setModalFilialOpen}
-        id_grupo_economico={id_grupo_economico}
-        id_matriz={id_matriz}
-        closeOnSelection
-      />
-
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          method="POST"
-          className="w-full grid grid-cols-1 lg:grid-rows-[1fr_auto] lg:grid-cols-[1fr_auto]"
-        >
-          <ScrollArea className="flex flex-col max-w-full max-h-[72vh] sm:max-h-[70vh] overflow-auto col-span-2">
-            {titulo?.status && (
-              <div className="flex-1 py-2">
-                <div
-                  className={`py-1 text-white text-center border text-md font-bold rounded-sm ${generateStatusColor(
-                    { status: titulo?.status || "", bg: true, text: true }
-                  )}`}
-                >
-                  {titulo.status}
-                </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        method="POST"
+        className="max-w-screen-xl w-full grid grid-cols-1 lg:grid-rows-[1fr_auto] lg:grid-cols-[1fr_auto] z-[100]"
+      >
+        <section className="overflow-auto scroll-thin z-[100] flex flex-col max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
+          {titulo?.status && (
+            <div className="py-2">
+              <div
+                className={`py-1 text-white text-center border text-md font-bold rounded-sm ${generateStatusColor(
+                  { status: titulo?.status || "", bg: true, text: true }
+                )}`}
+              >
+                {titulo.status}
               </div>
-            )}
+            </div>
+          )}
 
-            <ScrollArea className="flex-1 overflow-auto sm:pe-3">
-              <div className="w-full grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 ">
-                {/* Primeira coluna */}
-                <div className="flex flex-col flex-wrap gap-3 flex-shrink-0 flex-grow-0">
-                  {/* Dados do Fornecedor */}
-                  <div className="flex flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                    <div className="flex gap-2 mb-3">
-                      <Contact />
-                      <span className="text-lg font-bold">Fornecedor</span>
-                      <div>
-                        {errors.id_fornecedor?.message && (
-                          <Badge variant={"destructive"}>
-                            {errors.id_fornecedor?.message || ""}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3 items-end">
-                      <span onClick={showModalFornecedor}>
-                        <FormInput
-                          className="flex-1 min-w-[18ch]"
-                          name="cnpj_fornecedor"
-                          readOnly={true}
-                          label="CPF/CNPJ"
-                          fnMask={normalizeCnpjNumber}
-                          placeholder="SELECIONE O FORNECEDOR"
-                          control={form.control}
-                        />
-                      </span>
-                      <span onClick={showModalFornecedor}>
-                        <FormInput
-                          className="flex-1 min-w-[30ch] sm:min-w-[40ch] shrink-0"
-                          name="nome_fornecedor"
-                          placeholder="SELECIONE O FORNECEDOR"
-                          readOnly={true}
-                          label="Nome do fornecedor"
-                          control={form.control}
-                        />
-                      </span>
-
-                      <SelectFormaPagamento
-                        label="Forma de pagamento"
-                        name="id_forma_pagamento"
-                        control={form.control}
-                        disabled={disabled}
-                        className="flex-1 min-w-[15ch]"
-                      />
-                      <div
-                        className={`${
-                          showPix ? "flex w-full" : "hidden"
-                        } gap-3 flex-wrap`}
-                      >
-                        <SelectTipoChavePix
-                          control={form.control}
-                          name="id_tipo_chave_pix"
-                          label="Tipo Chave PIX"
-                          disabled={disabled}
-                          className="flex-1 min-w-[20ch]"
-                        />
-
-                        <FormInput
-                          label="Chave PIX"
-                          name="chave_pix"
-                          control={form.control}
-                          readOnly={readOnly}
-                          className="flex-1 min-w-[20ch]"
-                        />
-                      </div>
-                      {/* Dados bancários do fornecedor */}
-                      {showDadosBancarios && (
-                        <>
-                          <FormInput
-                            label="Favorecido"
-                            name="favorecido"
-                            control={form.control}
-                            readOnly={readOnly}
-                            inputClass="flex-1 min-w-[30ch] sm:min-w-[40ch]"
-                            className="flex-1"
-                          />
-
-                          <FormInput
-                            label="CNPJ Favorecido"
-                            name="cnpj_favorecido"
-                            control={form.control}
-                            readOnly={readOnly}
-                            fnMask={normalizeCnpjNumber}
-                            inputClass="min-w-[20ch]"
-                            className="flex-1"
-                          />
-
-                          <FormInput
-                            label="Cód. Banco"
-                            name="codigo_banco"
-                            className="min-w-[4ch]"
-                            control={form.control}
-                            readOnly={true}
-                          />
-
-                          <FormInput
-                            label="Banco"
-                            name="banco"
-                            className="min-w-fit"
-                            control={form.control}
-                            readOnly={true}
-                          />
-
-                          <FormInput
-                            label="Agência"
-                            name="agencia"
-                            control={form.control}
-                            readOnly={true}
-                          />
-
-                          <FormInput
-                            label="Dv. Ag."
-                            name="dv_agencia"
-                            className="min-w-[10ch]"
-                            control={form.control}
-                            readOnly={true}
-                          />
-
-                          <SelectTipoContaBancaria
-                            label="Tipo conta"
-                            name="id_tipo_conta"
-                            className="min-w-[15ch]"
-                            control={form.control}
-                          />
-
-                          <FormInput
-                            label="Conta"
-                            name="conta"
-                            control={form.control}
-                            readOnly={true}
-                          />
-
-                          <FormInput
-                            label="Dv. Conta"
-                            name="dv_conta"
-                            className="min-w-[10ch]"
-                            control={form.control}
-                            readOnly={true}
-                          />
-                        </>
+          <section className="overflow-auto scroll-thin z-[100] flex-1 ">
+            <div className="w-full grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 z-[100]">
+              {/* Primeira coluna */}
+              <div className="flex flex-col flex-wrap gap-3 flex-shrink-0 flex-grow-0">
+                {/* Dados do Fornecedor */}
+                <div className="flex flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                  <div className="flex gap-2 mb-3">
+                    <Contact />
+                    <span className="text-lg font-bold">Fornecedor</span>
+                    <div>
+                      {errors.id_fornecedor?.message && (
+                        <Badge variant={"destructive"}>
+                          {errors.id_fornecedor?.message || ""}
+                        </Badge>
                       )}
-
-                      <ModalFornecedores
-                        open={canEdit && modalFornecedorOpen}
-                        handleSelection={handleSelectionFornecedor}
-                        onOpenChange={() =>
-                          setModalFornecedorOpen((prev) => !prev)
-                        }
-                      />
                     </div>
                   </div>
 
-                  {/* Dados da solicitação */}
-                  <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                    <div className="flex gap-2 mb-3">
-                      <FileText />{" "}
-                      <span className="text-lg font-bold ">
-                        Dados da solicitação
+                  <div className="flex flex-wrap gap-3 items-end  z-50">
+                    <span onClick={showModalFornecedor}>
+                      <FormInput
+                        className="flex-1 min-w-[18ch]"
+                        name="cnpj_fornecedor"
+                        readOnly={true}
+                        label="CPF/CNPJ"
+                        fnMask={normalizeCnpjNumber}
+                        placeholder="SELECIONE O FORNECEDOR"
+                        control={form.control}
+                      />
+                    </span>
+                    <span onClick={showModalFornecedor}>
+                      <FormInput
+                        className="flex-1 min-w-[30ch] sm:min-w-[40ch] shrink-0"
+                        name="nome_fornecedor"
+                        placeholder="SELECIONE O FORNECEDOR"
+                        readOnly={true}
+                        label="Nome do fornecedor"
+                        control={form.control}
+                      />
+                    </span>
+
+                    <SelectFormaPagamento
+                      label="Forma de pagamento"
+                      name="id_forma_pagamento"
+                      control={form.control}
+                      disabled={disabled}
+                      className="flex-1 min-w-[15ch]"
+                    />
+                    <div
+                      className={`${
+                        showPix ? "flex w-full" : "hidden"
+                      } gap-3 flex-wrap`}
+                    >
+                      <SelectTipoChavePix
+                        control={form.control}
+                        name="id_tipo_chave_pix"
+                        label="Tipo Chave PIX"
+                        disabled={disabled}
+                        className="flex-1 min-w-[20ch]"
+                      />
+
+                      <FormInput
+                        label="Chave PIX"
+                        name="chave_pix"
+                        control={form.control}
+                        readOnly={readOnly}
+                        className="flex-1 min-w-[20ch]"
+                      />
+                    </div>
+                    {/* Dados bancários do fornecedor */}
+                    {showDadosBancarios && (
+                      <>
+                        <FormInput
+                          label="Favorecido"
+                          name="favorecido"
+                          control={form.control}
+                          readOnly={readOnly}
+                          inputClass="flex-1 min-w-[30ch] sm:min-w-[40ch]"
+                          className="flex-1"
+                        />
+
+                        <FormInput
+                          label="CNPJ Favorecido"
+                          name="cnpj_favorecido"
+                          control={form.control}
+                          readOnly={readOnly}
+                          fnMask={normalizeCnpjNumber}
+                          inputClass="min-w-[20ch]"
+                          className="flex-1"
+                        />
+
+                        <FormInput
+                          label="Cód. Banco"
+                          name="codigo_banco"
+                          className="min-w-[4ch]"
+                          control={form.control}
+                          readOnly={true}
+                        />
+
+                        <FormInput
+                          label="Banco"
+                          name="banco"
+                          className="min-w-fit"
+                          control={form.control}
+                          readOnly={true}
+                        />
+
+                        <FormInput
+                          label="Agência"
+                          name="agencia"
+                          control={form.control}
+                          readOnly={true}
+                        />
+
+                        <FormInput
+                          label="Dv. Ag."
+                          name="dv_agencia"
+                          className="min-w-[10ch]"
+                          control={form.control}
+                          readOnly={true}
+                        />
+
+                        <SelectTipoContaBancaria
+                          label="Tipo conta"
+                          name="id_tipo_conta"
+                          className="min-w-[15ch]"
+                          control={form.control}
+                        />
+
+                        <FormInput
+                          label="Conta"
+                          name="conta"
+                          control={form.control}
+                          readOnly={true}
+                        />
+
+                        <FormInput
+                          label="Dv. Conta"
+                          name="dv_conta"
+                          className="min-w-[10ch]"
+                          control={form.control}
+                          readOnly={true}
+                        />
+                      </>
+                    )}
+
+                    <ModalFornecedores
+                      open={canEdit && modalFornecedorOpen}
+                      handleSelection={handleSelectionFornecedor}
+                      onOpenChange={() =>
+                        setModalFornecedorOpen((prev) => !prev)
+                      }
+                    />
+                  </div>
+                </div>
+
+                {/* Dados da solicitação */}
+                <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                  <div className="flex gap-2 mb-3">
+                    <FileText />{" "}
+                    <span className="text-lg font-bold ">
+                      Dados da solicitação
+                    </span>
+                  </div>
+
+                  <div className="grid gap-3 flex-wrap items-end">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                      <FormSelect
+                        disabled={disabled}
+                        name="id_tipo_solicitacao"
+                        label={"Tipo de solicitação"}
+                        control={form.control}
+                        className="flex-1 min-w-[32ch]"
+                        options={[
+                          { value: "1", label: "Com nota fiscal" },
+                          {
+                            value: "2",
+                            label: "Antecipado / Nota fiscal futura",
+                          },
+                          { value: "3", label: "Sem nota fiscal" },
+                        ]}
+                      />
+
+                      <span onClick={showModalFilial}>
+                        <FormInput
+                          readOnly={true}
+                          name="filial"
+                          label="Filial"
+                          placeholder="SELECIONE A FILIAL"
+                          control={form.control}
+                          inputClass="sm:min-w-[100px]"
+                        />
+                      </span>
+                      <span className="lg:col-span-2 min-w-[20ch]">
+                        <SelectUserDepartamento
+                          label="Departamento"
+                          name="id_departamento"
+                          disabled={disabled}
+                          className="flex-1 w-full min-w-[20ch]"
+                          form={form}
+                        />
                       </span>
                     </div>
 
-                    <div className="grid gap-3 flex-wrap items-end">
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                        <FormSelect
-                          disabled={disabled}
-                          name="id_tipo_solicitacao"
-                          label={"Tipo de solicitação"}
-                          control={form.control}
-                          className="flex-1 min-w-[32ch]"
-                          options={[
-                            { value: "1", label: "Com nota fiscal" },
-                            {
-                              value: "2",
-                              label: "Antecipado / Nota fiscal futura",
-                            },
-                            { value: "3", label: "Sem nota fiscal" },
-                          ]}
-                        />
-
-                        <span onClick={showModalFilial}>
-                          <FormInput
-                            readOnly={true}
-                            name="filial"
-                            label="Filial"
-                            placeholder="SELECIONE A FILIAL"
-                            control={form.control}
-                            inputClass="sm:min-w-[100px]"
-                          />
-                        </span>
-                        <span className="lg:col-span-2 min-w-[20ch]">
-                          <SelectUserDepartamento
-                            label="Departamento"
-                            name="id_departamento"
-                            disabled={disabled}
-                            className="flex-1 w-full min-w-[20ch]"
-                            form={form}
-                          />
-                        </span>
-                      </div>
-
-                      <div className="max-w-full flex flex-wrap gap-3">
-                        <FormDateInput
-                          disabled={disabled}
-                          name="data_emissao"
-                          label="Data de emissão"
-                          control={form.control}
-                          className="flex-1 min-w-[15ch]"
-                        />
-
-                        <FormInput
-                          readOnly={readOnly}
-                          name="num_doc"
-                          label="Núm. Doc."
-                          className={"flex-1 min-w-[15ch]"}
-                          control={form.control}
-                        />
-
-                        <FormInput
-                          control={form.control}
-                          inputClass="text-left"
-                          name="valor"
-                          type="number"
-                          iconLeft
-                          icon={TbCurrencyReal}
-                          label="Valor Total"
-                          disabled={disabled}
-                          className="flex-1 min-w-[20ch]"
-                        />
-                      </div>
+                    <div className="max-w-full flex flex-wrap gap-3">
+                      <FormDateInput
+                        disabled={disabled}
+                        name="data_emissao"
+                        label="Data de emissão"
+                        control={form.control}
+                        className="flex-1 min-w-[15ch]"
+                      />
 
                       <FormInput
                         readOnly={readOnly}
-                        className="flex-1 trunkate sm:min-w-[400px]"
-                        name="descricao"
-                        inputClass="uppercase"
-                        label="Descrição do pagamento"
+                        name="num_doc"
+                        label="Núm. Doc."
+                        className={"flex-1 min-w-[15ch]"}
                         control={form.control}
                       />
+
+                      <FormInput
+                        control={form.control}
+                        inputClass="text-left"
+                        name="valor"
+                        type="number"
+                        iconLeft
+                        icon={TbCurrencyReal}
+                        label="Valor Total"
+                        disabled={disabled}
+                        className="flex-1 min-w-[20ch]"
+                      />
                     </div>
+
+                    <FormInput
+                      readOnly={readOnly}
+                      className="flex-1 trunkate sm:min-w-[400px]"
+                      name="descricao"
+                      inputClass="uppercase"
+                      label="Descrição do pagamento"
+                      control={form.control}
+                    />
                   </div>
-
-                  {/* Abas Vencimentos / Rateio entre filiais */}
-                  {valorTotalTitulo > 0 && !!id_matriz ? (
-                    <div className="max-w-full">
-                      <Tabs defaultValue="vencimentos" className="max-w-full">
-                        <TabsList className="grid w-full grid-cols-2">
-                          <TabsTrigger value="vencimentos">
-                            <div className="flex gap-3">
-                              <span>Vencimentos</span>
-                              {errors.vencimentos?.message && (
-                                <Popover>
-                                  <PopoverTrigger>
-                                    <Badge variant={"destructive"}>
-                                      Atenção
-                                    </Badge>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="bg-destructive text-destructive-foreground">
-                                    {errors.vencimentos.message}
-                                  </PopoverContent>
-                                </Popover>
-                              )}
-                            </div>
-                          </TabsTrigger>
-                          <TabsTrigger value="rateio">
-                            <div className="flex gap-3">
-                              <span>Rateio da solicitação</span>
-                              {errors.itens_rateio?.message && (
-                                <Popover>
-                                  <PopoverTrigger>
-                                    <Badge variant={"destructive"}>
-                                      Atenção
-                                    </Badge>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="bg-destructive text-destructive-foreground">
-                                    {errors.itens_rateio.message}
-                                  </PopoverContent>
-                                </Popover>
-                              )}
-                            </div>
-                          </TabsTrigger>
-                        </TabsList>
-
-                        <TabsContent value="vencimentos">
-                          <SecaoVencimentos
-                            id={id}
-                            form={form}
-                            canEdit={canEdit}
-                            modalEditing={modalEditing}
-                            disabled={disabled}
-                            readOnly={readOnly}
-                          />
-                        </TabsContent>
-
-                        <TabsContent value="rateio">
-                          <SecaoRateio
-                            id={id}
-                            form={form}
-                            disabled={disabled}
-                            canEdit={canEdit}
-                            modalEditing={modalEditing}
-                          />
-                        </TabsContent>
-                      </Tabs>
-                    </div>
-                  ) : (
-                    <Alert variant="destructive">
-                      <AlertTriangle className="h-4 w-4" />
-                      <AlertTitle>
-                        {valorTotalTitulo > 0
-                          ? "Selecione a filial!"
-                          : "Preencha o valor!"}
-                      </AlertTitle>
-                    </Alert>
-                  )}
-
-                  {/* Histórico */}
-                  <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                    <div className="flex gap-2 mb-3">
-                      <History />{" "}
-                      <span className="text-lg font-bold ">Histórico</span>
-                    </div>
-                    <div className="flex flex-col gap-3 overflow-auto max-h-72">
-                      {data?.historico?.map((h, index) => (
-                        <p key={`hist.${h.id}.${index}`} className="text-xs">
-                          {formatarDataHora(h.created_at)}:{" "}
-                          {formatarHistorico(h.descricao)}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Fim da primeira coluna */}
                 </div>
 
-                {/* Segunda coluna */}
-                <div className="max-w-full flex-1 lg:max-w-[300px] flex shrink-0 flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
-                  {/* Anexos */}
-                  <div className="flex gap-2 font-bold mb-3">
-                    <FileIcon /> <span>Anexos</span>
+                {/* Abas Vencimentos / Rateio entre filiais */}
+                {valorTotalTitulo > 0 && !!id_matriz ? (
+                  <div className="max-w-full">
+                    <Tabs defaultValue="vencimentos" className="max-w-full">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="vencimentos">
+                          <div className="flex gap-3">
+                            <span>Vencimentos</span>
+                            {errors.vencimentos?.message && (
+                              <Popover>
+                                <PopoverTrigger>
+                                  <Badge variant={"destructive"}>Atenção</Badge>
+                                </PopoverTrigger>
+                                <PopoverContent className="bg-destructive text-destructive-foreground">
+                                  {errors.vencimentos.message}
+                                </PopoverContent>
+                              </Popover>
+                            )}
+                          </div>
+                        </TabsTrigger>
+                        <TabsTrigger value="rateio">
+                          <div className="flex gap-3">
+                            <span>Rateio da solicitação</span>
+                            {errors.itens_rateio?.message && (
+                              <Popover>
+                                <PopoverTrigger>
+                                  <Badge variant={"destructive"}>Atenção</Badge>
+                                </PopoverTrigger>
+                                <PopoverContent className="bg-destructive text-destructive-foreground">
+                                  {errors.itens_rateio.message}
+                                </PopoverContent>
+                              </Popover>
+                            )}
+                          </div>
+                        </TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="vencimentos">
+                        <SecaoVencimentos
+                          id={id}
+                          form={form}
+                          canEdit={canEdit}
+                          modalEditing={modalEditing}
+                          disabled={disabled}
+                          readOnly={readOnly}
+                        />
+                      </TabsContent>
+
+                      <TabsContent value="rateio">
+                        <SecaoRateio
+                          id={id}
+                          form={form}
+                          disabled={disabled}
+                          canEdit={canEdit}
+                          modalEditing={modalEditing}
+                        />
+                      </TabsContent>
+                    </Tabs>
                   </div>
+                ) : (
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>
+                      {valorTotalTitulo > 0
+                        ? "Selecione a filial!"
+                        : "Preencha o valor!"}
+                    </AlertTitle>
+                  </Alert>
+                )}
 
-                  <FormFileUpload
-                    disabled={disabled}
-                    label="XML Nota fiscal"
-                    name="url_xml"
-                    mediaType="xml"
-                    control={form.control}
-                    onChange={(fileUrl: string) =>
-                      handleChangeFile({ fileUrl, campo: "url_xml" })
-                    }
-                  />
-                  <FormFileUpload
-                    disabled={!podeAnexarNotaFiscal}
-                    canDelete={podeExcluirNotaFiscal}
-                    label="Nota fiscal"
-                    name="url_nota_fiscal"
-                    mediaType="pdf"
-                    control={form.control}
-                    onChange={(fileUrl: string) => {
-                      handleChangeFile({ fileUrl, campo: "url_nota_fiscal" });
-                    }}
-                  />
-                  <FormFileUpload
-                    disabled={disabled}
-                    label="Boleto"
-                    name="url_boleto"
-                    mediaType="pdf"
-                    control={form.control}
-                    onChange={(fileUrl: string) =>
-                      handleChangeFile({ fileUrl, campo: "url_boleto" })
-                    }
-                  />
-                  <FormFileUpload
-                    disabled={disabled}
-                    label="Contrato/Autorização"
-                    name="url_contrato"
-                    mediaType="etc"
-                    control={form.control}
-                    onChange={(fileUrl: string) =>
-                      handleChangeFile({ fileUrl, campo: "url_contrato" })
-                    }
-                  />
-                  <FormFileUpload
-                    disabled={disabled}
-                    label="Planilha"
-                    name="url_planilha"
-                    mediaType="excel"
-                    control={form.control}
-                    onChange={(fileUrl: string) =>
-                      handleChangeFile({ fileUrl, campo: "url_planilha" })
-                    }
-                  />
-                  <FormFileUpload
-                    disabled={disabled}
-                    label="Arquivo remessa"
-                    name="url_txt"
-                    mediaType="txt"
-                    control={form.control}
-                    onChange={(fileUrl: string) =>
-                      handleChangeFile({ fileUrl, campo: "url_txt" })
-                    }
-                  />
+                {/* Histórico */}
+                <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                  <div className="flex gap-2 mb-3">
+                    <History />{" "}
+                    <span className="text-lg font-bold ">Histórico</span>
+                  </div>
+                  <ScrollArea
+                    className={"flex flex-col gap-3 max-h-72 z-[999]"}
+                  >
+                    {data?.historico?.map((h, index) => (
+                      <p key={`hist.${h.id}.${index}`} className="text-xs my-2">
+                        {formatarDataHora(h.created_at)}:{" "}
+                        {formatarHistorico(h.descricao)}
+                      </p>
+                    ))}
+                  </ScrollArea>
                 </div>
-              </div>
-            </ScrollArea>
-          </ScrollArea>
 
-          <div className="max-w-full flex justify-between sm:items-center mt-4 gap-3 sm:gap-0 col-span-2">
-            {isSubmtting ? (
-              <div className="flex gap-3 items-center">
-                <span className="font-lg">Aguarde...</span>{" "}
-                {<FaSpinner className="animate-spin" />}
+                {/* Fim da primeira coluna */}
               </div>
-            ) : (
-              <>
-                <div className="flex flex-wrap gap-3 items-center">
-                  {podeArquivar && (
-                    <ButtonMotivation
-                      title="Arquiva a solictação para sumir da vista."
-                      variant={"secondary"}
-                      size={"lg"}
-                      action={handleClickArquivar}
-                    >
-                      <Archive className="me-2" size={18} />
-                      Arquivar
-                    </ButtonMotivation>
-                  )}
-                  {podeResolicitar && (
-                    <ButtonMotivation
-                      title="Volta o status da solicitação para 'Solicitado', possibilitando a edição..."
-                      variant={"secondary"}
-                      size={"lg"}
-                      action={handleChangeVoltarSolicitado}
-                    >
-                      <Undo2 className="me-2" size={18} />
-                      Re-Solicitar
-                    </ButtonMotivation>
-                  )}
-                  {podeNegar && (
-                    <ButtonMotivation
-                      variant={"destructive"}
-                      size={"lg"}
-                      action={handleChangeNegar}
-                    >
-                      <X className="me-2" size={18} />
-                      Negar
-                    </ButtonMotivation>
-                  )}
-                  {podeAprovar && (
+
+              {/* Segunda coluna */}
+              <div className="max-w-full flex-1 lg:max-w-[300px] flex shrink-0 flex-col gap-3 bg-slate-200 dark:bg-blue-950 p-3 rounded-lg">
+                {/* Anexos */}
+                <div className="flex gap-2 font-bold mb-3">
+                  <FileIcon /> <span>Anexos</span>
+                </div>
+
+                <FormFileUpload
+                  disabled={disabled}
+                  label="XML Nota fiscal"
+                  name="url_xml"
+                  mediaType="xml"
+                  control={form.control}
+                  onChange={(fileUrl: string) =>
+                    handleChangeFile({ fileUrl, campo: "url_xml" })
+                  }
+                />
+                <FormFileUpload
+                  disabled={!podeAnexarNotaFiscal}
+                  canDelete={podeExcluirNotaFiscal}
+                  label="Nota fiscal"
+                  name="url_nota_fiscal"
+                  mediaType="pdf"
+                  control={form.control}
+                  onChange={(fileUrl: string) => {
+                    handleChangeFile({ fileUrl, campo: "url_nota_fiscal" });
+                  }}
+                />
+                <FormFileUpload
+                  disabled={disabled}
+                  label="Boleto"
+                  name="url_boleto"
+                  mediaType="pdf"
+                  control={form.control}
+                  onChange={(fileUrl: string) =>
+                    handleChangeFile({ fileUrl, campo: "url_boleto" })
+                  }
+                />
+                <FormFileUpload
+                  disabled={disabled}
+                  label="Contrato/Autorização"
+                  name="url_contrato"
+                  mediaType="etc"
+                  control={form.control}
+                  onChange={(fileUrl: string) =>
+                    handleChangeFile({ fileUrl, campo: "url_contrato" })
+                  }
+                />
+                <FormFileUpload
+                  disabled={disabled}
+                  label="Planilha"
+                  name="url_planilha"
+                  mediaType="excel"
+                  control={form.control}
+                  onChange={(fileUrl: string) =>
+                    handleChangeFile({ fileUrl, campo: "url_planilha" })
+                  }
+                />
+                <FormFileUpload
+                  disabled={disabled}
+                  label="Arquivo remessa"
+                  name="url_txt"
+                  mediaType="txt"
+                  control={form.control}
+                  onChange={(fileUrl: string) =>
+                    handleChangeFile({ fileUrl, campo: "url_txt" })
+                  }
+                />
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <div className="max-w-full flex justify-between sm:items-center mt-4 gap-3 sm:gap-0 col-span-2">
+          {isSubmtting ? (
+            <div className="flex gap-3 items-center">
+              <span className="font-lg">Aguarde...</span>{" "}
+              {<FaSpinner className="animate-spin" />}
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap gap-3 items-center">
+                {podeArquivar && (
+                  <ButtonMotivation
+                    title="Arquiva a solictação para sumir da vista."
+                    variant={"secondary"}
+                    size={"lg"}
+                    action={handleClickArquivar}
+                  >
+                    <Archive className="me-2" size={18} />
+                    Arquivar
+                  </ButtonMotivation>
+                )}
+                {podeResolicitar && (
+                  <ButtonMotivation
+                    title="Volta o status da solicitação para 'Solicitado', possibilitando a edição..."
+                    variant={"secondary"}
+                    size={"lg"}
+                    action={handleChangeVoltarSolicitado}
+                  >
+                    <Undo2 className="me-2" size={18} />
+                    Re-Solicitar
+                  </ButtonMotivation>
+                )}
+                {podeNegar && (
+                  <ButtonMotivation
+                    variant={"destructive"}
+                    size={"lg"}
+                    action={handleChangeNegar}
+                  >
+                    <X className="me-2" size={18} />
+                    Negar
+                  </ButtonMotivation>
+                )}
+                {podeAprovar && (
+                  <Button
+                    type="button"
+                    variant={"success"}
+                    size={"lg"}
+                    onClick={handleChangeAprovar}
+                  >
+                    <Check className="me-2" size={18} />
+                    Aprovar
+                  </Button>
+                )}
+                {podeCriarRecorrencia && (
+                  <AlertPopUp
+                    title="Deseja realmente criar uma recorrência?"
+                    description="Será criada com data 1 mês após a data do primeiro vencimento da solicitação."
+                    action={handleClickCriarRecorrencia}
+                  >
                     <Button
                       type="button"
-                      variant={"success"}
+                      title="Uma recorrência será criada com data para 1 mês após a data de vencimento desta solicitação."
+                      variant={"secondary"}
                       size={"lg"}
-                      onClick={handleChangeAprovar}
                     >
-                      <Check className="me-2" size={18} />
-                      Aprovar
+                      <Repeat2 className="me-2" size={18} />
+                      Criar Recorrência
                     </Button>
-                  )}
-                  {podeCriarRecorrencia && (
-                    <AlertPopUp
-                      title="Deseja realmente criar uma recorrência?"
-                      description="Será criada com data 1 mês após a data do primeiro vencimento da solicitação."
-                      action={handleClickCriarRecorrencia}
-                    >
-                      <Button
-                        type="button"
-                        title="Uma recorrência será criada com data para 1 mês após a data de vencimento desta solicitação."
-                        variant={"secondary"}
-                        size={"lg"}
-                      >
-                        <Repeat2 className="me-2" size={18} />
-                        Criar Recorrência
-                      </Button>
-                    </AlertPopUp>
-                  )}
-                </div>
+                  </AlertPopUp>
+                )}
+              </div>
 
-                <div className="flex gap-3 flex-wrap items-center">
-                  {canEdit && modalEditing && (
-                    <>
-                      <Button
-                        onClick={() => editModal(false)}
-                        size="lg"
-                        variant={"secondary"}
-                        className={!id ? "hidden" : ""}
-                      >
-                        <Ban className="me-2" size={18} /> Cancelar
-                      </Button>
-                      <Button type="submit" size="lg" variant={"default"}>
-                        <Save className="me-2" size={18} />
-                        {id ? "Salvar" : "Solicitar"}
-                      </Button>
-                    </>
-                  )}
-                  {canEdit && !modalEditing && (
+              <div className="flex gap-3 flex-wrap items-center">
+                {canEdit && modalEditing && (
+                  <>
                     <Button
-                      onClick={() => editModal(true)}
+                      onClick={() => editModal(false)}
                       size="lg"
-                      variant={"warning"}
+                      variant={"secondary"}
+                      className={!id ? "hidden" : ""}
                     >
-                      <Pen size={18} className="me-2" /> Editar
+                      <Ban className="me-2" size={18} /> Cancelar
                     </Button>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        </form>
-      </Form>
-    </div>
+                    <Button type="submit" size="lg" variant={"default"}>
+                      <Save className="me-2" size={18} />
+                      {id ? "Salvar" : "Solicitar"}
+                    </Button>
+                  </>
+                )}
+                {canEdit && !modalEditing && (
+                  <Button
+                    onClick={() => editModal(true)}
+                    size="lg"
+                    variant={"warning"}
+                  >
+                    <Pen size={18} className="me-2" /> Editar
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+        <ModalFiliais
+          open={modalFilialOpen}
+          handleSelection={handleSelectionFilial}
+          onOpenChange={setModalFilialOpen}
+          id_grupo_economico={id_grupo_economico}
+          id_matriz={id_matriz}
+          closeOnSelection
+        />
+      </form>
+    </Form>
   );
 };
 

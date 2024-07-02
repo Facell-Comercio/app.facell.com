@@ -17,7 +17,11 @@ type TableProps = {
   columns: ColumnDef<unknown, any>[];
   className?: string;
 };
-export const DataVirtualTableHeaderFixed = ({ data, columns, className }: TableProps) => {
+export const DataVirtualTableHeaderFixed = ({
+  data,
+  columns,
+  className,
+}: TableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
@@ -50,14 +54,17 @@ export const DataVirtualTableHeaderFixed = ({ data, columns, className }: TableP
 
   return (
     <div className="flex flex-col gap-3 overflow-hidden">
-      <div className="rounded-lg overflow-auto scroll-thin w-full">
+      <div className="rounded-lg overflow-auto z-40 scroll-thin w-full">
         <div
           ref={parentRef}
-          className={cn(`h-[200px] overflow-auto relative min-w-full`, className)}
+          className={cn(
+            `h-[200px] overflow-auto scroll-thin   z-50 relative min-w-full`,
+            className
+          )}
         >
           <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
             <table className="grid text-nowrap text-xs w-full">
-              <thead className="grid sticky top-0 z-10 border bg-slate-300 dark:bg-gray-900">
+              <thead className="grid sticky top-0 z-30 border bg-slate-300 dark:bg-gray-900">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr className="flex w-full" key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {

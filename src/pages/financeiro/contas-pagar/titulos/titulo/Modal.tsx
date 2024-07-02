@@ -132,42 +132,43 @@ const ModalTituloPagar = () => {
 
   return (
     <Dialog open={modalOpen} onOpenChange={closeModal}>
-      <DialogContent className="min-w-[96vw] xl:min-w-1 ">
+      <DialogContent className="min-w-[96vw] xl:min-w-1">
         <DialogHeader>
           <DialogTitle>
             {!!id && !recorrencia ? `Solicitação: ${id}` : "Nova Solicitação"}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="min-h-[80vh] sm:min-h-[70vh] overflow-auto">
-          {modalOpen && !isLoading ? (
-            <FormTituloPagar
-              id={!!id && !recorrencia ? id : ""}
-              data={modalData}
-              // formRef={formRef}
-            />
-          ) : (
-            <ScrollArea>
-              <div className="flex gap-3 w-full h-full">
-                <div className="flex-1 flex flex-col gap-3">
-                  <Skeleton className="h-16" />
-                  <Skeleton className="h-72" />
-                  <Skeleton className="h-72" />
-                  <Skeleton className="h-24" />
-                </div>
-
-                <div className="w-72 flex flex-col gap-3">
-                  <Skeleton className="h-16" />
-                  <Skeleton className="h-16" />
-                  <Skeleton className="h-16" />
-                  <Skeleton className="h-16" />
-                  <Skeleton className="h-16" />
-
-                  <Skeleton className="self-end mt-auto justify-self-end w-44 h-16" />
-                </div>
+        {/* <section className="min-h-[80vh] sm:min-h-[70vh] z-[999] overflow-auto scroll-thin">
+          
+        </section> */}
+        {modalOpen && !isLoading ? (
+          <FormTituloPagar
+            id={!!id && !recorrencia ? id : ""}
+            data={modalData}
+            // formRef={formRef}
+          />
+        ) : (
+          <ScrollArea>
+            <div className="flex gap-3 w-full h-full">
+              <div className="flex-1 flex flex-col gap-3">
+                <Skeleton className="h-16" />
+                <Skeleton className="h-72" />
+                <Skeleton className="h-72" />
+                <Skeleton className="h-24" />
               </div>
-            </ScrollArea>
-          )}
-        </ScrollArea>
+
+              <div className="w-72 flex flex-col gap-3">
+                <Skeleton className="h-16" />
+                <Skeleton className="h-16" />
+                <Skeleton className="h-16" />
+                <Skeleton className="h-16" />
+                <Skeleton className="h-16" />
+
+                <Skeleton className="self-end mt-auto justify-self-end w-44 h-16" />
+              </div>
+            </div>
+          </ScrollArea>
+        )}
         {/* <DialogFooter>
           <ModalButtons
             id={id}
