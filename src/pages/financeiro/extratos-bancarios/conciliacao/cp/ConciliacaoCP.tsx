@@ -178,21 +178,20 @@ const ConciliacaoCP = () => {
   );
 
   const totalTitulos = titulosConciliar.reduce(
-    (acc: number, val: VencimentosConciliarProps) => acc + +val.valor,
+    (acc: number, val: VencimentosConciliarProps) =>
+      acc + parseFloat(val.valor),
     0
   );
   const totalTransacoes = transacoesConciliar.reduce(
-    (acc: number, val: TransacoesConciliarProps) => acc + +val.valor,
+    (acc: number, val: TransacoesConciliarProps) => acc + parseFloat(val.valor),
     0
   );
-  const totalSelectedTitulos = vencimentosSelection.reduce(
-    (acc, val) => acc + +val.valor,
-    0
-  );
-  const totalSelectedTransacoes = transacoesSelection.reduce(
-    (acc, val) => acc + +val.valor,
-    0
-  );
+  const totalSelectedTitulos = vencimentosSelection
+    .reduce((acc, val) => acc + parseFloat(val.valor), 0)
+    .toFixed(2);
+  const totalSelectedTransacoes = transacoesSelection
+    .reduce((acc, val) => acc + parseFloat(val.valor), 0)
+    .toFixed(2);
 
   useEffect(() => {
     if (isSuccess && resultadoConciliacaoAutomatica) {
@@ -218,6 +217,7 @@ const ConciliacaoCP = () => {
     }
   }, [isSuccess]);
   const searchRef = useRef<HTMLInputElement | null>(null);
+  console.log(totalSelectedTitulos, totalSelectedTransacoes);
 
   const [itemOpen, setItemOpen] = useState<string>("nao-conciliado");
   return (
@@ -376,7 +376,7 @@ const ConciliacaoCP = () => {
             </ItemCP>
 
             <ItemCP title="Conciliado" value="conciliado">
-              <section className="grid grid-cols-2 max-w-full gap-2 grid-nowrap">
+              <section className="grid grid-cols-2 w-full gap-2 grid-nowrap">
                 <Card className="h-full grid-nowrap overflow-y border-0 bg-secondary">
                   <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
                     <CardTitle className="text-md">Vencimentos</CardTitle>
@@ -405,7 +405,7 @@ const ConciliacaoCP = () => {
                       name="transacaoConciliada"
                     />
                   </CardHeader>
-                  <CardContent className="px-0 py-0 overflow-auto">
+                  <CardContent className="px-0 py-0">
                     <TransacoesConciliadas
                       data={filteredTransacoesConciliadas}
                       isLoading={isLoading}

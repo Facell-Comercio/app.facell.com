@@ -9,7 +9,6 @@ import {
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { checkUserPermission } from "@/helpers/checkAuthorization";
 import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
@@ -106,7 +105,7 @@ const ModalConciliarCP = () => {
             {id ? `Conciliação: ${id}` : "Nova Conciliação"}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[75vh] max-w-full">
+        <section className="max-h-[75vh] max-w-full overflow-auto scroll-thin z-50">
           {modalOpen && !isLoading ? (
             <FormConciliacaoCP id={id} data={newData} formRef={formRef} />
           ) : (
@@ -115,7 +114,7 @@ const ModalConciliarCP = () => {
               <Skeleton className="w-full row-span-3" />
             </div>
           )}
-        </ScrollArea>
+        </section>
         <DialogFooter>
           {id ? (
             <AlertPopUp

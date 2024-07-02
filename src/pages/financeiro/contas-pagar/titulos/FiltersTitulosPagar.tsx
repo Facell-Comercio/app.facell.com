@@ -28,11 +28,14 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
 
   const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    console.log(filters);
+
     refetch();
   };
   const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     await new Promise((resolve) => resolve(resetFilters()));
+
     refetch();
   };
 
@@ -136,11 +139,12 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
 
               <Input
                 className="max-w-[200px]"
-                value={filters.descricao}
-                onChange={(e) => setFilters({ descricao: e.target.value })}
-                placeholder="Descrição..."
+                value={filters?.filial}
+                onChange={(e) => {
+                  setFilters({ filial: e.target.value });
+                }}
+                placeholder="Nome Filial..."
               />
-
               <Input
                 className="max-w-[200px]"
                 value={filters?.nome_fornecedor}
@@ -148,6 +152,12 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                   setFilters({ nome_fornecedor: e.target.value })
                 }
                 placeholder="Nome Fornecedor..."
+              />
+              <Input
+                className="max-w-[200px]"
+                value={filters.descricao}
+                onChange={(e) => setFilters({ descricao: e.target.value })}
+                placeholder="Descrição..."
               />
 
               <Input
