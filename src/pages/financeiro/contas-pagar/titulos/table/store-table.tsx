@@ -19,6 +19,7 @@ export interface Filters {
   descricao?: string;
   nome_user?: string;
   nome_fornecedor?: string;
+  filial?: string;
 }
 
 const initialFilters: Filters = {
@@ -29,8 +30,9 @@ const initialFilters: Filters = {
   tipo_data: "data_vencimento",
   range_data: { from: undefined, to: undefined },
   descricao: "",
-  nome_user: undefined,
-  nome_fornecedor: undefined,
+  nome_user: "",
+  nome_fornecedor: "",
+  filial: "",
 };
 
 export interface State {

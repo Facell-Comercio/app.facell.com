@@ -129,13 +129,10 @@ const FormBordero = ({
         (vencimento: VencimentosProps) => vencimento.updated
       ),
     };
-    if (!id) insertOne(newData);
+    !id && insertOne(newData);
     // console.log(filteredData);
 
-    if (id) update(filteredData);
-
-    editModal(false);
-    closeModal();
+    id && update(filteredData);
   }
 
   useEffect(() => {
@@ -335,7 +332,9 @@ const FormBordero = ({
                     value={form.watch("conta_bancaria")?.toUpperCase()}
                     className="flex-1 max-h-10 mt-2"
                     readOnly
-                    disabled={!modalEditing || isPending}
+                    disabled={
+                      !modalEditing || isPending || wVencimentosPago.length > 0
+                    }
                     onClick={() => setModalContaBancariaOpen(true)}
                     placeholder="Selecione a conta bancária"
                   />
@@ -354,12 +353,16 @@ const FormBordero = ({
                     value={form.watch("banco")?.toUpperCase()}
                     className="flex-1 max-h-10 mt-2"
                     readOnly
-                    disabled={!modalEditing || isPending}
+                    disabled={
+                      !modalEditing || isPending || wVencimentosPago.length > 0
+                    }
                     placeholder="Defina a conta bancária"
                   />
                 </div>
                 <FormDateInput
-                  disabled={!modalEditing || isPending}
+                  disabled={
+                    !modalEditing || isPending || wVencimentosPago.length > 0
+                  }
                   name="data_pagamento"
                   label="Data de Pagamento"
                   control={form.control}

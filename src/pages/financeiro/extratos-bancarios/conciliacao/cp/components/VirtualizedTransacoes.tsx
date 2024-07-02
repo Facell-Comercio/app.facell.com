@@ -26,9 +26,9 @@ const VirtualizedTransacoes: React.FC<VirtualizerTransacoesProps> = ({
   return (
     <section
       ref={parentElement}
-      className="h-[45vh] w-full overflow-auto scroll-thin"
+      className="h-[45vh] w-full overflow-auto scroll-thin z-50"
     >
-      <div className="flex gap-1 font-medium text-xs px-1 w-full sticky top-0 z-10 bg-background">
+      <div className="flex gap-1 font-medium text-xs px-1 w-full sticky top-0 z-50 bg-background">
         <p className="min-w-16 text-center bg-background">ID</p>
         <p className="min-w-28 text-center bg-background">Transação</p>
         <p className="min-w-28 pl-2 bg-background">Valor</p>
