@@ -89,10 +89,19 @@ const ConciliacaoCP = () => {
     isSuccess,
     data: resultadoConciliacaoAutomatica,
   } = useConciliacaoCP().conciliacaoAutomatica();
+
+  const {
+    mutate: conciliacaoTarifas,
+    isPending: isPendingTarifas,
+    isSuccess: isSuccessTarifas,
+    data: resultadoConciliacaoTarifas,
+  } = useConciliacaoCP().conciliacaoTarifas();
+
   const titulosConciliar = data?.data?.titulosConciliar || [];
   const transacoesConciliar = data?.data?.transacoesConciliar || [];
   const titulosConciliados = data?.data?.titulosConciliados || [];
   const transacoesConciliadas = data?.data?.transacoesConciliadas || [];
+  const bancoComFornecedor = data?.data?.bancoComFornecedor || false;
 
   const [searchFilters, setSearchFilters] = useState({
     tituloConciliar: "",
@@ -216,8 +225,33 @@ const ConciliacaoCP = () => {
       });
     }
   }, [isSuccess]);
+
+  //^ Verificar a necessidade da devolução dessa planilha
+  useEffect(() => {
+    if (isSuccessTarifas && resultadoConciliacaoTarifas) {
+      toast({
+        title: "Sucesso",
+        description: "Lançamento de tarifas realizado",
+        action: (
+          <ToastAction
+            altText="Ver Resultados"
+            onClick={() =>
+              exportToExcel(
+                resultadoConciliacaoTarifas,
+                `RESULTADO LANÇAMENTO DAS TARIFAS`
+              )
+            }
+          >
+            Ver Resultados
+          </ToastAction>
+        ),
+        duration: 3500,
+        variant: "success",
+      });
+    }
+  }, [isSuccessTarifas]);
+
   const searchRef = useRef<HTMLInputElement | null>(null);
-  console.log(totalSelectedTitulos, totalSelectedTransacoes);
 
   const [itemOpen, setItemOpen] = useState<string>("nao-conciliado");
   return (
@@ -298,6 +332,48 @@ const ConciliacaoCP = () => {
                     </Button>
                   )}
                 </AlertPopUp>
+                <span
+                  title={
+                    !bancoComFornecedor
+                      ? "Defina o fornecedor deste banco em cadastro de bancos para poder lançar as tarifas"
+                      : transacoesSelection.length > 0
+                      ? ""
+                      : "Selecione no mínimo 1 tarifa"
+                  }
+                >
+                  <AlertPopUp
+                    title={"Deseja realmente realizar essa operação?"}
+                    description="As tarifas serão lançadas e a concilição realizada automaticamente"
+                    action={() => {
+                      // Talvez verificar a existência de um "TAR" na descrição
+                      conciliacaoTarifas({
+                        tarifas: transacoesSelection,
+                        id_conta_bancaria: filters.id_conta_bancaria,
+                        data_transacao: transacoesSelection[0].data_transacao,
+                      });
+                    }}
+                  >
+                    {isPendingTarifas ? (
+                      <Button disabled variant={"outline"}>
+                        <span className="flex gap-2 w-full items-center justify-center">
+                          <FaSpinner size={18} className="me-2 animate-spin" />{" "}
+                          Lançando...
+                        </span>
+                      </Button>
+                    ) : (
+                      <Button
+                        disabled={
+                          !bancoComFornecedor ||
+                          transacoesSelection.length === 0
+                        }
+                        type={"button"}
+                        variant={"outline"}
+                      >
+                        Lançar Tarifas
+                      </Button>
+                    )}
+                  </AlertPopUp>
+                </span>
               </div>
               <section className="grid grid-cols-2 max-w-full gap-2 grid-nowrap">
                 <Card className="grid-nowrap overflow-y border-0 bg-secondary">
