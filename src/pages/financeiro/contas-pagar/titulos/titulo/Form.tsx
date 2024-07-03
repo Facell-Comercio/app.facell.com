@@ -136,7 +136,7 @@ const FormTituloPagar = ({
   const canEdit =
     !id ||
     status === "Solicitado" ||
-    (isMaster && id_status > 0 && id_status <= 2);
+    (isMaster && id_status > 0 && id_status <= 3);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
@@ -382,6 +382,14 @@ const FormTituloPagar = ({
         method="POST"
         className="max-w-screen-xl w-full grid grid-cols-1 lg:grid-rows-[1fr_auto] lg:grid-cols-[1fr_auto] z-[100]"
       >
+        <ModalFiliais
+          open={modalFilialOpen}
+          handleSelection={handleSelectionFilial}
+          onOpenChange={setModalFilialOpen}
+          id_grupo_economico={id_grupo_economico}
+          id_matriz={id_matriz}
+          closeOnSelection
+        />
         <section className="overflow-auto scroll-thin z-[100] flex flex-col max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
           {titulo?.status && (
             <div className="py-2">
@@ -905,14 +913,6 @@ const FormTituloPagar = ({
             </>
           )}
         </div>
-        <ModalFiliais
-          open={modalFilialOpen}
-          handleSelection={handleSelectionFilial}
-          onOpenChange={setModalFilialOpen}
-          id_grupo_economico={id_grupo_economico}
-          id_matriz={id_matriz}
-          closeOnSelection
-        />
       </form>
     </Form>
   );
