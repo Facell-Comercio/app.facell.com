@@ -65,9 +65,11 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     header: "Status",
     accessorKey: "status",
     cell: (info) => {
+      const id_titulo = info.row.original.id;
+
       const status = info.getValue<string>();
       const color = generateStatusColor({ status: status, text: true });
-      return <span className={`${color}`}>{status}</span>;
+      return <span onClick={()=>openModal(id_titulo)} className={`${color} cursor-pointer`}>{status}</span>;
     },
   },
   {
