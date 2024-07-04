@@ -3,6 +3,7 @@ import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
 import { AlteracaoLoteSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/alteracao-lote/Modal";
 import { ExportAnexosProps } from "@/pages/financeiro/contas-pagar/titulos/components/ButtonExportarTitulos";
+import { LancamentoLoteProps } from "@/pages/financeiro/contas-pagar/titulos/components/ButtonImportTitulos";
 import { EditRecorrenciaProps } from "@/pages/financeiro/contas-pagar/titulos/recorrencias/ModalEditarRecorrencia";
 import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/titulo/form-data";
 import {
@@ -196,6 +197,34 @@ export const useTituloPagar = () => {
       },
     });
 
+  const lancamentoLote = () =>
+    useMutation({
+      mutationFn: async (data: LancamentoLoteProps[]) => {
+        return api
+          .post("/financeiro/contas-a-pagar/titulo/solicitacao-lote", data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
+        queryClient.invalidateQueries({
+          queryKey: ["fin_cp_titulos_pendencias"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["fin_cp_vencimentos_pagar"],
+        });
+      },
+      onError(error) {
+        // @ts-expect-error "Vai funcionar"
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
   const changeTitulos = () =>
     useMutation({
       mutationFn: async ({ ...rest }: AlteracaoLoteSchemaProps) => {
@@ -302,6 +331,7 @@ export const useTituloPagar = () => {
     getPendencias,
     insertOne,
     update,
+    lancamentoLote,
     deleteRecorrencia,
     changeTitulos,
     changeRecorrencia,
