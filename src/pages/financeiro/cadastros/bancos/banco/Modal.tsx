@@ -19,12 +19,15 @@ export type BancoSchema = {
   id: string;
   codigo: string;
   nome: string;
+  id_fornecedor?: string;
+  nome_fornecedor?: string;
 };
 
 const initialPropsBanco: BancoSchema = {
   id: "",
   codigo: "",
   nome: "",
+  id_fornecedor: "",
 };
 
 const ModalBanco = () => {

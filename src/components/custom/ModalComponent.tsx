@@ -132,7 +132,7 @@ export const ModalComponent = ({
       <section
         ref={scrollAreaRef}
         className={
-          "h-[60vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin z-50"
+          "max-h-[55vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin z-50"
         }
       >
         {children}
