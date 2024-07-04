@@ -65,9 +65,11 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     header: "Status",
     accessorKey: "status",
     cell: (info) => {
+      const id_titulo = info.row.original.id;
+
       const status = info.getValue<string>();
       const color = generateStatusColor({ status: status, text: true });
-      return <span className={`${color}`}>{status}</span>;
+      return <span onClick={()=>openModal(id_titulo)} className={`${color} cursor-pointer`}>{status}</span>;
     },
   },
   {
@@ -86,18 +88,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
       });
     },
   },
-  {
-    header: "Filial",
-    accessorKey: "filial",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <div title={label} className="block truncate max-w-96 uppercase">
-          {label}
-        </div>
-      );
-    },
-  },
+ 
   {
     header: "Fornecedor",
     accessorKey: "fornecedor",
@@ -110,10 +101,9 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
       );
     },
   },
-
   {
-    id: "descricao",
-    accessorKey: "descricao",
+    header: "DOCUMENTO",
+    accessorKey: "num_doc",
     cell: (info) => {
       const label = info.getValue<string>();
       return (
@@ -122,7 +112,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
         </div>
       );
     },
-    header: "Descrição",
+    
   },
   {
     header: "Valor",
@@ -138,6 +128,32 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
       </span>
     ),
   },
+  {
+    id: "descricao",
+    accessorKey: "descricao",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
+    header: "Descrição",
+  },
+  {
+    header: "Filial",
+    accessorKey: "filial",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
+  },
+  
   {
     header: "Solicitante",
     accessorKey: "solicitante",

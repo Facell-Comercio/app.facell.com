@@ -20,6 +20,7 @@ export interface Filters {
   nome_user?: string;
   nome_fornecedor?: string;
   filial?: string;
+  num_doc?:string;
 }
 
 const initialFilters: Filters = {
@@ -33,6 +34,7 @@ const initialFilters: Filters = {
   nome_user: "",
   nome_fornecedor: "",
   filial: "",
+  num_doc:'',
 };
 
 export interface State {
