@@ -86,18 +86,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
       });
     },
   },
-  {
-    header: "Filial",
-    accessorKey: "filial",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <div title={label} className="block truncate max-w-96 uppercase">
-          {label}
-        </div>
-      );
-    },
-  },
+ 
   {
     header: "Fornecedor",
     accessorKey: "fornecedor",
@@ -124,19 +113,6 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     
   },
   {
-    id: "descricao",
-    accessorKey: "descricao",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <div title={label} className="block truncate max-w-96 uppercase">
-          {label}
-        </div>
-      );
-    },
-    header: "Descrição",
-  },
-  {
     header: "Valor",
     accessorKey: "valor",
     cell: (info) => (
@@ -150,6 +126,32 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
       </span>
     ),
   },
+  {
+    id: "descricao",
+    accessorKey: "descricao",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
+    header: "Descrição",
+  },
+  {
+    header: "Filial",
+    accessorKey: "filial",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
+  },
+  
   {
     header: "Solicitante",
     accessorKey: "solicitante",
