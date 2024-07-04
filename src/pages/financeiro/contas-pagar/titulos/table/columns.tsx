@@ -110,7 +110,19 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
       );
     },
   },
-
+  {
+    header: "DOCUMENTO",
+    accessorKey: "num_doc",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
+    
+  },
   {
     id: "descricao",
     accessorKey: "descricao",
