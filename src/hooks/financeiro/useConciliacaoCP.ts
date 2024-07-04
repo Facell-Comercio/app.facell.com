@@ -18,6 +18,12 @@ interface ConciliacaoAutomaticaProps {
   id_conta_bancaria?: string;
 }
 
+interface ConciliacaoTarifasProps {
+  tarifas: TransacoesConciliarProps[];
+  id_conta_bancaria?: string;
+  data_transacao?: string;
+}
+
 export const useConciliacaoCP = () => {
   const queryClient = useQueryClient();
   return {
@@ -100,6 +106,49 @@ export const useConciliacaoCP = () => {
         mutationFn: async (data: ConciliacaoAutomaticaProps) => {
           return api
             .post("/financeiro/conciliacao-cp/automatica", data)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ["fin_conciliacao_cp"] });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_conciliacoes_realizadas_cp"],
+          });
+
+          //* Invalidação nos locais onde há títulos e vencimentos
+          queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagar"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_bordero"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["fin_cp_vencimentos_pagos"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Conciliação automática feita com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error: AxiosError) {
+          // @ts-expect-error "Vai funcionar"
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    conciliacaoTarifas: () =>
+      useMutation({
+        mutationFn: async (data: ConciliacaoTarifasProps) => {
+          return api
+            .post("/financeiro/conciliacao-cp/tarifas", data)
             .then((response) => response.data);
         },
         onSuccess() {
