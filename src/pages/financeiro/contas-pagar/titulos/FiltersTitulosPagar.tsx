@@ -76,6 +76,14 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 }}
                 min={0}
               />
+              <Input
+                placeholder="DOC"
+                className="w-[80px]"
+                value={filters?.num_doc}
+                onChange={(e) => {
+                  setFilters({ num_doc: e.target.value });
+                }}
+              />
 
               <SelectGrupoEconomico
                 showAll={true}
