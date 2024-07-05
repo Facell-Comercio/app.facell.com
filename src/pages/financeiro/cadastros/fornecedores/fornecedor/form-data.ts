@@ -27,7 +27,7 @@ const schemaFornecedor = z
     nome: z
       .string()
       .refine((v) => v.trim() !== "", { message: "Nome inválido" }),
-    telefone: z.string().min(10, "Campo Obrigatório"),
+    telefone: z.string().optional(),
     razao: z.string().optional(),
     cep: z
       .string()
@@ -90,8 +90,19 @@ const schemaFornecedor = z
   // ^ Validação dados obrigatórios CNPJ
   .refine((data)=> data.cnpj.length > 11 && !data.razao ? false : true
   , {path: ['razao'], message: 'Obrigatório'})
-  .refine((data)=> data.cnpj.length > 11 && !data.email ? false : true
-  , {path: ['email'], message: 'Obrigatório'})
+  .refine((data)=> {
+      if(data.cnpj.length > 11){
+        try {
+          z.string().email().parse(data.email)
+        } catch (error) {
+          return false
+        }
+      }
+      return true
+  }
+  , {path: ['email'], message: 'Digite um email válido!'})
+  .refine((data)=> data.cnpj.length > 11 && (!data.telefone || data.telefone.length < 10) ? false : true
+  , {path: ['telefone'], message: 'No mínimo 10 caracteres'})
   .refine((data)=> data.cnpj.length > 11 && !data.numero ? false : true
   , {path: ['numero'], message: 'Obrigatório'})
   .refine((data)=> data.cnpj.length > 11 && !data.logradouro ? false : true
