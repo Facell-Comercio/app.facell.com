@@ -66,9 +66,13 @@ const FormFornecedor = ({
 
   async function axiosGetCnpjData() {
     try {
+      if(!cnpj || cnpj?.length < 14){
+        return ;
+      }
       const { data: cnpjData } = await api.get(
         `/financeiro/fornecedores/consulta-cnpj/${cnpj}`
       );
+      
       form.setValue("nome", cnpjData.fantasia);
       form.setValue("telefone", cnpjData.telefone);
 
@@ -228,7 +232,7 @@ const FormFornecedor = ({
                     className="flex-1 min-w-[40ch] shrink-0"
                     name="nome"
                     readOnly={!modalEditing || isPending}
-                    label="Nome fantasia"
+                    label="Nome/Nome fantasia"
                     control={form.control}
                   />
                   <FormInput
@@ -270,6 +274,13 @@ const FormFornecedor = ({
                     control={form.control}
                   />
                   <FormInput
+                    className="flex-1 min-w-[40ch]"
+                    name="logradouro"
+                    readOnly={!modalEditing || isPending}
+                    label="Logradouro"
+                    control={form.control}
+                  />
+                  <FormInput
                     className="flex-1 min-w-[25ch]"
                     name="bairro"
                     readOnly={!modalEditing || isPending}
@@ -284,7 +295,7 @@ const FormFornecedor = ({
                     control={form.control}
                   />
                   <FormInput
-                    className="flex-1 min-w-[5ch]"
+                    className="flex-1 max-w-[8ch]"
                     name="uf"
                     readOnly={!modalEditing || isPending}
                     label="UF"
