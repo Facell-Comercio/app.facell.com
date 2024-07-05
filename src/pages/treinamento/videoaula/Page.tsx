@@ -31,6 +31,12 @@ export const VideoAulaPage = () => {
                     title: 'Nova solicitação',
                     url: 'https://youtu.be/Bt39e0dGwpc'
                 },
+                {
+                    id: 2,
+                    title: 'Conciliação de Tarifas',
+                    url: 'https://youtu.be/WTywDyRbaAo'
+                },
+                
             ]
         },
     ]
