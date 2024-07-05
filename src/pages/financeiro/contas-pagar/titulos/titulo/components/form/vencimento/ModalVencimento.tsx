@@ -71,9 +71,6 @@ export function ModalVencimento({
 
   // const { formState: { errors } } = form;
 
-  const data_vencimento = form.watch("data_vencimento");
-  // Exemplo de testes
-
   //* Ao abrir o modal, caso não tenha um valor predefinido, irá setar como valor o que falta para completar o valor do título
   useEffect(() => {
     modalOpen &&
@@ -81,12 +78,12 @@ export function ModalVencimento({
       form.setValue("valor", `${valorTotalTitulo - valorTotalVencimentos}`);
   }, [modalOpen]);
 
-  useEffect(() => {
+  const handleChangeVencimento = (val:Date)=>{
     form.setValue(
       "data_prevista",
-      String(calcularDataPrevisaoPagamento(data_vencimento))
+      String(calcularDataPrevisaoPagamento(val))
     );
-  }, [data_vencimento]);
+  }
   const isUpdate = !!vencimento.id;
 
   const onSubmit = (data: z.infer<typeof vencimentoSchema>) => {
@@ -170,6 +167,7 @@ export function ModalVencimento({
                   label="Vencimento"
                   min={!isMaster ? subDays(new Date(),1) : undefined}
                   control={form.control}
+                  onChange={(val)=>handleChangeVencimento(val)}
                 />
                 <FormDateInput
                   name="data_prevista"
