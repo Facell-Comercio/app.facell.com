@@ -109,6 +109,7 @@ const ButtonImportTitulos = () => {
       <Button
         className="text-sm border border-violet-400 dark:border-violet-800"
         variant={"outline"}
+        disabled={isPending}
       >
         {!isPending ? (
           <>
