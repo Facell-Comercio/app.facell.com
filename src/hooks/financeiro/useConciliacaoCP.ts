@@ -168,12 +168,6 @@ export const useConciliacaoCP = () => {
           queryClient.invalidateQueries({
             queryKey: ["fin_cp_vencimentos_pagos"],
           });
-          //   toast({
-          //     variant: "success",
-          //     title: "Sucesso",
-          //     description: "Conciliação automática feita com sucesso",
-          //     duration: 3500,
-          //   });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"

@@ -78,7 +78,7 @@ export function calcularDataPrevisaoPagamento(data_venc: Date | string) {
 }
 
 export const checkIsTransferenciaBancaria = (id_forma_pagamento: string) => {
-  const formasPagamentoQueExigemAgenciaConta = ["4", 4, "5", 5];
+  const formasPagamentoQueExigemAgenciaConta = ["5", 5];
   return formasPagamentoQueExigemAgenciaConta.includes(id_forma_pagamento);
 };
 

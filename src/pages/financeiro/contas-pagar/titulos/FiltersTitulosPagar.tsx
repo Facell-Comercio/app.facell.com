@@ -28,7 +28,7 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
 
   const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    console.log(filters);
+    // console.log(filters);
 
     refetch();
   };

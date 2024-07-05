@@ -11,6 +11,7 @@ import Filters from "./FiltersTitulosPagar";
 import ModalAlteracoesLote from "./alteracao-lote/Modal";
 import ButtonEditTitulos from "./components/ButtonEditTitulos";
 import ButtonExportTitulos from "./components/ButtonExportarTitulos";
+import ButtonImportTitulos from "./components/ButtonImportTitulos";
 import ButtonNovoTitulo from "./components/ButtonNovoTitulo";
 import ButtonRecorrencias from "./components/ButtonRecorrencias";
 import ModalExportDatasys from "./export-datasys/Modal";
@@ -50,11 +51,9 @@ const TitulosPagar = () => {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap justify-end gap-3 ">
         {isMaster && <ButtonEditTitulos />}
-
         <ButtonExportTitulos />
-
+        <ButtonImportTitulos />
         <ButtonRecorrencias />
-
         <ButtonNovoTitulo />
       </div>
       <Filters refetch={refetchTitulos} />

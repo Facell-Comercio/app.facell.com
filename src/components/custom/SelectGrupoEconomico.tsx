@@ -12,6 +12,7 @@ type TSelectGrupoEconomico = {
   onChange: (id_grupo_economico?: string) => void;
   showAll?: boolean;
   className?: string;
+  disabled: boolean;
 };
 
 type GrupoEconomico = {
@@ -26,12 +27,13 @@ const SelectGrupoEconomico = ({
   onChange,
   showAll,
   className,
+  disabled,
 }: TSelectGrupoEconomico) => {
   const { data } = useGrupoEconomico().getAll();
   const gruposEconomicos = data?.data?.rows || [];
 
   return (
-    <Select value={value} onValueChange={onChange}>
+    <Select value={value} onValueChange={onChange} disabled={disabled}>
       {/* Estilização sendo usada no cadastro de orçamentos */}
       <SelectTrigger className={`w-[180px] ${className}`}>
         <SelectValue placeholder="Selecione o grupo" />

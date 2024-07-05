@@ -1,6 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
-import { CentroCustosSchema } from "@/pages/financeiro/cadastros/centro-de-custos/centro-custo/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import {
   keepPreviousData,
@@ -9,42 +8,47 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-export const useCentroCustos = () => {
+export type TarifaProps = {
+  id?: string;
+  id_grupo_economico: string;
+  id_centro_custo: string;
+  id_plano_contas: string;
+  grupo_economico?: string;
+  centro_custo?: string;
+  plano_contas?: string;
+  descricao: string;
+};
+
+export const useTarifas = () => {
   const queryClient = useQueryClient();
+
   return {
-    getAll: ({ pagination, filters }: GetAllParams) =>
+    getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: [
-          "fin_centro_custos",
-          pagination,
-          filters.id_grupo_economico,
-          filters.id_matriz,
-        ],
+        queryKey: ["fin_tarifas", params],
         queryFn: async () =>
-          await api.get(`/financeiro/centro-custos`, {
-            params: { pagination, filters },
-          }),
+          await api.get(`/financeiro/tarifas`, { params: params }),
         placeholderData: keepPreviousData,
       }),
 
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_centro_custos", id],
+        queryKey: ["fin_tarifas", id],
         queryFn: async () => {
-          return await api.get(`/financeiro/centro-custos/${id}`);
+          return await api.get(`/financeiro/tarifas/${id}`);
         },
       }),
 
     insertOne: () =>
       useMutation({
-        mutationFn: async (data: CentroCustosSchema) => {
+        mutationFn: async (data: TarifaProps) => {
           return api
-            .post("financeiro/centro-custos", data)
+            .post("/financeiro/tarifas", data)
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_centro_custos"] });
+          queryClient.invalidateQueries({ queryKey: ["fin_tarifas"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -66,17 +70,45 @@ export const useCentroCustos = () => {
 
     update: () =>
       useMutation({
-        mutationFn: async ({ id, ...rest }: CentroCustosSchema) => {
+        mutationFn: async ({ id, ...rest }: TarifaProps) => {
           return await api
-            .put("financeiro/centro-custos/", { id, ...rest })
+            .put("/financeiro/tarifas/", { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_centro_custos"] });
+          queryClient.invalidateQueries({ queryKey: ["fin_tarifas"] });
           toast({
             variant: "success",
             title: "Sucesso",
             description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error "Vai funcionar"
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    deleteOne: () =>
+      useMutation({
+        mutationFn: async (id: string | null | undefined) => {
+          return await api
+            .delete(`/financeiro/tarifas/${id}`)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ["fin_tarifas"] });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Tarifa deletada com sucesso",
             duration: 3500,
           });
         },
