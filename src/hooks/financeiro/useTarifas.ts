@@ -34,7 +34,7 @@ export const useTarifas = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_tarifas", id],
+        queryKey: [`fin_tarifas: ${id}`, id],
         queryFn: async () => {
           return await api.get(`/financeiro/tarifas/${id}`);
         },

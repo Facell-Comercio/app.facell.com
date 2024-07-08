@@ -18,7 +18,7 @@ export const ItemPainel = ({
   fn?: () => void;
 }) => {
   return (
-    <Card className={`flex-grow-1 xl:last:odd:col-span-2 ${!qtde && "hidden"}`}>
+    <Card className={`flex-grow-1 xl:last:odd:col-span-2`}>
       <CardHeader className="px-3 py-1.5">
         <CardTitle className="text-lg flex items-center justify-between">
           <span className="flex gap-4">
