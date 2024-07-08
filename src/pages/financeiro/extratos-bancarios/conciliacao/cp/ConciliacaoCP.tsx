@@ -48,6 +48,7 @@ const ConciliacaoCP = () => {
     handlerowVencimentosSelection,
     rowTransacoesSelection,
     handleRowTransacoesSelection,
+    resetSelectionTransacoes,
     vencimentosSelection,
     transacoesSelection,
     setDataPagamento,
@@ -61,6 +62,7 @@ const ConciliacaoCP = () => {
     state.handlerowVencimentosSelection,
     state.rowTransacoesSelection,
     state.handleRowTransacoesSelection,
+    state.resetSelectionTransacoes,
     state.vencimentosSelection,
     state.transacoesSelection,
     state.setDataPagamento,
@@ -229,6 +231,27 @@ const ConciliacaoCP = () => {
   //^ Verificar a necessidade da devolução dessa planilha
   useEffect(() => {
     if (isSuccessTarifas && resultadoConciliacaoTarifas) {
+      const retorno = resultadoConciliacaoTarifas.map((result: any) => ({
+        "ID TÍTULO": result.id_titulo,
+        FORNECEDOR: result.fornecedor,
+        FILIAL: result.filial,
+        "DATA PAGAMENTO": result.data_pagamento,
+        "VALOR PAGO": result.valor_pago,
+        "ID TRANSAÇÃO": result.id_transacao,
+        DESCRIÇÃO: result.descricao,
+        DOC: result.doc,
+        CONCILIADO: result.conciliado ? "SIM" : "NÃO",
+        ERROR: result.error,
+      }));
+
+      const tarifasNaoConciliadas = resultadoConciliacaoTarifas
+        .filter((tConciliada: any) => !tConciliada.conciliado)
+        .map((tConciliada: any) => tConciliada.id_transacao);
+
+      const filteredTarifas = transacoesSelection.filter((transacao) => {
+        return tarifasNaoConciliadas.includes(transacao.id_transacao);
+      });
+
       toast({
         title: "Sucesso",
         description: "Lançamento de tarifas realizado",
@@ -236,10 +259,7 @@ const ConciliacaoCP = () => {
           <ToastAction
             altText="Ver Resultados"
             onClick={() =>
-              exportToExcel(
-                resultadoConciliacaoTarifas,
-                `RESULTADO LANÇAMENTO DAS TARIFAS`
-              )
+              exportToExcel(retorno, `RESULTADO LANÇAMENTO DAS TARIFAS`)
             }
           >
             Ver Resultados
@@ -248,6 +268,8 @@ const ConciliacaoCP = () => {
         duration: 3500,
         variant: "success",
       });
+
+      resetSelectionTransacoes(filteredTarifas);
     }
   }, [isSuccessTarifas]);
 

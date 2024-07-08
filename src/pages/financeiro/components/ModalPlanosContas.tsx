@@ -19,6 +19,7 @@ interface IModalPlanosContas {
   open: boolean;
   handleSelection: (item: ItemPlanoContas) => void;
   onOpenChange: () => void;
+  closeOnSelection?: boolean;
   id_matriz?: string | null;
   id_grupo_economico?: string | null;
   tipo?: "Despesa" | "Receita";
@@ -40,6 +41,7 @@ const ModalPlanosContas = ({
   open,
   handleSelection,
   onOpenChange,
+  closeOnSelection,
   id_matriz,
   id_grupo_economico,
   tipo,
@@ -51,7 +53,7 @@ const ModalPlanosContas = ({
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["plano_contas", id_matriz],
+    queryKey: ["plano_contas", id_matriz, id_matriz, id_grupo_economico],
     queryFn: async () =>
       await api.get("financeiro/plano-contas", {
         params: {
@@ -117,6 +119,7 @@ const ModalPlanosContas = ({
                   variant={"outline"}
                   onClick={() => {
                     pushSelection(item);
+                    closeOnSelection && onOpenChange();
                   }}
                 >
                   Selecionar

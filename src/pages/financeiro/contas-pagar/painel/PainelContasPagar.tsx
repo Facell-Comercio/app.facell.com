@@ -56,41 +56,54 @@ export const PainelContasPagar = () => {
 
   return rowCountSemNota || rowCountNegadas || rowCountRecorrencias ? (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 ">
-      <ItemPainel title="Solicitações Negadas" qtde={rowCountNegadas}>
-        <DataTable
-          pagination={paginationNegadas}
-          setPagination={setPaginationNegadas}
-          data={rowsNegadas}
-          rowCount={rowCountNegadas}
-          columns={columnsTableNegadas}
-          isLoading={isLoadingNegadas}
-        />
-      </ItemPainel>
-      <ItemPainel title="Notas Fiscais Pendentes" qtde={rowCountSemNota}>
-        <DataTable
-          pagination={paginationSemNota}
-          setPagination={setPaginationSemNota}
-          data={rowsSemNota}
-          rowCount={rowCountSemNota}
-          columns={columnsTableSemNota}
-          isLoading={isLoadingSemNota}
-        />
-      </ItemPainel>
+      {rowCountNegadas ? (
+        <ItemPainel title="Solicitações Negadas" qtde={rowCountNegadas}>
+          <DataTable
+            pagination={paginationNegadas}
+            setPagination={setPaginationNegadas}
+            data={rowsNegadas}
+            rowCount={rowCountNegadas}
+            columns={columnsTableNegadas}
+            isLoading={isLoadingNegadas}
+          />
+        </ItemPainel>
+      ) : (
+        ""
+      )}
 
-      <ItemPainel
-        title="Recorrências Pendentes"
-        qtde={rowCountRecorrencias}
-        fn={openModalRecorrencias}
-      >
-        <DataTable
-          pagination={paginationRecorrencias}
-          setPagination={setPaginationRecorrencias}
-          data={rowsRecorrencias}
-          rowCount={rowCountRecorrencias}
-          columns={columnsTableRecorrencias}
-          isLoading={isLoadingRecorrencias}
-        />
-      </ItemPainel>
+      {rowCountSemNota ? (
+        <ItemPainel title="Notas Fiscais Pendentes" qtde={rowCountSemNota}>
+          <DataTable
+            pagination={paginationSemNota}
+            setPagination={setPaginationSemNota}
+            data={rowsSemNota}
+            rowCount={rowCountSemNota}
+            columns={columnsTableSemNota}
+            isLoading={isLoadingSemNota}
+          />
+        </ItemPainel>
+      ) : (
+        ""
+      )}
+
+      {rowCountRecorrencias ? (
+        <ItemPainel
+          title="Recorrências Pendentes"
+          qtde={rowCountRecorrencias}
+          fn={openModalRecorrencias}
+        >
+          <DataTable
+            pagination={paginationRecorrencias}
+            setPagination={setPaginationRecorrencias}
+            data={rowsRecorrencias}
+            rowCount={rowCountRecorrencias}
+            columns={columnsTableRecorrencias}
+            isLoading={isLoadingRecorrencias}
+          />
+        </ItemPainel>
+      ) : (
+        ""
+      )}
       <ModalTituloPagar />
       <ModalRecorrencias />
     </div>

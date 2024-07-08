@@ -21,6 +21,7 @@ const ContasPagarPage = () => {
             {(checkUserPermission("MASTER") ||
               checkUserDepartments("FINANCEIRO")) && (
               <>
+                <TabsTrigger value="cartoes">Cartões</TabsTrigger>
                 <TabsTrigger value="vencimentos">Vencimentos</TabsTrigger>
                 <TabsTrigger value="bordero">Borderôs</TabsTrigger>
                 <TabsTrigger value="movimento-contabil">

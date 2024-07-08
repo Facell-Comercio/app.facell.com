@@ -87,6 +87,8 @@ interface UseStoreTableConciliacaoCP {
   handleRowTransacoesSelection: (
     data: HandleRowSelectionTransacoesProps
   ) => void;
+
+  resetSelectionTransacoes: (transacao: TransacoesConciliarProps[]) => void;
   resetSelections: () => void;
   setCanSelect: (bool: boolean) => void;
   setShowAccordion: (bool: boolean) => void;
@@ -171,6 +173,11 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
           };
         }
       }),
+
+    resetSelectionTransacoes: (transacoes: TransacoesConciliarProps[]) => {
+      set({ transacoesSelection: transacoes });
+    },
+
     toggleModal: () =>
       set(() => ({
         modalOpen: false,

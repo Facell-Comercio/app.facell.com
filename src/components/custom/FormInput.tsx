@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
+import * as React from "react";
 import { Control } from "react-hook-form";
+import { Button } from "../ui/button";
 import {
   FormControl,
   FormDescription,
@@ -21,6 +23,7 @@ interface IFormInput {
   className?: string;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
   fnMask?: (val: string) => void;
   min?: number;
   max?: number;
@@ -29,10 +32,8 @@ interface IFormInput {
   step?: string;
   inputClass?: string;
   iconClass?: string;
+  title?: string;
 }
-
-import * as React from "react";
-import { Button } from "../ui/button";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -68,6 +69,7 @@ const FormInput = ({
   className,
   onBlur,
   onChange,
+  onClick,
   fnMask,
   min,
   max,
@@ -76,6 +78,7 @@ const FormInput = ({
   step,
   inputClass,
   iconClass,
+  title,
 }: IFormInput) => {
   return (
     <FormField
@@ -98,6 +101,7 @@ const FormInput = ({
                       ? fnMask(field.value)
                       : field.value || ""
                   }
+                  title={title}
                   placeholder={placeholder}
                   readOnly={readOnly}
                   disabled={
@@ -110,6 +114,7 @@ const FormInput = ({
                       onChange(event);
                     }
                   }}
+                  onClick={(e) => onClick && onClick(e)}
                   min={min}
                   max={max}
                   step={step ? step : type === "number" ? "0.01" : undefined}
