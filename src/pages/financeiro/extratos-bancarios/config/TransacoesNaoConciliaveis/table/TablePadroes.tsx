@@ -96,10 +96,9 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
       toast({
         title: "Erro ao tentar salvar o padrão",
         variant: "destructive",
-        // @ts-ignore
         description:
-          error?.response?.data?.message ||
-          "Tente novamente ao atualizar a página.",
+        // @ts-ignore
+          error?.response?.data?.message || "Tente novamente ao atualizar a página.",
       });
     } finally {
       setSaving(false);
@@ -124,8 +123,8 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
       toast({
         title: "Erro ao tentar excluir o padrão",
         variant: "destructive",
-        // @ts-ignore
         description:
+        // @ts-ignore
           error?.response?.data?.message ||
           "Tente novamente ao atualizar a página.",
       });

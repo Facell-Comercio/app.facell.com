@@ -12,7 +12,7 @@ type TSelectGrupoEconomico = {
   onChange: (id_grupo_economico?: string) => void;
   showAll?: boolean;
   className?: string;
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 type GrupoEconomico = {

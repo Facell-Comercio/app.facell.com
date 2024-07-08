@@ -55,7 +55,9 @@ const ModalTarifas = () => {
   }
 
   const { form } = useFormTarifasPadrao(newData);
-
+  const {errors} = form.formState;
+  console.log({errors})
+  
   const {
     mutate: insert,
     isPending: insertIsPending,
@@ -69,7 +71,6 @@ const ModalTarifas = () => {
   const { mutate: deleteOne } = useTarifas().deleteOne();
 
   function onSubmitData(data: TarifaProps) {
-    console.log(data);
     !id && insert(data);
     id && update(data);
   }
