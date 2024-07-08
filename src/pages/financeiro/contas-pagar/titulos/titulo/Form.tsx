@@ -422,27 +422,27 @@ const FormTituloPagar = ({
                   </div>
 
                   <div className="flex flex-wrap gap-3 items-end  z-50">
-                    <span onClick={showModalFornecedor}>
-                      <FormInput
-                        className="flex-1 min-w-[18ch]"
-                        name="cnpj_fornecedor"
-                        readOnly={true}
-                        label="CPF/CNPJ"
-                        fnMask={normalizeCnpjNumber}
-                        placeholder="SELECIONE O FORNECEDOR"
-                        control={form.control}
-                      />
-                    </span>
-                    <span onClick={showModalFornecedor}>
-                      <FormInput
-                        className="flex-1 min-w-[30ch] sm:min-w-[40ch] shrink-0"
-                        name="nome_fornecedor"
-                        placeholder="SELECIONE O FORNECEDOR"
-                        readOnly={true}
-                        label="Nome do fornecedor"
-                        control={form.control}
-                      />
-                    </span>
+                    <FormInput
+                      className="flex-1 min-w-[18ch]"
+                      name="cnpj_fornecedor"
+                      readOnly={true}
+                      label="CPF/CNPJ"
+                      fnMask={normalizeCnpjNumber}
+                      placeholder="SELECIONE O FORNECEDOR"
+                      control={form.control}
+                      disabled={disabled}
+                      onClick={showModalFornecedor}
+                    />
+                    <FormInput
+                      className="flex-1 min-w-[30ch] sm:min-w-[40ch] shrink-0"
+                      name="nome_fornecedor"
+                      placeholder="SELECIONE O FORNECEDOR"
+                      readOnly={true}
+                      label="Nome do fornecedor"
+                      control={form.control}
+                      disabled={disabled}
+                      onClick={showModalFornecedor}
+                    />
 
                     <SelectFormaPagamento
                       label="Forma de pagamento"
@@ -497,7 +497,7 @@ const FormTituloPagar = ({
                         <FormInput
                           label="Cód. Banco"
                           name="codigo_banco"
-                          className="min-w-[4ch]"
+                          className="min-w-[10ch]"
                           control={form.control}
                           readOnly={true}
                         />
@@ -530,6 +530,7 @@ const FormTituloPagar = ({
                           name="id_tipo_conta"
                           className="min-w-[15ch]"
                           control={form.control}
+                          disabled={disabled}
                         />
 
                         <FormInput
@@ -586,16 +587,16 @@ const FormTituloPagar = ({
                         ]}
                       />
 
-                      <span onClick={showModalFilial}>
-                        <FormInput
-                          readOnly={true}
-                          name="filial"
-                          label="Filial"
-                          placeholder="SELECIONE A FILIAL"
-                          control={form.control}
-                          inputClass="sm:min-w-[100px]"
-                        />
-                      </span>
+                      <FormInput
+                        readOnly={true}
+                        name="filial"
+                        label="Filial"
+                        placeholder="SELECIONE A FILIAL"
+                        control={form.control}
+                        inputClass="sm:min-w-[100px]"
+                        disabled={disabled}
+                        onClick={showModalFilial}
+                      />
                       <span className="lg:col-span-2 min-w-[20ch]">
                         <SelectUserDepartamento
                           label="Departamento"
