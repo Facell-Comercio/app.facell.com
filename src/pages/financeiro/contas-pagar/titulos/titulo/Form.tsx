@@ -156,7 +156,7 @@ const FormTituloPagar = ({
 
   const podeAnexarNotaFiscal =
     id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal);
-  const podeExcluirNotaFiscal = id_status < 3;
+  const podeExcluirNotaFiscal = id_status < 3 || isMaster;
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
