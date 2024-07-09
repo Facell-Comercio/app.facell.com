@@ -145,10 +145,9 @@ export function ModalVencimento({
         <Form {...form}>
           <form
             onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
               // @ts-ignore
-              form.handleSubmit(onSubmit)();
+              form.handleSubmit(onSubmit)(e);
+              e.stopPropagation();
             }}
           >
             <DialogHeader>
