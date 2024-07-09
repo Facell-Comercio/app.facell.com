@@ -241,7 +241,10 @@ export function BtnPadronizarAlocacao({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <Form {...formPadronizacao}>
-          <form onSubmit={formPadronizacao.handleSubmit(onSubmit)}>
+          <form onSubmit={(e)=>{
+              formPadronizacao.handleSubmit(onSubmit)(e)
+              e.stopPropagation()
+            }}>
             <DialogHeader>
               <DialogTitle>Padronização de Alocação</DialogTitle>
               <DialogDescription>

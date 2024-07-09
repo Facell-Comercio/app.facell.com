@@ -153,7 +153,10 @@ export function ModalGerarVencimentos({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[50vw]">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={(e)=>{
+            form.handleSubmit(onSubmit)(e)
+            e.stopPropagation()
+          }}>
             <DialogHeader>
               <DialogTitle>Gerar Vencimentos</DialogTitle>
               <DialogDescription>

@@ -450,10 +450,8 @@ export const ModalItemRateio = ({
         <Form {...formItemRateio}>
           <form
             onSubmit={(e) => {
-              e.preventDefault();
+              formItemRateio.handleSubmit(onSubmit)(e);
               e.stopPropagation();
-              // @ts-ignore
-              formItemRateio.handleSubmit(onSubmit)();
             }}
           >
             <DialogHeader>
