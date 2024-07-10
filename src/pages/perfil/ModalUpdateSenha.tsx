@@ -8,19 +8,25 @@ import { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { useUsers } from "@/hooks/useUsers";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useStorePerfil } from "./store";
 
 type ModalUpdateSenhaProps = {
   id: number;
 };
 function ModalUpdateSenha({ id }: ModalUpdateSenhaProps) {
-  const { mutate: updatePassword } = useUsers().updatePassword();
+  const { mutate: updatePassword, isSuccess } = useUsers().updatePassword();
 
   const modalOpen = useStorePerfil().modalOpen;
   const closeModal = useStorePerfil().closeModal;
   const password = useRef<HTMLInputElement | null>(null);
   const confirmedPassword = useRef<HTMLInputElement | null>(null);
+
+  useEffect(()=>{
+    if(isSuccess){
+      closeModal()
+    }
+  }, [isSuccess])
 
   function onSubmitData() {
     const senha = password.current?.value;
