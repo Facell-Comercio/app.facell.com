@@ -6,7 +6,7 @@ import { useAuthStore } from "@/context/auth-store";
 import { useUsers } from "@/hooks/useUsers";
 import { api } from "@/lib/axios";
 import { useQueryClient } from "@tanstack/react-query";
-import { Camera, Key, User } from "lucide-react";
+import { Camera, Crown, Key, User } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import ModalUpdateSenha from "./ModalUpdateSenha";
 import { useStorePerfil } from "./store";
@@ -66,7 +66,6 @@ const Perfil = () => {
   }
 
   async function updateImage(newUrl?: string | null) {
-    console.log(newUrl);
     await api.put(`user/update-img/${user?.id}`, { img_url: newUrl });
     queryClient.invalidateQueries({ queryKey: ["user"] });
     queryClient.invalidateQueries({ queryKey: ["user", user?.id || ""] });
@@ -79,12 +78,12 @@ const Perfil = () => {
       </h2>
       <div className="flex flex-col lg:flex-row gap-6  w-full justify-between p-4">
         <div className="flex flex-col items-center gap-5">
-          <span className="flex items-center justify-center w-40 h-40 border border-secondary rounded-full relative">
+          <span className="flex items-center justify-center w-40 h-40  border border-secondary rounded-full relative">
             {userData?.img_url ? (
               <img
                 src={userData?.img_url || ""}
                 alt="Imagem de Perfil"
-                className="w-36 rounded-full object-cover"
+                className="w-36 h-36 rounded-full object-cover"
               />
             ) : (
               <div className="w-36 h-36 flex items-center justify-center rounded-full text-gray-400 bg-gray-200 dark:text-gray-200 dark:bg-gray-800">
@@ -147,12 +146,12 @@ const Perfil = () => {
                   ({ id, nome, gestor }: DepartamentosProps) => (
                     <Badge
                       key={id + nome}
-                      className={`capitalize text-nowrap ${
-                        gestor && "border-2 border-blue-800"
-                      }`}
-                      title={gestor ? "Gestor" : ""}
+                      className={`capitalize text-nowrap`}
                     >
-                      {nome}
+                      <div className="relative">
+                        {gestor ? <div className="rounded-full p-1 absolute -top-4 -end-2 bg-secondary"><Crown size={10} className=" text-yellow-600"/></div> : null}
+                        {nome}
+                      </div>
                     </Badge>
                   )
                 )}
@@ -167,12 +166,12 @@ const Perfil = () => {
                   ({ id, nome, gestor }: FiliaisProps) => (
                     <Badge
                       key={id + nome}
-                      className={`capitalize text-nowrap ${
-                        gestor && "border-2 border-blue-800"
-                      }`}
-                      title={gestor ? "Gestor" : ""}
+                      className={`capitalize text-nowrap`}
                     >
-                      {nome}
+                      <div className="relative">
+                        {gestor ? <div className="rounded-full p-1 absolute -top-4 -end-2 bg-secondary"><Crown size={10} className=" text-yellow-600"/></div> : null}
+                        {nome}
+                      </div>
                     </Badge>
                   )
                 )}
@@ -187,12 +186,12 @@ const Perfil = () => {
                   ({ id, nome, gestor }: CentroCustoProps) => (
                     <Badge
                       key={id + nome}
-                      className={`capitalize text-nowrap ${
-                        gestor && "border-2 border-blue-800"
-                      }`}
-                      title={gestor ? "Gestor" : ""}
+                      className={`capitalize text-nowrap`}
                     >
-                      {nome}
+                      <div className="relative">
+                        {gestor ? <div className="rounded-full p-1 absolute -top-4 -end-2 bg-secondary"><Crown size={10} className=" text-yellow-600"/></div> : null}
+                        {nome}
+                      </div>
                     </Badge>
                   )
                 )}
