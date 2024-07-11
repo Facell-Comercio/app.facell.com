@@ -116,7 +116,7 @@ const ModalTituloPagar = () => {
       url_xml_nota: "",
       valor: recorrencia.valor,
       data_vencimento: recorrencia.data_vencimento,
-      data_emissao: new Date().toISOString(),
+      data_emissao: new Date().toDateString(),
       data_prevista: calcularDataPrevisaoPagamento(
         new Date(recorrencia.data_vencimento)
       ),
