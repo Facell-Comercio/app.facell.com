@@ -203,6 +203,7 @@ const Perfil = () => {
       <ModalUpdateSenha id={userData?.id} />
       <UploadDialog
         open={modalUploadOpen}
+        folderName="pessoal"
         closeAction={closeUploadModal}
         mediatype="img"
         action={updateImage}

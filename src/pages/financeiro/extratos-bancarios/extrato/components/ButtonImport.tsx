@@ -42,6 +42,7 @@ const ButtonImport = () => {
     }
     return (<>
         <ModalPreUpload
+            folderName="financeiro"
             open={modalUploadOpen}
             onOpenChange={() => setModalUploadOpen(prev => !prev)}
             title="Selecione o arquivo OFX"
