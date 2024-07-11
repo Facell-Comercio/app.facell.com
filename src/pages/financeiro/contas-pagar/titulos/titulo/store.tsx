@@ -42,7 +42,7 @@ export const initialPropsTitulo: TituloSchemaProps = {
   // Pagamento
   // forma_pagamento: "",
 
-  data_emissao: new Date().toISOString(),
+  data_emissao: new Date().toDateString(),
 
   valor: "0",
   descricao: "",

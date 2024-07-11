@@ -56,7 +56,7 @@ export function ModalGerarVencimentos({
   });
 
   const initialValues = {
-    data_vencimento: new Date().toISOString(),
+    data_vencimento: new Date().toDateString(),
     parcelas: "1",
     valor: "0",
   };
@@ -121,14 +121,14 @@ export function ModalGerarVencimentos({
         (obj.data_vencimento = data.data_vencimento),
           (obj.data_prevista = calcularDataPrevisaoPagamento(
             data.data_vencimento
-          ).toISOString());
+          ).toDateString());
       } else {
         obj.data_vencimento = proximoDiaUtil(
           addMonths(dataVencimento, p)
         ).toString();
         obj.data_prevista = calcularDataPrevisaoPagamento(
           obj.data_vencimento
-        ).toISOString();
+        ).toDateString();
       }
 
       // incluir um item ao fieldArray
