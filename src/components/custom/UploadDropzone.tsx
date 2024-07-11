@@ -4,8 +4,10 @@ import { File } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { MediaType } from '@/types/media-type';
 
+export type GoogleFolderName = 'financeiro' | 'logistica' | 'pessoal' | 'comercial'
 type UploadDropzoneProps = {
     disabled?: boolean,
+    folderName: GoogleFolderName,
     onUploadSuccess: (fileUrl?: string) => void,
     mediaType: MediaType
 }
@@ -58,6 +60,7 @@ const generateAcceptObject = (mediaType: MediaType): Accept => {
 
 const UploadDropzone = ({
     disabled,
+    folderName,
     mediaType = 'etc',
     onUploadSuccess,
 }: UploadDropzoneProps) => {
@@ -71,8 +74,9 @@ const UploadDropzone = ({
         }
         try {
 
-            const result = await api.postForm('upload/pre-upload', {
-                file: acceptedFiles[0]
+            const result = await api.postForm('storage/pre-upload', {
+                file: acceptedFiles[0],
+                folderName
             })
             const fileUrl = result?.data?.fileUrl;
             if (fileUrl) {

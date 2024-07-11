@@ -9,10 +9,12 @@ import { MediaType } from "@/types/media-type";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { FileUpload } from "./FileUpload";
+import { GoogleFolderName } from "./UploadDropzone";
 
 interface TUploadDialog {
   title: string;
   mediatype: MediaType;
+  folderName: GoogleFolderName,
   action: (newUrl?: string | null) => void;
   closeAction: () => void;
   className?: string;
@@ -23,6 +25,7 @@ interface TUploadDialog {
 const UploadDialog = ({
   title,
   mediatype,
+  folderName,
   action,
   closeAction,
   open,
@@ -37,6 +40,7 @@ const UploadDialog = ({
         </DialogHeader>
         <section className="max-w-80   max-h-80  mx-auto">
           <FileUpload
+            folderName={folderName}
             onChange={setUrl}
             value={url || ""}
             mediaType={mediatype}
