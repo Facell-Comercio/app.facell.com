@@ -136,7 +136,7 @@ const FormTituloPagar = ({
   const canEdit =
     !id ||
     status === "Solicitado" ||
-    (isMaster && id_status > 0 && id_status <= 3);
+    (isMaster && id_status > 0 && id_status < 3);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
