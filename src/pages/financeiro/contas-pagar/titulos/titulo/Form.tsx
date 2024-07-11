@@ -748,6 +748,7 @@ const FormTituloPagar = ({
                 </div>
 
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="XML Nota fiscal"
                   name="url_xml"
@@ -758,6 +759,7 @@ const FormTituloPagar = ({
                   }
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={!podeAnexarNotaFiscal}
                   canDelete={podeExcluirNotaFiscal}
                   label="Nota fiscal"
@@ -769,6 +771,7 @@ const FormTituloPagar = ({
                   }}
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="Boleto"
                   name="url_boleto"
@@ -779,6 +782,7 @@ const FormTituloPagar = ({
                   }
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="Contrato/Autorização"
                   name="url_contrato"
@@ -789,6 +793,7 @@ const FormTituloPagar = ({
                   }
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="Planilha"
                   name="url_planilha"
@@ -799,6 +804,7 @@ const FormTituloPagar = ({
                   }
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="Arquivo remessa"
                   name="url_txt"

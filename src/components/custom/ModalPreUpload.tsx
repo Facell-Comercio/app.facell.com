@@ -10,9 +10,11 @@ import { MediaType } from "@/types/media-type";
 import { Button } from "../ui/button";
 import { FileUpload } from "./FileUpload";
 import { useEffect, useState } from "react";
+import { GoogleFolderName } from "./UploadDropzone";
 
 type ModalUploadProps = {
     title?: string,
+    folderName: GoogleFolderName,
     description?: string,
     open: boolean,
     onOpenChange: ()=>void,
@@ -22,6 +24,7 @@ type ModalUploadProps = {
 
 export const ModalPreUpload = ({
     handleUpload,
+    folderName,
     title,
     description,
     mediaType,
@@ -43,6 +46,7 @@ export const ModalPreUpload = ({
                     <DialogDescription>{description}</DialogDescription>
                 )}
                 <FileUpload
+                    folderName={folderName}
                     mediaType={mediaType}
                     onChange={(fileUrl)=>{
                         setValue(fileUrl || '')

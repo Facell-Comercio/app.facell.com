@@ -241,6 +241,7 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
                         <FormFileUpload
                           name="img_url"
                           mediaType="img"
+                          folderName='pessoal'
                           control={form.control}
                           disabled={!modalEditing}
                         />
