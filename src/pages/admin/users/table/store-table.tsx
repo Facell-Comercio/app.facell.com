@@ -9,11 +9,13 @@ export interface Pagination {
 type RowSelection = Record<number, boolean>
 
 export interface Filters {
-  termo?: string
+  termo?: string,
+  inactives: boolean,
 }
 
 const initialFilters: Filters = {
   termo: '',
+  inactives: false,
 }
 
 export interface SortingItem {
