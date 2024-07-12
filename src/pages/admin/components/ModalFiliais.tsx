@@ -56,6 +56,7 @@ const ModalFiliais = ({
     pageIndex: 0,
   });
 
+  
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["filiais", id_matriz],
     queryFn: async () =>

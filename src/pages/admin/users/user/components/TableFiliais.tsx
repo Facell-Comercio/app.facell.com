@@ -2,11 +2,11 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import { DataVirtualTableHeaderFixed } from "@/components/custom/DataVirtualTableHeaderFixed";
 import FormSwitch from "@/components/custom/FormSwitch";
 import { Button } from "@/components/ui/button";
-import { FilialUser } from "@/context/auth-store";
 import { ColumnDef } from "@tanstack/react-table";
 import { Trash } from "lucide-react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { UserFormData } from "../form-data";
+import { UserFilial } from "@/types/user-type";
 
 type TableProps = {
   form: UseFormReturn<UserFormData>,
@@ -22,7 +22,7 @@ export const TableUserFiliais = ({ form, modalEditing }: TableProps) => {
   });
   const rows = form.watch('filiais')
 
-  const columns: ColumnDef<FilialUser>[] = [
+  const columns: ColumnDef<UserFilial>[] = [
     {
       accessorKey: 'grupo_economico',
       header: 'GRUPO ECONÔMICO',
