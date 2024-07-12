@@ -33,7 +33,7 @@ const ButtonExportTitulos = () => {
     const response = await api.get(`/financeiro/contas-a-pagar/titulo/`, {
       params: { filters },
     });
-    exportToExcel(response?.data?.rows || [], `solicitacoes`);
+    exportToExcel(response?.data?.rows || [], `SOLICITAÇÕES`);
   }
 
   async function exportAnexoFn(type: string) {
