@@ -12,7 +12,7 @@ import {
 
 interface TAlert {
   title: string;
-  description: string;
+  description?: string;
   children: JSX.Element;
   action: any;
   className?: string;

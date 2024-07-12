@@ -5,6 +5,7 @@ import {
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
 import Borderos from "./borderos/Borderos";
+import Cartoes from "./cartoes/Cartoes";
 import MovimentoContabil from "./movimento-contabil/MoviementoContabil";
 import { PainelContasPagar } from "./painel/PainelContasPagar";
 import TitulosPagar from "./titulos/TitulosPagar";
@@ -40,6 +41,9 @@ const ContasPagarPage = () => {
         </TabsContent>
         <TabsContent value="titulo">
           <TitulosPagar />
+        </TabsContent>
+        <TabsContent value="cartoes">
+          <Cartoes />
         </TabsContent>
         <TabsContent value="vencimentos">
           <Vencimentos />

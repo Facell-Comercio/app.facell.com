@@ -21,13 +21,14 @@ import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { normalizeCurrency } from "@/helpers/mask";
-import { addMonths } from "date-fns";
+import { addMonths, startOfDay } from "date-fns";
 import { ListPlus, Play } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import z from "zod";
 import { TituloSchemaProps } from "../../../form-data";
 import {
   calcularDataPrevisaoPagamento,
+  checkIsCartao,
   proximoDiaUtil,
 } from "../../../helpers/helper";
 import { VencimentoTitulo } from "../../../store";
@@ -54,9 +55,10 @@ export function ModalGerarVencimentos({
     parcelas: z.coerce.number().min(1, "Parcela precisa ser >= 1"),
     valor: z.coerce.number().min(0.01, "Valor precisa ser >= R$ 0,01"),
   });
-
+  const data_inicial = formTitulo.watch("data_emissao");
+  const id_forma_pagamento = formTitulo.watch("id_forma_pagamento");
   const initialValues = {
-    data_vencimento: new Date().toISOString(),
+    data_vencimento: startOfDay(data_inicial).toDateString(),
     parcelas: "1",
     valor: "0",
   };
@@ -76,6 +78,31 @@ export function ModalGerarVencimentos({
   // console.log({
   //     erros_gerar_vencimentos: errors
   // })
+
+  const day = parseInt(
+    useWatch({ name: "dia_vencimento_cartao", control: formTitulo.control }) ||
+      "0"
+  );
+  useEffect(() => {
+    if (checkIsCartao(id_forma_pagamento)) {
+      const year = startOfDay(data_inicial).getFullYear();
+      const month = startOfDay(data_inicial).getMonth();
+      const dia_corte = parseInt(formTitulo.watch("dia_corte_cartao") || "0");
+      console.log(startOfDay(data_inicial).getDate(), dia_corte);
+
+      if (startOfDay(data_inicial).getDate() > dia_corte) {
+        form.setValue(
+          "data_vencimento",
+          new Date(year, month + 2, day).toDateString()
+        );
+      } else {
+        form.setValue(
+          "data_vencimento",
+          new Date(year, month + 1, day).toDateString()
+        );
+      }
+    }
+  }, [data_inicial, day]);
 
   type GeradorVencimentos = {
     data_vencimento: string;
@@ -121,14 +148,14 @@ export function ModalGerarVencimentos({
         (obj.data_vencimento = data.data_vencimento),
           (obj.data_prevista = calcularDataPrevisaoPagamento(
             data.data_vencimento
-          ).toISOString());
+          ).toDateString());
       } else {
         obj.data_vencimento = proximoDiaUtil(
           addMonths(dataVencimento, p)
         ).toString();
         obj.data_prevista = calcularDataPrevisaoPagamento(
           obj.data_vencimento
-        ).toISOString();
+        ).toDateString();
       }
 
       // incluir um item ao fieldArray
@@ -169,6 +196,7 @@ export function ModalGerarVencimentos({
                 name="data_vencimento"
                 label="Primeiro Vencimento"
                 control={form.control}
+                disabled={checkIsCartao(id_forma_pagamento)}
               />
 
               <FormInput

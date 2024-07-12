@@ -69,7 +69,6 @@ const ModalTarifas = () => {
   const { mutate: deleteOne } = useTarifas().deleteOne();
 
   function onSubmitData(data: TarifaProps) {
-    console.log(data);
     !id && insert(data);
     id && update(data);
   }

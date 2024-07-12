@@ -25,6 +25,7 @@ import ModalFornecedores, {
 } from "@/pages/financeiro/components/ModalFornecedores";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
+import SelectCartao from "@/components/custom/SelectCartao";
 import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +61,7 @@ import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
 import {
+  checkIsCartao,
   checkIsPIX,
   checkIsTransferenciaBancaria,
   formatarHistorico,
@@ -230,6 +232,7 @@ const FormTituloPagar = ({
 
   // * [ FORMA DE PAGAMENTO ]
   const showPix = checkIsPIX(id_forma_pagamento);
+  const showCartao = checkIsCartao(id_forma_pagamento);
   const showDadosBancarios = checkIsTransferenciaBancaria(id_forma_pagamento);
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
@@ -470,6 +473,52 @@ const FormTituloPagar = ({
                         control={form.control}
                         readOnly={readOnly}
                         className="flex-1 min-w-[20ch]"
+                      />
+                    </div>
+                    <div
+                      className={`flex gap-3 ${
+                        showCartao ? "flex w-full" : "hidden"
+                      }`}
+                    >
+                      <SelectCartao
+                        control={form.control}
+                        name="id_cartao"
+                        label="Cartão"
+                        disabled={disabled}
+                        className={`flex-1 min-w-[30ch]`}
+                        onChange={async (id) => {
+                          await api
+                            .get(`/financeiro/contas-a-pagar/cartoes/${id}`)
+                            .then((data) => {
+                              form.setValue(
+                                "dia_vencimento_cartao",
+                                data.data.dia_vencimento
+                              );
+                              form.setValue(
+                                "dia_corte_cartao",
+                                data.data.dia_corte
+                              );
+                              form.setValue("id_matriz", data.data.id_matriz);
+                              form.setValue(
+                                "id_grupo_economico",
+                                data.data.id_grupo_economico
+                              );
+                            });
+                        }}
+                      />
+                      <FormInput
+                        className="flex-1 min-w-[20ch] shrink-0"
+                        name="dia_vencimento_cartao"
+                        readOnly
+                        label="Dia do vencimento"
+                        control={form.control}
+                      />
+                      <FormInput
+                        className="flex-1 min-w-[20ch] shrink-0"
+                        name="dia_corte_cartao"
+                        readOnly
+                        label="Dia de Corte"
+                        control={form.control}
                       />
                     </div>
                     {/* Dados bancários do fornecedor */}

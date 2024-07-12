@@ -7,6 +7,8 @@ import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useBordero } from "@/hooks/financeiro/useBordero";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { Banknote, CreditCard, Landmark } from "lucide-react";
+import { useStoreCartao } from "../../cartoes/cartao/store";
 
 interface RowVirtualizerFixedPagosProps {
   data: VencimentosProps[];
@@ -34,6 +36,8 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
     overscan: 10,
   });
 
+  const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
+
   return (
     <section
       ref={parentElement}
@@ -45,6 +49,7 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
       // }}
     >
       <div className="flex gap-1 font-medium text-sm w-full sticky top-0 z-10 bg-slate-200 dark:bg-blue-950 px-1">
+        <p className="min-w-[34px] text-center bg-slate-200 dark:bg-blue-950"></p>
         <p className="min-w-16 text-center bg-slate-200 dark:bg-blue-950">ID</p>
         <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">
           ID Título
@@ -92,8 +97,44 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
           const indexData = data.findIndex(
             (vencimento) =>
               vencimento.id_vencimento ===
-              filteredData[item.index].id_vencimento
+                filteredData[item.index].id_vencimento &&
+              vencimento.id_forma_pagamento ===
+                filteredData[item.index].id_forma_pagamento
           );
+
+          function IconeFormaPagamento() {
+            if (data[indexData]?.id_forma_pagamento === 3) {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-700 hover:bg-green-700 cursor-default"
+                  size={"xs"}
+                >
+                  <Banknote size={18} />
+                </Button>
+              );
+            } else if (data[indexData]?.id_forma_pagamento === 6) {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-violet-700 hover:bg-violet-600"
+                  size={"xs"}
+                  onClick={() =>
+                    openModalFatura(data[indexData].id_vencimento || "")
+                  }
+                >
+                  <CreditCard size={18} />
+                </Button>
+              );
+            } else {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-700 hover:bg-zinc-700 cursor-default"
+                  size={"xs"}
+                >
+                  <Landmark size={18} />
+                </Button>
+              );
+            }
+          }
 
           return (
             <div
@@ -112,6 +153,7 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
                 transform: `translateY(${item.start}px)`,
               }}
             >
+              <IconeFormaPagamento />
               <Input
                 className="w-16 h-8 text-xs p-2 text-center"
                 value={data[indexData].id_vencimento || ""}

@@ -1,7 +1,13 @@
+import { toast } from "@/components/ui/use-toast";
+import { normalizeDate } from "@/helpers/mask";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { checkIsPIX, checkIsTransferenciaBancaria } from "./helpers/helper";
+import {
+  checkIsCartao,
+  checkIsPIX,
+  checkIsTransferenciaBancaria,
+} from "./helpers/helper";
 
 export const vencimentoSchema = z.object({
   id: z.string().optional(),
@@ -71,6 +77,7 @@ export const schemaTitulo = z
     cnpj_favorecido: z.string().optional(),
     id_tipo_chave_pix: z.string().optional(),
     chave_pix: z.string().optional(),
+    id_cartao: z.string().optional(),
 
     id_banco: z.string().optional(),
     banco: z.string().optional(),
@@ -85,6 +92,8 @@ export const schemaTitulo = z
     // Outros
     created_at: z.coerce.date().optional(),
     data_emissao: z.coerce.string({ required_error: "Campo obrigatório" }),
+    dia_vencimento_cartao: z.coerce.string().optional(), //~ Usado somente na forma de pagamento Cartão
+    dia_corte_cartao: z.coerce.string().optional(), //~ Usado somente na forma de pagamento Cartão
 
     num_doc: z
       .string({ message: "Campo obrigatório" })
@@ -165,7 +174,7 @@ export const schemaTitulo = z
     { path: ["conta"], message: "Obrigatório para esta forma de pagamento." }
   )
 
-  // Cobrança PIX
+  //^ Cobrança PIX
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) ? !!data.id_tipo_chave_pix : true,
@@ -182,6 +191,16 @@ export const schemaTitulo = z
       message: "Obrigatório para esta forma de pagamento.",
     }
   )
+  //^ Cobrança cartão
+  .refine(
+    (data) =>
+      checkIsCartao(data.id_forma_pagamento) ? !!data.id_cartao : true,
+    {
+      path: ["id_cartao"],
+      message: "Obrigatório para esta forma de pagamento.",
+    }
+  )
+
   // ^ Validar se forma de pagamento for PIX Copia e Cola, cobrar o PIX Copia e Cola
   .refine(
     (data) => {
@@ -191,6 +210,38 @@ export const schemaTitulo = z
         }
         for (const v of data.vencimentos) {
           if (!v.qr_code) {
+            return false;
+          }
+        }
+      }
+      return true;
+    },
+    { path: ["vencimentos"], message: "Preencha o PIX Copia e Cola!" }
+  )
+  // ^ Valida se forma de pagamento for cartão se a data de vencimento está no dia certo
+  .refine(
+    (data) => {
+      if (checkIsCartao(data.id_forma_pagamento)) {
+        if (!data.vencimentos || data.vencimentos.length === 0) {
+          return false;
+        }
+
+        for (const v of data.vencimentos) {
+          console.log(
+            new Date(v.data_vencimento).getDate(),
+            parseInt(data.dia_vencimento_cartao || "")
+          );
+          if (
+            new Date(v.data_vencimento).getDate() !==
+            parseInt(data.dia_vencimento_cartao || "")
+          ) {
+            toast({
+              title: "Data de vencimento incorreta",
+              description: `${normalizeDate(
+                v.data_vencimento
+              )} não é uma data de vencimento aceita nessa forma de pagamento`,
+              variant: "destructive",
+            });
             return false;
           }
         }

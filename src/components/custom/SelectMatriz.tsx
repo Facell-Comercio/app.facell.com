@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "../ui/select"; // Assuming these are custom components
 
-type TSelectGrupoEconomico = {
+type TSelectMatriz = {
   value: string | undefined;
   onChange: (id_grupo_economico?: string) => void;
   showAll?: boolean;
@@ -15,38 +15,36 @@ type TSelectGrupoEconomico = {
   disabled?: boolean;
 };
 
-type GrupoEconomico = {
+type Matriz = {
   id: number;
   nome: string;
-  id_matriz: number;
-  ativo: boolean;
 };
 
-const SelectGrupoEconomico = ({
+const SelectMatriz = ({
   value,
   onChange,
   showAll,
   className,
   disabled,
-}: TSelectGrupoEconomico) => {
-  const { data } = useGrupoEconomico().getAll();
-  const gruposEconomicos = data?.data?.rows || [];
+}: TSelectMatriz) => {
+  const { data } = useGrupoEconomico().getAllMatriz();
+  const matriz = data?.data?.rows || [];
 
   return (
     <Select value={value} onValueChange={onChange} disabled={disabled}>
       {/* Estilização sendo usada no cadastro de orçamentos */}
       <SelectTrigger className={`w-[180px] ${className}`}>
-        <SelectValue placeholder="Selecione o grupo" />
+        <SelectValue placeholder="Selecione a matriz" />
       </SelectTrigger>
       <SelectContent>
-        {showAll && gruposEconomicos && gruposEconomicos.length > 1 && (
+        {showAll && matriz && matriz.length > 1 && (
           <SelectItem value="all">TODOS</SelectItem>
         )}
-        {gruposEconomicos?.map((item: GrupoEconomico) => (
+        {matriz?.map((item: Matriz, index: number) => (
           <SelectItem
             className="text-left"
-            key={item.id}
-            value={item.id.toString()}
+            key={`${item.id} - ${index}`}
+            value={String(item.id)}
           >
             {item.nome}
           </SelectItem>
@@ -56,4 +54,4 @@ const SelectGrupoEconomico = ({
   );
 };
 
-export default SelectGrupoEconomico;
+export default SelectMatriz;

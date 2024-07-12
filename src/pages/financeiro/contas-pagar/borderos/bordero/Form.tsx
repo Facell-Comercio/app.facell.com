@@ -22,6 +22,7 @@ import { Accordion } from "@/components/ui/accordion";
 import ModalVencimentos, {
   VencimentosProps,
 } from "@/pages/financeiro/components/ModalVencimentos";
+import ModalFatura from "../../cartoes/cartao/ModalFatura";
 import BtnOptionsRemessa from "./BtnOptionsRemessa";
 import { ItemVencimento } from "./ItemVencimento";
 import { BorderoSchemaProps } from "./Modal";
@@ -150,12 +151,15 @@ const FormBordero = ({
   function handleSelectionVencimento(item: VencimentosProps[]) {
     //^ Verificar se ele realmente está salvando como updated
     const idsVencimentos: string[] = wVencimentos.map(
-      (vencimento) => vencimento.id_vencimento
+      (vencimento) =>
+        `${vencimento.id_vencimento}-${vencimento.id_forma_pagamento}`
     );
-    console.log(item);
 
     item.forEach((subItem: VencimentosProps) => {
-      const isNewId = idsVencimentos.includes(subItem.id_vencimento);
+      const isNewId =
+        idsVencimentos.includes(`${subItem.id_vencimento}-${subItem.id_forma_pagamento}
+        `);
+
       if (!isNewId) {
         return addVencimento({
           ...subItem,
@@ -577,6 +581,7 @@ const FormBordero = ({
         />
         <ModalTransfer data={vencimentosChecked} id_matriz={id_matriz || ""} />
       </Form>
+      <ModalFatura />
     </div>
   );
 };

@@ -11,8 +11,9 @@ import { Toggle } from "@/components/ui/toggle";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Minus } from "lucide-react";
+import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
+import { useStoreCartao } from "../../cartoes/cartao/store";
 import { useStoreDDA } from "../components/storeDDA";
 
 interface RowVirtualizerFixedPendentesProps {
@@ -53,6 +54,8 @@ const RowVirtualizerFixedPendentes: React.FC<
     openModalDDA({ id_vencimento, filters: { vinculados: false } });
   };
 
+  const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
+
   return (
     <section
       ref={parentElement}
@@ -76,6 +79,7 @@ const RowVirtualizerFixedPendentes: React.FC<
             }}
           />
         )}
+        <p className="min-w-[34px] text-center bg-slate-200 dark:bg-blue-950"></p>
         <p className="min-w-16 text-center bg-slate-200 dark:bg-blue-950">ID</p>
         <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">
           ID Título
@@ -131,7 +135,9 @@ const RowVirtualizerFixedPendentes: React.FC<
           const indexData = data.findIndex(
             (vencimento) =>
               vencimento.id_vencimento ===
-              filteredData[item.index].id_vencimento
+                filteredData[item.index].id_vencimento &&
+              vencimento.id_forma_pagamento ===
+                filteredData[item.index].id_forma_pagamento
           );
 
           const id_vencimento = data[indexData].id_vencimento;
@@ -141,6 +147,40 @@ const RowVirtualizerFixedPendentes: React.FC<
           const vinculoDDA = !!data[indexData].id_dda;
           const isBoleto = (data[indexData]?.id_forma_pagamento || null) == 1;
           const emRemessa = data[indexData].remessa;
+
+          function IconeFormaPagamento() {
+            if (data[indexData]?.id_forma_pagamento === 3) {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-700 hover:bg-green-700 cursor-default"
+                  size={"xs"}
+                >
+                  <Banknote size={18} />
+                </Button>
+              );
+            } else if (data[indexData]?.id_forma_pagamento === 6) {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-violet-700 hover:bg-violet-600"
+                  size={"xs"}
+                  onClick={() =>
+                    openModalFatura(data[indexData].id_vencimento || "")
+                  }
+                >
+                  <CreditCard size={18} />
+                </Button>
+              );
+            } else {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-700 hover:bg-zinc-700 cursor-default"
+                  size={"xs"}
+                >
+                  <Landmark size={18} />
+                </Button>
+              );
+            }
+          }
 
           return (
             <div
@@ -172,6 +212,7 @@ const RowVirtualizerFixedPendentes: React.FC<
                   className="me-1"
                 />
               )}
+              <IconeFormaPagamento />
               <Input
                 className="w-16 h-8 text-xs p-2 text-center"
                 value={data[indexData].id_vencimento || ""}
@@ -239,10 +280,19 @@ const RowVirtualizerFixedPendentes: React.FC<
                 className="text-xs w-32 h-8"
                 control={form.control}
                 disabled={!modalEditing || disabled}
-                options={tipoBaixa.map((tipo_baixa: TipoBaixaProps) => ({
-                  value: tipo_baixa.id.toString(),
-                  label: tipo_baixa.label,
-                }))}
+                options={
+                  data[indexData].id_forma_pagamento !== 6
+                    ? tipoBaixa.map((tipo_baixa: TipoBaixaProps) => ({
+                        value: tipo_baixa.id.toString(),
+                        label: tipo_baixa.label,
+                      }))
+                    : tipoBaixa
+                        .map((tipo_baixa: TipoBaixaProps) => ({
+                          value: tipo_baixa.id.toString(),
+                          label: tipo_baixa.label,
+                        }))
+                        .filter((tipo_baixa) => tipo_baixa.label === "Total")
+                }
                 onChange={() => {
                   form.setValue(`vencimentos.${indexData}.valor_pago`, valor);
                   form.setValue(`vencimentos.${indexData}.updated`, true);

@@ -10,8 +10,9 @@ import { Toggle } from "@/components/ui/toggle";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Minus } from "lucide-react";
+import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
+import { useStoreCartao } from "../../cartoes/cartao/store";
 
 interface RowVirtualizerFixedErroProps {
   data: VencimentosProps[];
@@ -38,6 +39,8 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
     estimateSize: () => 36,
     overscan: 10,
   });
+
+  const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
 
   type TipoBaixaProps = {
     id: number | string;
@@ -67,13 +70,12 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
             className="min-w-4 me-1"
             onCheckedChange={(e) => {
               filteredData.forEach((_, index) => {
-                // if (item.id_status == "3") {
                 form.setValue(`vencimentos.${index}.checked`, !!e.valueOf());
-                // }
               });
             }}
           />
         )}
+        <p className="min-w-[34px] text-center bg-slate-200 dark:bg-blue-950"></p>
         <p className="min-w-16 text-center bg-slate-200 dark:bg-blue-950">ID</p>
         <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">
           ID Título
@@ -129,13 +131,49 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
           const indexData = data.findIndex(
             (vencimento) =>
               vencimento.id_vencimento ===
-              filteredData[item.index].id_vencimento
+                filteredData[item.index].id_vencimento &&
+              vencimento.id_forma_pagamento ===
+                filteredData[item.index].id_forma_pagamento
           );
 
           const disabled = !data[indexData].can_remove ? true : false;
           const tipo = form.watch(`vencimentos.${indexData}.tipo_baixa`);
           const valor = parseFloat(data[indexData].valor_total);
           const emRemessa = data[indexData].remessa;
+
+          function IconeFormaPagamento() {
+            if (data[indexData]?.id_forma_pagamento === 3) {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-700 hover:bg-green-700 cursor-default"
+                  size={"xs"}
+                >
+                  <Banknote size={18} />
+                </Button>
+              );
+            } else if (data[indexData]?.id_forma_pagamento === 6) {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-violet-700 hover:bg-violet-600"
+                  size={"xs"}
+                  onClick={() =>
+                    openModalFatura(data[indexData].id_vencimento || "")
+                  }
+                >
+                  <CreditCard size={18} />
+                </Button>
+              );
+            } else {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-700 hover:bg-zinc-700 cursor-default"
+                  size={"xs"}
+                >
+                  <Landmark size={18} />
+                </Button>
+              );
+            }
+          }
 
           return (
             <div
@@ -167,6 +205,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                   className="me-1"
                 />
               )}
+              <IconeFormaPagamento />
               <Input
                 className="w-16 h-8 text-xs p-2 text-center"
                 value={data[indexData].id_vencimento || ""}
