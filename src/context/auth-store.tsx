@@ -1,32 +1,17 @@
+import { UserCentroCusto, UserDepartamento, UserFilial, UserPermissao } from '@/types/user-type';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware'
 
 export interface User {
     ativo: boolean
-    departamentos: DepartamentoUser[]
     email: string
-    filiais: FilialUser[]
     id: string
     img_url?: string
     nome: string
-    permissoes: PermissaoUser[]
-  }
-  
-export interface DepartamentoUser {
-    id: number
-    nome: string
-    gestor: number
-}
-
-export interface FilialUser {
-    id: number
-    nome: string
-    gestor: number
-}
-
-export interface PermissaoUser {
-    id: number
-    nome: string
+    filiais: UserFilial[]
+    departamentos: UserDepartamento[]
+    centros_custo: UserCentroCusto[]
+    permissoes: UserPermissao[]
 }
 
 interface IAuthStore {
@@ -47,7 +32,7 @@ export const useAuthStore = create(
         user: null,
         token: null,
         isAuthenticate: false,
-        
+
         login: async ({ user, token }: ILogin) => {
             set({ user, token, isAuthenticate: true })
         },
