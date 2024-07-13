@@ -1,6 +1,6 @@
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
-import { Check, FileSearch2 } from "lucide-react";
+import { Check } from "lucide-react";
 import { ReactNode } from "react";
 import { useStoreBordero } from "../bordero/store";
 import { Badge } from "@/components/ui/badge";
@@ -22,19 +22,6 @@ export type RowBordero = {
 const openModal = useStoreBordero.getState().openModal;
 
 export const columnsTable: ColumnDef<RowBordero>[] = [
-  // {
-  //   header: "AÇÃO",
-  //   accessorKey: "id",
-  //   cell: (info) => (
-  //     <div title="Ver Borderô">
-  //       <FileSearch2
-  //         className="text-blue-500 cursor-pointer"
-  //         onClick={() => openModal(info.getValue<number>().toString())}
-  //       />
-  //     </div>
-  //   ),
-  //   enableSorting: false,
-  // },
   {
     header: "STATUS",
     id: 'andamento',
@@ -47,7 +34,7 @@ export const columnsTable: ColumnDef<RowBordero>[] = [
       const qtde_pago = info.row.original.qtde_pago;
       const borderoConcluido = qtde_pago == qtde_total;
 
-      return <div onClick={()=>{openModal(id_bordero)}} className="w-full cursor-pointer flex justify-between">
+      return <div onClick={()=>{openModal(id_bordero)}} className="w-full cursor-pointer flex justify-center gap-1">
         {borderoConcluido ? 
         <Badge variant={'default'} className="w-full flex justify-center"><Check size={18} /></Badge> 
         : 
