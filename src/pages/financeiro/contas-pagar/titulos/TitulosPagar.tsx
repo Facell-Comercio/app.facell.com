@@ -1,5 +1,4 @@
 import { useStoreTablePagar } from "./table/store-table";
-// import { useStoreTitulo } from "./titulo/store-titulo";
 import { DataTable } from "@/components/custom/DataTable";
 
 import {

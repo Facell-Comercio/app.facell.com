@@ -101,14 +101,17 @@ type RecorrenciaProps = {
 interface useStoreTitulo {
   id: string | null;
   recorrencia?: RecorrenciaProps;
+  copyData?: Partial<TituloSchemaProps>;
+  tituloCopiado: boolean;
   titulo: TituloSchemaProps;
   modalEditing: boolean;
   modalOpen: boolean;
   modalAlteracaoLoteOpen: boolean;
 
-  openModal: (id: string, recorrencia?: RecorrenciaProps) => void;
+  openModal: ({id, recorrencia, copyData}:{id: string, recorrencia?: RecorrenciaProps, copyData?: Partial<TituloSchemaProps>}) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
+  setTituloCopiado: (tituloCopiado:boolean)=>void;
 
   openAlteracaoLoteModal: () => void;
   closeAlteracaoLoteModal: () => void;
@@ -117,47 +120,21 @@ interface useStoreTitulo {
 export const useStoreTitulo = create<useStoreTitulo>((set) => ({
   id: null,
   recorrencia: undefined,
+  copyData: undefined,
+  tituloCopiado: false,
   titulo: initialPropsTitulo,
   modalEditing: false,
   modalOpen: false,
   modalAlteracaoLoteOpen: false,
 
-  openModal: (id: string, recorrencia?: RecorrenciaProps) =>
-    recorrencia
-      ? set({
-          modalOpen: true,
-          id: id,
-          modalEditing: true,
-          recorrencia: recorrencia,
-        })
-      : set({ modalOpen: true, id: id, modalEditing: !id ? true : false }),
-  closeModal: () => set({ modalOpen: false, recorrencia: undefined }),
+  openModal: ({id, recorrencia, copyData}) =>
+    set({ modalOpen: true, id: id, modalEditing: !id ? true : false, recorrencia: recorrencia ? recorrencia: undefined, copyData: copyData ? copyData : undefined }),
+  closeModal: () => set({ id: null, modalOpen: false, recorrencia: undefined, copyData: undefined }),
   editModal: (bool) => set({ modalEditing: bool }),
-
+  setTituloCopiado: (novoEstado)=>set({tituloCopiado: novoEstado}),
   openAlteracaoLoteModal: () => set({ modalAlteracaoLoteOpen: true }),
   closeAlteracaoLoteModal: () => set({ modalAlteracaoLoteOpen: false }),
 }));
-
-// interface useStoreTitulo {
-//   id: string | null,
-//   modalEditing: boolean,
-//   modalOpen: boolean,
-
-//   openModal: (id: string) => void,
-//   closeModal: () => void,
-//   editModal: (bool: boolean) => void,
-
-// }
-
-// export const useStoreTitulo = create<useStoreTitulo>((set) => ({
-//   id: null,
-//   modalEditing: false,
-//   modalOpen: false,
-
-//   openModal: (id: string)=>set({modalOpen: true, id: id}),
-//   closeModal: () => set(({ modalOpen: false })),
-//   editModal:(bool) => set(({ modalEditing: bool})),
-// }))
 
 export interface TipoRateio {
   id?: number;
