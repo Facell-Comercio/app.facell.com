@@ -16,7 +16,7 @@ import {
   initialPropsTitulo,
   useStoreTitulo,
 } from "./store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { BtnCopiarTitulo } from "./components/BtnCopiarTitulo";
 
 export type DataSchemaProps = {
