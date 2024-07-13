@@ -7,14 +7,17 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoutes = () => {
   const user = useAuthStore((state) => state.user);
-  const token = useAuthStore((state) => state.token);
   const login = useAuthStore((state) => state.login);
   const logout = useAuthStore((state) => state.logout);
 
   useEffect(() => {
     api
       .get("auth/validar-token")
-      .then(() => {
+      .then((data:any) => {
+       const token = data?.data?.token || null;
+        if(!token){
+          logout();
+        }
         const decodedToken = jwtDecode(token || "");
         // @ts-ignore
         login({ token: token || "", user: decodedToken.user });
@@ -22,6 +25,8 @@ const PrivateRoutes = () => {
       .catch((error: AxiosError) => {
         logout();
         if (error.response?.status == 401) {
+          // console.log(error.message);
+          
         } else {
           console.log("ERRO-PRIVATE-ROUTES-LOGIN-VALIDATE:", error);
         }

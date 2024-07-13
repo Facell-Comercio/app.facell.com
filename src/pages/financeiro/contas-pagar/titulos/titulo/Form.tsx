@@ -138,7 +138,7 @@ const FormTituloPagar = ({
   const canEdit =
     !id ||
     status === "Solicitado" ||
-    (isMaster && id_status > 0 && id_status <= 3);
+    (isMaster && id_status > 0 && id_status < 3);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
@@ -158,7 +158,7 @@ const FormTituloPagar = ({
 
   const podeAnexarNotaFiscal =
     id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal);
-  const podeExcluirNotaFiscal = id_status < 3;
+  const podeExcluirNotaFiscal = id_status < 3 || isMaster;
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
@@ -797,6 +797,7 @@ const FormTituloPagar = ({
                 </div>
 
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="XML Nota fiscal"
                   name="url_xml"
@@ -807,6 +808,7 @@ const FormTituloPagar = ({
                   }
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={!podeAnexarNotaFiscal}
                   canDelete={podeExcluirNotaFiscal}
                   label="Nota fiscal"
@@ -818,6 +820,7 @@ const FormTituloPagar = ({
                   }}
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="Boleto"
                   name="url_boleto"
@@ -828,6 +831,7 @@ const FormTituloPagar = ({
                   }
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="Contrato/Autorização"
                   name="url_contrato"
@@ -838,6 +842,7 @@ const FormTituloPagar = ({
                   }
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="Planilha"
                   name="url_planilha"
@@ -848,6 +853,7 @@ const FormTituloPagar = ({
                   }
                 />
                 <FormFileUpload
+                  folderName={'financeiro'}
                   disabled={disabled}
                   label="Arquivo remessa"
                   name="url_txt"

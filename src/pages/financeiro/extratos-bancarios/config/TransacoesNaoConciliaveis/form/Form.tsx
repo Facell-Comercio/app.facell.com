@@ -13,7 +13,7 @@ import { api } from "@/lib/axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ContaBancaria } from "../../../extrato/components/context";
-import { TransacaoPadrao } from "../padroes/table/TablePadroes";
+import { TransacaoPadrao } from "../table/TablePadroes";
 
 const FormNovoPadrao = ({ conta }: { conta: ContaBancaria | null }) => {
   const queryClient = useQueryClient();
@@ -61,9 +61,9 @@ const FormNovoPadrao = ({ conta }: { conta: ContaBancaria | null }) => {
       toast({
         title: "Erro ao tentar salvar o padrão",
         variant: "destructive",
-        // @ts-ignore
         description:
-          error?.response?.data?.message ||
+        // @ts-ignore
+          error?.response?.data?.message || error?.message ||
           "Tente novamente ao atualizar a página.",
       });
     } finally {
@@ -88,13 +88,13 @@ const FormNovoPadrao = ({ conta }: { conta: ContaBancaria | null }) => {
             className="max-w-72"
             value={newPadrao.descricao}
             onChange={(e) =>
-              setNewPadrao((state) => ({ ...state, descricao: e.target.value }))
+              setNewPadrao((state:any) => ({ ...state, descricao: e.target.value }))
             }
           />
           <Select
             value={newPadrao.tipo_transacao}
             onValueChange={(tipo_transacao: "CREDIT" | "DEBIT") =>
-              setNewPadrao((state) => ({ ...state, tipo_transacao }))
+              setNewPadrao((state:any) => ({ ...state, tipo_transacao }))
             }
           >
             <SelectTrigger className="w-[180px]">

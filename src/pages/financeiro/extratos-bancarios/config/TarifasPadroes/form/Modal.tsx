@@ -55,7 +55,9 @@ const ModalTarifas = () => {
   }
 
   const { form } = useFormTarifasPadrao(newData);
-
+  const {errors} = form.formState;
+  console.log({errors})
+  
   const {
     mutate: insert,
     isPending: insertIsPending,

@@ -4,11 +4,12 @@ import { FileIcon, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "../ui/use-toast";
 import AlertPopUp from "./AlertPopUp";
-import UploadDropzone from "./UploadDropzone";
+import UploadDropzone, { GoogleFolderName } from "./UploadDropzone";
 
 interface FileUploadProps {
   onChange: (url?: string) => void;
   value: string;
+  folderName: GoogleFolderName,
   mediaType: MediaType;
   disabled?: boolean;
   canDelete?: boolean;
@@ -43,6 +44,7 @@ const ButtonFileDelete = ({
 export const FileUpload = ({
   onChange,
   value,
+  folderName,
   mediaType,
   disabled,
   canDelete,
@@ -55,11 +57,7 @@ export const FileUpload = ({
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await api.delete(`/upload`, {
-        data: {
-          fileName: value,
-        },
-      });
+      await api.delete(`/storage?fileUrl=${value}`);
       onChange("");
     } catch (error: Error | any) {
       toast({
@@ -110,6 +108,7 @@ export const FileUpload = ({
 
   return (
     <UploadDropzone
+      folderName={folderName}
       disabled={disabled}
       mediaType={mediaType}
       onUploadSuccess={onChange}

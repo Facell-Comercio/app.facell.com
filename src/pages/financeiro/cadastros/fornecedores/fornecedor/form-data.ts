@@ -27,19 +27,19 @@ const schemaFornecedor = z
     nome: z
       .string()
       .refine((v) => v.trim() !== "", { message: "Nome inválido" }),
-    telefone: z.string().min(10, "Campo Obrigatório"),
-    razao: z.string().min(10, "Campo Obrigatório"),
+    telefone: z.string().optional(),
+    razao: z.string().optional(),
     cep: z
       .string()
       .min(9, "Campo Obrigatório")
       .transform((v) => normalizeNumberOnly(v)),
-    logradouro: z.string().min(3, "Campo Obrigatório"),
-    numero: z.string().min(1, "Campo Obrigatório"),
+    logradouro: z.string().optional(),
+    numero: z.string().optional(),
     complemento: z.string().optional(),
-    bairro: z.string().min(3, "Campo Obrigatório"),
-    municipio: z.string().min(3, "Campo Obrigatório"),
-    uf: z.string().min(1, "Campo Obrigatório"),
-    email: z.string().email("Email Inválido").min(3, "Campo Obrigatório"),
+    bairro: z.string().optional(),
+    municipio: z.string().optional(),
+    uf: z.string().optional(),
+    email: z.string().optional(),
 
     // Dados Bancários
     id_forma_pagamento: z.string().min(1, "Campo Obrigatório"),
@@ -68,27 +68,53 @@ const schemaFornecedor = z
   //^ Cobra Banco Agência e Conta
   .refine(
     (data) =>
-      checkIsTransferenciaBancaria(data.id_forma_pagamento)
+      checkIsTransferenciaBancaria(data.id_forma_pagamento) && data.id_forma_pagamento != '4'
         ? !!data.banco
         : true,
     { path: ["banco"], message: "Obrigatório." }
   )
   .refine(
     (data) =>
-      checkIsTransferenciaBancaria(data.id_forma_pagamento)
+      checkIsTransferenciaBancaria(data.id_forma_pagamento) && data.id_forma_pagamento != '4'
         ? !!data.agencia
         : true,
     { path: ["agencia"], message: "Obrigatório." }
   )
   .refine(
     (data) =>
-      checkIsTransferenciaBancaria(data.id_forma_pagamento)
+      checkIsTransferenciaBancaria(data.id_forma_pagamento) && data.id_forma_pagamento != '4'
         ? !!data.conta
         : true,
     { path: ["conta"], message: "Obrigatório." }
   )
+  // ^ Validação dados obrigatórios CNPJ
+  .refine((data)=> data.cnpj.length > 11 && !data.razao ? false : true
+  , {path: ['razao'], message: 'Obrigatório'})
+  .refine((data)=> {
+      if(data.cnpj.length > 11){
+        try {
+          z.string().email().parse(data.email)
+        } catch (error) {
+          return false
+        }
+      }
+      return true
+  }
+  , {path: ['email'], message: 'Digite um email válido!'})
+  .refine((data)=> data.cnpj.length > 11 && (!data.telefone || data.telefone.length < 10) ? false : true
+  , {path: ['telefone'], message: 'No mínimo 10 caracteres'})
+  .refine((data)=> data.cnpj.length > 11 && !data.numero ? false : true
+  , {path: ['numero'], message: 'Obrigatório'})
+  .refine((data)=> data.cnpj.length > 11 && !data.logradouro ? false : true
+  , {path: ['logradouro'], message: 'Obrigatório'})
+  .refine((data)=> data.cnpj.length > 11 && !data.bairro ? false : true
+  , {path: ['bairro'], message: 'Obrigatório'})
+  .refine((data)=> data.cnpj.length > 11 && !data.uf ? false : true
+  , {path: ['uf'], message: 'Obrigatório'})
+  .refine((data)=> data.cnpj.length > 11 && !data.municipio ? false : true
+  , {path: ['municipio'], message: 'Obrigatório'})
 
-  // Cobrança PIX
+  //^ Validação PIX
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) ? !!data.id_tipo_chave_pix : true,
@@ -97,7 +123,6 @@ const schemaFornecedor = z
       message: "Obrigatório.",
     }
   )
-
   .refine(
     (data) => (checkIsPIX(data.id_forma_pagamento) ? !!data.chave_pix : true),
     {
@@ -180,7 +205,7 @@ const schemaFornecedor = z
       return { ...data, chave_pix: normalizeNumberOnly(data.chave_pix) };
     }
     return data;
-  });
+  })
 
 export const useFormFornecedorData = (data: FornecedorSchema) => {
   const form = useForm<FornecedorSchema>({

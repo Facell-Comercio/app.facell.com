@@ -11,7 +11,7 @@ export const checkUserPermission = (permission:string | number)=>{
         return false;
     }
     if(tipo === 'number'){
-        const index = user.permissoes.findIndex(perm=>perm.id === permission)
+        const index = user.permissoes.findIndex(perm=>perm.id_permissao === permission)
         return index >= 0;
     } 
     if(tipo === 'string'){
@@ -35,11 +35,11 @@ export const checkUserDepartments = (depart:string | number, gestor?:boolean)=>{
       return (
         user.departamentos.findIndex(
           // @ts-ignore "Vai funcionar"
-          (userDepart:UserDepartamento) => userDepart.id === depart && userDepart.gestor === gestor
+          (userDepart:UserDepartamento) => userDepart.id_departamento === depart && userDepart.gestor === gestor
         ) >= 0
       );
     }
-    return user.departamentos.findIndex((userDepart) => userDepart.id === depart) >= 0;
+    return user.departamentos.findIndex((userDepart: UserDepartamento) => userDepart.id_departamento === depart) >= 0;
   }
   if (tipo === "string") {
     if (gestor !== undefined) {
