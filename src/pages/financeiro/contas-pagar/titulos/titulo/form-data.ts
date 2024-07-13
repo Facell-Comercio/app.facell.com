@@ -127,7 +127,7 @@ export const schemaTitulo = z
 
     // Anexos:
     url_nota_fiscal: z.string().optional(),
-    url_xml_nota: z.string().optional(),
+    url_xml: z.string().optional(),
     url_boleto: z.string().optional(),
     url_contrato: z.string().optional(),
     url_planilha: z.string().optional(),
@@ -262,81 +262,6 @@ export const schemaTitulo = z
   );
 
 export type TituloSchemaProps = z.infer<typeof schemaTitulo>;
-// export interface TituloSchemaProps {
-//   id_fornecedor: string;
-//   id_filial: string;
-//   id_tipo_solicitacao: string;
-//   id_centro_custo: string;
-//   id_matriz?: string;
-//   id_grupo_economico?: string;
-//   status?: string;
-
-//   num_doc: string;
-
-//   id?: string|null;
-//   id_solicitante?: string;
-
-//   update_vencimentos: boolean;
-//   vencimentos: ItemTitulo[];
-
-//   update_rateio: boolean;
-//   rateio_manual: boolean;
-//   id_rateio?: string;
-//   itens_rateio: ItemRateioTitulo[];
-
-//   id_extrato?: string | null;
-//   id_extrato_lote?: string | null;
-//   id_status?: string;
-//   id_tipo_baixa?: string | null;
-
-//   created_at?: string;
-//   updated_at?: string;
-//   data_emissao?: string;
-//   data_vencimento?: string;
-//   data_prevista?: string;
-//   data_pagamento?: string | null;
-//   valor_pago?: string;
-//   descricao?: string;
-//   valor?: string;
-
-//   num_parcelas?: string;
-//   parcela?: string;
-//   cod_barras?: string | null;
-
-//   // Fornecedor
-//   nome_fornecedor?: string;
-//   cnpj_fornecedor?: string;
-
-//   cnpj_favorecido?: string | null;
-//   favorecido?: string | null;
-
-//   id_forma_pagamento?: string;
-//   id_banco?: string | null;
-//   banco?: string;
-//   codigo_banco?: string;
-//   agencia?: string | null;
-//   dv_agencia?: string | null;
-//   id_tipo_conta?: string | null;
-//   conta?: string | null;
-//   dv_conta?: string | null;
-
-//   id_tipo_chave_pix?: string | null;
-//   chave_pix?: string | null;
-
-//   centro_custo?: string;
-
-//   historico?: Historico[]
-
-//   url_xml?: string | null;
-//   url_nota_fiscal?: string | null;
-//   url_boleto?: string | null;
-//   url_contrato?: string | null;
-//   url_planilha?: string | null;
-//   url_txt?: string | null;
-//   url_xml_nota?: string;
-
-//   id_recorrencia?: string;
-// }
 
 export const useFormTituloData = (data: TituloSchemaProps) => {
   const form = useForm<TituloSchemaProps>({

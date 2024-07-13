@@ -857,7 +857,7 @@ const FormTituloPagar = ({
                   disabled={disabled}
                   label="Arquivo remessa"
                   name="url_txt"
-                  mediaType="txt"
+                  mediaType="remessa"
                   control={form.control}
                   onChange={(fileUrl: string) =>
                     handleChangeFile({ fileUrl, campo: "url_txt" })

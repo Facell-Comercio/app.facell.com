@@ -84,7 +84,7 @@ export const initialPropsTitulo: TituloSchemaProps = {
   itens_rateio: [],
 
   // anexos
-  url_xml_nota: "",
+  url_xml: "",
   url_nota_fiscal: "",
   url_boleto: "",
   url_contrato: "",

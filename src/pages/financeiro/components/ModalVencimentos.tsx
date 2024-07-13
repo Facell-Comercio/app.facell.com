@@ -266,7 +266,7 @@ const ModalVencimentos = ({
             {normalizeCurrency(
               data?.data.rows.reduce(
                 (acc: number, titulo: VencimentosProps) =>
-                  acc + +titulo.valor_total,
+                  acc + parseFloat(titulo.valor_total),
                 0
               ) || 0
             )}
@@ -411,6 +411,8 @@ const ModalVencimentos = ({
                 const isSelected = ids.includes(
                   `${item.id_vencimento}-${item.id_forma_pagamento}`
                 );
+                const isFatura = (item?.id_forma_pagamento || 0) == 6;
+
                 return (
                   <tr
                     key={"titulos:" + item.id_titulo + index}
@@ -425,7 +427,7 @@ const ModalVencimentos = ({
                     </td>
                     <td className="text-xs text-nowrap p-1 text-center">
                       {" "}
-                      {item.id_titulo}
+                      {isFatura ? 'Fatura' : item.id_titulo}
                     </td>
                     <td className="text-xs text-nowrap p-1">
                       {item.nome_fornecedor.slice(0, 20) +

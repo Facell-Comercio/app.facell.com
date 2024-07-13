@@ -22,7 +22,7 @@ export const BtnCopiarTitulo = ({ copyData }: { copyData: Partial<TituloSchemaPr
                 status: '',
                 historico: [],
                 url_boleto: '',
-                url_xml_nota: '',
+                url_xml: '',
                 url_nota_fiscal: '',
                 url_contrato: '',
                 url_planilha: '',

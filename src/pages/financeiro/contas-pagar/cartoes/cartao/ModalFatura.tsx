@@ -265,7 +265,7 @@ const ModalFatura = () => {
                   </form>
                 </Form>
               </div>
-              {qntdAprovadas > 0 && (
+              {qntdAprovadas >= 0 && (
                 <Accordion
                   type="single"
                   collapsible
