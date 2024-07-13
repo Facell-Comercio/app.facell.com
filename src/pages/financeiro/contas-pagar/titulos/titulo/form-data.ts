@@ -257,7 +257,7 @@ export const schemaTitulo = z
     { path: ["url_nota_fiscal"], message: "Anexo Obrigatório!" }
   )
   .refine(
-    (data) => (data.id_tipo_solicitacao != "1" ? !!data.url_contrato : true),
+    (data) => (data.id_tipo_solicitacao != "1" && data.id_forma_pagamento != '2' ? !!data.url_contrato : true),
     { path: ["url_contrato"], message: "Anexo Obrigatória!" }
   );
 
