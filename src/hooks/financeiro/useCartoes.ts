@@ -75,6 +75,7 @@ export const useCartoes = () => {
       useQuery({
         enabled: !!id,
         queryKey: ["fin_fatura", id],
+        staleTime: 0,
         queryFn: async () => {
           return await api.get(
             `/financeiro/contas-a-pagar/cartoes/fatura/${id}`
@@ -85,6 +86,7 @@ export const useCartoes = () => {
     getOneFaturas: ({ id, ...rest }: GetAllParamsCartao) =>
       useQuery({
         enabled: !!id,
+        staleTime: 0,
         queryKey: ["fin_cartoes_faturas", id, rest.pagination],
         queryFn: async () => {
           return await api.get(

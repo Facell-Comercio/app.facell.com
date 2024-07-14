@@ -70,7 +70,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
             className="min-w-4 me-1"
             onCheckedChange={(e) => {
               filteredData.forEach((_, index) => {
-                form.setValue(`vencimentos.${index}.checked`, !!e.valueOf());
+                form.setValue(`itens.${index}.checked`, !!e.valueOf());
               });
             }}
           />
@@ -137,7 +137,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
           );
 
           const disabled = !data[indexData].can_remove ? true : false;
-          const tipo = form.watch(`vencimentos.${indexData}.tipo_baixa`);
+          const tipo = form.watch(`itens.${indexData}.tipo_baixa`);
           const valor = parseFloat(data[indexData].valor_total);
           const emRemessa = data[indexData].remessa;
 
@@ -195,10 +195,10 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
               {modalEditing && (
                 <Checkbox
                   disabled={disabled}
-                  checked={form.watch(`vencimentos.${indexData}.checked`)}
+                  checked={form.watch(`itens.${indexData}.checked`)}
                   onCheckedChange={(e) => {
                     form.setValue(
-                      `vencimentos.${indexData}.checked`,
+                      `itens.${indexData}.checked`,
                       e.valueOf()
                     );
                   }}
@@ -256,7 +256,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                 type="number"
                 inputClass="text-xs flex-1 min-w-24 h-8"
                 readOnly={tipo == "PADRÃO" || !modalEditing}
-                name={`vencimentos.${indexData}.valor_pago`}
+                name={`itens.${indexData}.valor_pago`}
                 control={form.control}
                 min={tipo === "COM ACRÉSCIMO" ? valor : 0}
                 max={tipo !== "COM ACRÉSCIMO" ? valor : valor * 1000}
@@ -265,11 +265,11 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                 iconClass="h-8"
                 disabled={!modalEditing || disabled || !tipo}
                 onBlur={() => {
-                  form.setValue(`vencimentos.${indexData}.updated`, true);
+                  form.setValue(`itens.${indexData}.updated`, true);
                 }}
               />
               <FormSelect
-                name={`vencimentos.${indexData}.tipo_baixa`}
+                name={`itens.${indexData}.tipo_baixa`}
                 className="text-xs w-32 h-8"
                 control={form.control}
                 disabled={!modalEditing || disabled}
@@ -278,8 +278,8 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                   label: tipo_baixa.label,
                 }))}
                 onChange={() => {
-                  form.setValue(`vencimentos.${indexData}.valor_pago`, valor);
-                  form.setValue(`vencimentos.${indexData}.updated`, true);
+                  form.setValue(`itens.${indexData}.valor_pago`, valor);
+                  form.setValue(`itens.${indexData}.updated`, true);
                 }}
               />
               {modalEditing && !disabled && tipo === "PARCIAL" ? (
@@ -292,11 +292,11 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                     "border border-red-600"
                   }`}
                   value={form.watch(
-                    `vencimentos.${indexData}.data_prevista_parcial`
+                    `itens.${indexData}.data_prevista_parcial`
                   )}
                   onChange={(e: Date) =>
                     form.setValue(
-                      `vencimentos.${indexData}.data_prevista_parcial`,
+                      `itens.${indexData}.data_prevista_parcial`,
                       e
                     )
                   }
@@ -322,8 +322,8 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                   !!emRemessa ? "fora" : "dentro"
                 } de uma remessa.`}
                 action={() => {
-                  form.setValue(`vencimentos.${indexData}.remessa`, !emRemessa);
-                  form.setValue(`vencimentos.${indexData}.updated`, true);
+                  form.setValue(`itens.${indexData}.remessa`, !emRemessa);
+                  form.setValue(`itens.${indexData}.updated`, true);
                 }}
                 disabled={!modalEditing}
               >

@@ -25,7 +25,7 @@ export type BorderoSchemaProps = {
   id_conta_bancaria: string;
   data_pagamento: string;
   id_matriz: string;
-  vencimentos: VencimentosProps[];
+  itens: VencimentosProps[];
 };
 
 const initialPropsBordero: BorderoSchemaProps = {
@@ -35,7 +35,7 @@ const initialPropsBordero: BorderoSchemaProps = {
   id_conta_bancaria: "",
   data_pagamento: "",
   id_matriz: "",
-  vencimentos: [],
+  itens: [],
 };
 
 const ModalBordero = () => {
@@ -49,6 +49,7 @@ const ModalBordero = () => {
   const formRef = useRef(null);
 
   const { data, isLoading } = useBordero().getOne(id);
+  
   const { mutate: deleteBordero, isSuccess } = useBordero().deleteBordero();
   const newData: BorderoSchemaProps & Record<string, any> =
     {} as BorderoSchemaProps & Record<string, any>;
@@ -63,20 +64,19 @@ const ModalBordero = () => {
     }
   }
 
-  // ^ Observar se não ocorrerá nenhum erro com essa "gambiarra"
-  if (newData.vencimentos && newData.vencimentos.length > 0) {
-    const newVencimento = newData.vencimentos.map(
-      (vencimento: VencimentosProps) => {
+  if (newData.itens && newData.itens.length > 0) {
+    const newVencimento = newData.itens.map(
+      (item: VencimentosProps) => {
         return {
-          ...vencimento,
-          previsao: vencimento.previsao || "",
-          valor_pago: vencimento.valor_pago || "0",
-          num_doc: vencimento.num_doc || "",
-          id_dda: vencimento.id_dda || "",
-          tipo_baixa: vencimento.tipo_baixa || "",
-          data_pagamento: vencimento.data_pagamento || "",
-          id_status: vencimento.id_status || "",
-          obs: vencimento.obs || "",
+          ...item,
+          previsao: item.previsao || "",
+          valor_pago: item.valor_pago || "0",
+          num_doc: item.num_doc || "",
+          id_dda: item.id_dda || "",
+          tipo_baixa: item.tipo_baixa || "",
+          data_pagamento: item.data_pagamento || "",
+          id_status: item.id_status || "",
+          obs: item.obs || "",
         };
       }
     );
@@ -88,26 +88,6 @@ const ModalBordero = () => {
       newData.vencimentos = [];
     }
   }
-
-  // function pushSelectionBorderos(item: BorderoProps) {
-  //   if (checkedTitulos.length) {
-  //     const transferredData = {
-  //       new_id: item.id,
-  //       titulos: checkedTitulos,
-  //     };
-  //     transferTitulos(transferredData);
-  //     toggleModal();
-  //   } else {
-  //     toast({
-  //       title: "Nenhum título foi selecionado",
-  //       duration: 3000,
-  //       description:
-  //         "Para realizar a tranferência de títulos é necessário selecionar alguns",
-  //     });
-  //   }
-  //   // toggleGetTitulo(false);
-  //   toggleModalBorderos();
-  // }
 
   function handleClickCancel() {
     editModal(false);

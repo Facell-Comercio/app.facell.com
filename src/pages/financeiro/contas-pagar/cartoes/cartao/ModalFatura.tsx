@@ -17,7 +17,7 @@ import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
-import { normalizeDate, normalizeNumberOnly } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate, normalizeNumberOnly } from "@/helpers/mask";
 import { FaturaSchema, useCartoes } from "@/hooks/financeiro/useCartoes";
 import {
   ArrowUpDown,
@@ -33,14 +33,13 @@ import { ItemFatura } from "./ItemFatura";
 import ModalTransfer from "./ModalTransfer";
 import RowVirtualizerFixed from "./RowVirtualizedFixed";
 import { useStoreCartao } from "./store";
-
-type DadosUpdateProps = {
-  data_prevista?: Date;
-  cod_barras?: string;
-  valor?: string;
-};
+import { api } from "@/lib/axios";
+import { Spinner } from "@/components/custom/Spinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ModalFatura = () => {
+  const queryClient = useQueryClient();
+
   const [
     modalOpen,
     closeModal,
@@ -70,6 +69,11 @@ const ModalFatura = () => {
   const dados: FaturaSchema = data?.data.dados;
   const { form } = useFormFaturaData(dados);
 
+  const faturaFechada = !!dados?.closed
+  const disabled = faturaFechada || (dados?.status === "pago" || dados?.status === "programado");
+  const canReabrirFatura = faturaFechada && !(dados?.status === "pago" || dados?.status === "programado");
+  const canCloseFatura = !faturaFechada;
+
   //~ Compras Aprovadas
   const comprasAprovadas = data?.data?.comprasAprovadas || [];
   const qntdAprovadas =
@@ -92,7 +96,6 @@ const ModalFatura = () => {
   useEffect(() => {
     if (updateFaturaIsSuccess) {
       editModal(false);
-      closeModal();
       editIsPending(false);
     } else if (updateFaturaIsError) {
       editIsPending(false);
@@ -118,22 +121,7 @@ const ModalFatura = () => {
 
   function handleSubmit() {
     const valor = parseFloat(form.watch("valor") || "0");
-    const diferenca = Math.abs(valor - parseFloat(totalAprovadas));
-    if (valor !== parseFloat(totalAprovadas)) {
-      if (parseFloat(totalAprovadas) < valor) {
-        toast({
-          title: `Valor da fatura ultrapassou o esperado em R$${diferenca}`,
-          variant: "warning",
-        });
-      }
-      if (parseFloat(totalAprovadas) > valor) {
-        toast({
-          title: `Valor da fatura é inferior ao valor esperado em R$${diferenca}`,
-          variant: "warning",
-        });
-      }
-      return;
-    }
+
     const cod_barras =
       normalizeNumberOnly(form.watch("cod_barras")) || undefined;
     if (cod_barras && cod_barras.length < 44) {
@@ -148,23 +136,26 @@ const ModalFatura = () => {
     });
   }
 
-  function handleCloseFatura() {
+  const [isOpenCloseLoading, setIsOpenCloseLoading] = useState<boolean>(false);
+
+  async function handleCloseFatura() {
+    const valor = parseFloat(form.watch("valor") || "0");
+
     if (!form.watch("cod_barras")) {
       toast({ title: "Código de barras obrigatório", variant: "warning" });
       return;
     }
-    const valor = parseFloat(form.watch("valor") || "0");
     const diferenca = Math.abs(valor - parseFloat(totalAprovadas));
     if (valor !== parseFloat(totalAprovadas)) {
       if (parseFloat(totalAprovadas) < valor) {
         toast({
-          title: `Valor da fatura ultrapassou o esperado em R$${diferenca}`,
+          title: `Valor da fatura ultrapassa o esperado em ${normalizeCurrency(diferenca)}`,
           variant: "warning",
         });
       }
       if (parseFloat(totalAprovadas) > valor) {
         toast({
-          title: `Valor da fatura é inferior ao valor esperado em R$${diferenca}`,
+          title: `Valor da fatura é inferior ao valor esperado em ${normalizeCurrency(diferenca)}`,
           variant: "warning",
         });
       }
@@ -176,12 +167,40 @@ const ModalFatura = () => {
       toast({ title: "Código de barras inválido", variant: "warning" });
       return;
     }
-    updateFatura({
-      id,
-      closed: !dados?.closed,
-      cod_barras: form.watch("cod_barras") || undefined,
-      valor: String(valor),
-    });
+
+    try {
+      setIsOpenCloseLoading(true)
+      await api.post('/financeiro/contas-a-pagar/cartoes/fatura/fechar', {
+        ...dados
+      })
+      queryClient.invalidateQueries({ queryKey: ['fin_fatura'] })
+    } catch (error) {
+      toast({
+        variant: 'destructive', title: 'Ops!',
+        // @ts-ignore
+        description: error?.response?.data?.message || error?.message
+      })
+    } finally {
+      setIsOpenCloseLoading(false)
+    }
+  }
+
+  async function handleReabrirFatura() {
+    try {
+      setIsOpenCloseLoading(true)
+      await api.post('/financeiro/contas-a-pagar/cartoes/fatura/reabrir', {
+        ...dados
+      })
+      queryClient.invalidateQueries({ queryKey: ['fin_fatura'] })
+    } catch (error) {
+      toast({
+        variant: 'destructive', title: 'Ops!',
+        // @ts-ignore
+        description: error?.response?.data?.message || error?.message
+      })
+    } finally {
+      setIsOpenCloseLoading(false)
+    }
   }
 
   const [itemOpen, setItemOpen] = useState<string>("aprovadas");
@@ -226,6 +245,7 @@ const ModalFatura = () => {
                         Data Vencimento
                       </label>
                       <Input
+                        disabled={disabled}
                         value={normalizeDate(dados?.data_vencimento || "")}
                         readOnly
                       />
@@ -235,7 +255,7 @@ const ModalFatura = () => {
                         Data Previsão
                       </label>
                       <InputDate
-                        disabled={!modalEditing || isPending}
+                        disabled={disabled || !modalEditing || isPending}
                         value={form.watch(`data_prevista`)}
                         onChange={(e: Date) =>
                           form.setValue(`data_prevista`, e)
@@ -251,13 +271,13 @@ const ModalFatura = () => {
                         min={0}
                         icon={TbCurrencyReal}
                         iconLeft
-                        disabled={!modalEditing || isPending}
+                        disabled={disabled || !modalEditing || isPending}
                       />
                     </span>
                     <span className="flex flex-1 flex-col gap-2 min-w-[20ch]">
                       <label className="text-sm font-medium">Cod. Barras</label>
                       <FormInput
-                        disabled={!modalEditing || isPending}
+                        disabled={disabled || !modalEditing || isPending}
                         name={`cod_barras`}
                         control={form.control}
                       />
@@ -390,29 +410,40 @@ const ModalFatura = () => {
         <DialogFooter>
           <ModalButtons
             id={id}
+            blockEdit={disabled}
             modalEditing={modalEditing}
             edit={() => editModal(true)}
             cancel={handleClickCancel}
             formRef={formRef}
           >
-            {!(dados?.status === "pago" || dados?.status === "programado") && (
-              <AlertPopUp
-                title={`Deseja realmente ${
-                  !dados?.closed ? "fechar a  fatura" : "reabrir a fatura"
-                }?`}
-                action={() => {
-                  handleCloseFatura();
-                }}
-              >
-                <Button
-                  variant={!dados?.closed ? "destructive" : "success"}
-                  size={"lg"}
+            <>
+              {canCloseFatura && (
+                <AlertPopUp
+                  title={`Deseja realmente fechar a fatura?`}
+                  action={handleCloseFatura}
                 >
-                  <Receipt className="me-2" />
-                  {!dados?.closed ? "Fechar Fatura" : "Reabrir Fatura"}
-                </Button>
-              </AlertPopUp>
-            )}
+                  <Button
+                    variant={"destructive"} size={"lg"}
+                  >
+                    <Receipt className="me-2" />
+                    {"Fechar Fatura"}
+                  </Button>
+                </AlertPopUp>
+              )}
+              {canReabrirFatura && (
+                <AlertPopUp
+                  title={`Deseja realmente reabrir a fatura?`}
+                  action={handleReabrirFatura}
+                >
+                  <Button
+                    variant={"warning"} size={"lg"}
+                  >
+                    {isOpenCloseLoading ? <Spinner /> : <Receipt className="me-2" />}
+                    {"Reabrir Fatura"}
+                  </Button>
+                </AlertPopUp>
+              )}
+            </>
           </ModalButtons>
         </DialogFooter>
         <ModalTransfer

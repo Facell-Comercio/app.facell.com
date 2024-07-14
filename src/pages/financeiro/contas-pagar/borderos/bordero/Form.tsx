@@ -11,17 +11,15 @@ import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
 
-import { ArrowUpDown, Download, Fingerprint, Minus, Plus } from "lucide-react";
+import { ArrowUpDown, Download, Fingerprint, ListChecks, Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
-import { useFormBorderoData } from "./form-data";
+import { ItemBordero, useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
 
 // Componentes
 import { Accordion } from "@/components/ui/accordion";
-import ModalVencimentos, {
-  VencimentosProps,
-} from "@/pages/financeiro/components/ModalVencimentos";
+
 import ModalFatura from "../../cartoes/cartao/ModalFatura";
 import BtnOptionsRemessa from "./BtnOptionsRemessa";
 import { ItemVencimento } from "./ItemVencimento";
@@ -31,6 +29,10 @@ import RowVirtualizerFixedErro from "./RowVirtualizedFixedErro";
 import RowVirtualizerFixedPagos from "./RowVirtualizedFixedPagos";
 import RowVirtualizerFixedPendentes from "./RowVirtualizedFixedPendentes";
 import RowVirtualizerFixedProgramado from "./RowVirtualizedFixedProgramado";
+import ModalFindItemsBordero, {
+  VencimentosProps,
+} from "@/pages/financeiro/components/ModalFindItemsBordero";
+import { useFieldArray } from "react-hook-form";
 
 const FormBordero = ({
   id,
@@ -41,6 +43,7 @@ const FormBordero = ({
   data: BorderoSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
+
   const {
     mutate: insertOne,
     isPending: insertIsPending,
@@ -71,54 +74,67 @@ const FormBordero = ({
     state.isPending,
   ]);
 
-  const [modalVencimentoOpen, setModalVencimentoOpen] =
+  const [modalFindItemsOpen, setModalFindItemsOpen] =
     useState<boolean>(false);
   const [modalContaBancariaOpen, setModalContaBancariaOpen] =
     useState<boolean>(false);
 
   const [exporting, setExporting] = useState<string>("");
 
-  const { form, addVencimento, removeVencimento } = useFormBorderoData(data);
+  const { form } = useFormBorderoData(data);
+  const { append: addItemBordero, remove: removeItemBordero } = useFieldArray({
+    control: form.control,
+    name: "itens",
+  });
 
   const id_conta_bancaria = form.watch("id_conta_bancaria");
   const id_matriz = form.watch("id_matriz");
   const data_pagamento = form.watch("data_pagamento");
-  const wVencimentos = form.watch("vencimentos");
+  const wVencimentos = form.watch("itens");
+  console.log({wVencimentos});
+  
   const wVencimentosPendentes = form
-    .watch("vencimentos")
+    .watch("itens")
     .filter((v) => v.status === "pendente");
+
   const wVencimentosPendentesValorTotal =
     form
-      .watch("vencimentos")
+      .watch("itens")
       .filter((v) => v.status === "pendente")
-      .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
+      .reduce((acc, item: VencimentosProps) => acc + parseFloat(item?.valor_total), 0) || 0;
   const wVencimentosProgramados = form
-    .watch("vencimentos")
+    .watch("itens")
     .filter((v) => v.status === "programado");
   const wVencimentosProgramadosValorTotal =
     form
-      .watch("vencimentos")
+      .watch("itens")
       .filter((v) => v.status === "programado")
       .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
   const wVencimentosErro = form
-    .watch("vencimentos")
+    .watch("itens")
     .filter((v) => v.status === "erro");
   const wVencimentosErroValorTotal =
     form
-      .watch("vencimentos")
+      .watch("itens")
       .filter((v) => v.status === "erro")
       .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
   const wVencimentosPago = form
-    .watch("vencimentos")
+    .watch("itens")
     .filter((v) => v.status === "pago");
   const wVencimentosPagoValorTotal =
     form
-      .watch("vencimentos")
+      .watch("itens")
       .filter((v) => v.status === "pago")
       .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
-  const vencimentosChecked: VencimentosProps[] = form
-    .watch("vencimentos")
+
+  const itensChecked: VencimentosProps[] = form
+    .watch("itens")
     .filter((v) => v.checked);
+
+  const handlePagamentoEmLote = async (itens: VencimentosProps[]) => {
+    console.log(itens);
+
+  }
 
   function onSubmitData(newData: BorderoSchemaProps) {
     const filteredData: BorderoSchemaProps = {
@@ -126,8 +142,8 @@ const FormBordero = ({
       id_conta_bancaria: newData.id_conta_bancaria,
       data_pagamento: newData.data_pagamento,
       id_matriz: newData.id_matriz,
-      vencimentos: newData.vencimentos?.filter(
-        (vencimento: VencimentosProps) => vencimento.updated
+      itens: newData.itens?.filter(
+        (item: VencimentosProps) => item.updated
       ),
     };
     !id && insertOne(newData);
@@ -161,7 +177,7 @@ const FormBordero = ({
         `);
 
       if (!isNewId) {
-        return addVencimento({
+        return addItemBordero({
           ...subItem,
           updated: true,
           valor_pago: "0",
@@ -170,7 +186,7 @@ const FormBordero = ({
       }
     });
 
-    setModalVencimentoOpen(false);
+    setModalFindItemsOpen(false);
   }
 
   function handleSelectionContaBancaria(item: ItemContaBancariaProps) {
@@ -191,7 +207,7 @@ const FormBordero = ({
   ) {
     if (id_status != "4" && id_status != "5") {
       deleteVencimento(id);
-      removeVencimento(index);
+      removeItemBordero(index);
     } else {
       toast({
         title: "Erro",
@@ -223,7 +239,7 @@ const FormBordero = ({
         deleteVencimento(v.id_vencimento);
       }
     });
-    form.setValue("vencimentos", novosVencimentos);
+    form.setValue("itens", novosVencimentos);
   }
 
   async function exportBordero(id: string) {
@@ -238,9 +254,9 @@ const FormBordero = ({
 
   // const data_pagamento = form.watch("data_pagamento");
   // console.log(form.formState.errors);
-  // console.log(form.watch("vencimentos"));
+  // console.log(form.watch("itens"));
 
-  // console.log(form.watch("vencimentos"), data.vencimentos);
+  // console.log(form.watch("itens"), data.vencimentos);
   const [itemOpen, setItemOpen] = useState<string>("a-pagar");
 
   return (
@@ -267,51 +283,7 @@ const FormBordero = ({
                 {id && (
                   <div className="flex gap-3 items-center">
                     <BtnOptionsRemessa id={id} />
-                    {/* <Button
-                      disabled={isLoadingDownload && isLoadingPix}
-                      variant={"outline"}
-                      type={"button"}
-                      onClick={() => {
-                        setIsLoadingPix(true);
-                        downloadRemessa({ id, isPix: true });
-                      }}
-                    >
-                      {isLoadingDownload && isLoadingPix ? (
-                        <FaSpinner size={18} className="me-2 animate-spin" />
-                      ) : (
-                        <Upload className="me-2" size={20} />
-                      )}{" "}
-                      Retorno Remessa
-                    </Button>
-                    <Button
-                      disabled={isLoadingDownload && isLoadingPix}
-                      variant={"outline"}
-                      type={"button"}
-                      onClick={() => {
-                        setIsLoadingPix(true);
-                        downloadRemessa({ id, isPix: true });
-                      }}
-                    >
-                      {isLoadingDownload && isLoadingPix ? (
-                        <FaSpinner size={18} className="me-2 animate-spin" />
-                      ) : (
-                        <Download className="me-2" size={20} />
-                      )}{" "}
-                      Remessa PIX
-                    </Button>
-                    <Button
-                      disabled={isLoadingDownload && !isLoadingPix}
-                      variant={"outline"}
-                      type={"button"}
-                      onClick={() => downloadRemessa({ id })}
-                    >
-                      {isLoadingDownload && !isLoadingPix ? (
-                        <FaSpinner size={18} className="me-2 animate-spin" />
-                      ) : (
-                        <Download className="me-2" size={20} />
-                      )}{" "}
-                      Remessa
-                    </Button> */}
+
                     <Button
                       disabled={!!exporting}
                       variant={"outline"}
@@ -392,8 +364,23 @@ const FormBordero = ({
                 <div className="flex gap-2 flex-wrap justify-end">
                   {id_conta_bancaria &&
                     modalEditing &&
-                    vencimentosChecked.length > 0 && (
+                    itensChecked.length > 0 && (
                       <>
+                        <AlertPopUp
+                          title="Deseja realmente realizar o pagamento?"
+                          description="Será realizado um pagamento em lote dos vencimentos e faturas selecionados."
+                          action={() => handlePagamentoEmLote(itensChecked)}
+                        >
+                          <Button
+                            type={"button"}
+                            variant={"warning"}
+                            size={"sm"}
+                            className="justify-self-start"
+                          >
+                            <ListChecks className="me-2" size={18} />
+                            Pagar em Lote
+                          </Button>
+                        </AlertPopUp>
                         <Button
                           type={"button"}
                           variant={"tertiary"}
@@ -408,7 +395,7 @@ const FormBordero = ({
                           title="Deseja realmente remover esses vencimentos?"
                           description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
                           action={() =>
-                            removeCheckedVencimentos(vencimentosChecked)
+                            removeCheckedVencimentos(itensChecked)
                           }
                         >
                           <Button
@@ -427,7 +414,7 @@ const FormBordero = ({
                     <Button
                       type="button"
                       size={"sm"}
-                      onClick={() => setModalVencimentoOpen(true)}
+                      onClick={() => setModalFindItemsOpen(true)}
                     >
                       <Plus className="me-2" strokeWidth={2} size={18} />
                       Adicionar
@@ -519,7 +506,7 @@ const FormBordero = ({
                   <div className="flex gap-2 flex-wrap justify-end ">
                     {id_conta_bancaria &&
                       modalEditing &&
-                      vencimentosChecked.length > 0 && (
+                      itensChecked.length > 0 && (
                         <>
                           <Button
                             type={"button"}
@@ -535,7 +522,7 @@ const FormBordero = ({
                             title="Deseja realmente remover esses vencimentos?"
                             description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
                             action={() =>
-                              removeCheckedVencimentos(vencimentosChecked)
+                              removeCheckedVencimentos(itensChecked)
                             }
                           >
                             <Button
@@ -565,11 +552,11 @@ const FormBordero = ({
             )}
           </div>
         </form>
-        <ModalVencimentos
-          open={modalEditing && modalVencimentoOpen}
+        <ModalFindItemsBordero
+          open={modalEditing && modalFindItemsOpen}
           handleMultiSelection={handleSelectionVencimento}
           multiSelection
-          onOpenChange={setModalVencimentoOpen}
+          onOpenChange={setModalFindItemsOpen}
           id_matriz={id_matriz || ""}
           initialFilters={{
             tipo_data: "data_prevista",
@@ -579,7 +566,7 @@ const FormBordero = ({
             },
           }}
         />
-        <ModalTransfer data={vencimentosChecked} id_matriz={id_matriz || ""} />
+        <ModalTransfer data={itensChecked} id_matriz={id_matriz || ""} />
       </Form>
       <ModalFatura />
     </div>
