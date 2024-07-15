@@ -69,7 +69,6 @@ const FormBordero = ({
   ] = useStoreBordero((state) => [
     state.modalEditing,
     state.editModal,
-    state.closeModal,
     state.editIsPending,
     state.toggleModalTransfer,
     state.isPending,

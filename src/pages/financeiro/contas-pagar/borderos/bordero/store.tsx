@@ -14,7 +14,6 @@ interface UseStoreBordero {
   toggleModal: () => void;
   toggleModalContasBancarias: () => void;
   toggleModalTransfer: () => void;
-
   editIsPending: (bool: boolean) => void;
 }
 
