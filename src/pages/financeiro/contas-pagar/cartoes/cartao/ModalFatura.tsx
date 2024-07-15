@@ -25,6 +25,7 @@ import {
   Info,
   Receipt,
   ShoppingCart,
+  Trash,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
@@ -69,22 +70,25 @@ const ModalFatura = () => {
   const dados: FaturaSchema = data?.data.dados;
   const { form } = useFormFaturaData(dados);
 
+   //~ Compras Aprovadas
+   const comprasAprovadas = data?.data?.comprasAprovadas || [];
+   const qntdAprovadas =
+     (data?.data?.comprasAprovadas && data?.data?.comprasAprovadas.length) || 0;
+   const totalAprovadas = data?.data?.totalAprovadas || 0;
+ 
+   //~ Compras Pendentes
+   const comprasPendentes = data?.data?.comprasPendentes || [];
+   const qntdPendentes =
+     (data?.data?.comprasPendentes && data?.data?.comprasPendentes.length) || 0;
+   const totalPendentes = data?.data.totalPendentes;
+
   const faturaFechada = !!dados?.closed
   const disabled = faturaFechada || (dados?.status === "pago" || dados?.status === "programado");
-  const canReabrirFatura = faturaFechada && !(dados?.status === "pago" || dados?.status === "programado");
-  const canCloseFatura = !faturaFechada;
+  const canDeleteFatura = (comprasAprovadas.length + comprasPendentes.length) == 0
+  const canReabrirFatura = !canDeleteFatura && faturaFechada && !(dados?.status === "pago" || dados?.status === "programado");
+  const canCloseFatura = !canDeleteFatura && !faturaFechada;
 
-  //~ Compras Aprovadas
-  const comprasAprovadas = data?.data?.comprasAprovadas || [];
-  const qntdAprovadas =
-    (data?.data?.comprasAprovadas && data?.data?.comprasAprovadas.length) || 0;
-  const totalAprovadas = data?.data?.totalAprovadas || 0;
-
-  //~ Compras Pendentes
-  const comprasPendentes = data?.data.comprasPendentes;
-  const qntdPendentes =
-    (data?.data?.comprasPendentes && data?.data?.comprasPendentes.length) || 0;
-  const totalPendentes = data?.data.totalPendentes;
+ 
 
   const {
     mutate: updateFatura,
@@ -174,6 +178,9 @@ const ModalFatura = () => {
         ...dados
       })
       queryClient.invalidateQueries({ queryKey: ['fin_fatura'] })
+      toast({
+        variant: 'success', title: 'Fatura fechada!'
+      })
     } catch (error) {
       toast({
         variant: 'destructive', title: 'Ops!',
@@ -192,6 +199,33 @@ const ModalFatura = () => {
         ...dados
       })
       queryClient.invalidateQueries({ queryKey: ['fin_fatura'] })
+      toast({
+        variant: 'success', title: 'Fatura reaberta!'
+      })
+    } catch (error) {
+      toast({
+        variant: 'destructive', title: 'Ops!',
+        // @ts-ignore
+        description: error?.response?.data?.message || error?.message
+      })
+    } finally {
+      setIsOpenCloseLoading(false)
+    }
+  }
+
+  async function handleDeleteFatura() {
+    try {
+      setIsOpenCloseLoading(true)
+      await api.delete('/financeiro/contas-a-pagar/cartoes/fatura', {
+        params: {id: dados.id}
+      })
+      queryClient.invalidateQueries({ queryKey: ['fin_fatura'] })
+      queryClient.invalidateQueries({ queryKey: ['fin_cartoes'] })
+      queryClient.invalidateQueries({ queryKey: ['fin_cartoes_faturas'] })
+      toast({
+        variant: 'success', title: 'Fatura excluída!'
+      })
+      closeModal()
     } catch (error) {
       toast({
         variant: 'destructive', title: 'Ops!',
@@ -417,6 +451,21 @@ const ModalFatura = () => {
             formRef={formRef}
           >
             <>
+            <div className="flex gap-3 items-center">
+            {canDeleteFatura && (
+                <AlertPopUp
+                  title={`Deseja realmente fechar a fatura?`}
+                  action={handleDeleteFatura}
+                >
+                  <Button
+                    disabled={isOpenCloseLoading}
+                    variant={"destructive"} size={"lg"}
+                  >
+                    {isOpenCloseLoading ? <Spinner /> : <Trash className="me-2" />}
+                    {"Excluir Fatura"}
+                  </Button>
+                </AlertPopUp>
+              )}
               {canCloseFatura && (
                 <AlertPopUp
                   title={`Deseja realmente fechar a fatura?`}
@@ -443,6 +492,7 @@ const ModalFatura = () => {
                   </Button>
                 </AlertPopUp>
               )}
+              </div>
             </>
           </ModalButtons>
         </DialogFooter>
