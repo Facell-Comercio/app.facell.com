@@ -209,7 +209,7 @@ const ModalFatura = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{`Fatura: ${id} `}{dados?.closed ? <span  className="text-slate-600">Fechada</span> : <span className="text-green-600">Aberta</span>}</DialogTitle>
+          <DialogTitle>{`Fatura: ${id} `}{dados?.closed ? <span  className="text-slate-500">Fechada</span> : <span className="text-green-500">Aberta</span>}</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
