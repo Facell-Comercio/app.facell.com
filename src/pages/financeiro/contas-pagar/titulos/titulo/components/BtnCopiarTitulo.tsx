@@ -4,11 +4,9 @@ import { Copy, CopyCheck } from "lucide-react";
 import { useStoreTitulo } from "../store";
 
 export const BtnCopiarTitulo = ({ copyData }: { copyData: Partial<TituloSchemaProps> }) => {
-    console.log('Renderização');
     
     const openModal = useStoreTitulo((state)=>state.openModal)
     const [tituloCopiado, setTituloCopiado] = useStoreTitulo((state)=>[state.tituloCopiado, state.setTituloCopiado])
-    console.log({copyData});
     
     const handleClickCopiar = () => {
         openModal({

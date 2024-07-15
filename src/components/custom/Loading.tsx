@@ -6,10 +6,11 @@ type DotsLoadingProps = {
     qtde?: number,
     variant?: BadgeProps['variant'],
 }
-const Dot = ({ size = 6, variant = 'default', index }: DotsLoadingProps) => {
+const Dot = ({ size = 3, variant = 'default', index }: DotsLoadingProps) => {
     const delay = (index || 0) * 100;
     return (<Badge variant={variant} className={`px-0 py-0 h-${size} w-${size} animate-bounce delay-${delay} opacity-75`} />)
 };
+
 export const DotsLoading = (props: DotsLoadingProps) => {
     return (
         <div className="flex gap-2">
