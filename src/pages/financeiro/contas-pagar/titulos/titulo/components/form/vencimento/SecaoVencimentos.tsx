@@ -87,7 +87,7 @@ const SecaoVencimentos = ({
     () => [
       {
         accessorKey: "id",
-        header: "AÇÃO",
+        header: modalEditing ? "AÇÃO" : '',
         cell: (info) => {
           const index = info.row.index;
           return (
@@ -124,7 +124,7 @@ const SecaoVencimentos = ({
             </div>
           );
         },
-        size: 100,
+        size: modalEditing ? 100 : 0,
       },
       {
         accessorKey: "data_vencimento",
@@ -147,6 +147,16 @@ const SecaoVencimentos = ({
       {
         accessorKey: "valor",
         header: "VALOR",
+        size: 120,
+        cell: (info) => {
+          let valor = parseFloat(info.getValue<string>());
+          let currency = normalizeCurrency(valor);
+          return <div className={`w-full  px-2 text-end`}>{currency}</div>;
+        },
+      },
+      {
+        accessorKey: "valor_pago",
+        header: "VALOR PAGO",
         size: 120,
         cell: (info) => {
           let valor = parseFloat(info.getValue<string>());
@@ -179,7 +189,7 @@ const SecaoVencimentos = ({
         size: 150,
       },
     ],
-    [wvencimentos, canEditVencimentos, indexCopyCodBarras, indexCopyQrCode]
+    [modalEditing, wvencimentos, canEditVencimentos, indexCopyCodBarras, indexCopyQrCode]
   );
 
   const valor_total = wvencimentos?.reduce((acc, curr) => {
@@ -187,7 +197,7 @@ const SecaoVencimentos = ({
   }, 0);
 
   return (
-    <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+    <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg max-w-full">
       <ModalVencimento form={form} />
       <div className="flex flex-col md:flex-row gap-3 mb-3 md:items-center">
         <span className="flex gap-2">

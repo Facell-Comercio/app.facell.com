@@ -55,16 +55,11 @@ const RowVirtualizerFixedPendentes: React.FC<
   };
 
   const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
-
+  
   return (
     <section
       ref={parentElement}
       className="pe-2 h-[300px] w-full overflow-auto scroll-thin"
-      // style={{
-      //   height: `300px`,
-      //   width: `100%`,
-      //   overflow: 'auto',
-      // }}
     >
       <div className="flex gap-1 font-medium text-sm w-full sticky top-0 z-10 bg-slate-200 dark:bg-blue-950 px-1">
         {modalEditing && (
@@ -72,6 +67,8 @@ const RowVirtualizerFixedPendentes: React.FC<
             className="min-w-4 me-1"
             onCheckedChange={(e) => {
               filteredData.forEach((_, index) => {
+                console.log({item: _});
+                
                 // if (item.id_status == "3") {
                 form.setValue(`itens.${index}.checked`, !!e.valueOf());
                 // }

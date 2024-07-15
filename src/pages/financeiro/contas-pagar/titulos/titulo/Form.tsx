@@ -409,7 +409,7 @@ const FormTituloPagar = ({
           <section className="overflow-auto scroll-thin z-[100] flex-1 ">
             <div className="w-full grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 z-[100]">
               {/* Primeira coluna */}
-              <div className="flex flex-col flex-wrap gap-3 flex-shrink-0 flex-grow-0">
+              <div className="grid gap-3 flex-shrink-0 flex-grow-0">
                 {/* Dados do Fornecedor */}
                 <div className="flex flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex gap-2 mb-3">
@@ -700,8 +700,8 @@ const FormTituloPagar = ({
 
                 {/* Abas Vencimentos / Rateio entre filiais */}
                 {valorTotalTitulo > 0 && !!id_matriz ? (
-                  <div className="max-w-full">
-                    <Tabs defaultValue="vencimentos" className="max-w-full">
+                  <div className="overflow-auto">
+                    <Tabs defaultValue="vencimentos" className="overflow-auto">
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="vencimentos">
                           <div className="flex gap-3">
@@ -735,7 +735,7 @@ const FormTituloPagar = ({
                         </TabsTrigger>
                       </TabsList>
 
-                      <TabsContent value="vencimentos">
+                      <TabsContent value="vencimentos" className="orverflow-auto">
                         <SecaoVencimentos
                           id={id}
                           form={form}
@@ -746,7 +746,7 @@ const FormTituloPagar = ({
                         />
                       </TabsContent>
 
-                      <TabsContent value="rateio">
+                      <TabsContent value="rateio" className="orverflow-auto">
                         <SecaoRateio
                           id={id}
                           form={form}

@@ -11,10 +11,10 @@ import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
 
-import { ArrowUpDown, Download, Fingerprint, ListChecks, Minus, Plus } from "lucide-react";
+import { ArrowsUpFromLine, ArrowUpDown, Download, Fingerprint, ListChecks, Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
-import { ItemBordero, useFormBorderoData } from "./form-data";
+import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
 
 // Componentes
@@ -33,6 +33,7 @@ import ModalFindItemsBordero, {
   VencimentosProps,
 } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { useFieldArray } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 
 const FormBordero = ({
   id,
@@ -43,6 +44,7 @@ const FormBordero = ({
   data: BorderoSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
+  const queryClient = useQueryClient()
 
   const {
     mutate: insertOne,
@@ -61,7 +63,6 @@ const FormBordero = ({
   const [
     modalEditing,
     editModal,
-    closeModal,
     editIsPending,
     toggleModalTransfer,
     isPending,
@@ -91,17 +92,19 @@ const FormBordero = ({
   const id_matriz = form.watch("id_matriz");
   const data_pagamento = form.watch("data_pagamento");
   const wVencimentos = form.watch("itens");
-  console.log({wVencimentos});
-  
+  // console.log({wVencimentos});
+
+  // ITENS - PENDENTES
   const wVencimentosPendentes = form
     .watch("itens")
     .filter((v) => v.status === "pendente");
-
   const wVencimentosPendentesValorTotal =
     form
       .watch("itens")
       .filter((v) => v.status === "pendente")
       .reduce((acc, item: VencimentosProps) => acc + parseFloat(item?.valor_total), 0) || 0;
+
+  // ITENS - PROGRAMADOS
   const wVencimentosProgramados = form
     .watch("itens")
     .filter((v) => v.status === "programado");
@@ -110,6 +113,8 @@ const FormBordero = ({
       .watch("itens")
       .filter((v) => v.status === "programado")
       .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
+
+  // ITENS - ERRO
   const wVencimentosErro = form
     .watch("itens")
     .filter((v) => v.status === "erro");
@@ -118,9 +123,13 @@ const FormBordero = ({
       .watch("itens")
       .filter((v) => v.status === "erro")
       .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
+
+  // ITENS - PAGOS
   const wVencimentosPago = form
     .watch("itens")
     .filter((v) => v.status === "pago");
+    console.log({wVencimentosPago});
+    
   const wVencimentosPagoValorTotal =
     form
       .watch("itens")
@@ -131,9 +140,33 @@ const FormBordero = ({
     .watch("itens")
     .filter((v) => v.checked);
 
-  const handlePagamentoEmLote = async (itens: VencimentosProps[]) => {
-    console.log(itens);
+  const handlePadronizarTipoBaixa = () => {
+    itensChecked.forEach((itemChecked: VencimentosProps) => {
+      const indexItem = wVencimentos.findIndex((v: VencimentosProps) => v.id_vencimento == itemChecked.id_vencimento && v.tipo == itemChecked.tipo)
+      console.log({ indexItem });
 
+      form.setValue(`itens.${indexItem}`,
+        {
+          ...itemChecked,
+          valor_pago: itemChecked.valor_total,
+          tipo_baixa: 'PADRÃO'
+        })
+    })
+  }
+
+  const handlePagamentoEmLote = async () => {
+    const itens = wVencimentos.filter((v: VencimentosProps) => v.checked === true)
+
+    try {
+      await api.post('/financeiro/contas-a-pagar/bordero/pagamento', { id_bordero: data.id, itens, data_pagamento: data.data_pagamento })
+      queryClient.invalidateQueries({ queryKey: ['fin_borderos'] })
+    } catch (error) {
+      toast({
+        variant: 'destructive', title: 'Ops!',
+        // @ts-ignore
+        description: error?.response?.data?.message || error?.message
+      })
+    }
   }
 
   function onSubmitData(newData: BorderoSchemaProps) {
@@ -155,7 +188,6 @@ const FormBordero = ({
   useEffect(() => {
     if (updateIsSuccess || insertIsSuccess) {
       editModal(false);
-      closeModal();
       editIsPending(false);
     } else if (updateIsError || insertIsError) {
       editIsPending(false);
@@ -367,15 +399,36 @@ const FormBordero = ({
                     itensChecked.length > 0 && (
                       <>
                         <AlertPopUp
-                          title="Deseja realmente realizar o pagamento?"
-                          description="Será realizado um pagamento em lote dos vencimentos e faturas selecionados."
-                          action={() => handlePagamentoEmLote(itensChecked)}
+                          title="Deseja realmente prosseguir?"
+                          description="Todos os itens selecionados serão preenchidos com valor pago e tipo baixa 'Total'. Nada será salvo até que faça o Pagamento em Lote."
+                          action={handlePadronizarTipoBaixa}
                         >
                           <Button
                             type={"button"}
-                            variant={"warning"}
+                            variant={"tertiary"}
+                            size={"sm"}
+                            className="justify-self-start group"
+                            title="Todos os itens selecionados receberão valor pago = total, tipo baixa = 'Total' "
+                          >
+                            <ArrowsUpFromLine
+                              size={18}
+                              className="me-2 group-hover:rotate-180 transition-all"
+                            />
+                            Padronizar Tipo Baixa
+                          </Button>
+                        </AlertPopUp>
+
+                        <AlertPopUp
+                          title="Deseja realmente realizar o pagamento?"
+                          description="Será realizado um pagamento em lote dos vencimentos e faturas selecionados."
+                          action={handlePagamentoEmLote}
+                        >
+                          <Button
+                            type={"button"}
+                            variant={"success"}
                             size={"sm"}
                             className="justify-self-start"
+                            title="Todos os selecionados serão pagos conforme o tipo de baixa, os sem tipo baixa serão ignorados..."
                           >
                             <ListChecks className="me-2" size={18} />
                             Pagar em Lote

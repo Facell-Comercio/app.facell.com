@@ -61,7 +61,7 @@ export type VencimentosProps = {
   filial: string;
   obs?: string;
   data_pagamento?: string;
-
+  tipo?: 'vencimento' | 'fatura'
   can_remove?: boolean;
   can_modify?: boolean;
   updated?: boolean;
