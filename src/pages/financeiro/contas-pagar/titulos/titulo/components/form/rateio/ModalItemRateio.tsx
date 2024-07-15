@@ -428,7 +428,7 @@ export const ModalItemRateio = ({
       <DialogContent className="sm:max-w-[400px]">
         <ModalFiliais
           open={canEdit && modalFilialOpen && !!id_matriz}
-          id_matriz={id_matriz}
+          id_grupo_economico={id_grupo_economico}
           onOpenChange={setModalFilialOpen}
           handleSelection={handleSelectionFilial}
           closeOnSelection
