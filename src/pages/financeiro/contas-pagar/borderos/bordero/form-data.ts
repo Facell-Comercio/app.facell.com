@@ -38,11 +38,6 @@ const ItemBorderoSchema = z
       message: "Data prevista parcial é obrigatória",
     }
   )
-  .refine(
-    (data) =>
-      data.valor_pago && data.valor_pago > 0 ? !!data.tipo_baixa : true,
-    { path: ["tipo_baixa"], message: "Tipo baixa é obrigatório" }
-  )
 
 const schemaBorderos = z.object({
   // Identificador do plano de contas

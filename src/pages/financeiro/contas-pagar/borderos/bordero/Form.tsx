@@ -34,6 +34,7 @@ import ModalFindItemsBordero, {
 } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { useFieldArray } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
+import { Spinner } from "@/components/custom/Spinner";
 
 const FormBordero = ({
   id,
@@ -63,12 +64,14 @@ const FormBordero = ({
   const [
     modalEditing,
     editModal,
+    closeModal,
     editIsPending,
     toggleModalTransfer,
     isPending,
   ] = useStoreBordero((state) => [
     state.modalEditing,
     state.editModal,
+    state.closeModal,
     state.editIsPending,
     state.toggleModalTransfer,
     state.isPending,
@@ -142,7 +145,7 @@ const FormBordero = ({
   const handlePadronizarTipoBaixa = () => {
     itensChecked.forEach((itemChecked: VencimentosProps) => {
       const indexItem = wVencimentos.findIndex((v: VencimentosProps) => v.id_vencimento == itemChecked.id_vencimento && v.tipo == itemChecked.tipo)
-      console.log({ indexItem });
+      // console.log({ indexItem });
 
       form.setValue(`itens.${indexItem}`,
         {
@@ -152,19 +155,28 @@ const FormBordero = ({
         })
     })
   }
-
+  const [loadingPagamento, setLoadingPagamento] = useState<boolean>(false)
   const handlePagamentoEmLote = async () => {
     const itens = wVencimentos.filter((v: VencimentosProps) => v.checked === true)
 
     try {
+      if(!itens || itens.length ===0){
+        throw new Error('Nenhum item selecionado!')
+      }
+      setLoadingPagamento(true)
       await api.post('/financeiro/contas-a-pagar/bordero/pagamento', { id_bordero: data.id, itens, data_pagamento: data.data_pagamento })
       queryClient.invalidateQueries({ queryKey: ['fin_borderos'] })
+      toast({
+        variant: 'success', title: 'Pagamento realizado!',
+      })
     } catch (error) {
       toast({
         variant: 'destructive', title: 'Ops!',
         // @ts-ignore
         description: error?.response?.data?.message || error?.message
       })
+    }finally{
+      setLoadingPagamento(false)
     }
   }
 
@@ -185,12 +197,21 @@ const FormBordero = ({
   }
 
   useEffect(() => {
-    if (updateIsSuccess || insertIsSuccess) {
+    if(insertIsSuccess){
+      editModal(false);
+      closeModal()
+      return 
+    }
+    if (updateIsSuccess) {
       editModal(false);
       editIsPending(false);
-    } else if (updateIsError || insertIsError) {
+      return
+    } 
+    if (updateIsError || insertIsError) {
       editIsPending(false);
-    } else if (updateIsPending || insertIsPending) {
+      return
+    } 
+    if (updateIsPending || insertIsPending) {
       editIsPending(true);
     }
   }, [updateIsPending, insertIsPending]);
@@ -404,6 +425,7 @@ const FormBordero = ({
                         >
                           <Button
                             type={"button"}
+                            disabled={loadingPagamento}
                             variant={"tertiary"}
                             size={"sm"}
                             className="justify-self-start group"
@@ -426,11 +448,15 @@ const FormBordero = ({
                             type={"button"}
                             variant={"success"}
                             size={"sm"}
+                            disabled={loadingPagamento}
                             className="justify-self-start"
                             title="Todos os selecionados serão pagos conforme o tipo de baixa, os sem tipo baixa serão ignorados..."
                           >
-                            <ListChecks className="me-2" size={18} />
-                            Pagar em Lote
+                            {loadingPagamento ? (<><Spinner/>
+                              <span>Pagando...</span></>): 
+                            (<><ListChecks className="me-2" size={18} />
+                            <span>Pagar em Lote</span></>)
+                            }
                           </Button>
                         </AlertPopUp>
                         <Button
