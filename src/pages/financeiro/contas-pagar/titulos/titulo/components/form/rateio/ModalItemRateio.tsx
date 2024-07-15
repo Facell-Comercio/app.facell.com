@@ -353,7 +353,8 @@ export const ModalItemRateio = ({
                 return acc + parseFloat(curr.valor);
               }, 0) || 0) + parseFloat(data.valor);
           const dif = totalPrevisto - parseFloat(valorTotalTitulo);
-
+              console.log(dif);
+              
           if (dif > 0) {
             const difFormatada = normalizeCurrency(dif);
             toast({
