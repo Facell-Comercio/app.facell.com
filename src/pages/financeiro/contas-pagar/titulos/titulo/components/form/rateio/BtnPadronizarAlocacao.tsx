@@ -27,6 +27,7 @@ import { z } from "zod";
 import { TituloSchemaProps } from "../../../form-data";
 import { ItemRateioTitulo } from "../../../store";
 import { checkIfValidateBudget } from "../../../helpers/helper";
+import { DotsLoading } from "@/components/custom/Loading";
 
 type PadronizarAlocacaoProps = {
   form: UseFormReturn<TituloSchemaProps>;
@@ -76,6 +77,7 @@ export function BtnPadronizarAlocacao({
   };
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [validarOrcamento, setValidarOrcamento] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const itens_rateio = useWatch({
     name: "itens_rateio",
@@ -107,6 +109,7 @@ export function BtnPadronizarAlocacao({
   // const { errors } = formPadronizacao.formState
   // console.log('Erros padronizar alocação', errors)
 
+  // * WATCHES
   const id_centro_custo = formPadronizacao.watch("id_centro_custo");
   const id_plano_conta = formPadronizacao.watch("id_plano_conta");
 
@@ -131,6 +134,7 @@ export function BtnPadronizarAlocacao({
 
   const valorExcessoOrcamento = valorTotalItens - saldoOrcamento;
   const excedeOrcamento = saldoOrcamento < valorTotalItens;
+  const saldoFuturoOrcamento = saldoOrcamento - valorTotalItens;
 
   type FetchOrcamento = {
     id_grupo_economico: number | string;
@@ -139,6 +143,7 @@ export function BtnPadronizarAlocacao({
   };
   const fetchOrcamento = async (props: FetchOrcamento) => {
     try {
+      setIsFetching(true)
       const result = await api.get("/financeiro/orcamento/find-account", {
         params: { ...props },
       });
@@ -158,6 +163,8 @@ export function BtnPadronizarAlocacao({
         description: error?.response?.data?.message || error.message,
       });
       setSaldoOrcamento(0);
+    }finally{
+      setIsFetching(false)
     }
   };
 
@@ -168,6 +175,7 @@ export function BtnPadronizarAlocacao({
       setSaldoOrcamento(0);
     }
   }, [id_centro_custo, id_plano_conta]);
+
   useEffect(() => {
     if (!id_centro_custo) {
       setFeedback({
@@ -207,7 +215,7 @@ export function BtnPadronizarAlocacao({
       itens_rateio?.forEach((item: ItemRateioTitulo) => {
         novos_itens.push({
           ...item,
-          percentual: String(parseFloat(item.percentual) * 100),
+          percentual: String(parseFloat(item.percentual)),
           ...data,
         });
       });
@@ -241,10 +249,10 @@ export function BtnPadronizarAlocacao({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <Form {...formPadronizacao}>
-          <form onSubmit={(e)=>{
-              formPadronizacao.handleSubmit(onSubmit)(e)
-              e.stopPropagation()
-            }}>
+          <form onSubmit={(e) => {
+            formPadronizacao.handleSubmit(onSubmit)(e)
+            e.stopPropagation()
+          }}>
             <DialogHeader>
               <DialogTitle>Padronização de Alocação</DialogTitle>
               <DialogDescription>
@@ -293,19 +301,25 @@ export function BtnPadronizarAlocacao({
                 />
               </span>
 
-              {validarOrcamento && (
-                <>
-                  <div className="flex gap-3 text-muted-foreground">
-                    <span>Saldo Orçamento</span>
-                    <span>{normalizeCurrency(saldoOrcamento)}</span>
-                  </div>
+              {isFetching ?
+                <div className="w-full flex justify-center"><DotsLoading size={3} /></div> :
+                validarOrcamento && (
+                  <>
+                    <div className="flex gap-3 text-muted-foreground">
+                      <span>Saldo Orçamento</span>
+                      <span>{normalizeCurrency(saldoOrcamento)}</span>
+                    </div>
+                    <div className="flex gap-3 text-muted-foreground">
+                      <span>Saldo Orçamento Futuro</span>
+                      <span>{normalizeCurrency(saldoFuturoOrcamento)}</span>
+                    </div>
+                    <div className="flex gap-3 text-muted-foreground">
+                      <span>Será consumido</span>
+                      <span>{normalizeCurrency(valorTotalItens)}</span>
+                    </div>
 
-                  <div className="flex gap-3 text-muted-foreground">
-                    <span>Será consumido</span>
-                    <span>{normalizeCurrency(valorTotalItens)}</span>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
 
 
               <div className="flex gap-3">

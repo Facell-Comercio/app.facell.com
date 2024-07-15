@@ -35,6 +35,7 @@ import { TituloSchemaProps, rateioSchema } from "../../../form-data";
 import { ItemRateioTitulo } from "../../../store";
 import { initialStateRateio, useStoreRateio } from "./context";
 import { checkIfValidateBudget } from "../../../helpers/helper";
+import { DotsLoading } from "@/components/custom/Loading";
 
 type ModalItemRateioProps = {
   form: UseFormReturn<TituloSchemaProps>;
@@ -59,6 +60,7 @@ export const ModalItemRateio = ({
   };
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [validarOrcamento, setValidarOrcamento] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   // Dados obtidos do Título:
   const id_matriz = useWatch({
@@ -179,6 +181,7 @@ export const ModalItemRateio = ({
   };
   const fetchOrcamento = async (props: FetchOrcamento) => {
     try {
+      setIsFetching(true)
       const result = await api.get("/financeiro/orcamento/find-account", {
         params: { ...props },
       });
@@ -197,6 +200,8 @@ export const ModalItemRateio = ({
         description: error?.response?.data?.message || error.message,
       });
       setValorOrcamento(0);
+    } finally {
+      setIsFetching(false)
     }
   };
 
@@ -492,18 +497,19 @@ export const ModalItemRateio = ({
                 />
               </span>
 
-              {validarOrcamento && (
-                <>
-                  <div className="flex gap-3 text-muted-foreground">
-                    <span>Saldo Orçamento</span>
-                    <span>{normalizeCurrency(valorOrcamento)}</span>
-                  </div>
-                  <div className="flex gap-3 text-muted-foreground">
-                    <span>Saldo Orçamento Futuro</span>
-                    <span>{normalizeCurrency(saldoFuturoOrcamento)}</span>
-                  </div>
-                </>
-              )}
+              {isFetching ? <div className="w-full flex justify-center"><DotsLoading size={3} /></div> :
+                validarOrcamento && (
+                  <>
+                    <div className="flex gap-3 text-muted-foreground">
+                      <span>Saldo Orçamento</span>
+                      <span>{normalizeCurrency(valorOrcamento)}</span>
+                    </div>
+                    <div className="flex gap-3 text-muted-foreground">
+                      <span>Saldo Orçamento Futuro</span>
+                      <span>{normalizeCurrency(saldoFuturoOrcamento)}</span>
+                    </div>
+                  </>
+                )}
 
               <div className="flex gap-3">
                 {feedback && (

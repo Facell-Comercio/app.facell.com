@@ -11,8 +11,9 @@ import { Toggle } from "@/components/ui/toggle";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Minus } from "lucide-react";
+import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
+import { useStoreCartao } from "../../cartoes/cartao/store";
 import { useStoreDDA } from "../components/storeDDA";
 
 interface RowVirtualizerFixedPendentesProps {
@@ -53,15 +54,12 @@ const RowVirtualizerFixedPendentes: React.FC<
     openModalDDA({ id_vencimento, filters: { vinculados: false } });
   };
 
+  const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
+  
   return (
     <section
       ref={parentElement}
       className="pe-2 h-[300px] w-full overflow-auto scroll-thin"
-      // style={{
-      //   height: `300px`,
-      //   width: `100%`,
-      //   overflow: 'auto',
-      // }}
     >
       <div className="flex gap-1 font-medium text-sm w-full sticky top-0 z-10 bg-slate-200 dark:bg-blue-950 px-1">
         {modalEditing && (
@@ -69,13 +67,16 @@ const RowVirtualizerFixedPendentes: React.FC<
             className="min-w-4 me-1"
             onCheckedChange={(e) => {
               filteredData.forEach((_, index) => {
+                console.log({item: _});
+                
                 // if (item.id_status == "3") {
-                form.setValue(`vencimentos.${index}.checked`, !!e.valueOf());
+                form.setValue(`itens.${index}.checked`, !!e.valueOf());
                 // }
               });
             }}
           />
         )}
+        <p className="min-w-[34px] text-center bg-slate-200 dark:bg-blue-950"></p>
         <p className="min-w-16 text-center bg-slate-200 dark:bg-blue-950">ID</p>
         <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">
           ID Título
@@ -131,16 +132,52 @@ const RowVirtualizerFixedPendentes: React.FC<
           const indexData = data.findIndex(
             (vencimento) =>
               vencimento.id_vencimento ===
-              filteredData[item.index].id_vencimento
+                filteredData[item.index].id_vencimento &&
+              vencimento.id_forma_pagamento ===
+                filteredData[item.index].id_forma_pagamento
           );
 
           const id_vencimento = data[indexData].id_vencimento;
           const disabled = !data[indexData].can_remove ? true : false;
-          const tipo = form.watch(`vencimentos.${indexData}.tipo_baixa`);
+          const tipo = form.watch(`itens.${indexData}.tipo_baixa`);
           const valor = parseFloat(data[indexData].valor_total);
           const vinculoDDA = !!data[indexData].id_dda;
           const isBoleto = (data[indexData]?.id_forma_pagamento || null) == 1;
           const emRemessa = data[indexData].remessa;
+
+          function IconeFormaPagamento() {
+            if (data[indexData]?.id_forma_pagamento === 3) {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-700 hover:bg-green-700 cursor-default"
+                  size={"xs"}
+                >
+                  <Banknote size={18} />
+                </Button>
+              );
+            } else if (data[indexData]?.id_forma_pagamento === 6) {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-violet-700 hover:bg-violet-600"
+                  size={"xs"}
+                  onClick={() =>
+                    openModalFatura(data[indexData].id_vencimento || "")
+                  }
+                >
+                  <CreditCard size={18} />
+                </Button>
+              );
+            } else {
+              return (
+                <Button
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-700 hover:bg-zinc-700 cursor-default"
+                  size={"xs"}
+                >
+                  <Landmark size={18} />
+                </Button>
+              );
+            }
+          }
 
           return (
             <div
@@ -162,16 +199,17 @@ const RowVirtualizerFixedPendentes: React.FC<
               {modalEditing && (
                 <Checkbox
                   disabled={disabled}
-                  checked={form.watch(`vencimentos.${indexData}.checked`)}
+                  checked={form.watch(`itens.${indexData}.checked`)}
                   onCheckedChange={(e) => {
                     form.setValue(
-                      `vencimentos.${indexData}.checked`,
+                      `itens.${indexData}.checked`,
                       e.valueOf()
                     );
                   }}
                   className="me-1"
                 />
               )}
+              <IconeFormaPagamento />
               <Input
                 className="w-16 h-8 text-xs p-2 text-center"
                 value={data[indexData].id_vencimento || ""}
@@ -222,7 +260,7 @@ const RowVirtualizerFixedPendentes: React.FC<
                 type="number"
                 inputClass="text-xs flex-1 min-w-24 h-8"
                 readOnly={tipo == "PADRÃO" || !modalEditing}
-                name={`vencimentos.${indexData}.valor_pago`}
+                name={`itens.${indexData}.valor_pago`}
                 control={form.control}
                 min={tipo === "COM ACRÉSCIMO" ? valor : 0}
                 max={tipo !== "COM ACRÉSCIMO" ? valor : valor * 1000}
@@ -231,21 +269,30 @@ const RowVirtualizerFixedPendentes: React.FC<
                 iconClass="h-8"
                 disabled={!modalEditing || disabled || !tipo}
                 onBlur={() => {
-                  form.setValue(`vencimentos.${indexData}.updated`, true);
+                  form.setValue(`itens.${indexData}.updated`, true);
                 }}
               />
               <FormSelect
-                name={`vencimentos.${indexData}.tipo_baixa`}
+                name={`itens.${indexData}.tipo_baixa`}
                 className="text-xs w-32 h-8"
                 control={form.control}
                 disabled={!modalEditing || disabled}
-                options={tipoBaixa.map((tipo_baixa: TipoBaixaProps) => ({
-                  value: tipo_baixa.id.toString(),
-                  label: tipo_baixa.label,
-                }))}
+                options={
+                  data[indexData].id_forma_pagamento !== 6
+                    ? tipoBaixa.map((tipo_baixa: TipoBaixaProps) => ({
+                        value: tipo_baixa.id.toString(),
+                        label: tipo_baixa.label,
+                      }))
+                    : tipoBaixa
+                        .map((tipo_baixa: TipoBaixaProps) => ({
+                          value: tipo_baixa.id.toString(),
+                          label: tipo_baixa.label,
+                        }))
+                        .filter((tipo_baixa) => tipo_baixa.label === "Total")
+                }
                 onChange={() => {
-                  form.setValue(`vencimentos.${indexData}.valor_pago`, valor);
-                  form.setValue(`vencimentos.${indexData}.updated`, true);
+                  form.setValue(`itens.${indexData}.valor_pago`, valor);
+                  form.setValue(`itens.${indexData}.updated`, true);
                 }}
               />
               {/* DDA */}
@@ -286,8 +333,8 @@ const RowVirtualizerFixedPendentes: React.FC<
                   !!emRemessa ? "fora" : "dentro"
                 } de uma remessa.`}
                 action={() => {
-                  form.setValue(`vencimentos.${indexData}.remessa`, !emRemessa);
-                  form.setValue(`vencimentos.${indexData}.updated`, true);
+                  form.setValue(`itens.${indexData}.remessa`, !emRemessa);
+                  form.setValue(`itens.${indexData}.updated`, true);
                 }}
                 disabled={!modalEditing}
               >
@@ -316,11 +363,11 @@ const RowVirtualizerFixedPendentes: React.FC<
                     "border border-red-600"
                   }`}
                   value={form.watch(
-                    `vencimentos.${indexData}.data_prevista_parcial`
+                    `itens.${indexData}.data_prevista_parcial`
                   )}
                   onChange={(e: Date) =>
                     form.setValue(
-                      `vencimentos.${indexData}.data_prevista_parcial`,
+                      `itens.${indexData}.data_prevista_parcial`,
                       e
                     )
                   }

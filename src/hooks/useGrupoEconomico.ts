@@ -22,6 +22,16 @@ export const useGrupoEconomico = () => {
         refetchOnMount: false,
       }),
 
+    getAllMatriz: (params?: GetAllParams) =>
+      useQuery({
+        queryKey: ["matriz", params],
+        queryFn: async () =>
+          await api.get("/grupo-economico/matriz", { params: params }),
+        placeholderData: keepPreviousData,
+        staleTime: Infinity,
+        refetchOnMount: false,
+      }),
+
     getOne: (id?: string) =>
       useQuery({
         enabled: !!id,

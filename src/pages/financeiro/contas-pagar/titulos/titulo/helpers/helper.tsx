@@ -86,6 +86,10 @@ export const checkIsPIX = (id_forma_pagamento: string) => {
   return id_forma_pagamento == "4";
 };
 
+export const checkIsCartao = (id_forma_pagamento: string) => {
+  return id_forma_pagamento == "6";
+};
+
 export const formatarHistorico = (descricao: string) => {
   if (!descricao) return descricao;
   let iniciais = descricao.substring(0, 2).toUpperCase();

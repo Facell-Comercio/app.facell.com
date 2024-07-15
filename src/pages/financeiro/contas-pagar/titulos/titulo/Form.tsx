@@ -25,6 +25,7 @@ import ModalFornecedores, {
 } from "@/pages/financeiro/components/ModalFornecedores";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
+import SelectCartao from "@/components/custom/SelectCartao";
 import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +61,7 @@ import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
 import {
+  checkIsCartao,
   checkIsPIX,
   checkIsTransferenciaBancaria,
   formatarHistorico,
@@ -230,6 +232,7 @@ const FormTituloPagar = ({
 
   // * [ FORMA DE PAGAMENTO ]
   const showPix = checkIsPIX(id_forma_pagamento);
+  const showCartao = checkIsCartao(id_forma_pagamento);
   const showDadosBancarios = checkIsTransferenciaBancaria(id_forma_pagamento);
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
@@ -406,7 +409,7 @@ const FormTituloPagar = ({
           <section className="overflow-auto scroll-thin z-[100] flex-1 ">
             <div className="w-full grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 z-[100]">
               {/* Primeira coluna */}
-              <div className="flex flex-col flex-wrap gap-3 flex-shrink-0 flex-grow-0">
+              <div className="grid gap-3 flex-shrink-0 flex-grow-0">
                 {/* Dados do Fornecedor */}
                 <div className="flex flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex gap-2 mb-3">
@@ -470,6 +473,52 @@ const FormTituloPagar = ({
                         control={form.control}
                         readOnly={readOnly}
                         className="flex-1 min-w-[20ch]"
+                      />
+                    </div>
+                    <div
+                      className={`flex gap-3 ${
+                        showCartao ? "flex w-full" : "hidden"
+                      }`}
+                    >
+                      <SelectCartao
+                        control={form.control}
+                        name="id_cartao"
+                        label="Cartão"
+                        disabled={disabled}
+                        className={`flex-1 min-w-[30ch]`}
+                        onChange={async (id) => {
+                          await api
+                            .get(`/financeiro/contas-a-pagar/cartoes/${id}`)
+                            .then((data) => {
+                              form.setValue(
+                                "dia_vencimento_cartao",
+                                data.data.dia_vencimento
+                              );
+                              form.setValue(
+                                "dia_corte_cartao",
+                                data.data.dia_corte
+                              );
+                              form.setValue("id_matriz", data.data.id_matriz);
+                              form.setValue(
+                                "id_grupo_economico",
+                                data.data.id_grupo_economico
+                              );
+                            });
+                        }}
+                      />
+                      <FormInput
+                        className="flex-1 min-w-[20ch] shrink-0"
+                        name="dia_vencimento_cartao"
+                        readOnly
+                        label="Dia do vencimento"
+                        control={form.control}
+                      />
+                      <FormInput
+                        className="flex-1 min-w-[20ch] shrink-0"
+                        name="dia_corte_cartao"
+                        readOnly
+                        label="Dia de Corte"
+                        control={form.control}
                       />
                     </div>
                     {/* Dados bancários do fornecedor */}
@@ -651,8 +700,8 @@ const FormTituloPagar = ({
 
                 {/* Abas Vencimentos / Rateio entre filiais */}
                 {valorTotalTitulo > 0 && !!id_matriz ? (
-                  <div className="max-w-full">
-                    <Tabs defaultValue="vencimentos" className="max-w-full">
+                  <div className="overflow-auto">
+                    <Tabs defaultValue="vencimentos" className="overflow-auto">
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="vencimentos">
                           <div className="flex gap-3">
@@ -686,7 +735,7 @@ const FormTituloPagar = ({
                         </TabsTrigger>
                       </TabsList>
 
-                      <TabsContent value="vencimentos">
+                      <TabsContent value="vencimentos" className="orverflow-auto">
                         <SecaoVencimentos
                           id={id}
                           form={form}
@@ -697,7 +746,7 @@ const FormTituloPagar = ({
                         />
                       </TabsContent>
 
-                      <TabsContent value="rateio">
+                      <TabsContent value="rateio" className="orverflow-auto">
                         <SecaoRateio
                           id={id}
                           form={form}
@@ -808,7 +857,7 @@ const FormTituloPagar = ({
                   disabled={disabled}
                   label="Arquivo remessa"
                   name="url_txt"
-                  mediaType="txt"
+                  mediaType="remessa"
                   control={form.control}
                   onChange={(fileUrl: string) =>
                     handleChangeFile({ fileUrl, campo: "url_txt" })

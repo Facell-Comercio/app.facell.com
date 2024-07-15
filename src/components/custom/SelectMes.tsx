@@ -15,6 +15,7 @@ type TSelectMes = {
   value?: string;
   onValueChange?: (value: string) => void;
   placeholder?: string;
+  disabled?: boolean;
 };
 
 const SelectMes = (props: TSelectMes) => {
@@ -34,7 +35,11 @@ const SelectMes = (props: TSelectMes) => {
     { id: "12", mes: "Dezembro" },
   ];
   return (
-    <Select onValueChange={props.onValueChange} value={props.value}>
+    <Select
+      onValueChange={props.onValueChange}
+      value={props.value}
+      disabled={props.disabled}
+    >
       <SelectTrigger className={`min-w-[15ch] ${props.className}`}>
         <SelectValue
           placeholder={props.placeholder ? props.placeholder : `Selecione...`}

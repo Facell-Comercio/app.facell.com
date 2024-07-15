@@ -5,7 +5,7 @@ import { useStoreTableTarifas } from "./store-table";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type RowTitulo = {
+export type RowTarifas = {
   select: ReactNode;
   id: string;
   status: string;
@@ -19,7 +19,7 @@ export type RowTitulo = {
 
 const openModal = useStoreTableTarifas.getState().openModal;
 
-export const columnsTable: ColumnDef<RowTitulo>[] = [
+export const columnsTable: ColumnDef<RowTarifas>[] = [
   {
     id: "select",
     header: ({ table }) => (

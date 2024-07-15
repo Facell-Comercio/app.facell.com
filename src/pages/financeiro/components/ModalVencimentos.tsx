@@ -172,8 +172,14 @@ const ModalVencimentos = ({
   }
   function handleSelectAll() {
     data?.data?.rows.forEach((item: VencimentosProps) => {
-      const isAlreadyInVencimentos = titulos.some(
-        (existingItem) => existingItem.id_vencimento === item.id_vencimento
+      // const isAlreadyInVencimentos = titulos.some(
+      //   (existingItem) =>
+      //     existingItem.id_vencimento === item.id_vencimento &&
+      //     existingItem.id_forma_pagamento === item.id_forma_pagamento
+      // );
+
+      const isAlreadyInVencimentos = ids.some(
+        (id) => id === `${item.id_vencimento}-${item.id_forma_pagamento}`
       );
 
       if (!isAlreadyInVencimentos) {
@@ -186,7 +192,10 @@ const ModalVencimentos = ({
           },
         ]);
 
-        setIds((prevIds) => [...prevIds, item.id_vencimento.toString()]);
+        setIds((prevIds) => [
+          ...prevIds,
+          `${item.id_vencimento}-${item.id_forma_pagamento}`,
+        ]);
       }
     });
   }
@@ -194,7 +203,7 @@ const ModalVencimentos = ({
   function pushSelection(item: VencimentosProps) {
     if (multiSelection) {
       const isAlreadyInVencimentos = ids.some(
-        (id) => id === String(item.id_vencimento)
+        (id) => id === `${item.id_vencimento}-${item.id_forma_pagamento}`
       );
 
       if (!isAlreadyInVencimentos) {
@@ -206,16 +215,19 @@ const ModalVencimentos = ({
             data_pagamento: item.data_pagamento || "",
           },
         ]);
-        setIds([...ids, item.id_vencimento.toString()]);
+        setIds([...ids, `${item.id_vencimento}-${item.id_forma_pagamento}`]);
       } else {
         setTitulos((prevTitulos) =>
           prevTitulos.filter(
-            (titulo) => titulo.id_vencimento !== item.id_vencimento
+            (titulo) =>
+              titulo.id_vencimento !== item.id_vencimento &&
+              titulo.id_forma_pagamento !== item.id_forma_pagamento
           )
         );
+
         setIds((prevId) =>
           prevId.filter((id) => {
-            return id !== String(item.id_vencimento);
+            return id !== `${item.id_vencimento}-${item.id_forma_pagamento}`;
           })
         );
       }
@@ -254,7 +266,7 @@ const ModalVencimentos = ({
             {normalizeCurrency(
               data?.data.rows.reduce(
                 (acc: number, titulo: VencimentosProps) =>
-                  acc + +titulo.valor_total,
+                  acc + parseFloat(titulo.valor_total),
                 0
               ) || 0
             )}
@@ -331,8 +343,8 @@ const ModalVencimentos = ({
                 <ScrollArea className="whitespace-nowrap rounded-md pb-1 flex flex-wrap w-max max-w-full  ">
                   <div className="flex gap-2 sm:gap-3 w-max">
                     <Input
-                      placeholder="ID Vencimento"
-                      className="w-[20ch]"
+                      placeholder="ID"
+                      className="w-[10ch]"
                       ref={(el) => setInputRef("id_vencimento", el)}
                     />
                     <Input
@@ -396,7 +408,11 @@ const ModalVencimentos = ({
             </thead>
             <tbody>
               {data?.data?.rows.map((item: VencimentosProps, index: number) => {
-                const isSelected = ids.includes(item.id_vencimento.toString());
+                const isSelected = ids.includes(
+                  `${item.id_vencimento}-${item.id_forma_pagamento}`
+                );
+                const isFatura = (item?.id_forma_pagamento || 0) == 6;
+
                 return (
                   <tr
                     key={"titulos:" + item.id_titulo + index}
@@ -411,7 +427,7 @@ const ModalVencimentos = ({
                     </td>
                     <td className="text-xs text-nowrap p-1 text-center">
                       {" "}
-                      {item.id_titulo}
+                      {isFatura ? 'Fatura' : item.id_titulo}
                     </td>
                     <td className="text-xs text-nowrap p-1">
                       {item.nome_fornecedor.slice(0, 20) +

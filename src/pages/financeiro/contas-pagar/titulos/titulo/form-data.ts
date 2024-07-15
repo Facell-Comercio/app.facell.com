@@ -1,7 +1,13 @@
+import { toast } from "@/components/ui/use-toast";
+import { normalizeDate } from "@/helpers/mask";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { checkIsPIX, checkIsTransferenciaBancaria } from "./helpers/helper";
+import {
+  checkIsCartao,
+  checkIsPIX,
+  checkIsTransferenciaBancaria,
+} from "./helpers/helper";
 
 export const vencimentoSchema = z.object({
   id: z.string().optional(),
@@ -71,6 +77,7 @@ export const schemaTitulo = z
     cnpj_favorecido: z.string().optional(),
     id_tipo_chave_pix: z.string().optional(),
     chave_pix: z.string().optional(),
+    id_cartao: z.string().optional(),
 
     id_banco: z.string().optional(),
     banco: z.string().optional(),
@@ -85,6 +92,8 @@ export const schemaTitulo = z
     // Outros
     created_at: z.coerce.date().optional(),
     data_emissao: z.coerce.string({ required_error: "Campo obrigatório" }),
+    dia_vencimento_cartao: z.coerce.string().optional(), //~ Usado somente na forma de pagamento Cartão
+    dia_corte_cartao: z.coerce.string().optional(), //~ Usado somente na forma de pagamento Cartão
 
     num_doc: z
       .string({ message: "Campo obrigatório" })
@@ -118,7 +127,7 @@ export const schemaTitulo = z
 
     // Anexos:
     url_nota_fiscal: z.string().optional(),
-    url_xml_nota: z.string().optional(),
+    url_xml: z.string().optional(),
     url_boleto: z.string().optional(),
     url_contrato: z.string().optional(),
     url_planilha: z.string().optional(),
@@ -165,7 +174,7 @@ export const schemaTitulo = z
     { path: ["conta"], message: "Obrigatório para esta forma de pagamento." }
   )
 
-  // Cobrança PIX
+  //^ Cobrança PIX
   .refine(
     (data) =>
       checkIsPIX(data.id_forma_pagamento) ? !!data.id_tipo_chave_pix : true,
@@ -182,6 +191,16 @@ export const schemaTitulo = z
       message: "Obrigatório para esta forma de pagamento.",
     }
   )
+  //^ Cobrança cartão
+  .refine(
+    (data) =>
+      checkIsCartao(data.id_forma_pagamento) ? !!data.id_cartao : true,
+    {
+      path: ["id_cartao"],
+      message: "Obrigatório para esta forma de pagamento.",
+    }
+  )
+
   // ^ Validar se forma de pagamento for PIX Copia e Cola, cobrar o PIX Copia e Cola
   .refine(
     (data) => {
@@ -199,6 +218,38 @@ export const schemaTitulo = z
     },
     { path: ["vencimentos"], message: "Preencha o PIX Copia e Cola!" }
   )
+  // ^ Valida se forma de pagamento for cartão se a data de vencimento está no dia certo
+  .refine(
+    (data) => {
+      if (checkIsCartao(data.id_forma_pagamento)) {
+        if (!data.vencimentos || data.vencimentos.length === 0) {
+          return false;
+        }
+
+        for (const v of data.vencimentos) {
+          console.log(
+            new Date(v.data_vencimento).getDate(),
+            parseInt(data.dia_vencimento_cartao || "")
+          );
+          if (
+            new Date(v.data_vencimento).getDate() !==
+            parseInt(data.dia_vencimento_cartao || "")
+          ) {
+            toast({
+              title: "Data de vencimento incorreta",
+              description: `${normalizeDate(
+                v.data_vencimento
+              )} não é uma data de vencimento aceita nessa forma de pagamento`,
+              variant: "destructive",
+            });
+            return false;
+          }
+        }
+      }
+      return true;
+    },
+    { path: ["vencimentos"], message: "Preencha o PIX Copia e Cola!" }
+  )
 
   // ^ Validação de Anexos
   .refine(
@@ -206,86 +257,11 @@ export const schemaTitulo = z
     { path: ["url_nota_fiscal"], message: "Anexo Obrigatório!" }
   )
   .refine(
-    (data) => (data.id_tipo_solicitacao != "1" ? !!data.url_contrato : true),
+    (data) => (data.id_tipo_solicitacao != "1" && data.id_forma_pagamento != '2' ? !!data.url_contrato : true),
     { path: ["url_contrato"], message: "Anexo Obrigatória!" }
   );
 
 export type TituloSchemaProps = z.infer<typeof schemaTitulo>;
-// export interface TituloSchemaProps {
-//   id_fornecedor: string;
-//   id_filial: string;
-//   id_tipo_solicitacao: string;
-//   id_centro_custo: string;
-//   id_matriz?: string;
-//   id_grupo_economico?: string;
-//   status?: string;
-
-//   num_doc: string;
-
-//   id?: string|null;
-//   id_solicitante?: string;
-
-//   update_vencimentos: boolean;
-//   vencimentos: ItemTitulo[];
-
-//   update_rateio: boolean;
-//   rateio_manual: boolean;
-//   id_rateio?: string;
-//   itens_rateio: ItemRateioTitulo[];
-
-//   id_extrato?: string | null;
-//   id_extrato_lote?: string | null;
-//   id_status?: string;
-//   id_tipo_baixa?: string | null;
-
-//   created_at?: string;
-//   updated_at?: string;
-//   data_emissao?: string;
-//   data_vencimento?: string;
-//   data_prevista?: string;
-//   data_pagamento?: string | null;
-//   valor_pago?: string;
-//   descricao?: string;
-//   valor?: string;
-
-//   num_parcelas?: string;
-//   parcela?: string;
-//   cod_barras?: string | null;
-
-//   // Fornecedor
-//   nome_fornecedor?: string;
-//   cnpj_fornecedor?: string;
-
-//   cnpj_favorecido?: string | null;
-//   favorecido?: string | null;
-
-//   id_forma_pagamento?: string;
-//   id_banco?: string | null;
-//   banco?: string;
-//   codigo_banco?: string;
-//   agencia?: string | null;
-//   dv_agencia?: string | null;
-//   id_tipo_conta?: string | null;
-//   conta?: string | null;
-//   dv_conta?: string | null;
-
-//   id_tipo_chave_pix?: string | null;
-//   chave_pix?: string | null;
-
-//   centro_custo?: string;
-
-//   historico?: Historico[]
-
-//   url_xml?: string | null;
-//   url_nota_fiscal?: string | null;
-//   url_boleto?: string | null;
-//   url_contrato?: string | null;
-//   url_planilha?: string | null;
-//   url_txt?: string | null;
-//   url_xml_nota?: string;
-
-//   id_recorrencia?: string;
-// }
 
 export const useFormTituloData = (data: TituloSchemaProps) => {
   const form = useForm<TituloSchemaProps>({

@@ -31,7 +31,7 @@ export const columnsTableSemNota: ColumnDef<RowTitulo>[] = [
     cell: (info) => (
       <span
         className="flex justify-center font-semibold cursor-pointer text-blue-500"
-        onClick={() => openModal(info.getValue<string>())}
+        onClick={() => openModal({ id: info.getValue<string>() })}
       >
         {info.getValue<string>()}
       </span>
@@ -111,7 +111,7 @@ export const columnsTableNegadas: ColumnDef<RowTitulo>[] = [
     cell: (info) => (
       <span
         className="flex justify-center font-semibold cursor-pointer text-blue-500"
-        onClick={() => openModal(info.getValue<string>())}
+        onClick={() => openModal({ id: info.getValue<string>() })}
       >
         {info.getValue<string>()}
       </span>
@@ -197,10 +197,12 @@ export const columnsTableRecorrencias: ColumnDef<RowRecorrencia>[] = [
           const id = info.cell.row.original.id;
           const data_vencimento = info.cell.row.original.data_vencimento;
           const valor = info.cell.row.original.valor;
-          openModal(id_titulo, {
-            data_vencimento,
-            id,
-            valor,
+          openModal({
+            id: id_titulo, recorrencia: {
+              data_vencimento,
+              id,
+              valor,
+            }
           });
         }}
       >

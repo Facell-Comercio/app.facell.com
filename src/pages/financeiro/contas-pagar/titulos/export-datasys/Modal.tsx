@@ -5,7 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-// import { useStoreTitulo } from "./store-titulo";
 
 import { InputDate } from "@/components/custom/InputDate";
 import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
@@ -36,9 +35,9 @@ const ModalExportDatasys = () => {
   async function exportDatasys() {
     if (!filters.id_grupo_economico || !filters.data_pagamento) {
       toast({
-        title: "Dados insuficientes!",
+        title: "Ops!",
         description:
-          "Preencha os campos de grupo econômico e de data de pagamento",
+          "Preencha o grupo econômico e a data de pagamento",
         variant: "destructive",
       });
       return;
@@ -52,6 +51,9 @@ const ModalExportDatasys = () => {
         }
       );
       const rows = response?.data || [];
+      if(rows.length == 0){
+        throw new Error('Nenhum pagamento realizado no período!')
+      }
 
       // const formatedResponse = rows.map((row: ResponseExportDatasysProps) => {
       //   return {
@@ -86,8 +88,9 @@ const ModalExportDatasys = () => {
       closeModal();
     } catch (err) {
       toast({
-        title: "Erro!",
-        description: "Houve um problema no processo de exportação",
+        title: "Ops!",
+        // @ts-ignore
+        description: err.message,
         variant: "destructive",
       });
     } finally {

@@ -7,6 +7,7 @@ import { Navigate } from "react-router-dom";
 import ConciliacaoCP from "./conciliacao/cp/ConciliacaoCP";
 import ConfigTab from "./config/ConfigTab";
 import ExtratoTab from "./extrato/ExtratoTab";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const ConciliacaoBancaria = () => {
   const authorized =
@@ -18,11 +19,13 @@ const ConciliacaoBancaria = () => {
     <div className="flex p-4">
       <Tabs defaultValue="conciliacao" className="w-full">
         <TabsList className="w-full justify-start">
-          <TabsTrigger value="extratos">Extratos Bancários</TabsTrigger>
-          <TabsTrigger value="conciliacao">
-            Conciliação de pagamentos
-          </TabsTrigger>
-          <TabsTrigger value="config">Configurações</TabsTrigger>
+          <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
+            <TabsTrigger value="extratos">Extratos Bancários</TabsTrigger>
+            <TabsTrigger value="conciliacao">
+              Conciliação de pagamentos
+            </TabsTrigger>
+            <TabsTrigger value="config">Configurações</TabsTrigger>
+          </ScrollArea>
         </TabsList>
         <TabsContent value="extratos">
           <ExtratoTab />

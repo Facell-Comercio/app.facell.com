@@ -16,6 +16,8 @@ import {
   initialPropsTitulo,
   useStoreTitulo,
 } from "./store";
+import { useEffect } from "react";
+import { BtnCopiarTitulo } from "./components/BtnCopiarTitulo";
 
 export type DataSchemaProps = {
   titulo: TituloSchemaProps;
@@ -28,7 +30,11 @@ const ModalTituloPagar = () => {
   const closeModal = useStoreTitulo().closeModal;
   const id = useStoreTitulo().id;
   const recorrencia = useStoreTitulo().recorrencia;
+  const copyData = useStoreTitulo().copyData;
   // const formRef = useRef(null);
+  useEffect(()=>{
+
+  }, [id])
 
   const { data, isLoading } = useTituloPagar().getOne(id);
 
@@ -113,7 +119,6 @@ const ModalTituloPagar = () => {
       url_planilha: "",
       url_txt: "",
       url_xml: "",
-      url_xml_nota: "",
       valor: recorrencia.valor,
       data_vencimento: recorrencia.data_vencimento,
       data_emissao: new Date().toDateString(),
@@ -126,17 +131,21 @@ const ModalTituloPagar = () => {
       id_recorrencia: recorrencia.id,
       created_at: undefined,
     };
-  } else if (id) {
+  } else if(copyData){
+    // @ts-ignore
+    modalData = {...copyData}
+  }else if (id) {
     modalData = { ...titulo, vencimentos, itens_rateio, historico };
   }
 
   return (
     <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent className="min-w-[96vw] xl:min-w-1">
-        <DialogHeader>
+        <DialogHeader className="flex flex-row items-center gap-3">
           <DialogTitle>
             {!!id && !recorrencia ? `Solicitação: ${id}` : "Nova Solicitação"}
           </DialogTitle>
+          <BtnCopiarTitulo copyData={modalData}/>
         </DialogHeader>
         {/* <section className="min-h-[80vh] sm:min-h-[70vh] z-[999] overflow-auto scroll-thin">
           

@@ -87,6 +87,7 @@ export const useVencimentos = () => {
         queryClient.invalidateQueries({
           queryKey: ["fin_cp_titulo"],
         });
+        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
       },
       onError(error) {
         toast({

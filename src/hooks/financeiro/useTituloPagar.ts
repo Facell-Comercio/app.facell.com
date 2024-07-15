@@ -117,6 +117,7 @@ export const useTituloPagar = () => {
         queryClient.invalidateQueries({
           queryKey: ["fin_cp_vencimentos_pagar"],
         });
+        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
@@ -157,6 +158,13 @@ export const useTituloPagar = () => {
         queryClient.invalidateQueries({
           queryKey: ["fin_painel_recorrencias"],
         });
+        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
+
+        //* Tarifas Cartão
+        queryClient.invalidateQueries({ queryKey: ["fin_cartoes"] });
+        queryClient.invalidateQueries({ queryKey: ["fin_cartoes_faturas"] });
+        queryClient.invalidateQueries({ queryKey: ["fin_fatura"] });
+        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
@@ -212,6 +220,7 @@ export const useTituloPagar = () => {
         queryClient.invalidateQueries({
           queryKey: ["fin_cp_vencimentos_pagar"],
         });
+        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
@@ -244,6 +253,13 @@ export const useTituloPagar = () => {
           queryKey: ["fin_cp_titulos_pendencias"],
         });
         queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
+
+        //* Tarifas Cartão
+        queryClient.invalidateQueries({ queryKey: ["fin_cartoes"] });
+        queryClient.invalidateQueries({ queryKey: ["fin_cartoes_faturas"] });
+        queryClient.invalidateQueries({ queryKey: ["fin_fatura"] });
+        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"

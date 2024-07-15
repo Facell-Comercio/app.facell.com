@@ -5,14 +5,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-// import { useStoreTitulo } from "./store-titulo";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { checkUserPermission } from "@/helpers/checkAuthorization";
 import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
-// import { useStoreConciliacaoCP } from "@/pages/financeiro/extratos-bancarios/conciliacao/conciliacaocp/store";
 import { HandCoins, X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { VencimentosConciliarProps } from "../tables/TitulosConciliar";

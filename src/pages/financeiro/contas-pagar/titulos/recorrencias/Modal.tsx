@@ -4,7 +4,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-// import { useStoreTitulo } from "./store-titulo";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import SelectMes from "@/components/custom/SelectMes";
@@ -225,11 +224,11 @@ const ModalRecorrencias = () => {
                               title="Nova solicitação"
                               size={"xs"}
                               onClick={() => {
-                                openModal(rec["id_titulo"], {
+                                openModal({id: rec["id_titulo"], recorrencia: {
                                   data_vencimento: rec["data_vencimento"],
                                   id: rec["id"],
                                   valor: rec["valor"],
-                                });
+                                }});
                               }}
                             >
                               <Plus size={18} />

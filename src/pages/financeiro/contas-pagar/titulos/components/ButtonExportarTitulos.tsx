@@ -3,15 +3,10 @@ import { api } from "@/lib/axios";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from "@/components/ui/use-toast";
 import { exportToExcel } from "@/helpers/importExportXLS";
-import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Download } from "lucide-react";
 import { useStoreExportDatasys } from "../export-datasys/store";
 import { useStoreTablePagar } from "../table/store-table";
@@ -22,11 +17,9 @@ export type ExportAnexosProps = {
 };
 
 const ButtonExportTitulos = () => {
-  const { mutate: exportAnexo } = useTituloPagar().exportAnexo();
   const openModalExportDatasys = useStoreExportDatasys().openModal;
-  const [filters, idSelection] = useStoreTablePagar((state) => [
+  const [filters] = useStoreTablePagar((state) => [
     state.filters,
-    state.idSelection,
   ]);
 
   async function exportSolicitacao() {
@@ -34,20 +27,6 @@ const ButtonExportTitulos = () => {
       params: { filters },
     });
     exportToExcel(response?.data?.rows || [], `SOLICITAÇÕES`);
-  }
-
-  async function exportAnexoFn(type: string) {
-    if (!(idSelection && idSelection.length)) {
-      toast({
-        variant: "destructive",
-        title: "Solicitações não selecionadas",
-        description:
-          "Selecione uma ou mais solicitações para realizar as alterações",
-      });
-      return;
-    }
-
-    exportAnexo({ type, idSelection });
   }
 
   return (
@@ -60,24 +39,14 @@ const ButtonExportTitulos = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem onClick={exportSolicitacao}>
-          Solicitações
+          Layout Padrão
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => openModalExportDatasys("")}>
-          Para o Datasys
+          Layout Datasys
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Anexos</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => exportAnexoFn("url_boleto")}>
-            Boleto
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => exportAnexoFn("url_nota_fiscal")}>
-            Nota fiscal
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => exportAnexoFn("url_contrato")}>
-            Contrato/Autorização
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+        <DropdownMenuItem>
+          <a target="_blank" href="https://docs.google.com/spreadsheets/d/1xQXNc7i27msUu3W72tBmdniDZMa_82Hr/export?format=xlsx">Planilha Padrão Importação</a>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

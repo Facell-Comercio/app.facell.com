@@ -19,7 +19,7 @@ const ButtonNovoTitulo = () => {
       <Button
         variant={"outline"}
         className="border-blue-200 dark:border-primary"
-        onClick={() => openModal("")}
+        onClick={() => openModal({id: ''})}
         disabled={qtdPendencias > 0}
       >
         <Plus className="me-2" size={18} /> Nova Solicitação

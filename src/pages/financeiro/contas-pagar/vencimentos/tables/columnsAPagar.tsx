@@ -53,7 +53,7 @@ export const columnsTableAPagar: ColumnDef<RowTitulo>[] = [
     cell: (info) => (
       <span
         className="flex font-semibold cursor-pointer text-blue-500 truncate max-w-96"
-        onClick={() => openModal(info.getValue<string>())}
+        onClick={() => openModal({id: info.getValue<string>()})}
       >
         {info.getValue<string>()}
       </span>
