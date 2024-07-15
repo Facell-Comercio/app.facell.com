@@ -106,13 +106,13 @@ export const schemaTitulo = z
       .toUpperCase(),
 
     update_vencimentos: z.boolean(),
-    vencimentos: z.array(vencimentoSchema).optional(),
+    vencimentos: z.array(vencimentoSchema),
 
     // Rateio:
     id_rateio: z.string().optional(),
     update_rateio: z.boolean(),
     rateio_manual: z.coerce.boolean(),
-    itens_rateio: z.array(rateioSchema).optional(),
+    itens_rateio: z.array(rateioSchema),
 
     historico: z
       .array(
@@ -150,7 +150,7 @@ export const schemaTitulo = z
     (data) =>
       (data.itens_rateio?.reduce((acc, curr) => {
         return acc + parseFloat(curr.valor);
-      }, 0) || 0) == parseFloat(data.valor),
+      }, 0) || 0).toFixed(2) == parseFloat(data.valor).toFixed(2),
     {
       path: ["itens_rateio"],
       message:
@@ -225,21 +225,16 @@ export const schemaTitulo = z
         if (!data.vencimentos || data.vencimentos.length === 0) {
           return false;
         }
-
         for (const v of data.vencimentos) {
-          console.log(
-            new Date(v.data_vencimento).getDate(),
-            parseInt(data.dia_vencimento_cartao || "")
-          );
           if (
             new Date(v.data_vencimento).getDate() !==
             parseInt(data.dia_vencimento_cartao || "")
           ) {
             toast({
-              title: "Data de vencimento incorreta",
+              title: "Data de vencimento inválida",
               description: `${normalizeDate(
                 v.data_vencimento
-              )} não é uma data de vencimento aceita nessa forma de pagamento`,
+              )} não é uma data de vencimento aceita, precisa ser no dia exato do vencimento do cartão.`,
               variant: "destructive",
             });
             return false;

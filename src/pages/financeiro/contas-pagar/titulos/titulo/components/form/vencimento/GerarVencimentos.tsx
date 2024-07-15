@@ -163,11 +163,6 @@ export function ModalGerarVencimentos({
     }
     formTitulo.setValue("update_vencimentos", true);
     setModalOpen(false);
-    toast({
-      variant: "success",
-      title: `Geração realizada`,
-    });
-    setModalOpen(false);
     form.reset();
   };
 

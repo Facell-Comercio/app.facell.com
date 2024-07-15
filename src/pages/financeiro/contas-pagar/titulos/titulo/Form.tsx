@@ -24,7 +24,6 @@ import ModalFornecedores, {
   ItemFornecedor,
 } from "@/pages/financeiro/components/ModalFornecedores";
 
-import AlertPopUp from "@/components/custom/AlertPopUp";
 import SelectCartao from "@/components/custom/SelectCartao";
 import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
 import { Alert, AlertTitle } from "@/components/ui/alert";
@@ -48,7 +47,6 @@ import {
   FileText,
   History,
   Pen,
-  Repeat2,
   Save,
   Undo2,
   X,
