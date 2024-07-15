@@ -110,11 +110,11 @@ const ModalFatura = () => {
 
   let color = "";
   if (dados?.status === "pendente") {
-    color = "bg-yellow-600";
+    color = "bg-slate-600";
   } else if (dados?.status === "pago") {
-    color = "bg-green-600";
+    color = "bg-blue-600";
   } else if (dados?.status === "programado") {
-    color = "bg-orange-600";
+    color = "bg-green-600";
   } else {
     color = "bg-red-500";
   }
@@ -209,7 +209,7 @@ const ModalFatura = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{`Fatura: ${id}`}</DialogTitle>
+          <DialogTitle>{`Fatura: ${id} `}{dados?.closed ? <span  className="text-slate-600">Fechada</span> : <span className="text-green-600">Aberta</span>}</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
@@ -219,7 +219,7 @@ const ModalFatura = () => {
                   <div
                     className={`py-1 text-white text-center border text-md font-bold rounded-sm ${color} capitalize`}
                   >
-                    {dados.status} - {dados.closed ? "Fechada" : "Aberta"}
+                      {dados.status == 'pago' ? 'Pago' :  `Pagamento ${dados.status}`}
                   </div>
                 </div>
               )}
