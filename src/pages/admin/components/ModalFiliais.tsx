@@ -58,11 +58,15 @@ const ModalFiliais = ({
 
   
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["filiais", id_matriz],
+    queryKey: ["filiais", id_matriz, id_grupo_economico],
     queryFn: async () =>
       await api.get("filial", {
         params: {
-          filters: { termo: search, id_matriz, id_grupo_economico },
+          filters: { 
+              termo: search, 
+                id_matriz: id_matriz ? id_matriz : undefined, 
+                id_grupo_economico: id_grupo_economico ? id_grupo_economico : undefined
+               },
           pagination,
         },
       }),

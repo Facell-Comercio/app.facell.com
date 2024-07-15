@@ -353,7 +353,8 @@ export const ModalItemRateio = ({
                 return acc + parseFloat(curr.valor);
               }, 0) || 0) + parseFloat(data.valor);
           const dif = totalPrevisto - parseFloat(valorTotalTitulo);
-
+              console.log(dif);
+              
           if (dif > 0) {
             const difFormatada = normalizeCurrency(dif);
             toast({
@@ -427,30 +428,32 @@ export const ModalItemRateio = ({
     <Dialog open={modalOpen} onOpenChange={toggleModal}>
       <DialogContent className="sm:max-w-[400px]">
         <ModalFiliais
-          open={canEdit && modalFilialOpen && !!id_matriz}
-          id_matriz={id_matriz}
+          open={canEdit && modalFilialOpen && !!id_grupo_economico}
+          id_grupo_economico={id_grupo_economico}
           onOpenChange={setModalFilialOpen}
           handleSelection={handleSelectionFilial}
           closeOnSelection
         />
 
+        <ModalCentrosCustos
+          handleSelection={handleSelectionCentroCusto}
+          id_grupo_economico={id_grupo_economico}
+          // @ts-expect-error 'Vai funcionar'
+          onOpenChange={setModalCentrosCustosOpen}
+          open={canEdit && modalCentrosCustosOpen && !!id_grupo_economico}
+          closeOnSelection={true}
+        />
+
         <ModalPlanosContas
-          open={canEdit && modalPlanoContasOpen && !!id_matriz}
-          id_matriz={id_matriz}
+          open={canEdit && modalPlanoContasOpen && !!id_grupo_economico}
+          id_grupo_economico={id_grupo_economico}
           tipo="Despesa"
           // @ts-ignore
           onOpenChange={setModalPlanoContasOpen}
           handleSelection={handleSelectionPlanoContas}
         />
 
-        <ModalCentrosCustos
-          handleSelection={handleSelectionCentroCusto}
-          id_matriz={id_matriz}
-          // @ts-expect-error 'Vai funcionar'
-          onOpenChange={setModalCentrosCustosOpen}
-          open={canEdit && modalCentrosCustosOpen && !!id_matriz}
-          closeOnSelection={true}
-        />
+
 
         <Form {...formItemRateio}>
           <form
