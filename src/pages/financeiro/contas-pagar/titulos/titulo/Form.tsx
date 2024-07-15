@@ -325,35 +325,6 @@ const FormTituloPagar = ({
     });
   };
 
-  const handleClickCriarRecorrencia = async () => {
-    try {
-      // e.preventDefault();
-      const dados = form.getValues();
-
-      await api.post("financeiro/contas-a-pagar/titulo/criar-recorrencia", {
-        id: dados.id,
-        data_vencimento:
-          dados.vencimentos && dados.vencimentos[0].data_vencimento,
-        valor: dados.valor,
-      });
-      queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
-      toast({
-        variant: "success",
-        title: "Recorrência criada com sucesso!",
-      });
-      return true;
-    } catch (error) {
-      // console.log(error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao tentar criar a recorrência!",
-        // @ts-ignore
-        description: error.response?.data?.message || error.message,
-      });
-      return false;
-    }
-  };
-
   // ! FIM - ACTIONS //////////////////////////////////////
   const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
   const handleSelectionFilial = (item: Filial) => {
