@@ -3,6 +3,7 @@ import * as React from "react";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
+import { checkUserDepartments } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useBordero } from "@/hooks/financeiro/useBordero";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
@@ -24,6 +25,7 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
   modalEditing,
 }) => {
   const { mutate: reverseManualPayment } = useBordero().reverseManualPayment();
+  const authorized = checkUserDepartments("FINANCEIRO", true);
 
   const parentElement = React.useRef(null);
 
@@ -220,11 +222,14 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
                   title="Deseja realmente desfazer?"
                   description="O pagamento manual será desfeito, podendo ser realizado novamente."
                   action={() =>
-                    reverseManualPayment(data[indexData].id_vencimento)
+                    reverseManualPayment({
+                      id: data[indexData].id_vencimento,
+                      tipo: data[indexData].tipo,
+                    })
                   }
                 >
                   <Button
-                    disabled={!data[indexData].can_modify}
+                    disabled={!data[indexData].can_modify && !authorized}
                     type="button"
                     className="h-8 text-xs"
                     variant={"destructive"}

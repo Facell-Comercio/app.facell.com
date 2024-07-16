@@ -61,6 +61,8 @@ export type VencimentosProps = {
   obs?: string;
   data_pagamento?: string;
 
+  tipo?: string;
+
   can_remove?: boolean;
   can_modify?: boolean;
   updated?: boolean;
@@ -427,7 +429,7 @@ const ModalVencimentos = ({
                     </td>
                     <td className="text-xs text-nowrap p-1 text-center">
                       {" "}
-                      {isFatura ? 'Fatura' : item.id_titulo}
+                      {isFatura ? "Fatura" : item.id_titulo}
                     </td>
                     <td className="text-xs text-nowrap p-1">
                       {item.nome_fornecedor.slice(0, 20) +

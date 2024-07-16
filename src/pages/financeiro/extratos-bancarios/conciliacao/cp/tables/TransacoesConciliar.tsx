@@ -26,6 +26,7 @@ export type TransacoesConciliarProps = {
   valor_pago?: string;
   descricao: string;
   data_transacao: string;
+  conta_bancaria?: string;
 };
 
 interface RowVirtualizerTransacoesConciliarProps {
