@@ -293,8 +293,6 @@ const FormBordero = ({
     });
     form.setValue("itens", novosVencimentos);
   }
-  console.log({local: 'form', modalEditing, isPending});
-  
 
   async function exportBordero(id: string) {
     setExporting("default");

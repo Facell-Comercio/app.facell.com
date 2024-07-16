@@ -31,8 +31,6 @@ const RowVirtualizerFixedPendentes: React.FC<
   const [openModalDDA] = useStoreDDA((state) => [state.openModal]);
 
   const count = filteredData.length;
-
-  console.log({ local: 'rowPendentes', modalEditing });
   
   const virtualizer = useVirtualizer({
     count,
