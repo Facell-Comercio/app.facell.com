@@ -293,6 +293,8 @@ const FormBordero = ({
     });
     form.setValue("itens", novosVencimentos);
   }
+  console.log({local: 'form', modalEditing, isPending});
+  
 
   async function exportBordero(id: string) {
     setExporting("default");
@@ -504,7 +506,7 @@ const FormBordero = ({
                     data={wVencimentos}
                     filteredData={wVencimentosPendentes}
                     form={form}
-                    modalEditing={modalEditing && !isPending}
+                    modalEditing={modalEditing}
                     removeItem={removeItemVencimentos}
                   />
                 )}
@@ -531,7 +533,7 @@ const FormBordero = ({
                       data={wVencimentos}
                       filteredData={wVencimentosProgramados}
                       form={form}
-                      modalEditing={modalEditing && !isPending}
+                      modalEditing={modalEditing}
                       removeItem={removeItemVencimentos}
                     />
                   )}
@@ -558,7 +560,7 @@ const FormBordero = ({
                       data={wVencimentos}
                       filteredData={wVencimentosPago}
                       form={form}
-                      modalEditing={modalEditing && !isPending}
+                      modalEditing={modalEditing}
                       removeItem={removeItemVencimentos}
                     />
                   )}
@@ -621,7 +623,7 @@ const FormBordero = ({
                       data={wVencimentos}
                       filteredData={wVencimentosErro}
                       form={form}
-                      modalEditing={modalEditing && !isPending}
+                      modalEditing={modalEditing}
                       removeItem={removeItemVencimentos}
                     />
                   )}

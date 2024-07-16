@@ -32,6 +32,8 @@ const RowVirtualizerFixedPendentes: React.FC<
 
   const count = filteredData.length;
 
+  console.log({ local: 'rowPendentes', modalEditing });
+  
   const virtualizer = useVirtualizer({
     count,
     getScrollElement: () => parentElement.current,
