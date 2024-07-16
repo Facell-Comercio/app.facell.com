@@ -197,7 +197,6 @@ const ReactTableVirtualized: React.FC<
           tipo_baixa: "PADRÃO",
           valor_pago: data[+c].valor,
           data_pagamento: data[+c].data_pagamento,
-          tipo: data[+c].tipo,
         }));
 
         handleRowSelection({
