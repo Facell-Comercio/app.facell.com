@@ -428,7 +428,9 @@ const ConciliacaoCP = () => {
               <section className="grid grid-cols-1 md:grid-cols-2 max-w-full gap-2 grid-nowrap">
                 <Card className="grid-nowrap overflow-y border-0 bg-secondary">
                   <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md">Vencimentos</CardTitle>
+                    <CardTitle className="text-md text-nowrap">
+                      Vencimentos
+                    </CardTitle>
                     <SearchComponent
                       searchFilters={searchFilters}
                       setSearchFilters={setSearchFilters}
@@ -461,7 +463,7 @@ const ConciliacaoCP = () => {
 
                 <Card className="h-full grid-nowrap border-0 bg-secondary">
                   <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md">
+                    <CardTitle className="text-md text-nowrap">
                       Transações Bancárias
                     </CardTitle>
                     <span className="flex gap-2">
@@ -505,7 +507,9 @@ const ConciliacaoCP = () => {
               <section className="grid grid-cols-1 md:grid-cols-2 w-full gap-2 grid-nowrap">
                 <Card className="h-full grid-nowrap overflow-y border-0 bg-secondary">
                   <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md">Vencimentos</CardTitle>
+                    <CardTitle className="text-md text-nowrap">
+                      Vencimentos
+                    </CardTitle>
                     <SearchComponent
                       searchFilters={searchFilters}
                       setSearchFilters={setSearchFilters}
@@ -522,7 +526,7 @@ const ConciliacaoCP = () => {
                 </Card>
                 <Card className="h-full grid-nowrap overflow-y border-0 bg-secondary">
                   <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md">
+                    <CardTitle className="text-md text-nowrap">
                       Transações Bancárias
                     </CardTitle>
                     <SearchComponent

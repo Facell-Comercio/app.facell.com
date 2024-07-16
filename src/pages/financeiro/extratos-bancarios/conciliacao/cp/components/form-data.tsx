@@ -15,6 +15,7 @@ const schemaConciliacaoCP = z.object({
         tipo_baixa: z.string().trim(),
         valor_pago: z.coerce.string().optional(),
         data_prevista: z.date().optional(),
+        tipo: z.string().trim().optional(),
       })
       .refine(
         (data) => (data.tipo_baixa === "PARCIAL" ? !!data.data_prevista : true),
