@@ -1,26 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
+// import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Plus } from "lucide-react";
 import { useStoreTitulo } from "../titulo/store";
 
 const ButtonNovoTitulo = () => {
   const openModal = useStoreTitulo().openModal;
-  const { data } = useTituloPagar().getPendencias();
-  const qtdPendencias = data?.data;
+  // const { data } = useTituloPagar().getPendencias();
+  // const qtdPendencias = data?.data;
 
   return (
-    <span
-      title={
-        qtdPendencias > 0
-          ? `Você possui ${qtdPendencias} notas fiscais pendentes de envio`
-          : ""
-      }
-    >
+    <span>
       <Button
         variant={"outline"}
         className="border-blue-200 dark:border-primary"
         onClick={() => openModal({id: ''})}
-        disabled={qtdPendencias > 0}
+        // disabled={qtdPendencias > 0}
       >
         <Plus className="me-2" size={18} /> Nova Solicitação
       </Button>
