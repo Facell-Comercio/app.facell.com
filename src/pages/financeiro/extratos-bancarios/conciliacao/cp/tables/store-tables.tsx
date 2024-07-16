@@ -50,6 +50,16 @@ const initialFilters: Filters = {
   range_data: { from: undefined, to: undefined },
 };
 
+export interface FiltersConciliacoes {
+  id_filial?: string;
+  range_data?: DateRange;
+}
+
+const initialFiltersConciliacoes: FiltersConciliacoes = {
+  id_filial: "",
+  range_data: { from: undefined, to: undefined },
+};
+
 interface UseStoreTableConciliacaoCP {
   id?: string | null;
   modalEditing: boolean;
@@ -61,11 +71,13 @@ interface UseStoreTableConciliacaoCP {
   vencimentosSelection: VencimentosConciliarProps[];
   transacoesSelection: TransacoesConciliarProps[];
   filters: Filters;
+  filtersConciliacoes: FiltersConciliacoes;
   tipoConciliacao?: "manual" | "automatica";
   data_pagamento?: string;
   canSelect: boolean;
   showAccordion?: boolean;
   pagination: Pagination;
+  paginationConciliacoes: Pagination;
 
   openModal: (id: string) => void;
   closeModal: () => void;
@@ -77,6 +89,9 @@ interface UseStoreTableConciliacaoCP {
 
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
+
+  setFiltersConciliacoes: (filtersConciliacoes: FiltersConciliacoes) => void;
+  resetFiltersConciliacoes: () => void;
 
   setTipoConciliacao: (tipo: "manual" | "automatica") => void;
   resetTipoConciliacao: () => void;
@@ -95,6 +110,7 @@ interface UseStoreTableConciliacaoCP {
   setDataPagamento: (data?: string) => void;
 
   setPagination: (pagination: Pagination) => void;
+  setPaginationConciliacoes: (paginationConciliacoes: Pagination) => void;
 }
 
 export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
@@ -114,15 +130,25 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
     transacoesSelection: [],
     data_pagamento: undefined,
     pagination: { pageIndex: 0, pageSize: 15 },
+    paginationConciliacoes: { pageIndex: 0, pageSize: 15 },
 
     // Filters
     filters: initialFilters,
+    filtersConciliacoes: initialFiltersConciliacoes,
     setFilters: (novoFiltro) =>
       set((state) => ({
         filters: { ...state.filters, ...novoFiltro },
       })),
     resetFilters: () => {
       set({ filters: initialFilters });
+    },
+
+    setFiltersConciliacoes: (novoFiltro) =>
+      set((state) => ({
+        filtersConciliacoes: { ...state.filtersConciliacoes, ...novoFiltro },
+      })),
+    resetFiltersConciliacoes: () => {
+      set({ filtersConciliacoes: initialFiltersConciliacoes });
     },
 
     setTipoConciliacao: (novoTipo) =>
@@ -212,5 +238,7 @@ export const useStoreTableConciliacaoCP = create<UseStoreTableConciliacaoCP>(
         data_pagamento: dataPagamento,
       }),
     setPagination: (pagination) => set({ pagination }),
+    setPaginationConciliacoes: (paginationConciliacoes) =>
+      set({ paginationConciliacoes }),
   })
 );

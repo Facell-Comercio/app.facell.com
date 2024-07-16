@@ -189,7 +189,7 @@ export const ModalComponent = ({
             <PaginationItem>
               <Button
                 variant={"outline"}
-                disabled={pagination.pageIndex === pages.length - 1}
+                disabled={pagination.pageIndex === pageCount - 1}
                 onClick={handlePaginationUp}
               >
                 <ChevronRight className="h-4 w-4" />

@@ -138,29 +138,37 @@ const FormConciliacaoCP = ({
             <span className="flex gap-2 items-center">
               <List />{" "}
               <span className="text-lg font-bold ">
-                Pagamentos e Transações
+                {vencimentos.length > 0
+                  ? "Pagamentos e Transações"
+                  : "Transações"}
               </span>
             </span>
           </div>
           <div className="w-full grid grid-cols-2 gap-2 relative">
-            <Card className="flex flex-col  overflow-hidden">
-              <CardHeader className="p-2">
-                <CardTitle className="text-md text-center font-medium">
-                  Pagamentos
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-1 overflow-hidden">
-                <VirtualizedTitulos data={vencimentos} />
-              </CardContent>
-              <CardFooter className="flex justify-end p-2 align-botton">
-                <Badge variant={"secondary"}>
-                  <p className="me-1">Valor Total: </p>
-                  {normalizeCurrency(totalVencimentos)}
-                </Badge>
-              </CardFooter>
-            </Card>
+            {vencimentos.length > 0 && (
+              <Card className="flex flex-col overflow-hidden">
+                <CardHeader className="p-2">
+                  <CardTitle className="text-md text-center font-medium">
+                    Pagamentos
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-1 overflow-hidden">
+                  <VirtualizedTitulos data={vencimentos} />
+                </CardContent>
+                <CardFooter className="flex justify-end p-2 align-botton">
+                  <Badge variant={"secondary"}>
+                    <p className="me-1">Valor Total: </p>
+                    {normalizeCurrency(totalVencimentos)}
+                  </Badge>
+                </CardFooter>
+              </Card>
+            )}
 
-            <Card className="flex flex-col">
+            <Card
+              className={`flex flex-col ${
+                vencimentos.length === 0 && "col-span-2"
+              }`}
+            >
               <CardHeader className="p-2">
                 <CardTitle className="text-md text-center font-medium">
                   Transações

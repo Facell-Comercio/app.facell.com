@@ -8,23 +8,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
-import { useEffect, useRef, useState } from "react";
-import FiltersConciliacaoCP from "./tables/Filters";
+import { useEffect, useState } from "react";
 import { ItemCP } from "./tables/ItemCP";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeCurrency } from "@/helpers/mask";
-import { Search } from "lucide-react";
 import { FaSpinner } from "react-icons/fa6";
 import ModalConciliarCP from "./components/ModalConciliar";
+import ModalExtratosCredit, {
+  ItemExtratosCredit,
+} from "./components/ModalExtratosCredit";
 import { useStoreConciliacaoCP } from "./components/store";
-import { ConciliacoesProps } from "./tables/Conciliacoes";
+import { FiltersConciliacaoCP, FiltersRealizados } from "./tables/Filters";
 import { SearchComponent } from "./tables/SearchComponent";
 import TitulosConciliados, {
   TitulosConciliadosProps,
@@ -42,8 +44,11 @@ import { columnsTable } from "./tables/columns";
 import { useStoreTableConciliacaoCP } from "./tables/store-tables";
 
 const ConciliacaoCP = () => {
+  const [modalExtratosCreditOpen, setModalExtratosCreditOpen] = useState(false);
+
   const [
     filters,
+    filtersConciliacoes,
     rowVencimentosSelection,
     handlerowVencimentosSelection,
     rowTransacoesSelection,
@@ -58,6 +63,7 @@ const ConciliacaoCP = () => {
     setPagination,
   ] = useStoreTableConciliacaoCP((state) => [
     state.filters,
+    state.filtersConciliacoes,
     state.rowVencimentosSelection,
     state.handlerowVencimentosSelection,
     state.rowTransacoesSelection,
@@ -78,12 +84,15 @@ const ConciliacaoCP = () => {
   });
   const {
     data: dataConciliacoes,
-    refetch: refetchConciliacao,
-    isLoading: isLoadingConciliacao,
+    refetch: refetchConciliacoes,
+    isLoading: isLoadingConciliacoes,
   } = useConciliacaoCP().getConciliacoes({
-    filters,
+    filters: filtersConciliacoes,
     pagination,
   });
+
+  const rowsConciliacoes = dataConciliacoes?.data?.rows || [];
+  const rowCountConciliacoes = dataConciliacoes?.data?.rowCount || 0;
 
   const {
     mutate: conciliacaoAutomatica,
@@ -98,6 +107,18 @@ const ConciliacaoCP = () => {
     isSuccess: isSuccessTarifas,
     data: resultadoConciliacaoTarifas,
   } = useConciliacaoCP().conciliacaoTarifas();
+
+  const {
+    mutate: conciliacaoTransferenciaContas,
+    isPending: isPendingTransferenciaContas,
+    isSuccess: isSuccessTransferenciaContas,
+  } = useConciliacaoCP().conciliacaoTransferenciaContas();
+
+  useEffect(() => {
+    if (isSuccessTransferenciaContas) {
+      resetSelectionTransacoes([]);
+    }
+  }, [isSuccessTransferenciaContas]);
 
   const titulosConciliar = data?.data?.titulosConciliar || [];
   const transacoesConciliar = data?.data?.transacoesConciliar || [];
@@ -129,63 +150,46 @@ const ConciliacaoCP = () => {
   const filteredTitulosConciliar = titulosConciliar
     .filter(
       (titulo: VencimentosConciliarProps) =>
-        titulo.id_titulo.toString().includes(searchFilters.tituloConciliar) ||
-        titulo.descricao.toString().includes(searchFilters.tituloConciliar) ||
-        titulo.filial.toString().includes(searchFilters.tituloConciliar) ||
-        titulo.nome_fornecedor
-          .toString()
-          .includes(searchFilters.tituloConciliar)
+        String(titulo.id_titulo).includes(searchFilters.tituloConciliar) ||
+        String(titulo.descricao).includes(searchFilters.tituloConciliar) ||
+        String(titulo.filial).includes(searchFilters.tituloConciliar) ||
+        String(titulo.nome_fornecedor).includes(searchFilters.tituloConciliar)
     )
     .filter((titulo: VencimentosConciliarProps) =>
-      dataPagamento
-        ? titulo.data_pagamento.toString() === dataPagamento
-        : titulo
+      dataPagamento ? String(titulo.data_pagamento) === dataPagamento : titulo
     );
 
   const filteredTitulosConciliados = titulosConciliados.filter(
     (titulo: TitulosConciliadosProps) =>
-      titulo.id_titulo.toString().includes(searchFilters.tituloConciliado) ||
-      titulo.descricao.toString().includes(searchFilters.tituloConciliado) ||
-      titulo.filial.toString().includes(searchFilters.tituloConciliado) ||
-      titulo.nome_fornecedor.toString().includes(searchFilters.tituloConciliado)
+      String(titulo.id_titulo).includes(searchFilters.tituloConciliado) ||
+      String(titulo.descricao).includes(searchFilters.tituloConciliado) ||
+      String(titulo.filial).includes(searchFilters.tituloConciliado) ||
+      String(titulo.nome_fornecedor).includes(searchFilters.tituloConciliado)
   );
+
   const filteredTransacoesConciliar = transacoesConciliar
     .filter(
       (transacao: TransacoesConciliarProps) =>
-        transacao.id_transacao
-          .toString()
-          .includes(searchFilters.transacaoConciliar) ||
-        transacao.descricao
-          .toString()
-          .includes(searchFilters.transacaoConciliar) ||
-        transacao.doc.toString().includes(searchFilters.transacaoConciliar)
+        String(transacao.id_transacao).includes(
+          searchFilters.transacaoConciliar
+        ) ||
+        String(transacao.descricao).includes(
+          searchFilters.transacaoConciliar
+        ) ||
+        String(transacao.doc).includes(searchFilters.transacaoConciliar)
     )
     .filter((transacao: TransacoesConciliarProps) =>
       dataPagamento
-        ? transacao.data_transacao.toString() === dataPagamento
+        ? String(transacao.data_transacao) === dataPagamento
         : transacao
     );
   const filteredTransacoesConciliadas = transacoesConciliadas.filter(
     (transacao: TransacoesConciliadasProps) =>
-      transacao.id_transacao
-        .toString()
-        .includes(searchFilters.transacaoConciliada) ||
-      transacao.descricao
-        .toString()
-        .includes(searchFilters.transacaoConciliada) ||
-      transacao.doc.toString().includes(searchFilters.transacaoConciliada)
-  );
-  const filteredConciliacoes = dataConciliacoes?.data.filter(
-    (transacao: ConciliacoesProps) =>
-      transacao.tipo
-        .toString()
-        .includes(searchFilters.conciliacao.toUpperCase()) ||
-      transacao.responsavel
-        .toString()
-        .includes(searchFilters.conciliacao.toUpperCase()) ||
-      transacao.valor_transacoes
-        .toString()
-        .includes(searchFilters.conciliacao.toUpperCase())
+      String(transacao.id_transacao).includes(
+        searchFilters.transacaoConciliada
+      ) ||
+      String(transacao.descricao).includes(searchFilters.transacaoConciliada) ||
+      String(transacao.doc).includes(searchFilters.transacaoConciliada)
   );
 
   const totalTitulos = titulosConciliar.reduce(
@@ -208,7 +212,7 @@ const ConciliacaoCP = () => {
     if (isSuccess && resultadoConciliacaoAutomatica) {
       toast({
         title: "Sucesso",
-        description: "Conciliações realizadas",
+        description: "Conciliações conciliacoes",
         action: (
           <ToastAction
             altText="Ver Resultados"
@@ -273,15 +277,20 @@ const ConciliacaoCP = () => {
     }
   }, [isSuccessTarifas]);
 
-  const searchRef = useRef<HTMLInputElement | null>(null);
+  function handleSelection(extrato: ItemExtratosCredit) {
+    conciliacaoTransferenciaContas({
+      id_conta_bancaria: filters.id_conta_bancaria,
+      id_saida: transacoesSelection[0].id,
+      id_entrada: extrato.id,
+      valor: extrato.valor,
+    });
+  }
 
   const [itemOpen, setItemOpen] = useState<string>("nao-conciliado");
+  const [realizadosOpen, setRealizadosOpen] = useState<string>("");
   return (
     <div className="flex flex-col gap-3">
-      <FiltersConciliacaoCP
-        refetch={refetch}
-        refetchConciliacao={refetchConciliacao}
-      />
+      <FiltersConciliacaoCP refetch={refetch} />
       {filters.id_conta_bancaria &&
         filters.range_data &&
         filters.range_data.from &&
@@ -299,105 +308,124 @@ const ConciliacaoCP = () => {
               value="nao-conciliado"
               className="flex-col"
             >
-              <div className="flex justify-end gap-2 transition-all">
-                <Button
-                  type={"button"}
-                  variant={"outline"}
-                  onClick={() => {
-                    if (
-                      !vencimentosSelection.length ||
-                      !transacoesSelection.length
-                    ) {
-                      toast({
-                        title: "Selecione os títulos e as transações!",
-                        description:
-                          "É necessário que sejam selecionados no mínimo um título e uma transação bancária",
-                        variant: "warning",
-                      });
-                    } else if (
-                      totalSelectedTitulos !== totalSelectedTransacoes
-                    ) {
-                      toast({
-                        title: "Valores incorretos!",
-                        description:
-                          "O total dos títulos e das transações não são iguais",
-                        variant: "warning",
-                      });
-                    } else {
-                      openModal("");
-                    }
-                  }}
-                >
-                  Conciliação Manual
-                </Button>
-                <AlertPopUp
-                  title={"Deseja realmente realizar a conciliação?"}
-                  description="A conciliação de alguns títulos e de algumas transações será feita automaticamente"
-                  action={() => {
-                    conciliacaoAutomatica({
-                      vencimentos: filteredTitulosConciliar,
-                      transacoes: filteredTransacoesConciliar,
-                      id_conta_bancaria: filters.id_conta_bancaria,
-                    });
-                  }}
-                >
-                  {isPending ? (
-                    <Button disabled variant={"outline"}>
-                      <span className="flex gap-2 w-full items-center justify-center">
-                        <FaSpinner size={18} className="me-2 animate-spin" />{" "}
-                        Conciliando...
-                      </span>
-                    </Button>
-                  ) : (
-                    <Button type={"button"} variant={"outline"}>
-                      Conciliação Automática
+              <ScrollArea className="w-fill whitespace-nowrap rounded-md md:pb-2.5 lg:pb-1">
+                <div className="flex justify-end gap-2 transition-all">
+                  {transacoesSelection.length === 1 && (
+                    <Button
+                      type={"button"}
+                      variant={"outline"}
+                      disabled={isPendingTransferenciaContas}
+                      onClick={() => {
+                        setModalExtratosCreditOpen(true);
+                      }}
+                    >
+                      Transferência entre Contas
                     </Button>
                   )}
-                </AlertPopUp>
-                <span
-                  title={
-                    !bancoComFornecedor
-                      ? "Defina o fornecedor deste banco em cadastro de bancos para poder lançar as tarifas"
-                      : transacoesSelection.length > 0
-                      ? ""
-                      : "Selecione no mínimo 1 tarifa"
-                  }
-                >
+                  <Button
+                    type={"button"}
+                    variant={"outline"}
+                    onClick={() => {
+                      if (
+                        !vencimentosSelection.length ||
+                        !transacoesSelection.length
+                      ) {
+                        toast({
+                          title: "Selecione os títulos e as transações!",
+                          description:
+                            "É necessário que sejam selecionados no mínimo um título e uma transação bancária",
+                          variant: "warning",
+                        });
+                      } else if (
+                        totalSelectedTitulos !== totalSelectedTransacoes
+                      ) {
+                        toast({
+                          title: "Valores incorretos!",
+                          description:
+                            "O total dos títulos e das transações não são iguais",
+                          variant: "warning",
+                        });
+                      } else {
+                        openModal("");
+                      }
+                    }}
+                  >
+                    Conciliação Manual
+                  </Button>
                   <AlertPopUp
-                    title={"Deseja realmente realizar essa operação?"}
-                    description="As tarifas serão lançadas e a concilição realizada automaticamente"
+                    title={"Deseja realmente realizar a conciliação?"}
+                    description="A conciliação de alguns títulos e de algumas transações será feita automaticamente"
                     action={() => {
-                      // Talvez verificar a existência de um "TAR" na descrição
-                      conciliacaoTarifas({
-                        tarifas: transacoesSelection,
+                      conciliacaoAutomatica({
+                        vencimentos: filteredTitulosConciliar,
+                        transacoes: filteredTransacoesConciliar,
                         id_conta_bancaria: filters.id_conta_bancaria,
-                        data_transacao: transacoesSelection[0].data_transacao,
                       });
                     }}
                   >
-                    {isPendingTarifas ? (
+                    {isPending ? (
                       <Button disabled variant={"outline"}>
                         <span className="flex gap-2 w-full items-center justify-center">
                           <FaSpinner size={18} className="me-2 animate-spin" />{" "}
-                          Lançando...
+                          Conciliando...
                         </span>
                       </Button>
                     ) : (
-                      <Button
-                        disabled={
-                          !bancoComFornecedor ||
-                          transacoesSelection.length === 0
-                        }
-                        type={"button"}
-                        variant={"outline"}
-                      >
-                        Lançar Tarifas
+                      <Button type={"button"} variant={"outline"}>
+                        Conciliação Automática
                       </Button>
                     )}
                   </AlertPopUp>
-                </span>
-              </div>
-              <section className="grid grid-cols-2 max-w-full gap-2 grid-nowrap">
+                  <span
+                    title={
+                      !bancoComFornecedor
+                        ? "Defina o fornecedor deste banco em cadastro de bancos para poder lançar as tarifas"
+                        : transacoesSelection.length > 0
+                        ? ""
+                        : "Selecione no mínimo 1 tarifa"
+                    }
+                  >
+                    <AlertPopUp
+                      title={"Deseja realmente realizar essa operação?"}
+                      description="As tarifas serão lançadas e a concilição realizada automaticamente"
+                      action={() => {
+                        // Talvez verificar a existência de um "TAR" na descrição
+                        conciliacaoTarifas({
+                          tarifas: transacoesSelection,
+                          id_conta_bancaria: filters.id_conta_bancaria,
+                          data_transacao: transacoesSelection[0].data_transacao,
+                        });
+                      }}
+                    >
+                      {isPendingTarifas ? (
+                        <Button disabled variant={"outline"}>
+                          <span className="flex gap-2 w-full items-center justify-center">
+                            <FaSpinner
+                              size={18}
+                              className="me-2 animate-spin"
+                            />{" "}
+                            Lançando...
+                          </span>
+                        </Button>
+                      ) : (
+                        <Button
+                          disabled={
+                            !bancoComFornecedor ||
+                            transacoesSelection.length === 0
+                          }
+                          type={"button"}
+                          variant={"outline"}
+                        >
+                          Lançar Tarifas
+                        </Button>
+                      )}
+                    </AlertPopUp>
+                  </span>
+                </div>
+
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+              <section className="grid grid-cols-1 md:grid-cols-2 max-w-full gap-2 grid-nowrap">
                 <Card className="grid-nowrap overflow-y border-0 bg-secondary">
                   <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
                     <CardTitle className="text-md">Vencimentos</CardTitle>
@@ -474,7 +502,7 @@ const ConciliacaoCP = () => {
             </ItemCP>
 
             <ItemCP title="Conciliado" value="conciliado">
-              <section className="grid grid-cols-2 w-full gap-2 grid-nowrap">
+              <section className="grid grid-cols-1 md:grid-cols-2 w-full gap-2 grid-nowrap">
                 <Card className="h-full grid-nowrap overflow-y border-0 bg-secondary">
                   <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
                     <CardTitle className="text-md">Vencimentos</CardTitle>
@@ -513,52 +541,50 @@ const ConciliacaoCP = () => {
                 </Card>
               </section>
             </ItemCP>
-            <ItemCP
-              title="Conciliações Realizadas"
-              value="conciliacoes-realizadas"
-              className="flex-col"
-            >
-              <div className="flex gap-3">
-                <Input
-                  ref={searchRef}
-                  type="search"
-                  placeholder="Buscar..."
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      setSearchFilters({
-                        ...searchFilters,
-                        conciliacao: searchRef.current?.value || "",
-                      });
-                    }
-                  }}
-                  className="h-9"
-                />
-                <Button
-                  size={"sm"}
-                  variant={"tertiary"}
-                  className="flex gap-0.5"
-                  onClick={() =>
-                    setSearchFilters({
-                      ...searchFilters,
-                      conciliacao: searchRef.current?.value || "",
-                    })
-                  }
-                >
-                  <Search size={18} className="me-2" /> Procurar
-                </Button>
-              </div>
-              <DataTable
-                pagination={pagination}
-                setPagination={setPagination}
-                data={filteredConciliacoes}
-                rowCount={dataConciliacoes?.data.length}
-                columns={columnsTable}
-                isLoading={isLoadingConciliacao}
-              />
-            </ItemCP>
           </Accordion>
         )}
       <ModalConciliarCP />
+
+      {filters.id_conta_bancaria && (
+        <Accordion
+          type="single"
+          collapsible
+          value={realizadosOpen}
+          onValueChange={(e) => setRealizadosOpen(e)}
+          className="px-2 py-1 border dark:border-slate-800 rounded-lg "
+        >
+          <ItemCP
+            title="Conciliações Realizadas"
+            value="conciliacoes-conciliacoes"
+            className="flex-col"
+          >
+            <FiltersRealizados refetch={refetchConciliacoes} />
+            <DataTable
+              pagination={pagination}
+              setPagination={setPagination}
+              data={rowsConciliacoes}
+              rowCount={rowCountConciliacoes}
+              columns={columnsTable}
+              isLoading={isLoadingConciliacoes}
+            />
+          </ItemCP>
+        </Accordion>
+      )}
+      <ModalExtratosCredit
+        open={modalExtratosCreditOpen}
+        onOpenChange={() => setModalExtratosCreditOpen(false)}
+        handleSelection={handleSelection}
+        filters={{
+          data_transacao:
+            transacoesSelection.length === 1
+              ? transacoesSelection[0].data_transacao
+              : undefined,
+          valor:
+            transacoesSelection.length === 1
+              ? parseFloat(transacoesSelection[0].valor)
+              : undefined,
+        }}
+      />
     </div>
   );
 };

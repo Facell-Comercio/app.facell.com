@@ -21,6 +21,11 @@ type DownloadRemessaProps = {
   isPix?: boolean;
 };
 
+type reverseManualPaymentProps = {
+  id?: string | null;
+  tipo?: string;
+};
+
 export const useBordero = () => {
   const queryClient = useQueryClient();
   return {
@@ -133,10 +138,11 @@ export const useBordero = () => {
 
     reverseManualPayment: () =>
       useMutation({
-        mutationFn: async (id: string | null | undefined) => {
+        mutationFn: async ({ id, tipo }: reverseManualPaymentProps) => {
           return await api
             .put(
-              `/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`
+              `/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`,
+              { tipo }
             )
             .then((response) => response.data);
         },

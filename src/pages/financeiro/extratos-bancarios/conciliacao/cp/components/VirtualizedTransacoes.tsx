@@ -32,7 +32,8 @@ const VirtualizedTransacoes: React.FC<VirtualizerTransacoesProps> = ({
         <p className="min-w-16 text-center bg-background">ID</p>
         <p className="min-w-28 text-center bg-background">Transação</p>
         <p className="min-w-28 pl-2 bg-background">Valor</p>
-        <p className="min-w-64 pl-2 bg-background">Descrição</p>
+        <p className="flex-1 min-w-64 pl-2 bg-background">Descrição</p>
+        <p className="min-w-32 pl-2 bg-background">Conta Bancária</p>
         <p className="min-w-24 text-center bg-background">Doc</p>
       </div>
       <div
@@ -82,8 +83,13 @@ const VirtualizedTransacoes: React.FC<VirtualizerTransacoesProps> = ({
                 readOnly={true}
               />
               <Input
-                className="text-xs min-w-64 h-8 p-2"
+                className="flex-1 text-xs min-w-64 h-8 p-2"
                 value={data[item.index].descricao}
+                readOnly={true}
+              />
+              <Input
+                className="text-xs w-32 h-8 p-2"
+                value={data[item.index].conta_bancaria}
                 readOnly={true}
               />
               <Input
