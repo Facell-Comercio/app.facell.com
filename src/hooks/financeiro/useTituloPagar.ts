@@ -1,3 +1,4 @@
+import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
@@ -29,11 +30,7 @@ export const useTituloPagar = () => {
       queryKey: ["financeiro", "contas_pagar", "titulo", "lista", pagination],
       staleTime: 5 * 1000 * 60,
       retry: false,
-      queryFn: async () => {
-        return await api.get(`/financeiro/contas-a-pagar/titulo`, {
-          params: { pagination, filters },
-        });
-      },
+      queryFn: () => fetchApi.financeiro.contas_pagar.titulos.getAll({pagination, filters}),
       placeholderData: keepPreviousData,
     });
 
