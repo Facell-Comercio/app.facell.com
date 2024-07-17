@@ -1,6 +1,7 @@
 import { toast } from "@/components/ui/use-toast";
 import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/borderos/bordero/Modal";
 import { GetAllParams } from "@/types/query-params-type";
 import {
@@ -19,6 +20,7 @@ type TransferDataProps = {
 type DownloadRemessaProps = {
   id: string;
   isPix?: boolean;
+  itens?: VencimentosProps[]
 };
 
 type reverseManualPaymentProps = {
@@ -297,14 +299,14 @@ export const useBordero = () => {
         },
       }),
 
-    downloadRemessa: () =>
+    exportRemessa: () =>
       useMutation({
-        mutationFn: async ({ id, isPix }: DownloadRemessaProps) => {
+        mutationFn: async ({ id, isPix, itens }: DownloadRemessaProps) => {
           return await api
-            .get(`/financeiro/contas-a-pagar/bordero/remessa/${id}`, {
-              params: { isPix },
-              responseType: "blob",
-            })
+            .post(`/financeiro/contas-a-pagar/bordero/export-remessa`,
+              { id_bordero: id, itens, isPix },
+              {responseType: "blob"},
+            )
             .then(async (response) => {
               downloadResponse(response);
             });

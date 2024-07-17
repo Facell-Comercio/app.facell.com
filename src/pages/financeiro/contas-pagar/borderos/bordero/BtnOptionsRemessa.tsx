@@ -25,8 +25,8 @@ type OptionsRemessaProps = {
 };
 const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
   const queryClient = useQueryClient();
-  const { mutate: downloadRemessa, isPending: isLoadingDownload } =
-    useBordero().downloadRemessa();
+  const { mutate: exportRemessa, isPending: isLoadingDownload } =
+    useBordero().exportRemessa();
   const [processing, setProcessing] = useState({
     import: false,
     remessaPix: false,
@@ -124,7 +124,7 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
                 type={"button"}
                 onClick={(e) => {
                   e.preventDefault();
-                  downloadRemessa({ id });
+                  exportRemessa({ id });
                 }}
               >
                 {isLoadingDownload && !processing.remessaPix ? (
@@ -144,7 +144,7 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
                 onClick={(e) => {
                   e.preventDefault();
                   setProcessing((prev) => ({ ...prev, remessaPix: true }));
-                  downloadRemessa({ id, isPix: true });
+                  exportRemessa({ id, isPix: true });
                 }}
               >
                 {isLoadingDownload && processing.remessaPix ? (

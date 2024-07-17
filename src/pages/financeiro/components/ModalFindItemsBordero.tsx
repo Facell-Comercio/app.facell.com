@@ -191,6 +191,7 @@ const ModalFindItemsBordero = ({
             ...item,
             num_doc: item.num_doc || "",
             data_pagamento: item.data_pagamento || "",
+            tipo_baixa: item.tipo_baixa || ''
           },
         ]);
 
@@ -215,6 +216,7 @@ const ModalFindItemsBordero = ({
             ...item,
             num_doc: item.num_doc || "",
             data_pagamento: item.data_pagamento || "",
+            tipo_baixa: item.tipo_baixa || ''
           },
         ]);
         setIds([...ids, `${item.id_vencimento}-${item.id_forma_pagamento}`]);

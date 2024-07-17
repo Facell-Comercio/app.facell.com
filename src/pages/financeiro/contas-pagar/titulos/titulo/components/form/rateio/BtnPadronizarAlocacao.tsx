@@ -61,7 +61,6 @@ export function BtnPadronizarAlocacao({
 }: PadronizarAlocacaoProps) {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  const id_matriz = form.watch("id_matriz");
   const id_grupo_economico = form.watch("id_grupo_economico");
 
   const [modalCentrosCustosOpen, setModalCentrosCustosOpen] =
@@ -264,8 +263,8 @@ export function BtnPadronizarAlocacao({
             </DialogHeader>
 
             <ModalPlanosContas
-              open={modalPlanoContasOpen && !!id_matriz}
-              id_matriz={id_matriz}
+              open={modalPlanoContasOpen && !!id_grupo_economico}
+              id_grupo_economico={id_grupo_economico}
               tipo="Despesa"
               //@ts-ignore
               onOpenChange={setModalPlanoContasOpen}
@@ -274,10 +273,10 @@ export function BtnPadronizarAlocacao({
 
             <ModalCentrosCustos
               handleSelection={handleSelectionCentroCusto}
-              id_matriz={id_matriz}
+              id_grupo_economico={id_grupo_economico}
               // @ts-expect-error 'Vai funcionar'
               onOpenChange={setModalCentrosCustosOpen}
-              open={modalCentrosCustosOpen && !!id_matriz}
+              open={modalCentrosCustosOpen && !!id_grupo_economico}
               closeOnSelection={true}
             />
 
