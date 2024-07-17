@@ -25,9 +25,18 @@ export const useVencimentos = () => {
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
-        return await api.get(`/financeiro/contas-a-pagar/vencimentos/a-pagar`, {
-          params: { pagination, filters },
-        });
+        return await api.get(
+          `/financeiro/contas-a-pagar/vencimentos/vencimentos-e-faturas`,
+          {
+            params: {
+              pagination,
+              filters,
+              minStatusTitulo: 3,
+              pago: 0,
+              emBordero: 0,
+            },
+          }
+        );
       },
       placeholderData: keepPreviousData,
     });
@@ -42,8 +51,16 @@ export const useVencimentos = () => {
       retry: false,
       queryFn: async () => {
         return await api.get(
-          `/financeiro/contas-a-pagar/vencimentos/em-bordero`,
-          { params: { pagination, filters } }
+          `/financeiro/contas-a-pagar/vencimentos/vencimentos-e-faturas`,
+          {
+            params: {
+              pagination,
+              filters,
+              minStatusTitulo: 3,
+              pago: 0,
+              emBordero: 1,
+            },
+          }
         );
       },
       placeholderData: keepPreviousData,
@@ -55,9 +72,18 @@ export const useVencimentos = () => {
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
-        return await api.get(`/financeiro/contas-a-pagar/vencimentos/pagos`, {
-          params: { pagination, filters },
-        });
+        return await api.get(
+          `/financeiro/contas-a-pagar/vencimentos/vencimentos-e-faturas`,
+          {
+            params: {
+              pagination,
+              filters,
+              minStatusTitulo: 4,
+              pago: 1,
+              emBordero: 1,
+            },
+          }
+        );
       },
       placeholderData: keepPreviousData,
     });

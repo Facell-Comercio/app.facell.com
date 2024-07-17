@@ -1,6 +1,9 @@
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
+import { Banknote, CreditCard, Landmark } from "lucide-react";
 import { ReactNode } from "react";
+import { useStoreCartao } from "../../cartoes/cartao/store";
 import { useStoreTitulo } from "../../titulos/titulo/store";
 
 // This type is used to define the shape of our data.
@@ -8,16 +11,19 @@ import { useStoreTitulo } from "../../titulos/titulo/store";
 export type RowTitulo = {
   select: ReactNode;
   id_titulo: string;
+  id_vencimento: string;
   data_vencimento: Date;
   data_prevista: Date;
   valor: string;
   num_doc: string;
-  fornecedor: string;
+  nome_fornecedor: string;
   filial: string;
   descricao: string;
+  tipo: "vencimento" | "fatura";
 };
 
 const openModal = useStoreTitulo.getState().openModal;
+const openModalFatura = useStoreCartao.getState().openModalFatura;
 
 export const columnsTableAPagar: ColumnDef<RowTitulo>[] = [
   {
@@ -47,15 +53,54 @@ export const columnsTableAPagar: ColumnDef<RowTitulo>[] = [
     ),
   },
   {
+    id: "id_forma_pagamento",
+    header: "forma",
+    accessorKey: "id_forma_pagamento",
+    cell: (info) => {
+      const id_forma_pagamento = parseInt(info.getValue<string>());
+      if (id_forma_pagamento === 3) {
+        return (
+          <Button
+            className="w-full py-1 max-h-8 text-xs text-center border-none bg-green-700 hover:bg-green-700 cursor-default"
+            size={"xs"}
+            onClick={() => openModal({ id: info.row.original.id_titulo })}
+          >
+            <Banknote size={16} />
+          </Button>
+        );
+      } else if (id_forma_pagamento === 6) {
+        return (
+          <Button
+            className="w-full py-1 max-h-8 text-xs text-center border-none bg-violet-700 hover:bg-violet-600"
+            size={"xs"}
+            onClick={() => openModalFatura(info.row.original.id_vencimento)}
+          >
+            <CreditCard size={16} />
+          </Button>
+        );
+      } else {
+        return (
+          <Button
+            className="w-full py-1.5 max-h-8 text-xs text-center border-none bg-zinc-700 hover:bg-zinc-700 cursor-default"
+            size={"xs"}
+            onClick={() => openModal({ id: info.row.original.id_titulo })}
+          >
+            <Landmark size={16} />
+          </Button>
+        );
+      }
+    },
+    enableSorting: false,
+  },
+  {
     id: "id_titulo",
     header: "ID TÍTULO",
     accessorKey: "id_titulo",
     cell: (info) => (
-      <span
-        className="flex font-semibold cursor-pointer text-blue-500 truncate max-w-96"
-        onClick={() => openModal({id: info.getValue<string>()})}
-      >
-        {info.getValue<string>()}
+      <span className="flex font-semibold truncate max-w-96">
+        {info.row.original.tipo === "vencimento"
+          ? info.getValue<string>()
+          : "-"}
       </span>
     ),
     enableSorting: false,
@@ -123,9 +168,9 @@ export const columnsTableAPagar: ColumnDef<RowTitulo>[] = [
     enableSorting: false,
   },
   {
-    id: "fornecedor",
+    id: "nome_fornecedor",
     header: "FORNECEDOR",
-    accessorKey: "fornecedor",
+    accessorKey: "nome_fornecedor",
     cell: (info) => {
       const label = info.getValue<string>();
       return (
