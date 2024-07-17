@@ -53,7 +53,7 @@ const FormNovoPadrao = ({ conta }: { conta: ContaBancaria | null }) => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: [`transacao_padrao_${conta?.id}`],
+        queryKey: ["financeiro", "conciliacao", "transacao_nao_conciliavel"],
       });
 
       toggleOpen();

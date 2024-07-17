@@ -165,7 +165,7 @@ const FormBordero = ({
       }
       setLoadingPagamento(true)
       await api.post('/financeiro/contas-a-pagar/bordero/pagamento', { id_bordero: data.id, itens, data_pagamento: data.data_pagamento })
-      queryClient.invalidateQueries({ queryKey: ['fin_borderos'] })
+      queryClient.invalidateQueries({ queryKey: ["financeiro"] })
       toast({
         variant: 'success', title: 'Pagamento realizado!',
       })
@@ -187,7 +187,8 @@ const FormBordero = ({
       data_pagamento: newData.data_pagamento,
       id_matriz: newData.id_matriz,
       itens: newData.itens?.filter(
-        (item: VencimentosProps) => item.updated
+        // @ts-ignore
+        (item: VencimentosProps) => item?.updated == true
       ),
     };
     !id && insertOne(newData);

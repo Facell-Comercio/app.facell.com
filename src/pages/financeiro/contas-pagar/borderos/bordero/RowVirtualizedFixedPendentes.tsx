@@ -9,12 +9,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Toggle } from "@/components/ui/toggle";
 
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreCartao } from "../../cartoes/cartao/store";
 import { useStoreDDA } from "../components/storeDDA";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 
 interface RowVirtualizerFixedPendentesProps {
   data: VencimentosProps[];

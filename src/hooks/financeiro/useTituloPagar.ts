@@ -26,7 +26,7 @@ export const useTituloPagar = () => {
 
   const getAll = ({ pagination, filters }: GetTitulosPagarProps) =>
     useQuery({
-      queryKey: ["fin_cp_titulos", pagination],
+      queryKey: ["financeiro", "contas_pagar", "titulo", "lista", pagination],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
@@ -39,7 +39,7 @@ export const useTituloPagar = () => {
 
   const getRecorrencias = ({ filters }: GetTitulosPagarProps) =>
     useQuery({
-      queryKey: ["fin_cp_recorrencias"],
+      queryKey: ["financeiro", "contas_pagar", "recorrencia", "lista", filters],
       retry: false,
       queryFn: async () => {
         return await api.get(`/financeiro/contas-a-pagar/titulo/recorrencias`, {
@@ -54,7 +54,7 @@ export const useTituloPagar = () => {
       enabled: !!id,
       retry: false,
       staleTime: 5 * 1000 * 60,
-      queryKey: ["fin_cp_titulo", id],
+      queryKey: ["financeiro", "contas_pagar", "titulo", "detalhe", id],
       queryFn: async () => {
         try {
           const result = await api.get(
@@ -77,7 +77,7 @@ export const useTituloPagar = () => {
   const getPendencias = () =>
     useQuery({
       retry: false,
-      queryKey: ["fin_cp_titulos_pendencias"],
+      queryKey: ["financeiro", "contas_pagar", "pendencia", "lista"],
       queryFn: async () => {
         try {
           const result = await api.get(
@@ -110,14 +110,8 @@ export const useTituloPagar = () => {
           title: "Sucesso!",
           description: "Solicitação criada com sucesso!",
         });
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_cp_titulos_pendencias"],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_cp_vencimentos_pagar"],
-        });
-        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
@@ -144,27 +138,8 @@ export const useTituloPagar = () => {
           title: "Sucesso!",
           description: "Solicitação atualizada com sucesso!",
         });
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_titulo"] });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_cp_titulos_pendencias"],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_cp_vencimentos_pagar"],
-        });
-        queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-        queryClient.invalidateQueries({ queryKey: ["fin_painel_negados"] });
-        queryClient.invalidateQueries({ queryKey: ["fin_painel_sem_nota"] });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_painel_recorrencias"],
-        });
-        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
 
-        //* Tarifas Cartão
-        queryClient.invalidateQueries({ queryKey: ["fin_cartoes"] });
-        queryClient.invalidateQueries({ queryKey: ["fin_cartoes_faturas"] });
-        queryClient.invalidateQueries({ queryKey: ["fin_fatura"] });
-        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
@@ -191,7 +166,7 @@ export const useTituloPagar = () => {
           title: "Sucesso!",
           description: "Exclusão de recorrência realizada com sucesso!",
         });
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "recorrencia"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
@@ -213,14 +188,7 @@ export const useTituloPagar = () => {
           .then((response) => response.data);
       },
       onSuccess() {
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_cp_titulos_pendencias"],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_cp_vencimentos_pagar"],
-        });
-        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
@@ -247,19 +215,7 @@ export const useTituloPagar = () => {
           title: "Sucesso!",
           description: "Alterações realizadas com sucesso!",
         });
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_titulo"] });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_cp_titulos_pendencias"],
-        });
-        queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
-
-        //* Tarifas Cartão
-        queryClient.invalidateQueries({ queryKey: ["fin_cartoes"] });
-        queryClient.invalidateQueries({ queryKey: ["fin_cartoes_faturas"] });
-        queryClient.invalidateQueries({ queryKey: ["fin_fatura"] });
-        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
@@ -292,7 +248,7 @@ export const useTituloPagar = () => {
           title: "Sucesso!",
           description: "Alterações realizadas com sucesso!",
         });
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "recorrencia"] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"

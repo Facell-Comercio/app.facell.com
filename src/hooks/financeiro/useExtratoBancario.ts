@@ -8,14 +8,14 @@ export const useExtratoBancario = () => {
     const queryClient = useQueryClient()
     return ({
         getAll : ({ pagination, filters }: GetAllParams) => useQuery({
-            queryKey: ['extratos-bancarios', pagination],
+            queryKey: ["financeiro", "extrato_bancario", "lista", pagination],
             queryFn: async () => { return await api.get(`/financeiro/extratos-bancarios/`, { params: { pagination, filters } }) },
             placeholderData: keepPreviousData
         }),
 
         getOne : (id: string | null | undefined) => useQuery({
             enabled: !!id,
-            queryKey: ['extratos-bancarios', id],
+            queryKey: ["financeiro", "extrato_bancario", "detalhe", id],
             queryFn: async () => {
                 return await api.get(`/financeiro/extratos-bancarios/${id}`)
             },
@@ -28,7 +28,7 @@ export const useExtratoBancario = () => {
             },
             onSuccess() {
                 toast({title: "Sucesso", description: "Novo borderô criado", duration: 3500})
-                queryClient.invalidateQueries({queryKey:['extratos-bancarios']}) 
+                queryClient.invalidateQueries({queryKey:["financeiro", "extrato_bancario"]}) 
             },
             onError(error: AxiosError) {
                 // @ts-expect-error "Vai funcionar"
@@ -44,7 +44,7 @@ export const useExtratoBancario = () => {
             },
             onSuccess() {
                 toast({title: "Sucesso", description: "Atualização realizada com sucesso", duration: 3500})
-                queryClient.invalidateQueries({queryKey:['extratos-bancarios']}) 
+                queryClient.invalidateQueries({queryKey:["financeiro", "extrato_bancario"]}) 
             },
             onError(error: AxiosError) {
                 // @ts-expect-error "Vai funcionar"

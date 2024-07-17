@@ -13,7 +13,7 @@ export const usePermissoes = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["permissoes", pagination],
+        queryKey: ["permissao", "lista", pagination],
         queryFn: async () =>
           await api.get(`/permissao`, { params: { pagination, filters } }),
         placeholderData: keepPreviousData,
@@ -22,7 +22,7 @@ export const usePermissoes = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["permissao", id],
+        queryKey: ["permissao", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/permissao/${id}`);
         },
@@ -36,7 +36,6 @@ export const usePermissoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["permissoes"] });
           queryClient.invalidateQueries({ queryKey: ["permissao"] });
         },
         onError(error) {
@@ -52,7 +51,7 @@ export const usePermissoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["permissoes"] });
+          queryClient.invalidateQueries({ queryKey: ["permissao", "lista"] });
           queryClient.invalidateQueries({ queryKey: ["permissao"] });
         },
         onError(error) {

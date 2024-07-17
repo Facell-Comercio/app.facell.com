@@ -14,7 +14,7 @@ export const useFilial = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["filiais", params],
+        queryKey: ["filial", "lista", params],
         queryFn: async () => await api.get("/filial", { params: params }),
         placeholderData: keepPreviousData,
         staleTime: Infinity,
@@ -24,7 +24,7 @@ export const useFilial = () => {
     getOne: (id?: string) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["filial", id],
+        queryKey: ["filial", "detalhe", id],
         queryFn: async () => await api.get(`/filial/${id}`),
         staleTime: Infinity,
         refetchOnMount: false,
@@ -64,7 +64,6 @@ export const useFilial = () => {
             title: "Sucesso!",
             description: "Filial atualizada com sucesso.",
           });
-          queryClient.invalidateQueries({ queryKey: ["filiais"] });
           queryClient.invalidateQueries({ queryKey: ["filial"] });
         },
         onError(error) {

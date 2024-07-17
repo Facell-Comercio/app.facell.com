@@ -52,7 +52,7 @@ const ModalBorderos = ({
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["fin_borderos", id_matriz],
+    queryKey: ["financeiro", "contas_pagar", "bordero", "lista", {id_matriz, termo: search}],
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/bordero/", {
         params: { filters: { termo: search, id_matriz }, pagination },

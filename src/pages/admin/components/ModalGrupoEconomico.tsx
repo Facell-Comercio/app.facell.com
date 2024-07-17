@@ -48,7 +48,7 @@ const ModalGruposEconomicos = ({
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["grupos_economicos"],
+    queryKey: ["grupo_economico"],
     queryFn: async () =>
       await api.get("/grupo-economico", {
         params: {

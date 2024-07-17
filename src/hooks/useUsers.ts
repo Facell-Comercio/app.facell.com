@@ -20,7 +20,7 @@ export const useUsers = () => {
   return {
     getAll: (params: GetAllParams) => {
       return useQuery({
-        queryKey: [`users`, params],
+        queryKey: ["user", "lista", params],
         placeholderData: keepPreviousData,
         queryFn: async () => {
           const result = await api.get("/user", { params });
@@ -31,7 +31,7 @@ export const useUsers = () => {
     getOne: (id: number | null) =>
       useQuery({
         enabled: !!id,
-        queryKey: [`user`, id],
+        queryKey: ["user", "detalhe", id],
         queryFn: async () => {
           return await api.get(`user/${id}`);
         },
@@ -48,7 +48,7 @@ export const useUsers = () => {
             description: "Usuário inserido com sucesso.",
             variant: "success",
           });
-          queryClient.invalidateQueries({ queryKey: ["users"] });
+          queryClient.invalidateQueries({ queryKey: ["user"] });
         },
         onError(error) {
           toast({
@@ -73,7 +73,6 @@ export const useUsers = () => {
             description: "Usuário atualizado com sucesso.",
             variant: "success",
           });
-          queryClient.invalidateQueries({ queryKey: ["users"] });
           queryClient.invalidateQueries({ queryKey: ["user"] });
         },
         onError(error) {
@@ -99,7 +98,6 @@ export const useUsers = () => {
             description: "Senha atualizada com sucesso.",
             variant: "success",
           });
-          queryClient.invalidateQueries({ queryKey: ["users"] });
           queryClient.invalidateQueries({ queryKey: ["user"] });
         },
         onError(error) {

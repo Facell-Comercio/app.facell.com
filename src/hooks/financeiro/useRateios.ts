@@ -14,7 +14,7 @@ export const useRateios = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_rateios", pagination, filters?.id_grupo_economico],
+        queryKey: ["financeiro", "contas_pagar", "rateio", "lista", pagination, filters?.id_grupo_economico],
         queryFn: async () => {
           return await api.get(`financeiro/rateios/`, {
             params: { pagination, filters },
@@ -26,7 +26,7 @@ export const useRateios = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: [`fin_rateios-${id}`, id],
+        queryKey: ["financeiro", "contas_pagar", "rateio", "detalhe", id],
         queryFn: async () => {
           return await api.get(`financeiro/rateios/${id}`);
         },
@@ -40,7 +40,7 @@ export const useRateios = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_rateios"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "rateio"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -67,9 +67,8 @@ export const useRateios = () => {
             .put("financeiro/rateios/", { id, ...rest })
             .then((response) => response.data);
         },
-        onSuccess(_, { id }) {
-          queryClient.invalidateQueries({ queryKey: ["fin_rateios"] });
-          queryClient.invalidateQueries({ queryKey: [`fin_rateios-${id}`] });
+        onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "rateio"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -95,9 +94,8 @@ export const useRateios = () => {
             .delete(`/financeiro/rateios/${id}`)
             .then((response) => response.data);
         },
-        onSuccess(_, id) {
-          queryClient.invalidateQueries({ queryKey: ["fin_rateios"] });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
+        onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "rateio"] });
           toast({
             variant: "success",
             title: "Sucesso",

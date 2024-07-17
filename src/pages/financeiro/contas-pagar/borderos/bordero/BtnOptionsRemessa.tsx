@@ -51,7 +51,7 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
           "/financeiro/contas-a-pagar/bordero/import-retorno-remessa",
           form
         );
-        queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
         resolve(result.data);
       } catch (error) {
         reject(error);

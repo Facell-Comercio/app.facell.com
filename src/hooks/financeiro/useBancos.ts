@@ -15,7 +15,7 @@ export const useBancos = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_bancos", params],
+        queryKey: ["financeiro", "banco", "lista", params],
         queryFn: async () =>
           await api.get(`/financeiro/bancos`, { params: params }),
         placeholderData: keepPreviousData,
@@ -24,7 +24,7 @@ export const useBancos = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_bancos", id],
+        queryKey: ["financeiro", "banco", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/bancos/${id}`);
         },
@@ -38,7 +38,7 @@ export const useBancos = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_bancos"] });
+          queryClient.invalidateQueries({ queryKey: ["banco"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -66,7 +66,7 @@ export const useBancos = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_bancos"] });
+          queryClient.invalidateQueries({ queryKey: ["banco"] });
           toast({
             variant: "success",
             title: "Sucesso",

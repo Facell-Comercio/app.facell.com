@@ -24,6 +24,7 @@ import { EraserIcon, FilterIcon } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
 import ModalFiliais from "../../admin/components/ModalFiliais";
+import { VencimentosProps } from "./ModalFindItemsBordero";
 
 interface IModalVencimentos {
   open: boolean;
@@ -38,36 +39,6 @@ interface IModalVencimentos {
     [key: string]: any;
   };
 }
-
-export type VencimentosProps = {
-  checked?: boolean;
-  id?: string;
-  id_vencimento: string;
-  id_titulo: string;
-  id_status?: string;
-  id_dda?: number;
-  id_forma_pagamento?: number;
-  status: string;
-  forma_pagamento?: string;
-  tipo_baixa?: string;
-  previsao: string;
-  nome_fornecedor: string;
-  valor_total: string;
-  valor_pago?: string;
-  data_prevista_pagamento?: string;
-  num_doc: string;
-  descricao: string;
-  filial: string;
-  obs?: string;
-  data_pagamento?: string;
-
-  tipo?: string;
-
-  can_remove?: boolean;
-  can_modify?: boolean;
-  updated?: boolean;
-  remessa?: boolean;
-};
 
 interface Filters {
   id_vencimento?: string;
@@ -119,7 +90,7 @@ const ModalVencimentos = ({
   };
 
   const { data, isError, isLoading, refetch } = useQuery({
-    queryKey: ["modal-vencimentos", id_matriz, id_status],
+    queryKey: ["financeiro", "contas_pagar", "vencimento", "em_bordero", "lista", {id_matriz, id_status, filters}],
     staleTime: 0,
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/titulo/vencimentos-bordero", {

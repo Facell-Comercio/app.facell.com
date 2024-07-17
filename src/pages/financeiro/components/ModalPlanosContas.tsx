@@ -53,7 +53,7 @@ const ModalPlanosContas = ({
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["plano_contas", id_matriz, id_matriz, id_grupo_economico],
+    queryKey: ["financeiro", "plano_contas", "lista", {id_matriz, id_grupo_economico}],
     queryFn: async () =>
       await api.get("financeiro/plano-contas", {
         params: {

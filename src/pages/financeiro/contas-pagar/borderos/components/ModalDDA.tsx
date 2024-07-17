@@ -98,12 +98,8 @@ export const ModalDDA = () => {
       });
       if (id_vencimento) {
         toggleModal(false);
-        queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
       }
-
-      queryClient.invalidateQueries({ queryKey: ["fin_dda"] });
-
-      refetch();
       return true;
     } catch (error) {
       toast({
@@ -132,12 +128,9 @@ export const ModalDDA = () => {
       });
       if (id_vencimento) {
         toggleModal(false);
-        queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
       }
+      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
 
-      queryClient.invalidateQueries({ queryKey: ["fin_dda"] });
-
-      refetch();
       return true;
     } catch (error) {
       toast({

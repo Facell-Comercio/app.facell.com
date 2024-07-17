@@ -31,7 +31,7 @@ export const useBordero = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_borderos", pagination],
+        queryKey: ["financeiro", "contas_pagar", "bordero", "lista", pagination],
         queryFn: async () => {
           return await api.get(`/financeiro/contas-a-pagar/bordero/`, {
             params: { pagination, filters },
@@ -43,7 +43,7 @@ export const useBordero = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_borderos", id],
+        queryKey: ["financeiro", "contas_pagar", "bordero", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/contas-a-pagar/bordero/${id}`);
         },
@@ -63,22 +63,7 @@ export const useBordero = () => {
             description: "Novo borderô criado",
             duration: 3500,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulos"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulo"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -99,30 +84,15 @@ export const useBordero = () => {
             .put("/financeiro/contas-a-pagar/bordero/", { id, ...rest })
             .then((response) => response.data);
         },
-        onSuccess(_, { id }) {
+        onSuccess() {
           toast({
             variant: "success",
             title: "Sucesso",
             description: "Atualização realizada com sucesso",
             duration: 3500,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulos"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulo"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -153,23 +123,8 @@ export const useBordero = () => {
             description: "Atualização realizada com sucesso",
             duration: 3500,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulos"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulo"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -201,16 +156,8 @@ export const useBordero = () => {
             description: "Transferência realizada com sucesso",
             duration: 3500,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -231,15 +178,9 @@ export const useBordero = () => {
             .delete(`/financeiro/contas-a-pagar/bordero/titulo/${id}`)
             .then((response) => response.data);
         },
-        onSuccess(_, id) {
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
+        onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+
           toast({
             variant: "success",
             title: "Sucesso",
@@ -270,14 +211,8 @@ export const useBordero = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+
           toast({
             variant: "success",
             title: "Sucesso",
@@ -343,22 +278,7 @@ export const useBordero = () => {
             "/financeiro/contas-a-pagar/bordero/import-retorno-remessa",
             form
           );
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulos"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulo"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
 
           resolve(result.data);
         } catch (error) {

@@ -270,7 +270,7 @@ const FormTituloPagar = ({
       closeModal();
 
       if (titulo.id_recorrencia) {
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "recorrencia"] });
       }
     }
   }, [insertOneSuccess]);
@@ -289,8 +289,8 @@ const FormTituloPagar = ({
         id_novo_status,
         motivo,
       });
-      queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-      queryClient.invalidateQueries({ queryKey: ["fin_cp_titulo"] });
+      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
+
     } catch (error) {
       toast({
         variant: "destructive",

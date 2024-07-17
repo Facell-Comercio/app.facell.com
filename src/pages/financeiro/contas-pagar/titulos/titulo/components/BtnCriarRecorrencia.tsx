@@ -21,7 +21,7 @@ export const BtnCriarRecorrencia = ({form}:{form: UseFormReturn<TituloSchemaProp
               dados.vencimentos && dados.vencimentos[0].data_vencimento,
             valor: dados.valor,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "recorrencia"] });
           toast({
             variant: "success",
             title: "Recorrência criada com sucesso!",

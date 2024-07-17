@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { checkUserDepartments } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useBordero } from "@/hooks/financeiro/useBordero";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Banknote, CreditCard, Landmark } from "lucide-react";
 import { useStoreCartao } from "../../cartoes/cartao/store";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 
 interface RowVirtualizerFixedPagosProps {
   data: VencimentosProps[];

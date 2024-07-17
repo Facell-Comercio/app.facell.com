@@ -14,12 +14,7 @@ export const useCentroCustos = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: [
-          "fin_centro_custos",
-          pagination,
-          filters.id_grupo_economico,
-          filters.id_matriz,
-        ],
+        queryKey: ["financeiro", "centro_custo", "lista", pagination, filters.id_grupo_economico, filters.id_matriz],
         queryFn: async () =>
           await api.get(`/financeiro/centro-custos`, {
             params: { pagination, filters },
@@ -30,7 +25,7 @@ export const useCentroCustos = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_centro_custos", id],
+        queryKey: ["financeiro", "centro_custo", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/centro-custos/${id}`);
         },
@@ -44,7 +39,7 @@ export const useCentroCustos = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_centro_custos"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "centro_custo"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -72,7 +67,7 @@ export const useCentroCustos = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_centro_custos"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "centro_custo"] });
           toast({
             variant: "success",
             title: "Sucesso",

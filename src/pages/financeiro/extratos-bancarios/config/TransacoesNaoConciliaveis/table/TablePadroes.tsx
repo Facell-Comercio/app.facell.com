@@ -47,7 +47,7 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
 
   const { data, isLoading } = useQuery({
     enabled: !!conta,
-    queryKey: [`transacao_padrao_${conta?.id}`],
+    queryKey: ["financeiro", "conciliacao", "transacao_nao_conciliavel", "lista", conta?.id],
     queryFn: () =>
       api.get(`/financeiro/conciliacao-bancaria/transacao-padrao`, {
         params: { id_conta_bancaria: conta?.id },
@@ -89,7 +89,7 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: [`transacao_padrao_${conta?.id}`],
+        queryKey: ["financeiro", "conciliacao", "transacao_nao_conciliavel"],
       });
       setRowEditing(initialRowEditing);
     } catch (error) {
@@ -113,7 +113,7 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
         params: { id_padrao: id_padrao },
       });
       queryClient.invalidateQueries({
-        queryKey: [`transacao_padrao_${conta?.id}`],
+        queryKey: ["financeiro", "conciliacao", "transacao_nao_conciliavel"],
       });
       toast({
         title: "Padrão excluído",

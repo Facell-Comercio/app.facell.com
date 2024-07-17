@@ -14,7 +14,7 @@ export const useGrupoEconomico = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["grupos-economicos", params],
+        queryKey: ["grupo_economico", "lista", params],
         queryFn: async () =>
           await api.get("/grupo-economico", { params: params }),
         placeholderData: keepPreviousData,
@@ -24,7 +24,7 @@ export const useGrupoEconomico = () => {
 
     getAllMatriz: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["matriz", params],
+        queryKey: ["matriz", "lista", params],
         queryFn: async () =>
           await api.get("/grupo-economico/matriz", { params: params }),
         placeholderData: keepPreviousData,
@@ -35,7 +35,7 @@ export const useGrupoEconomico = () => {
     getOne: (id?: string) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["grupo-economico", id],
+        queryKey: ["grupo_economico", "detalhe", id],
         queryFn: async () => await api.get(`/grupo-economico/${id}`),
         staleTime: Infinity,
         refetchOnMount: false,
@@ -54,7 +54,7 @@ export const useGrupoEconomico = () => {
             description: "Grupo econômico inserido com sucesso.",
             variant: "success",
           });
-          queryClient.invalidateQueries({ queryKey: ["grupos-economicos"] });
+          queryClient.invalidateQueries({ queryKey: ["grupo_economico"] });
         },
         onError(error) {
           toast({
@@ -78,8 +78,7 @@ export const useGrupoEconomico = () => {
             description: "Grupo econômico atualizado com sucesso.",
             variant: "success",
           });
-          queryClient.invalidateQueries({ queryKey: ["grupos-economicos"] });
-          queryClient.invalidateQueries({ queryKey: ["grupo-economico"] });
+          queryClient.invalidateQueries({ queryKey: ["grupo_economico"] });
         },
         onError(error) {
           toast({

@@ -54,7 +54,7 @@ const ModalExtratosCredit = ({
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["fin_extratos_credit", filters],
+    queryKey: ["financeiro", "conciliacao", "transacao", "lista", filters],
     queryFn: async () =>
       await api.get("financeiro/conciliacao-cp/extratos-credit", {
         params: {

@@ -57,7 +57,7 @@ const BtnOptionsDDA = () => {
       const result = await useDDA().importDDA(target.files)
       exportToExcel(result, 'RESULTADO IMPORTAÇÃO DDA')
 
-      queryClient.invalidateQueries({ queryKey: ['fin_dda'] })
+      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "dda"] })
       toast({
         variant: 'success', title: 'Importação concluída!',
       })

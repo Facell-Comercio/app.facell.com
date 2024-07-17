@@ -118,7 +118,7 @@ const ModalFindItemsBordero = ({
   };
 
   const { data, isError, isLoading, refetch } = useQuery({
-    queryKey: ["bordero_novos_itens", id_matriz, id_status],
+    queryKey: ["financeiro", "contas_pagar", "bordero", "novos_itens", "lista", {id_matriz, id_status}],
     staleTime: 0,
     retry: false,
     queryFn: async () =>

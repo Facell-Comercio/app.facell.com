@@ -21,7 +21,7 @@ export const useDDA = () => {
 
   const getAllDDA = ({ pagination, filters }: GetDDAProps) =>
     useQuery({
-      queryKey: ["fin_dda", pagination, filters],
+      queryKey: ["financeiro", "contas_pagar", "dda", "lista", pagination, filters],
       staleTime: 0,
       retry: false,
       queryFn: async () => {
