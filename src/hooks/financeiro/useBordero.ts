@@ -1,16 +1,16 @@
-import { toast } from "@/components/ui/use-toast";
-import { downloadResponse } from "@/helpers/download";
-import { api } from "@/lib/axios";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
-import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/borderos/bordero/Modal";
-import { GetAllParams } from "@/types/query-params-type";
+import { toast } from '@/components/ui/use-toast';
+import { downloadResponse } from '@/helpers/download';
+import { api } from '@/lib/axios';
+import { VencimentosProps } from '@/pages/financeiro/components/ModalFindItemsBordero';
+import { BorderoSchemaProps } from '@/pages/financeiro/contas-pagar/borderos/bordero/Modal';
+import { GetAllParams } from '@/types/query-params-type';
 import {
   keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
-} from "@tanstack/react-query";
-import { AxiosError } from "axios";
+} from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 type TransferDataProps = {
   id_vencimento: string;
@@ -20,7 +20,7 @@ type TransferDataProps = {
 type DownloadRemessaProps = {
   id: string;
   isPix?: boolean;
-  itens?: VencimentosProps[]
+  itens?: VencimentosProps[];
 };
 
 type reverseManualPaymentProps = {
@@ -33,7 +33,7 @@ export const useBordero = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_borderos", pagination],
+        queryKey: ['fin_borderos', pagination],
         queryFn: async () => {
           return await api.get(`/financeiro/contas-a-pagar/bordero/`, {
             params: { pagination, filters },
@@ -45,7 +45,7 @@ export const useBordero = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_borderos", id],
+        queryKey: ['fin_borderos', id],
         queryFn: async () => {
           return await api.get(`/financeiro/contas-a-pagar/bordero/${id}`);
         },
@@ -55,41 +55,41 @@ export const useBordero = () => {
       useMutation({
         mutationFn: async (data: BorderoSchemaProps) => {
           return await api
-            .post("/financeiro/contas-a-pagar/bordero", data)
+            .post('/financeiro/contas-a-pagar/bordero', data)
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Novo borderô criado",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Novo borderô criado',
             duration: 3500,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos'] });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
+            queryKey: ['fin_cp_vencimentos_pagar'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
+            queryKey: ['fin_cp_vencimentos_bordero'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
+            queryKey: ['fin_cp_vencimentos_pagos'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulos"],
+            queryKey: ['fin_cp_titulos'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulo"],
+            queryKey: ['fin_cp_titulo'],
           });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -98,42 +98,42 @@ export const useBordero = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: BorderoSchemaProps) => {
           return await api
-            .put("/financeiro/contas-a-pagar/bordero/", { id, ...rest })
+            .put('/financeiro/contas-a-pagar/bordero/', { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess(_, { id }) {
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos', id] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos'] });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
+            queryKey: ['fin_cp_vencimentos_pagar'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
+            queryKey: ['fin_cp_vencimentos_bordero'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
+            queryKey: ['fin_cp_vencimentos_pagos'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulos"],
+            queryKey: ['fin_cp_titulos'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulo"],
+            queryKey: ['fin_cp_titulo'],
           });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -150,37 +150,37 @@ export const useBordero = () => {
         },
         onSuccess(_, id) {
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos', id] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos'] });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
+            queryKey: ['fin_cp_vencimentos_pagar'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
+            queryKey: ['fin_cp_vencimentos_bordero'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
+            queryKey: ['fin_cp_vencimentos_pagos'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulos"],
+            queryKey: ['fin_cp_titulos'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulo"],
+            queryKey: ['fin_cp_titulo'],
           });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -193,35 +193,35 @@ export const useBordero = () => {
           vencimentos: TransferDataProps[];
         }) => {
           return await api
-            .put("financeiro/contas-a-pagar/bordero/transfer", data)
+            .put('financeiro/contas-a-pagar/bordero/transfer', data)
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Transferência realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Transferência realizada com sucesso',
             duration: 3500,
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos'] });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
+            queryKey: ['fin_cp_vencimentos_pagar'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
+            queryKey: ['fin_cp_vencimentos_bordero'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
+            queryKey: ['fin_cp_vencimentos_pagos'],
           });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -234,18 +234,18 @@ export const useBordero = () => {
             .then((response) => response.data);
         },
         onSuccess(_, id) {
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos", id] });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos', id] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos'] });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
+            queryKey: ['fin_cp_vencimentos_pagar'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
+            queryKey: ['fin_cp_vencimentos_bordero'],
           });
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
         },
@@ -253,10 +253,10 @@ export const useBordero = () => {
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -272,18 +272,18 @@ export const useBordero = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos'] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos'] });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
+            queryKey: ['fin_cp_vencimentos_pagar'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
+            queryKey: ['fin_cp_vencimentos_bordero'],
           });
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Exclusão realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Exclusão realizada com sucesso',
             duration: 3500,
           });
         },
@@ -291,10 +291,10 @@ export const useBordero = () => {
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -303,9 +303,10 @@ export const useBordero = () => {
       useMutation({
         mutationFn: async ({ id, isPix, itens }: DownloadRemessaProps) => {
           return await api
-            .post(`/financeiro/contas-a-pagar/bordero/export-remessa`,
+            .post(
+              `/financeiro/contas-a-pagar/bordero/export-remessa`,
               { id_bordero: id, itens, isPix },
-              {responseType: "blob"},
+              { responseType: 'blob' }
             )
             .then(async (response) => {
               downloadResponse(response);
@@ -314,9 +315,9 @@ export const useBordero = () => {
         },
         onSuccess() {
           toast({
-            variant: "success",
-            title: "Sucesso!",
-            description: "Exportação de remessa realizada com sucesso!",
+            variant: 'success',
+            title: 'Sucesso!',
+            description: 'Exportação de remessa realizada com sucesso!',
           });
         },
         onError: async (error) => {
@@ -325,8 +326,8 @@ export const useBordero = () => {
           const errorJSON = JSON.parse(errorText);
 
           toast({
-            variant: "destructive",
-            title: "Ocorreu o seguinte erro",
+            variant: 'destructive',
+            title: 'Ocorreu o seguinte erro',
             description: errorJSON.message,
           });
         },
@@ -338,28 +339,28 @@ export const useBordero = () => {
           const form = new FormData();
           if (files) {
             for (let i = 0; i < files.length; i++) {
-              form.append("files", files[i]);
+              form.append('files', files[i]);
             }
           }
           const result = await api.postForm(
-            "/financeiro/contas-a-pagar/bordero/import-retorno-remessa",
+            '/financeiro/contas-a-pagar/bordero/import-retorno-remessa',
             form
           );
-          queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_borderos'] });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
+            queryKey: ['fin_cp_vencimentos_pagar'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
+            queryKey: ['fin_cp_vencimentos_bordero'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
+            queryKey: ['fin_cp_vencimentos_pagos'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulos"],
+            queryKey: ['fin_cp_titulos'],
           });
           queryClient.invalidateQueries({
-            queryKey: ["fin_cp_titulo"],
+            queryKey: ['fin_cp_titulo'],
           });
 
           resolve(result.data);

@@ -20,12 +20,17 @@ type TSelectCartao = {
   onChange?: (id?: string) => void;
 };
 
-const SelectCartao = (props: TSelectCartao) => {
-  const { data } = useCartoes().getAll();
+const SelectCartao = ({ disabled, ...props }: TSelectCartao) => {
+  const { data } = useCartoes().getAll({
+    filters: {
+      active: 1,
+    },
+  });
   const cartoes = data?.data?.rows || [];
   return (
     <FormSelect
       {...props}
+      disabled={disabled || cartoes.length === 0}
       options={cartoes.map((cartao: Cartao) => ({
         value: String(cartao.id).toString(),
         label: cartao.descricao,

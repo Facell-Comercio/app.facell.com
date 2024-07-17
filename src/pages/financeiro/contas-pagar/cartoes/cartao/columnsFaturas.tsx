@@ -1,23 +1,11 @@
+import { FaturaSchema } from "@/hooks/financeiro/useCartoes";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { useStoreCartao } from "./store";
 
-export type RowVencimento = {
-  id_bordero: string;
-  id_titulo: string;
-  data_vencimento: Date;
-  valor: string;
-  data_pagamento: Date;
-  tipo_baixa: string;
-  valor_pago: string;
-  num_doc: string;
-  fornecedor: string;
-  filial: string;
-  descricao: string;
-};
 const openModal = useStoreCartao.getState().openModalFatura;
 
-export const columnsTableFaturas: ColumnDef<RowVencimento>[] = [
+export const columnsTableFaturas: ColumnDef<FaturaSchema>[] = [
   {
     id: "id",
     header: "Fatura",

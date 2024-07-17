@@ -9,6 +9,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
+export type UserProps = {
+  id?: number | string | null;
+  nome?: string;
+};
+
 type UserUpdateProps = {
   id: number | null;
   senha: string;

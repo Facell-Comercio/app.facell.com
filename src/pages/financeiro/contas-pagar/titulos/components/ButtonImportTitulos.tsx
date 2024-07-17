@@ -60,7 +60,7 @@ const ButtonImportTitulos = () => {
             value.CNPJ_FILIAL !== "" &&
             value.CNPJ_FILIAL_RATEIO !== ""
         ) as LancamentoLoteProps[];
-        console.log(result);
+        // console.log(result);
 
         const responseError: any[] = [];
         if (responseError.length > 0) {

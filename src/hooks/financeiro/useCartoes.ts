@@ -1,12 +1,12 @@
-import { toast } from "@/components/ui/use-toast";
-import { api } from "@/lib/axios";
-import { GetAllParams } from "@/types/query-params-type";
+import { toast } from '@/components/ui/use-toast';
+import { api } from '@/lib/axios';
+import { GetAllParams } from '@/types/query-params-type';
 import {
   keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 
 export type CartaoSchema = {
   id?: string;
@@ -17,6 +17,20 @@ export type CartaoSchema = {
   id_fornecedor: string;
   nome_fornecedor: string;
   active: boolean;
+  faturas?: FaturasDatabaseSchema;
+  users?: CartoesDatabaseSchema[];
+};
+
+type FaturasDatabaseSchema = {
+  rows: FaturaSchema[];
+  pageCount: number;
+  rowCount: number;
+};
+
+type CartoesDatabaseSchema = {
+  id: string;
+  nome: string;
+  img_url: string;
 };
 
 export type FaturaSchema = {
@@ -39,7 +53,21 @@ export type TransferVencimentosSchema = {
   ids: string[];
 };
 
+export type InsertUserFaturaSchema = {
+  id_cartao?: string | number | null;
+  id_user?: string | number | null;
+};
+
 export type GetAllParamsCartao = {
+  pagination?: {
+    pageIndex: number;
+    pageSize: number;
+  };
+  filters?: any;
+  id: string | null | undefined;
+};
+
+export type GetOneParamsCartao = {
   pagination?: {
     pageIndex: number;
     pageSize: number;
@@ -54,7 +82,7 @@ export const useCartoes = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_cartoes", params?.pagination],
+        queryKey: ['fin_cartoes', params?.pagination],
         queryFn: async () =>
           await api.get(`/financeiro/contas-a-pagar/cartoes`, {
             params: params,
@@ -62,19 +90,21 @@ export const useCartoes = () => {
         placeholderData: keepPreviousData,
       }),
 
-    getOne: (id: string | null | undefined) =>
+    getOne: ({ id, ...params }: GetOneParamsCartao) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_cartoes", id],
+        queryKey: ['fin_cartoes', id],
         queryFn: async () => {
-          return await api.get(`/financeiro/contas-a-pagar/cartoes/${id}`);
+          return await api.get(`/financeiro/contas-a-pagar/cartoes/${id}`, {
+            params,
+          });
         },
       }),
 
     getFatura: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_fatura", id],
+        queryKey: ['fin_fatura', id],
         staleTime: 0,
         queryFn: async () => {
           return await api.get(
@@ -83,45 +113,58 @@ export const useCartoes = () => {
         },
       }),
 
-    getOneFaturas: ({ id, ...rest }: GetAllParamsCartao) =>
-      useQuery({
-        enabled: !!id,
-        staleTime: 0,
-        queryKey: ["fin_cartoes_faturas", id, rest.pagination],
-        queryFn: async () => {
-          return await api.get(
-            `/financeiro/contas-a-pagar/cartoes/${id}/faturas/`,
-            {
-              params: rest,
-            }
-          );
-        },
-      }),
-
     insertOne: () =>
       useMutation({
         mutationFn: async (data: CartaoSchema) => {
           return await api
-            .post("financeiro/contas-a-pagar/cartoes", data)
+            .post('financeiro/contas-a-pagar/cartoes', data)
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_cartoes"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_cartoes'] });
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
         },
         onError(error) {
-          // @ts-expect-error "Vai funcionar"
+          // @ts-expect-error 'Vai funcionar'
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
+          });
+        },
+      }),
+
+    insertUserFatura: () =>
+      useMutation({
+        mutationFn: async (data: InsertUserFaturaSchema) => {
+          return await api
+            .post('financeiro/contas-a-pagar/cartoes/user', data)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ['fin_cartoes'] });
+          toast({
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: 'Erro',
+            description: errorMessage,
+            duration: 3500,
+            variant: 'destructive',
           });
         },
       }),
@@ -130,26 +173,26 @@ export const useCartoes = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: CartaoSchema) => {
           return await api
-            .put("financeiro/contas-a-pagar/cartoes/", { id, ...rest })
+            .put('financeiro/contas-a-pagar/cartoes/', { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_cartoes"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_cartoes'] });
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
         },
         onError(error) {
-          // @ts-expect-error "Vai funcionar"
+          // @ts-expect-error 'Vai funcionar'
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -162,25 +205,25 @@ export const useCartoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_cartoes"] });
-          queryClient.invalidateQueries({ queryKey: ["fin_cartoes_faturas"] });
-          queryClient.invalidateQueries({ queryKey: ["fin_fatura"] });
-          queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_cartoes'] });
+          queryClient.invalidateQueries({ queryKey: ['fin_cartoes_faturas'] });
+          queryClient.invalidateQueries({ queryKey: ['fin_fatura'] });
+          queryClient.invalidateQueries({ queryKey: ['modal-vencimentos'] });
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
         },
         onError(error) {
-          // @ts-expect-error "Vai funcionar"
+          // @ts-expect-error 'Vai funcionar'
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -195,25 +238,25 @@ export const useCartoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_cartoes"] });
-          queryClient.invalidateQueries({ queryKey: ["fin_cartoes_faturas"] });
-          queryClient.invalidateQueries({ queryKey: ["fin_fatura"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_cartoes'] });
+          queryClient.invalidateQueries({ queryKey: ['fin_cartoes_faturas'] });
+          queryClient.invalidateQueries({ queryKey: ['fin_fatura'] });
 
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
         },
         onError(error) {
-          // @ts-expect-error "Vai funcionar"
+          // @ts-expect-error 'Vai funcionar'
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -226,22 +269,50 @@ export const useCartoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_cartoes"] });
+          queryClient.invalidateQueries({ queryKey: ['fin_cartoes'] });
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
         },
         onError(error) {
-          // @ts-expect-error "Vai funcionar"
+          // @ts-expect-error 'Vai funcionar'
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
+          });
+        },
+      }),
+
+    removeUserFatura: () =>
+      useMutation({
+        mutationFn: async (id: string | null | undefined) => {
+          return await api
+            .delete(`financeiro/contas-a-pagar/cartoes/user/${id}`)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ['fin_cartoes'] });
+          toast({
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: 'Erro',
+            description: errorMessage,
+            duration: 3500,
+            variant: 'destructive',
           });
         },
       }),

@@ -148,9 +148,11 @@ export const schemaTitulo = z
   //^ Validar se rateio == valor total
   .refine(
     (data) =>
-      (data.itens_rateio?.reduce((acc, curr) => {
-        return acc + parseFloat(curr.valor);
-      }, 0) || 0).toFixed(2) == parseFloat(data.valor).toFixed(2),
+      (
+        data.itens_rateio?.reduce((acc, curr) => {
+          return acc + parseFloat(curr.valor);
+        }, 0) || 0
+      ).toFixed(2) == parseFloat(data.valor).toFixed(2),
     {
       path: ["itens_rateio"],
       message:
@@ -227,10 +229,10 @@ export const schemaTitulo = z
         }
 
         for (const v of data.vencimentos) {
-          console.log(
-            new Date(v.data_vencimento).getDate(),
-            parseInt(data.dia_vencimento_cartao || "")
-          );
+          // console.log(
+          // new Date(v.data_vencimento).getDate(),
+          //   parseInt(data.dia_vencimento_cartao || "")
+          // );
           if (
             new Date(v.data_vencimento).getDate() !==
             parseInt(data.dia_vencimento_cartao || "")
@@ -257,7 +259,10 @@ export const schemaTitulo = z
     { path: ["url_nota_fiscal"], message: "Anexo Obrigatório!" }
   )
   .refine(
-    (data) => (data.id_tipo_solicitacao != "1" && data.id_forma_pagamento != '2' ? !!data.url_contrato : true),
+    (data) =>
+      data.id_tipo_solicitacao != "1" && data.id_forma_pagamento != "2"
+        ? !!data.url_contrato
+        : true,
     { path: ["url_contrato"], message: "Anexo Obrigatória!" }
   );
 

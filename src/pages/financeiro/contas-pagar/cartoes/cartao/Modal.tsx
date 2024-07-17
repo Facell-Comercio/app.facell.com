@@ -25,23 +25,37 @@ const initialPropsCartao: CartaoSchema = {
   dia_vencimento: "",
   id_fornecedor: "",
   nome_fornecedor: "",
-  active: false,
+  active: true,
+  faturas: undefined,
+  users: undefined,
 };
 
 const ModalCartao = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreCartao((state) => [
-      state.modalOpen,
-      state.closeModal,
-      state.modalEditing,
-      state.editModal,
-      state.isPending,
-      state.id,
-    ]);
+  const [
+    modalOpen,
+    closeModal,
+    modalEditing,
+    editModal,
+    isPending,
+    id,
+    paginationFaturas,
+  ] = useStoreCartao((state) => [
+    state.modalOpen,
+    state.closeModal,
+    state.modalEditing,
+    state.editModal,
+    state.isPending,
+    state.id,
+    state.paginationFaturas,
+  ]);
 
   const formRef = useRef(null);
 
-  const { data, isLoading } = useCartoes().getOne(id);
+  const { data, isLoading } = useCartoes().getOne({
+    id,
+    pagination: paginationFaturas,
+  });
+
   const { mutate: deleteCartao } = useCartoes().deleteCartao();
   const newDataCartao: CartaoSchema & Record<string, any> = {} as CartaoSchema &
     Record<string, any>;
