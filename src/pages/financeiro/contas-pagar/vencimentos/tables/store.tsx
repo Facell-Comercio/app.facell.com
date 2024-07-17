@@ -12,6 +12,7 @@ type RowSelection = Record<number, boolean>;
 export interface Filters {
   id?: string;
   id_grupo_economico?: string;
+  id_matriz?: string;
   id_status?: string;
   tipo_data?: string;
   range_data?: DateRange;
@@ -22,6 +23,7 @@ export interface Filters {
 const initialFilters: Filters = {
   id: "",
   id_grupo_economico: "",
+  id_matriz: "",
   id_status: "",
   tipo_data: "data_vencimento",
   range_data: { from: undefined, to: undefined },
