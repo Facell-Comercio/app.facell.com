@@ -15,7 +15,7 @@ export const useBancos = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["financeiro", "banco", "lista", params],
+        queryKey: ['financeiro', 'banco', 'lista', params],
         queryFn: async () =>
           await api.get(`/financeiro/bancos`, { params: params }),
         placeholderData: keepPreviousData,
@@ -24,7 +24,7 @@ export const useBancos = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "banco", "detalhe", id],
+        queryKey: ['financeiro', 'banco', 'detalhe', id],
         queryFn: async () => {
           return await api.get(`/financeiro/bancos/${id}`);
         },
@@ -34,26 +34,26 @@ export const useBancos = () => {
       useMutation({
         mutationFn: async (data: BancoSchema) => {
           return api
-            .post("/financeiro/bancos", data)
+            .post('/financeiro/bancos', data)
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["banco"] });
+          queryClient.invalidateQueries({ queryKey: ['banco'] });
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
         },
         onError(error) {
-          // @ts-expect-error "Vai funcionar"
+          // @ts-expect-error 'Vai funcionar'
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -62,26 +62,26 @@ export const useBancos = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: BancoSchema) => {
           return await api
-            .put("/financeiro/bancos/", { id, ...rest })
+            .put('/financeiro/bancos/', { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["banco"] });
+          queryClient.invalidateQueries({ queryKey: ['banco'] });
           toast({
-            variant: "success",
-            title: "Sucesso",
-            description: "Atualização realizada com sucesso",
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
             duration: 3500,
           });
         },
         onError(error) {
-          // @ts-expect-error "Vai funcionar"
+          // @ts-expect-error 'Vai funcionar'
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),

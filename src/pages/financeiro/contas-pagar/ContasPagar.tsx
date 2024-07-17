@@ -22,7 +22,7 @@ const ContasPagarPage = () => {
   })
 
   queryClient.prefetchQuery({
-    queryKey: ['financeiro', 'contas_pagar', "cartao", 'lista', null],
+    queryKey: ['financeiro', 'contas_pagar', 'cartao', 'lista', null],
     staleTime: Infinity,
     queryFn: async()=>await fetchApi.financeiro.contas_pagar.cartoes.getAll({}),
   })

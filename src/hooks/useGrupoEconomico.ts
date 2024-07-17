@@ -15,7 +15,7 @@ export const useGrupoEconomico = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["grupo_economico", "lista", params],
+        queryKey: ['grupo_economico', 'lista', params],
         queryFn: async () => await fetchApi.grupo_economico.getAll(params),
         // placeholderData: keepPreviousData,
         staleTime: Infinity,
@@ -24,9 +24,9 @@ export const useGrupoEconomico = () => {
 
     getAllMatriz: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["matriz", "lista", params],
+        queryKey: ['matriz', 'lista', params],
         queryFn: async () =>
-          await api.get("/grupo-economico/matriz", { params: params }),
+          await api.get('/grupo-economico/matriz', { params: params }),
         placeholderData: keepPreviousData,
         staleTime: Infinity,
         refetchOnMount: false,
@@ -35,7 +35,7 @@ export const useGrupoEconomico = () => {
     getOne: (id?: string) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["grupo_economico", "detalhe", id],
+        queryKey: ['grupo_economico', 'detalhe', id],
         queryFn: async () => await api.get(`/grupo-economico/${id}`),
         staleTime: Infinity,
         refetchOnMount: false,
@@ -45,22 +45,22 @@ export const useGrupoEconomico = () => {
       useMutation({
         mutationFn: async (data: GrupoEconomicoFormData) => {
           return await api
-            .post("grupo-economico", data)
+            .post('grupo-economico', data)
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Grupo econômico inserido com sucesso.",
-            variant: "success",
+            title: 'Sucesso!',
+            description: 'Grupo econômico inserido com sucesso.',
+            variant: 'success',
           });
-          queryClient.invalidateQueries({ queryKey: ["grupo_economico"] });
+          queryClient.invalidateQueries({ queryKey: ['grupo_economico'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
-            variant: "destructive",
+            variant: 'destructive',
           });
           console.log(error);
         },
@@ -69,24 +69,23 @@ export const useGrupoEconomico = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: GrupoEconomicoFormData) => {
           return await api
-            .put("grupo-economico", { id, ...rest })
+            .put('grupo-economico', { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Grupo econômico atualizado com sucesso.",
-            variant: "success",
+            title: 'Sucesso!',
+            description: 'Grupo econômico atualizado com sucesso.',
+            variant: 'success',
           });
-          queryClient.invalidateQueries({ queryKey: ["grupo_economico"] });
+          queryClient.invalidateQueries({ queryKey: ['grupo_economico'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
-            variant: "destructive",
+            variant: 'destructive',
           });
-          console.log(error);
         },
       }),
   };

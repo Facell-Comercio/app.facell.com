@@ -55,7 +55,7 @@ export const useCartoes = () => {
     getAll: (params?: GetAllParams) =>
       useQuery({
         staleTime: Infinity,
-        queryKey: ["financeiro", "contas_pagar", "cartao", "lista", params?.pagination],
+        queryKey: ['financeiro', 'contas_pagar', 'cartao', 'lista', params?.pagination],
         queryFn: ()=>fetchApi.financeiro.contas_pagar.cartoes.getAll(params),
         placeholderData:[],
       }),
@@ -63,7 +63,7 @@ export const useCartoes = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "contas_pagar", "cartao", "detalhe", id],
+        queryKey: ['financeiro', 'contas_pagar', 'cartao', 'detalhe', id],
         queryFn: async () => {
           return await api.get(`/financeiro/contas-a-pagar/cartoes/${id}`);
         },
@@ -72,7 +72,7 @@ export const useCartoes = () => {
     getFatura: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "contas_pagar", "cartao", "fatura", "detalhe", id],
+        queryKey: ['financeiro', 'contas_pagar', 'cartao', 'fatura', 'detalhe', id],
         staleTime: 0,
         queryFn: async () => {
           return await api.get(
@@ -85,7 +85,7 @@ export const useCartoes = () => {
       useQuery({
         enabled: !!id,
         staleTime: 0,
-        queryKey: ["financeiro", "contas_pagar", "cartao", "fatura", "lista", id, rest.pagination],
+        queryKey: ['financeiro', 'contas_pagar', 'cartao', 'fatura', 'lista', id, rest.pagination],
         queryFn: async () => {
           return await api.get(
             `/financeiro/contas-a-pagar/cartoes/${id}/faturas/`,
@@ -104,7 +104,7 @@ export const useCartoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "cartao"] });
+          queryClient.invalidateQueries({ queryKey: ['financeiro', 'contas_pagar', 'cartao'] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -132,7 +132,7 @@ export const useCartoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "cartao"] });
+          queryClient.invalidateQueries({ queryKey: ['financeiro', 'contas_pagar', 'cartao'] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -160,7 +160,7 @@ export const useCartoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
+          queryClient.invalidateQueries({ queryKey: ['financeiro', 'contas_pagar'] });
 
           toast({
             variant: "success",
@@ -191,7 +191,7 @@ export const useCartoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
+          queryClient.invalidateQueries({ queryKey: ['financeiro', 'contas_pagar'] });
 
           toast({
             variant: "success",
@@ -220,7 +220,7 @@ export const useCartoes = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
+          queryClient.invalidateQueries({ queryKey: ['financeiro', 'contas_pagar'] });
           toast({
             variant: "success",
             title: "Sucesso",

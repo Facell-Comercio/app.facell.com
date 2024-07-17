@@ -24,7 +24,7 @@ const SelectFormaPagamento = (props: TSelectFormaPagamento) => {
   // Use a single state variable for fetching and storing data
 
   const { data } = useQuery({
-    queryKey: ["financeiro", "forma_pagamento", "lista"],
+    queryKey: ['financeiro', 'forma_pagamento', 'lista'],
     queryFn: ()=> fetchApi.financeiro.forma_pagamento.getAll(),
     staleTime: Infinity,
   });

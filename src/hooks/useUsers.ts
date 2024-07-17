@@ -21,7 +21,7 @@ export const useUsers = () => {
   return {
     getAll: (params: GetAllParams) => {
       return useQuery({
-        queryKey: ["user", "lista", params],
+        queryKey: ['user', 'lista', params],
         placeholderData: keepPreviousData,
         queryFn: ()=>fetchApi.user.getAll({params}),
       });
@@ -29,7 +29,7 @@ export const useUsers = () => {
     getOne: (id: number | null) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["user", "detalhe", id],
+        queryKey: ['user', 'detalhe', id],
         queryFn: ()=>fetchApi.user.getOne(id)
       }),
 
@@ -38,17 +38,17 @@ export const useUsers = () => {
         mutationFn: (data: UserFormData)=>fetchApi.user.insertOne(data),
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Usuário inserido com sucesso.",
-            variant: "success",
+            title: 'Sucesso!',
+            description: 'Usuário inserido com sucesso.',
+            variant: 'success',
           });
-          queryClient.invalidateQueries({ queryKey: ["user"] });
+          queryClient.invalidateQueries({ queryKey: ['user'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
-            variant: "destructive",
+            variant: 'destructive',
           });
           console.log(error);
         },
@@ -59,17 +59,17 @@ export const useUsers = () => {
         mutationFn: (data: UserFormData)=>fetchApi.user.update(data),
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Usuário atualizado com sucesso.",
-            variant: "success",
+            title: 'Sucesso!',
+            description: 'Usuário atualizado com sucesso.',
+            variant: 'success',
           });
-          queryClient.invalidateQueries({ queryKey: ["user"] });
+          queryClient.invalidateQueries({ queryKey: ['user'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
-            variant: "destructive",
+            variant: 'destructive',
           });
           console.log(error);
         },
@@ -79,22 +79,22 @@ export const useUsers = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: UserUpdateProps) => {
           return await api
-            .put("auth/alterar-senha", { params: { id, ...rest } })
+            .put('auth/alterar-senha', { params: { id, ...rest } })
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Senha atualizada com sucesso.",
-            variant: "success",
+            title: 'Sucesso!',
+            description: 'Senha atualizada com sucesso.',
+            variant: 'success',
           });
-          queryClient.invalidateQueries({ queryKey: ["user"] });
+          queryClient.invalidateQueries({ queryKey: ['user'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),

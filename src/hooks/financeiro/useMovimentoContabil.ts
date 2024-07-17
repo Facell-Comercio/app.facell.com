@@ -7,7 +7,7 @@ import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 
 export const useMovimentoContabil = () => {
     const getAll = ({ pagination, filters }: GetAllParams) => useQuery({
-        queryKey: ['financeiro', "contas_pagar", "movimento_contabil", "lista", pagination],
+        queryKey: ['financeiro', 'contas_pagar', 'movimento_contabil', 'lista', pagination],
         queryFn: async () => { return await api.get(`/financeiro/contas-a-pagar/movimento-contabil`, { params: { pagination, filters } }) },
         placeholderData: keepPreviousData
     });
