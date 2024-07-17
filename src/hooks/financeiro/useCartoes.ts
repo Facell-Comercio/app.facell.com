@@ -1,8 +1,8 @@
+import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { GetAllParams } from "@/types/query-params-type";
 import {
-  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -54,12 +54,10 @@ export const useCartoes = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
+        staleTime: Infinity,
         queryKey: ["financeiro", "contas_pagar", "cartao", "lista", params?.pagination],
-        queryFn: async () =>
-          await api.get(`/financeiro/contas-a-pagar/cartoes`, {
-            params: params,
-          }),
-        placeholderData: keepPreviousData,
+        queryFn: ()=>fetchApi.financeiro.contas_pagar.cartoes.getAll(params),
+        placeholderData:[],
       }),
 
     getOne: (id: string | null | undefined) =>

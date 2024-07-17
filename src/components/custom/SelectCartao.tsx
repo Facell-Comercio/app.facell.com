@@ -22,7 +22,7 @@ type TSelectCartao = {
 
 const SelectCartao = (props: TSelectCartao) => {
   const { data } = useCartoes().getAll();
-  const cartoes = data?.data?.rows || [];
+  const cartoes = data?.rows || [];
   return (
     <FormSelect
       {...props}

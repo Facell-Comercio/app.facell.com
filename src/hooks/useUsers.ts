@@ -1,3 +1,4 @@
+import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { UserFormData } from "@/pages/admin/users/user/form-data";
@@ -22,26 +23,19 @@ export const useUsers = () => {
       return useQuery({
         queryKey: ["user", "lista", params],
         placeholderData: keepPreviousData,
-        queryFn: async () => {
-          const result = await api.get("/user", { params });
-          return result;
-        },
+        queryFn: ()=>fetchApi.user.getAll({params}),
       });
     },
     getOne: (id: number | null) =>
       useQuery({
         enabled: !!id,
         queryKey: ["user", "detalhe", id],
-        queryFn: async () => {
-          return await api.get(`user/${id}`);
-        },
+        queryFn: ()=>fetchApi.user.getOne(id)
       }),
 
     insertOne: () =>
       useMutation({
-        mutationFn: async (data: UserFormData) => {
-          return await api.post("user", data).then((response) => response.data);
-        },
+        mutationFn: (data: UserFormData)=>fetchApi.user.insertOne(data),
         onSuccess() {
           toast({
             title: "Sucesso!",
@@ -62,11 +56,7 @@ export const useUsers = () => {
 
     update: () =>
       useMutation({
-        mutationFn: async ({ id, ...rest }: UserFormData) => {
-          return await api
-            .put("user", { id, ...rest })
-            .then((response) => response.data);
-        },
+        mutationFn: (data: UserFormData)=>fetchApi.user.update(data),
         onSuccess() {
           toast({
             title: "Sucesso!",

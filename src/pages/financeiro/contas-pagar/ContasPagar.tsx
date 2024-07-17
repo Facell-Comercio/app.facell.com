@@ -10,8 +10,23 @@ import MovimentoContabil from "./movimento-contabil/MoviementoContabil";
 import { PainelContasPagar } from "./painel/PainelContasPagar";
 import TitulosPagar from "./titulos/TitulosPagar";
 import Vencimentos from "./vencimentos/Vencimentos";
+import { useQueryClient } from "@tanstack/react-query";
+import fetchApi from "@/api/fetchApi";
 
 const ContasPagarPage = () => {
+  const queryClient = useQueryClient()
+
+  queryClient.prefetchQuery({
+    queryKey: ['financeiro', 'forma_pagamento', 'lista'],
+    queryFn: async()=>await fetchApi.financeiro.forma_pagamento.getAll(),
+  })
+
+  queryClient.prefetchQuery({
+    queryKey: ['financeiro', 'contas_pagar', "cartao", 'lista', null],
+    staleTime: Infinity,
+    queryFn: async()=>await fetchApi.financeiro.contas_pagar.cartoes.getAll({}),
+  })
+
   return (
     <div className="flex p-4">
       <Tabs defaultValue="painel" className="w-full">

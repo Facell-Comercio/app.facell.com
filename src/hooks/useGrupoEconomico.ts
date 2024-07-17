@@ -1,3 +1,4 @@
+import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { GrupoEconomicoFormData } from "@/pages/admin/grupos-economicos/grupo-economico/form-data";
@@ -15,9 +16,8 @@ export const useGrupoEconomico = () => {
     getAll: (params?: GetAllParams) =>
       useQuery({
         queryKey: ["grupo_economico", "lista", params],
-        queryFn: async () =>
-          await api.get("/grupo-economico", { params: params }),
-        placeholderData: keepPreviousData,
+        queryFn: async () => await fetchApi.grupo_economico.getAll(params),
+        // placeholderData: keepPreviousData,
         staleTime: Infinity,
         refetchOnMount: false,
       }),

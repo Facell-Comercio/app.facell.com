@@ -1,7 +1,7 @@
-import { api } from "@/lib/axios";
 import { Register, useQuery } from "@tanstack/react-query";
 import { Control } from "react-hook-form";
 import FormSelect from "./FormSelect";
+import fetchApi from "@/api/fetchApi";
 
 type FormaPagamento = {
   id: number;
@@ -25,16 +25,16 @@ const SelectFormaPagamento = (props: TSelectFormaPagamento) => {
 
   const { data } = useQuery({
     queryKey: ["financeiro", "forma_pagamento", "lista"],
-    queryFn: async () => await api.get("financeiro/formas-pagamento"),
+    queryFn: ()=> fetchApi.financeiro.forma_pagamento.getAll(),
     staleTime: Infinity,
   });
-
+  
   return (
     // @ts-ignore
     <FormSelect
       {...props}
       options={
-        data?.data?.map((formaPagamento: FormaPagamento) => ({
+        data?.map((formaPagamento: FormaPagamento) => ({
           value: formaPagamento.id.toString(),
           label: formaPagamento.forma_pagamento,
         })) || []
