@@ -33,8 +33,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FaSpinner } from "react-icons/fa6";
+import { useEffect, useState } from "react";
+import { normalizeCurrency } from "@/helpers/mask";
 
 interface DataTableProps<TData, TValue> {
+  sumField?: string,
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowCount: number;
@@ -46,6 +49,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({
+  sumField,
   pagination,
   setPagination,
   columns,
@@ -88,6 +92,25 @@ export function DataTable<TData, TValue>({
     },
     manualPagination: true,
   });
+
+  const [valorTotal, setValorTotal] = useState<number>(0);
+  function calcularTotal(){
+    const valorTotalCalculado = sumField !== undefined
+    ? table.getFilteredSelectedRowModel().rows.reduce((acc, curr) => {
+      // @ts-ignore 
+      if (curr.original && curr.original[sumField]) {
+        // @ts-ignore 
+        return acc + parseFloat(curr.original[sumField]);
+      }
+      return acc;
+    }, 0)
+    : 0;
+    setValorTotal(valorTotalCalculado)
+  }
+
+  useEffect(()=>{
+    calcularTotal()
+  }, [data, table.getState().rowSelection])
 
   //^ Foi adicionada a class scroll-thin no componente de Table
   return (
@@ -168,7 +191,8 @@ export function DataTable<TData, TValue>({
           }`}
         >
           {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
+          {table.getFilteredRowModel().rows.length} selecionado(s).{" "}
+          {sumField && table.getFilteredSelectedRowModel().rows.length ? normalizeCurrency(valorTotal) : null}
         </div>
         <div
           className={`flex flex-row gap-3 items-center ${

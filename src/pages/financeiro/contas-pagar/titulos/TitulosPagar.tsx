@@ -58,6 +58,7 @@ const TitulosPagar = () => {
       <Filters refetch={refetchTitulos} />
 
       <DataTable
+        sumField="valor"
         pagination={pagination}
         setPagination={setPagination}
         rowSelection={rowSelection}

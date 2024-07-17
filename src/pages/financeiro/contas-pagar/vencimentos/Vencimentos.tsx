@@ -133,6 +133,7 @@ const Vencimentos = () => {
             </Button>
           </div>
           <DataTable
+            sumField="valor"
             pagination={paginationAPagar}
             setPagination={setPaginationAPagar}
             rowSelection={rowSelection}
