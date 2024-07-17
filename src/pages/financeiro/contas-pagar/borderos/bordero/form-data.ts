@@ -12,7 +12,7 @@ const ItemBorderoSchema = z
     status: z.string().optional(),
     id_forma_pagamento: z.number().optional(),
     forma_pagamento: z.string().optional(),
-    tipo_baixa: z.string().optional(),
+    tipo_baixa: z.coerce.string().optional().transform(v=>v=='null'? '': v),
     data_prevista_parcial: z.date().optional(),
     id_dda: z.coerce.string().optional(),
     previsao: z.string().trim().optional(),

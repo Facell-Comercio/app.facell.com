@@ -31,7 +31,7 @@ const RowVirtualizerFixedPendentes: React.FC<
   const [openModalDDA] = useStoreDDA((state) => [state.openModal]);
 
   const count = filteredData.length;
-
+  
   const virtualizer = useVirtualizer({
     count,
     getScrollElement: () => parentElement.current,
