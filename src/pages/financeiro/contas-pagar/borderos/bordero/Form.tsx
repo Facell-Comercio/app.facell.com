@@ -351,8 +351,8 @@ const FormBordero = ({
   // const data_pagamento = form.watch("data_pagamento");
   // console.log(form.formState.errors);
   // console.log(form.watch("itens"));
-
   // console.log(form.watch("itens"), data.vencimentos);
+  const canEditBordero = modalEditing && !isPending && wVencimentosPago.length === 0 && wVencimentosProgramados.length === 0
   const [itemOpen, setItemOpen] = useState<string>("a-pagar");
 
   return (
@@ -404,15 +404,13 @@ const FormBordero = ({
                     value={form.watch("conta_bancaria")?.toUpperCase()}
                     className="flex-1 max-h-10 mt-2"
                     readOnly
-                    disabled={
-                      !modalEditing || isPending || wVencimentosPago.length > 0
-                    }
+                    disabled={!canEditBordero}
                     onClick={() => setModalContaBancariaOpen(true)}
                     placeholder="Selecione a conta bancária"
                   />
                 </div>
                 <ModalContasBancarias
-                  open={modalEditing && modalContaBancariaOpen}
+                  open={canEditBordero && modalContaBancariaOpen}
                   handleSelection={handleSelectionContaBancaria}
                   onOpenChange={() =>
                     setModalContaBancariaOpen((prev) => !prev)
@@ -425,16 +423,12 @@ const FormBordero = ({
                     value={form.watch("banco")?.toUpperCase()}
                     className="flex-1 max-h-10 mt-2"
                     readOnly
-                    disabled={
-                      !modalEditing || isPending || wVencimentosPago.length > 0
-                    }
+                    disabled={!canEditBordero}
                     placeholder="Defina a conta bancária"
                   />
                 </div>
                 <FormDateInput
-                  disabled={
-                    !modalEditing || isPending || wVencimentosPago.length > 0
-                  }
+                  disabled={!canEditBordero}
                   name="data_pagamento"
                   label="Data de Pagamento"
                   control={form.control}
