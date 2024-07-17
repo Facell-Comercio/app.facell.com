@@ -35,6 +35,7 @@ import ModalFindItemsBordero, {
 import { useFieldArray } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "@/components/custom/Spinner";
+import { downloadResponse } from "@/helpers/download";
 
 const FormBordero = ({
   id,
@@ -130,7 +131,6 @@ const FormBordero = ({
   const wVencimentosPago = form
     .watch("itens")
     .filter((v) => v.status === "pago");
-    console.log({wVencimentosPago});
     
   const wVencimentosPagoValorTotal =
     form
@@ -160,7 +160,7 @@ const FormBordero = ({
     const itens = wVencimentos.filter((v: VencimentosProps) => v.checked === true)
 
     try {
-      if(!itens || itens.length ===0){
+      if(!itens || itens.length === 0){
         throw new Error('Nenhum item selecionado!')
       }
       setLoadingPagamento(true)
@@ -304,6 +304,50 @@ const FormBordero = ({
     setExporting("");
   }
 
+  const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] = useState<boolean>(false)
+  async function handleRemessaSelecao(){
+    try {
+      if(!itensChecked || !itensChecked.length){
+        throw new Error('Nenhum item selecionado!')
+      }
+      const response = await api.post('financeiro/contas-a-pagar/bordero/export-remessa', {
+          id_bordero: id,
+          itens: itensChecked
+      }, {responseType: "blob"},)
+      downloadResponse(response);
+      setIsLoadingRemessaSelecao(true)
+    } catch (error) {
+      toast({
+        variant: 'destructive', title: 'Ops!',
+        // @ts-ignore 
+        description: error?.response?.data?.message || error.message
+      })
+    } finally{
+      setIsLoadingRemessaSelecao(false)
+    }
+  }
+  async function handleRemessaSelecaoPix(){
+    try {
+      if(!itensChecked || !itensChecked.length){
+        throw new Error('Nenhum item selecionado!')
+      }
+      const response = await api.post('financeiro/contas-a-pagar/bordero/export-remessa', {
+          id_bordero: id,
+          isPix: true,
+          itens: itensChecked
+      }, {responseType: "blob"},)
+      downloadResponse(response);
+      setIsLoadingRemessaSelecao(true)
+    } catch (error) {
+      toast({
+        variant: 'destructive', title: 'Ops!',
+        // @ts-ignore 
+        description: error?.response?.data?.message || error.message
+      })
+    } finally{
+      setIsLoadingRemessaSelecao(false)
+    }
+  }
   // const data_pagamento = form.watch("data_pagamento");
   // console.log(form.formState.errors);
   // console.log(form.watch("itens"));
@@ -343,7 +387,7 @@ const FormBordero = ({
                       onClick={() => exportBordero(id || "")}
                     >
                       {exporting == "default" ? (
-                        <FaSpinner size={18} className="me-2 animate-spin" />
+                        <Spinner />
                       ) : (
                         <Download className="me-2" size={20} />
                       )}
@@ -418,6 +462,44 @@ const FormBordero = ({
                     modalEditing &&
                     itensChecked.length > 0 && (
                       <>
+                      <AlertPopUp
+                          title="Deseja realmente prosseguir?"
+                          description="Criaremos um arquivo de remessa com base nos itens selecionados. Caso queira criar de todos os itens, utilize o botão acima de Exportação"
+                          action={handleRemessaSelecao}
+                        >
+                          {}
+                          <Button
+                            type={"button"}
+                            disabled={loadingPagamento}
+                            variant={"outline"}
+                            size={"sm"}
+                            className="justify-self-start group"
+                            title="(Não selecione PIX) Exporta o arquivo de remessa somente com os itens selecionados"
+                          >
+                            {isLoadingRemessaSelecao ? <Spinner /> : <Download size={18}  className="me-2 group-hover:rotate-180 transition-all" />}
+                            Remessa
+                          </Button>
+                        </AlertPopUp>
+
+                        <AlertPopUp
+                          title="Deseja realmente prosseguir?"
+                          description="Criaremos um arquivo de remessa com base nos itens selecionados. Caso queira criar de todos os itens, utilize o botão acima de Exportação"
+                          action={handleRemessaSelecaoPix}
+                        >
+                          {}
+                          <Button
+                            type={"button"}
+                            disabled={loadingPagamento}
+                            variant={"outline"}
+                            size={"sm"}
+                            className="justify-self-start group"
+                            title="(Somente PIX) Exporta o arquivo de remessa somente com os itens selecionados"
+                          >
+                            {isLoadingRemessaSelecao ? <Spinner /> : <Download size={18}  className="me-2 group-hover:rotate-180 transition-all" />}
+                            Remessa PIX
+                          </Button>
+                        </AlertPopUp>
+
                         <AlertPopUp
                           title="Deseja realmente prosseguir?"
                           description="Todos os itens selecionados serão preenchidos com valor pago e tipo baixa 'Total'. Nada será salvo até que faça o Pagamento em Lote."
@@ -426,7 +508,7 @@ const FormBordero = ({
                           <Button
                             type={"button"}
                             disabled={loadingPagamento}
-                            variant={"tertiary"}
+                            variant={"outline"}
                             size={"sm"}
                             className="justify-self-start group"
                             title="Todos os itens selecionados receberão valor pago = total, tipo baixa = 'Total' "
