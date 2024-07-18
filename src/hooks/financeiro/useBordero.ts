@@ -28,6 +28,11 @@ type reverseManualPaymentProps = {
   tipo?: string;
 };
 
+type ImportRetornoRemessaProps = {
+  files: FileList | null;
+  id_bordero?: string | null;
+};
+
 export const useBordero = () => {
   const queryClient = useQueryClient();
   return {
@@ -123,7 +128,7 @@ export const useBordero = () => {
             )
             .then((response) => response.data);
         },
-        onSuccess(_, id) {
+        onSuccess() {
           toast({
             variant: 'success',
             title: 'Sucesso',
@@ -271,7 +276,7 @@ export const useBordero = () => {
         },
       }),
 
-    importRemessa: (files: FileList | null) => {
+    importRemessa: ({ files, id_bordero }: ImportRetornoRemessaProps) => {
       return new Promise(async (resolve, reject) => {
         try {
           const form = new FormData();
@@ -281,7 +286,7 @@ export const useBordero = () => {
             }
           }
           const result = await api.postForm(
-            '/financeiro/contas-a-pagar/bordero/import-retorno-remessa',
+            `/financeiro/contas-a-pagar/bordero/${id_bordero}/import-retorno-remessa`,
             form
           );
           queryClient.invalidateQueries({ queryKey: ['financeiro'] });

@@ -1,30 +1,30 @@
-import { Badge } from "@/components/ui/badge";
-import { Form } from "@/components/ui/form";
-import { Fingerprint, List } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Badge } from '@/components/ui/badge';
+import { Form } from '@/components/ui/form';
+import { Fingerprint, List } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 // Componentes
-import { Input } from "@/components/custom/FormInput";
+import { Input } from '@/components/custom/FormInput';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
+} from '@/components/ui/card';
+import { toast } from '@/components/ui/use-toast';
 import {
   normalizeCurrency,
   normalizeDate,
   normalizeFirstAndLastName,
-} from "@/helpers/mask";
-import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
-import { useStoreTableConciliacaoCP } from "../tables/store-tables";
-import { ConciliacaoCPSchemaProps } from "./ModalConciliar";
-import { default as VirtualizedTitulos } from "./VirtualizedTitulos";
-import VirtualizedTransacoes from "./VirtualizedTransacoes";
-import { useFormConciliacaoCPData } from "./form-data";
-import { useStoreConciliacaoCP } from "./store";
+} from '@/helpers/mask';
+import { useConciliacaoCP } from '@/hooks/financeiro/useConciliacaoCP';
+import { useStoreTableConciliacaoCP } from '../tables/store-tables';
+import { ConciliacaoCPSchemaProps } from './ModalConciliar';
+import { default as VirtualizedTitulos } from './VirtualizedTitulos';
+import VirtualizedTransacoes from './VirtualizedTransacoes';
+import { useFormConciliacaoCPData } from './form-data';
+import { useStoreConciliacaoCP } from './store';
 const FormConciliacaoCP = ({
   id,
   data,
@@ -64,18 +64,20 @@ const FormConciliacaoCP = ({
   const transacoes = data.transacoes;
 
   const totalVencimentos = form
-    .watch("vencimentos")
-    .reduce((acc, val) => acc + parseFloat(val.valor_pago || "0"), 0);
+    .watch('vencimentos')
+    .reduce((acc, val) => acc + parseFloat(val.valor_pago || '0'), 0);
   const totalTransacoes = parseFloat(
     transacoes.reduce((acc, val) => acc + parseFloat(val.valor), 0).toFixed(2)
   );
 
+  // console.log(totalVencimentos.toFixed(2), totalTransacoes.toFixed(2));
+
   function onSubmitData(newData: ConciliacaoCPSchemaProps) {
-    if (totalVencimentos !== totalTransacoes) {
+    if (totalVencimentos.toFixed(2) !== totalTransacoes.toFixed(2)) {
       toast({
-        title: "Valores incorretos!",
-        description: "O total dos títulos e das transações não são iguais",
-        variant: "warning",
+        title: 'Valores incorretos!',
+        description: 'O total dos títulos e das transações não são iguais',
+        variant: 'warning',
       });
       return;
     }
@@ -99,7 +101,7 @@ const FormConciliacaoCP = ({
           <div className="flex flex-col flex-1 w-full p-3 bg-slate-200 dark:bg-blue-950 rounded-lg relative">
             <div className="flex items-center gap-2 mb-3 justify-between">
               <span className="flex gap-2 items-center">
-                <Fingerprint />{" "}
+                <Fingerprint />{' '}
                 <span className="text-lg font-bold ">Dados da Conciliação</span>
               </span>
             </div>
@@ -108,7 +110,7 @@ const FormConciliacaoCP = ({
                 <label className="text-sm font-medium mb-2">Responsável</label>
                 <Input
                   value={normalizeFirstAndLastName(
-                    data.responsavel?.toUpperCase() || ""
+                    data.responsavel?.toUpperCase() || ''
                   )}
                   className="flex-1"
                   readOnly
@@ -125,7 +127,7 @@ const FormConciliacaoCP = ({
                   Data da Conciliação
                 </label>
                 <Input
-                  value={normalizeDate(data.data_conciliacao || "")}
+                  value={normalizeDate(data.data_conciliacao || '')}
                   className="flex-1"
                   readOnly
                 />
@@ -136,11 +138,11 @@ const FormConciliacaoCP = ({
         <div className="flex flex-col flex-1 w-full p-3 bg-slate-200 dark:bg-blue-950 rounded-lg relative">
           <div className="flex items-center gap-2 mb-3 justify-between">
             <span className="flex gap-2 items-center">
-              <List />{" "}
+              <List />{' '}
               <span className="text-lg font-bold ">
                 {vencimentos.length > 0
-                  ? "Pagamentos e Transações"
-                  : "Transações"}
+                  ? 'Pagamentos e Transações'
+                  : 'Transações'}
               </span>
             </span>
           </div>
@@ -156,7 +158,7 @@ const FormConciliacaoCP = ({
                   <VirtualizedTitulos data={vencimentos} />
                 </CardContent>
                 <CardFooter className="flex justify-end p-2 align-botton">
-                  <Badge variant={"secondary"}>
+                  <Badge variant={'secondary'}>
                     <p className="me-1">Valor Total: </p>
                     {normalizeCurrency(totalVencimentos)}
                   </Badge>
@@ -166,7 +168,7 @@ const FormConciliacaoCP = ({
 
             <Card
               className={`flex flex-col ${
-                vencimentos.length === 0 && "col-span-2"
+                vencimentos.length === 0 && 'col-span-2'
               }`}
             >
               <CardHeader className="p-2">
@@ -178,7 +180,7 @@ const FormConciliacaoCP = ({
                 <VirtualizedTransacoes data={transacoes} />
               </CardContent>
               <CardFooter className="flex p-2 mt-auto align-botton">
-                <Badge variant={"secondary"}>
+                <Badge variant={'secondary'}>
                   <p className="me-1">Valor Total: </p>
                   {normalizeCurrency(totalTransacoes)}
                 </Badge>

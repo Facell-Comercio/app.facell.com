@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,15 +6,15 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { toast } from "@/components/ui/use-toast";
-import { exportToExcel } from "@/helpers/importExportXLS";
-import { useBordero } from "@/hooks/financeiro/useBordero";
-import { api } from "@/lib/axios";
-import { useQueryClient } from "@tanstack/react-query";
-import { Download, FileText, Upload } from "lucide-react";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { FaSpinner } from "react-icons/fa6";
+} from '@/components/ui/dropdown-menu';
+import { toast } from '@/components/ui/use-toast';
+import { exportToExcel } from '@/helpers/importExportXLS';
+import { useBordero } from '@/hooks/financeiro/useBordero';
+import { api } from '@/lib/axios';
+import { useQueryClient } from '@tanstack/react-query';
+import { Download, FileText, Upload } from 'lucide-react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { FaSpinner } from 'react-icons/fa6';
 
 export type ExportAnexosProps = {
   type: string;
@@ -44,14 +44,16 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
         const form = new FormData();
         if (files) {
           for (let i = 0; i < files.length; i++) {
-            form.append("files", files[i]);
+            form.append('files', files[i]);
           }
         }
         const result = await api.postForm(
-          "/financeiro/contas-a-pagar/bordero/import-retorno-remessa",
+          `/financeiro/contas-a-pagar/bordero/${id}/import-retorno-remessa`,
           form
         );
-        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
+        queryClient.invalidateQueries({
+          queryKey: ['financeiro', 'contas_pagar'],
+        });
         resolve(result.data);
       } catch (error) {
         reject(error);
@@ -76,23 +78,23 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
         return;
       }
       const result = await importRemessa(target.files);
-      exportToExcel(result, "RESULTADO IMPORTAÇÃO DE REMESSA");
+      exportToExcel(result, 'RESULTADO IMPORTAÇÃO DE REMESSA');
 
       toast({
-        variant: "success",
-        title: "Importação concluída!",
+        variant: 'success',
+        title: 'Importação concluída!',
       });
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Erro ao tentar importar a remessa",
+        variant: 'destructive',
+        title: 'Erro ao tentar importar a remessa',
         // @ts-ignore
         description: error?.response?.data?.message || error?.message,
       });
       console.log(error);
     } finally {
       setProcessing((prev) => ({ ...prev, import: false }));
-      target.value = "";
+      target.value = '';
     }
   };
 
@@ -109,7 +111,7 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button type="button" variant={"outline"}>
+          <Button type="button" variant={'outline'}>
             <FileText size={18} className="me-2" />
             Remessa
           </Button>
@@ -120,8 +122,8 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
               <Button
                 disabled={isLoadingDownload && !processing.remessaPix}
                 className="w-full"
-                variant={"outline"}
-                type={"button"}
+                variant={'outline'}
+                type={'button'}
                 onClick={(e) => {
                   e.preventDefault();
                   exportRemessa({ id });
@@ -131,7 +133,7 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
                   <FaSpinner size={18} className="me-2 animate-spin" />
                 ) : (
                   <Download className="me-2" size={20} />
-                )}{" "}
+                )}{' '}
                 Outros Tipos
               </Button>
             </DropdownMenuItem>
@@ -139,8 +141,8 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
               <Button
                 disabled={isLoadingDownload && processing.remessaPix}
                 className="w-full"
-                variant={"outline"}
-                type={"button"}
+                variant={'outline'}
+                type={'button'}
                 onClick={(e) => {
                   e.preventDefault();
                   setProcessing((prev) => ({ ...prev, remessaPix: true }));
@@ -151,7 +153,7 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
                   <FaSpinner size={18} className="me-2 animate-spin" />
                 ) : (
                   <Download className="me-2" size={20} />
-                )}{" "}
+                )}{' '}
                 PIX
               </Button>
             </DropdownMenuItem>
@@ -162,15 +164,15 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
               <Button
                 disabled={processing.import}
                 className="w-full"
-                size={"sm"}
-                variant={"outline"}
+                size={'sm'}
+                variant={'outline'}
                 onClick={handleFileImportClick}
               >
                 {processing.import ? (
                   <FaSpinner size={18} className="animate-spin me-2" />
                 ) : (
                   <Upload size={18} className="me-2" />
-                )}{" "}
+                )}{' '}
                 Importar Retorno
               </Button>
             </DropdownMenuItem>

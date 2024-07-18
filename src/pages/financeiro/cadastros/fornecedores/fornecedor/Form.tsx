@@ -52,8 +52,9 @@ const FormFornecedor = ({
     ]);
   const [cnpj, setCnpj] = useState<string>();
   const { form } = useFormFornecedorData(data);
-  const { errors } = form.formState;
-  console.log({ errors });
+  // const { errors } = form.formState;
+  // // ! Verificar a existênicia de erros
+  // console.log({ errors });
 
   const watchFormaPagamento = useWatch({
     control: form.control,
@@ -176,8 +177,6 @@ const FormFornecedor = ({
     }
   }, [updateIsPending, insertIsPending]);
 
-  // ! Verificar a existênicia de erros
-  // console.log(form.formState.errors);
   const [openModalBanco, setOpenModalBanco] = useState<boolean>(false);
   const handleSelectionBanco = (banco: BancoSchema) => {
     form.setValue('id_banco', banco.id);

@@ -295,6 +295,36 @@ export const useCartoes = () => {
         },
       }),
 
+    removeUserFatura: () =>
+      useMutation({
+        mutationFn: async (id: string | null | undefined) => {
+          return await api
+            .delete(`financeiro/contas-a-pagar/cartoes/user/${id}`)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ['financeiro', 'contas_pagar'],
+          });
+          toast({
+            variant: 'success',
+            title: 'Sucesso',
+            description: 'Atualização realizada com sucesso',
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: 'Erro',
+            description: errorMessage,
+            duration: 3500,
+            variant: 'destructive',
+          });
+        },
+      }),
+
     deleteCartao: () =>
       useMutation({
         mutationFn: async (id: string | null | undefined) => {
@@ -304,7 +334,7 @@ export const useCartoes = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ['financeiro', 'contas_pagar'],
+            queryKey: ['financeiro', 'contas_pagar', 'cartao'],
           });
           toast({
             variant: 'success',

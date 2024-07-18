@@ -46,21 +46,14 @@ type recorrenciaProps = {
 };
 
 const ModalRecorrencias = () => {
-  const [
-    modalOpen,
-    filters,
-    closeModal,
-    setFilters,
-    resetFilters,
-    openModalEditRecorrencia,
-  ] = useStoreRecorrencias((state) => [
-    state.modalOpen,
-    state.filters,
-    state.closeModal,
-    state.setFilters,
-    state.resetFilters,
-    state.openModalEditRecorrencia,
-  ]);
+  const [modalOpen, filters, closeModal, setFilters, openModalEditRecorrencia] =
+    useStoreRecorrencias((state) => [
+      state.modalOpen,
+      state.filters,
+      state.closeModal,
+      state.setFilters,
+      state.openModalEditRecorrencia,
+    ]);
 
   const openModal = useStoreTitulo.getState().openModal;
 
