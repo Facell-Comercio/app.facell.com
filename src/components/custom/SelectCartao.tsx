@@ -26,7 +26,8 @@ const SelectCartao = ({ disabled, ...props }: TSelectCartao) => {
       active: 1,
     },
   });
-  const cartoes = data?.data?.rows || [];
+
+  const cartoes = data?.rows || [];
   return (
     <FormSelect
       {...props}
