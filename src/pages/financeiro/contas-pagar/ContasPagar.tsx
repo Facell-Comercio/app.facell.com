@@ -1,15 +1,15 @@
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   checkUserDepartments,
   checkUserPermission,
-} from "@/helpers/checkAuthorization";
-import Borderos from "./borderos/Borderos";
-import Cartoes from "./cartoes/Cartoes";
-import MovimentoContabil from "./movimento-contabil/MoviementoContabil";
-import { PainelContasPagar } from "./painel/PainelContasPagar";
-import TitulosPagar from "./titulos/TitulosPagar";
-import Vencimentos from "./vencimentos/Vencimentos";
+} from '@/helpers/checkAuthorization';
+import Borderos from './borderos/Borderos';
+import Cartoes from './cartoes/Cartoes';
+import MovimentoContabil from './movimento-contabil/MovimentoContabil';
+import { PainelContasPagar } from './painel/PainelContasPagar';
+import TitulosPagar from './titulos/TitulosPagar';
+import Vencimentos from './vencimentos/Vencimentos';
 
 const ContasPagarPage = () => {
   return (
@@ -19,8 +19,8 @@ const ContasPagarPage = () => {
           <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
             <TabsTrigger value="painel">Painel</TabsTrigger>
             <TabsTrigger value="titulo">Solicitações</TabsTrigger>
-            {(checkUserPermission("MASTER") ||
-              checkUserDepartments("FINANCEIRO")) && (
+            {(checkUserPermission('MASTER') ||
+              checkUserDepartments('FINANCEIRO')) && (
               <>
                 <TabsTrigger value="cartoes">Cartões</TabsTrigger>
                 <TabsTrigger value="vencimentos">Vencimentos</TabsTrigger>
