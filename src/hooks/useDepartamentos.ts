@@ -14,7 +14,7 @@ export const useDepartamentos = () => {
   return {
     getAll: (params: undefined | GetAllParams) =>
       useQuery({
-        queryKey: ["departamentos", params],
+        queryKey: ['departamento', 'lista', params],
         queryFn: async () => await api.get("/departamento", { params: params }),
         placeholderData: keepPreviousData,
         staleTime: Infinity,
@@ -24,7 +24,7 @@ export const useDepartamentos = () => {
     getOne: (id?: string) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["departamento", id],
+        queryKey: ['departamento', 'detalhe', id],
         queryFn: async () => await api.get(`/departamento/${id}`),
         staleTime: Infinity,
         refetchOnMount: false,
@@ -32,7 +32,7 @@ export const useDepartamentos = () => {
 
     getUserDepartamento: () =>
       useQuery({
-        queryKey: ["user-departamentos"],
+        queryKey: ['user', 'departamento', 'lista'],
         queryFn: async () => await api.get(`/departamento/user-departamentos`),
         staleTime: Infinity,
         refetchOnMount: false,
@@ -42,19 +42,19 @@ export const useDepartamentos = () => {
       useMutation({
         mutationFn: async (data: DepartamentoFormData) => {
           return await api
-            .post("departamento", data)
+            .post('departamento', data)
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Departamento inserido com sucesso.",
+            title: 'Sucesso!',
+            description: 'Departamento inserido com sucesso.',
           });
-          queryClient.invalidateQueries({ queryKey: ["departamentos"] });
+          queryClient.invalidateQueries({ queryKey: ['departamento'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
           });
           console.log(error);
@@ -64,20 +64,19 @@ export const useDepartamentos = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: DepartamentoFormData) => {
           return await api
-            .put("departamento", { id, ...rest })
+            .put('departamento', { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Departamento atualizado com sucesso.",
+            title: 'Sucesso!',
+            description: 'Departamento atualizado com sucesso.',
           });
-          queryClient.invalidateQueries({ queryKey: ["departamentos"] });
-          queryClient.invalidateQueries({ queryKey: ["departamento"] });
+          queryClient.invalidateQueries({ queryKey: ['departamento'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
           });
           console.log(error);

@@ -18,7 +18,7 @@ export const useOrcamento = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_orcamento", params],
+        queryKey: ["financeiro", "orcamento", "lista", params],
         queryFn: async () =>
           await api.get(`/financeiro/orcamento/`, { params: params }),
         placeholderData: keepPreviousData,
@@ -27,7 +27,7 @@ export const useOrcamento = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_orcamento", id],
+        queryKey: ["financeiro", "orcamento", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/orcamento/${id}`);
         },
@@ -41,13 +41,13 @@ export const useOrcamento = () => {
             .then((response) => response.data);
         },
         onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "orcamento"] });
           toast({
             title: "Sucesso",
             description: "Novo Orçamento Criado",
             duration: 3500,
             variant: "success",
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_orcamento"] });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -69,13 +69,13 @@ export const useOrcamento = () => {
             .then((response) => response.data);
         },
         onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "orcamento"] });
           toast({
             title: "Sucesso",
             description: "Atualização Realizada",
             duration: 3500,
             variant: "success",
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_orcamento"] });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -97,6 +97,7 @@ export const useOrcamento = () => {
             .then((response) => response.data);
         },
         onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "orcamento"] });
           toast({
             title: "Sucesso",
             description: "Atualização Realizada",
@@ -118,7 +119,7 @@ export const useOrcamento = () => {
 
     getMyBudgets: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_my_budget", pagination],
+        queryKey: ["financeiro", "orcamento", "acompanhamento", "lista", pagination],
         queryFn: async () =>
           await api.get(`/financeiro/orcamento/my-budget`, {
             params: { pagination, filters },
@@ -129,7 +130,7 @@ export const useOrcamento = () => {
     getMyBudget: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_my_budget", id],
+        queryKey: ["financeiro", "orcamento", "acompanhamento", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/orcamento/my-budget/${id}`);
         },
@@ -150,7 +151,7 @@ export const useOrcamento = () => {
             variant: "success",
           });
 
-          queryClient.invalidateQueries({ queryKey: ["fin_my_budget"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "orcamento"] });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -167,7 +168,7 @@ export const useOrcamento = () => {
     getLogs: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_orcamento_log", id],
+        queryKey: ["financeiro", "orcamento", "historico", "lista", id],
         queryFn: async () => {
           return await api.get(`/financeiro/orcamento/logs/${id}`);
         },

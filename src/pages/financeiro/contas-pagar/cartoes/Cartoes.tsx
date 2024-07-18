@@ -17,9 +17,9 @@ const Cartoes = () => {
     pagination,
     filters,
   });
-  const rows = data?.data?.rows || [];
+  const rows = data?.rows || [];
 
-  const rowCount = data?.data?.rowCount || 0;
+  const rowCount = data?.rowCount || 0;
   const openModal = useStoreCartao().openModal;
   const editModal = useStoreCartao().editModal;
   function handleClickNewCartao() {

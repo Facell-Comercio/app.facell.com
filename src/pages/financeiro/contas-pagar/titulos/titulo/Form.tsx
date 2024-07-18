@@ -24,7 +24,6 @@ import ModalFornecedores, {
   ItemFornecedor,
 } from "@/pages/financeiro/components/ModalFornecedores";
 
-import AlertPopUp from "@/components/custom/AlertPopUp";
 import SelectCartao from "@/components/custom/SelectCartao";
 import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
 import { Alert, AlertTitle } from "@/components/ui/alert";
@@ -48,32 +47,31 @@ import {
   FileText,
   History,
   Pen,
-  Repeat2,
   Save,
   Undo2,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useWatch } from "react-hook-form";
+import { SubmitHandler, UseFormReturn, useWatch } from "react-hook-form";
 import { FaSpinner } from "react-icons/fa6";
 import { TbCurrencyReal } from "react-icons/tb";
 import SecaoRateio from "./components/form/rateio/SecaoRateio";
 import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
-import { TituloSchemaProps, useFormTituloData } from "./form-data";
+import { TituloSchemaProps } from "./form-data";
 import {
   checkIsCartao,
   checkIsPIX,
   checkIsTransferenciaBancaria,
   formatarHistorico,
 } from "./helpers/helper";
-import { initialPropsTitulo, useStoreTitulo } from "./store";
+import { useStoreTitulo } from "./store";
 
 const FormTituloPagar = ({
   id,
-  data,
+  form,
 }: {
   id: string | null | undefined;
-  data: TituloSchemaProps;
+  form: UseFormReturn<TituloSchemaProps> | any | undefined;
   // formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   const queryClient = useQueryClient();
@@ -84,16 +82,8 @@ const FormTituloPagar = ({
   const [modalFornecedorOpen, setModalFornecedorOpen] =
     useState<boolean>(false);
 
-  const titulo =
-    {
-      ...data,
-      update_vencimentos: false,
-      update_rateio: false,
-    } || initialPropsTitulo;
-  // console.log(titulo);
-
-  // * [ FORM ]
-  const { form } = useFormTituloData(titulo);
+  const data = form?.getValues() || {}
+  const titulo = form?.getValues() || {}
 
   const {
     setValue,
@@ -154,7 +144,6 @@ const FormTituloPagar = ({
     isMaster && id && status !== "Negado" && id_status > 0 && id_status < 4;
   const podeAprovar =
     isMaster && id && status !== "Aprovado" && id_status > 0 && id_status < 4;
-  const podeCriarRecorrencia = id && id_status > 0;
 
   const podeAnexarNotaFiscal =
     id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal);
@@ -195,7 +184,7 @@ const FormTituloPagar = ({
       );
       setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
-    } catch (error) {}
+    } catch (error) { }
   }
 
   // * [ ANEXOS ]
@@ -281,7 +270,7 @@ const FormTituloPagar = ({
       closeModal();
 
       if (titulo.id_recorrencia) {
-        queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
+        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "recorrencia"] });
       }
     }
   }, [insertOneSuccess]);
@@ -300,8 +289,8 @@ const FormTituloPagar = ({
         id_novo_status,
         motivo,
       });
-      queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-      queryClient.invalidateQueries({ queryKey: ["fin_cp_titulo"] });
+      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
+
     } catch (error) {
       toast({
         variant: "destructive",
@@ -334,35 +323,6 @@ const FormTituloPagar = ({
     changeStatusTitulo({
       id_novo_status: "3",
     });
-  };
-
-  const handleClickCriarRecorrencia = async () => {
-    try {
-      // e.preventDefault();
-      const dados = form.getValues();
-
-      await api.post("financeiro/contas-a-pagar/titulo/criar-recorrencia", {
-        id: dados.id,
-        data_vencimento:
-          dados.vencimentos && dados.vencimentos[0].data_vencimento,
-        valor: dados.valor,
-      });
-      queryClient.invalidateQueries({ queryKey: ["fin_cp_recorrencias"] });
-      toast({
-        variant: "success",
-        title: "Recorrência criada com sucesso!",
-      });
-      return true;
-    } catch (error) {
-      // console.log(error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao tentar criar a recorrência!",
-        // @ts-ignore
-        description: error.response?.data?.message || error.message,
-      });
-      return false;
-    }
   };
 
   // ! FIM - ACTIONS //////////////////////////////////////
@@ -455,9 +415,8 @@ const FormTituloPagar = ({
                       className="flex-1 min-w-[15ch]"
                     />
                     <div
-                      className={`${
-                        showPix ? "flex w-full" : "hidden"
-                      } gap-3 flex-wrap`}
+                      className={`${showPix ? "flex w-full" : "hidden"
+                        } gap-3 flex-wrap`}
                     >
                       <SelectTipoChavePix
                         control={form.control}
@@ -476,9 +435,8 @@ const FormTituloPagar = ({
                       />
                     </div>
                     <div
-                      className={`flex gap-3 ${
-                        showCartao ? "flex w-full" : "hidden"
-                      }`}
+                      className={`flex gap-3 ${showCartao ? "flex w-full" : "hidden"
+                        }`}
                     >
                       <SelectCartao
                         control={form.control}
@@ -777,12 +735,14 @@ const FormTituloPagar = ({
                   <ScrollArea
                     className={"flex flex-col gap-3 max-h-72 z-[999]"}
                   >
-                    {data?.historico?.map((h, index) => (
-                      <p key={`hist.${h.id}.${index}`} className="text-xs my-2">
-                        {formatarDataHora(h.created_at)}:{" "}
-                        {formatarHistorico(h.descricao)}
-                      </p>
-                    ))}
+                    {
+                      // @ts-ignore
+                      data?.historico?.map((h, index) => (
+                        <p key={`hist.${h.id}.${index}`} className="text-xs my-2">
+                          {formatarDataHora(h.created_at)}:{" "}
+                          {formatarHistorico(h.descricao)}
+                        </p>
+                      ))}
                   </ScrollArea>
                 </div>
 
@@ -919,23 +879,6 @@ const FormTituloPagar = ({
                     <Check className="me-2" size={18} />
                     Aprovar
                   </Button>
-                )}
-                {podeCriarRecorrencia && (
-                  <AlertPopUp
-                    title="Deseja realmente criar uma recorrência?"
-                    description="Será criada com data 1 mês após a data do primeiro vencimento da solicitação."
-                    action={handleClickCriarRecorrencia}
-                  >
-                    <Button
-                      type="button"
-                      title="Uma recorrência será criada com data para 1 mês após a data de vencimento desta solicitação."
-                      variant={"secondary"}
-                      size={"lg"}
-                    >
-                      <Repeat2 className="me-2" size={18} />
-                      Criar Recorrência
-                    </Button>
-                  </AlertPopUp>
                 )}
               </div>
 

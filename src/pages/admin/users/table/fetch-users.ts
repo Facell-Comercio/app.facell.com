@@ -8,7 +8,7 @@ export const useUsers = ()=>({
         const filters = useStoreUsers().filters;
         
         return useQuery({
-            queryKey: [`user`, pagination],
+            queryKey: ["user", "lista", pagination],
             queryFn: async ()=>{
                 const result = await api.get('/user', { params: {
                     filters: filters, pagination

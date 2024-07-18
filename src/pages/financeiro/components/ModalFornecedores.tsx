@@ -64,7 +64,7 @@ const ModalFornecedores = ({
     isError,
     refetch: refetch,
   } = useQuery({
-    queryKey: ["fornecedores"],
+    queryKey: ["financeiro", "fornecedor", "lista", { termo: search, pagination}],
     queryFn: async () =>
       await api.get("financeiro/fornecedores/", {
         params: { filters: { termo: search }, pagination },

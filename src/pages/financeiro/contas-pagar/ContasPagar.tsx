@@ -1,9 +1,11 @@
+import fetchApi from '@/api/fetchApi';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   checkUserDepartments,
   checkUserPermission,
 } from '@/helpers/checkAuthorization';
+import { useQueryClient } from '@tanstack/react-query';
 import Borderos from './borderos/Borderos';
 import Cartoes from './cartoes/Cartoes';
 import MovimentoContabil from './movimento-contabil/MovimentoContabil';
@@ -12,6 +14,20 @@ import TitulosPagar from './titulos/TitulosPagar';
 import Vencimentos from './vencimentos/Vencimentos';
 
 const ContasPagarPage = () => {
+  const queryClient = useQueryClient();
+
+  queryClient.prefetchQuery({
+    queryKey: ['financeiro', 'forma_pagamento', 'lista'],
+    queryFn: async () => await fetchApi.financeiro.forma_pagamento.getAll(),
+  });
+
+  queryClient.prefetchQuery({
+    queryKey: ['financeiro', 'contas_pagar', 'cartao', 'lista', null],
+    staleTime: Infinity,
+    queryFn: async () =>
+      await fetchApi.financeiro.contas_pagar.cartoes.getAll({}),
+  });
+
   return (
     <div className="flex p-4">
       <Tabs defaultValue="painel" className="w-full">

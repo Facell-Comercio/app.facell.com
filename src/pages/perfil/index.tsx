@@ -68,7 +68,6 @@ const Perfil = () => {
   async function updateImage(newUrl?: string | null) {
     await api.put(`user/update-img/${user?.id}`, { img_url: newUrl });
     queryClient.invalidateQueries({ queryKey: ["user"] });
-    queryClient.invalidateQueries({ queryKey: ["user", user?.id || ""] });
   }
 
   return (

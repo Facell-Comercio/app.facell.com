@@ -15,7 +15,7 @@ export const useEquipamentos = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_equipamentos_cielo", pagination],
+        queryKey: ["financeiro","equipamento_cielo", "lista", pagination],
         queryFn: async () =>
           await api.get(`/financeiro/equipamentos-cielo`, {
             params: { pagination, filters },
@@ -26,7 +26,7 @@ export const useEquipamentos = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_equipamentos_cielo", id],
+        queryKey: ["financeiro","equipamento_cielo", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/equipamentos-cielo/${id}`);
         },
@@ -41,7 +41,7 @@ export const useEquipamentos = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["fin_equipamentos_cielo"],
+            queryKey: ["financeiro","equipamento_cielo"],
           });
           toast({
             variant: "success",
@@ -71,7 +71,7 @@ export const useEquipamentos = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["fin_equipamentos_cielo"],
+            queryKey: ["financeiro","equipamento_cielo"],
           });
           toast({
             variant: "success",

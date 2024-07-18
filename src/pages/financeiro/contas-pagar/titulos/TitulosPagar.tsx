@@ -38,8 +38,8 @@ const TitulosPagar = () => {
     filters,
   });
 
-  const rows = data?.data?.rows || [];
-  const rowCount = data?.data?.rowCount || 0;
+  const rows = data?.rows || [];
+  const rowCount = data?.rowCount || 0;
 
   function refetchTitulos() {
     refetch();
@@ -58,6 +58,7 @@ const TitulosPagar = () => {
       <Filters refetch={refetchTitulos} />
 
       <DataTable
+        sumField='valor'
         pagination={pagination}
         setPagination={setPagination}
         rowSelection={rowSelection}

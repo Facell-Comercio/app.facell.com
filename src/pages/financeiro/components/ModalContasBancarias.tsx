@@ -78,7 +78,7 @@ const ModalContasBancarias = ({
   };
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["contas_bancarias", id_matriz],
+    queryKey: ["financeiro", "conta_bancaria", {filters, pagination, id_matriz, id_grupo_economico}],
     queryFn: async () =>
       await api.get("financeiro/contas-bancarias/", {
         params: {

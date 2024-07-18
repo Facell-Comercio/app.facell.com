@@ -36,7 +36,7 @@ export const useConciliacaoCP = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_conciliacao_cp"],
+        queryKey: ["financeiro", "conciliacao", "lista"],
         queryFn: async () => {
           return await api.get(`/financeiro/conciliacao-cp/`, {
             params: { pagination, filters },
@@ -47,11 +47,7 @@ export const useConciliacaoCP = () => {
 
     getConciliacoes: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: [
-          "fin_conciliacoes_realizadas_cp",
-          pagination,
-          filters.id_filial,
-        ],
+        queryKey: ["financeiro", "conciliacao", "realizado", "lista", pagination, filters.id_filial],
         queryFn: async () => {
           return await api.get(`/financeiro/conciliacao-cp/conciliacoes`, {
             params: { pagination, filters },
@@ -63,7 +59,7 @@ export const useConciliacaoCP = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: [`fin_conciliacao_cp:${id}`, id],
+        queryKey: ["financeiro", "conciliacao", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/conciliacao-cp/${id}`);
         },
@@ -83,22 +79,8 @@ export const useConciliacaoCP = () => {
             duration: 3500,
             variant: "success",
           });
-          queryClient.invalidateQueries({ queryKey: ["fin_conciliacao_cp"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_conciliacoes_realizadas_cp"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
 
-          //* Invalidação nos locais onde há títulos e vencimentos
-          queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -120,22 +102,8 @@ export const useConciliacaoCP = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_conciliacao_cp"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_conciliacoes_realizadas_cp"],
-          });
-
-          //* Invalidação nos locais onde há títulos e vencimentos
-          queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+          
           toast({
             variant: "success",
             title: "Sucesso",
@@ -163,22 +131,8 @@ export const useConciliacaoCP = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_conciliacao_cp"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_conciliacoes_realizadas_cp"],
-          });
-
-          //* Invalidação nos locais onde há títulos e vencimentos
-          queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+          
           toast({
             variant: "success",
             title: "Sucesso",
@@ -202,26 +156,12 @@ export const useConciliacaoCP = () => {
       useMutation({
         mutationFn: async (data: ConciliacaoTarifasProps) => {
           return api
-            .post("/financeiro/conciliacao-cp/tarifas", data)
+            .post("/financeiro/conciliacao-cp/conciliar-tarifas", data)
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_conciliacao_cp"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_conciliacoes_realizadas_cp"],
-          });
-
-          //* Invalidação nos locais onde há títulos e vencimentos
-          queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+         
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -243,22 +183,7 @@ export const useConciliacaoCP = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_conciliacao_cp"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_conciliacoes_realizadas_cp"],
-          });
-
-          //* Invalidação nos locais onde há títulos e vencimentos
-          queryClient.invalidateQueries({ queryKey: ["fin_cp_titulos"] });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagar"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_bordero"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["fin_cp_vencimentos_pagos"],
-          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
 
           toast({
             variant: "success",

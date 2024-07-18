@@ -14,7 +14,7 @@ export const usePlanoContas = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_plano_contas", pagination],
+        queryKey: ["financeiro", "plano_contas", "lista", pagination],
         queryFn: async () => {
           return await api.get(`financeiro/plano-contas/`, {
             params: { pagination, filters },
@@ -26,7 +26,7 @@ export const usePlanoContas = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_plano_contas", id],
+        queryKey: ["financeiro", "plano_contas", "detalhe", id],
         queryFn: async () => {
           return await api.get(`financeiro/plano-contas/${id}`);
         },
@@ -40,7 +40,7 @@ export const usePlanoContas = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_plano_contas"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "plano_contas"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -68,7 +68,7 @@ export const usePlanoContas = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_plano_contas"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "plano_contas"] });
           toast({
             variant: "success",
             title: "Sucesso",

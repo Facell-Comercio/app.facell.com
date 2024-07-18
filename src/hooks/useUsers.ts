@@ -1,3 +1,4 @@
+import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { UserFormData } from "@/pages/admin/users/user/form-data";
@@ -25,41 +26,34 @@ export const useUsers = () => {
   return {
     getAll: (params: GetAllParams) => {
       return useQuery({
-        queryKey: [`users`, params],
+        queryKey: ['user', 'lista', params],
         placeholderData: keepPreviousData,
-        queryFn: async () => {
-          const result = await api.get("/user", { params });
-          return result;
-        },
+        queryFn: ()=>fetchApi.user.getAll({params}),
       });
     },
     getOne: (id: number | null) =>
       useQuery({
         enabled: !!id,
-        queryKey: [`user`, id],
-        queryFn: async () => {
-          return await api.get(`user/${id}`);
-        },
+        queryKey: ['user', 'detalhe', id],
+        queryFn: ()=>fetchApi.user.getOne(id)
       }),
 
     insertOne: () =>
       useMutation({
-        mutationFn: async (data: UserFormData) => {
-          return await api.post("user", data).then((response) => response.data);
-        },
+        mutationFn: (data: UserFormData)=>fetchApi.user.insertOne(data),
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Usuário inserido com sucesso.",
-            variant: "success",
+            title: 'Sucesso!',
+            description: 'Usuário inserido com sucesso.',
+            variant: 'success',
           });
-          queryClient.invalidateQueries({ queryKey: ["users"] });
+          queryClient.invalidateQueries({ queryKey: ['user'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
-            variant: "destructive",
+            variant: 'destructive',
           });
           console.log(error);
         },
@@ -67,25 +61,20 @@ export const useUsers = () => {
 
     update: () =>
       useMutation({
-        mutationFn: async ({ id, ...rest }: UserFormData) => {
-          return await api
-            .put("user", { id, ...rest })
-            .then((response) => response.data);
-        },
+        mutationFn: (data: UserFormData)=>fetchApi.user.update(data),
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Usuário atualizado com sucesso.",
-            variant: "success",
+            title: 'Sucesso!',
+            description: 'Usuário atualizado com sucesso.',
+            variant: 'success',
           });
-          queryClient.invalidateQueries({ queryKey: ["users"] });
-          queryClient.invalidateQueries({ queryKey: ["user"] });
+          queryClient.invalidateQueries({ queryKey: ['user'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
-            variant: "destructive",
+            variant: 'destructive',
           });
           console.log(error);
         },
@@ -95,23 +84,22 @@ export const useUsers = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: UserUpdateProps) => {
           return await api
-            .put("auth/alterar-senha", { params: { id, ...rest } })
+            .put('auth/alterar-senha', { params: { id, ...rest } })
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Senha atualizada com sucesso.",
-            variant: "success",
+            title: 'Sucesso!',
+            description: 'Senha atualizada com sucesso.',
+            variant: 'success',
           });
-          queryClient.invalidateQueries({ queryKey: ["users"] });
-          queryClient.invalidateQueries({ queryKey: ["user"] });
+          queryClient.invalidateQueries({ queryKey: ['user'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),

@@ -14,8 +14,8 @@ export const useFilial = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["filiais", params],
-        queryFn: async () => await api.get("/filial", { params: params }),
+        queryKey: ['filial', 'lista', params],
+        queryFn: async () => await api.get('/filial', { params: params }),
         placeholderData: keepPreviousData,
         staleTime: Infinity,
         refetchOnMount: false,
@@ -24,7 +24,7 @@ export const useFilial = () => {
     getOne: (id?: string) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["filial", id],
+        queryKey: ['filial', 'detalhe', id],
         queryFn: async () => await api.get(`/filial/${id}`),
         staleTime: Infinity,
         refetchOnMount: false,
@@ -34,19 +34,19 @@ export const useFilial = () => {
       useMutation({
         mutationFn: async (data: FilialFormData) => {
           return await api
-            .post("filial", data)
+            .post('filial', data)
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Filial inserida com sucesso.",
+            title: 'Sucesso!',
+            description: 'Filial inserida com sucesso.',
           });
-          queryClient.invalidateQueries({ queryKey: ["filial"] });
+          queryClient.invalidateQueries({ queryKey: ['filial'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
           });
           console.log(error);
@@ -56,20 +56,19 @@ export const useFilial = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: FilialFormData) => {
           return await api
-            .put("filial", { id, ...rest })
+            .put('filial', { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
           toast({
-            title: "Sucesso!",
-            description: "Filial atualizada com sucesso.",
+            title: 'Sucesso!',
+            description: 'Filial atualizada com sucesso.',
           });
-          queryClient.invalidateQueries({ queryKey: ["filiais"] });
-          queryClient.invalidateQueries({ queryKey: ["filial"] });
+          queryClient.invalidateQueries({ queryKey: ['filial'] });
         },
         onError(error) {
           toast({
-            title: "Ocorreu o seguinte erro",
+            title: 'Ocorreu o seguinte erro',
             description: error.message,
           });
           console.log(error);

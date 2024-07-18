@@ -33,8 +33,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FaSpinner } from "react-icons/fa6";
+import { normalizeCurrency } from "@/helpers/mask";
+import { useEffect, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
+  sumField?: string,
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowCount: number;
@@ -46,6 +49,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({
+  sumField,
   pagination,
   setPagination,
   columns,
@@ -55,6 +59,8 @@ export function DataTable<TData, TValue>({
   handleRowSelection,
   isLoading,
 }: DataTableProps<TData, TValue>) {
+  const [valorTotal, setValorTotal] = useState<number>(0);
+  
   const table = useReactTable({
     data,
     rowCount: rowCount || 0,
@@ -88,6 +94,24 @@ export function DataTable<TData, TValue>({
     },
     manualPagination: true,
   });
+
+  function calcularTotal(){
+    const valorTotalCalculado = sumField !== undefined
+    ? table.getFilteredSelectedRowModel().rows.reduce((acc, curr) => {
+      // @ts-ignore 
+      if (curr.original && curr.original[sumField]) {
+        // @ts-ignore 
+        return acc + parseFloat(curr.original[sumField]);
+      }
+      return acc;
+    }, 0)
+    : 0;
+    setValorTotal(valorTotalCalculado)
+  }
+
+  useEffect(()=>{
+    calcularTotal()
+  }, [data, table.getState().rowSelection])
 
   //^ Foi adicionada a class scroll-thin no componente de Table
   return (
@@ -163,26 +187,24 @@ export function DataTable<TData, TValue>({
       {/* Pagination */}
       <div className="flex items-center justify-between py-2 px-3">
         <div
-          className={`flex-1 text-xs sm:text-sm text-muted-foreground ${
-            !handleRowSelection && "hidden"
-          }`}
+          className={`flex-1 text-xs sm:text-sm text-muted-foreground ${!handleRowSelection && "hidden"
+            }`}
         >
           {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
+          {table.getFilteredRowModel().rows.length} selecionado(s).{" "}
+          {sumField && table.getFilteredSelectedRowModel().rows.length ? normalizeCurrency(valorTotal) : null}
         </div>
         <div
-          className={`flex flex-row gap-3 items-center ${
-            !handleRowSelection && "w-full justify-between"
-          } sm:space-x-6 lg:space-x-8`}
+          className={`flex flex-row gap-3 items-center ${!handleRowSelection && "w-full justify-between"
+            } sm:space-x-6 lg:space-x-8`}
         >
           <div className="flex items-center space-x-0 sm:space-x-2">
             <p className="text-xs sm:text-sm font-medium hidden sm:inline-block">
               Linhas por página
             </p>
             <Select
-              value={`${
-                table.getState().pagination.pageSize?.toString() || ""
-              }`}
+              value={`${table.getState().pagination.pageSize?.toString() || ""
+                }`}
               onValueChange={(value) => {
                 table.setPageSize(Number(value));
               }}

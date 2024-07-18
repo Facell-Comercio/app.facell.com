@@ -39,7 +39,7 @@ const ButtonImport = () => {
                 variant: 'success', title: 'Importação realizada!'
             })
             queryClient.invalidateQueries({
-                queryKey: ['extratos-bancarios']
+                queryKey: ["financeiro", "extrato_bancario"]
             })
 
         } catch (error) {

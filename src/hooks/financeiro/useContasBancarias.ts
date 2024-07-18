@@ -14,7 +14,7 @@ export const useContasBancarias = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_contas_bancarias", pagination, filters.id_matriz],
+        queryKey: ["financeiro", "conta_bancaria", "lista", pagination, filters.id_matriz],
         queryFn: async () => {
           return await api.get(`financeiro/contas-bancarias/`, {
             params: { pagination, filters },
@@ -26,7 +26,7 @@ export const useContasBancarias = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_contas_bancarias", id],
+        queryKey: ["financeiro", "conta_bancaria", "detalhe", id],
         queryFn: async () => {
           return await api.get(`financeiro/contas-bancarias/${id}`);
         },
@@ -40,7 +40,7 @@ export const useContasBancarias = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_contas_bancarias"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "conta_bancaria"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -68,7 +68,7 @@ export const useContasBancarias = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_contas_bancarias"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "conta_bancaria"] });
           toast({
             variant: "success",
             title: "Sucesso",

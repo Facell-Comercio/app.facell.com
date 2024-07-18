@@ -1,7 +1,7 @@
-import { useCartoes } from "@/hooks/financeiro/useCartoes";
-import { Register } from "@tanstack/react-query";
-import { Control } from "react-hook-form";
-import FormSelect from "./FormSelect";
+import { useCartoes } from '@/hooks/financeiro/useCartoes';
+import { Register } from '@tanstack/react-query';
+import { Control } from 'react-hook-form';
+import FormSelect from './FormSelect';
 
 type Cartao = {
   id: number;

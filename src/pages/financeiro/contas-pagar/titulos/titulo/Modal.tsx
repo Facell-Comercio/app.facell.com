@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import FormTituloPagar from "./Form";
-import { TituloSchemaProps } from "./form-data";
+import { TituloSchemaProps, useFormTituloData } from "./form-data";
 import { calcularDataPrevisaoPagamento } from "./helpers/helper";
 import {
   Historico,
@@ -18,6 +18,7 @@ import {
 } from "./store";
 import { useEffect } from "react";
 import { BtnCopiarTitulo } from "./components/BtnCopiarTitulo";
+import { BtnCriarRecorrencia } from "./components/BtnCriarRecorrencia";
 
 export type DataSchemaProps = {
   titulo: TituloSchemaProps;
@@ -138,6 +139,15 @@ const ModalTituloPagar = () => {
     modalData = { ...titulo, vencimentos, itens_rateio, historico };
   }
 
+
+  // * [ FORM ]
+  const { form } = useFormTituloData({
+    ...modalData,
+    update_vencimentos: false,
+    update_rateio: false,
+  } || initialPropsTitulo);
+  const podeCriarRecorrencia = id && (parseInt(modalData?.id_status) || 0) > 0;
+
   return (
     <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent className="min-w-[96vw] xl:min-w-1">
@@ -146,14 +156,15 @@ const ModalTituloPagar = () => {
             {!!id && !recorrencia ? `Solicitação: ${id}` : "Nova Solicitação"}
           </DialogTitle>
           <BtnCopiarTitulo copyData={modalData}/>
+          {podeCriarRecorrencia && <BtnCriarRecorrencia form={form} />}
         </DialogHeader>
         {/* <section className="min-h-[80vh] sm:min-h-[70vh] z-[999] overflow-auto scroll-thin">
           
         </section> */}
-        {modalOpen && !isLoading ? (
+        {modalOpen && !isLoading && form ? (
           <FormTituloPagar
             id={!!id && !recorrencia ? id : ""}
-            data={modalData}
+            form={form}
             // formRef={formRef}
           />
         ) : (

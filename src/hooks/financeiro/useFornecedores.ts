@@ -15,7 +15,7 @@ export const useFornecedores = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_fornecedores", params],
+        queryKey: ["financeiro", "fornecedor", "lista", params],
         queryFn: async () =>
           await api.get(`/financeiro/fornecedores`, { params: params }),
         placeholderData: keepPreviousData,
@@ -24,7 +24,7 @@ export const useFornecedores = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["fin_fornecedores", id],
+        queryKey: ["financeiro", "fornecedor", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/fornecedores/${id}`);
         },
@@ -38,7 +38,7 @@ export const useFornecedores = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_fornecedores"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "fornecedor"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -66,7 +66,7 @@ export const useFornecedores = () => {
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_fornecedores"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "fornecedor"] });
           toast({
             variant: "success",
             title: "Sucesso",

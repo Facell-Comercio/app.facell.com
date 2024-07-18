@@ -11,9 +11,9 @@ import { useBordero } from "@/hooks/financeiro/useBordero";
 import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalVencimentos";
 import { useState } from "react";
 import { useStoreBordero } from "./store";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 
 interface ModalTransferProps {
   data: VencimentosProps[];

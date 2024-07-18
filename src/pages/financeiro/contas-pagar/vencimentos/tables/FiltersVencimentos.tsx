@@ -1,4 +1,3 @@
-import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
 import {
   Accordion,
   AccordionContent,
@@ -19,6 +18,7 @@ import {
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
 import { useStoreTableVencimentos } from "./store";
+import SelectMatriz from "@/components/custom/SelectMatriz";
 
 const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableVencimentos((state) => state.filters);
@@ -73,11 +73,11 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
                 min={0}
               />
 
-              <SelectGrupoEconomico
+              <SelectMatriz
                 showAll={true}
-                value={filters.id_grupo_economico}
-                onChange={(id_grupo_economico) => {
-                  setFilters({ id_grupo_economico: id_grupo_economico });
+                value={filters.id_matriz}
+                onChange={(id_matriz) => {
+                  setFilters({ id_matriz: id_matriz });
                 }}
               />
 

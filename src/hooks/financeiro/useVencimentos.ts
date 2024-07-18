@@ -21,7 +21,7 @@ export const useVencimentos = () => {
 
   const getVencimentosAPagar = ({ pagination, filters }: GetVencimentosProps) =>
     useQuery({
-      queryKey: ["fin_cp_vencimentos_pagar", pagination],
+      queryKey: ["financeiro", "contas_pagar", "vencimento", "pagamento_pendente", "lista", pagination],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
@@ -46,7 +46,7 @@ export const useVencimentos = () => {
     filters,
   }: GetVencimentosProps) =>
     useQuery({
-      queryKey: ["fin_cp_vencimentos_bordero", pagination],
+      queryKey: ["financeiro", "contas_pagar", "vencimento", "em_bordero", "lista", pagination],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
@@ -68,7 +68,7 @@ export const useVencimentos = () => {
 
   const getVencimentosPagos = ({ pagination, filters }: GetVencimentosProps) =>
     useQuery({
-      queryKey: ["fin_cp_vencimentos_pagos", pagination],
+      queryKey: ["financeiro", "contas_pagar", "vencimento", "pago", "lista", pagination],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
@@ -104,16 +104,8 @@ export const useVencimentos = () => {
           description: "Alterações realizadas com sucesso!",
         });
         queryClient.invalidateQueries({
-          queryKey: ["fin_cp_vencimentos_pagar"],
+          queryKey: ["financeiro", "contas_pagar"],
         });
-        queryClient.invalidateQueries({ queryKey: ["fin_borderos"] });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_cp_titulos"],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["fin_cp_titulo"],
-        });
-        queryClient.invalidateQueries({ queryKey: ["modal-vencimentos"] });
       },
       onError(error) {
         toast({

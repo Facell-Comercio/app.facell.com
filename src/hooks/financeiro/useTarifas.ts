@@ -25,18 +25,18 @@ export const useTarifas = () => {
   return {
     getAll: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["fin_tarifas", params],
+        queryKey: ["financeiro", "conciliacao", "tarifa_padrao", "lista", params],
         queryFn: async () =>
-          await api.get(`/financeiro/tarifas`, { params: params }),
+          await api.get(`/financeiro/conciliacao-cp/tarifas-padrao`, { params: params }),
         placeholderData: keepPreviousData,
       }),
 
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: [`fin_tarifas: ${id}`, id],
+        queryKey: ["financeiro", "conciliacao", "tarifa_padrao", "detalhe", id],
         queryFn: async () => {
-          return await api.get(`/financeiro/tarifas/${id}`);
+          return await api.get(`/financeiro/conciliacao-cp/tarifas-padrao/${id}`);
         },
       }),
 
@@ -44,11 +44,11 @@ export const useTarifas = () => {
       useMutation({
         mutationFn: async (data: TarifaProps) => {
           return api
-            .post("/financeiro/tarifas", data)
+            .post("/financeiro/conciliacao-cp/tarifas-padrao", data)
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_tarifas"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "conciliacao", "tarifa_padrao"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -72,11 +72,11 @@ export const useTarifas = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: TarifaProps) => {
           return await api
-            .put("/financeiro/tarifas/", { id, ...rest })
+            .put("/financeiro/conciliacao-cp/tarifas-padrao/", { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_tarifas"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "conciliacao", "tarifa_padrao"] });
           toast({
             variant: "success",
             title: "Sucesso",
@@ -100,11 +100,11 @@ export const useTarifas = () => {
       useMutation({
         mutationFn: async (id: string | null | undefined) => {
           return await api
-            .delete(`/financeiro/tarifas/${id}`)
+            .delete(`/financeiro/conciliacao-cp/tarifas-padrao/${id}`)
             .then((response) => response.data);
         },
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["fin_tarifas"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro", "conciliacao", "tarifa_padrao"] });
           toast({
             variant: "success",
             title: "Sucesso",

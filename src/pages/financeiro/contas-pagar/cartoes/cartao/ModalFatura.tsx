@@ -177,7 +177,7 @@ const ModalFatura = () => {
       await api.post('/financeiro/contas-a-pagar/cartoes/fatura/fechar', {
         ...dados
       })
-      queryClient.invalidateQueries({ queryKey: ['fin_fatura'] })
+      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] })
       toast({
         variant: 'success', title: 'Fatura fechada!'
       })
@@ -198,7 +198,7 @@ const ModalFatura = () => {
       await api.post('/financeiro/contas-a-pagar/cartoes/fatura/reabrir', {
         ...dados
       })
-      queryClient.invalidateQueries({ queryKey: ['fin_fatura'] })
+      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] })
       toast({
         variant: 'success', title: 'Fatura reaberta!'
       })
@@ -219,9 +219,8 @@ const ModalFatura = () => {
       await api.delete('/financeiro/contas-a-pagar/cartoes/fatura', {
         params: {id: dados.id}
       })
-      queryClient.invalidateQueries({ queryKey: ['fin_fatura'] })
-      queryClient.invalidateQueries({ queryKey: ['fin_cartoes'] })
-      queryClient.invalidateQueries({ queryKey: ['fin_cartoes_faturas'] })
+      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "cartao"] })
+ 
       toast({
         variant: 'success', title: 'Fatura excluída!'
       })

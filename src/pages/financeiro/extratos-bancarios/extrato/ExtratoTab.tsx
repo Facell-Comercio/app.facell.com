@@ -12,7 +12,7 @@ const ExtratoTab = () => {
     const {data, isLoading, isFetching, isError, refetch} = useQuery({
         enabled: (!!periodo && !!contaBancaria),
         staleTime:0,
-        queryKey: ['extratos-bancarios', periodo, contaBancaria],
+        queryKey: ["financeiro", "extrato_bancario", "transacao", "lista", {periodo, contaBancaria}],
         queryFn: () => api.get('financeiro/conciliacao-bancaria/extratos-bancarios/', {
             params: {
                 filters: {

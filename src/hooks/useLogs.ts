@@ -8,7 +8,7 @@ export const useLogs = () => {
   return {
     getAll: () => {
       return useQuery({
-        queryKey: [`logs`],
+        queryKey: ['logs', 'lista'],
         placeholderData: keepPreviousData,
         queryFn: async () =>
           await api.get("/logs").then((result) => result.data),
@@ -17,7 +17,7 @@ export const useLogs = () => {
     getOne: (pid?: string | null) =>
       useQuery({
         enabled: !!pid,
-        queryKey: [`logs-${pid}`, pid],
+        queryKey: ['logs', 'detalhe', pid],
         queryFn: async () => {
           return await api.get(`logs/${pid}`);
         },
@@ -30,7 +30,7 @@ export const useLogs = () => {
           .then((response) => response.data);
       },
       onSuccess() {
-        queryClient.invalidateQueries({ queryKey: ["logs"] });
+        queryClient.invalidateQueries({ queryKey: ['logs'] });
         toast({
           variant: "success",
           title: "Sucesso",

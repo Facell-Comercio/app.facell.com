@@ -22,6 +22,7 @@ const ItemBorderoSchema = z
     num_doc: z.string().optional(),
     descricao: z.string().trim().optional(),
     filial: z.string().trim().optional(),
+    tipo: z.string().optional(),
 
     can_remove: z.coerce.boolean().optional(),
     can_modify: z.coerce.boolean().optional(),
