@@ -4,7 +4,7 @@ import { downloadResponse } from '@/helpers/download';
 import { api } from '@/lib/axios';
 import { AlteracaoLoteSchemaProps } from '@/pages/financeiro/contas-pagar/titulos/alteracao-lote/Modal';
 import { ExportAnexosProps } from '@/pages/financeiro/contas-pagar/titulos/components/ButtonExportarTitulos';
-import { LancamentoLoteProps } from '@/pages/financeiro/contas-pagar/titulos/components/ButtonImportTitulos';
+import { LancamentoLoteProps } from '@/pages/financeiro/contas-pagar/titulos/components/ButtonImportarTitulo';
 import { EditRecorrenciaProps } from '@/pages/financeiro/contas-pagar/titulos/recorrencias/ModalEditarRecorrencia';
 import { TituloSchemaProps } from '@/pages/financeiro/contas-pagar/titulos/titulo/form-data';
 import {

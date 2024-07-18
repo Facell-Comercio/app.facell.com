@@ -10,7 +10,7 @@ import Filters from './FiltersTitulosPagar';
 import ModalAlteracoesLote from './alteracao-lote/Modal';
 import ButtonEditTitulos from './components/ButtonEditTitulos';
 import ButtonExportTitulos from './components/ButtonExportarTitulos';
-import ButtonImportTitulos from './components/ButtonImportarSolicitacoes';
+import ButtonImportTitulos from './components/ButtonImportarTitulo';
 import ButtonNovoTitulo from './components/ButtonNovoTitulo';
 import ButtonRecorrencias from './components/ButtonRecorrencias';
 import ModalExportDatasys from './export-datasys/Modal';
