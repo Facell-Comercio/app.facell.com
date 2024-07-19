@@ -88,14 +88,25 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
       });
     },
   },
- 
+  {
+    header: "Filial",
+    accessorKey: "filial",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-32 uppercase">
+          {label}
+        </div>
+      );
+    },
+  },
   {
     header: "Fornecedor",
     accessorKey: "fornecedor",
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label} className="block truncate max-w-96 uppercase">
+        <div title={label} className="block truncate max-w-32 uppercase">
           {label}
         </div>
       );
@@ -107,7 +118,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label} className="block truncate max-w-96 uppercase">
+        <div title={label} className="block truncate max-w-24 uppercase">
           {label}
         </div>
       );
@@ -134,25 +145,14 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label} className="block truncate max-w-96 uppercase">
+        <div title={label} className="block truncate max-w-72 uppercase">
           {label}
         </div>
       );
     },
     header: "Descrição",
   },
-  {
-    header: "Filial",
-    accessorKey: "filial",
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return (
-        <div title={label} className="block truncate max-w-96 uppercase">
-          {label}
-        </div>
-      );
-    },
-  },
+ 
   
   {
     header: "Solicitante",
@@ -160,7 +160,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label} className="block truncate max-w-96 uppercase">
+        <div title={label} className="block truncate max-w-32 uppercase">
           {label}
         </div>
       );

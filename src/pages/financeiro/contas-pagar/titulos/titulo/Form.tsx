@@ -350,7 +350,6 @@ const FormTituloPagar = ({
           handleSelection={handleSelectionFilial}
           onOpenChange={setModalFilialOpen}
           id_grupo_economico={id_grupo_economico}
-          id_matriz={id_matriz}
           closeOnSelection
         />
         <section className="overflow-auto scroll-thin z-[100] flex flex-col max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">

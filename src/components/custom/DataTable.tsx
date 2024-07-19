@@ -33,8 +33,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FaSpinner } from "react-icons/fa6";
-import { normalizeCurrency } from "@/helpers/mask";
 import { useEffect, useState } from "react";
+import { normalizeCurrency } from "@/helpers/mask";
 
 interface DataTableProps<TData, TValue> {
   sumField?: string,
