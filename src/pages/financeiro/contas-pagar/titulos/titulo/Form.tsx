@@ -1,42 +1,43 @@
-import ButtonMotivation from "@/components/custom/ButtonMotivation";
-import FormDateInput from "@/components/custom/FormDate";
-import FormFileUpload from "@/components/custom/FormFileUpload";
-import FormInput from "@/components/custom/FormInput";
-import FormSelect from "@/components/custom/FormSelect";
-import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
-import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
-import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
+import ButtonMotivation from '@/components/custom/ButtonMotivation';
+import FormDateInput from '@/components/custom/FormDate';
+import FormFileUpload from '@/components/custom/FormFileUpload';
+import FormInput from '@/components/custom/FormInput';
+import FormSelect from '@/components/custom/FormSelect';
+import SelectFormaPagamento from '@/components/custom/SelectFormaPagamento';
+import SelectTipoChavePix from '@/components/custom/SelectTipoChavePix';
+import SelectTipoContaBancaria from '@/components/custom/SelectTipoContaBancaria';
 
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { toast } from "@/components/ui/use-toast";
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { toast } from '@/components/ui/use-toast';
 import {
   checkUserDepartments,
   checkUserPermission,
-} from "@/helpers/checkAuthorization";
-import { formatarDataHora } from "@/helpers/format";
-import { generateStatusColor } from "@/helpers/generateColorStatus";
-import { normalizeCnpjNumber } from "@/helpers/mask";
-import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
-import { api } from "@/lib/axios";
+} from '@/helpers/checkAuthorization';
+import { formatarDataHora } from '@/helpers/format';
+import { generateStatusColor } from '@/helpers/generateColorStatus';
+import { normalizeCnpjNumber } from '@/helpers/mask';
+import { useTituloPagar } from '@/hooks/financeiro/useTituloPagar';
+import { api } from '@/lib/axios';
 import ModalFornecedores, {
   ItemFornecedor,
-} from "@/pages/financeiro/components/ModalFornecedores";
+} from '@/pages/financeiro/components/ModalFornecedores';
 
-import SelectCartao from "@/components/custom/SelectCartao";
-import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import fetchApi from '@/api/fetchApi';
+import SelectCartao from '@/components/custom/SelectCartao';
+import SelectUserDepartamento from '@/components/custom/SelectUserDepartamento';
+import { Alert, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ModalFiliais from "@/pages/admin/components/ModalFiliais";
-import { Filial } from "@/types/filial-type";
-import { useQueryClient } from "@tanstack/react-query";
+} from '@/components/ui/popover';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ModalFiliais from '@/pages/admin/components/ModalFiliais';
+import { Filial } from '@/types/filial-type';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   AlertTriangle,
   Archive,
@@ -50,21 +51,21 @@ import {
   Save,
   Undo2,
   X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { SubmitHandler, UseFormReturn, useWatch } from "react-hook-form";
-import { FaSpinner } from "react-icons/fa6";
-import { TbCurrencyReal } from "react-icons/tb";
-import SecaoRateio from "./components/form/rateio/SecaoRateio";
-import SecaoVencimentos from "./components/form/vencimento/SecaoVencimentos";
-import { TituloSchemaProps } from "./form-data";
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { SubmitHandler, UseFormReturn, useWatch } from 'react-hook-form';
+import { FaSpinner } from 'react-icons/fa6';
+import { TbCurrencyReal } from 'react-icons/tb';
+import SecaoRateio from './components/form/rateio/SecaoRateio';
+import SecaoVencimentos from './components/form/vencimento/SecaoVencimentos';
+import { TituloSchemaProps } from './form-data';
 import {
   checkIsCartao,
   checkIsPIX,
   checkIsTransferenciaBancaria,
   formatarHistorico,
-} from "./helpers/helper";
-import { useStoreTitulo } from "./store";
+} from './helpers/helper';
+import { useStoreTitulo } from './store';
 
 const FormTituloPagar = ({
   id,
@@ -96,54 +97,54 @@ const FormTituloPagar = ({
   // const wfull = form.watch();
   // console.log(wfull);
   const url_nota_fiscal = useWatch({
-    name: "url_nota_fiscal",
+    name: 'url_nota_fiscal',
     control: form.control,
   });
   const id_grupo_economico = useWatch({
-    name: "id_grupo_economico",
+    name: 'id_grupo_economico',
     control: form.control,
   });
   const id_matriz = useWatch({
-    name: "id_matriz",
+    name: 'id_matriz',
     control: form.control,
   });
   const id_forma_pagamento = useWatch({
-    name: "id_forma_pagamento",
+    name: 'id_forma_pagamento',
     control: form.control,
   });
   const valorTotalTitulo = parseFloat(
     useWatch({
-      name: "valor",
+      name: 'valor',
       control: form.control,
-    }) || "0"
+    }) || '0'
   );
 
   // * [ VERIFICAÇÕES ]
-  const status = titulo?.status || "Solicitado";
+  const status = titulo?.status || 'Solicitado';
   const id_status = parseInt(titulo?.id_status) ?? 1;
 
   const isMaster =
-    checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+    checkUserDepartments('FINANCEIRO') || checkUserPermission('MASTER');
 
   const canEdit =
     !id ||
-    status === "Solicitado" ||
+    status === 'Solicitado' ||
     (isMaster && id_status > 0 && id_status < 3);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
-  const podeArquivar = id && (status == "Solicitado" || status == "Negado");
+  const podeArquivar = id && (status == 'Solicitado' || status == 'Negado');
 
   const podeResolicitar =
     id &&
-    status !== "Solicitado" &&
+    status !== 'Solicitado' &&
     (id_status < 3 ||
-      (isMaster === true && status === "Aprovado" ? true : false));
+      (isMaster === true && status === 'Aprovado' ? true : false));
 
   const podeNegar =
-    isMaster && id && status !== "Negado" && id_status > 0 && id_status < 4;
+    isMaster && id && status !== 'Negado' && id_status > 0 && id_status < 4;
   const podeAprovar =
-    isMaster && id && status !== "Aprovado" && id_status > 0 && id_status < 4;
+    isMaster && id && status !== 'Aprovado' && id_status > 0 && id_status < 4;
 
   const podeAnexarNotaFiscal =
     id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal);
@@ -154,6 +155,25 @@ const FormTituloPagar = ({
     setModalFornecedorOpen(true);
   }
 
+  async function checkDoc() {
+    const result = await fetchApi.financeiro.contas_pagar.titulos.checkDoc({
+      id_fornecedor: form.watch('id_fornecedor'),
+      num_doc: form.watch('num_doc'),
+    });
+    if (result > 0) {
+      toast({
+        variant: 'warning',
+        title: 'Atenção!',
+        // @ts-ignore
+        description: `${
+          result === 1
+            ? `Existe 1 solicitação`
+            : `Existem ${result} solicitações`
+        } no sistema com esse fornecedor e número de documento`,
+      });
+    }
+  }
+
   // Quando escolher um fornecedor:
   async function handleSelectionFornecedor(item: ItemFornecedor) {
     try {
@@ -161,30 +181,31 @@ const FormTituloPagar = ({
       const fornecedor = result.data;
       // console.log('FORNECEDOR SELECIONADO', fornecedor)
 
-      setValue("id_fornecedor", fornecedor.id?.toString() || "");
-      setValue("cnpj_fornecedor", normalizeCnpjNumber(fornecedor.cnpj) || "");
-      setValue("nome_fornecedor", fornecedor.nome || "");
-      setValue("favorecido", fornecedor.favorecido || "");
-      setValue("cnpj_favorecido", fornecedor.cnpj_favorecido || "");
-      setValue("id_banco", fornecedor.id_banco?.toString() || "");
-      setValue("banco", fornecedor.banco || "");
-      setValue("codigo_banco", fornecedor.codigo_banco || "");
-      setValue("agencia", fornecedor.agencia || "");
-      setValue("dv_agencia", fornecedor.dv_agencia || "");
-      setValue("conta", fornecedor.conta || "");
-      setValue("dv_conta", fornecedor.dv_conta || "");
+      setValue('id_fornecedor', fornecedor.id?.toString() || '');
+      setValue('cnpj_fornecedor', normalizeCnpjNumber(fornecedor.cnpj) || '');
+      setValue('nome_fornecedor', fornecedor.nome || '');
+      setValue('favorecido', fornecedor.favorecido || '');
+      setValue('cnpj_favorecido', fornecedor.cnpj_favorecido || '');
+      setValue('id_banco', fornecedor.id_banco?.toString() || '');
+      setValue('banco', fornecedor.banco || '');
+      setValue('codigo_banco', fornecedor.codigo_banco || '');
+      setValue('agencia', fornecedor.agencia || '');
+      setValue('dv_agencia', fornecedor.dv_agencia || '');
+      setValue('conta', fornecedor.conta || '');
+      setValue('dv_conta', fornecedor.dv_conta || '');
       setValue(
-        "id_forma_pagamento",
-        fornecedor.id_forma_pagamento?.toString() || ""
+        'id_forma_pagamento',
+        fornecedor.id_forma_pagamento?.toString() || ''
       );
-      setValue("id_tipo_conta", fornecedor.id_tipo_conta?.toString() || "");
+      setValue('id_tipo_conta', fornecedor.id_tipo_conta?.toString() || '');
       setValue(
-        "id_tipo_chave_pix",
-        fornecedor.id_tipo_chave_pix?.toString() || ""
+        'id_tipo_chave_pix',
+        fornecedor.id_tipo_chave_pix?.toString() || ''
       );
-      setValue("chave_pix", fornecedor.chave_pix || "");
+      setValue('chave_pix', fornecedor.chave_pix || '');
       setModalFornecedorOpen(false);
-    } catch (error) { }
+    } catch (error) {}
+    checkDoc();
   }
 
   // * [ ANEXOS ]
@@ -199,7 +220,7 @@ const FormTituloPagar = ({
     try {
       if (id) {
         const result = await api.post(
-          "financeiro/contas-a-pagar/titulo/update-anexo",
+          'financeiro/contas-a-pagar/titulo/update-anexo',
           {
             campo,
             fileUrl,
@@ -207,14 +228,14 @@ const FormTituloPagar = ({
           }
         );
         // @ts-ignore
-        form.setValue(campo, result.data.fileUrl || "");
+        form.setValue(campo, result.data.fileUrl || '');
       }
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Erro!",
+        variant: 'destructive',
+        title: 'Erro!',
         description:
-          "O arquivo pode ter sido excluído, mas não foi possível remover o anexo da solicitação, tente excluir novamente mais tarde!",
+          'O arquivo pode ter sido excluído, mas não foi possível remover o anexo da solicitação, tente excluir novamente mais tarde!',
       });
     }
   }
@@ -270,7 +291,9 @@ const FormTituloPagar = ({
       closeModal();
 
       if (titulo.id_recorrencia) {
-        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "recorrencia"] });
+        queryClient.invalidateQueries({
+          queryKey: ['financeiro', 'contas_pagar', 'recorrencia'],
+        });
       }
     }
   }, [insertOneSuccess]);
@@ -289,12 +312,13 @@ const FormTituloPagar = ({
         id_novo_status,
         motivo,
       });
-      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
-
+      queryClient.invalidateQueries({
+        queryKey: ['financeiro', 'contas_pagar'],
+      });
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Erro!",
+        variant: 'destructive',
+        title: 'Erro!',
         // @ts-ignore
         description: error?.response?.data?.message || error?.message,
       });
@@ -303,36 +327,36 @@ const FormTituloPagar = ({
 
   const handleClickArquivar = (motivo: string) => {
     changeStatusTitulo({
-      id_novo_status: "0",
+      id_novo_status: '0',
       motivo,
     });
   };
   const handleChangeVoltarSolicitado = (motivo: string) => {
     changeStatusTitulo({
-      id_novo_status: "1",
+      id_novo_status: '1',
       motivo,
     });
   };
   const handleChangeNegar = (motivo: string) => {
     changeStatusTitulo({
-      id_novo_status: "2",
+      id_novo_status: '2',
       motivo: motivo,
     });
   };
   const handleChangeAprovar = () => {
     changeStatusTitulo({
-      id_novo_status: "3",
+      id_novo_status: '3',
     });
   };
 
   // ! FIM - ACTIONS //////////////////////////////////////
   const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
   const handleSelectionFilial = (item: Filial) => {
-    setValue("id_filial", String(item.id));
-    setValue("id_grupo_economico", String(item.id_grupo_economico));
-    setValue("id_matriz", String(item.id_matriz));
+    setValue('id_filial', String(item.id));
+    setValue('id_grupo_economico', String(item.id_grupo_economico));
+    setValue('id_matriz', String(item.id_matriz));
 
-    setValue("filial", String(item.nome));
+    setValue('filial', String(item.nome));
   };
   const showModalFilial = () => {
     setModalFilialOpen(true);
@@ -357,7 +381,7 @@ const FormTituloPagar = ({
             <div className="py-2">
               <div
                 className={`py-1 text-white text-center border text-md font-bold rounded-sm ${generateStatusColor(
-                  { status: titulo?.status || "", bg: true, text: true }
+                  { status: titulo?.status || '', bg: true, text: true }
                 )}`}
               >
                 {titulo.status}
@@ -376,8 +400,8 @@ const FormTituloPagar = ({
                     <span className="text-lg font-bold">Fornecedor</span>
                     <div>
                       {errors.id_fornecedor?.message && (
-                        <Badge variant={"destructive"}>
-                          {errors.id_fornecedor?.message || ""}
+                        <Badge variant={'destructive'}>
+                          {errors.id_fornecedor?.message || ''}
                         </Badge>
                       )}
                     </div>
@@ -414,8 +438,9 @@ const FormTituloPagar = ({
                       className="flex-1 min-w-[15ch]"
                     />
                     <div
-                      className={`${showPix ? "flex w-full" : "hidden"
-                        } gap-3 flex-wrap`}
+                      className={`${
+                        showPix ? 'flex w-full' : 'hidden'
+                      } gap-3 flex-wrap`}
                     >
                       <SelectTipoChavePix
                         control={form.control}
@@ -434,8 +459,9 @@ const FormTituloPagar = ({
                       />
                     </div>
                     <div
-                      className={`flex gap-3 ${showCartao ? "flex w-full" : "hidden"
-                        }`}
+                      className={`flex gap-3 ${
+                        showCartao ? 'flex w-full' : 'hidden'
+                      }`}
                     >
                       <SelectCartao
                         control={form.control}
@@ -448,16 +474,16 @@ const FormTituloPagar = ({
                             .get(`/financeiro/contas-a-pagar/cartoes/${id}`)
                             .then((data) => {
                               form.setValue(
-                                "dia_vencimento_cartao",
+                                'dia_vencimento_cartao',
                                 data.data.dia_vencimento
                               );
                               form.setValue(
-                                "dia_corte_cartao",
+                                'dia_corte_cartao',
                                 data.data.dia_corte
                               );
-                              form.setValue("id_matriz", data.data.id_matriz);
+                              form.setValue('id_matriz', data.data.id_matriz);
                               form.setValue(
-                                "id_grupo_economico",
+                                'id_grupo_economico',
                                 data.data.id_grupo_economico
                               );
                             });
@@ -569,7 +595,7 @@ const FormTituloPagar = ({
                 {/* Dados da solicitação */}
                 <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex gap-2 mb-3">
-                    <FileText />{" "}
+                    <FileText />{' '}
                     <span className="text-lg font-bold ">
                       Dados da solicitação
                     </span>
@@ -580,16 +606,16 @@ const FormTituloPagar = ({
                       <FormSelect
                         disabled={disabled}
                         name="id_tipo_solicitacao"
-                        label={"Tipo de solicitação"}
+                        label={'Tipo de solicitação'}
                         control={form.control}
                         className="flex-1 min-w-[32ch]"
                         options={[
-                          { value: "1", label: "Com nota fiscal" },
+                          { value: '1', label: 'Com nota fiscal' },
                           {
-                            value: "2",
-                            label: "Antecipado / Nota fiscal futura",
+                            value: '2',
+                            label: 'Antecipado / Nota fiscal futura',
                           },
-                          { value: "3", label: "Sem nota fiscal" },
+                          { value: '3', label: 'Sem nota fiscal' },
                         ]}
                       />
 
@@ -627,8 +653,9 @@ const FormTituloPagar = ({
                         readOnly={readOnly}
                         name="num_doc"
                         label="Núm. Doc."
-                        className={"flex-1 min-w-[15ch]"}
+                        className={'flex-1 min-w-[15ch]'}
                         control={form.control}
+                        onBlur={() => checkDoc()}
                       />
 
                       <FormInput
@@ -666,7 +693,7 @@ const FormTituloPagar = ({
                             {errors.vencimentos?.message && (
                               <Popover>
                                 <PopoverTrigger>
-                                  <Badge variant={"destructive"}>Atenção</Badge>
+                                  <Badge variant={'destructive'}>Atenção</Badge>
                                 </PopoverTrigger>
                                 <PopoverContent className="bg-destructive text-destructive-foreground">
                                   {errors.vencimentos.message}
@@ -681,7 +708,7 @@ const FormTituloPagar = ({
                             {errors.itens_rateio?.message && (
                               <Popover>
                                 <PopoverTrigger>
-                                  <Badge variant={"destructive"}>Atenção</Badge>
+                                  <Badge variant={'destructive'}>Atenção</Badge>
                                 </PopoverTrigger>
                                 <PopoverContent className="bg-destructive text-destructive-foreground">
                                   {errors.itens_rateio.message}
@@ -692,7 +719,10 @@ const FormTituloPagar = ({
                         </TabsTrigger>
                       </TabsList>
 
-                      <TabsContent value="vencimentos" className="orverflow-auto">
+                      <TabsContent
+                        value="vencimentos"
+                        className="orverflow-auto"
+                      >
                         <SecaoVencimentos
                           id={id}
                           form={form}
@@ -719,8 +749,8 @@ const FormTituloPagar = ({
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>
                       {valorTotalTitulo > 0
-                        ? "Selecione a filial!"
-                        : "Preencha o valor!"}
+                        ? 'Selecione a filial!'
+                        : 'Preencha o valor!'}
                     </AlertTitle>
                   </Alert>
                 )}
@@ -728,20 +758,24 @@ const FormTituloPagar = ({
                 {/* Histórico */}
                 <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex gap-2 mb-3">
-                    <History />{" "}
+                    <History />{' '}
                     <span className="text-lg font-bold ">Histórico</span>
                   </div>
                   <ScrollArea
-                    className={"flex flex-col gap-3 max-h-72 z-[999]"}
+                    className={'flex flex-col gap-3 max-h-72 z-[999]'}
                   >
                     {
                       // @ts-ignore
                       data?.historico?.map((h, index) => (
-                        <p key={`hist.${h.id}.${index}`} className="text-xs my-2">
-                          {formatarDataHora(h.created_at)}:{" "}
+                        <p
+                          key={`hist.${h.id}.${index}`}
+                          className="text-xs my-2"
+                        >
+                          {formatarDataHora(h.created_at)}:{' '}
                           {formatarHistorico(h.descricao)}
                         </p>
-                      ))}
+                      ))
+                    }
                   </ScrollArea>
                 </div>
 
@@ -763,7 +797,7 @@ const FormTituloPagar = ({
                   mediaType="xml"
                   control={form.control}
                   onChange={(fileUrl: string) =>
-                    handleChangeFile({ fileUrl, campo: "url_xml" })
+                    handleChangeFile({ fileUrl, campo: 'url_xml' })
                   }
                 />
                 <FormFileUpload
@@ -775,7 +809,7 @@ const FormTituloPagar = ({
                   mediaType="pdf"
                   control={form.control}
                   onChange={(fileUrl: string) => {
-                    handleChangeFile({ fileUrl, campo: "url_nota_fiscal" });
+                    handleChangeFile({ fileUrl, campo: 'url_nota_fiscal' });
                   }}
                 />
                 <FormFileUpload
@@ -786,7 +820,7 @@ const FormTituloPagar = ({
                   mediaType="pdf"
                   control={form.control}
                   onChange={(fileUrl: string) =>
-                    handleChangeFile({ fileUrl, campo: "url_boleto" })
+                    handleChangeFile({ fileUrl, campo: 'url_boleto' })
                   }
                 />
                 <FormFileUpload
@@ -797,7 +831,7 @@ const FormTituloPagar = ({
                   mediaType="etc"
                   control={form.control}
                   onChange={(fileUrl: string) =>
-                    handleChangeFile({ fileUrl, campo: "url_contrato" })
+                    handleChangeFile({ fileUrl, campo: 'url_contrato' })
                   }
                 />
                 <FormFileUpload
@@ -808,7 +842,7 @@ const FormTituloPagar = ({
                   mediaType="excel"
                   control={form.control}
                   onChange={(fileUrl: string) =>
-                    handleChangeFile({ fileUrl, campo: "url_planilha" })
+                    handleChangeFile({ fileUrl, campo: 'url_planilha' })
                   }
                 />
                 <FormFileUpload
@@ -819,7 +853,7 @@ const FormTituloPagar = ({
                   mediaType="remessa"
                   control={form.control}
                   onChange={(fileUrl: string) =>
-                    handleChangeFile({ fileUrl, campo: "url_txt" })
+                    handleChangeFile({ fileUrl, campo: 'url_txt' })
                   }
                 />
               </div>
@@ -830,7 +864,7 @@ const FormTituloPagar = ({
         <div className="max-w-full flex justify-between sm:items-center mt-4 gap-3 sm:gap-0 col-span-2">
           {isSubmtting ? (
             <div className="flex gap-3 items-center">
-              <span className="font-lg">Aguarde...</span>{" "}
+              <span className="font-lg">Aguarde...</span>{' '}
               {<FaSpinner className="animate-spin" />}
             </div>
           ) : (
@@ -839,8 +873,8 @@ const FormTituloPagar = ({
                 {podeArquivar && (
                   <ButtonMotivation
                     title="Arquiva a solictação para sumir da vista."
-                    variant={"secondary"}
-                    size={"lg"}
+                    variant={'secondary'}
+                    size={'lg'}
                     action={handleClickArquivar}
                   >
                     <Archive className="me-2" size={18} />
@@ -850,8 +884,8 @@ const FormTituloPagar = ({
                 {podeResolicitar && (
                   <ButtonMotivation
                     title="Volta o status da solicitação para 'Solicitado', possibilitando a edição..."
-                    variant={"secondary"}
-                    size={"lg"}
+                    variant={'secondary'}
+                    size={'lg'}
                     action={handleChangeVoltarSolicitado}
                   >
                     <Undo2 className="me-2" size={18} />
@@ -860,8 +894,8 @@ const FormTituloPagar = ({
                 )}
                 {podeNegar && (
                   <ButtonMotivation
-                    variant={"destructive"}
-                    size={"lg"}
+                    variant={'destructive'}
+                    size={'lg'}
                     action={handleChangeNegar}
                   >
                     <X className="me-2" size={18} />
@@ -871,8 +905,8 @@ const FormTituloPagar = ({
                 {podeAprovar && (
                   <Button
                     type="button"
-                    variant={"success"}
-                    size={"lg"}
+                    variant={'success'}
+                    size={'lg'}
                     onClick={handleChangeAprovar}
                   >
                     <Check className="me-2" size={18} />
@@ -887,14 +921,14 @@ const FormTituloPagar = ({
                     <Button
                       onClick={() => editModal(false)}
                       size="lg"
-                      variant={"secondary"}
-                      className={!id ? "hidden" : ""}
+                      variant={'secondary'}
+                      className={!id ? 'hidden' : ''}
                     >
                       <Ban className="me-2" size={18} /> Cancelar
                     </Button>
-                    <Button type="submit" size="lg" variant={"default"}>
+                    <Button type="submit" size="lg" variant={'default'}>
                       <Save className="me-2" size={18} />
-                      {id ? "Salvar" : "Solicitar"}
+                      {id ? 'Salvar' : 'Solicitar'}
                     </Button>
                   </>
                 )}
@@ -902,7 +936,7 @@ const FormTituloPagar = ({
                   <Button
                     onClick={() => editModal(true)}
                     size="lg"
-                    variant={"warning"}
+                    variant={'warning'}
                   >
                     <Pen size={18} className="me-2" /> Editar
                   </Button>

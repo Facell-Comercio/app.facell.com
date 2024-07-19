@@ -1,15 +1,15 @@
-import { DataTable } from "@/components/custom/DataTable";
-import { usePainel } from "@/hooks/financeiro/usePainel";
-import ModalRecorrencias from "../titulos/recorrencias/Modal";
-import { useStoreRecorrencias } from "../titulos/recorrencias/store";
-import ModalTituloPagar from "../titulos/titulo/Modal";
-import { ItemPainel } from "./components/ItemPainel";
+import { DataTable } from '@/components/custom/DataTable';
+import { usePainel } from '@/hooks/financeiro/usePainel';
+import ModalRecorrencias from '../titulos/recorrencias/Modal';
+import { useStoreRecorrencias } from '../titulos/recorrencias/store';
+import ModalTituloPagar from '../titulos/titulo/Modal';
+import { ItemPainel } from './components/ItemPainel';
 import {
   columnsTableNegadas,
   columnsTableRecorrencias,
   columnsTableSemNota,
-} from "./table/columns";
-import { useStoreTablePainel } from "./table/store-table";
+} from './table/columns';
+import { useStoreTablePainel } from './table/store-table';
 
 export const PainelContasPagar = () => {
   const [
@@ -57,7 +57,11 @@ export const PainelContasPagar = () => {
   return rowCountSemNota || rowCountNegadas || rowCountRecorrencias ? (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 ">
       {rowCountNegadas ? (
-        <ItemPainel title="Solicitações Negadas" qtde={rowCountNegadas}>
+        <ItemPainel
+          title="Solicitações Negadas"
+          qtde={rowCountNegadas}
+          endpoint="negada"
+        >
           <DataTable
             pagination={paginationNegadas}
             setPagination={setPaginationNegadas}
@@ -68,11 +72,15 @@ export const PainelContasPagar = () => {
           />
         </ItemPainel>
       ) : (
-        ""
+        ''
       )}
 
       {rowCountSemNota ? (
-        <ItemPainel title="Notas Fiscais Pendentes" qtde={rowCountSemNota}>
+        <ItemPainel
+          title="Notas Fiscais Pendentes"
+          qtde={rowCountSemNota}
+          endpoint="sem-nota"
+        >
           <DataTable
             pagination={paginationSemNota}
             setPagination={setPaginationSemNota}
@@ -83,7 +91,7 @@ export const PainelContasPagar = () => {
           />
         </ItemPainel>
       ) : (
-        ""
+        ''
       )}
 
       {rowCountRecorrencias ? (
@@ -91,6 +99,8 @@ export const PainelContasPagar = () => {
           title="Recorrências Pendentes"
           qtde={rowCountRecorrencias}
           fn={openModalRecorrencias}
+          fnTitle="Abrir modal de recorrências"
+          endpoint="recorrencias"
         >
           <DataTable
             pagination={paginationRecorrencias}
@@ -102,7 +112,7 @@ export const PainelContasPagar = () => {
           />
         </ItemPainel>
       ) : (
-        ""
+        ''
       )}
       <ModalTituloPagar />
       <ModalRecorrencias />

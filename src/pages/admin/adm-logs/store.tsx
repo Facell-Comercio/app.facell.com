@@ -1,5 +1,5 @@
-import { DateRange } from "react-day-picker";
-import { create } from "zustand";
+import { DateRange } from 'react-day-picker';
+import { create } from 'zustand';
 
 export interface Filters {
   level?: string;
@@ -10,22 +10,23 @@ export interface Filters {
 }
 
 const initialFilters: Filters = {
-  level: "50",
-  module: "",
-  origin: "",
-  method: "",
+  level: '50',
+  module: '',
+  origin: '',
+  method: '',
   range_data: { from: undefined, to: undefined },
 };
 
 export interface State {
   id?: string | null;
+  time?: string | null;
   modalOpen: boolean;
 
   filters: Filters;
 }
 
 export interface Actions {
-  openModal: (id: string) => void;
+  openModal: (id: string, time: string) => void;
   closeModal: () => void;
 
   setFilters: (filters: Filters) => void;
@@ -34,11 +35,12 @@ export interface Actions {
 
 export const useStoreLogs = create<State & Actions>((set) => ({
   id: null,
+  time: null,
   modalOpen: false,
   filters: initialFilters,
 
-  openModal: (id: string) => set({ modalOpen: true, id }),
-  closeModal: () => set({ modalOpen: false }),
+  openModal: (id: string, time: string) => set({ modalOpen: true, id, time }),
+  closeModal: () => set({ modalOpen: false, id: null, time: null }),
 
   setFilters: (novoFiltro) =>
     set((state) => ({

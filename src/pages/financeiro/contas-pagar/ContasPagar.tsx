@@ -1,31 +1,32 @@
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import fetchApi from '@/api/fetchApi';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   checkUserDepartments,
   checkUserPermission,
-} from "@/helpers/checkAuthorization";
-import Borderos from "./borderos/Borderos";
-import Cartoes from "./cartoes/Cartoes";
-import MovimentoContabil from "./movimento-contabil/MoviementoContabil";
-import { PainelContasPagar } from "./painel/PainelContasPagar";
-import TitulosPagar from "./titulos/TitulosPagar";
-import Vencimentos from "./vencimentos/Vencimentos";
-import { useQueryClient } from "@tanstack/react-query";
-import fetchApi from "@/api/fetchApi";
+} from '@/helpers/checkAuthorization';
+import { useQueryClient } from '@tanstack/react-query';
+import Borderos from './borderos/Borderos';
+import Cartoes from './cartoes/Cartoes';
+import MovimentoContabil from './movimento-contabil/MovimentoContabil';
+import { PainelContasPagar } from './painel/PainelContasPagar';
+import TitulosPagar from './titulos/TitulosPagar';
+import Vencimentos from './vencimentos/Vencimentos';
 
 const ContasPagarPage = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   queryClient.prefetchQuery({
     queryKey: ['financeiro', 'forma_pagamento', 'lista'],
-    queryFn: async()=>await fetchApi.financeiro.forma_pagamento.getAll(),
-  })
+    queryFn: async () => await fetchApi.financeiro.forma_pagamento.getAll(),
+  });
 
   queryClient.prefetchQuery({
     queryKey: ['financeiro', 'contas_pagar', 'cartao', 'lista', null],
     staleTime: Infinity,
-    queryFn: async()=>await fetchApi.financeiro.contas_pagar.cartoes.getAll({}),
-  })
+    queryFn: async () =>
+      await fetchApi.financeiro.contas_pagar.cartoes.getAll({}),
+  });
 
   return (
     <div className="flex p-4">
@@ -34,8 +35,8 @@ const ContasPagarPage = () => {
           <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
             <TabsTrigger value="painel">Painel</TabsTrigger>
             <TabsTrigger value="titulo">Solicitações</TabsTrigger>
-            {(checkUserPermission("MASTER") ||
-              checkUserDepartments("FINANCEIRO")) && (
+            {(checkUserPermission('MASTER') ||
+              checkUserDepartments('FINANCEIRO')) && (
               <>
                 <TabsTrigger value="cartoes">Cartões</TabsTrigger>
                 <TabsTrigger value="vencimentos">Vencimentos</TabsTrigger>

@@ -15,6 +15,7 @@ import { columnsTableAPagar } from "./tables/columnsAPagar";
 import { columnsTableEmBordero } from "./tables/columnsEmBordero";
 import { columnsTablePagos } from "./tables/columnsPagos";
 import { useStoreTableVencimentos } from "./tables/store";
+import ModalFatura from "../cartoes/cartao/ModalFatura";
 
 const Vencimentos = () => {
   const [
@@ -180,6 +181,7 @@ const Vencimentos = () => {
       <ModalBordero />
       <ModalTituloPagar />
       <ModalAlteracoesVencimentosLote />
+      <ModalFatura />
     </div>
   );
 };

@@ -31,7 +31,7 @@ const RowVirtualizerFixedPendentes: React.FC<
   const [openModalDDA] = useStoreDDA((state) => [state.openModal]);
 
   const count = filteredData.length;
-  
+
   const virtualizer = useVirtualizer({
     count,
     getScrollElement: () => parentElement.current,
@@ -55,7 +55,7 @@ const RowVirtualizerFixedPendentes: React.FC<
   };
 
   const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
-  
+
   return (
     <section
       ref={parentElement}
@@ -67,8 +67,6 @@ const RowVirtualizerFixedPendentes: React.FC<
             className="min-w-4 me-1"
             onCheckedChange={(e) => {
               filteredData.forEach((_, index) => {
-                console.log({item: _});
-                
                 // if (item.id_status == "3") {
                 form.setValue(`itens.${index}.checked`, !!e.valueOf());
                 // }
@@ -201,10 +199,7 @@ const RowVirtualizerFixedPendentes: React.FC<
                   disabled={disabled}
                   checked={form.watch(`itens.${indexData}.checked`)}
                   onCheckedChange={(e) => {
-                    form.setValue(
-                      `itens.${indexData}.checked`,
-                      e.valueOf()
-                    );
+                    form.setValue(`itens.${indexData}.checked`, e.valueOf());
                   }}
                   className="me-1"
                 />
@@ -362,14 +357,9 @@ const RowVirtualizerFixedPendentes: React.FC<
                     form.formState.errors.vencimentos[indexData] &&
                     "border border-red-600"
                   }`}
-                  value={form.watch(
-                    `itens.${indexData}.data_prevista_parcial`
-                  )}
+                  value={form.watch(`itens.${indexData}.data_prevista_parcial`)}
                   onChange={(e: Date) =>
-                    form.setValue(
-                      `itens.${indexData}.data_prevista_parcial`,
-                      e
-                    )
+                    form.setValue(`itens.${indexData}.data_prevista_parcial`, e)
                   }
                 />
               ) : (

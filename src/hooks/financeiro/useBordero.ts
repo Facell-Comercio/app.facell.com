@@ -1,16 +1,16 @@
 import { toast } from '@/components/ui/use-toast';
-import { downloadResponse } from "@/helpers/download";
-import { api } from "@/lib/axios";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
-import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/borderos/bordero/Modal";
-import { GetAllParams } from "@/types/query-params-type";
+import { downloadResponse } from '@/helpers/download';
+import { api } from '@/lib/axios';
+import { VencimentosProps } from '@/pages/financeiro/components/ModalFindItemsBordero';
+import { BorderoSchemaProps } from '@/pages/financeiro/contas-pagar/borderos/bordero/Modal';
+import { GetAllParams } from '@/types/query-params-type';
 import {
   keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
-} from "@tanstack/react-query";
-import { AxiosError } from "axios";
+} from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 type TransferDataProps = {
   id_vencimento: string;
@@ -20,7 +20,7 @@ type TransferDataProps = {
 type DownloadRemessaProps = {
   id: string;
   isPix?: boolean;
-  itens?: VencimentosProps[]
+  itens?: VencimentosProps[];
 };
 
 type reverseManualPaymentProps = {
@@ -28,12 +28,23 @@ type reverseManualPaymentProps = {
   tipo?: string;
 };
 
+type ImportRetornoRemessaProps = {
+  files: FileList | null;
+  id_bordero?: string | null;
+};
+
 export const useBordero = () => {
   const queryClient = useQueryClient();
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ['financeiro', 'contas_pagar', 'bordero', 'lista', pagination],
+        queryKey: [
+          'financeiro',
+          'contas_pagar',
+          'bordero',
+          'lista',
+          pagination,
+        ],
         queryFn: async () => {
           return await api.get(`/financeiro/contas-a-pagar/bordero/`, {
             params: { pagination, filters },
@@ -55,7 +66,7 @@ export const useBordero = () => {
       useMutation({
         mutationFn: async (data: BorderoSchemaProps) => {
           return await api
-            .post("/financeiro/contas-a-pagar/bordero", data)
+            .post('/financeiro/contas-a-pagar/bordero', data)
             .then((response) => response.data);
         },
         onSuccess() {
@@ -71,10 +82,10 @@ export const useBordero = () => {
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         },
       }),
@@ -83,7 +94,7 @@ export const useBordero = () => {
       useMutation({
         mutationFn: async ({ id, ...rest }: BorderoSchemaProps) => {
           return await api
-            .put("/financeiro/contas-a-pagar/bordero/", { id, ...rest })
+            .put('/financeiro/contas-a-pagar/bordero/', { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
@@ -94,7 +105,6 @@ export const useBordero = () => {
             duration: 3500,
           });
           queryClient.invalidateQueries({ queryKey: ['financeiro'] });
-
         },
         onError(error: AxiosError) {
           // @ts-expect-error 'Vai funcionar'
@@ -118,7 +128,7 @@ export const useBordero = () => {
             )
             .then((response) => response.data);
         },
-        onSuccess(_, id) {
+        onSuccess() {
           toast({
             variant: 'success',
             title: 'Sucesso',
@@ -126,7 +136,6 @@ export const useBordero = () => {
             duration: 3500,
           });
           queryClient.invalidateQueries({ queryKey: ['financeiro'] });
-
         },
         onError(error: AxiosError) {
           // @ts-expect-error 'Vai funcionar'
@@ -159,7 +168,6 @@ export const useBordero = () => {
             duration: 3500,
           });
           queryClient.invalidateQueries({ queryKey: ['financeiro'] });
-
         },
         onError(error: AxiosError) {
           // @ts-expect-error 'Vai funcionar'
@@ -238,9 +246,10 @@ export const useBordero = () => {
       useMutation({
         mutationFn: async ({ id, isPix, itens }: DownloadRemessaProps) => {
           return await api
-            .post(`/financeiro/contas-a-pagar/bordero/export-remessa`,
+            .post(
+              `/financeiro/contas-a-pagar/bordero/export-remessa`,
               { id_bordero: id, itens, isPix },
-              {responseType: "blob"},
+              { responseType: 'blob' }
             )
             .then(async (response) => {
               downloadResponse(response);
@@ -267,7 +276,7 @@ export const useBordero = () => {
         },
       }),
 
-    importRemessa: (files: FileList | null) => {
+    importRemessa: ({ files, id_bordero }: ImportRetornoRemessaProps) => {
       return new Promise(async (resolve, reject) => {
         try {
           const form = new FormData();
@@ -277,7 +286,7 @@ export const useBordero = () => {
             }
           }
           const result = await api.postForm(
-            "/financeiro/contas-a-pagar/bordero/import-retorno-remessa",
+            `/financeiro/contas-a-pagar/bordero/${id_bordero}/import-retorno-remessa`,
             form
           );
           queryClient.invalidateQueries({ queryKey: ['financeiro'] });

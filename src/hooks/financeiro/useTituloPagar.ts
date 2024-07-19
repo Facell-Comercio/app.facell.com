@@ -1,18 +1,18 @@
-import fetchApi from "@/api/fetchApi";
-import { toast } from "@/components/ui/use-toast";
-import { downloadResponse } from "@/helpers/download";
-import { api } from "@/lib/axios";
-import { AlteracaoLoteSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/alteracao-lote/Modal";
-import { ExportAnexosProps } from "@/pages/financeiro/contas-pagar/titulos/components/ButtonExportarTitulos";
-import { LancamentoLoteProps } from "@/pages/financeiro/contas-pagar/titulos/components/ButtonImportTitulos";
-import { EditRecorrenciaProps } from "@/pages/financeiro/contas-pagar/titulos/recorrencias/ModalEditarRecorrencia";
-import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/titulo/form-data";
+import fetchApi from '@/api/fetchApi';
+import { toast } from '@/components/ui/use-toast';
+import { downloadResponse } from '@/helpers/download';
+import { api } from '@/lib/axios';
+import { AlteracaoLoteSchemaProps } from '@/pages/financeiro/contas-pagar/titulos/alteracao-lote/Modal';
+import { ExportAnexosProps } from '@/pages/financeiro/contas-pagar/titulos/components/ButtonExportarTitulos';
+import { LancamentoLoteProps } from '@/pages/financeiro/contas-pagar/titulos/components/ButtonImportarTitulo';
+import { EditRecorrenciaProps } from '@/pages/financeiro/contas-pagar/titulos/recorrencias/ModalEditarRecorrencia';
+import { TituloSchemaProps } from '@/pages/financeiro/contas-pagar/titulos/titulo/form-data';
 import {
   keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 
 export interface GetTitulosPagarProps {
   pagination?: {
@@ -27,16 +27,20 @@ export const useTituloPagar = () => {
 
   const getAll = ({ pagination, filters }: GetTitulosPagarProps) =>
     useQuery({
-      queryKey: ["financeiro", "contas_pagar", "titulo", "lista", pagination],
+      queryKey: ['financeiro', 'contas_pagar', 'titulo', 'lista', pagination],
       staleTime: 5 * 1000 * 60,
       retry: false,
-      queryFn: () => fetchApi.financeiro.contas_pagar.titulos.getAll({pagination, filters}),
+      queryFn: () =>
+        fetchApi.financeiro.contas_pagar.titulos.getAll({
+          pagination,
+          filters,
+        }),
       placeholderData: keepPreviousData,
     });
 
   const getRecorrencias = ({ filters }: GetTitulosPagarProps) =>
     useQuery({
-      queryKey: ["financeiro", "contas_pagar", "recorrencia", "lista", filters],
+      queryKey: ['financeiro', 'contas_pagar', 'recorrencia', 'lista', filters],
       retry: false,
       queryFn: async () => {
         return await api.get(`/financeiro/contas-a-pagar/titulo/recorrencias`, {
@@ -51,7 +55,7 @@ export const useTituloPagar = () => {
       enabled: !!id,
       retry: false,
       staleTime: 5 * 1000 * 60,
-      queryKey: ["financeiro", "contas_pagar", "titulo", "detalhe", id],
+      queryKey: ['financeiro', 'contas_pagar', 'titulo', 'detalhe', id],
       queryFn: async () => {
         try {
           const result = await api.get(
@@ -62,10 +66,10 @@ export const useTituloPagar = () => {
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         }
       },
@@ -74,7 +78,7 @@ export const useTituloPagar = () => {
   const getPendencias = () =>
     useQuery({
       retry: false,
-      queryKey: ["financeiro", "contas_pagar", "pendencia", "lista"],
+      queryKey: ['financeiro', 'contas_pagar', 'pendencia', 'lista'],
       queryFn: async () => {
         try {
           const result = await api.get(
@@ -85,10 +89,10 @@ export const useTituloPagar = () => {
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
-            title: "Erro",
+            title: 'Erro',
             description: errorMessage,
             duration: 3500,
-            variant: "destructive",
+            variant: 'destructive',
           });
         }
       },
@@ -98,26 +102,25 @@ export const useTituloPagar = () => {
     useMutation({
       mutationFn: async (data: TituloSchemaProps) => {
         return await api
-          .post("/financeiro/contas-a-pagar/titulo", data)
+          .post('/financeiro/contas-a-pagar/titulo', data)
           .then((response) => response.data);
       },
       onSuccess() {
         toast({
-          variant: "success",
-          title: "Sucesso!",
-          description: "Solicitação criada com sucesso!",
+          variant: 'success',
+          title: 'Sucesso!',
+          description: 'Solicitação criada com sucesso!',
         });
-        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
-
+        queryClient.invalidateQueries({ queryKey: ['financeiro'] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
         const errorMessage = error.response?.data.message || error.message;
         toast({
-          title: "Erro",
+          title: 'Erro',
           description: errorMessage,
           duration: 3500,
-          variant: "destructive",
+          variant: 'destructive',
         });
       },
     });
@@ -126,26 +129,25 @@ export const useTituloPagar = () => {
     useMutation({
       mutationFn: async ({ id, ...rest }: TituloSchemaProps) => {
         return await api
-          .put("/financeiro/contas-a-pagar/titulo", { id, ...rest })
+          .put('/financeiro/contas-a-pagar/titulo', { id, ...rest })
           .then((response) => response.data);
       },
       onSuccess() {
         toast({
-          variant: "success",
-          title: "Sucesso!",
-          description: "Solicitação atualizada com sucesso!",
+          variant: 'success',
+          title: 'Sucesso!',
+          description: 'Solicitação atualizada com sucesso!',
         });
-        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
-
+        queryClient.invalidateQueries({ queryKey: ['financeiro'] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
         const errorMessage = error.response?.data.message || error.message;
         toast({
-          title: "Erro",
+          title: 'Erro',
           description: errorMessage,
           duration: 3500,
-          variant: "destructive",
+          variant: 'destructive',
         });
       },
     });
@@ -159,20 +161,22 @@ export const useTituloPagar = () => {
       },
       onSuccess() {
         toast({
-          variant: "success",
-          title: "Sucesso!",
-          description: "Exclusão de recorrência realizada com sucesso!",
+          variant: 'success',
+          title: 'Sucesso!',
+          description: 'Exclusão de recorrência realizada com sucesso!',
         });
-        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "recorrencia"] });
+        queryClient.invalidateQueries({
+          queryKey: ['financeiro', 'contas_pagar', 'recorrencia'],
+        });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
         const errorMessage = error.response?.data.message || error.message;
         toast({
-          title: "Erro",
+          title: 'Erro',
           description: errorMessage,
           duration: 3500,
-          variant: "destructive",
+          variant: 'destructive',
         });
       },
     });
@@ -181,20 +185,20 @@ export const useTituloPagar = () => {
     useMutation({
       mutationFn: async (data: LancamentoLoteProps[]) => {
         return api
-          .post("/financeiro/contas-a-pagar/titulo/solicitacao-lote", data)
+          .post('/financeiro/contas-a-pagar/titulo/solicitacao-lote', data)
           .then((response) => response.data);
       },
       onSuccess() {
-        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+        queryClient.invalidateQueries({ queryKey: ['financeiro'] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
         const errorMessage = error.response?.data.message || error.message;
         toast({
-          title: "Erro",
+          title: 'Erro',
           description: errorMessage,
           duration: 3500,
-          variant: "destructive",
+          variant: 'destructive',
         });
       },
     });
@@ -203,25 +207,25 @@ export const useTituloPagar = () => {
     useMutation({
       mutationFn: async ({ ...rest }: AlteracaoLoteSchemaProps) => {
         return await api
-          .put("/financeiro/contas-a-pagar/titulo/change-fields", { ...rest })
+          .put('/financeiro/contas-a-pagar/titulo/change-fields', { ...rest })
           .then((response) => response.data);
       },
       onSuccess() {
         toast({
-          variant: "success",
-          title: "Sucesso!",
-          description: "Alterações realizadas com sucesso!",
+          variant: 'success',
+          title: 'Sucesso!',
+          description: 'Alterações realizadas com sucesso!',
         });
-        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+        queryClient.invalidateQueries({ queryKey: ['financeiro'] });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
         const errorMessage = error.response?.data.message || error.message;
         toast({
-          title: "Erro",
+          title: 'Erro',
           description: errorMessage,
           duration: 3500,
-          variant: "destructive",
+          variant: 'destructive',
         });
       },
     });
@@ -241,20 +245,22 @@ export const useTituloPagar = () => {
       },
       onSuccess() {
         toast({
-          variant: "success",
-          title: "Sucesso!",
-          description: "Alterações realizadas com sucesso!",
+          variant: 'success',
+          title: 'Sucesso!',
+          description: 'Alterações realizadas com sucesso!',
         });
-        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "recorrencia"] });
+        queryClient.invalidateQueries({
+          queryKey: ['financeiro', 'contas_pagar', 'recorrencia'],
+        });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
         const errorMessage = error.response?.data.message || error.message;
         toast({
-          title: "Erro",
+          title: 'Erro',
           description: errorMessage,
           duration: 3500,
-          variant: "destructive",
+          variant: 'destructive',
         });
       },
     });
@@ -267,7 +273,7 @@ export const useTituloPagar = () => {
             `/financeiro/contas-a-pagar/titulo/download`,
             { type, idSelection },
             {
-              responseType: "blob",
+              responseType: 'blob',
             }
           )
           .then((response) => {
@@ -276,19 +282,19 @@ export const useTituloPagar = () => {
       },
       onSuccess() {
         toast({
-          variant: "success",
-          title: "Sucesso!",
-          description: "Exportação realizadas com sucesso!",
+          variant: 'success',
+          title: 'Sucesso!',
+          description: 'Exportação realizadas com sucesso!',
         });
       },
       onError(error) {
         // @ts-expect-error "Vai funcionar"
         const errorMessage = error.response?.data.message || error.message;
         toast({
-          title: "Erro",
+          title: 'Erro',
           description: errorMessage,
           duration: 3500,
-          variant: "destructive",
+          variant: 'destructive',
         });
       },
     });

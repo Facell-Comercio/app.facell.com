@@ -3,20 +3,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import AlertPopUp from "@/components/custom/AlertPopUp";
-import SelectMes from "@/components/custom/SelectMes";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
+import AlertPopUp from '@/components/custom/AlertPopUp';
+import SelectMes from '@/components/custom/SelectMes';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -24,27 +18,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { exportToExcel } from "@/helpers/importExportXLS";
+} from '@/components/ui/table';
+import { exportToExcel } from '@/helpers/importExportXLS';
 import {
   normalizeCurrency,
   normalizeDate,
   normalizeFirstAndLastName,
   normalizeMes,
-} from "@/helpers/mask";
-import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
-import {
-  Check,
-  Download,
-  EraserIcon,
-  FilterIcon,
-  Pen,
-  Plus,
-  Trash,
-} from "lucide-react";
-import { useStoreTitulo } from "../titulo/store";
-import ModalEditarRecorrencias from "./ModalEditarRecorrencia";
-import { useStoreRecorrencias } from "./store";
+} from '@/helpers/mask';
+import { useTituloPagar } from '@/hooks/financeiro/useTituloPagar';
+import { Check, Download, Pen, Plus, Trash } from 'lucide-react';
+import { useStoreTitulo } from '../titulo/store';
+import ModalEditarRecorrencias from './ModalEditarRecorrencia';
+import { useStoreRecorrencias } from './store';
 
 type recorrenciaProps = {
   id: string;
@@ -60,57 +46,41 @@ type recorrenciaProps = {
 };
 
 const ModalRecorrencias = () => {
-  const [
-    modalOpen,
-    filters,
-    closeModal,
-    setFilters,
-    resetFilters,
-    openModalEditRecorrencia,
-  ] = useStoreRecorrencias((state) => [
-    state.modalOpen,
-    state.filters,
-    state.closeModal,
-    state.setFilters,
-    state.resetFilters,
-    state.openModalEditRecorrencia,
-  ]);
+  const [modalOpen, filters, closeModal, setFilters, openModalEditRecorrencia] =
+    useStoreRecorrencias((state) => [
+      state.modalOpen,
+      state.filters,
+      state.closeModal,
+      state.setFilters,
+      state.openModalEditRecorrencia,
+    ]);
 
   const openModal = useStoreTitulo.getState().openModal;
 
   const { data, isLoading, refetch } = useTituloPagar().getRecorrencias({
     filters,
   });
+
   const { mutate: deleteRecorrencia } = useTituloPagar().deleteRecorrencia();
   const rows = data?.data.rows;
-
-  const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    refetch();
-  };
-  const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    await new Promise((resolve) => resolve(resetFilters()));
-    refetch();
-  };
 
   async function exportRecorrencias() {
     const exportedData: any[] = [];
     for (const row of rows) {
       exportedData.push({
-        "ID TITULO": row.id_titulo,
+        'ID TITULO': row.id_titulo,
         FORNECEDOR: row.fornecedor,
         FILIAL: row.filial,
-        "DATA VENCIMENTO": normalizeDate(row.data_vencimento),
+        'DATA VENCIMENTO': normalizeDate(row.data_vencimento),
         VALOR: row.valor,
         DESCRICAO: row.descricao,
-        "GRUPO ECONOMICO": row.grupo_economico,
+        'GRUPO ECONOMICO': row.grupo_economico,
         CRIADOR: normalizeFirstAndLastName(row.criador),
       });
     }
     exportToExcel(
       exportedData,
-      `recorrencias-${normalizeMes(filters.mes || "")}-${filters.ano}`
+      `recorrencias-${normalizeMes(filters.mes || '')}-${filters.ano}`
     );
   }
 
@@ -121,58 +91,39 @@ const ModalRecorrencias = () => {
           <DialogTitle className="flex gap-2 justify-between items-center mb-2">
             <span>Recorrências</span>
             <Button
-              variant={"outline"}
-              type={"button"}
+              variant={'outline'}
+              type={'button'}
               onClick={() => exportRecorrencias()}
             >
               <Download className="me-2" size={20} />
               Exportar
             </Button>
           </DialogTitle>
-          <Accordion
-            type="single"
-            collapsible
-            className="p-2 border-2 dark:border-slate-800 rounded-lg "
-          >
-            <AccordionItem value="item-1" className="relative border-0">
-              <div className="flex gap-3 items-center absolute start-16 top-1">
-                <Button size={"xs"} onClick={handleClickFilter}>
-                  Aplicar <FilterIcon size={12} className="ms-2" />
-                </Button>
-                <Button
-                  size={"xs"}
-                  variant="secondary"
-                  onClick={handleResetFilter}
-                >
-                  Limpar <EraserIcon size={12} className="ms-2" />
-                </Button>
-              </div>
-
-              <AccordionTrigger className={`py-1 hover:no-underline`}>
-                <span className="">Filtros</span>
-              </AccordionTrigger>
-
-              <AccordionContent className="flex gap-2 p-0 pt-3">
-                <SelectMes
-                  placeholder="Selecione o mês..."
-                  value={filters.mes?.toString()}
-                  onValueChange={(mes) => {
-                    setFilters({ mes: mes });
-                  }}
-                />
-                <Input
-                  type="number"
-                  step={"1"}
-                  min={2023}
-                  placeholder="Digite o ano"
-                  value={filters.ano}
-                  onChange={(e) => {
-                    setFilters({ ano: e.target.value });
-                  }}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+            <SelectMes
+              placeholder="Selecione o mês..."
+              value={filters.mes?.toString()}
+              onValueChange={async (mes) => {
+                await new Promise((resolve) =>
+                  resolve(setFilters({ mes: mes }))
+                );
+                refetch();
+              }}
+            />
+            <Input
+              type="number"
+              step={'1'}
+              min={2023}
+              placeholder="Digite o ano"
+              value={filters.ano}
+              onChange={async (e) => {
+                await new Promise((resolve) =>
+                  resolve(setFilters({ ano: e.target.value }))
+                );
+                refetch();
+              }}
+            />
+          </div>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
@@ -211,10 +162,10 @@ const ModalRecorrencias = () => {
                     (rec: recorrenciaProps, index: number) => (
                       <TableRow key={`rec.${index}`} className="text-nowrap">
                         <TableCell className="flex gap-2 justify-center text-xs p-2">
-                          {rec["lancado"] ? (
+                          {rec['lancado'] ? (
                             <Button
                               title="Solicitado"
-                              size={"xs"}
+                              size={'xs'}
                               disabled={true}
                             >
                               <Check size={18} />
@@ -222,13 +173,16 @@ const ModalRecorrencias = () => {
                           ) : (
                             <Button
                               title="Nova solicitação"
-                              size={"xs"}
+                              size={'xs'}
                               onClick={() => {
-                                openModal({id: rec["id_titulo"], recorrencia: {
-                                  data_vencimento: rec["data_vencimento"],
-                                  id: rec["id"],
-                                  valor: rec["valor"],
-                                }});
+                                openModal({
+                                  id: rec['id_titulo'],
+                                  recorrencia: {
+                                    data_vencimento: rec['data_vencimento'],
+                                    id: rec['id'],
+                                    valor: rec['valor'],
+                                  },
+                                });
                               }}
                             >
                               <Plus size={18} />
@@ -237,14 +191,14 @@ const ModalRecorrencias = () => {
                           <Button
                             onClick={() =>
                               openModalEditRecorrencia(
-                                rec["id"],
-                                new Date(rec["data_vencimento"]),
-                                parseFloat(rec["valor"])
+                                rec['id'],
+                                new Date(rec['data_vencimento']),
+                                parseFloat(rec['valor'])
                               )
                             }
                             title="Editar recorrência"
-                            size={"xs"}
-                            variant={"warning"}
+                            size={'xs'}
+                            variant={'warning'}
                           >
                             <Pen size={18} />
                             {/* {} */}
@@ -252,12 +206,12 @@ const ModalRecorrencias = () => {
                           <AlertPopUp
                             title="Deseja realmente excluir?"
                             description="Essa ação não pode ser desfeita. A recorrência será excluída definitivamente do servidor."
-                            action={() => deleteRecorrencia(rec["id"])}
+                            action={() => deleteRecorrencia(rec['id'])}
                           >
                             <Button
                               title="Excluir recorrência"
-                              size={"xs"}
-                              variant={"destructive"}
+                              size={'xs'}
+                              variant={'destructive'}
                             >
                               <Trash size={18} />
                               {/* {} */}
@@ -265,25 +219,25 @@ const ModalRecorrencias = () => {
                           </AlertPopUp>
                         </TableCell>
                         <TableCell className="text-xs uppercase p-2">
-                          {rec["fornecedor"]}
+                          {rec['fornecedor']}
                         </TableCell>
                         <TableCell className="text-xs uppercase p-2">
-                          {rec["filial"]}
+                          {rec['filial']}
                         </TableCell>
                         <TableCell className="text-xs uppercase p-2 text-center">
-                          {normalizeDate(rec["data_vencimento"])}
+                          {normalizeDate(rec['data_vencimento'])}
                         </TableCell>
                         <TableCell className="text-xs uppercase p-2 text-center">
-                          {normalizeCurrency(rec["valor"])}
+                          {normalizeCurrency(rec['valor'])}
                         </TableCell>
                         <TableCell className="text-xs uppercase p-2">
-                          {rec["descricao"]}
+                          {rec['descricao']}
                         </TableCell>
                         <TableCell className="text-xs uppercase p-2">
-                          {rec["grupo_economico"]}
+                          {rec['grupo_economico']}
                         </TableCell>
                         <TableCell className="text-xs uppercase p-2">
-                          {normalizeFirstAndLastName(rec["criador"])}
+                          {normalizeFirstAndLastName(rec['criador'])}
                         </TableCell>
                       </TableRow>
                     )

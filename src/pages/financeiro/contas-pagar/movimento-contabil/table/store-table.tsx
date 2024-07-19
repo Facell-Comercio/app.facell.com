@@ -1,4 +1,5 @@
-import { create } from "zustand";
+import { DateRange } from 'react-day-picker';
+import { create } from 'zustand';
 
 export interface Pagination {
   pageIndex: number;
@@ -12,19 +13,19 @@ export interface Filters {
   id_conta_bancaria?: string;
   conta_bancaria?: string;
   grupo_economico?: string;
+  range_data?: DateRange;
   mes?: string;
   ano?: string;
   id_matriz?: string;
 }
 
 const initialFilters: Filters = {
-  id_conta_bancaria: "",
-  id_grupo_economico: "",
-  conta_bancaria: "",
-  grupo_economico: "",
-  mes: "",
-  ano: "",
-  id_matriz: "",
+  id_conta_bancaria: '',
+  id_grupo_economico: '',
+  conta_bancaria: '',
+  grupo_economico: '',
+  range_data: { from: undefined, to: undefined },
+  id_matriz: '',
 };
 
 export interface State {

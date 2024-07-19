@@ -1,13 +1,18 @@
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import { DataTable } from "@/components/custom/DataTable";
 import FormInput from "@/components/custom/FormInput";
 import FormSwitch from "@/components/custom/FormSwitch";
 import SelectMatriz from "@/components/custom/SelectMatriz";
+import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { normalizeFirstAndLastName } from "@/helpers/mask";
 import { CartaoSchema, useCartoes } from "@/hooks/financeiro/useCartoes";
+import { UserProps } from "@/hooks/useUsers";
 import ModalFornecedores, {
   ItemFornecedor,
 } from "@/pages/financeiro/components/ModalFornecedores";
-import { CreditCard, ReceiptText } from "lucide-react";
+import ModalUsers from "@/pages/financeiro/components/ModalUsers";
+import { CreditCard, Plus, ReceiptText, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TituloSchemaProps } from "../../titulos/titulo/form-data";
 import { columnsTableFaturas } from "./columnsFaturas";
@@ -40,6 +45,10 @@ const FormCartao = ({
     isSuccess: updateIsSuccess,
     isError: updateIsError,
   } = useCartoes().update();
+  const { mutate: removeUserFatura, isPending: removeUserFaturaIsPending } =
+    useCartoes().removeUserFatura();
+  const { mutate: insertUserFatura, isPending: insertUserFaturaIsPending } =
+    useCartoes().insertUserFatura();
   const [
     modalEditing,
     editModal,
@@ -59,18 +68,14 @@ const FormCartao = ({
   ]);
   const [modalFornecedorOpen, setModalFornecedorOpen] =
     useState<boolean>(false);
+  const [modalUsersOpen, setModalUsersOpen] = useState<boolean>(false);
 
   const { form } = useFormCartaoData(data);
   const id_matriz = form.watch("id_matriz");
 
-  const { data: dataFaturas, isLoading: isLoadingFaturas } =
-    useCartoes().getOneFaturas({
-      id,
-      pagination: paginationFaturas,
-    });
-
-  const rowsFaturas = dataFaturas?.data?.rows || [];
-  const rowCountFaturas = dataFaturas?.data?.rowCount || 0;
+  const rowsFaturas = data?.faturas?.rows || [];
+  const rowCountFaturas = data?.faturas?.rowCount || 0;
+  const users = data?.users || [];
 
   const onSubmitData = (data: CartaoSchema) => {
     if (id) update(data);
@@ -94,6 +99,13 @@ const FormCartao = ({
     form.setValue("id_fornecedor", String(item.id) || "");
     form.setValue("nome_fornecedor", String(item.nome) || "");
     setModalFornecedorOpen(false);
+  }
+
+  async function handleSelectionUser(user: UserProps) {
+    insertUserFatura({
+      id_cartao: id,
+      id_user: user.id,
+    });
   }
 
   // ! Verificar a existênicia de erros
@@ -201,8 +213,64 @@ const FormCartao = ({
                     data={rowsFaturas}
                     rowCount={rowCountFaturas}
                     columns={columnsTableFaturas}
-                    isLoading={isLoadingFaturas}
                   />
+                </section>
+              </div>
+            )}
+            {!!id && (
+              <div className="max-w-full p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                <div className="flex justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <User />{" "}
+                    <span className="text-lg font-bold ">Usuários</span>
+                  </div>
+                  <Button
+                    className="flex gap-2"
+                    size={"sm"}
+                    onClick={() => setModalUsersOpen(true)}
+                    disabled={!modalEditing}
+                  >
+                    <Plus />
+                    Adicionar
+                  </Button>
+                </div>
+                <section className="flex gap-2 flex-wrap animate-in">
+                  {users &&
+                    users.map((user) => (
+                      <div
+                        key={user.id}
+                        className="flex gap-3 items-center p-1.5 pe-4 rounded-full bg-background w-fit relative"
+                      >
+                        <img
+                          src={user.img_url || ""}
+                          alt={`Imagem de Perfil de ${user.nome}`}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                        <span className="capitalize text-sm text-nowrap">
+                          {normalizeFirstAndLastName(user.nome).toLowerCase()}
+                        </span>
+                        {modalEditing && (
+                          <AlertPopUp
+                            title={"Deseja realmente remover esse usuário?"}
+                            action={() => {
+                              removeUserFatura(user.id);
+                            }}
+                          >
+                            <Button
+                              size={"sm"}
+                              className="rounded-full w-6 h-6 p-1 absolute top-[-5px] right-[-5px]"
+                              variant={"destructive"}
+                              disabled={
+                                removeUserFaturaIsPending ||
+                                insertUserFaturaIsPending
+                              }
+                            >
+                              <X size={10} />
+                            </Button>
+                          </AlertPopUp>
+                        )}
+                      </div>
+                    ))}
                 </section>
               </div>
             )}
@@ -215,6 +283,11 @@ const FormCartao = ({
         onOpenChange={() => setModalFornecedorOpen((prev) => !prev)}
       />
       <ModalFatura />
+      <ModalUsers
+        open={modalUsersOpen}
+        onOpenChange={() => setModalUsersOpen(false)}
+        handleSelection={handleSelectionUser}
+      />
     </div>
   );
 };
