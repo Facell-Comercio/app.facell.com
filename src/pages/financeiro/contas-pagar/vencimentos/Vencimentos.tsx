@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
 import { useVencimentos } from "@/hooks/financeiro/useVencimentos";
 import { Edit } from "lucide-react";
 import ModalBordero from "../borderos/bordero/Modal";
@@ -22,7 +21,6 @@ const Vencimentos = () => {
     filters,
     rowSelection,
     handleRowSelection,
-    idSelection,
     paginationAPagar,
     setPaginationAPagar,
     paginationEmBordero,
@@ -34,7 +32,6 @@ const Vencimentos = () => {
     state.filters,
     state.rowSelection,
     state.handleRowSelection,
-    state.idSelection,
     state.paginationAPagar,
     state.setPaginationAPagar,
     state.paginationEmBordero,
@@ -89,7 +86,7 @@ const Vencimentos = () => {
     refetchVencimentosAPagar();
     refetchVencimentosEmBordero();
     refetchVencimentosPagos();
-    handleRowSelection({ idSelection: [], rowSelection: {} });
+    handleRowSelection({ rowSelection: {} });
   }
 
   const [itemOpen, setItemOpen] = useState<string>("a-pagar");
@@ -117,16 +114,6 @@ const Vencimentos = () => {
               size={"sm"}
               className="border border-orange-200 dark:border-orange-600"
               onClick={() => {
-                if (!idSelection.length) {
-                  toast({
-                    title: "Vencimentos não selecionados",
-                    description:
-                      "Selecione no mínimo um vencimento para alterar",
-                    duration: 3000,
-                    variant: "warning",
-                  });
-                  return;
-                }
                 openModal();
               }}
             >
@@ -180,7 +167,7 @@ const Vencimentos = () => {
       </Accordion>
       <ModalBordero />
       <ModalTituloPagar />
-      <ModalAlteracoesVencimentosLote />
+      <ModalAlteracoesVencimentosLote itens={dataVencimentosAPagar?.data?.rows || []} />
       <ModalFatura />
     </div>
   );

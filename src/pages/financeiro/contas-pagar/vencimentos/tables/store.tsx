@@ -43,7 +43,6 @@ export interface State {
 }
 type HandleRowSelectionProps = {
   rowSelection: RowSelectionState;
-  idSelection: number[];
 };
 
 export interface Actions {
@@ -86,7 +85,7 @@ export const useStoreTableVencimentos = create<State & Actions>((set) => ({
     set({ paginationEmBordero: pagination }),
   setPaginationPagos: (pagination) => set({ paginationPagos: pagination }),
   handleRowSelection: (data: HandleRowSelectionProps) =>
-    set({ rowSelection: data.rowSelection, idSelection: data.idSelection }),
+    set({ rowSelection: data.rowSelection }),
 
   openModal: () => set({ modalOpen: true }),
   closeModal: () => set({ modalOpen: false }),
