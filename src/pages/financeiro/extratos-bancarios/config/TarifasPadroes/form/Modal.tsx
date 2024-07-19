@@ -1,28 +1,28 @@
-import AlertPopUp from "@/components/custom/AlertPopUp";
-import FormInput from "@/components/custom/FormInput";
-import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
-import ModalButtons from "@/components/custom/ModalButtons";
-import { Button } from "@/components/ui/button";
+import AlertPopUp from '@/components/custom/AlertPopUp';
+import FormInput from '@/components/custom/FormInput';
+import FormSelectGrupoEconomico from '@/components/custom/FormSelectGrupoEconomico';
+import ModalButtons from '@/components/custom/ModalButtons';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Form } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { TarifaProps, useTarifas } from "@/hooks/financeiro/useTarifas";
-import ModalCentrosCustos from "@/pages/financeiro/components/ModalCentrosCustos";
+} from '@/components/ui/dialog';
+import { Form } from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import { TarifaProps, useTarifas } from '@/hooks/financeiro/useTarifas';
+import ModalCentrosCustos from '@/pages/financeiro/components/ModalCentrosCustos';
 import ModalPlanosContas, {
   ItemPlanoContas,
-} from "@/pages/financeiro/components/ModalPlanosContas";
-import { CentroCustos } from "@/types/financeiro/centro-custos-type";
-import { Trash } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useStoreTableTarifas } from "../table/store-table";
-import useFormTarifasPadrao from "./form-data";
+} from '@/pages/financeiro/components/ModalPlanosContas';
+import { CentroCustos } from '@/types/financeiro/centro-custos-type';
+import { Trash } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useStoreTableTarifas } from '../table/store-table';
+import useFormTarifasPadrao from './form-data';
 
 const ModalTarifas = () => {
   const [id, modalOpen, closeModal, modalEditing, editModal] =
@@ -45,19 +45,19 @@ const ModalTarifas = () => {
     Record<string, any>;
 
   for (const key in data?.data) {
-    if (typeof data?.data[key] === "number") {
+    if (typeof data?.data[key] === 'number') {
       newData[key] = String(data?.data[key]);
     } else if (data?.data[key] === null) {
-      newData[key] = "";
+      newData[key] = '';
     } else {
       newData[key] = data?.data[key];
     }
   }
 
   const { form } = useFormTarifasPadrao(newData);
-  const {errors} = form.formState;
-  console.log({errors})
-  
+  // const {errors} = form.formState;
+  // console.log({errors})
+
   const {
     mutate: insert,
     isPending: insertIsPending,
@@ -78,15 +78,15 @@ const ModalTarifas = () => {
     closeModal();
   }
   const handleSelectCentroCusto = (centro_custo: CentroCustos) => {
-    form.setValue("centro_custo", centro_custo.nome);
-    form.setValue("id_centro_custo", centro_custo.id);
+    form.setValue('centro_custo', centro_custo.nome);
+    form.setValue('id_centro_custo', centro_custo.id);
   };
   function handleSelectionPlanoContas(plano_contas: ItemPlanoContas) {
-    form.setValue("plano_contas", plano_contas.descricao);
-    form.setValue("id_plano_contas", plano_contas.id);
+    form.setValue('plano_contas', plano_contas.descricao);
+    form.setValue('id_plano_contas', plano_contas.id);
   }
 
-  const id_grupo_economico = form.watch("id_grupo_economico");
+  const id_grupo_economico = form.watch('id_grupo_economico');
 
   useEffect(() => {
     if (insertIsSuccess || updateIsSuccess) {
@@ -98,7 +98,7 @@ const ModalTarifas = () => {
     <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>{id ? `Tarifa: ${id}` : "Nova Tarifa"}</DialogTitle>
+          <DialogTitle>{id ? `Tarifa: ${id}` : 'Nova Tarifa'}</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh] w-full">
           {modalOpen && !isLoading && (!id || isSuccess) ? (
@@ -128,8 +128,8 @@ const ModalTarifas = () => {
                   <FormInput
                     title={
                       !id_grupo_economico
-                        ? "Primeiro selecione o grupo econômico"
-                        : ""
+                        ? 'Primeiro selecione o grupo econômico'
+                        : ''
                     }
                     name="centro_custo"
                     label="Centro de Custos"
@@ -142,8 +142,8 @@ const ModalTarifas = () => {
                   <FormInput
                     title={
                       !id_grupo_economico
-                        ? "Primeiro selecione o grupo econômico"
-                        : ""
+                        ? 'Primeiro selecione o grupo econômico'
+                        : ''
                     }
                     name="plano_contas"
                     label="Plano de Contas"
@@ -191,7 +191,7 @@ const ModalTarifas = () => {
           >
             {id && (
               <AlertPopUp
-                title={"Deseja realmente excluir"}
+                title={'Deseja realmente excluir'}
                 description="Essa ação não pode ser desfeita. A tarifa será excluída definitivamente do servidor."
                 action={() => {
                   deleteOne(id);
@@ -199,11 +199,11 @@ const ModalTarifas = () => {
                 }}
               >
                 <Button
-                  type={"button"}
+                  type={'button'}
                   size="lg"
-                  variant={"destructive"}
+                  variant={'destructive'}
                   className={`text-white justify-self-start ${
-                    !modalEditing && "hidden"
+                    !modalEditing && 'hidden'
                   }`}
                 >
                   <Trash className="me-2" />

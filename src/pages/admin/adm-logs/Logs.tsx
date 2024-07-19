@@ -49,7 +49,6 @@ const Logs = () => {
       }),
     [toogleRefetch, data]
   );
-  console.log(filteredData);
 
   return (
     <div className="flex flex-col gap-3">
