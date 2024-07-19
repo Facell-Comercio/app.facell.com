@@ -83,7 +83,7 @@ const FormTituloPagar = ({
     useState<boolean>(false);
 
   const data = form?.getValues() || {}
-  const titulo = form?.getValues() || {}
+  const titulo = data
 
   const {
     setValue,
