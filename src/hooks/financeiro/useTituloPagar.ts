@@ -27,7 +27,7 @@ export const useTituloPagar = () => {
 
   const getAll = ({ pagination, filters }: GetTitulosPagarProps) =>
     useQuery({
-      queryKey: ['financeiro', 'contas_pagar', 'titulo', 'lista', pagination],
+      queryKey: ['financeiro', 'contas_pagar', 'titulo', 'lista', {pagination, filters}],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: () =>

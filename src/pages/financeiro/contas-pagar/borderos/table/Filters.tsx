@@ -1,4 +1,3 @@
-import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +21,7 @@ import ModalContasBancarias, {
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
 import { useStoreTableBorderos } from "./store-table";
+import SelectMatriz from "@/components/custom/SelectMatriz";
 
 const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableBorderos((state) => state.filters);
@@ -93,11 +93,11 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
                   setFilters({ banco: e.target.value });
                 }}
               />
-              <SelectGrupoEconomico
+              <SelectMatriz
                 showAll
-                value={filters.id_grupo_economico}
-                onChange={(id_grupo_economico) => {
-                  setFilters({ id_grupo_economico: id_grupo_economico });
+                value={filters.id_matriz}
+                onChange={(id_matriz) => {
+                  setFilters({ id_matriz: id_matriz });
                 }}
               />
               <Input
