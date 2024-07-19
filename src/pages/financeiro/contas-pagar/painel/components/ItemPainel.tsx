@@ -2,7 +2,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { exportToExcel } from '@/helpers/importExportXLS';
-import { normalizeDate } from '@/helpers/mask';
 import { api } from '@/lib/axios';
 import { Download, Eye } from 'lucide-react';
 import { ReactNode } from 'react';
@@ -28,7 +27,9 @@ export const ItemPainel = ({
     const response = await api.get(
       `/financeiro/contas-a-pagar/painel/${endpoint}`
     );
+
     const rows = response?.data?.rows || [];
+    console.log(rows);
     const data = rows.map((obj: any) => {
       const transformedObj: { [key: string]: any } = {};
       for (const key in obj) {
@@ -38,13 +39,14 @@ export const ItemPainel = ({
         if (newKey === 'VALOR') {
           newValue = parseFloat(newValue);
         } else if (newKey.startsWith('DATA')) {
-          newValue = normalizeDate(newValue || '');
+          newValue = new Date(newValue || '').toLocaleDateString('pt-BR');
         }
 
         transformedObj[newKey] = newValue;
       }
       return transformedObj;
     });
+    console.log(data);
 
     exportToExcel(data, String(title).toUpperCase());
   }

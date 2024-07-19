@@ -18,7 +18,7 @@ function trim_headers(ws: XLSX.WorkSheet) {
 //     const newRow = { ...row };
 //     Object.keys(newRow).forEach((key) => {
 //       if (typeof newRow[key] === 'string' && !isNaN(Date.parse(newRow[key]))) {
-//         newRow[key] = excelDateToJSDate(newRow[key]);
+//         newRow[key] = new Date(newRow[key]).toLocaleDateString('pt-BR');
 //       }
 //     });
 //     return newRow;

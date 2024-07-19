@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 interface UseStoreConciliacaoCP {
   id?: string | null;
@@ -20,11 +20,12 @@ export const useStoreConciliacaoCP = create<UseStoreConciliacaoCP>((set) => ({
   isPending: false,
 
   openModal: (id: string) => set({ modalOpen: true, id }),
-  closeModal: () => set({ modalOpen: false }),
+  closeModal: () => set({ modalOpen: false, id: null }),
   editModal: (bool) => set({ modalEditing: bool }),
   editIsPending: (bool) => set({ isPending: bool }),
   toggleModal: () =>
     set(() => ({
+      id: null,
       modalOpen: false,
       modalEditing: false,
     })),

@@ -1,32 +1,33 @@
-import { useLogs } from "@/hooks/useLogs";
-import { addDays, isWithinInterval } from "date-fns";
-import { useMemo, useState } from "react";
-import FilterLogs from "./FiltersLogs";
-import ModalLog from "./Modal";
-import RowVirtualizedFixed, { Log } from "./RowVirtualizedFixed";
-import { useStoreLogs } from "./store";
-import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
-import AlertPopUp from "@/components/custom/AlertPopUp";
+import AlertPopUp from '@/components/custom/AlertPopUp';
+import { Button } from '@/components/ui/button';
+import { useLogs } from '@/hooks/useLogs';
+import { addDays, isWithinInterval } from 'date-fns';
+import { Trash } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import FilterLogs from './FiltersLogs';
+import ModalLog from './Modal';
+import RowVirtualizedFixed, { Log } from './RowVirtualizedFixed';
+import { useStoreLogs } from './store';
 
 const Logs = () => {
   const [toogleRefetch, setToogleRefetch] = useState(false);
   const filters = useStoreLogs().filters;
   const id = useStoreLogs().id;
+  const time = useStoreLogs().time;
   const { data, isFetched, isLoading, isError, refetch } = useLogs().getAll();
-  const { mutate, isPending } = useLogs().delete()
+  const { mutate, isPending } = useLogs().delete();
 
   const handleDeleteLogs = async () => {
-    mutate()
-  }
+    mutate();
+  };
 
   const filteredData: Log[] = useMemo(
     () =>
       data?.filter((data: Log) => {
         return (
-          (parseInt(filters.level || "0") === 30
+          (parseInt(filters.level || '0') === 30
             ? data.level !== 50
-            : data.level >= parseInt(filters.level || "0")) &&
+            : data.level >= parseInt(filters.level || '0')) &&
           (!!filters.origin
             ? data.origin === String(filters.origin).toUpperCase()
             : true) &&
@@ -38,16 +39,17 @@ const Logs = () => {
             : true) &&
           (!!filters.range_data?.from
             ? isWithinInterval(new Date(data.date), {
-              start: filters.range_data?.from,
-              end: filters.range_data?.to
-                ? addDays(filters.range_data?.to, 1)
-                : addDays(filters.range_data?.from, 1),
-            })
+                start: filters.range_data?.from,
+                end: filters.range_data?.to
+                  ? addDays(filters.range_data?.to, 1)
+                  : addDays(filters.range_data?.from, 1),
+              })
             : true)
         );
       }),
     [toogleRefetch, data]
   );
+  console.log(filteredData);
 
   return (
     <div className="flex flex-col gap-3">
@@ -57,11 +59,7 @@ const Logs = () => {
           description="Todos os logs serão excluídos e não será possível recuperar..."
           action={handleDeleteLogs}
         >
-          <Button
-            disabled={isPending}
-            size={"sm"}
-            variant={"destructive"}
-          >
+          <Button disabled={isPending} size={'sm'} variant={'destructive'}>
             <Trash size={18} className="me-2" /> Excluir Todos
           </Button>
         </AlertPopUp>
@@ -82,7 +80,9 @@ const Logs = () => {
           //@ts-ignore vai funcionar
           data={
             filteredData.filter(
-              (data: Log) => data.pid === parseInt(id || "0")
+              (data: Log) =>
+                data.pid === parseInt(id || '0') &&
+                data.time === parseInt(time || '')
             )[0]
           }
         />

@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { sliceString } from "@/helpers/mask";
+import { Skeleton } from '@/components/ui/skeleton';
+import { sliceString } from '@/helpers/mask';
 import {
   ColumnDef,
   flexRender,
@@ -8,12 +8,12 @@ import {
   Row,
   SortingState,
   useReactTable,
-} from "@tanstack/react-table";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { formatDate } from "date-fns";
-import { FileSearch2 } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
-import { useStoreLogs } from "./store";
+} from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { formatDate } from 'date-fns';
+import { FileSearch2 } from 'lucide-react';
+import { useMemo, useRef, useState } from 'react';
+import { useStoreLogs } from './store';
 
 type DataLog = {
   message?: string;
@@ -23,7 +23,7 @@ type DataLog = {
 export interface Log {
   type: string;
   level: number;
-  date: string;
+  date: number;
   time: string; // Assuming this is an ISO 8601 formatted date string
   pid: number;
   hostname: string;
@@ -44,8 +44,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
   const columns = useMemo<ColumnDef<Log>[]>(
     () => [
       {
-        accessorKey: "pid",
-        header: "AÇÃO",
+        accessorKey: 'pid',
+        header: 'AÇÃO',
         cell: (info) => {
           return (
             <div
@@ -56,7 +56,10 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
                 size={20}
                 className="text-blue-500 cursor-pointer"
                 onClick={() => {
-                  openModal(info.getValue<number>().toString());
+                  openModal(
+                    info.getValue<number>().toString(),
+                    info.row.original.time
+                  );
                 }}
               />
             </div>
@@ -66,33 +69,33 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
       },
 
       {
-        accessorKey: "date",
-        header: "DATA",
+        accessorKey: 'date',
+        header: 'DATA',
         cell: (info) => {
           let valor = formatDate(
             info.getValue<string>(),
-            "dd/MM/yyyy HH:mm:ss"
+            'dd/MM/yyyy HH:mm:ss'
           );
           return <div className="uppercase mx-auto">{valor}</div>;
         },
         size: 130,
       },
       {
-        accessorKey: "level",
-        header: "TIPO",
+        accessorKey: 'level',
+        header: 'TIPO',
         cell: (info) => {
           const valor = info.getValue<string>();
-          let color = "";
-          let texto = "";
+          let color = '';
+          let texto = '';
           if (parseInt(valor) === 30) {
-            color = "text-blue-500";
-            texto = "INFO";
+            color = 'text-blue-500';
+            texto = 'INFO';
           } else if (parseInt(valor) === 40) {
-            color = "text-warning";
-            texto = "WARNING";
+            color = 'text-warning';
+            texto = 'WARNING';
           } else if (parseInt(valor) === 50) {
-            color = "text-red-500";
-            texto = "ERROR";
+            color = 'text-red-500';
+            texto = 'ERROR';
           }
 
           return (
@@ -105,8 +108,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
         size: 100,
       },
       {
-        accessorKey: "module",
-        header: "MÓDULO",
+        accessorKey: 'module',
+        header: 'MÓDULO',
         cell: (info) => {
           let valor = info.getValue<string>();
           return <div className="uppercase mx-auto">{valor}</div>;
@@ -114,8 +117,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
         size: 200,
       },
       {
-        accessorKey: "origin",
-        header: "ORIGEM",
+        accessorKey: 'origin',
+        header: 'ORIGEM',
         cell: (info) => {
           let valor = info.getValue<string>();
           return <div className="uppercase mx-auto">{valor}</div>;
@@ -123,8 +126,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
         size: 200,
       },
       {
-        accessorKey: "method",
-        header: "MÉTODO",
+        accessorKey: 'method',
+        header: 'MÉTODO',
         cell: (info) => {
           let valor = info.getValue<string>();
           return <div className="uppercase mx-auto">{valor}</div>;
@@ -132,13 +135,13 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
         size: 200,
       },
       {
-        accessorKey: "data",
-        header: "MESSAGE",
+        accessorKey: 'data',
+        header: 'MESSAGE',
         cell: (info) => {
           let data = info.getValue<DataLog>();
           return (
             <div className="uppercase">
-              {sliceString((data && data.message) || "", 55)}
+              {sliceString((data && data.message) || '', 55)}
             </div>
           );
         },
@@ -171,8 +174,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
     estimateSize: () => 30,
     overscan: 10,
     measureElement:
-      typeof window !== "undefined" &&
-      navigator.userAgent.indexOf("Firefox") === -1
+      typeof window !== 'undefined' &&
+      navigator.userAgent.indexOf('Firefox') === -1
         ? (element) => element?.getBoundingClientRect().height
         : undefined,
   });
@@ -191,13 +194,13 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
                   {table.getHeaderGroups().map((headerGroup, index) => (
                     <tr
                       className="flex w-full"
-                      key={"tituloConciliar thead" + headerGroup.id + index}
+                      key={'tituloConciliar thead' + headerGroup.id + index}
                     >
                       {headerGroup.headers.map((header, index) => {
                         return (
                           <th
                             className={`py-2`}
-                            key={"tituloConciliar th" + header.id + index}
+                            key={'tituloConciliar th' + header.id + index}
                             colSpan={header.colSpan}
                             style={{
                               width: header.getSize(),
@@ -207,8 +210,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
                               <div
                                 {...{
                                   className: header.column.getCanSort()
-                                    ? "cursor-pointer select-none"
-                                    : "",
+                                    ? 'cursor-pointer select-none'
+                                    : '',
                                   onClick:
                                     header.column.getToggleSortingHandler(),
                                 }}
@@ -218,8 +221,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
                                   header.getContext()
                                 )}
                                 {{
-                                  asc: " 🔼",
-                                  desc: " 🔽",
+                                  asc: ' 🔼',
+                                  desc: ' 🔽',
                                 }[header.column.getIsSorted() as string] ??
                                   null}
                               </div>
@@ -232,22 +235,22 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
                 </thead>
                 <tbody
                   style={{
-                    display: "grid",
+                    display: 'grid',
                     height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-                    position: "relative", //needed for absolute positioning of rows
+                    position: 'relative', //needed for absolute positioning of rows
                   }}
                 >
                   {virtualizer.getVirtualItems().map((virtualRow, index) => {
                     const row = rows[virtualRow.index] as Row<Log>;
                     return (
                       <tr
-                        key={"tituloConciliar tr" + virtualRow.index + index}
+                        key={'tituloConciliar tr' + virtualRow.index + index}
                         data-index={index}
                         style={{
-                          display: "flex",
-                          position: "absolute",
+                          display: 'flex',
+                          position: 'absolute',
                           transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
-                          width: "100%",
+                          width: '100%',
                         }}
                         className="bg-background"
                       >
@@ -255,9 +258,9 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
                           return (
                             <td
                               className={`flex items-center p-2`}
-                              key={"tituloConciliar td" + cell.id + index}
+                              key={'tituloConciliar td' + cell.id + index}
                               style={{
-                                display: "flex",
+                                display: 'flex',
                                 width: cell.column.getSize(),
                               }}
                             >

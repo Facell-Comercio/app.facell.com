@@ -1,15 +1,15 @@
-import UploadDialog from "@/components/custom/UploadDialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useAuthStore } from "@/context/auth-store";
-import { useUsers } from "@/hooks/useUsers";
-import { api } from "@/lib/axios";
-import { useQueryClient } from "@tanstack/react-query";
-import { Camera, Crown, Key, User } from "lucide-react";
-import { Navigate } from "react-router-dom";
-import ModalUpdateSenha from "./ModalUpdateSenha";
-import { useStorePerfil } from "./store";
+import UploadDialog from '@/components/custom/UploadDialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useAuthStore } from '@/context/auth-store';
+import { useUsers } from '@/hooks/useUsers';
+import { api } from '@/lib/axios';
+import { useQueryClient } from '@tanstack/react-query';
+import { Camera, Crown, Key, User } from 'lucide-react';
+import { Navigate } from 'react-router-dom';
+import ModalUpdateSenha from './ModalUpdateSenha';
+import { useStorePerfil } from './store';
 
 type PermissoesProps = {
   id: number;
@@ -42,11 +42,11 @@ const Perfil = () => {
   const queryClient = useQueryClient();
   const user = useAuthStore().user;
   if (!user?.id) {
-    return <Navigate to={"/login"} />;
+    return <Navigate to={'/login'} />;
   }
 
   const { data } = useUsers().getOne(parseInt(user.id));
-  const userData = data?.data;
+  const userData = data;
 
   const [openModal, modalUploadOpen, openUploadModal, closeUploadModal] =
     useStorePerfil((state) => [
@@ -56,18 +56,18 @@ const Perfil = () => {
       state.closeUploadModal,
     ]);
   for (const key in userData) {
-    if (typeof userData[key] === "number") {
+    if (typeof userData[key] === 'number') {
       userData[key] = String(userData[key]);
     } else if (userData[key] === null) {
-      userData[key] = "";
+      userData[key] = '';
     } else {
       userData[key] = userData[key];
     }
   }
 
   async function updateImage(newUrl?: string | null) {
-    await api.put(`user/update-img/${user?.id}`, { img_url: newUrl });
-    queryClient.invalidateQueries({ queryKey: ["user"] });
+    await api.put(`users/update-img/${user?.id}`, { img_url: newUrl });
+    queryClient.invalidateQueries({ queryKey: ['user'] });
   }
 
   return (
@@ -80,7 +80,7 @@ const Perfil = () => {
           <span className="flex items-center justify-center w-40 h-40  border border-secondary rounded-full relative">
             {userData?.img_url ? (
               <img
-                src={userData?.img_url || ""}
+                src={userData?.img_url || ''}
                 alt="Imagem de Perfil"
                 className="w-36 h-36 rounded-full object-cover"
               />
@@ -97,8 +97,8 @@ const Perfil = () => {
             </span>
           </span>
           <Button
-            variant={"secondary"}
-            size={"sm"}
+            variant={'secondary'}
+            size={'sm'}
             className="flex gap-3"
             onClick={() => openModal()}
           >
@@ -111,7 +111,7 @@ const Perfil = () => {
             <div className="flex-1">
               <label className="font-medium text-md ">Nome</label>
               <Input
-                value={userData?.nome || ""}
+                value={userData?.nome || ''}
                 className="capitalize min-w-[35ch]"
                 readOnly={true}
               />
@@ -119,7 +119,7 @@ const Perfil = () => {
             <div className="flex-1">
               <label className="font-medium text-md">Email</label>
               <Input
-                value={userData?.email || ""}
+                value={userData?.email || ''}
                 className="min-w-[35ch]"
                 readOnly={true}
               />
@@ -143,12 +143,13 @@ const Perfil = () => {
               <span className="flex gap-1.5 flex-wrap">
                 {userData?.departamentos?.map(
                   ({ id, nome, gestor }: DepartamentosProps) => (
-                    <Badge
-                      key={id + nome}
-                      className={`capitalize text-nowrap`}
-                    >
+                    <Badge key={id + nome} className={`capitalize text-nowrap`}>
                       <div className="relative">
-                        {gestor ? <div className="rounded-full p-1 absolute -top-4 -end-2 bg-secondary"><Crown size={10} className=" text-yellow-600"/></div> : null}
+                        {gestor ? (
+                          <div className="rounded-full p-1 absolute -top-4 -end-2 bg-secondary">
+                            <Crown size={10} className=" text-yellow-600" />
+                          </div>
+                        ) : null}
                         {nome}
                       </div>
                     </Badge>
@@ -163,12 +164,13 @@ const Perfil = () => {
               <span className="flex gap-1.5 flex-wrap">
                 {userData?.filiais?.map(
                   ({ id, nome, gestor }: FiliaisProps) => (
-                    <Badge
-                      key={id + nome}
-                      className={`capitalize text-nowrap`}
-                    >
+                    <Badge key={id + nome} className={`capitalize text-nowrap`}>
                       <div className="relative">
-                        {gestor ? <div className="rounded-full p-1 absolute -top-4 -end-2 bg-secondary"><Crown size={10} className=" text-yellow-600"/></div> : null}
+                        {gestor ? (
+                          <div className="rounded-full p-1 absolute -top-4 -end-2 bg-secondary">
+                            <Crown size={10} className=" text-yellow-600" />
+                          </div>
+                        ) : null}
                         {nome}
                       </div>
                     </Badge>
@@ -183,12 +185,13 @@ const Perfil = () => {
               <span className="flex gap-1.5 flex-wrap">
                 {userData?.centros_custo?.map(
                   ({ id, nome, gestor }: CentroCustoProps) => (
-                    <Badge
-                      key={id + nome}
-                      className={`capitalize text-nowrap`}
-                    >
+                    <Badge key={id + nome} className={`capitalize text-nowrap`}>
                       <div className="relative">
-                        {gestor ? <div className="rounded-full p-1 absolute -top-4 -end-2 bg-secondary"><Crown size={10} className=" text-yellow-600"/></div> : null}
+                        {gestor ? (
+                          <div className="rounded-full p-1 absolute -top-4 -end-2 bg-secondary">
+                            <Crown size={10} className=" text-yellow-600" />
+                          </div>
+                        ) : null}
                         {nome}
                       </div>
                     </Badge>
@@ -206,7 +209,7 @@ const Perfil = () => {
         closeAction={closeUploadModal}
         mediatype="img"
         action={updateImage}
-        title={"Selecione uma imagem"}
+        title={'Selecione uma imagem'}
       />
     </div>
   );
