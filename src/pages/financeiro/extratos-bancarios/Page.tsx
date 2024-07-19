@@ -1,3 +1,4 @@
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   checkUserDepartments,
@@ -7,7 +8,6 @@ import { Navigate } from "react-router-dom";
 import ConciliacaoCP from "./conciliacao/cp/ConciliacaoCP";
 import ConfigTab from "./config/ConfigTab";
 import ExtratoTab from "./extrato/ExtratoTab";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const ConciliacaoBancaria = () => {
   const authorized =
@@ -22,7 +22,7 @@ const ConciliacaoBancaria = () => {
           <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
             <TabsTrigger value="extratos">Extratos Bancários</TabsTrigger>
             <TabsTrigger value="conciliacao">
-              Conciliação de pagamentos
+              Conciliação de Pagamentos
             </TabsTrigger>
             <TabsTrigger value="config">Configurações</TabsTrigger>
           </ScrollArea>
