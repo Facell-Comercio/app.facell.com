@@ -82,7 +82,7 @@ const Logs = () => {
             filteredData.filter(
               (data: Log) =>
                 data.pid === parseInt(id || '0') &&
-                data.time === parseInt(time || '')
+                data.time === parseInt(time || '0')
             )[0]
           }
         />

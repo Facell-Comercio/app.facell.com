@@ -23,8 +23,8 @@ type DataLog = {
 export interface Log {
   type: string;
   level: number;
-  date: number;
-  time: string; // Assuming this is an ISO 8601 formatted date string
+  date: string;
+  time: number; // Assuming this is an ISO 8601 formatted date string
   pid: number;
   hostname: string;
   module: string;
@@ -58,7 +58,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerLog> = ({ data }) => {
                 onClick={() => {
                   openModal(
                     info.getValue<number>().toString(),
-                    info.row.original.time
+                    String(info.row.original.time)
                   );
                 }}
               />
