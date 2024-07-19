@@ -29,7 +29,6 @@ export const ItemPainel = ({
     );
 
     const rows = response?.data?.rows || [];
-    console.log(rows);
     const data = rows.map((obj: any) => {
       const transformedObj: { [key: string]: any } = {};
       for (const key in obj) {
@@ -46,7 +45,6 @@ export const ItemPainel = ({
       }
       return transformedObj;
     });
-    console.log(data);
 
     exportToExcel(data, String(title).toUpperCase());
   }

@@ -57,7 +57,6 @@ export const useDepartamentos = () => {
             title: 'Ocorreu o seguinte erro',
             description: error.message,
           });
-          console.log(error);
         },
       }),
     update: () =>
@@ -79,7 +78,6 @@ export const useDepartamentos = () => {
             title: 'Ocorreu o seguinte erro',
             description: error.message,
           });
-          console.log(error);
         },
       }),
   };
