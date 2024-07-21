@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 
 interface UseStoreConciliacaoCP {
-  id?: string | null;
+  id_conciliacao?: string | null;
   modalEditing: boolean;
   modalOpen: boolean;
   isPending: boolean;
 
-  openModal: (id: string) => void;
+  openModal: (id_conciliacao: string) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
   editIsPending: (bool: boolean) => void;
@@ -14,18 +14,18 @@ interface UseStoreConciliacaoCP {
 }
 
 export const useStoreConciliacaoCP = create<UseStoreConciliacaoCP>((set) => ({
-  id: null,
+  id_conciliacao: null,
   modalEditing: false,
   modalOpen: false,
   isPending: false,
 
-  openModal: (id: string) => set({ modalOpen: true, id }),
-  closeModal: () => set({ modalOpen: false, id: null }),
+  openModal: (newIdConciliacao: string) => set({ modalOpen: true, id_conciliacao: newIdConciliacao }),
+  closeModal: () => set({ modalOpen: false, id_conciliacao: null }),
   editModal: (bool) => set({ modalEditing: bool }),
   editIsPending: (bool) => set({ isPending: bool }),
   toggleModal: () =>
     set(() => ({
-      id: null,
+      id_conciliacao: null,
       modalOpen: false,
       modalEditing: false,
     })),

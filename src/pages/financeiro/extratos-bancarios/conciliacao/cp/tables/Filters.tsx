@@ -94,6 +94,14 @@ export const FiltersConciliacaoCP = ({ refetch }: { refetch: () => void }) => {
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-1">
             <div className="flex w-max space-x-3">
+            <Input
+                value={filters.conta_bancaria}
+                className="flex-1 max-h-10 min-w-[36ch]"
+                readOnly
+                placeholder="Conta Bancaria"
+                onClick={() => setModalContaBancariaOpen(true)}
+              />
+
               <DatePickerWithRange
                 description="Período de transação"
                 date={filters.range_data}
@@ -101,13 +109,7 @@ export const FiltersConciliacaoCP = ({ refetch }: { refetch: () => void }) => {
                   setFilters({ range_data: range_data });
                 }}
               />
-              <Input
-                value={filters.conta_bancaria}
-                className="flex-1 max-h-10 min-w-[26ch]"
-                readOnly
-                placeholder="Conta Bancaria"
-                onClick={() => setModalContaBancariaOpen(true)}
-              />
+              
               <ModalContasBancarias
                 open={modalContaBancariaOpen}
                 handleSelection={handleSelectionContaBancaria}
