@@ -27,7 +27,7 @@ import { TituloSchemaProps, vencimentoSchema } from "../../../form-data";
 import { calcularDataPrevisaoPagamento } from "../../../helpers/helper";
 import { initialStateVencimento, useStoreVencimento } from "./context";
 import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
-import { subDays } from "date-fns";
+import { addMonths, formatDate, isBefore, setDate, subDays } from "date-fns";
 
 export function ModalVencimento({
   form: formTitulo,
@@ -52,6 +52,7 @@ export function ModalVencimento({
     name: "vencimentos",
   });
 
+  // * WATCHES 
   const valorTotalTitulo = parseFloat(
     useWatch({
       name: "valor",
@@ -69,6 +70,34 @@ export function ModalVencimento({
     control: formTitulo.control,
   });
 
+  const id_forma_pagamento = formTitulo.watch('id_forma_pagamento');
+  const dia_corte_cartao = formTitulo.watch('dia_corte_cartao');
+  const dia_vencimento_cartao = formTitulo.watch('dia_vencimento_cartao');
+  const isCartao = id_forma_pagamento == '6';
+
+  const uniqueDayMonth = isCartao ? dia_vencimento_cartao : undefined;
+
+  // * Lógica de cartões:
+  useEffect(() => {
+    if (isCartao) {
+      const dataAtual = new Date();
+      const corteCartaoDate = setDate(dataAtual, Number(dia_corte_cartao));
+      const vencimentoCartaoDate = setDate(dataAtual, Number(dia_vencimento_cartao));
+      
+      let proximaDataVencimento;
+  
+      if (isBefore(dataAtual, corteCartaoDate)) {
+        // Se a data atual for antes do dia de corte, o vencimento é no mês atual
+        proximaDataVencimento = vencimentoCartaoDate;
+      } else {
+        // Se a data atual for depois do dia de corte, o vencimento é no próximo mês
+        proximaDataVencimento = addMonths(vencimentoCartaoDate, 1);
+      }
+  
+      form.setValue('data_vencimento', proximaDataVencimento.toDateString());
+      form.setValue('data_prevista', calcularDataPrevisaoPagamento(proximaDataVencimento).toDateString());
+    }
+  }, [isCartao, dia_corte_cartao, dia_vencimento_cartao, form]);
   // const { formState: { errors } } = form;
 
   //* Ao abrir o modal, caso não tenha um valor predefinido, irá setar como valor o que falta para completar o valor do título
@@ -164,6 +193,7 @@ export function ModalVencimento({
                 <FormDateInput
                   name="data_vencimento"
                   label="Vencimento"
+                  uniqueDayMonth={uniqueDayMonth}
                   min={!isMaster ? subDays(new Date(),1) : undefined}
                   control={form.control}
                   onChange={(val)=>handleChangeVencimento(val)}

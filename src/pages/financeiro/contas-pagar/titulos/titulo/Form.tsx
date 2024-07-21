@@ -87,6 +87,7 @@ const FormTituloPagar = ({
   const titulo = data
 
   const {
+    reset: resetForm,
     setValue,
     formState: { errors },
   } = form;
@@ -288,6 +289,7 @@ const FormTituloPagar = ({
 
   useEffect(() => {
     if (insertOneSuccess) {
+      resetForm()
       closeModal();
 
       if (titulo.id_recorrencia) {
