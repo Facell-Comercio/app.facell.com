@@ -18,7 +18,6 @@ import { TransacoesConciliarProps } from '../tables/TransacoesConciliar';
 import { useStoreTableConciliacaoCP } from '../tables/store-tables';
 import FormConciliacaoCP from './Form';
 import { useStoreConciliacaoCP } from './store';
-import { useQueryClient } from '@tanstack/react-query';
 
 export type ConciliacaoCPSchemaProps = {
   id_conciliacao?: string;
@@ -32,7 +31,6 @@ export type ConciliacaoCPSchemaProps = {
 };
 
 const ModalConciliarCP = () => {
-  const queryClient = useQueryClient()
   const modalOpen = useStoreConciliacaoCP().modalOpen;
 
   const toggleModal = useStoreConciliacaoCP().toggleModal;

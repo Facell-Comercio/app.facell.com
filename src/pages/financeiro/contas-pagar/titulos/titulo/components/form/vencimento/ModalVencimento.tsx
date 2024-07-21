@@ -27,7 +27,7 @@ import { TituloSchemaProps, vencimentoSchema } from "../../../form-data";
 import { calcularDataPrevisaoPagamento } from "../../../helpers/helper";
 import { initialStateVencimento, useStoreVencimento } from "./context";
 import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
-import { addMonths, formatDate, isBefore, setDate, subDays } from "date-fns";
+import { addMonths, isBefore, setDate, subDays } from "date-fns";
 
 export function ModalVencimento({
   form: formTitulo,
