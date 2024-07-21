@@ -38,7 +38,7 @@ const ModalUsers = ({ open, handleSelection, onOpenChange }: IModalUsers) => {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["users"],
     queryFn: async () =>
-      await api.get("user", {
+      await api.get("users", {
         params: { filters: { termo: search }, pagination },
       }),
     enabled: open,

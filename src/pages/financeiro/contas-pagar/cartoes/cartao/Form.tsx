@@ -113,6 +113,18 @@ const FormCartao = ({
 
   return (
     <div className="max-w-full overflow-x-hidden">
+      <ModalFornecedores
+        open={modalEditing && modalFornecedorOpen}
+        handleSelection={handleSelectionFornecedor}
+        onOpenChange={() => setModalFornecedorOpen((prev) => !prev)}
+      />
+      <ModalFatura />
+      <ModalUsers
+        open={modalUsersOpen}
+        onOpenChange={() => setModalUsersOpen(false)}
+        handleSelection={handleSelectionUser}
+      />
+
       <Form {...form}>
         <form
           ref={formRef}
@@ -277,17 +289,7 @@ const FormCartao = ({
           </div>
         </form>
       </Form>
-      <ModalFornecedores
-        open={modalEditing && modalFornecedorOpen}
-        handleSelection={handleSelectionFornecedor}
-        onOpenChange={() => setModalFornecedorOpen((prev) => !prev)}
-      />
-      <ModalFatura />
-      <ModalUsers
-        open={modalUsersOpen}
-        onOpenChange={() => setModalUsersOpen(false)}
-        handleSelection={handleSelectionUser}
-      />
+      
     </div>
   );
 };

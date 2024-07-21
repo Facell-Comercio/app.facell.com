@@ -88,10 +88,10 @@ export function ModalVencimento({
   
       if (isBefore(dataAtual, corteCartaoDate)) {
         // Se a data atual for antes do dia de corte, o vencimento é no mês atual
-        proximaDataVencimento = vencimentoCartaoDate;
+        proximaDataVencimento = addMonths(vencimentoCartaoDate, 1);
       } else {
         // Se a data atual for depois do dia de corte, o vencimento é no próximo mês
-        proximaDataVencimento = addMonths(vencimentoCartaoDate, 1);
+        proximaDataVencimento = addMonths(vencimentoCartaoDate, 2);
       }
   
       form.setValue('data_vencimento', proximaDataVencimento.toDateString());
