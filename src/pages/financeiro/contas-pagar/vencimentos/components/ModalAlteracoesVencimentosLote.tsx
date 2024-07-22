@@ -10,36 +10,38 @@ import { InputDate } from "@/components/custom/InputDate";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { useVencimentos } from "@/hooks/financeiro/useVencimentos";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { useEffect, useState } from "react";
 import { useStoreTableVencimentos } from "../tables/store";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 
 export type AlteracaoLoteVencimentosSchemaProps = {
   value?: Date;
   itens: VencimentosProps[];
 };
 
-type ModalAlteracoesVencimentosLoteProps ={
-  itens: VencimentosProps[] | []
-}
+type ModalAlteracoesVencimentosLoteProps = {
+  itens: VencimentosProps[] | [];
+};
 
-const ModalAlteracoesVencimentosLote = ({itens}: ModalAlteracoesVencimentosLoteProps) => {
+const ModalAlteracoesVencimentosLote = ({
+  itens,
+}: ModalAlteracoesVencimentosLoteProps) => {
   const [dataPrevista, setDataPrevista] = useState<Date | undefined>(undefined);
   const modalOpen = useStoreTableVencimentos().modalOpen;
   const closeModal = useStoreTableVencimentos().closeModal;
   const rowSelection = useStoreTableVencimentos().rowSelection;
   const handleRowSelection = useStoreTableVencimentos().handleRowSelection;
 
-  
   const { mutate: changeVencimento } = useVencimentos().changeVencimentos();
-  
+
   const alterarLote = async () => {
     const selectedIndexes = Object.keys(rowSelection)
-    .filter((key:any) => rowSelection[key])
-    .map(Number);
-    
-    const itensSelecionados = itens.filter((_, index)=>selectedIndexes.includes(index)) || []
-    
+      .filter((key: any) => rowSelection[key])
+      .map(Number);
+
+    const itensSelecionados =
+      itens.filter((_, index) => selectedIndexes.includes(index)) || [];
+
     if (!dataPrevista) {
       toast({
         variant: "destructive",

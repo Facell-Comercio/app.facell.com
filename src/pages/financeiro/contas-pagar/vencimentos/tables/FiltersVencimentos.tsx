@@ -1,3 +1,4 @@
+import SelectMatriz from "@/components/custom/SelectMatriz";
 import {
   Accordion,
   AccordionContent,
@@ -18,7 +19,6 @@ import {
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
 import { useStoreTableVencimentos } from "./store";
-import SelectMatriz from "@/components/custom/SelectMatriz";
 
 const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableVencimentos((state) => state.filters);
@@ -65,7 +65,7 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
               <Input
                 type="number"
                 placeholder="ID VENCIMENTO"
-                className="w-[80px]"
+                className="w-[20ch]"
                 value={filters?.id_vencimento}
                 onChange={(e) => {
                   setFilters({ id_vencimento: e.target.value });
@@ -75,15 +75,14 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
 
               <Input
                 type="number"
-                placeholder="ID TITULO"
-                className="w-[80px]"
+                placeholder="ID TÍTULO"
+                className="w-[20ch]"
                 value={filters?.id_titulo}
                 onChange={(e) => {
                   setFilters({ id_titulo: e.target.value });
                 }}
                 min={0}
               />
-
 
               <SelectMatriz
                 showAll={true}
