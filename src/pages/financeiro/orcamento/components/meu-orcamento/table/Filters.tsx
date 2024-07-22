@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 // import { ScrollArea } from "@radix-ui/react-scroll-area";
-import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
+import { SelectGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
 import SelectMes from "@/components/custom/SelectMes";
 import {
   Accordion,

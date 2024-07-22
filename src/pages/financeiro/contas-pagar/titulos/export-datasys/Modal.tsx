@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { InputDate } from "@/components/custom/InputDate";
-import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
+import { SelectGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
@@ -36,8 +36,7 @@ const ModalExportDatasys = () => {
     if (!filters.id_grupo_economico || !filters.data_pagamento) {
       toast({
         title: "Ops!",
-        description:
-          "Preencha o grupo econômico e a data de pagamento",
+        description: "Preencha o grupo econômico e a data de pagamento",
         variant: "destructive",
       });
       return;
@@ -51,8 +50,8 @@ const ModalExportDatasys = () => {
         }
       );
       const rows = response?.data || [];
-      if(rows.length == 0){
-        throw new Error('Nenhum pagamento realizado no período!')
+      if (rows.length == 0) {
+        throw new Error("Nenhum pagamento realizado no período!");
       }
 
       // const formatedResponse = rows.map((row: ResponseExportDatasysProps) => {

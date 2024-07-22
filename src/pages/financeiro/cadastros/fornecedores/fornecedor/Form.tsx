@@ -1,25 +1,25 @@
-import FormInput from '@/components/custom/FormInput';
-import FormSwitch from '@/components/custom/FormSwitch';
-import SelectFormaPagamento from '@/components/custom/SelectFormaPagamento';
-import SelectTipoChavePix from '@/components/custom/SelectTipoChavePix';
-import SelectTipoContaBancaria from '@/components/custom/SelectTipoContaBancaria';
-import { Form } from '@/components/ui/form';
-import { toast } from '@/components/ui/use-toast';
+import FormInput from "@/components/custom/FormInput";
+import FormSwitch from "@/components/custom/FormSwitch";
+import { SelectFormaPagamento } from "@/components/custom/SelectFormaPagamento";
+import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
+import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
+import { Form } from "@/components/ui/form";
+import { toast } from "@/components/ui/use-toast";
 import {
   normalizeCepNumber,
   normalizeCnpjNumber,
   normalizePhoneNumber,
-} from '@/helpers/mask';
-import { useFornecedores } from '@/hooks/financeiro/useFornecedores';
-import { api } from '@/lib/axios';
-import ModalBancos from '@/pages/financeiro/components/ModalBancos';
-import { Contact, DollarSign } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useWatch } from 'react-hook-form';
-import { BancoSchema } from '../../bancos/banco/Modal';
-import { FornecedorSchema } from './Modal';
-import { useFormFornecedorData } from './form-data';
-import { useStoreFornecedor } from './store';
+} from "@/helpers/mask";
+import { useFornecedores } from "@/hooks/financeiro/useFornecedores";
+import { api } from "@/lib/axios";
+import ModalBancos from "@/pages/financeiro/components/ModalBancos";
+import { Contact, DollarSign } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useWatch } from "react-hook-form";
+import { BancoSchema } from "../../bancos/banco/Modal";
+import { FornecedorSchema } from "./Modal";
+import { useFormFornecedorData } from "./form-data";
+import { useStoreFornecedor } from "./store";
 
 const FormFornecedor = ({
   id,
@@ -58,11 +58,11 @@ const FormFornecedor = ({
 
   const watchFormaPagamento = useWatch({
     control: form.control,
-    name: 'id_forma_pagamento',
+    name: "id_forma_pagamento",
   });
   const watchTipoChavePix = useWatch({
     control: form.control,
-    name: 'id_tipo_chave_pix',
+    name: "id_tipo_chave_pix",
   });
 
   async function axiosGetCnpjData() {
@@ -74,37 +74,37 @@ const FormFornecedor = ({
         `/financeiro/fornecedores/consulta-cnpj/${cnpj}`
       );
 
-      form.setValue('nome', cnpjData.fantasia);
-      form.setValue('telefone', cnpjData.telefone);
+      form.setValue("nome", cnpjData.fantasia);
+      form.setValue("telefone", cnpjData.telefone);
 
-      form.setValue('razao', cnpjData.nome);
-      form.setValue('email', cnpjData.email);
-      form.setValue('cep', cnpjData.cep);
-      form.setValue('logradouro', cnpjData.logradouro);
-      form.setValue('numero', cnpjData.numero);
-      form.setValue('bairro', cnpjData.bairro);
-      form.setValue('municipio', cnpjData.municipio);
-      form.setValue('uf', cnpjData.uf);
-      form.setValue('favorecido', cnpjData.fantasia);
-      form.setValue('cnpj_favorecido', cnpj || '');
+      form.setValue("razao", cnpjData.nome);
+      form.setValue("email", cnpjData.email);
+      form.setValue("cep", cnpjData.cep);
+      form.setValue("logradouro", cnpjData.logradouro);
+      form.setValue("numero", cnpjData.numero);
+      form.setValue("bairro", cnpjData.bairro);
+      form.setValue("municipio", cnpjData.municipio);
+      form.setValue("uf", cnpjData.uf);
+      form.setValue("favorecido", cnpjData.fantasia);
+      form.setValue("cnpj_favorecido", cnpj || "");
     } catch (error) {
       // @ts-expect-error "Vai funcionar"
       const errorMessage = error.response?.data.message || error.message;
       // console.log(errorMessage);
       toast({
-        title: 'Erro na consulta do fornecedor',
+        title: "Erro na consulta do fornecedor",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
         duration: 3500,
       });
     }
   }
 
   useEffect(() => {
-    handleChangeCnpj(data.cnpj, 'cnpj');
+    handleChangeCnpj(data.cnpj, "cnpj");
     // handleChangePhoneNumber(data.telefone);
     handleChangeCep(data.cep);
-    handleChangeCnpj(data.cnpj_favorecido, 'cnpj_favorecido');
+    handleChangeCnpj(data.cnpj_favorecido, "cnpj_favorecido");
   }, []);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const FormFornecedor = ({
   }, [cnpj]);
 
   function onBlurCnpj(cnpj: string) {
-    const cnpjTratado = cnpj.replace(/\D/g, '');
+    const cnpjTratado = cnpj.replace(/\D/g, "");
     if (modalEditing && cnpjTratado.length === 14) {
       setCnpj(cnpjTratado);
     }
@@ -120,7 +120,7 @@ const FormFornecedor = ({
 
   const handleChangeCnpj = (
     value: string,
-    type: 'cnpj' | 'cnpj_favorecido'
+    type: "cnpj" | "cnpj_favorecido"
   ) => {
     form.setValue(type, normalizeCnpjNumber(value));
   };
@@ -128,7 +128,7 @@ const FormFornecedor = ({
   //   form.setValue("telefone", normalizePhoneNumber(value));
   // };
   const handleChangeCep = (value: string) => {
-    form.setValue('cep', normalizeCepNumber(value));
+    form.setValue("cep", normalizeCepNumber(value));
   };
 
   const onSubmitData = (data: FornecedorSchema) => {
@@ -137,29 +137,29 @@ const FormFornecedor = ({
   };
 
   function placeholderChavePix(tipoChavePix: string | number): string {
-    if (String(tipoChavePix) === '1') {
-      return 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
+    if (String(tipoChavePix) === "1") {
+      return "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX";
     }
-    if (String(tipoChavePix) === '2') {
-      return 'exemplo@exemplo.com.br';
+    if (String(tipoChavePix) === "2") {
+      return "exemplo@exemplo.com.br";
     }
-    if (String(tipoChavePix) === '3') {
-      return '(00) 98888-8888';
+    if (String(tipoChavePix) === "3") {
+      return "(00) 98888-8888";
     }
-    if (String(tipoChavePix) === '4') {
-      return '111.222.333-44';
+    if (String(tipoChavePix) === "4") {
+      return "111.222.333-44";
     }
-    if (String(tipoChavePix) === '5') {
-      return '11.222.333/0001-44';
+    if (String(tipoChavePix) === "5") {
+      return "11.222.333/0001-44";
     }
-    return '';
+    return "";
   }
 
   function fnMaskChavePix(tipoChavePix: string | number) {
-    if (String(tipoChavePix) === '3') {
+    if (String(tipoChavePix) === "3") {
       return normalizePhoneNumber;
     }
-    if (String(tipoChavePix) === '4' || String(tipoChavePix) === '5') {
+    if (String(tipoChavePix) === "4" || String(tipoChavePix) === "5") {
       return normalizeCnpjNumber;
     }
     return (tipoChavePix: string | number) => tipoChavePix;
@@ -179,9 +179,9 @@ const FormFornecedor = ({
 
   const [openModalBanco, setOpenModalBanco] = useState<boolean>(false);
   const handleSelectionBanco = (banco: BancoSchema) => {
-    form.setValue('id_banco', banco.id);
-    form.setValue('banco', banco.nome);
-    form.setValue('codigo_banco', banco.codigo);
+    form.setValue("id_banco", banco.id);
+    form.setValue("banco", banco.nome);
+    form.setValue("codigo_banco", banco.codigo);
 
     setOpenModalBanco(false);
   };
@@ -203,7 +203,7 @@ const FormFornecedor = ({
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
-                    <Contact />{' '}
+                    <Contact />{" "}
                     <span className="text-lg font-bold ">
                       Dados do Fornecedor
                     </span>
@@ -223,7 +223,7 @@ const FormFornecedor = ({
                     readOnly={!modalEditing || isPending}
                     label="CPF/CNPJ"
                     control={form.control}
-                    onChange={(e) => handleChangeCnpj(e.target.value, 'cnpj')}
+                    onChange={(e) => handleChangeCnpj(e.target.value, "cnpj")}
                     onBlur={(e) => onBlurCnpj(e.target.value)}
                     fnMask={normalizeCnpjNumber}
                   />
@@ -312,7 +312,7 @@ const FormFornecedor = ({
 
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
-                  <DollarSign />{' '}
+                  <DollarSign />{" "}
                   <span className="text-lg font-bold ">Dados Bancários</span>
                 </div>
                 <div className="flex gap-3 flex-wrap ">
@@ -330,7 +330,7 @@ const FormFornecedor = ({
                     label="CPF/CNPJ Favorecido"
                     control={form.control}
                     onChange={(e) =>
-                      handleChangeCnpj(e.target.value, 'cnpj_favorecido')
+                      handleChangeCnpj(e.target.value, "cnpj_favorecido")
                     }
                     onBlur={(e) => onBlurCnpj(e.target.value)}
                     fnMask={normalizeCnpjNumber}
@@ -342,8 +342,8 @@ const FormFornecedor = ({
                     label="Favorecido"
                     control={form.control}
                   />
-                  {(watchFormaPagamento === '4' ||
-                    watchFormaPagamento === '5') && (
+                  {(watchFormaPagamento === "4" ||
+                    watchFormaPagamento === "5") && (
                     <>
                       <div onClick={() => setOpenModalBanco(true)}>
                         <FormInput
@@ -356,7 +356,7 @@ const FormFornecedor = ({
                         />
                       </div>
 
-                      {watchFormaPagamento === '4' && (
+                      {watchFormaPagamento === "4" && (
                         <>
                           <SelectTipoChavePix
                             className="flex-1 min-w-[20ch]"

@@ -2,7 +2,7 @@ import {
   ModalComponent,
   ModalComponentRow,
 } from "@/components/custom/ModalComponent";
-import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
+import { SelectGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
 import { AccordionItem } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
@@ -78,7 +78,11 @@ const ModalContasBancarias = ({
   };
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["financeiro", "conta_bancaria", {filters, pagination, id_matriz, id_grupo_economico}],
+    queryKey: [
+      "financeiro",
+      "conta_bancaria",
+      { filters, pagination, id_matriz, id_grupo_economico },
+    ],
     queryFn: async () =>
       await api.get("financeiro/contas-bancarias/", {
         params: {

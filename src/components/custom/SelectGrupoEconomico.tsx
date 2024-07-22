@@ -22,7 +22,7 @@ type GrupoEconomico = {
   ativo: boolean;
 };
 
-const SelectGrupoEconomico = ({
+export const SelectGrupoEconomico = ({
   value,
   onChange,
   showAll,
@@ -56,4 +56,43 @@ const SelectGrupoEconomico = ({
   );
 };
 
-export default SelectGrupoEconomico;
+import { Register } from "@tanstack/react-query";
+import { Control } from "react-hook-form";
+import { MultiSelect } from "../ui/multi-select";
+
+type TSelectMultiGrupoEconomico = {
+  showAll?: boolean;
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  control?: Control<any>;
+  register?: Register;
+  disabled?: boolean;
+  className?: string;
+  value: string[];
+  onChange: (value: string[]) => any;
+};
+
+export const SelectMultiGrupoEconomico = (
+  props: TSelectMultiGrupoEconomico
+) => {
+  const { data } = useGrupoEconomico().getAll();
+  const gruposEconomicos = data?.data?.rows || [];
+
+  return (
+    // @ts-ignore
+    <MultiSelect
+      {...props}
+      options={gruposEconomicos.map((grupo: GrupoEconomico) => ({
+        value: grupo.id,
+        label: grupo.nome,
+      }))}
+      onValueChange={props.onChange}
+      defaultValue={props.value}
+      placeholder="Grupo Econômico"
+      variant="inverted"
+      animation={4}
+      maxCount={1}
+    />
+  );
+};

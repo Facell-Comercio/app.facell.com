@@ -1,5 +1,7 @@
-import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
-import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
+import { SelectMultiFormaPagamento } from "@/components/custom/SelectFormaPagamento";
+// import SelectMultiFormaPagamento from "@/components/custom/SelectMultiFormaPagamento";
+import { SelectMultiGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
+import { SelectMultiStatus } from "@/components/custom/SelectMultiStatus";
 import {
   Accordion,
   AccordionContent,
@@ -85,39 +87,26 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 }}
               />
 
-              <SelectGrupoEconomico
+              <SelectMultiGrupoEconomico
+                className="w-fit"
                 showAll={true}
-                value={filters.id_grupo_economico}
-                onChange={(id_grupo_economico) => {
-                  setFilters({ id_grupo_economico: id_grupo_economico });
+                value={filters.grupo_economico_list || []}
+                onChange={(value) => {
+                  setFilters({ grupo_economico_list: value });
                 }}
               />
+              <SelectMultiFormaPagamento
+                className="w-fit"
+                value={filters.forma_pagamento_list || []}
+                onChange={(value) =>
+                  setFilters({ forma_pagamento_list: value })
+                }
+              />
 
-              <Select
-                value={filters.id_status}
-                onValueChange={(id_status) => {
-                  setFilters({ id_status: id_status });
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="1">Solicitado</SelectItem>
-                  <SelectItem value="2">Negado</SelectItem>
-                  <SelectItem value="3">Aprovado</SelectItem>
-                  <SelectItem value="4">Pago Parcial</SelectItem>
-                  <SelectItem value="5">Pago</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <SelectFormaPagamento
-                className="flex-1 min-w-[20ch]"
-                placeholder="Forma de pagamento"
-                showAll
-                value={filters.id_forma_pagamento}
-                onChange={(e) => setFilters({ id_forma_pagamento: e })}
+              <SelectMultiStatus
+                className="w-fit"
+                value={filters.status_list || []}
+                onChange={(value) => setFilters({ status_list: value })}
               />
 
               <Select

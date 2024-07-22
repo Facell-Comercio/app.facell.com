@@ -1,4 +1,4 @@
-import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
+import { SelectGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
 import SelectIsActive from "@/components/custom/SelectIsActive";
 import {
   Accordion,

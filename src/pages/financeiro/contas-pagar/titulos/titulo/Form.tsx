@@ -3,7 +3,6 @@ import FormDateInput from "@/components/custom/FormDate";
 import FormFileUpload from "@/components/custom/FormFileUpload";
 import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
-import SelectFormaPagamento from "@/components/custom/SelectFormaPagamento";
 import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
 
@@ -26,6 +25,7 @@ import ModalFornecedores, {
 
 import fetchApi from "@/api/fetchApi";
 import SelectCartao from "@/components/custom/SelectCartao";
+import { SelectFormaPagamento } from "@/components/custom/SelectFormaPagamento";
 import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";

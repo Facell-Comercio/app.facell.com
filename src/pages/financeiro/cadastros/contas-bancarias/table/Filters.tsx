@@ -1,5 +1,5 @@
 import SelectFilial from "@/components/custom/SelectFilial";
-import SelectGrupoEconomico from "@/components/custom/SelectGrupoEconomico";
+import { SelectGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
 import {
   Accordion,
   AccordionContent,
