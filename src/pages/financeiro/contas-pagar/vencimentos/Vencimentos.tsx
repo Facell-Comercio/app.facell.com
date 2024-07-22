@@ -66,7 +66,7 @@ const Vencimentos = () => {
     pagination: paginationPagos,
   });
 
-  const vencimentosAPagar = dataVencimentosAPagar?.data?.rows || [];
+  const vencimentosAPagar = dataVencimentosAPagar?.data?.rows || [];  
   const rowCountVencimentosAPagar = dataVencimentosAPagar?.data?.rowCount || [];
   const valorTotalVencimentosAPagar =
     dataVencimentosAPagar?.data?.valorTotal || 0;
