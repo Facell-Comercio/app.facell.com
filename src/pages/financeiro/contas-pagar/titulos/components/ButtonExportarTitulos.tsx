@@ -1,18 +1,18 @@
-import { api } from '@/lib/axios';
+import { api } from "@/lib/axios";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { exportToExcel } from '@/helpers/importExportXLS';
-import { normalizeDate } from '@/helpers/mask';
-import { Download } from 'lucide-react';
-import { useState } from 'react';
-import { useStoreExportDatasys } from '../export-datasys/store';
-import { useStoreTablePagar } from '../table/store-table';
-import { TituloSchemaProps } from '../titulo/form-data';
+} from "@/components/ui/dropdown-menu";
+import { exportToExcel } from "@/helpers/importExportXLS";
+import { normalizeDate } from "@/helpers/mask";
+import { Download } from "lucide-react";
+import { useState } from "react";
+import { useStoreExportDatasys } from "../export-datasys/store";
+import { useStoreTablePagar } from "../table/store-table";
+import { TituloSchemaProps } from "../titulo/form-data";
 
 export type ExportAnexosProps = {
   type: string;
@@ -22,6 +22,8 @@ export type ExportAnexosProps = {
 interface TituloProps extends TituloSchemaProps {
   solicitante?: string;
   forma_pagamento?: string;
+  fornecedor?: string;
+  cnpj_fornecedor?: string;
 }
 
 const ButtonExportTitulos = () => {
@@ -34,20 +36,22 @@ const ButtonExportTitulos = () => {
     const response = await api.get(`/financeiro/contas-a-pagar/titulo/`, {
       params: { filters },
     });
+    console.log(response.data);
+
     const rows = response?.data?.rows || [];
     const data = rows.map((row: TituloProps) => {
       return {
         ID: row.id,
         STATUS: row.status,
-        'CRIADO EM': normalizeDate(row.created_at || ''),
-        'NUM DOC': row.num_doc,
+        "CRIADO EM": normalizeDate(row.created_at || ""),
+        "NUM DOC": row.num_doc,
         DESCRIÇÃO: row.descricao,
         VALOR: parseFloat(row.valor),
         FILIAL: row.filial,
-        'ID MATRIZ': row.id_matriz,
-        FORNECEDOR: row.id_fornecedor,
+        FORNECEDOR: row.fornecedor,
+        "CNPJ FORNECEDOR": row.cnpj_fornecedor,
         SOLICITANTE: row.solicitante,
-        'FORMA DE PAGAMENTO': row.forma_pagamento,
+        "FORMA DE PAGAMENTO": row.forma_pagamento,
       };
     });
     exportToExcel(data, `SOLICITAÇÕES`);
@@ -67,7 +71,7 @@ const ButtonExportTitulos = () => {
         <DropdownMenuItem onClick={exportSolicitacao}>
           Layout Padrão
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => openModalExportDatasys('')}>
+        <DropdownMenuItem onClick={() => openModalExportDatasys("")}>
           Layout Datasys
         </DropdownMenuItem>
         <DropdownMenuItem>
