@@ -89,7 +89,6 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
 
               <SelectMultiGrupoEconomico
                 className="w-fit"
-                showAll={true}
                 value={filters.grupo_economico_list || []}
                 onChange={(value) => {
                   setFilters({ grupo_economico_list: value });
