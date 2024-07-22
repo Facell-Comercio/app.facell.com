@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useVencimentos } from "@/hooks/financeiro/useVencimentos";
 import { Edit } from "lucide-react";
 import ModalBordero from "../borderos/bordero/Modal";
+import ModalFatura from "../cartoes/cartao/ModalFatura";
 import ModalTituloPagar from "../titulos/titulo/Modal";
 import ModalAlteracoesVencimentosLote from "./components/ModalAlteracoesVencimentosLote";
 import FiltersVencimentos from "./tables/FiltersVencimentos";
@@ -14,7 +15,6 @@ import { columnsTableAPagar } from "./tables/columnsAPagar";
 import { columnsTableEmBordero } from "./tables/columnsEmBordero";
 import { columnsTablePagos } from "./tables/columnsPagos";
 import { useStoreTableVencimentos } from "./tables/store";
-import ModalFatura from "../cartoes/cartao/ModalFatura";
 
 const Vencimentos = () => {
   const [
@@ -66,7 +66,7 @@ const Vencimentos = () => {
     pagination: paginationPagos,
   });
 
-  const vencimentosAPagar = dataVencimentosAPagar?.data?.rows || [];  
+  const vencimentosAPagar = dataVencimentosAPagar?.data?.rows || [];
   const rowCountVencimentosAPagar = dataVencimentosAPagar?.data?.rowCount || [];
   const valorTotalVencimentosAPagar =
     dataVencimentosAPagar?.data?.valorTotal || 0;
@@ -167,7 +167,9 @@ const Vencimentos = () => {
       </Accordion>
       <ModalBordero />
       <ModalTituloPagar />
-      <ModalAlteracoesVencimentosLote itens={dataVencimentosAPagar?.data?.rows || []} />
+      <ModalAlteracoesVencimentosLote
+        itens={dataVencimentosAPagar?.data?.rows || []}
+      />
       <ModalFatura />
     </div>
   );
