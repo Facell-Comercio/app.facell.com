@@ -89,7 +89,7 @@ const ModalTituloPagar = () => {
         }
 
         if (propriedade == "valor") {
-          objeto[propriedade] = parseFloat(objeto[propriedade]).toFixed(2);
+          objeto[propriedade] = parseFloat(objeto[propriedade]).toFixed(4);
         }
       });
     });

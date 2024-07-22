@@ -64,14 +64,26 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
             <div className="flex w-max space-x-3">
               <Input
                 type="number"
-                placeholder="ID"
+                placeholder="ID VENCIMENTO"
                 className="w-[80px]"
-                value={filters?.id}
+                value={filters?.id_vencimento}
                 onChange={(e) => {
-                  setFilters({ id: e.target.value });
+                  setFilters({ id_vencimento: e.target.value });
                 }}
                 min={0}
               />
+
+              <Input
+                type="number"
+                placeholder="ID TITULO"
+                className="w-[80px]"
+                value={filters?.id_titulo}
+                onChange={(e) => {
+                  setFilters({ id_titulo: e.target.value });
+                }}
+                min={0}
+              />
+
 
               <SelectMatriz
                 showAll={true}

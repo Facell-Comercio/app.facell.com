@@ -8,6 +8,7 @@ import {
   checkIsPIX,
   checkIsTransferenciaBancaria,
 } from "./helpers/helper";
+import { initialPropsTitulo } from "./store";
 
 export const vencimentoSchema = z.object({
   id: z.string().optional(),
@@ -296,7 +297,7 @@ export type TituloSchemaProps = z.infer<typeof schemaTitulo>;
 export const useFormTituloData = (data: TituloSchemaProps) => {
   const form = useForm<TituloSchemaProps>({
     resolver: zodResolver(schemaTitulo),
-    defaultValues: data,
+    defaultValues: initialPropsTitulo,
     values: data,
     mode: "all",
   });

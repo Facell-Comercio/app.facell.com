@@ -77,7 +77,7 @@ export const columnsTableFaturas: ColumnDef<FaturaSchema>[] = [
   {
     id: "status",
     accessorKey: "status",
-    header: "STATUS",
+    header: "STATUS PGTO",
     cell: (info) => {
       const label = info.getValue<string>();
       let color = "";

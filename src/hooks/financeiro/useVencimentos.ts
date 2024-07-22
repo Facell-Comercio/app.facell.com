@@ -21,7 +21,7 @@ export const useVencimentos = () => {
 
   const getVencimentosAPagar = ({ pagination, filters }: GetVencimentosProps) =>
     useQuery({
-      queryKey: ["financeiro", "contas_pagar", "vencimento", "pagamento_pendente", "lista", pagination],
+      queryKey: ["financeiro", "contas_pagar", "vencimento", "pagamento_pendente", "lista", {pagination, filters}],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
@@ -46,7 +46,7 @@ export const useVencimentos = () => {
     filters,
   }: GetVencimentosProps) =>
     useQuery({
-      queryKey: ["financeiro", "contas_pagar", "vencimento", "em_bordero", "lista", pagination],
+      queryKey: ["financeiro", "contas_pagar", "vencimento", "em_bordero", "lista", {pagination, filters}],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
@@ -68,7 +68,7 @@ export const useVencimentos = () => {
 
   const getVencimentosPagos = ({ pagination, filters }: GetVencimentosProps) =>
     useQuery({
-      queryKey: ["financeiro", "contas_pagar", "vencimento", "pago", "lista", pagination],
+      queryKey: ["financeiro", "contas_pagar", "vencimento", "pago", "lista", {pagination, filters}],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {

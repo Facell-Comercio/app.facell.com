@@ -49,7 +49,6 @@ export const useFilial = () => {
             title: 'Ocorreu o seguinte erro',
             description: error.message,
           });
-          console.log(error);
         },
       }),
     update: () =>

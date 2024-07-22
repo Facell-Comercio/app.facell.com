@@ -83,10 +83,11 @@ const FormTituloPagar = ({
   const [modalFornecedorOpen, setModalFornecedorOpen] =
     useState<boolean>(false);
 
-  const data = form?.getValues() || {};
-  const titulo = form?.getValues() || {};
+  const data = form?.getValues() || {}
+  const titulo = data
 
   const {
+    reset: resetForm,
     setValue,
     formState: { errors },
   } = form;
@@ -288,6 +289,7 @@ const FormTituloPagar = ({
 
   useEffect(() => {
     if (insertOneSuccess) {
+      resetForm()
       closeModal();
 
       if (titulo.id_recorrencia) {
@@ -374,7 +376,6 @@ const FormTituloPagar = ({
           handleSelection={handleSelectionFilial}
           onOpenChange={setModalFilialOpen}
           id_grupo_economico={id_grupo_economico}
-          id_matriz={id_matriz}
           closeOnSelection
         />
         <section className="overflow-auto scroll-thin z-[100] flex flex-col max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">

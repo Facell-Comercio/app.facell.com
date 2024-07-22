@@ -10,7 +10,8 @@ export interface Pagination {
 type RowSelection = Record<number, boolean>;
 
 export interface Filters {
-  id?: string;
+  id_vencimento?: string;
+  id_titulo?: string;
   id_grupo_economico?: string;
   id_matriz?: string;
   id_status?: string;
@@ -21,7 +22,8 @@ export interface Filters {
 }
 
 const initialFilters: Filters = {
-  id: "",
+  id_vencimento: "",
+  id_titulo: '',
   id_grupo_economico: "",
   id_matriz: "",
   id_status: "",
@@ -43,7 +45,6 @@ export interface State {
 }
 type HandleRowSelectionProps = {
   rowSelection: RowSelectionState;
-  idSelection: number[];
 };
 
 export interface Actions {
@@ -86,7 +87,7 @@ export const useStoreTableVencimentos = create<State & Actions>((set) => ({
     set({ paginationEmBordero: pagination }),
   setPaginationPagos: (pagination) => set({ paginationPagos: pagination }),
   handleRowSelection: (data: HandleRowSelectionProps) =>
-    set({ rowSelection: data.rowSelection, idSelection: data.idSelection }),
+    set({ rowSelection: data.rowSelection }),
 
   openModal: () => set({ modalOpen: true }),
   closeModal: () => set({ modalOpen: false }),

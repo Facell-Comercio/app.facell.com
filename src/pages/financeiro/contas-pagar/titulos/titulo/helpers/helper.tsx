@@ -31,7 +31,7 @@ export function calcularDataPrevisaoPagamento(data_venc: Date | string) {
   const dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
 
   const dataAtual = startOfDay(new Date());
-  let dataMinima = addDays(dataAtual, 2);
+  let dataMinima = isFriday(dataAtual) ? addDays(dataAtual, 3) : addDays(dataAtual, 2);
 
   while (
     (!isMonday(dataMinima) &&

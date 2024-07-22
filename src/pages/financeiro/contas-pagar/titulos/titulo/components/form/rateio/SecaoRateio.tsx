@@ -127,6 +127,7 @@ const SecaoRateio = ({
         size: 120,
         cell: (info) => {
           let valor = parseFloat(info.getValue<string>());
+          
           let currency = normalizeCurrency(valor);
 
           return <div className={`w-full  px-2 text-end`}>{currency}</div>;

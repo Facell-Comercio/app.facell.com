@@ -1,5 +1,5 @@
 import { CalendarIcon } from "@radix-ui/react-icons";
-import { format } from "date-fns";
+import { format, formatDate } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,7 @@ type FormDateProps = {
   min?: Date;
   onChange?: (date: Date) => void;
   className?: string;
+  uniqueDayMonth?: string | number;
 };
 
 const FormDateInput = ({
@@ -42,6 +43,7 @@ const FormDateInput = ({
   min,
   onChange,
   className,
+  uniqueDayMonth,
 }: FormDateProps) => {
   return (
     <FormField
@@ -91,6 +93,9 @@ const FormDateInput = ({
                   }
                   if (max && date > max) {
                     return true;
+                  }
+                  if(uniqueDayMonth !== undefined && parseInt(formatDate(date, 'dd')) !== uniqueDayMonth){
+                    return true
                   }
                   return date < new Date("1900-01-01");
                 }}

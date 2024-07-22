@@ -57,6 +57,7 @@ export function ModalGerarVencimentos({
   });
   const data_inicial = formTitulo.watch("data_emissao");
   const id_forma_pagamento = formTitulo.watch("id_forma_pagamento");
+  const isCartao = checkIsCartao(id_forma_pagamento);
   const initialValues = {
     data_vencimento: startOfDay(data_inicial).toDateString(),
     parcelas: "1",
@@ -79,30 +80,30 @@ export function ModalGerarVencimentos({
   //     erros_gerar_vencimentos: errors
   // })
 
-  const day = parseInt(
+  const diaVencimentoCartao = parseInt(
     useWatch({ name: "dia_vencimento_cartao", control: formTitulo.control }) ||
       "0"
   );
+  const diaCorteCartao = parseInt(formTitulo.watch("dia_corte_cartao") || "0");
+
   useEffect(() => {
-    if (checkIsCartao(id_forma_pagamento)) {
+    if (isCartao) {
       const year = startOfDay(data_inicial).getFullYear();
       const month = startOfDay(data_inicial).getMonth();
-      const dia_corte = parseInt(formTitulo.watch("dia_corte_cartao") || "0");
-      console.log(startOfDay(data_inicial).getDate(), dia_corte);
 
-      if (startOfDay(data_inicial).getDate() > dia_corte) {
+      if (startOfDay(data_inicial).getDate() > diaCorteCartao) {
         form.setValue(
           "data_vencimento",
-          new Date(year, month + 2, day).toDateString()
+          new Date(year, month + 2, diaVencimentoCartao).toDateString()
         );
       } else {
         form.setValue(
           "data_vencimento",
-          new Date(year, month + 1, day).toDateString()
+          new Date(year, month + 1, diaVencimentoCartao).toDateString()
         );
       }
     }
-  }, [data_inicial, day]);
+  }, [data_inicial, diaVencimentoCartao]);
 
   type GeradorVencimentos = {
     data_vencimento: string;
@@ -133,7 +134,7 @@ export function ModalGerarVencimentos({
       });
       return;
     }
-    for (let p = 0; p < qtdeParcelas; p++) {
+    for (let parcela = 0; parcela < qtdeParcelas; parcela++) {
       let obj = {
         id: new Date().getTime().toString(),
         data_vencimento: "",
@@ -144,18 +145,19 @@ export function ModalGerarVencimentos({
       };
 
       // gerar uma data de vencimento e previsão
-      if (p == 0) {
-        (obj.data_vencimento = data.data_vencimento),
-          (obj.data_prevista = calcularDataPrevisaoPagamento(
-            data.data_vencimento
-          ).toDateString());
+      if (parcela == 0) {
+        obj.data_vencimento = data.data_vencimento;
+        if(!isCartao){
+          obj.data_vencimento = proximoDiaUtil(obj.data_vencimento).toString();
+        }
+        obj.data_prevista = calcularDataPrevisaoPagamento(data.data_vencimento).toDateString();
+
       } else {
-        obj.data_vencimento = proximoDiaUtil(
-          addMonths(dataVencimento, p)
-        ).toString();
-        obj.data_prevista = calcularDataPrevisaoPagamento(
-          obj.data_vencimento
-        ).toDateString();
+        obj.data_vencimento = addMonths(dataVencimento, parcela).toString();
+        if(!isCartao){
+          obj.data_vencimento = proximoDiaUtil(obj.data_vencimento).toString();
+        }
+        obj.data_prevista = calcularDataPrevisaoPagamento(obj.data_vencimento).toDateString();
       }
 
       // incluir um item ao fieldArray

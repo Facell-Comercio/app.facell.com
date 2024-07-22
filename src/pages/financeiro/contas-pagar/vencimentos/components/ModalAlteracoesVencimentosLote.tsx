@@ -12,23 +12,35 @@ import { toast } from "@/components/ui/use-toast";
 import { useVencimentos } from "@/hooks/financeiro/useVencimentos";
 import { useEffect, useState } from "react";
 import { useStoreTableVencimentos } from "../tables/store";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 
 export type AlteracaoLoteVencimentosSchemaProps = {
   value?: Date;
-  ids: number[];
+  itens: VencimentosProps[];
 };
 
-const ModalAlteracoesVencimentosLote = () => {
-  const [data, setData] = useState<Date | undefined>(undefined);
+type ModalAlteracoesVencimentosLoteProps ={
+  itens: VencimentosProps[] | []
+}
+
+const ModalAlteracoesVencimentosLote = ({itens}: ModalAlteracoesVencimentosLoteProps) => {
+  const [dataPrevista, setDataPrevista] = useState<Date | undefined>(undefined);
   const modalOpen = useStoreTableVencimentos().modalOpen;
   const closeModal = useStoreTableVencimentos().closeModal;
-  const idSelection = useStoreTableVencimentos().idSelection;
+  const rowSelection = useStoreTableVencimentos().rowSelection;
   const handleRowSelection = useStoreTableVencimentos().handleRowSelection;
 
+  
   const { mutate: changeVencimento } = useVencimentos().changeVencimentos();
-
+  
   const alterarLote = async () => {
-    if (!data) {
+    const selectedIndexes = Object.keys(rowSelection)
+    .filter((key:any) => rowSelection[key])
+    .map(Number);
+    
+    const itensSelecionados = itens.filter((_, index)=>selectedIndexes.includes(index)) || []
+    
+    if (!dataPrevista) {
       toast({
         variant: "destructive",
         title: "Dados insuficientes!",
@@ -37,16 +49,16 @@ const ModalAlteracoesVencimentosLote = () => {
       return;
     }
     changeVencimento({
-      value: data,
-      ids: idSelection,
+      value: dataPrevista,
+      itens: itensSelecionados,
     });
-    handleRowSelection({ idSelection: [], rowSelection: {} });
+    handleRowSelection({ rowSelection: {} });
     closeModal();
   };
 
   useEffect(() => {
     if (!modalOpen) {
-      setData(undefined);
+      setDataPrevista(undefined);
     }
   }, [modalOpen]);
 
@@ -60,8 +72,8 @@ const ModalAlteracoesVencimentosLote = () => {
           <label className="text-sm font-medium">Previsão de Pagamento</label>
           <InputDate
             className="mt-2"
-            value={data}
-            onChange={(e: Date) => setData(e)}
+            value={dataPrevista}
+            onChange={(e: Date) => setDataPrevista(e)}
           />
         </div>
         <DialogFooter>

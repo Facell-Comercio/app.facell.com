@@ -47,7 +47,7 @@ export const useConciliacaoCP = () => {
 
     getConciliacoes: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["financeiro", "conciliacao", "realizado", "lista", pagination, filters.id_filial],
+        queryKey: ["financeiro", "conciliacao", "realizado", "lista", {pagination, filters}],
         queryFn: async () => {
           return await api.get(`/financeiro/conciliacao-cp/conciliacoes`, {
             params: { pagination, filters },
