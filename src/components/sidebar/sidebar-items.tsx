@@ -10,6 +10,7 @@ import {
 } from "react-icons/bs";
 import {
   FaBullhorn,
+  FaRankingStar,
   FaSackDollar,
   FaTruckRampBox,
   FaUsers,
@@ -53,6 +54,29 @@ export const sidebarItems: SidebarItem[] = [
     type: "title",
     spacing: true,
     visible: true,
+  },
+  {
+    name: "Comercial",
+    type: "label",
+    icon: <FaRankingStar />,
+    uri: "comercial",
+    visible: true,
+    children: [
+      {
+        name: "Metas",
+        type: "link",
+        shortName: "M",
+        uri: "comercial/metas",
+        visible: true,
+      },
+      {
+        name: "Comissionamento",
+        type: "link",
+        shortName: "E",
+        uri: "comercial/comissionamento",
+        visible: true,
+      },
+    ],
   },
   {
     name: "Pessoal",
