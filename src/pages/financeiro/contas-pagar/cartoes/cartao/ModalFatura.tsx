@@ -14,11 +14,18 @@ import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 
+import { Spinner } from "@/components/custom/Spinner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
-import { normalizeCurrency, normalizeDate, normalizeNumberOnly } from "@/helpers/mask";
+import {
+  normalizeCurrency,
+  normalizeDate,
+  normalizeNumberOnly,
+} from "@/helpers/mask";
 import { FaturaSchema, useCartoes } from "@/hooks/financeiro/useCartoes";
+import { api } from "@/lib/axios";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ArrowUpDown,
   Hourglass,
@@ -29,14 +36,12 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
+import ModalTituloPagar from "../../titulos/titulo/Modal";
 import { useFormFaturaData } from "./form-data";
 import { ItemFatura } from "./ItemFatura";
 import ModalTransfer from "./ModalTransfer";
 import RowVirtualizerFixed from "./RowVirtualizedFixed";
 import { useStoreCartao } from "./store";
-import { api } from "@/lib/axios";
-import { Spinner } from "@/components/custom/Spinner";
-import { useQueryClient } from "@tanstack/react-query";
 
 const ModalFatura = () => {
   const queryClient = useQueryClient();
@@ -70,25 +75,28 @@ const ModalFatura = () => {
   const dados: FaturaSchema = data?.data.dados;
   const { form } = useFormFaturaData(dados);
 
-   //~ Compras Aprovadas
-   const comprasAprovadas = data?.data?.comprasAprovadas || [];
-   const qntdAprovadas =
-     (data?.data?.comprasAprovadas && data?.data?.comprasAprovadas.length) || 0;
-   const totalAprovadas = data?.data?.totalAprovadas || 0;
- 
-   //~ Compras Pendentes
-   const comprasPendentes = data?.data?.comprasPendentes || [];
-   const qntdPendentes =
-     (data?.data?.comprasPendentes && data?.data?.comprasPendentes.length) || 0;
-   const totalPendentes = data?.data.totalPendentes;
+  //~ Compras Aprovadas
+  const comprasAprovadas = data?.data?.comprasAprovadas || [];
+  const qntdAprovadas =
+    (data?.data?.comprasAprovadas && data?.data?.comprasAprovadas.length) || 0;
+  const totalAprovadas = data?.data?.totalAprovadas || 0;
 
-  const faturaFechada = !!dados?.closed
-  const disabled = faturaFechada || (dados?.status === "pago" || dados?.status === "programado");
-  const canDeleteFatura = (comprasAprovadas.length + comprasPendentes.length) == 0
-  const canReabrirFatura = !canDeleteFatura && faturaFechada && !(dados?.status === "pago" || dados?.status === "programado");
+  //~ Compras Pendentes
+  const comprasPendentes = data?.data?.comprasPendentes || [];
+  const qntdPendentes =
+    (data?.data?.comprasPendentes && data?.data?.comprasPendentes.length) || 0;
+  const totalPendentes = data?.data.totalPendentes;
+
+  const faturaFechada = !!dados?.closed;
+  const disabled =
+    faturaFechada || dados?.status === "pago" || dados?.status === "programado";
+  const canDeleteFatura =
+    comprasAprovadas.length + comprasPendentes.length == 0;
+  const canReabrirFatura =
+    !canDeleteFatura &&
+    faturaFechada &&
+    !(dados?.status === "pago" || dados?.status === "programado");
   const canCloseFatura = !canDeleteFatura && !faturaFechada;
-
- 
 
   const {
     mutate: updateFatura,
@@ -153,13 +161,17 @@ const ModalFatura = () => {
     if (valor !== parseFloat(totalAprovadas)) {
       if (parseFloat(totalAprovadas) < valor) {
         toast({
-          title: `Valor da fatura ultrapassa o esperado em ${normalizeCurrency(diferenca)}`,
+          title: `Valor da fatura ultrapassa o esperado em ${normalizeCurrency(
+            diferenca
+          )}`,
           variant: "warning",
         });
       }
       if (parseFloat(totalAprovadas) > valor) {
         toast({
-          title: `Valor da fatura é inferior ao valor esperado em ${normalizeCurrency(diferenca)}`,
+          title: `Valor da fatura é inferior ao valor esperado em ${normalizeCurrency(
+            diferenca
+          )}`,
           variant: "warning",
         });
       }
@@ -173,66 +185,78 @@ const ModalFatura = () => {
     }
 
     try {
-      setIsOpenCloseLoading(true)
-      await api.post('/financeiro/contas-a-pagar/cartoes/fatura/fechar', {
-        ...dados
-      })
-      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] })
+      setIsOpenCloseLoading(true);
+      await api.post("/financeiro/contas-a-pagar/cartoes/fatura/fechar", {
+        ...dados,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["financeiro", "contas_pagar"],
+      });
       toast({
-        variant: 'success', title: 'Fatura fechada!'
-      })
+        variant: "success",
+        title: "Fatura fechada!",
+      });
     } catch (error) {
       toast({
-        variant: 'destructive', title: 'Ops!',
+        variant: "destructive",
+        title: "Ops!",
         // @ts-ignore
-        description: error?.response?.data?.message || error?.message
-      })
+        description: error?.response?.data?.message || error?.message,
+      });
     } finally {
-      setIsOpenCloseLoading(false)
+      setIsOpenCloseLoading(false);
     }
   }
 
   async function handleReabrirFatura() {
     try {
-      setIsOpenCloseLoading(true)
-      await api.post('/financeiro/contas-a-pagar/cartoes/fatura/reabrir', {
-        ...dados
-      })
-      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] })
+      setIsOpenCloseLoading(true);
+      await api.post("/financeiro/contas-a-pagar/cartoes/fatura/reabrir", {
+        ...dados,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["financeiro", "contas_pagar"],
+      });
       toast({
-        variant: 'success', title: 'Fatura reaberta!'
-      })
+        variant: "success",
+        title: "Fatura reaberta!",
+      });
     } catch (error) {
       toast({
-        variant: 'destructive', title: 'Ops!',
+        variant: "destructive",
+        title: "Ops!",
         // @ts-ignore
-        description: error?.response?.data?.message || error?.message
-      })
+        description: error?.response?.data?.message || error?.message,
+      });
     } finally {
-      setIsOpenCloseLoading(false)
+      setIsOpenCloseLoading(false);
     }
   }
 
   async function handleDeleteFatura() {
     try {
-      setIsOpenCloseLoading(true)
-      await api.delete('/financeiro/contas-a-pagar/cartoes/fatura', {
-        params: {id: dados.id}
-      })
-      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar", "cartao"] })
- 
+      setIsOpenCloseLoading(true);
+      await api.delete("/financeiro/contas-a-pagar/cartoes/fatura", {
+        params: { id: dados.id },
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["financeiro", "contas_pagar", "cartao"],
+      });
+
       toast({
-        variant: 'success', title: 'Fatura excluída!'
-      })
-      closeModal()
+        variant: "success",
+        title: "Fatura excluída!",
+      });
+      closeModal();
     } catch (error) {
       toast({
-        variant: 'destructive', title: 'Ops!',
+        variant: "destructive",
+        title: "Ops!",
         // @ts-ignore
-        description: error?.response?.data?.message || error?.message
-      })
+        description: error?.response?.data?.message || error?.message,
+      });
     } finally {
-      setIsOpenCloseLoading(false)
+      setIsOpenCloseLoading(false);
     }
   }
 
@@ -242,7 +266,14 @@ const ModalFatura = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{`Fatura: ${id} `}{dados?.closed ? <span  className="text-slate-500">Fechada</span> : <span className="text-green-500">Aberta</span>}</DialogTitle>
+          <DialogTitle>
+            {`Fatura: ${id} `}
+            {dados?.closed ? (
+              <span className="text-slate-500">Fechada</span>
+            ) : (
+              <span className="text-green-500">Aberta</span>
+            )}
+          </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
@@ -252,7 +283,9 @@ const ModalFatura = () => {
                   <div
                     className={`py-1 text-white text-center border text-md font-bold rounded-sm ${color} capitalize`}
                   >
-                      {dados.status == 'pago' ? 'Pago' :  `Pagamento ${dados.status}`}
+                    {dados.status == "pago"
+                      ? "Pago"
+                      : `Pagamento ${dados.status}`}
                   </div>
                 </div>
               )}
@@ -318,7 +351,7 @@ const ModalFatura = () => {
                   </form>
                 </Form>
               </div>
-              {qntdAprovadas >= 0 && (
+              {qntdAprovadas > 0 && (
                 <Accordion
                   type="single"
                   collapsible
@@ -450,47 +483,52 @@ const ModalFatura = () => {
             formRef={formRef}
           >
             <>
-            <div className="flex gap-3 items-center">
-            {canDeleteFatura && (
-                <AlertPopUp
-                  title={`Deseja realmente fechar a fatura?`}
-                  action={handleDeleteFatura}
-                >
-                  <Button
-                    disabled={isOpenCloseLoading}
-                    variant={"destructive"} size={"lg"}
+              <div className="flex gap-3 items-center">
+                {canDeleteFatura && (
+                  <AlertPopUp
+                    title={`Deseja realmente fechar a fatura?`}
+                    action={handleDeleteFatura}
                   >
-                    {isOpenCloseLoading ? <Spinner /> : <Trash className="me-2" />}
-                    {"Excluir Fatura"}
-                  </Button>
-                </AlertPopUp>
-              )}
-              {canCloseFatura && (
-                <AlertPopUp
-                  title={`Deseja realmente fechar a fatura?`}
-                  action={handleCloseFatura}
-                >
-                  <Button
-                    variant={"destructive"} size={"lg"}
+                    <Button
+                      disabled={isOpenCloseLoading}
+                      variant={"destructive"}
+                      size={"lg"}
+                    >
+                      {isOpenCloseLoading ? (
+                        <Spinner />
+                      ) : (
+                        <Trash className="me-2" />
+                      )}
+                      {"Excluir Fatura"}
+                    </Button>
+                  </AlertPopUp>
+                )}
+                {canCloseFatura && (
+                  <AlertPopUp
+                    title={`Deseja realmente fechar a fatura?`}
+                    action={handleCloseFatura}
                   >
-                    <Receipt className="me-2" />
-                    {"Fechar Fatura"}
-                  </Button>
-                </AlertPopUp>
-              )}
-              {canReabrirFatura && (
-                <AlertPopUp
-                  title={`Deseja realmente reabrir a fatura?`}
-                  action={handleReabrirFatura}
-                >
-                  <Button
-                    variant={"warning"} size={"lg"}
+                    <Button variant={"destructive"} size={"lg"}>
+                      <Receipt className="me-2" />
+                      {"Fechar Fatura"}
+                    </Button>
+                  </AlertPopUp>
+                )}
+                {canReabrirFatura && (
+                  <AlertPopUp
+                    title={`Deseja realmente reabrir a fatura?`}
+                    action={handleReabrirFatura}
                   >
-                    {isOpenCloseLoading ? <Spinner /> : <Receipt className="me-2" />}
-                    {"Reabrir Fatura"}
-                  </Button>
-                </AlertPopUp>
-              )}
+                    <Button variant={"warning"} size={"lg"}>
+                      {isOpenCloseLoading ? (
+                        <Spinner />
+                      ) : (
+                        <Receipt className="me-2" />
+                      )}
+                      {"Reabrir Fatura"}
+                    </Button>
+                  </AlertPopUp>
+                )}
               </div>
             </>
           </ModalButtons>
@@ -501,6 +539,7 @@ const ModalFatura = () => {
           dia_vencimento={dados?.dia_vencimento || ""}
           id_fatura={id || ""}
         />
+        <ModalTituloPagar />
       </DialogContent>
     </Dialog>
   );
