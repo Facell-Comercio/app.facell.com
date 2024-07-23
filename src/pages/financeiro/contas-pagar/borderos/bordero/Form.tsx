@@ -124,7 +124,10 @@ const FormBordero = ({
     form
       .watch("itens")
       .filter((v) => v.status === "programado")
-      .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
+      .reduce(
+        (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
+        0
+      ) || 0;
 
   // ITENS - ERRO
   const wVencimentosErro = form
@@ -134,7 +137,10 @@ const FormBordero = ({
     form
       .watch("itens")
       .filter((v) => v.status === "erro")
-      .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
+      .reduce(
+        (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
+        0
+      ) || 0;
 
   // ITENS - PAGOS
   const wVencimentosPago = form
@@ -145,7 +151,11 @@ const FormBordero = ({
     form
       .watch("itens")
       .filter((v) => v.status === "pago")
-      .reduce((acc, item: VencimentosProps) => acc + +item.valor_total, 0) || 0;
+      .reduce(
+        (acc, item: VencimentosProps) =>
+          acc + parseFloat(item.valor_pago || "0"),
+        0
+      ) || 0;
 
   const itensChecked: VencimentosProps[] = form
     .watch("itens")
