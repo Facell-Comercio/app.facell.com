@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { toast } from "@/components/ui/use-toast";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import { Filial } from "@/types/filial-type";
@@ -24,7 +25,6 @@ import { EraserIcon, FilterIcon } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
 import ModalFiliais from "../../admin/components/ModalFiliais";
-import { toast } from "@/components/ui/use-toast";
 
 interface IModalVencimentos {
   open: boolean;
@@ -44,6 +44,7 @@ export type VencimentosProps = {
   checked?: boolean;
   id?: string;
   id_vencimento: string;
+  id_item?: string;
   id_titulo: string;
   id_status?: string;
   id_dda?: number;
@@ -61,7 +62,7 @@ export type VencimentosProps = {
   filial: string;
   obs?: string;
   data_pagamento?: string;
-  tipo?: 'vencimento' | 'fatura'
+  tipo?: "vencimento" | "fatura";
   can_remove?: boolean;
   can_modify?: boolean;
   updated?: boolean;
@@ -118,7 +119,14 @@ const ModalFindItemsBordero = ({
   };
 
   const { data, isError, isLoading, refetch } = useQuery({
-    queryKey: ["financeiro", "contas_pagar", "bordero", "novos_itens", "lista", {id_matriz, id_status}],
+    queryKey: [
+      "financeiro",
+      "contas_pagar",
+      "bordero",
+      "novos_itens",
+      "lista",
+      { id_matriz, id_status },
+    ],
     staleTime: 0,
     retry: false,
     queryFn: async () =>
@@ -191,7 +199,7 @@ const ModalFindItemsBordero = ({
             ...item,
             num_doc: item.num_doc || "",
             data_pagamento: item.data_pagamento || "",
-            tipo_baixa: item.tipo_baixa || ''
+            tipo_baixa: item.tipo_baixa || "",
           },
         ]);
 
@@ -216,7 +224,7 @@ const ModalFindItemsBordero = ({
             ...item,
             num_doc: item.num_doc || "",
             data_pagamento: item.data_pagamento || "",
-            tipo_baixa: item.tipo_baixa || ''
+            tipo_baixa: item.tipo_baixa || "",
           },
         ]);
         setIds([...ids, `${item.id_vencimento}-${item.id_forma_pagamento}`]);
@@ -307,9 +315,9 @@ const ModalFindItemsBordero = ({
   useEffect(() => {
     if (isError && open) {
       toast({
-        title: 'Ops!', 
-        variant: 'destructive',
-        description: 'Ocorreu um erro ao tentar buscar os vencimentos'
+        title: "Ops!",
+        variant: "destructive",
+        description: "Ocorreu um erro ao tentar buscar os vencimentos",
       });
     }
   }, [isError]);
@@ -438,7 +446,7 @@ const ModalFindItemsBordero = ({
                     </td>
                     <td className="text-xs text-nowrap p-1 text-center">
                       {" "}
-                      {isFatura ? 'Fatura' : item.id_titulo}
+                      {isFatura ? "Fatura" : item.id_titulo}
                     </td>
                     <td className="text-xs text-nowrap p-1">
                       {item.nome_fornecedor.slice(0, 20) +

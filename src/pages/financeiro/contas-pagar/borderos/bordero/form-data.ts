@@ -7,12 +7,16 @@ const ItemBorderoSchema = z
   .object({
     checked: z.coerce.boolean().optional(),
     id_titulo: z.coerce.string().trim().optional(),
+    id_item: z.coerce.string().trim().optional(),
     id_vencimento: z.coerce.string().trim().optional(),
     id_status: z.number().nullable(),
     status: z.string().optional(),
     id_forma_pagamento: z.number().optional(),
     forma_pagamento: z.string().optional(),
-    tipo_baixa: z.coerce.string().optional().transform(v=>v=='null'? '': v),
+    tipo_baixa: z.coerce
+      .string()
+      .optional()
+      .transform((v) => (v == "null" ? "" : v)),
     data_prevista_parcial: z.date().optional(),
     id_dda: z.coerce.string().optional(),
     previsao: z.string().trim().optional(),
@@ -38,7 +42,7 @@ const ItemBorderoSchema = z
       path: ["data_prevista_parcial"],
       message: "Data prevista parcial é obrigatória",
     }
-  )
+  );
 
 const schemaBorderos = z.object({
   // Identificador do plano de contas
@@ -61,6 +65,6 @@ export const useFormBorderoData = (data: BorderoSchemaProps) => {
   });
 
   return {
-    form
+    form,
   };
 };

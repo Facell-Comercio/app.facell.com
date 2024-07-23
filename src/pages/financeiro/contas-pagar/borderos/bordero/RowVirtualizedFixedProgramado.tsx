@@ -3,10 +3,10 @@ import * as React from "react";
 import { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Banknote, CreditCard, Landmark } from "lucide-react";
 import { useStoreCartao } from "../../cartoes/cartao/store";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 
 interface RowVirtualizerFixedProgramadoProps {
   data: VencimentosProps[];
@@ -124,12 +124,12 @@ const RowVirtualizerFixedProgramado: React.FC<
               );
             }
           }
-
+          const key = `${item.index} - ${data[indexData].id_item} - ${data[indexData].tipo}`;
           return (
             <div
               // ref={virtualizer.measureElement}
-              key={indexData}
-              data-index={index}
+              key={key}
+              data-index={key}
               className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
                 virtualizer.getVirtualItems().length == 0 && "hidden"
               }`}
