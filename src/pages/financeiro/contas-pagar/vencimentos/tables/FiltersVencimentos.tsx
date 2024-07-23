@@ -1,3 +1,4 @@
+import { SelectMultiFormaPagamento } from "@/components/custom/SelectFormaPagamento";
 import SelectMatriz from "@/components/custom/SelectMatriz";
 import {
   Accordion,
@@ -91,7 +92,13 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
                   setFilters({ id_matriz: id_matriz });
                 }}
               />
-
+              <SelectMultiFormaPagamento
+                className="w-fit"
+                value={filters.forma_pagamento_list || []}
+                onChange={(value) =>
+                  setFilters({ forma_pagamento_list: value })
+                }
+              />
               <Select
                 value={filters.tipo_data}
                 onValueChange={(tipo_data) => {
