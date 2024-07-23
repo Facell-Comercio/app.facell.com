@@ -9,12 +9,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Toggle } from "@/components/ui/toggle";
 
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreCartao } from "../../cartoes/cartao/store";
 import { useStoreDDA } from "../components/storeDDA";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 
 interface RowVirtualizerFixedPendentesProps {
   data: VencimentosProps[];
@@ -66,10 +66,14 @@ const RowVirtualizerFixedPendentes: React.FC<
           <Checkbox
             className="min-w-4 me-1"
             onCheckedChange={(e) => {
-              filteredData.forEach((_, index) => {
-                // if (item.id_status == "3") {
-                form.setValue(`itens.${index}.checked`, !!e.valueOf());
-                // }
+              filteredData.forEach((filteredVencimento) => {
+                const indexData = data.findIndex(
+                  (vencimento) =>
+                    vencimento.id_item == filteredVencimento.id_item &&
+                    vencimento.tipo == filteredVencimento.tipo
+                );
+
+                form.setValue(`itens.${indexData}.checked`, !!e.valueOf());
               });
             }}
           />
@@ -177,11 +181,12 @@ const RowVirtualizerFixedPendentes: React.FC<
             }
           }
 
+          const key = `${item.index} - ${data[indexData].id_item} - ${data[indexData].tipo}`;
           return (
             <div
               // ref={virtualizer.measureElement}
-              key={item.index}
-              data-index={index}
+              key={key}
+              data-index={`${index} ${key}`}
               className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
                 virtualizer.getVirtualItems().length == 0 && "hidden"
               }`}

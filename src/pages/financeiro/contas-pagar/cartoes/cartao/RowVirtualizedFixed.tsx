@@ -4,6 +4,7 @@ import { Input } from "@/components/custom/FormInput";
 import { Checkbox } from "@/components/ui/checkbox";
 import { normalizeCurrency } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useStoreTitulo } from "../../titulos/titulo/store";
 
 type ItemFaturaProps = {
   id: string;
@@ -37,6 +38,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
     estimateSize: () => 36,
     overscan: 10,
   });
+  const openModal = useStoreTitulo.getState().openModal;
 
   return (
     <section
@@ -118,8 +120,9 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
                 readOnly
               />
               <Input
-                className="w-[72px] h-8 text-xs p-2 text-center"
+                className="w-[72px] h-8 text-xs p-2 text-center cursor-pointer"
                 value={data[index].id_titulo || ""}
+                onClick={() => openModal({ id: data[index].id_titulo })}
                 readOnly
               />
               <Input
