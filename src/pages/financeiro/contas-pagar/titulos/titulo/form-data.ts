@@ -204,43 +204,46 @@ export const schemaTitulo = z
     }
   )
 
-  // ^ Validar se forma de pagamento for PIX Copia e Cola, cobrar o PIX Copia e Cola
-  .refine(
-    (data) => {
-      if (data.id_forma_pagamento == "8") {
-        if (!data.vencimentos || data.vencimentos.length === 0) {
-          return false;
-        }
-        for (const v of data.vencimentos) {
-          if (!v.qr_code) {
-            return false;
-          }
-        }
-      }
-      return true;
-    },
-    { path: ["vencimentos"], message: "Preencha o PIX Copia e Cola!" }
-  )
-  // ^ Validar se forma de pagamento for Boleto de Impostos/Concessionárias cobrar o PIX Copia e Cola
-  .refine(
-    (data) => {
-      if (data.id_forma_pagamento == "10") {
-        if (!data.vencimentos || data.vencimentos.length === 0) {
-          return false;
-        }
-        for (const v of data.vencimentos) {
-          if (!v.cod_barras || v.cod_barras.length !== 48) {
-            return false;
-          }
-        }
-      }
-      return true;
-    },
-    {
-      path: ["vencimentos"],
-      message: "Preencha o código de barras corretamente",
-    }
-  )
+  // // ^ Validar se forma de pagamento for PIX Copia e Cola, cobrar o PIX Copia e Cola
+  // .refine(
+  //   (data) => {
+  //     if (data.id_forma_pagamento == "8") {
+  //       if (!data.vencimentos || data.vencimentos.length === 0) {
+  //         return false;
+  //       }
+  //       for (const v of data.vencimentos) {
+  //         if (!v.qr_code) {
+  //           return false;
+  //         }
+  //       }
+  //     }
+  //     return true;
+  //   },
+  //   { path: ["vencimentos"], message: "Preencha o PIX Copia e Cola!" }
+  // )
+  // // ^ Validar se forma de pagamento for Boleto de Impostos/Concessionárias cobrar o PIX Copia e Cola
+  // .refine(
+  //   (data) => {
+  //     if (data.id_forma_pagamento == "10") {
+  //       if (!data.vencimentos || data.vencimentos.length === 0) {
+  //         return false;
+  //       }
+  //       for (const v of data.vencimentos) {
+  //         if (
+  //           !v.cod_barras ||
+  //           (v.cod_barras.length !== 44 && v.cod_barras.length !== 48)
+  //         ) {
+  //           return false;
+  //         }
+  //       }
+  //     }
+  //     return true;
+  //   },
+  //   {
+  //     path: ["vencimentos"],
+  //     message: "Preencha o código de barras corretamente",
+  //   }
+  // )
   // ^ Valida se forma de pagamento for cartão se a data de vencimento está no dia certo
   .refine(
     (data) => {

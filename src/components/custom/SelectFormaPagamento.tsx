@@ -67,11 +67,13 @@ export const SelectMultiFormaPagamento = (
     staleTime: Infinity,
   });
 
+  const formaPagamento = data || [];
+
   return (
     // @ts-ignore
     <MultiSelect
       {...props}
-      options={data.map((forma: FormaPagamento) => ({
+      options={formaPagamento.map((forma: FormaPagamento) => ({
         value: forma.id,
         label: forma.forma_pagamento,
       }))}

@@ -33,6 +33,7 @@ export const columnsTableEmBordero: ColumnDef<RowVencimento>[] = [
     accessorKey: "id_forma_pagamento",
     cell: (info) => {
       const id_forma_pagamento = parseInt(info.getValue<string>());
+
       if (id_forma_pagamento === 3) {
         return (
           <Button

@@ -11,7 +11,15 @@ import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
 
-import { ArrowsUpFromLine, ArrowUpDown, Download, Fingerprint, ListChecks, Minus, Plus } from "lucide-react";
+import {
+  ArrowsUpFromLine,
+  ArrowUpDown,
+  Download,
+  Fingerprint,
+  ListChecks,
+  Minus,
+  Plus,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFormBorderoData } from "./form-data";
 import { useStoreBordero } from "./store";
@@ -19,6 +27,13 @@ import { useStoreBordero } from "./store";
 // Componentes
 import { Accordion } from "@/components/ui/accordion";
 
+import { Spinner } from "@/components/custom/Spinner";
+import { downloadResponse } from "@/helpers/download";
+import ModalFindItemsBordero, {
+  VencimentosProps,
+} from "@/pages/financeiro/components/ModalFindItemsBordero";
+import { useQueryClient } from "@tanstack/react-query";
+import { useFieldArray } from "react-hook-form";
 import ModalFatura from "../../cartoes/cartao/ModalFatura";
 import BtnOptionsRemessa from "./BtnOptionsRemessa";
 import { ItemVencimento } from "./ItemVencimento";
@@ -28,13 +43,6 @@ import RowVirtualizerFixedErro from "./RowVirtualizedFixedErro";
 import RowVirtualizerFixedPagos from "./RowVirtualizedFixedPagos";
 import RowVirtualizerFixedPendentes from "./RowVirtualizedFixedPendentes";
 import RowVirtualizerFixedProgramado from "./RowVirtualizedFixedProgramado";
-import ModalFindItemsBordero, {
-  VencimentosProps,
-} from "@/pages/financeiro/components/ModalFindItemsBordero";
-import { useFieldArray } from "react-hook-form";
-import { useQueryClient } from "@tanstack/react-query";
-import { Spinner } from "@/components/custom/Spinner";
-import { downloadResponse } from "@/helpers/download";
 
 const FormBordero = ({
   id,
@@ -45,7 +53,7 @@ const FormBordero = ({
   data: BorderoSchemaProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const {
     mutate: insertOne,
@@ -77,8 +85,7 @@ const FormBordero = ({
     state.isPending,
   ]);
 
-  const [modalFindItemsOpen, setModalFindItemsOpen] =
-    useState<boolean>(false);
+  const [modalFindItemsOpen, setModalFindItemsOpen] = useState<boolean>(false);
   const [modalContaBancariaOpen, setModalContaBancariaOpen] =
     useState<boolean>(false);
 
@@ -104,7 +111,10 @@ const FormBordero = ({
     form
       .watch("itens")
       .filter((v) => v.status === "pendente")
-      .reduce((acc, item: VencimentosProps) => acc + parseFloat(item?.valor_total), 0) || 0;
+      .reduce(
+        (acc, item: VencimentosProps) => acc + parseFloat(item?.valor_total),
+        0
+      ) || 0;
 
   // ITENS - PROGRAMADOS
   const wVencimentosProgramados = form
@@ -130,7 +140,7 @@ const FormBordero = ({
   const wVencimentosPago = form
     .watch("itens")
     .filter((v) => v.status === "pago");
-    
+
   const wVencimentosPagoValorTotal =
     form
       .watch("itens")
@@ -143,41 +153,52 @@ const FormBordero = ({
 
   const handlePadronizarTipoBaixa = () => {
     itensChecked.forEach((itemChecked: VencimentosProps) => {
-      const indexItem = wVencimentos.findIndex((v: VencimentosProps) => v.id_vencimento == itemChecked.id_vencimento && v.tipo == itemChecked.tipo)
+      const indexItem = wVencimentos.findIndex(
+        (v: VencimentosProps) =>
+          v.id_vencimento == itemChecked.id_vencimento &&
+          v.tipo == itemChecked.tipo
+      );
       // console.log({ indexItem });
 
-      form.setValue(`itens.${indexItem}`,
-        {
-          ...itemChecked,
-          valor_pago: itemChecked.valor_total,
-          tipo_baixa: 'PADRÃO'
-        })
-    })
-  }
-  const [loadingPagamento, setLoadingPagamento] = useState<boolean>(false)
+      form.setValue(`itens.${indexItem}`, {
+        ...itemChecked,
+        valor_pago: itemChecked.valor_total,
+        tipo_baixa: "PADRÃO",
+      });
+    });
+  };
+  const [loadingPagamento, setLoadingPagamento] = useState<boolean>(false);
   const handlePagamentoEmLote = async () => {
-    const itens = wVencimentos.filter((v: VencimentosProps) => v.checked === true)
+    const itens = wVencimentos.filter(
+      (v: VencimentosProps) => v.checked === true
+    );
 
     try {
-      if(!itens || itens.length === 0){
-        throw new Error('Nenhum item selecionado!')
+      if (!itens || itens.length === 0) {
+        throw new Error("Nenhum item selecionado!");
       }
-      setLoadingPagamento(true)
-      await api.post('/financeiro/contas-a-pagar/bordero/pagamento', { id_bordero: data.id, itens, data_pagamento: data.data_pagamento })
-      queryClient.invalidateQueries({ queryKey: ["financeiro"] })
+      setLoadingPagamento(true);
+      await api.post("/financeiro/contas-a-pagar/bordero/pagamento", {
+        id_bordero: data.id,
+        itens,
+        data_pagamento: data.data_pagamento,
+      });
+      queryClient.invalidateQueries({ queryKey: ["financeiro"] });
       toast({
-        variant: 'success', title: 'Pagamento realizado!',
-      })
+        variant: "success",
+        title: "Pagamento realizado!",
+      });
     } catch (error) {
       toast({
-        variant: 'destructive', title: 'Ops!',
+        variant: "destructive",
+        title: "Ops!",
         // @ts-ignore
-        description: error?.response?.data?.message || error?.message
-      })
-    }finally{
-      setLoadingPagamento(false)
+        description: error?.response?.data?.message || error?.message,
+      });
+    } finally {
+      setLoadingPagamento(false);
     }
-  }
+  };
 
   function onSubmitData(newData: BorderoSchemaProps) {
     const filteredData: BorderoSchemaProps = {
@@ -197,20 +218,20 @@ const FormBordero = ({
   }
 
   useEffect(() => {
-    if(insertIsSuccess){
+    if (insertIsSuccess) {
       editModal(false);
-      closeModal()
-      return 
+      closeModal();
+      return;
     }
     if (updateIsSuccess) {
       editModal(false);
       editIsPending(false);
-      return
-    } 
+      return;
+    }
     if (updateIsError || insertIsError) {
       editIsPending(false);
-      return
-    } 
+      return;
+    }
     if (updateIsPending || insertIsPending) {
       editIsPending(true);
     }
@@ -280,14 +301,9 @@ const FormBordero = ({
           .map((v) => v.id_vencimento)
           .includes(v.id_vencimento)
     );
-    wVencimentos.forEach((v) => {
-      if (
-        !checkedVencimentos
-          .map((v) => v.id_vencimento)
-          .includes(v.id_vencimento) &&
-        v.id_status != "4" &&
-        v.id_status != "5"
-      ) {
+
+    checkedVencimentos.forEach((v) => {
+      if (v.id_status != "4" && v.id_status != "5") {
         deleteVencimento(v.id_vencimento);
       }
     });
@@ -304,55 +320,70 @@ const FormBordero = ({
     setExporting("");
   }
 
-  const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] = useState<boolean>(false)
-  async function handleRemessaSelecao(){
+  const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] =
+    useState<boolean>(false);
+  async function handleRemessaSelecao() {
     try {
-      if(!itensChecked || !itensChecked.length){
-        throw new Error('Nenhum item selecionado!')
+      if (!itensChecked || !itensChecked.length) {
+        throw new Error("Nenhum item selecionado!");
       }
-      const response = await api.post('financeiro/contas-a-pagar/bordero/export-remessa', {
+      const response = await api.post(
+        "financeiro/contas-a-pagar/bordero/export-remessa",
+        {
           id_bordero: id,
-          itens: itensChecked
-      }, {responseType: "blob"},)
+          itens: itensChecked,
+        },
+        { responseType: "blob" }
+      );
       downloadResponse(response);
-      setIsLoadingRemessaSelecao(true)
+      setIsLoadingRemessaSelecao(true);
     } catch (error) {
       toast({
-        variant: 'destructive', title: 'Ops!',
-        // @ts-ignore 
-        description: error?.response?.data?.message || error.message
-      })
-    } finally{
-      setIsLoadingRemessaSelecao(false)
+        variant: "destructive",
+        title: "Ops!",
+        // @ts-ignore
+        description: error?.response?.data?.message || error.message,
+      });
+    } finally {
+      setIsLoadingRemessaSelecao(false);
     }
   }
-  async function handleRemessaSelecaoPix(){
+  async function handleRemessaSelecaoPix() {
     try {
-      if(!itensChecked || !itensChecked.length){
-        throw new Error('Nenhum item selecionado!')
+      if (!itensChecked || !itensChecked.length) {
+        throw new Error("Nenhum item selecionado!");
       }
-      const response = await api.post('financeiro/contas-a-pagar/bordero/export-remessa', {
+      const response = await api.post(
+        "financeiro/contas-a-pagar/bordero/export-remessa",
+        {
           id_bordero: id,
           isPix: true,
-          itens: itensChecked
-      }, {responseType: "blob"},)
+          itens: itensChecked,
+        },
+        { responseType: "blob" }
+      );
       downloadResponse(response);
-      setIsLoadingRemessaSelecao(true)
+      setIsLoadingRemessaSelecao(true);
     } catch (error) {
       toast({
-        variant: 'destructive', title: 'Ops!',
-        // @ts-ignore 
-        description: error?.response?.data?.message || error.message
-      })
-    } finally{
-      setIsLoadingRemessaSelecao(false)
+        variant: "destructive",
+        title: "Ops!",
+        // @ts-ignore
+        description: error?.response?.data?.message || error.message,
+      });
+    } finally {
+      setIsLoadingRemessaSelecao(false);
     }
   }
   // const data_pagamento = form.watch("data_pagamento");
   // console.log(form.formState.errors);
   // console.log(form.watch("itens"));
   // console.log(form.watch("itens"), data.vencimentos);
-  const canEditBordero = modalEditing && !isPending && wVencimentosPago.length === 0 && wVencimentosProgramados.length === 0
+  const canEditBordero =
+    modalEditing &&
+    !isPending &&
+    wVencimentosPago.length === 0 &&
+    wVencimentosProgramados.length === 0;
   const [itemOpen, setItemOpen] = useState<string>("a-pagar");
 
   return (
@@ -456,7 +487,7 @@ const FormBordero = ({
                     modalEditing &&
                     itensChecked.length > 0 && (
                       <>
-                      <AlertPopUp
+                        <AlertPopUp
                           title="Deseja realmente prosseguir?"
                           description="Criaremos um arquivo de remessa com base nos itens selecionados. Caso queira criar de todos os itens, utilize o botão acima de Exportação"
                           action={handleRemessaSelecao}
@@ -470,7 +501,14 @@ const FormBordero = ({
                             className="justify-self-start group"
                             title="(Não selecione PIX) Exporta o arquivo de remessa somente com os itens selecionados"
                           >
-                            {isLoadingRemessaSelecao ? <Spinner /> : <Download size={18}  className="me-2 group-hover:rotate-180 transition-all" />}
+                            {isLoadingRemessaSelecao ? (
+                              <Spinner />
+                            ) : (
+                              <Download
+                                size={18}
+                                className="me-2 group-hover:rotate-180 transition-all"
+                              />
+                            )}
                             Remessa
                           </Button>
                         </AlertPopUp>
@@ -489,7 +527,14 @@ const FormBordero = ({
                             className="justify-self-start group"
                             title="(Somente PIX) Exporta o arquivo de remessa somente com os itens selecionados"
                           >
-                            {isLoadingRemessaSelecao ? <Spinner /> : <Download size={18}  className="me-2 group-hover:rotate-180 transition-all" />}
+                            {isLoadingRemessaSelecao ? (
+                              <Spinner />
+                            ) : (
+                              <Download
+                                size={18}
+                                className="me-2 group-hover:rotate-180 transition-all"
+                              />
+                            )}
                             Remessa PIX
                           </Button>
                         </AlertPopUp>
@@ -528,11 +573,17 @@ const FormBordero = ({
                             className="justify-self-start"
                             title="Todos os selecionados serão pagos conforme o tipo de baixa, os sem tipo baixa serão ignorados..."
                           >
-                            {loadingPagamento ? (<><Spinner/>
-                              <span>Pagando...</span></>): 
-                            (<><ListChecks className="me-2" size={18} />
-                            <span>Pagar em Lote</span></>)
-                            }
+                            {loadingPagamento ? (
+                              <>
+                                <Spinner />
+                                <span>Pagando...</span>
+                              </>
+                            ) : (
+                              <>
+                                <ListChecks className="me-2" size={18} />
+                                <span>Pagar em Lote</span>
+                              </>
+                            )}
                           </Button>
                         </AlertPopUp>
                         <Button
@@ -548,9 +599,7 @@ const FormBordero = ({
                         <AlertPopUp
                           title="Deseja realmente remover esses vencimentos?"
                           description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
-                          action={() =>
-                            removeCheckedVencimentos(itensChecked)
-                          }
+                          action={() => removeCheckedVencimentos(itensChecked)}
                         >
                           <Button
                             type={"button"}
