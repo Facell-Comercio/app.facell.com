@@ -1,6 +1,7 @@
 import { RowSelectionState } from "@tanstack/react-table";
 import { DateRange } from "react-day-picker";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface Pagination {
   pageIndex: number;
@@ -61,7 +62,7 @@ export interface Actions {
   closeModal: () => void;
 }
 
-export const useStoreTableVencimentos = create<State & Actions>((set) => ({
+export const useStoreTableVencimentos = create(persist<State & Actions>((set) => ({
   // Table
   rowCount: 0,
   // sorting: [],
@@ -93,4 +94,11 @@ export const useStoreTableVencimentos = create<State & Actions>((set) => ({
 
   openModal: () => set({ modalOpen: true }),
   closeModal: () => set({ modalOpen: false }),
-}));
+}),
+{
+  name: 'store-table-vencimentos',
+  // @ts-ignore
+  partialize: (state)=>({ filters: state.filters} as State)
+}
+)
+);
