@@ -307,7 +307,6 @@ export const useTituloPagar = () => {
 
   const exportPrevisaoPagamento = () => useMutation({
     mutationFn: async ({ filters }: GetTitulosPagarProps) => {
-      console.log('Executou');
       
       return await api
         .get(`/financeiro/contas-a-pagar/titulo/export-previsao-pagamento`, {
@@ -315,8 +314,6 @@ export const useTituloPagar = () => {
           responseType: "blob",
         })
         .then((response) => {
-          console.log(response);
-          
           downloadResponse(response);
         });
     },

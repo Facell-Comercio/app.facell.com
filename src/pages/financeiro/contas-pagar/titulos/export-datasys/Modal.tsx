@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useStoreExportDatasys } from "./store";
+import { downloadResponse } from "@/helpers/download";
 
 type ExportDatasysProps = {
   id_grupo_economico?: string;
@@ -47,43 +48,10 @@ const ModalExportDatasys = () => {
         `/financeiro/contas-a-pagar/titulo/export-datasys`,
         {
           params: { filters },
+          responseType: "blob",
         }
       );
-      const rows = response?.data || [];
-      if (rows.length == 0) {
-        throw new Error("Nenhum pagamento realizado no período!");
-      }
-
-      // const formatedResponse = rows.map((row: ResponseExportDatasysProps) => {
-      //   return {
-      //     "CNPJ LOJA": row.cnpj_loja,
-      //     "CPF / CNPJ FORNECEDOR": row.cnpj_fornecedor,
-      //     DOCUMENTO: row.id_titulo,
-      //     EMISSÃO: normalizeDate(row.emissao),
-      //     VENCIMENTO: normalizeDate(row.vencimento),
-      //     VALOR: row.valor,
-      //     "TIPO DOCUMENTO": row.tipo_documento.toUpperCase(),
-      //     HISTÓRICO: row.historico.toUpperCase(),
-      //     BARCODE: row.bar_code,
-      //     "CENTRO DE CUSTOS": row.centro_custo.toUpperCase(),
-      //     "PLANO DE CONTAS": row.plano_contas,
-      //     "CNPJ RATEIO": row.cnpj_rateio,
-      //     "VALOR RATEIO": (
-      //       parseFloat(row.valor_rateio) * parseFloat(row.percentual)
-      //     ).toFixed(2),
-      //     "BANCO PG": row.data_pg && row.data_pg.toUpperCase(),
-      //     "DATA PG": row.data_pg && normalizeDate(row.data_pg),
-      //     "NOME FORNECEDOR": row.nome_fornecedor.toUpperCase(),
-      //     PERCENTUAL: parseFloat(row.percentual),
-      //   };
-      // });
-      exportToExcel(
-        rows,
-        `EXPORTAÇÃO DATASYS GRUPO ${filters.id_grupo_economico} ${format(
-          filters.data_pagamento,
-          "dd.MM.yyyy"
-        )}`
-      );
+      downloadResponse(response)
       closeModal();
     } catch (err) {
       toast({

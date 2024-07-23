@@ -39,17 +39,17 @@ const ContasPagarPage = () => {
       <Tabs defaultValue={activeTab || 'painel'} className="w-full">
         <TabsList className="w-full justify-start">
           <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
-            <TabsTrigger value="painel"><Link to={`${uri}?tab=painel`}>Painel</Link></TabsTrigger>
-            <TabsTrigger value="titulo"><Link to={`${uri}?tab=titulo`}>Solicitações</Link></TabsTrigger>
+            <Link to={`${uri}?tab=painel`}><TabsTrigger value="painel">Painel</TabsTrigger></Link>
+            <Link to={`${uri}?tab=titulo`}><TabsTrigger value="titulo">Solicitação</TabsTrigger></Link>
             {(checkUserPermission('MASTER') ||
               checkUserDepartments('FINANCEIRO')) && (
-              <>
-                <TabsTrigger value="cartoes"><Link to={`${uri}?tab=cartoes`}>Cartões</Link></TabsTrigger>
-                <TabsTrigger value="vencimentos"><Link to={`${uri}?tab=vencimentos`}>Vencimentos</Link></TabsTrigger>
-                <TabsTrigger value="bordero"><Link to={`${uri}?tab=bordero`}>Borderôs</Link></TabsTrigger>
-                <TabsTrigger value="movimento-contabil"><Link to={`${uri}?tab=movimento-contabil`}>Movimento Contábil</Link></TabsTrigger>
-              </>
-            )}
+                <>
+                  <Link to={`${uri}?tab=cartoes`}><TabsTrigger value="cartoes">Cartão</TabsTrigger></Link>
+                  <Link to={`${uri}?tab=vencimentos`}><TabsTrigger value="vencimentos">Vencimento</TabsTrigger></Link>
+                  <Link to={`${uri}?tab=bordero`}><TabsTrigger value="bordero">Borderô</TabsTrigger></Link>
+                  <Link to={`${uri}?tab=movimento-contabil`}><TabsTrigger value="movimento-contabil">Movimento Contábil</TabsTrigger></Link>
+                </>
+              )}
             <ScrollBar
               orientation="horizontal"
               thumbColor="dark:bg-slate-400 bg-gray-450"
