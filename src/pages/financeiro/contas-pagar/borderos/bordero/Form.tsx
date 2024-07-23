@@ -336,6 +336,9 @@ const FormBordero = ({
         { responseType: "blob" }
       );
       downloadResponse(response);
+      queryClient.invalidateQueries({
+        queryKey: ["financeiro", "contas_pagar", "bordero", "detalhe"],
+      });
       setIsLoadingRemessaSelecao(true);
     } catch (error) {
       toast({
