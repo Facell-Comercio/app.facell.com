@@ -14,6 +14,7 @@ import { useStoreExportDatasys } from "../export-datasys/store";
 import { useStoreTablePagar } from "../table/store-table";
 import { TituloSchemaProps } from "../titulo/form-data";
 import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 
 export type ExportAnexosProps = {
   type: string;
@@ -28,6 +29,7 @@ interface TituloProps extends TituloSchemaProps {
 }
 
 const ButtonExportTitulos = () => {
+  const {mutate: exportPrevisaoPagamento} = useTituloPagar().exportPrevisaoPagamento()
   const openModalExportDatasys = useStoreExportDatasys().openModal;
   const isMaster = checkUserPermission('MASTER')|| checkUserDepartments('FINANCEIRO')
   const [isPending, setIsPending] = useState(false);
@@ -60,8 +62,8 @@ const ButtonExportTitulos = () => {
     setIsPending(false);
   }
 
-  function exportLayoutPagamento(){
-    
+  function exportLayoutPrevisaoPagamento(){
+    exportPrevisaoPagamento({filters})
   }
 
   return (
@@ -77,8 +79,8 @@ const ButtonExportTitulos = () => {
         <DropdownMenuItem onClick={exportSolicitacao}>
           Layout Padrão
         </DropdownMenuItem>
-        {isMaster && (<DropdownMenuItem onClick={exportLayoutPagamento}>
-          Layout Pagamento
+        {isMaster && (<DropdownMenuItem onClick={exportLayoutPrevisaoPagamento}>
+          Layout Previsão Pagamento
         </DropdownMenuItem>)}
         <DropdownMenuItem onClick={() => openModalExportDatasys("")}>
           Layout Datasys

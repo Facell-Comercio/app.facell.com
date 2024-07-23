@@ -1,6 +1,7 @@
 import { RowSelectionState } from "@tanstack/react-table";
 import { DateRange } from "react-day-picker";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface Pagination {
   pageIndex: number;
@@ -57,7 +58,8 @@ export interface Actions {
   handleRowSelection: (data: HandleRowSelectionProps) => void;
 }
 
-export const useStoreTablePagar = create<State & Actions>((set) => ({
+export const useStoreTablePagar = create(persist<State & Actions>(
+  (set) => ({
   // Table
   rowCount: 0,
   // sorting: [],
@@ -80,4 +82,11 @@ export const useStoreTablePagar = create<State & Actions>((set) => ({
   setPagination: (pagination) => set({ pagination }),
   handleRowSelection: (data: HandleRowSelectionProps) =>
     set({ rowSelection: data.rowSelection, idSelection: data.idSelection }),
-}));
+}), 
+{
+  name: 'store-table-cp-titulos',
+  // @ts-ignore
+  partialize: (state)=>({ filters: state.filters } as State),
+}
+)
+);

@@ -305,6 +305,34 @@ export const useTituloPagar = () => {
       },
     });
 
+  const exportPrevisaoPagamento = () => useMutation({
+    mutationFn: async ({ filters }: GetTitulosPagarProps) => {
+      console.log('Executou');
+      
+      return await api
+        .get(`/financeiro/contas-a-pagar/titulo/export-previsao-pagamento`, {
+          params: { filters },
+          responseType: "blob",
+        })
+        .then((response) => {
+          console.log(response);
+          
+          downloadResponse(response);
+        });
+    },
+    onError: async (error) => {
+      // @ts-expect-error "Funciona"   
+      const errorText = await error.response.data.text();
+      const errorJSON = JSON.parse(errorText);
+
+      toast({
+        variant: "destructive",
+        title: 'Ops',
+        description: errorJSON.message
+      });
+    },
+  })
+
   return {
     getAll,
     getRecorrencias,
@@ -317,5 +345,6 @@ export const useTituloPagar = () => {
     changeTitulos,
     changeRecorrencia,
     exportAnexo,
+    exportPrevisaoPagamento,
   };
 };
