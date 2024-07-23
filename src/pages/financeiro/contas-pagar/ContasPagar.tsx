@@ -12,8 +12,14 @@ import MovimentoContabil from './movimento-contabil/MovimentoContabil';
 import { PainelContasPagar } from './painel/PainelContasPagar';
 import TitulosPagar from './titulos/TitulosPagar';
 import Vencimentos from './vencimentos/Vencimentos';
+import { Link, useLocation } from 'react-router-dom';
 
 const ContasPagarPage = () => {
+  const uri = `/financeiro/contas-a-pagar`
+  const location = useLocation()
+  const searchParams = new URLSearchParams(location.search);
+  const activeTab = searchParams.get('tab') || '';
+
   const queryClient = useQueryClient();
 
   queryClient.prefetchQuery({
@@ -30,20 +36,18 @@ const ContasPagarPage = () => {
 
   return (
     <div className="flex p-4">
-      <Tabs defaultValue="painel" className="w-full">
+      <Tabs defaultValue={activeTab || 'painel'} className="w-full">
         <TabsList className="w-full justify-start">
           <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
-            <TabsTrigger value="painel">Painel</TabsTrigger>
-            <TabsTrigger value="titulo">Solicitações</TabsTrigger>
+            <TabsTrigger value="painel"><Link to={`${uri}?tab=painel`}>Painel</Link></TabsTrigger>
+            <TabsTrigger value="titulo"><Link to={`${uri}?tab=titulo`}>Solicitações</Link></TabsTrigger>
             {(checkUserPermission('MASTER') ||
               checkUserDepartments('FINANCEIRO')) && (
               <>
-                <TabsTrigger value="cartoes">Cartões</TabsTrigger>
-                <TabsTrigger value="vencimentos">Vencimentos</TabsTrigger>
-                <TabsTrigger value="bordero">Borderôs</TabsTrigger>
-                <TabsTrigger value="movimento-contabil">
-                  Movimento Contábil
-                </TabsTrigger>
+                <TabsTrigger value="cartoes"><Link to={`${uri}?tab=cartoes`}>Cartões</Link></TabsTrigger>
+                <TabsTrigger value="vencimentos"><Link to={`${uri}?tab=vencimentos`}>Vencimentos</Link></TabsTrigger>
+                <TabsTrigger value="bordero"><Link to={`${uri}?tab=bordero`}>Borderôs</Link></TabsTrigger>
+                <TabsTrigger value="movimento-contabil"><Link to={`${uri}?tab=movimento-contabil`}>Movimento Contábil</Link></TabsTrigger>
               </>
             )}
             <ScrollBar
