@@ -82,7 +82,7 @@ const RowVirtualizerFixedProgramado: React.FC<
           position: "relative",
         }}
       >
-        {virtualizer.getVirtualItems().map((item, index) => {
+        {virtualizer.getVirtualItems().map((item) => {
           const indexData = data.findIndex(
             (vencimento) =>
               vencimento.id_vencimento ===
