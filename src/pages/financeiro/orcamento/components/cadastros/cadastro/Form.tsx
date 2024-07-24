@@ -132,7 +132,7 @@ const FormCadastro = ({
   }, [insertIsSuccess, updateIsSuccess]);
 
   function onSubmitData(data: cadastroSchemaProps) {
-    console.log(!!+form.watch("active"), typeof !!+form.watch("active"));
+    // console.log(!!+form.watch("active"), typeof !!+form.watch("active"));
 
     const filteredData: cadastroSchemaProps = {
       id: data.id,
