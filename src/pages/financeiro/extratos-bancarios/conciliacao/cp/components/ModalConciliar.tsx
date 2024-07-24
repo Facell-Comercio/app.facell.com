@@ -26,6 +26,7 @@ export type ConciliacaoCPSchemaProps = {
   data_pagamento?: string;
   data_conciliacao?: string;
   responsavel?: string;
+  tipo?: string;
   id_conta_bancaria?: string;
 };
 
