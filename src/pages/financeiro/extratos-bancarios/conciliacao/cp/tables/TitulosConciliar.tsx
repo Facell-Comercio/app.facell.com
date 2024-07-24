@@ -29,6 +29,7 @@ export type VencimentosConciliarProps = {
   data_pagamento: string;
   valor_pago?: string;
   tipo_baixa?: string;
+  tipo: string;
 };
 
 interface RowVirtualizerVencimentosConciliarProps {
@@ -194,9 +195,10 @@ const ReactTableVirtualized: React.FC<
           nome_fornecedor: data[+c].nome_fornecedor,
           valor: data[+c].valor,
           filial: data[+c].filial,
-          tipo_baixa: "PADRÃO",
+          tipo_baixa: data[+c].tipo_baixa,
           valor_pago: data[+c].valor,
           data_pagamento: data[+c].data_pagamento,
+          tipo: data[+c].tipo,
         }));
 
         handleRowSelection({
