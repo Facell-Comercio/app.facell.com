@@ -22,6 +22,8 @@ export interface GetTitulosPagarProps {
   filters: any;
 }
 
+const uri = '/financeiro/contas-a-pagar/titulo';
+
 export const useTituloPagar = () => {
   const queryClient = useQueryClient();
 
@@ -49,7 +51,7 @@ export const useTituloPagar = () => {
       queryKey: ["financeiro", "contas_pagar", "recorrencia", "lista", filters],
       retry: false,
       queryFn: async () => {
-        return await api.get(`/financeiro/contas-a-pagar/titulo/recorrencias`, {
+        return await api.get(`${uri}/recorrencias`, {
           params: { filters },
         });
       },
@@ -65,7 +67,7 @@ export const useTituloPagar = () => {
       queryFn: async () => {
         try {
           const result = await api.get(
-            `/financeiro/contas-a-pagar/titulo/${id}`
+            `${uri}/${id}`
           );
           return result;
         } catch (error) {
@@ -88,7 +90,7 @@ export const useTituloPagar = () => {
       queryFn: async () => {
         try {
           const result = await api.get(
-            `/financeiro/contas-a-pagar/titulo/pendencias`
+            `${uri}/pendencias`
           );
           return result;
         } catch (error) {
@@ -108,7 +110,7 @@ export const useTituloPagar = () => {
     useMutation({
       mutationFn: async (data: TituloSchemaProps) => {
         return await api
-          .post("/financeiro/contas-a-pagar/titulo", data)
+          .post(`${uri}`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -135,7 +137,7 @@ export const useTituloPagar = () => {
     useMutation({
       mutationFn: async ({ id, ...rest }: TituloSchemaProps) => {
         return await api
-          .put("/financeiro/contas-a-pagar/titulo", { id, ...rest })
+          .put(`${uri}`, { id, ...rest })
           .then((response) => response.data);
       },
       onSuccess() {
@@ -162,7 +164,7 @@ export const useTituloPagar = () => {
     useMutation({
       mutationFn: async (id: number | string) => {
         return await api
-          .delete(`/financeiro/contas-a-pagar/titulo/recorrencias/${id}`)
+          .delete(`${uri}/recorrencias/${id}`)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -191,7 +193,7 @@ export const useTituloPagar = () => {
     useMutation({
       mutationFn: async (data: LancamentoLoteProps[]) => {
         return api
-          .post("/financeiro/contas-a-pagar/titulo/solicitacao-lote", data)
+          .post(`${uri}/solicitacao-lote`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -213,7 +215,7 @@ export const useTituloPagar = () => {
     useMutation({
       mutationFn: async ({ ...rest }: AlteracaoLoteSchemaProps) => {
         return await api
-          .put("/financeiro/contas-a-pagar/titulo/change-fields", { ...rest })
+          .put(`${uri}/change-fields`, { ...rest })
           .then((response) => response.data);
       },
       onSuccess() {
@@ -243,7 +245,7 @@ export const useTituloPagar = () => {
         valor,
       }: EditRecorrenciaProps) => {
         return await api
-          .put(`/financeiro/contas-a-pagar/titulo/recorrencias/${id}`, {
+          .put(`${uri}/recorrencias/${id}`, {
             data_vencimento,
             valor,
           })
@@ -276,7 +278,7 @@ export const useTituloPagar = () => {
       mutationFn: async ({ type, idSelection }: ExportAnexosProps) => {
         return await api
           .post(
-            `/financeiro/contas-a-pagar/titulo/download`,
+            `${uri}/download`,
             { type, idSelection },
             {
               responseType: "blob",
@@ -309,7 +311,7 @@ export const useTituloPagar = () => {
     mutationFn: async ({ filters }: GetTitulosPagarProps) => {
       
       return await api
-        .get(`/financeiro/contas-a-pagar/titulo/export-previsao-pagamento`, {
+        .get(`${uri}/export-previsao-pagamento`, {
           params: { filters },
           responseType: "blob",
         })
@@ -329,6 +331,7 @@ export const useTituloPagar = () => {
       });
     },
   })
+
 
   return {
     getAll,
