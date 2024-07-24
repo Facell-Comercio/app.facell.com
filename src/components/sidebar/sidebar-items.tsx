@@ -63,6 +63,13 @@ export const sidebarItems: SidebarItem[] = [
     visible: true,
     children: [
       {
+        name: "Vales",
+        type: "link",
+        shortName: "M",
+        uri: "comercial/vales",
+        visible: checkUserPermission('MASTER') || checkUserPermission('VISUALIZAR_VALES'),
+      },
+      {
         name: "Metas",
         type: "link",
         shortName: "M",
