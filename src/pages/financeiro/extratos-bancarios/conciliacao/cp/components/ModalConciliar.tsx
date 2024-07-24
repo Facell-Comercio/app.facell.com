@@ -27,6 +27,7 @@ export type ConciliacaoCPSchemaProps = {
   data_conciliacao?: string;
   responsavel?: string;
   id_conta_bancaria?: string;
+  tipo?: string;
 };
 
 const ModalConciliarCP = () => {
