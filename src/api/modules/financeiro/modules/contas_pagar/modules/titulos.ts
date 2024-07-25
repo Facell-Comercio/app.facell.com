@@ -1,7 +1,9 @@
 import { api } from '@/lib/axios';
 
+const uri = '/financeiro/contas-a-pagar/titulo';
+
 export const getAll = async (params: unknown) => {
-  const response = await api.get('/financeiro/contas-a-pagar/titulo', {
+  const response = await api.get(`${uri}`, {
     params,
   });
   return response.data;
@@ -9,8 +11,17 @@ export const getAll = async (params: unknown) => {
 
 export const checkDoc = async (params: unknown) => {
   const response = await api.get(
-    '/financeiro/contas-a-pagar/titulo/check-doc',
+    `${uri}/check-doc`,
     { params }
   );
   return response.data;
 };
+
+export const processarXml = async function (fileUrl:string){
+  try {
+    const result = await api.post(`${uri}/processar-xml`, {fileUrl})
+    return result.data;
+  } catch (error) {
+    return error
+  }
+}

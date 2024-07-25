@@ -194,7 +194,7 @@ const ConciliacaoCP = () => {
 
   const totalTitulos = titulosConciliar.reduce(
     (acc: number, val: VencimentosConciliarProps) =>
-      acc + parseFloat(val.valor),
+      acc + parseFloat(val.valor_pago || "0"),
     0
   );
   const totalTransacoes = transacoesConciliar.reduce(
@@ -202,7 +202,7 @@ const ConciliacaoCP = () => {
     0
   );
   const totalSelectedTitulos = vencimentosSelection
-    .reduce((acc, val) => acc + parseFloat(val.valor), 0)
+    .reduce((acc, val) => acc + parseFloat(val.valor_pago || "0"), 0)
     .toFixed(2);
   const totalSelectedTransacoes = transacoesSelection
     .reduce((acc, val) => acc + parseFloat(val.valor), 0)

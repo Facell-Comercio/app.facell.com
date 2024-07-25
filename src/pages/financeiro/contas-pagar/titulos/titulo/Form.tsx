@@ -92,6 +92,12 @@ const FormTituloPagar = ({
     formState: { errors },
   } = form;
 
+  useEffect(()=>{
+    return ()=>{
+      // Reseta o form ao desmontar o componente...
+      resetForm()
+    }
+  },[])
   // console.log("ERROS_TITULO:", errors);
 
   // * [ WATCHES ]
@@ -166,11 +172,10 @@ const FormTituloPagar = ({
         variant: "warning",
         title: "Atenção!",
         // @ts-ignore
-        description: `${
-          result === 1
-            ? `Existe 1 solicitação`
-            : `Existem ${result} solicitações`
-        } no sistema com esse fornecedor e número de documento`,
+        description: `${result === 1
+          ? `Existe 1 solicitação`
+          : `Existem ${result} solicitações`
+          } no sistema com esse fornecedor e número de documento`,
       });
     }
   }
@@ -205,7 +210,7 @@ const FormTituloPagar = ({
       );
       setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
-    } catch (error) {}
+    } catch (error) { }
     checkDoc();
   }
 
@@ -351,6 +356,41 @@ const FormTituloPagar = ({
     });
   };
 
+  async function processarXml({ fileUrl }: { fileUrl: string }){
+    try {
+        if(!fileUrl){
+          return;
+        }
+        const data = await fetchApi.financeiro.contas_pagar.titulos.processarXml(fileUrl)
+        
+        if(data){
+          const {fornecedor, filial, num_doc, valor, data_emissao} = data;
+          if(fornecedor){
+            form.setValue('id_fornecedor', String(fornecedor.id))
+            form.setValue('id_forma_pagamento', String(fornecedor.id_forma_pagamento))
+            form.setValue('cnpj_fornecedor', String(fornecedor.cnpj))
+            form.setValue('nome_fornecedor', String(fornecedor.nome))
+          }
+          if(filial){
+            form.setValue('filial', String(filial.nome))
+            form.setValue('id_filial', String(filial.id))
+            form.setValue('id_matriz', String(filial.id_matriz))
+            form.setValue('id_grupo_economico', String(filial.id_grupo_economico))
+          }
+          form.setValue('num_doc', String(num_doc))
+          if(valor){
+            form.setValue('valor', String(valor)) 
+          }
+          form.setValue('data_emissao', String(data_emissao))
+        }
+        
+    } catch (error) {
+        toast({variant: 'destructive', title: 'Ops!', 
+          // @ts-ignore
+          description: error?.response?.data?.message || error.message})        
+    }
+  }
+
   // ! FIM - ACTIONS //////////////////////////////////////
   const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
   const handleSelectionFilial = (item: Filial) => {
@@ -440,9 +480,8 @@ const FormTituloPagar = ({
                       className="flex-1 min-w-[15ch]"
                     />
                     <div
-                      className={`${
-                        showPix ? "flex w-full" : "hidden"
-                      } gap-3 flex-wrap`}
+                      className={`${showPix ? "flex w-full" : "hidden"
+                        } gap-3 flex-wrap`}
                     >
                       <SelectTipoChavePix
                         control={form.control}
@@ -461,9 +500,8 @@ const FormTituloPagar = ({
                       />
                     </div>
                     <div
-                      className={`flex gap-3 ${
-                        showCartao ? "flex w-full" : "hidden"
-                      }`}
+                      className={`flex gap-3 ${showCartao ? "flex w-full" : "hidden"
+                        }`}
                     >
                       <SelectCartao
                         control={form.control}
@@ -799,8 +837,10 @@ const FormTituloPagar = ({
                   name="url_xml"
                   mediaType="xml"
                   control={form.control}
-                  onChange={(fileUrl: string) =>
+                  onChange={(fileUrl: string) => {
                     handleChangeFile({ fileUrl, campo: "url_xml" })
+                    processarXml({ fileUrl })
+                  }
                   }
                 />
                 <FormFileUpload

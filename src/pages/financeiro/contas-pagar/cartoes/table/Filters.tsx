@@ -42,7 +42,7 @@ const FiltersCartao = ({ refetch }: { refetch: () => void }) => {
       collapsible
       value={itemOpen}
       onValueChange={(e) => setItemOpen(e)}
-      className="p-2 border-2 dark:border-slate-800 rounded-lg "
+      className="p-2 border dark:border-slate-800 rounded-lg "
     >
       <AccordionItem value="item-1" className="relative border-0">
         <div className="flex gap-3 items-center absolute start-16 top-1">
