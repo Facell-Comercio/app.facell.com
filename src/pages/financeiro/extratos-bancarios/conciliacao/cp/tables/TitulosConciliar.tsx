@@ -79,7 +79,7 @@ const ReactTableVirtualized: React.FC<
                 onCheckedChange={() => {
                   handlevencimentosSelection({
                     ...row.original,
-                    valor_pago: row.original.valor,
+                    valor_pago: row.original.valor_pago,
                     tipo_baixa: "PADRÃO",
                   });
 
@@ -122,7 +122,7 @@ const ReactTableVirtualized: React.FC<
         size: 80,
       },
       {
-        accessorKey: "valor",
+        accessorKey: "valor_pago",
         header: "VALOR",
         size: 80,
 
@@ -196,7 +196,7 @@ const ReactTableVirtualized: React.FC<
           valor: data[+c].valor,
           filial: data[+c].filial,
           tipo_baixa: data[+c].tipo_baixa,
-          valor_pago: data[+c].valor,
+          valor_pago: data[+c].valor_pago,
           data_pagamento: data[+c].data_pagamento,
           tipo: data[+c].tipo,
         }));
