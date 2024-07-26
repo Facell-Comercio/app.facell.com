@@ -25,6 +25,9 @@ import ModalConciliarCP from "./components/ModalConciliar";
 import ModalExtratosCredit, {
   ItemExtratosCredit,
 } from "./components/ModalExtratosCredit";
+import ModalExtratosDuplicated, {
+  ItemExtratosDuplicated,
+} from "./components/ModalExtratosDuplicados";
 import { useStoreConciliacaoCP } from "./components/store";
 import { FiltersConciliacaoCP, FiltersRealizados } from "./tables/Filters";
 import { SearchComponent } from "./tables/SearchComponent";
@@ -45,6 +48,8 @@ import { useStoreTableConciliacaoCP } from "./tables/store-tables";
 
 const ConciliacaoCP = () => {
   const [modalExtratosCreditOpen, setModalExtratosCreditOpen] = useState(false);
+  const [modalExtratosDuplicatedOpen, setModalExtratosDuplicatedOpen] =
+    useState(false);
 
   const [
     filters,
@@ -114,11 +119,17 @@ const ConciliacaoCP = () => {
     isSuccess: isSuccessTransferenciaContas,
   } = useConciliacaoCP().conciliacaoTransferenciaContas();
 
+  const {
+    mutate: tratarDuplicidade,
+    isPending: isPendingTratarDuplicidade,
+    isSuccess: isSuccessTratarDuplicidade,
+  } = useConciliacaoCP().tratarDuplicidade();
+
   useEffect(() => {
-    if (isSuccessTransferenciaContas) {
+    if (isSuccessTransferenciaContas || isSuccessTratarDuplicidade) {
       resetSelectionTransacoes([]);
     }
-  }, [isSuccessTransferenciaContas]);
+  }, [isSuccessTransferenciaContas || isSuccessTratarDuplicidade]);
 
   const titulosConciliar = data?.data?.titulosConciliar || [];
   const transacoesConciliar = data?.data?.transacoesConciliar || [];
@@ -277,12 +288,19 @@ const ConciliacaoCP = () => {
     }
   }, [isSuccessTarifas]);
 
-  function handleSelection(extrato: ItemExtratosCredit) {
+  function handleSelectionExtratosCredit(extrato: ItemExtratosCredit) {
     conciliacaoTransferenciaContas({
       id_conta_bancaria: filters.id_conta_bancaria,
       id_saida: transacoesSelection[0].id,
       id_entrada: extrato.id,
       valor: extrato.valor,
+    });
+  }
+
+  function handleSelectionExtratosDuplicated(extrato: ItemExtratosDuplicated) {
+    tratarDuplicidade({
+      id_extrato: transacoesSelection[0].id,
+      id_duplicidade: extrato.id,
     });
   }
 
@@ -310,6 +328,18 @@ const ConciliacaoCP = () => {
             >
               <ScrollArea className="w-fill whitespace-nowrap rounded-md md:pb-2.5 lg:pb-1">
                 <div className="flex justify-end gap-2 transition-all">
+                  {transacoesSelection.length === 1 && (
+                    <Button
+                      type={"button"}
+                      variant={"outline"}
+                      disabled={isPendingTratarDuplicidade}
+                      onClick={() => {
+                        setModalExtratosDuplicatedOpen(true);
+                      }}
+                    >
+                      Tratar como Duplicidade
+                    </Button>
+                  )}
                   {transacoesSelection.length === 1 && (
                     <Button
                       type={"button"}
@@ -577,8 +607,32 @@ const ConciliacaoCP = () => {
       <ModalExtratosCredit
         open={modalExtratosCreditOpen}
         onOpenChange={() => setModalExtratosCreditOpen(false)}
-        handleSelection={handleSelection}
+        handleSelection={handleSelectionExtratosCredit}
         filters={{
+          data_transacao:
+            transacoesSelection.length === 1
+              ? transacoesSelection[0].data_transacao
+              : undefined,
+          valor:
+            transacoesSelection.length === 1
+              ? parseFloat(transacoesSelection[0].valor)
+              : undefined,
+        }}
+      />
+      <ModalExtratosDuplicated
+        open={modalExtratosDuplicatedOpen}
+        onOpenChange={() => setModalExtratosDuplicatedOpen(false)}
+        handleSelection={handleSelectionExtratosDuplicated}
+        filters={{
+          id_conta_bancaria: filters.id_conta_bancaria,
+          id_extrato:
+            transacoesSelection.length === 1
+              ? transacoesSelection[0].id
+              : undefined,
+          descricao:
+            transacoesSelection.length === 1
+              ? transacoesSelection[0].descricao
+              : undefined,
           data_transacao:
             transacoesSelection.length === 1
               ? transacoesSelection[0].data_transacao
