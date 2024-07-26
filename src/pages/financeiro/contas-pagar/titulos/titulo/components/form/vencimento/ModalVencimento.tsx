@@ -19,22 +19,26 @@ import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
+import {
+  checkUserDepartments,
+  checkUserPermission,
+} from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
+import { addMonths, isBefore, setDate, subDays } from "date-fns";
 import { Plus, Save } from "lucide-react";
 import { useEffect } from "react";
 import z from "zod";
 import { TituloSchemaProps, vencimentoSchema } from "../../../form-data";
 import { calcularDataPrevisaoPagamento } from "../../../helpers/helper";
 import { initialStateVencimento, useStoreVencimento } from "./context";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
-import { addMonths, isBefore, setDate, subDays } from "date-fns";
 
 export function ModalVencimento({
   form: formTitulo,
 }: {
   form: UseFormReturn<TituloSchemaProps>;
 }) {
-  const isMaster:boolean = checkUserPermission('MASTER') || checkUserDepartments('FINANCEIRO')
+  const isMaster: boolean =
+    checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
 
@@ -52,7 +56,7 @@ export function ModalVencimento({
     name: "vencimentos",
   });
 
-  // * WATCHES 
+  // * WATCHES
   const valorTotalTitulo = parseFloat(
     useWatch({
       name: "valor",
@@ -70,10 +74,11 @@ export function ModalVencimento({
     control: formTitulo.control,
   });
 
-  const id_forma_pagamento = formTitulo.watch('id_forma_pagamento');
-  const dia_corte_cartao = formTitulo.watch('dia_corte_cartao');
-  const dia_vencimento_cartao = formTitulo.watch('dia_vencimento_cartao');
-  const isCartao = id_forma_pagamento == '6';
+  const id_forma_pagamento = formTitulo.watch("id_forma_pagamento");
+  const dia_corte_cartao = formTitulo.watch("dia_corte_cartao");
+  const dia_vencimento_cartao = formTitulo.watch("dia_vencimento_cartao");
+  const data_vencimento = form.watch("data_vencimento");
+  const isCartao = id_forma_pagamento == "6";
 
   const uniqueDayMonth = isCartao ? dia_vencimento_cartao : undefined;
 
@@ -82,10 +87,13 @@ export function ModalVencimento({
     if (isCartao) {
       const dataAtual = new Date();
       const corteCartaoDate = setDate(dataAtual, Number(dia_corte_cartao));
-      const vencimentoCartaoDate = setDate(dataAtual, Number(dia_vencimento_cartao));
-      
+      const vencimentoCartaoDate = setDate(
+        dataAtual,
+        Number(dia_vencimento_cartao)
+      );
+
       let proximaDataVencimento;
-  
+
       if (isBefore(dataAtual, corteCartaoDate)) {
         // Se a data atual for antes do dia de corte, o vencimento é no mês atual
         proximaDataVencimento = addMonths(vencimentoCartaoDate, 1);
@@ -93,9 +101,12 @@ export function ModalVencimento({
         // Se a data atual for depois do dia de corte, o vencimento é no próximo mês
         proximaDataVencimento = addMonths(vencimentoCartaoDate, 2);
       }
-  
-      form.setValue('data_vencimento', proximaDataVencimento.toDateString());
-      form.setValue('data_prevista', calcularDataPrevisaoPagamento(proximaDataVencimento).toDateString());
+
+      form.setValue("data_vencimento", proximaDataVencimento.toDateString());
+      form.setValue(
+        "data_prevista",
+        calcularDataPrevisaoPagamento(proximaDataVencimento).toDateString()
+      );
     }
   }, [isCartao, dia_corte_cartao, dia_vencimento_cartao, form]);
   // const { formState: { errors } } = form;
@@ -107,12 +118,11 @@ export function ModalVencimento({
       form.setValue("valor", `${valorTotalTitulo - valorTotalVencimentos}`);
   }, [modalOpen]);
 
-  const handleChangeVencimento = (val:Date)=>{
-    form.setValue(
-      "data_prevista",
-      String(calcularDataPrevisaoPagamento(val))
-    );
-  }
+  const handleChangeVencimento = (val: Date) => {
+    console.log(String(calcularDataPrevisaoPagamento(val)));
+
+    form.setValue("data_prevista", String(calcularDataPrevisaoPagamento(val)));
+  };
   const isUpdate = !!vencimento.id;
 
   const onSubmit = (data: z.infer<typeof vencimentoSchema>) => {
@@ -194,9 +204,9 @@ export function ModalVencimento({
                   name="data_vencimento"
                   label="Vencimento"
                   uniqueDayMonth={uniqueDayMonth}
-                  min={!isMaster ? subDays(new Date(),1) : undefined}
+                  min={!isMaster ? subDays(new Date(), 1) : undefined}
                   control={form.control}
-                  onChange={(val)=>handleChangeVencimento(val)}
+                  onChange={(val) => handleChangeVencimento(val)}
                 />
                 <FormDateInput
                   name="data_prevista"
