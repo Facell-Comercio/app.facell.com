@@ -177,7 +177,7 @@ export const useConciliacaoCP = () => {
           toast({
             variant: "success",
             title: "Sucesso",
-            description: "Conciliação automática feita com sucesso",
+            description: "Tratamento realizado com sucesso",
             duration: 3500,
           });
         },
