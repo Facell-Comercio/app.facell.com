@@ -2,7 +2,6 @@ import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 
 import { useVales } from "@/hooks/comercial/useVales";
-import { RadialChart } from "@/pages/comercial/vales/table/radial-chart";
 import FiltersVale from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTableVale } from "./table/store-table";
@@ -31,8 +30,8 @@ const Vales = () => {
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <div className="flex justify-between">
-        <RadialChart />
+      <div className="flex justify-end">
+        {/* <RadialChart /> */}
         <Button variant={"secondary"} onClick={handleClickNewVale}>
           Novo Vale
         </Button>

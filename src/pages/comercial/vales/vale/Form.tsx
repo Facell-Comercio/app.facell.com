@@ -10,14 +10,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { normalizeDate } from "@/helpers/mask";
-import { ValeProps } from "@/hooks/comercial/useVales";
+import { useVales, ValeProps } from "@/hooks/comercial/useVales";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
 import { Edit2, Info, Plus, Trash } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
+import { CustomCombobox } from "../../../../components/custom/CustomCombobox";
 import { useFormValeData } from "./form-data";
 import { useStoreVale } from "./store";
+
+const defaultValuesOrigem = [
+  {
+    value: "AUDITORIA LOGISTICA",
+    label: "AUDITORIA LOGISTICA",
+  },
+  {
+    value: "AUDITORIA QUALIDADE",
+    label: "AUDITORIA QUALIDADE",
+  },
+];
 
 const FormVale = ({
   id,
@@ -28,18 +40,18 @@ const FormVale = ({
   data: ValeProps;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  // const {
-  //   mutate: insertOne,
-  //   isPending: insertIsPending,
-  //   isSuccess: insertIsSuccess,
-  //   isError: insertIsError,
-  // } = useCartoes().insertOne();
-  // const {
-  //   mutate: update,
-  //   isPending: updateIsPending,
-  //   isSuccess: updateIsSuccess,
-  //   isError: updateIsError,
-  // } = useCartoes().update();
+  const {
+    mutate: insertOne,
+    isPending: insertIsPending,
+    isSuccess: insertIsSuccess,
+    isError: insertIsError,
+  } = useVales().insertOne();
+  const {
+    mutate: update,
+    isPending: updateIsPending,
+    isSuccess: updateIsSuccess,
+    isError: updateIsError,
+  } = useVales().update();
 
   const [modalEditing, editModal, closeModal, editIsPending, isPending] =
     useStoreVale((state) => [
@@ -56,22 +68,22 @@ const FormVale = ({
   const rowsAbatimentos = data?.abatimentos || [];
 
   const onSubmitData = (data: ValeProps) => {
-    // if (id) update(data);
-    // if (!id) insertOne(data);
+    if (id) update(data);
+    if (!id) insertOne(data);
     // console.log(data);
   };
 
-  // useEffect(() => {
-  //   if (updateIsSuccess || insertIsSuccess) {
-  //     editModal(false);
-  //     closeModal();
-  //     editIsPending(false);
-  //   } else if (updateIsError || insertIsError) {
-  //     editIsPending(false);
-  //   } else if (updateIsPending || insertIsPending) {
-  //     editIsPending(true);
-  //   }
-  // }, [updateIsPending, insertIsPending]);
+  useEffect(() => {
+    if (updateIsSuccess || insertIsSuccess) {
+      editModal(false);
+      closeModal();
+      editIsPending(false);
+    } else if (updateIsError || insertIsError) {
+      editIsPending(false);
+    } else if (updateIsPending || insertIsPending) {
+      editIsPending(true);
+    }
+  }, [updateIsPending, insertIsPending]);
 
   // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
@@ -82,6 +94,8 @@ const FormVale = ({
   }
 
   const disabled = !modalEditing;
+  const saldo = parseFloat(form.watch("saldo") || "0");
+  const parcelas = parseFloat(form.watch("parcelas") || "1");
 
   return (
     <div className="max-w-full overflow-x-hidden">
@@ -117,6 +131,7 @@ const FormVale = ({
                     label="Nome Colaborador"
                     control={form.control}
                   />
+
                   <FormInput
                     className="flex-1 min-w-full sm:min-w-[30ch] shrink-0"
                     name="filial"
@@ -135,17 +150,22 @@ const FormVale = ({
                     control={form.control}
                     className="flex-1 min-w-[15ch]"
                   />
-                  <FormInput
-                    className="flex-1 min-w-[30ch] shrink-0"
-                    name="origem"
-                    disabled={disabled}
-                    label="Origem"
-                    control={form.control}
-                  />
+                  <span className="flex flex-col gap-2">
+                    <label className="text-sm font-medium">Origem</label>
+                    <CustomCombobox
+                      value={form.watch("origem")}
+                      onChange={(value) => form.setValue("origem", value)}
+                      disabled={disabled}
+                      defaultValues={defaultValuesOrigem}
+                      placeholder="Selecione a origem..."
+                    />
+                  </span>
+
                   <FormInput
                     className="flex-1 min-w-[10ch]"
                     name="parcelas"
                     disabled={disabled}
+                    readOnly={!!id}
                     label="Qtde Parcelas"
                     type="number"
                     min={1}
@@ -156,28 +176,35 @@ const FormVale = ({
                     className="flex-1 min-w-[10ch]"
                     name="parcela"
                     disabled={disabled}
+                    readOnly={!!id}
                     label="Parcela"
                     type="number"
                     min={1}
+                    max={parcelas}
                     step="1"
                     control={form.control}
                   />
-                  <FormInput
-                    className="flex-1 min-w-[30ch]"
-                    name="valor_parcela"
-                    disabled={disabled}
-                    label="Valor Parcela"
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    icon={TbCurrencyReal}
-                    iconLeft
-                    control={form.control}
-                  />
+                  <span title={!saldo ? "Primeiro digite o saldo" : ""}>
+                    <FormInput
+                      className="flex-1 min-w-[30ch]"
+                      name="valor_parcela"
+                      disabled={disabled || !saldo}
+                      readOnly={!!id}
+                      label="Valor Parcela"
+                      type="number"
+                      min={0}
+                      max={saldo}
+                      step="0.01"
+                      icon={TbCurrencyReal}
+                      iconLeft
+                      control={form.control}
+                    />
+                  </span>
                   <FormInput
                     className="flex-1 min-w-[30ch]"
                     name="saldo"
                     disabled={disabled}
+                    readOnly={!!id}
                     label="Saldo"
                     type="number"
                     min={0}
@@ -198,67 +225,69 @@ const FormVale = ({
             </div>
 
             {/* Segunda seção */}
-            <div className="flex flex-1 flex-col gap-3 shrink-0">
-              <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                <div className="flex justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <Info />
-                    <span className="text-lg font-bold ">Abatimentos</span>
+            {!!id && (
+              <div className="flex flex-1 flex-col gap-3 shrink-0">
+                <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                  <div className="flex justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <Info />
+                      <span className="text-lg font-bold ">Abatimentos</span>
+                    </div>
+                    <Button
+                      variant={"tertiary"}
+                      disabled={disabled}
+                      className="flex gap-2"
+                    >
+                      <Plus /> Novo Abatimento
+                    </Button>
                   </div>
-                  <Button
-                    variant={"tertiary"}
-                    disabled={disabled}
-                    className="flex gap-2"
-                  >
-                    <Plus /> Novo Abatimento
-                  </Button>
-                </div>
 
-                <Table
-                  className={`bg-background rounded-sm pb-2 ${
-                    disabled && "opacity-65"
-                  }`}
-                >
-                  <TableHeader>
-                    <TableRow className="font-medium uppercase">
-                      <TableCell>Ações</TableCell>
-                      <TableCell>Data</TableCell>
-                      <TableCell>Observações</TableCell>
-                      <TableCell>Valor</TableCell>
-                      <TableCell>Abatido Por</TableCell>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {rowsAbatimentos.map((abatimento) => (
-                      <TableRow key={abatimento.id}>
-                        <TableCell className="flex gap-1">
-                          <Button
-                            variant={"warning"}
-                            size={"xs"}
-                            disabled={disabled}
-                          >
-                            <Edit2 size={16} />
-                          </Button>
-                          <Button
-                            variant={"destructive"}
-                            size={"xs"}
-                            disabled={disabled}
-                          >
-                            <Trash size={16} />
-                          </Button>
-                        </TableCell>
-                        <TableCell>
-                          {normalizeDate(abatimento.created_at || "")}
-                        </TableCell>
-                        <TableCell>{abatimento.obs}</TableCell>
-                        <TableCell>{abatimento.valor}</TableCell>
-                        <TableCell>{abatimento.criador}</TableCell>
+                  <Table
+                    className={`bg-background rounded-sm pb-2 ${
+                      disabled && "opacity-65"
+                    }`}
+                  >
+                    <TableHeader>
+                      <TableRow className="font-medium uppercase">
+                        <TableCell>Ações</TableCell>
+                        <TableCell>Data</TableCell>
+                        <TableCell>Observações</TableCell>
+                        <TableCell>Valor</TableCell>
+                        <TableCell>Abatido Por</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {rowsAbatimentos.map((abatimento) => (
+                        <TableRow key={abatimento.id}>
+                          <TableCell className="flex gap-1">
+                            <Button
+                              variant={"warning"}
+                              size={"xs"}
+                              disabled={disabled}
+                            >
+                              <Edit2 size={16} />
+                            </Button>
+                            <Button
+                              variant={"destructive"}
+                              size={"xs"}
+                              disabled={disabled}
+                            >
+                              <Trash size={16} />
+                            </Button>
+                          </TableCell>
+                          <TableCell>
+                            {normalizeDate(abatimento.created_at || "")}
+                          </TableCell>
+                          <TableCell>{abatimento.obs}</TableCell>
+                          <TableCell>{abatimento.valor}</TableCell>
+                          <TableCell>{abatimento.criador}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </form>
       </Form>

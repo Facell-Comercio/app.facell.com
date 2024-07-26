@@ -83,6 +83,66 @@ export const useVales = () => {
       },
     });
 
+  const insertOne = () =>
+    useMutation({
+      mutationFn: async (data: ValeProps) => {
+        return await api
+          .post(`comercial/vales`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial", "vales"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const update = () =>
+    useMutation({
+      mutationFn: async (data: ValeProps) => {
+        return await api
+          .put(`comercial/vales`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial", "vales"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
   const deleteVale = () =>
     useMutation({
       mutationFn: async (id: string | null | undefined) => {
@@ -116,6 +176,8 @@ export const useVales = () => {
   return {
     getAll,
     getOne,
+    insertOne,
+    update,
     deleteVale,
   };
 };

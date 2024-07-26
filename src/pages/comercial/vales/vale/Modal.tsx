@@ -27,8 +27,8 @@ const initialPropsVale: ValeProps = {
   valor: "",
   saldo: "",
   origem: "",
-  parcelas: "",
-  parcela: "",
+  parcelas: "1",
+  parcela: "1",
   obs: "",
   nome_colaborador: "",
   id_criador: "",
@@ -87,7 +87,7 @@ const ModalVale = () => {
           {modalOpen && !isLoading ? (
             <FormVale
               id={id}
-              data={newDataVale.id ? newDataVale : initialPropsVale}
+              data={id ? newDataVale : initialPropsVale}
               formRef={formRef}
             />
           ) : (
