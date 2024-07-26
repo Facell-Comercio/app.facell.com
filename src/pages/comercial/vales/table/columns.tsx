@@ -51,14 +51,38 @@ export const columnsTable: ColumnDef<RowVale>[] = [
   {
     header: "Filial",
     accessorKey: "filial",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
   },
   {
     header: "Nome",
     accessorKey: "nome_colaborador",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
   },
   {
     header: "Origem",
     accessorKey: "origem",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block truncate max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
   },
   {
     id: "valor",

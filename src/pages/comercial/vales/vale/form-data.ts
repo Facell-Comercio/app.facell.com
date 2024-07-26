@@ -61,12 +61,21 @@ export const useFormValeData = (data: ValeProps) => {
   };
 };
 
-const schemaAbatimento = z.object({
-  // Dados Abatimento
-  saldo: z.coerce.string({ required_error: "Campo obrigatório" }),
-  valor: z.coerce.string({ required_error: "Campo obrigatório" }),
-  obs: z.coerce.string({ required_error: "Campo obrigatório" }),
-});
+const schemaAbatimento = z
+  .object({
+    // Dados Abatimento
+    saldo: z.coerce.string().optional(),
+    id_vale: z.coerce.string({ required_error: "Campo obrigatório" }),
+    valor: z.coerce.number().min(1, "Campo obrigatório"),
+    obs: z.coerce.string().min(5, "Campo Obrigatório"),
+  })
+  .refine(
+    (data) => (data.valor > parseFloat(data.saldo || "0") ? false : true),
+    {
+      path: ["valor"],
+      message: "Valor acima do permitido",
+    }
+  );
 
 export const useFormAbatimentoData = (data: AbatimentosProps) => {
   const form = useForm<AbatimentosProps>({

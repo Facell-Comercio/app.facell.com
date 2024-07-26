@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { CustomCombobox } from "../../../../components/custom/CustomCombobox";
 import { useFormValeData } from "./form-data";
+import ModalAbatimento from "./ModalAbatimento";
 import { useStoreVale } from "./store";
 
 const defaultValuesOrigem = [
@@ -53,14 +54,21 @@ const FormVale = ({
     isError: updateIsError,
   } = useVales().update();
 
-  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
-    useStoreVale((state) => [
-      state.modalEditing,
-      state.editModal,
-      state.closeModal,
-      state.editIsPending,
-      state.isPending,
-    ]);
+  const [
+    modalEditing,
+    editModal,
+    closeModal,
+    editIsPending,
+    isPending,
+    openModalAbatimento,
+  ] = useStoreVale((state) => [
+    state.modalEditing,
+    state.editModal,
+    state.closeModal,
+    state.editIsPending,
+    state.isPending,
+    state.openModalAbatimento,
+  ]);
   const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
 
   const { form } = useFormValeData(data);
@@ -93,7 +101,7 @@ const FormVale = ({
     form.setValue("filial", filial.nome);
   }
 
-  const disabled = !modalEditing;
+  const disabled = !modalEditing || isPending;
   const saldo = parseFloat(form.watch("saldo") || "0");
   const parcelas = parseFloat(form.watch("parcelas") || "1");
 
@@ -237,6 +245,7 @@ const FormVale = ({
                       variant={"tertiary"}
                       disabled={disabled}
                       className="flex gap-2"
+                      onClick={() => openModalAbatimento("")}
                     >
                       <Plus /> Novo Abatimento
                     </Button>
@@ -297,6 +306,7 @@ const FormVale = ({
         onOpenChange={setModalFilialOpen}
         closeOnSelection
       />
+      <ModalAbatimento saldo={form.watch("saldo")} />
     </div>
   );
 };

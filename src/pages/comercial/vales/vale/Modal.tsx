@@ -49,7 +49,7 @@ const ModalVale = () => {
 
   const formRef = useRef(null);
 
-  const { data, isLoading } = useVales().getOne(id || "1");
+  const { data, isLoading } = useVales().getOne(id);
 
   const { mutate: deleteVale, isSuccess } = useVales().deleteVale();
   const newDataVale: ValeProps & Record<string, any> = {} as ValeProps &

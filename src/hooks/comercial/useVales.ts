@@ -30,7 +30,9 @@ export type ValeProps = {
 
 export type AbatimentosProps = {
   id?: string;
+  id_vale?: string;
   valor?: string;
+  saldo?: string;
   obs?: string;
   created_at?: string;
   criador?: string;
@@ -93,6 +95,36 @@ export const useVales = () => {
       onSuccess() {
         queryClient.invalidateQueries({
           queryKey: ["comercial", "vales"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const insertAbatimento = () =>
+    useMutation({
+      mutationFn: async (data: AbatimentosProps) => {
+        return await api
+          .post(`comercial/vales/abatimento`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial", "vales", "detalhe"],
         });
         toast({
           variant: "success",
@@ -177,6 +209,7 @@ export const useVales = () => {
     getAll,
     getOne,
     insertOne,
+    insertAbatimento,
     update,
     deleteVale,
   };
