@@ -8,6 +8,7 @@ import {
   isThursday,
   isWeekend,
   startOfDay,
+  subDays,
 } from "date-fns";
 import { Fragment } from "react/jsx-runtime";
 
@@ -65,7 +66,7 @@ export function calcularDataPrevisaoPagamento(data_venc: Date | string) {
       (!isMonday(dataPagamento) && !isThursday(dataPagamento)) ||
       checkFeriado(dataPagamento)
     ) {
-      dataPagamento = addDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
+      dataPagamento = subDays(dataPagamento, 1); // Retorna um dia até encontrar uma segunda ou quinta-feira que não seja feriado
     }
   }
 
