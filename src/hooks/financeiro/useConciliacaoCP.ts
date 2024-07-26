@@ -25,6 +25,11 @@ interface ConciliacaoTransferenciaContasProps {
   id_conta_bancaria?: string;
 }
 
+interface TratarDuplicidadeProps {
+  id_extrato?: string;
+  id_duplicidade?: string;
+}
+
 interface ConciliacaoTarifasProps {
   tarifas: TransacoesConciliarProps[];
   id_conta_bancaria?: string;
@@ -47,7 +52,13 @@ export const useConciliacaoCP = () => {
 
     getConciliacoes: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["financeiro", "conciliacao", "realizado", "lista", {pagination, filters}],
+        queryKey: [
+          "financeiro",
+          "conciliacao",
+          "realizado",
+          "lista",
+          { pagination, filters },
+        ],
         queryFn: async () => {
           return await api.get(`/financeiro/conciliacao-cp/conciliacoes`, {
             params: { pagination, filters },
@@ -80,7 +91,6 @@ export const useConciliacaoCP = () => {
             variant: "success",
           });
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
-
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
@@ -103,7 +113,7 @@ export const useConciliacaoCP = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
-          
+
           toast({
             variant: "success",
             title: "Sucesso",
@@ -132,7 +142,38 @@ export const useConciliacaoCP = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
-          
+
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Conciliação automática feita com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error: AxiosError) {
+          // @ts-expect-error "Vai funcionar"
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    tratarDuplicidade: () =>
+      useMutation({
+        mutationFn: async (data: TratarDuplicidadeProps) => {
+          return api
+            .put("/financeiro/conciliacao-cp/tratar-duplicidade", data)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conciliacao", "lista"],
+          });
+
           toast({
             variant: "success",
             title: "Sucesso",
@@ -161,7 +202,6 @@ export const useConciliacaoCP = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
-         
         },
         onError(error: AxiosError) {
           // @ts-expect-error "Vai funcionar"
