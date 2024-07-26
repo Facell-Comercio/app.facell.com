@@ -77,7 +77,6 @@ export function ModalVencimento({
   const id_forma_pagamento = formTitulo.watch("id_forma_pagamento");
   const dia_corte_cartao = formTitulo.watch("dia_corte_cartao");
   const dia_vencimento_cartao = formTitulo.watch("dia_vencimento_cartao");
-  const data_vencimento = form.watch("data_vencimento");
   const isCartao = id_forma_pagamento == "6";
 
   const uniqueDayMonth = isCartao ? dia_vencimento_cartao : undefined;
