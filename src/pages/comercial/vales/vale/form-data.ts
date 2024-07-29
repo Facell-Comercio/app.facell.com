@@ -20,7 +20,9 @@ const schemaVale = z
       .transform((n) => String(n).toUpperCase()),
     id_filial: z.coerce.string().trim().min(1, "Campo Obrigatório"),
     filial: z.string().trim().min(1, "Campo Obrigatório"),
-    data_inicio_cobranca: z.coerce.string().min(1, "Campo Obrigatório"),
+    data_inicio_cobranca: z.coerce.date({
+      required_error: "Campo obrigatório",
+    }),
     origem: z.string().trim().min(1, "Campo Obrigatório"),
     parcelas: z.coerce.string().min(1, "Campo Obrigatório"),
     parcela: z.coerce.string().min(1, "Campo Obrigatório"),

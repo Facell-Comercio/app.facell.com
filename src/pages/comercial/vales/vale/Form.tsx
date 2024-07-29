@@ -14,6 +14,7 @@ import { normalizeDate } from "@/helpers/mask";
 import { useVales, ValeProps } from "@/hooks/comercial/useVales";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
+import { addMonths } from "date-fns";
 import { Edit2, Info, Plus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
@@ -68,6 +69,7 @@ const FormVale = ({
   const [
     modalEditing,
     editModal,
+    openModal,
     closeModal,
     editIsPending,
     isPending,
@@ -76,6 +78,7 @@ const FormVale = ({
   ] = useStoreVale((state) => [
     state.modalEditing,
     state.editModal,
+    state.openModal,
     state.closeModal,
     state.editIsPending,
     state.isPending,
@@ -87,6 +90,11 @@ const FormVale = ({
   const { form } = useFormValeData(data);
 
   const rowsAbatimentos = data?.abatimentos || [];
+
+  const disabled = !modalEditing || isPending;
+  const saldo = parseFloat(form.watch("saldo") || "0");
+  const parcela = parseFloat(form.watch("parcela") || "1");
+  const parcelas = parseFloat(form.watch("parcelas") || "1");
 
   const onSubmitData = (data: ValeProps) => {
     if (id) update(data);
@@ -100,9 +108,21 @@ const FormVale = ({
   }
 
   useEffect(() => {
-    if (updateIsSuccess || insertIsSuccess) {
+    if (updateIsSuccess) {
       editModal(false);
       closeModal();
+      editIsPending(false);
+    } else if (insertIsSuccess) {
+      if (parcela !== parcelas) {
+        form.setValue("parcela", String(parcela + 1));
+        form.setValue(
+          "data_inicio_cobranca",
+          addMonths(form.watch("data_inicio_cobranca"), 1)
+        );
+      } else {
+        editModal(false);
+        closeModal();
+      }
       editIsPending(false);
     } else if (updateIsError || insertIsError) {
       editIsPending(false);
@@ -118,10 +138,6 @@ const FormVale = ({
     form.setValue("id_filial", filial.id || "");
     form.setValue("filial", filial.nome);
   }
-
-  const disabled = !modalEditing || isPending;
-  const saldo = parseFloat(form.watch("saldo") || "0");
-  const parcelas = parseFloat(form.watch("parcelas") || "1");
 
   return (
     <div className="max-w-full overflow-x-hidden">

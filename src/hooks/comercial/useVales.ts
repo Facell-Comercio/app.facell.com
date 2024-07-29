@@ -12,7 +12,7 @@ export type ValeProps = {
   id?: string;
   created_at?: string;
   updated_at?: string;
-  data_inicio_cobranca: string;
+  data_inicio_cobranca: string | Date;
   cpf: string;
   id_filial: string;
   valor: string;
