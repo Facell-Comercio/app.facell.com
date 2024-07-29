@@ -1,3 +1,4 @@
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
@@ -53,6 +54,16 @@ const FormVale = ({
     isSuccess: updateIsSuccess,
     isError: updateIsError,
   } = useVales().update();
+  /*  
+    Itens atualizados
+      - CPF
+      - NOME COLABORADOR
+      - FILIAL
+      - INÍCIO COBRANÇA
+      - ORIGEM
+      - OBSERVAÇÃO
+  **/
+  const { mutate: deleteAbatimento } = useVales().deleteAbatimento();
 
   const [
     modalEditing,
@@ -61,6 +72,7 @@ const FormVale = ({
     editIsPending,
     isPending,
     openModalAbatimento,
+    editModalAbatimento,
   ] = useStoreVale((state) => [
     state.modalEditing,
     state.editModal,
@@ -68,6 +80,7 @@ const FormVale = ({
     state.editIsPending,
     state.isPending,
     state.openModalAbatimento,
+    state.editModalAbatimento,
   ]);
   const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
 
@@ -80,6 +93,11 @@ const FormVale = ({
     if (!id) insertOne(data);
     // console.log(data);
   };
+
+  function handleClickNewAbatimento() {
+    openModalAbatimento("");
+    editModalAbatimento(true);
+  }
 
   useEffect(() => {
     if (updateIsSuccess || insertIsSuccess) {
@@ -197,7 +215,7 @@ const FormVale = ({
                       className="flex-1 min-w-[30ch]"
                       name="valor_parcela"
                       disabled={disabled || !saldo}
-                      readOnly={!!id}
+                      readOnly
                       label="Valor Parcela"
                       type="number"
                       min={0}
@@ -220,6 +238,9 @@ const FormVale = ({
                     icon={TbCurrencyReal}
                     iconLeft
                     control={form.control}
+                    onChange={(e) => {
+                      if (!id) form.setValue("valor_parcela", e.target.value);
+                    }}
                   />
                   <FormInput
                     className="min-w-full shrink-0"
@@ -245,7 +266,7 @@ const FormVale = ({
                       variant={"tertiary"}
                       disabled={disabled}
                       className="flex gap-2"
-                      onClick={() => openModalAbatimento("")}
+                      onClick={() => handleClickNewAbatimento()}
                     >
                       <Plus /> Novo Abatimento
                     </Button>
@@ -273,16 +294,27 @@ const FormVale = ({
                               variant={"warning"}
                               size={"xs"}
                               disabled={disabled}
+                              onClick={() =>
+                                openModalAbatimento(abatimento.id || "")
+                              }
                             >
                               <Edit2 size={16} />
                             </Button>
-                            <Button
-                              variant={"destructive"}
-                              size={"xs"}
-                              disabled={disabled}
+                            <AlertPopUp
+                              title={"Deseja realmente excluir"}
+                              description="Essa ação não pode ser desfeita. O abatimento será excluído definitivamente do servidor."
+                              action={() => {
+                                deleteAbatimento(abatimento.id);
+                              }}
                             >
-                              <Trash size={16} />
-                            </Button>
+                              <Button
+                                variant={"destructive"}
+                                size={"xs"}
+                                disabled={disabled}
+                              >
+                                <Trash size={16} />
+                              </Button>
+                            </AlertPopUp>
                           </TableCell>
                           <TableCell>
                             {normalizeDate(abatimento.created_at || "")}

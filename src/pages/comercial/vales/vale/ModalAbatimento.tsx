@@ -7,11 +7,11 @@ import {
 } from "@/components/ui/dialog";
 
 import FormInput, { Input } from "@/components/custom/FormInput";
+import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AbatimentosProps, useVales } from "@/hooks/comercial/useVales";
-import { Ban, Plus, Save } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useFormAbatimentoData } from "./form-data";
@@ -24,27 +24,28 @@ interface ModalAbatimentoProps {
 const initialFormAbatimentoData = { valor: "0", obs: "" };
 
 const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
-  const [modalOpen, closeModal, id, idVale] = useStoreVale((state) => [
-    state.modalOpenAbatimento,
-    state.closeModalAbatimento,
-    state.id_abatimento,
-    state.id,
-  ]);
+  const [modalOpen, closeModal, id, idVale, modalEditing, editModal] =
+    useStoreVale((state) => [
+      state.modalOpenAbatimento,
+      state.closeModalAbatimento,
+      state.id_abatimento,
+      state.id,
+      state.modalEditingAbatimento,
+      state.editModalAbatimento,
+    ]);
   const formRef = useRef(null);
-  const { data, isLoading } = useVales().getOne(id); //! Trocar por uma função de abatimento
+  const { data } = useVales().getOneAbatimento(id);
 
   const {
     mutate: insertAbatimento,
     isPending: insertIsPending,
     isSuccess: insertIsSuccess,
-    isError: insertIsError,
   } = useVales().insertAbatimento();
   const {
-    mutate: update,
+    mutate: updateAbatimento,
     isPending: updateIsPending,
     isSuccess: updateIsSuccess,
-    isError: updateIsError,
-  } = useVales().update(); //! Trocar por uma função de abatimento
+  } = useVales().updateAbatimento();
   const newDataAbatimento: AbatimentosProps & Record<string, any> =
     {} as AbatimentosProps & Record<string, any>;
 
@@ -60,18 +61,25 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
 
   const { form } = useFormAbatimentoData(
     id
-      ? newDataAbatimento
+      ? {
+          ...newDataAbatimento,
+          saldo: newDataAbatimento.saldo_vale,
+          valor_inicial: newDataAbatimento.valor,
+        }
       : { ...initialFormAbatimentoData, saldo, id_vale: idVale || "" }
   );
 
   function handleClickCancel() {
     closeModal();
+    editModal(false);
   }
 
+  const disabled = !modalEditing || insertIsPending || updateIsPending;
+
   const onSubmitData = (data: AbatimentosProps) => {
-    // if (id) update(data);
-    if (!id) insertAbatimento(data);
     console.log(data);
+    if (id) updateAbatimento(data);
+    if (!id) insertAbatimento(data);
   };
 
   // ! Verificar a existênicia de erros
@@ -80,16 +88,25 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
   useEffect(() => {
     if (updateIsSuccess || insertIsSuccess) {
       closeModal();
+      editModal(false);
     }
   }, [updateIsPending, insertIsPending]);
-  const saldoFinal =
-    parseFloat(saldo || "0") - parseFloat(form.watch("valor") || "0");
+
+  //~ O cálculo será diferente se houver um id
+  const saldoVale = id
+    ? parseFloat(newDataAbatimento.saldo_vale || "0") +
+      parseFloat(newDataAbatimento.valor || "0")
+    : parseFloat(saldo || "0");
+
+  const saldoFinal = saldoVale - parseFloat(form.watch("valor") || "0");
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Novo Abatimento</DialogTitle>
+          <DialogTitle>
+            {id ? `Abatimento: ${id}` : "Novo Abatimento"}
+          </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           <Form {...form}>
@@ -119,6 +136,7 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
                       className="rounded-none rounded-r-md"
                       readOnly
                       value={saldo}
+                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -128,7 +146,8 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
                   label="Valor a Abater"
                   type="number"
                   min={0}
-                  max={parseFloat(saldo || "0")}
+                  max={saldoVale}
+                  disabled={disabled}
                   step="0.01"
                   icon={TbCurrencyReal}
                   iconLeft
@@ -151,6 +170,7 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
                       className="rounded-none rounded-r-md"
                       readOnly
                       value={saldoFinal.toFixed(2)}
+                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -158,6 +178,7 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
               <FormInput
                 name="obs"
                 label="Observação"
+                disabled={disabled}
                 className="flex-1 min-w-full"
                 control={form.control}
               />
@@ -165,34 +186,13 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
           </Form>
         </ScrollArea>
         <DialogFooter className="flex gap-2 flex-row-reverse">
-          <Button
-            variant={"secondary"}
-            disabled={isLoading}
-            onClick={() => closeModal()}
-          >
-            <Ban className="me-2 text-xl" />
-            Cancelar
-          </Button>
-          <Button
-            variant={id ? "success" : "default"}
-            type="submit"
-            onClick={() => {
-              // @ts-ignore
-              formRef.current && formRef.current.requestSubmit();
-            }}
-          >
-            {id ? (
-              <span className="flex gap-2">
-                <Save size={18} />
-                Salvar
-              </span>
-            ) : (
-              <span className="flex gap-2">
-                <Plus size={18} />
-                Adicionar
-              </span>
-            )}
-          </Button>
+          <ModalButtons
+            id={id}
+            modalEditing={modalEditing}
+            edit={() => editModal(true)}
+            cancel={handleClickCancel}
+            formRef={formRef}
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

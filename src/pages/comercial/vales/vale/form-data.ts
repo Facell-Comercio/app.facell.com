@@ -40,10 +40,13 @@ const schemaVale = z
 
   //   { path: ["valor_parcela"], message: "Valor da parcela incompleto" }
   // )
-  // .refine((data) => (data.valor_parcela > data.saldo ? false : true), {
-  //   path: ["valor_parcela"],
-  //   message: "Valor acima do permitido",
-  // })
+  .refine(
+    (data) => (!data.id && data.valor_parcela !== data.saldo ? false : true),
+    {
+      path: ["valor_parcela"],
+      message: "Valor da parcela deve ser igual ao do saldo",
+    }
+  )
 
   .refine((data) => (data.parcela > data.parcelas ? false : true), {
     path: ["parcela"],
@@ -64,13 +67,24 @@ export const useFormValeData = (data: ValeProps) => {
 const schemaAbatimento = z
   .object({
     // Dados Abatimento
+    id: z.coerce.string().optional(),
     saldo: z.coerce.string().optional(),
     id_vale: z.coerce.string({ required_error: "Campo obrigatório" }),
     valor: z.coerce.number().min(1, "Campo obrigatório"),
+    valor_inicial: z.coerce.string().optional(),
     obs: z.coerce.string().min(5, "Campo Obrigatório"),
   })
   .refine(
-    (data) => (data.valor > parseFloat(data.saldo || "0") ? false : true),
+    (data) =>
+      (
+        data.id
+          ? data.valor >
+            parseFloat(data.saldo || "0") +
+              parseFloat(data.valor_inicial || "0")
+          : data.valor > parseFloat(data.saldo || "0")
+      )
+        ? false
+        : true,
     {
       path: ["valor"],
       message: "Valor acima do permitido",

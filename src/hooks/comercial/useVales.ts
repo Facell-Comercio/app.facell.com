@@ -32,6 +32,8 @@ export type AbatimentosProps = {
   id?: string;
   id_vale?: string;
   valor?: string;
+  valor_inicial?: string;
+  saldo_vale?: string;
   saldo?: string;
   obs?: string;
   created_at?: string;
@@ -85,6 +87,31 @@ export const useVales = () => {
       },
     });
 
+  const getOneAbatimento = (id?: string | null) =>
+    useQuery({
+      enabled: !!id,
+      retry: false,
+      staleTime: 5 * 1000 * 60,
+      queryKey: ["comercial", "vales", "vale", "detalhe", id],
+      queryFn: async () => {
+        try {
+          const result = await api
+            .get(`comercial/vales/abatimentos/${id}`)
+            .then((response) => response.data);
+          return result;
+        } catch (error) {
+          // @ts-expect-error "Vai funcionar"
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        }
+      },
+    });
+
   const insertOne = () =>
     useMutation({
       mutationFn: async (data: ValeProps) => {
@@ -119,7 +146,7 @@ export const useVales = () => {
     useMutation({
       mutationFn: async (data: AbatimentosProps) => {
         return await api
-          .post(`comercial/vales/abatimento`, data)
+          .post(`comercial/vales/abatimentos`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -175,6 +202,36 @@ export const useVales = () => {
       },
     });
 
+  const updateAbatimento = () =>
+    useMutation({
+      mutationFn: async (data: AbatimentosProps) => {
+        return await api
+          .put(`comercial/vales/abatimentos`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial", "vales"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
   const deleteVale = () =>
     useMutation({
       mutationFn: async (id: string | null | undefined) => {
@@ -205,12 +262,45 @@ export const useVales = () => {
       },
     });
 
+  const deleteAbatimento = () =>
+    useMutation({
+      mutationFn: async (id: string | null | undefined) => {
+        return await api
+          .delete(`comercial/vales/abatimentos/${id}`)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial", "vales"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
   return {
     getAll,
     getOne,
+    getOneAbatimento,
     insertOne,
     insertAbatimento,
     update,
+    updateAbatimento,
     deleteVale,
+    deleteAbatimento,
   };
 };
