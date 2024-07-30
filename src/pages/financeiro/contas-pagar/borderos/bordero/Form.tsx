@@ -297,7 +297,7 @@ const FormBordero = ({
     tipo,
   }: RemoveItemVencimentosProps) {
     if (id_status != "4" && id_status != "5") {
-      deleteVencimento(id);
+      deleteVencimento({ id, tipo });
       removeItemBordero(index);
     } else {
       toast({

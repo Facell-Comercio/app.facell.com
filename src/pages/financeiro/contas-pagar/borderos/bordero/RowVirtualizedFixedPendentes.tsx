@@ -382,11 +382,12 @@ const RowVirtualizerFixedPendentes: React.FC<
                 title="Deseja realmente remover?"
                 description="O vencimento será removido definitivamente deste borderô, podendo ser incluido novamente."
                 action={() =>
-                  removeItem(
-                    indexData,
-                    data[indexData].id_vencimento,
-                    data[indexData].id_status
-                  )
+                  removeItem({
+                    index: indexData,
+                    id: data[indexData].id_vencimento,
+                    id_status: data[indexData].id_status,
+                    tipo: data[indexData].tipo || "",
+                  })
                 }
               >
                 {modalEditing ? (

@@ -11,6 +11,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+} from "@tanstack/react-query";
 
 type TransferDataProps = {
   id_vencimento: string;
@@ -43,6 +44,10 @@ export const useBordero = () => {
           "contas_pagar",
           "bordero",
           "lista",
+          "financeiro",
+          "contas_pagar",
+          "bordero",
+          "lista",
           pagination,
         ],
         queryFn: async () => {
@@ -57,6 +62,7 @@ export const useBordero = () => {
       useQuery({
         enabled: !!id,
         queryKey: ["financeiro", "contas_pagar", "bordero", "detalhe", id],
+        queryKey: ["financeiro", "contas_pagar", "bordero", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/contas-a-pagar/bordero/${id}`);
         },
@@ -67,6 +73,7 @@ export const useBordero = () => {
         mutationFn: async (data: BorderoSchemaProps) => {
           return await api
             .post("/financeiro/contas-a-pagar/bordero", data)
+            .post("/financeiro/contas-a-pagar/bordero", data)
             .then((response) => response.data);
         },
         onSuccess() {
@@ -74,8 +81,12 @@ export const useBordero = () => {
             variant: "success",
             title: "Sucesso",
             description: "Novo borderô criado",
+            variant: "success",
+            title: "Sucesso",
+            description: "Novo borderô criado",
             duration: 3500,
           });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
         },
         onError(error: AxiosError) {
@@ -83,8 +94,10 @@ export const useBordero = () => {
           const errorMessage = error.response?.data.message || error.message;
           toast({
             title: "Erro",
+            title: "Erro",
             description: errorMessage,
             duration: 3500,
+            variant: "destructive",
             variant: "destructive",
           });
         },
@@ -95,6 +108,7 @@ export const useBordero = () => {
         mutationFn: async ({ id, ...rest }: BorderoSchemaProps) => {
           return await api
             .put("/financeiro/contas-a-pagar/bordero/", { id, ...rest })
+            .put("/financeiro/contas-a-pagar/bordero/", { id, ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
@@ -102,8 +116,12 @@ export const useBordero = () => {
             variant: "success",
             title: "Sucesso",
             description: "Atualização realizada com sucesso",
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
             duration: 3500,
           });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
         },
         onError(error: AxiosError) {
@@ -111,8 +129,10 @@ export const useBordero = () => {
           const errorMessage = error.response?.data.message || error.message;
           toast({
             title: "Erro",
+            title: "Erro",
             description: errorMessage,
             duration: 3500,
+            variant: "destructive",
             variant: "destructive",
           });
         },
@@ -133,8 +153,12 @@ export const useBordero = () => {
             variant: "success",
             title: "Sucesso",
             description: "Atualização realizada com sucesso",
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
             duration: 3500,
           });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
         },
         onError(error: AxiosError) {
@@ -142,8 +166,10 @@ export const useBordero = () => {
           const errorMessage = error.response?.data.message || error.message;
           toast({
             title: "Erro",
+            title: "Erro",
             description: errorMessage,
             duration: 3500,
+            variant: "destructive",
             variant: "destructive",
           });
         },
@@ -158,6 +184,7 @@ export const useBordero = () => {
         }) => {
           return await api
             .put("financeiro/contas-a-pagar/bordero/transfer", data)
+            .put("financeiro/contas-a-pagar/bordero/transfer", data)
             .then((response) => response.data);
         },
         onSuccess() {
@@ -165,8 +192,12 @@ export const useBordero = () => {
             variant: "success",
             title: "Sucesso",
             description: "Transferência realizada com sucesso",
+            variant: "success",
+            title: "Sucesso",
+            description: "Transferência realizada com sucesso",
             duration: 3500,
           });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
         },
         onError(error: AxiosError) {
@@ -174,8 +205,10 @@ export const useBordero = () => {
           const errorMessage = error.response?.data.message || error.message;
           toast({
             title: "Erro",
+            title: "Erro",
             description: errorMessage,
             duration: 3500,
+            variant: "destructive",
             variant: "destructive",
           });
         },
@@ -183,15 +216,19 @@ export const useBordero = () => {
 
     deleteVencimento: () =>
       useMutation({
-        mutationFn: async (id: string | null | undefined | number) => {
+        mutationFn: async (data: unknown) => {
           return await api
             .delete(`/financeiro/contas-a-pagar/bordero/item/${id}`)
             .then((response) => response.data);
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
 
           toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
             variant: "success",
             title: "Sucesso",
             description: "Atualização realizada com sucesso",
@@ -203,8 +240,10 @@ export const useBordero = () => {
           const errorMessage = error.response?.data.message || error.message;
           toast({
             title: "Erro",
+            title: "Erro",
             description: errorMessage,
             duration: 3500,
+            variant: "destructive",
             variant: "destructive",
           });
         },
@@ -222,8 +261,12 @@ export const useBordero = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
 
           toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Exclusão realizada com sucesso",
             variant: "success",
             title: "Sucesso",
             description: "Exclusão realizada com sucesso",
@@ -235,8 +278,10 @@ export const useBordero = () => {
           const errorMessage = error.response?.data.message || error.message;
           toast({
             title: "Erro",
+            title: "Erro",
             description: errorMessage,
             duration: 3500,
+            variant: "destructive",
             variant: "destructive",
           });
         },
@@ -250,6 +295,7 @@ export const useBordero = () => {
               `/financeiro/contas-a-pagar/bordero/export-remessa`,
               { id_bordero: id, itens, isPix },
               { responseType: "blob" }
+              { responseType: "blob" }
             )
             .then(async (response) => {
               downloadResponse(response);
@@ -261,6 +307,9 @@ export const useBordero = () => {
             variant: "success",
             title: "Sucesso!",
             description: "Exportação de remessa realizada com sucesso!",
+            variant: "success",
+            title: "Sucesso!",
+            description: "Exportação de remessa realizada com sucesso!",
           });
         },
         onError: async (error) => {
@@ -269,6 +318,8 @@ export const useBordero = () => {
           const errorJSON = JSON.parse(errorText);
 
           toast({
+            variant: "destructive",
+            title: "Ocorreu o seguinte erro",
             variant: "destructive",
             title: "Ocorreu o seguinte erro",
             description: errorJSON.message,
@@ -283,12 +334,14 @@ export const useBordero = () => {
           if (files) {
             for (let i = 0; i < files.length; i++) {
               form.append("files", files[i]);
+              form.append("files", files[i]);
             }
           }
           const result = await api.postForm(
             `/financeiro/contas-a-pagar/bordero/${id_bordero}/import-retorno-remessa`,
             form
           );
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });
 
           resolve(result.data);
