@@ -1,3 +1,4 @@
+import { Checkbox } from "@/components/ui/checkbox";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
@@ -20,6 +21,32 @@ const openModal = useStoreVale.getState().openModal;
 
 export const columnsTable: ColumnDef<RowVale>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <div className="px-1">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="flex items-center">
+        <Checkbox
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            indeterminate: row.getIsSomeSelected().toString(),
+            onCheckedChange: row.getToggleSelectedHandler(),
+          }}
+        />
+      </div>
+    ),
+  },
+  {
     accessorKey: "id",
     header: "ID",
     cell: (info) => (
@@ -36,8 +63,8 @@ export const columnsTable: ColumnDef<RowVale>[] = [
     enableSorting: false,
   },
   {
-    id: "created_at",
-    accessorKey: "created_at",
+    id: "data_inicio_cobranca",
+    accessorKey: "data_inicio_cobranca",
     cell: (info) => {
       const label = normalizeDate(info.getValue<string>());
       return (

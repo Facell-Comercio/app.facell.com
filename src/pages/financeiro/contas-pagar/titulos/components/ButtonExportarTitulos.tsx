@@ -6,15 +6,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  checkUserDepartments,
+  checkUserPermission,
+} from "@/helpers/checkAuthorization";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeDate } from "@/helpers/mask";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Download } from "lucide-react";
 import { useState } from "react";
 import { useStoreExportDatasys } from "../export-datasys/store";
 import { useStoreTablePagar } from "../table/store-table";
 import { TituloSchemaProps } from "../titulo/form-data";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
-import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 
 export type ExportAnexosProps = {
   type: string;
@@ -29,9 +32,11 @@ interface TituloProps extends TituloSchemaProps {
 }
 
 const ButtonExportTitulos = () => {
-  const {mutate: exportPrevisaoPagamento} = useTituloPagar().exportPrevisaoPagamento()
+  const { mutate: exportPrevisaoPagamento } =
+    useTituloPagar().exportPrevisaoPagamento();
   const openModalExportDatasys = useStoreExportDatasys().openModal;
-  const isMaster = checkUserPermission('MASTER')|| checkUserDepartments('FINANCEIRO')
+  const isMaster =
+    checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const [isPending, setIsPending] = useState(false);
   const [filters] = useStoreTablePagar((state) => [state.filters]);
 
@@ -40,7 +45,6 @@ const ButtonExportTitulos = () => {
     const response = await api.get(`/financeiro/contas-a-pagar/titulo/`, {
       params: { filters },
     });
-    console.log(response.data);
 
     const rows = response?.data?.rows || [];
     const data = rows.map((row: TituloProps) => {
@@ -62,8 +66,8 @@ const ButtonExportTitulos = () => {
     setIsPending(false);
   }
 
-  function exportLayoutPrevisaoPagamento(){
-    exportPrevisaoPagamento({filters})
+  function exportLayoutPrevisaoPagamento() {
+    exportPrevisaoPagamento({ filters });
   }
 
   return (
@@ -79,9 +83,11 @@ const ButtonExportTitulos = () => {
         <DropdownMenuItem onClick={exportSolicitacao}>
           Layout Padrão
         </DropdownMenuItem>
-        {isMaster && (<DropdownMenuItem onClick={exportLayoutPrevisaoPagamento}>
-          Layout Previsão Pagamento
-        </DropdownMenuItem>)}
+        {isMaster && (
+          <DropdownMenuItem onClick={exportLayoutPrevisaoPagamento}>
+            Layout Previsão Pagamento
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem onClick={() => openModalExportDatasys("")}>
           Layout Datasys
         </DropdownMenuItem>

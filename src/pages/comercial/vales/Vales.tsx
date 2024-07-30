@@ -1,19 +1,23 @@
 import { DataTable } from "@/components/custom/DataTable";
-import { Button } from "@/components/ui/button";
 
 import { useVales } from "@/hooks/comercial/useVales";
+import ButtonExportVale from "./components/ButtonExportVale";
+import ButtonImportVale from "./components/ButtonImportVale";
+import ButtonNovoVale from "./components/ButtonNovoVale";
 import FiltersVale from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTableVale } from "./table/store-table";
 import ModalVale from "./vale/Modal";
-import { useStoreVale } from "./vale/store";
 
 const Vales = () => {
-  const [pagination, setPagination, filters] = useStoreTableVale((state) => [
-    state.pagination,
-    state.setPagination,
-    state.filters,
-  ]);
+  const [pagination, setPagination, filters, rowSelection, handleRowSelection] =
+    useStoreTableVale((state) => [
+      state.pagination,
+      state.setPagination,
+      state.filters,
+      state.rowSelection,
+      state.handleRowSelection,
+    ]);
   const { data, refetch, isLoading } = useVales().getAll({
     pagination,
     filters,
@@ -21,20 +25,16 @@ const Vales = () => {
   const rows = data?.rows || [];
 
   const rowCount = data?.rowCount || 0;
-  const openModal = useStoreVale().openModal;
-  const editModal = useStoreVale().editModal;
-  function handleClickNewVale() {
-    openModal("");
-    editModal(true);
-  }
 
   return (
     <div className="flex flex-col gap-3 p-4">
       <div className="flex justify-end">
         {/* <RadialChart /> */}
-        <Button variant={"secondary"} onClick={handleClickNewVale}>
-          Novo Vale
-        </Button>
+        <span className="flex gap-2">
+          <ButtonImportVale />
+          <ButtonExportVale />
+          <ButtonNovoVale />
+        </span>
       </div>
       <FiltersVale refetch={refetch} />
 
@@ -43,6 +43,8 @@ const Vales = () => {
         setPagination={setPagination}
         data={rows}
         rowCount={rowCount}
+        rowSelection={rowSelection}
+        handleRowSelection={handleRowSelection}
         columns={columnsTable}
         isLoading={isLoading}
       />

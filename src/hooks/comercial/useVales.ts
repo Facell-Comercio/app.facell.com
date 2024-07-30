@@ -56,8 +56,8 @@ export const useVales = () => {
       queryKey: ["comercial", "vales", "lista", { pagination, filters }],
       staleTime: 5 * 1000 * 60,
       retry: false,
-      queryFn: () =>
-        fetchApi.comercial.vales.getAll({
+      queryFn: async () =>
+        await fetchApi.comercial.vales.getAll({
           pagination,
           filters,
         }),
@@ -117,6 +117,36 @@ export const useVales = () => {
       mutationFn: async (data: ValeProps) => {
         return await api
           .post(`comercial/vales`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial", "vales"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const lancamentoLote = () =>
+    useMutation({
+      mutationFn: async (data: ValeProps[]) => {
+        return await api
+          .post(`comercial/vales/lancamento-lote`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -297,6 +327,7 @@ export const useVales = () => {
     getOne,
     getOneAbatimento,
     insertOne,
+    lancamentoLote,
     insertAbatimento,
     update,
     updateAbatimento,
