@@ -1,4 +1,7 @@
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import {
+  checkUserDepartments,
+  checkUserPermission,
+} from "@/helpers/checkAuthorization";
 import { Play, Settings } from "lucide-react";
 import { ReactNode } from "react";
 import {
@@ -67,7 +70,11 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "M",
         uri: "comercial/vales",
-        visible: checkUserPermission('MASTER') || checkUserPermission('VISUALIZAR_VALES'),
+        visible: checkUserPermission([
+          "GERENCIAR_VALES",
+          "VISUALIZAR_VALES",
+          "MASTER",
+        ]),
       },
       {
         name: "Metas",
@@ -129,7 +136,7 @@ export const sidebarItems: SidebarItem[] = [
         shortName: "V",
         uri: "treinamento/videoaula",
         visible: true,
-        icon: <Play />
+        icon: <Play />,
       },
       {
         name: "Cursos",
@@ -234,7 +241,8 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CBK",
         uri: "/financeiro/conciliacao-bancaria",
-        visible: checkUserDepartments('FINANCEIRO') || checkUserPermission('MASTER'),
+        visible:
+          checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
       },
       {
         name: "Cadastros",
@@ -288,6 +296,6 @@ export const sidebarItems: SidebarItem[] = [
     type: "link",
     icon: <Settings size={16} />,
     uri: "/administracao",
-    visible: checkUserPermission('MASTER'),
+    visible: checkUserPermission("MASTER"),
   },
 ];

@@ -26,6 +26,7 @@ interface CustomComboboxProps {
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
+  readOnly?: boolean;
   placeholder: string;
   defaultValues: DefaultValueProps[];
 }
@@ -34,6 +35,7 @@ export function CustomCombobox({
   value,
   onChange,
   disabled,
+  readOnly,
   placeholder,
   defaultValues,
 }: CustomComboboxProps) {
@@ -57,7 +59,7 @@ export function CustomCombobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          disabled={disabled}
+          disabled={disabled || readOnly}
           className="w-[28ch] justify-between"
         >
           {value
@@ -70,6 +72,7 @@ export function CustomCombobox({
       <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput
+            readOnly={readOnly}
             placeholder="Procurar..."
             value={inputValue}
             onChangeCapture={(e) => {
@@ -84,7 +87,7 @@ export function CustomCombobox({
                 <CommandItem
                   key={framework.value}
                   value={framework.value}
-                  onSelect={() => handleSelect(framework.value)}
+                  onSelect={() => !!readOnly && handleSelect(framework.value)}
                   className={`${
                     !disabled &&
                     "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"

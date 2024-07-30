@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { checkUserPermission } from "@/helpers/checkAuthorization";
 import { normalizeDate } from "@/helpers/mask";
 import { useVales, ValeProps } from "@/hooks/comercial/useVales";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
@@ -91,7 +92,8 @@ const FormVale = ({
 
   const rowsAbatimentos = data?.abatimentos || [];
 
-  const disabled = !modalEditing || isPending;
+  const readOnly = !checkUserPermission(["GERENCIAR_VALES", "MASTER"]);
+  const disabled = (!modalEditing || isPending) && !readOnly;
   const saldo = parseFloat(form.watch("saldo") || "0");
   const parcela = parseFloat(form.watch("parcela") || "1");
   const parcelas = parseFloat(form.watch("parcelas") || "1");
@@ -163,6 +165,7 @@ const FormVale = ({
                     className="flex-1 min-w-[30ch] shrink-0"
                     name="cpf_colaborador"
                     disabled={disabled}
+                    readOnly={readOnly}
                     label="CPF Colaborador"
                     control={form.control}
                   />
@@ -170,6 +173,7 @@ const FormVale = ({
                     className="flex-1 min-w-[30ch] sm:min-w-[45ch] shrink-0"
                     name="nome_colaborador"
                     disabled={disabled}
+                    readOnly={readOnly}
                     label="Nome Colaborador"
                     control={form.control}
                   />
@@ -183,10 +187,11 @@ const FormVale = ({
                     readOnly
                     label="Filial"
                     control={form.control}
-                    onClick={() => setModalFilialOpen(true)}
+                    onClick={() => !readOnly && setModalFilialOpen(true)}
                   />
                   <FormDateInput
                     disabled={disabled}
+                    readOnly={readOnly}
                     name="data_inicio_cobranca"
                     label="Início Cobrança"
                     control={form.control}
@@ -198,6 +203,7 @@ const FormVale = ({
                       value={form.watch("origem")}
                       onChange={(value) => form.setValue("origem", value)}
                       disabled={disabled}
+                      readOnly={readOnly}
                       defaultValues={defaultValuesOrigem}
                       placeholder="Selecione a origem..."
                     />
@@ -262,6 +268,7 @@ const FormVale = ({
                     className="min-w-full shrink-0"
                     name="obs"
                     disabled={disabled}
+                    readOnly={readOnly}
                     label="Observação"
                     control={form.control}
                   />
@@ -278,24 +285,26 @@ const FormVale = ({
                       <Info />
                       <span className="text-lg font-bold ">Abatimentos</span>
                     </div>
-                    <Button
-                      variant={"tertiary"}
-                      disabled={disabled}
-                      className="flex gap-2"
-                      onClick={() => handleClickNewAbatimento()}
-                    >
-                      <Plus /> Novo Abatimento
-                    </Button>
+                    {checkUserPermission(["GERENCIAR_VALES", "MASTER"]) && (
+                      <Button
+                        variant={"tertiary"}
+                        disabled={disabled}
+                        className="flex gap-2"
+                        onClick={() => handleClickNewAbatimento()}
+                      >
+                        <Plus /> Novo Abatimento
+                      </Button>
+                    )}
                   </div>
 
                   <Table
                     className={`bg-background rounded-sm pb-2 ${
-                      disabled && "opacity-65"
+                      disabled && !readOnly && "opacity-65"
                     }`}
                   >
                     <TableHeader>
                       <TableRow className="font-medium uppercase">
-                        <TableCell>Ações</TableCell>
+                        {!readOnly && <TableCell>Ações</TableCell>}
                         <TableCell>Data</TableCell>
                         <TableCell>Observações</TableCell>
                         <TableCell>Valor</TableCell>
@@ -305,33 +314,35 @@ const FormVale = ({
                     <TableBody>
                       {rowsAbatimentos.map((abatimento) => (
                         <TableRow key={abatimento.id}>
-                          <TableCell className="flex gap-1">
-                            <Button
-                              variant={"warning"}
-                              size={"xs"}
-                              disabled={disabled}
-                              onClick={() =>
-                                openModalAbatimento(abatimento.id || "")
-                              }
-                            >
-                              <Edit2 size={16} />
-                            </Button>
-                            <AlertPopUp
-                              title={"Deseja realmente excluir"}
-                              description="Essa ação não pode ser desfeita. O abatimento será excluído definitivamente do servidor."
-                              action={() => {
-                                deleteAbatimento(abatimento.id);
-                              }}
-                            >
+                          {!readOnly && (
+                            <TableCell className="flex gap-1">
                               <Button
-                                variant={"destructive"}
+                                variant={"warning"}
                                 size={"xs"}
                                 disabled={disabled}
+                                onClick={() =>
+                                  openModalAbatimento(abatimento.id || "")
+                                }
                               >
-                                <Trash size={16} />
+                                <Edit2 size={16} />
                               </Button>
-                            </AlertPopUp>
-                          </TableCell>
+                              <AlertPopUp
+                                title={"Deseja realmente excluir"}
+                                description="Essa ação não pode ser desfeita. O abatimento será excluído definitivamente do servidor."
+                                action={() => {
+                                  deleteAbatimento(abatimento.id);
+                                }}
+                              >
+                                <Button
+                                  variant={"destructive"}
+                                  size={"xs"}
+                                  disabled={disabled}
+                                >
+                                  <Trash size={16} />
+                                </Button>
+                              </AlertPopUp>
+                            </TableCell>
+                          )}
                           <TableCell>
                             {normalizeDate(abatimento.created_at || "")}
                           </TableCell>

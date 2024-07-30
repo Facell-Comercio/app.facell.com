@@ -11,6 +11,7 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { checkUserPermission } from "@/helpers/checkAuthorization";
 import { useVales, ValeProps } from "@/hooks/comercial/useVales";
 import { Trash } from "lucide-react";
 import { useEffect, useRef } from "react";
@@ -105,6 +106,7 @@ const ModalVale = () => {
             cancel={handleClickCancel}
             formRef={formRef}
             isLoading={isPending}
+            blockEdit={!checkUserPermission(["GERENCIAR_VALES", "MASTER"])}
           >
             <AlertPopUp
               title={"Deseja realmente excluir"}

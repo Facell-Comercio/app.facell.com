@@ -13,12 +13,13 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreCartao } from "../../cartoes/cartao/store";
+import { RemoveItemVencimentosProps } from "./Form";
 
 interface RowVirtualizerFixedErroProps {
   data: VencimentosProps[];
   filteredData: VencimentosProps[];
   form: any;
-  removeItem: (index: number, id?: string, id_status?: string) => void;
+  removeItem: (item: RemoveItemVencimentosProps) => void;
   modalEditing: boolean;
 }
 
@@ -114,9 +115,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
             Data Prevista Parcial
           </p>
         )}
-        <p className="min-w-56 text-center bg-slate-200 dark:bg-blue-950">
-          Observação
-        </p>
+        <p className="min-w-56 bg-slate-200 dark:bg-blue-950">Observação</p>
         <p className="flex-1 min-w-[88px] text-center bg-slate-200 dark:bg-blue-950">
           Em Remessa
         </p>
@@ -310,7 +309,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                 )
               )}
               <Input
-                className="min-w-56 h-8 text-xs p-2 text-center uppercase"
+                className="min-w-56 h-8 text-xs p-2 uppercase"
                 value={data[indexData].obs || ""}
                 readOnly
               />
@@ -344,11 +343,12 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                 title="Deseja realmente remover?"
                 description="O vencimento será removido definitivamente deste borderô, podendo ser incluido novamente."
                 action={() =>
-                  removeItem(
-                    indexData,
-                    data[indexData].id_vencimento,
-                    data[indexData].id_status
-                  )
+                  removeItem({
+                    index: indexData,
+                    id: data[indexData].id_vencimento,
+                    id_status: data[indexData].id_status,
+                    tipo: data[indexData].tipo || "",
+                  })
                 }
               >
                 {modalEditing ? (

@@ -1,5 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 
+import { checkUserPermission } from "@/helpers/checkAuthorization";
 import { useVales } from "@/hooks/comercial/useVales";
 import ButtonExportVale from "./components/ButtonExportVale";
 import ButtonImportVale from "./components/ButtonImportVale";
@@ -31,14 +32,19 @@ const Vales = () => {
       <div className="flex justify-end">
         {/* <RadialChart /> */}
         <span className="flex gap-2">
-          <ButtonImportVale />
+          {checkUserPermission(["GERENCIAR_VALES", "MASTER"]) && (
+            <ButtonImportVale />
+          )}
           <ButtonExportVale />
-          <ButtonNovoVale />
+          {checkUserPermission(["GERENCIAR_VALES", "MASTER"]) && (
+            <ButtonNovoVale />
+          )}
         </span>
       </div>
       <FiltersVale refetch={refetch} />
 
       <DataTable
+        sumField="valor"
         pagination={pagination}
         setPagination={setPagination}
         data={rows}

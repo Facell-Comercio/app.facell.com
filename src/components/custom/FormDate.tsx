@@ -26,6 +26,7 @@ type FormDateProps = {
   label?: string;
   description?: string;
   disabled?: boolean;
+  readOnly?: boolean;
   max?: Date;
   min?: Date;
   onChange?: (date: Date) => void;
@@ -39,6 +40,7 @@ const FormDateInput = ({
   label,
   description,
   disabled,
+  readOnly,
   max,
   min,
   onChange,
@@ -58,7 +60,7 @@ const FormDateInput = ({
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
-                  disabled={disabled}
+                  disabled={disabled || readOnly}
                   variant={"outline"}
                   className={cn(
                     "pl-3 text-left font-normal",
@@ -94,8 +96,11 @@ const FormDateInput = ({
                   if (max && date > max) {
                     return true;
                   }
-                  if(uniqueDayMonth !== undefined && parseInt(formatDate(date, 'dd')) !== uniqueDayMonth){
-                    return true
+                  if (
+                    uniqueDayMonth !== undefined &&
+                    parseInt(formatDate(date, "dd")) !== uniqueDayMonth
+                  ) {
+                    return true;
                   }
                   return date < new Date("1900-01-01");
                 }}
