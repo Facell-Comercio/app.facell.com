@@ -44,6 +44,13 @@ import RowVirtualizerFixedPagos from "./RowVirtualizedFixedPagos";
 import RowVirtualizerFixedPendentes from "./RowVirtualizedFixedPendentes";
 import RowVirtualizerFixedProgramado from "./RowVirtualizedFixedProgramado";
 
+export type RemoveItemVencimentosProps = {
+  index: number;
+  tipo: string;
+  id?: string;
+  id_status?: string;
+};
+
 const FormBordero = ({
   id,
   data,
@@ -283,13 +290,14 @@ const FormBordero = ({
     setModalContaBancariaOpen(false);
   }
 
-  async function removeItemVencimentos(
-    index: number,
-    id?: string,
-    id_status?: string
-  ) {
+  async function removeItemVencimentos({
+    index,
+    id,
+    id_status,
+    tipo,
+  }: RemoveItemVencimentosProps) {
     if (id_status != "4" && id_status != "5") {
-      deleteVencimento(id);
+      deleteVencimento({ id, tipo });
       removeItemBordero(index);
     } else {
       toast({

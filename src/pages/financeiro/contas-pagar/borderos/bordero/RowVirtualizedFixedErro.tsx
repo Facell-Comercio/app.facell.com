@@ -13,12 +13,13 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreCartao } from "../../cartoes/cartao/store";
+import { RemoveItemVencimentosProps } from "./Form";
 
 interface RowVirtualizerFixedErroProps {
   data: VencimentosProps[];
   filteredData: VencimentosProps[];
   form: any;
-  removeItem: (index: number, id?: string, id_status?: string) => void;
+  removeItem: (item: RemoveItemVencimentosProps) => void;
   modalEditing: boolean;
 }
 
@@ -344,11 +345,12 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                 title="Deseja realmente remover?"
                 description="O vencimento será removido definitivamente deste borderô, podendo ser incluido novamente."
                 action={() =>
-                  removeItem(
-                    indexData,
-                    data[indexData].id_vencimento,
-                    data[indexData].id_status
-                  )
+                  removeItem({
+                    index: indexData,
+                    id: data[indexData].id_vencimento,
+                    id_status: data[indexData].id_status,
+                    tipo: data[indexData].tipo || "",
+                  })
                 }
               >
                 {modalEditing ? (

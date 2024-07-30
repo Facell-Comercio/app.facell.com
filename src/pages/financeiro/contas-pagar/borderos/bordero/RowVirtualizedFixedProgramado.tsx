@@ -7,12 +7,13 @@ import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBo
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Banknote, CreditCard, Landmark } from "lucide-react";
 import { useStoreCartao } from "../../cartoes/cartao/store";
+import { RemoveItemVencimentosProps } from "./Form";
 
 interface RowVirtualizerFixedProgramadoProps {
   data: VencimentosProps[];
   filteredData: VencimentosProps[];
   form: any;
-  removeItem: (index: number, id?: string, id_status?: string) => void;
+  removeItem: (item: RemoveItemVencimentosProps) => void;
   modalEditing: boolean;
 }
 
