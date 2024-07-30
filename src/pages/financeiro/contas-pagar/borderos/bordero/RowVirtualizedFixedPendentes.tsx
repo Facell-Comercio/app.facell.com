@@ -15,12 +15,13 @@ import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreCartao } from "../../cartoes/cartao/store";
 import { useStoreDDA } from "../components/storeDDA";
+import { RemoveItemVencimentosProps } from "./Form";
 
 interface RowVirtualizerFixedPendentesProps {
   data: VencimentosProps[];
   filteredData: VencimentosProps[];
   form: any;
-  removeItem: (index: number, id?: string, id_status?: string) => void;
+  removeItem: (item: RemoveItemVencimentosProps) => void;
   modalEditing: boolean;
 }
 
@@ -381,11 +382,12 @@ const RowVirtualizerFixedPendentes: React.FC<
                 title="Deseja realmente remover?"
                 description="O vencimento será removido definitivamente deste borderô, podendo ser incluido novamente."
                 action={() =>
-                  removeItem(
-                    indexData,
-                    data[indexData].id_vencimento,
-                    data[indexData].id_status
-                  )
+                  removeItem({
+                    index: indexData,
+                    id: data[indexData].id_vencimento,
+                    id_status: data[indexData].id_status,
+                    tipo: data[indexData].tipo || "",
+                  })
                 }
               >
                 {modalEditing ? (
