@@ -10,18 +10,18 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUsers } from "@/hooks/useUsers";
+import { Filial } from "@/types/filial-type";
 import { useRef } from "react";
 import Form from "./Form";
-import { useStoreUser } from "./store";
 import { UserFormData } from "./form-data";
-import { Filial } from "@/types/filial-type";
+import { useStoreUser } from "./store";
 
 const initialProps: UserFormData = {
   id: undefined,
   active: true,
   nome: "",
   email: "",
-  img_url: '',
+  img_url: "",
 
   updateFiliais: false,
   filiais: [],
@@ -42,7 +42,8 @@ const ModalUser = () => {
   const formRef = useRef(null);
 
   const { data, isLoading } = useUsers().getOne(id);
-  const userData = data?.data;
+  const userData = data;
+  console.log(data);
 
   for (const key in userData) {
     if (typeof userData[key] === "number") {
@@ -53,10 +54,16 @@ const ModalUser = () => {
       userData[key] = userData[key];
     }
   }
-  userData?.filiais?.forEach((e:Filial)=>e.id = e?.id?.toString() || '')
-  userData?.departamentos?.forEach((e:Filial)=>e.id = e?.id?.toString() || '')
-  userData?.centros_custo?.forEach((e:Filial)=>e.id = e?.id?.toString() || '')
-  userData?.permissoes?.forEach((e:Filial)=>e.id = e?.id?.toString() || '')
+  userData?.filiais?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
+  userData?.departamentos?.forEach(
+    (e: Filial) => (e.id = e?.id?.toString() || "")
+  );
+  userData?.centros_custo?.forEach(
+    (e: Filial) => (e.id = e?.id?.toString() || "")
+  );
+  userData?.permissoes?.forEach(
+    (e: Filial) => (e.id = e?.id?.toString() || "")
+  );
 
   function handleClickCancel() {
     editModal(false);
