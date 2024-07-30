@@ -5,7 +5,7 @@ import {
   isMonday,
   isSaturday,
   isSunday,
-  isWednesday,
+  isThursday,
   isWeekend,
   startOfDay,
   subDays,
@@ -31,12 +31,12 @@ export function calcularDataPrevisaoPagamento(data_venc: Date | string) {
   const dataVencimento = startOfDay(data_venc); // Inicia com o próximo dia
 
   const dataAtual = startOfDay(new Date());
-  let dataMinima = isFriday(dataAtual) ? addDays(dataAtual, 3) : addDays(dataAtual, 2);
+  let dataMinima = isFriday(dataAtual)
+    ? addDays(dataAtual, 3)
+    : addDays(dataAtual, 2);
 
   while (
-    (!isMonday(dataMinima) &&
-      !isWednesday(dataMinima) &&
-      !isFriday(dataMinima)) ||
+    (!isMonday(dataMinima) && !isThursday(dataMinima)) ||
     checkFeriado(dataMinima)
   ) {
     dataMinima = addDays(dataMinima, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
@@ -49,9 +49,7 @@ export function calcularDataPrevisaoPagamento(data_venc: Date | string) {
     //então vou buscar a partir da data atual + 1 a próxima data de pagamento
     while (
       dataPagamento < dataMinima ||
-      (!isMonday(dataPagamento) &&
-        !isWednesday(dataPagamento) &&
-        !isFriday(dataPagamento)) ||
+      (!isMonday(dataPagamento) && !isThursday(dataPagamento)) ||
       checkFeriado(dataPagamento)
     ) {
       dataPagamento = addDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
@@ -65,12 +63,10 @@ export function calcularDataPrevisaoPagamento(data_venc: Date | string) {
       dataPagamento = addDays(dataPagamento, 1);
     }
     while (
-      (!isMonday(dataPagamento) &&
-        !isWednesday(dataPagamento) &&
-        !isFriday(dataPagamento)) ||
+      (!isMonday(dataPagamento) && !isThursday(dataPagamento)) ||
       checkFeriado(dataPagamento)
     ) {
-      dataPagamento = subDays(dataPagamento, 1); // Avança para o próximo dia até encontrar uma segunda ou quinta-feira que não seja feriado
+      dataPagamento = subDays(dataPagamento, 1); // Retorna um dia até encontrar uma segunda ou quinta-feira que não seja feriado
     }
   }
 
