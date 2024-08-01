@@ -1,3 +1,4 @@
+import fetchApi from "@/api/fetchApi";
 import {
   ModalComponent,
   ModalComponentRow,
@@ -11,23 +12,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-interface IModalGrupoEconomico {
+interface IModalColaboradores {
   open: boolean;
-  handleSelection: (item: ItemGrupoEconomicoProps) => void;
+  handleSelection: (item: ItemColaboradores) => void;
   onOpenChange: () => void;
-  id_matriz?: string | null;
+  id?: string | null;
 }
 
-export type ItemGrupoEconomicoProps = {
+export type ItemColaboradores = {
   id: string;
-  id_matriz: string;
   nome: string;
-  apelido: string;
-  active: string;
+  cpf: string;
 };
 
 type PaginationProps = {
@@ -35,12 +33,11 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalGruposEconomicos = ({
+const ModalColaboradores = ({
   open,
   handleSelection,
   onOpenChange,
-  id_matriz,
-}: IModalGrupoEconomico) => {
+}: IModalColaboradores) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -48,13 +45,16 @@ const ModalGruposEconomicos = ({
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["grupo_economico"],
+    queryKey: [
+      "pessoal",
+      "colaboradores",
+      "lista",
+      { termo: search, pagination },
+    ],
     queryFn: async () =>
-      await api.get("/grupo-economico", {
-        params: {
-          filters: { termo: search, id_matriz },
-          pagination,
-        },
+      await fetchApi.pessoal.colaboradores.getAll({
+        filters: { termo: search, active: 1 },
+        pagination,
       }),
     enabled: open,
   });
@@ -67,12 +67,12 @@ const ModalGruposEconomicos = ({
     });
     refetch();
   }
-  function pushSelection(item: ItemGrupoEconomicoProps) {
+
+  function pushSelection(item: ItemColaboradores) {
     handleSelection(item);
   }
 
-  const pageCount = (data && data.data.pageCount) || 0;
-
+  const pageCount = (data && data.pageCount) || 0;
   if (isError) return null;
   if (!open) return null;
 
@@ -80,7 +80,7 @@ const ModalGruposEconomicos = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Lista de Grupos Economicos</DialogTitle>
+          <DialogTitle>Colaboradores</DialogTitle>
           <DialogDescription>
             Selecione um ao clicar no botão à direita.
           </DialogDescription>
@@ -95,29 +95,29 @@ const ModalGruposEconomicos = ({
           pagination={pagination}
           setPagination={setPagination}
         >
-          {data?.data?.rows.map(
-            (item: ItemGrupoEconomicoProps, index: number) => (
-              <ModalComponentRow key={"grupoEconomicoRow:" + item.id + index}>
-                <>
-                  <span>{item.nome && item.nome.toUpperCase()}</span>
-                  <Button
-                    size={"xs"}
-                    className="p-1"
-                    variant={"outline"}
-                    onClick={() => {
-                      pushSelection(item);
-                    }}
-                  >
-                    Selecionar
-                  </Button>
-                </>
-              </ModalComponentRow>
-            )
-          )}
+          {data?.rows.map((item: ItemColaboradores, index: number) => (
+            <ModalComponentRow key={"colaboradoresRow:" + item.id + index}>
+              <>
+                <span>
+                  {item.nome} - {item.cpf}
+                </span>
+                <Button
+                  size={"xs"}
+                  className="p-1"
+                  variant={"outline"}
+                  onClick={() => {
+                    pushSelection(item);
+                  }}
+                >
+                  Selecionar
+                </Button>
+              </>
+            </ModalComponentRow>
+          ))}
         </ModalComponent>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ModalGruposEconomicos;
+export default ModalColaboradores;

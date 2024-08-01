@@ -64,7 +64,12 @@ const ModalFornecedores = ({
     isError,
     refetch: refetch,
   } = useQuery({
-    queryKey: ["financeiro", "fornecedor", "lista", { termo: search, pagination}],
+    queryKey: [
+      "financeiro",
+      "fornecedor",
+      "lista",
+      { termo: search, pagination },
+    ],
     queryFn: async () =>
       await api.get("financeiro/fornecedores/", {
         params: { filters: { termo: search }, pagination },
@@ -85,7 +90,6 @@ const ModalFornecedores = ({
   }
 
   const pageCount = (data && data.data.pageCount) || 0;
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -102,6 +106,7 @@ const ModalFornecedores = ({
         </DialogHeader>
 
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

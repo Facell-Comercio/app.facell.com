@@ -1,6 +1,7 @@
 import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
+import { GetAllParams } from "@/types/query-params-type";
 import {
   keepPreviousData,
   useMutation,
@@ -13,7 +14,7 @@ export type ValeProps = {
   created_at?: string;
   updated_at?: string;
   data_inicio_cobranca: string | Date;
-  cpf: string;
+  cpf_colaborador?: string;
   id_filial: string;
   valor: string;
   saldo: string;
@@ -24,6 +25,7 @@ export type ValeProps = {
   obs: string;
   nome_colaborador: string;
   id_criador: string;
+  id_colaborador: string;
   filial?: string;
   abatimentos?: AbatimentosProps[];
 };
@@ -40,18 +42,10 @@ export type AbatimentosProps = {
   criador?: string;
 };
 
-export interface GetValesProps {
-  pagination?: {
-    pageIndex?: number;
-    pageLength?: number;
-  };
-  filters: any;
-}
-
 export const useVales = () => {
   const queryClient = useQueryClient();
 
-  const getAll = ({ pagination, filters }: GetValesProps) =>
+  const getAll = ({ pagination, filters }: GetAllParams) =>
     useQuery({
       queryKey: ["comercial", "vales", "lista", { pagination, filters }],
       staleTime: 5 * 1000 * 60,
@@ -152,12 +146,6 @@ export const useVales = () => {
       onSuccess() {
         queryClient.invalidateQueries({
           queryKey: ["comercial", "vales"],
-        });
-        toast({
-          variant: "success",
-          title: "Sucesso",
-          description: "Atualização realizada com sucesso",
-          duration: 3500,
         });
       },
       onError(error) {

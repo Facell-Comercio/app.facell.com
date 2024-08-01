@@ -97,8 +97,15 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaUsers />,
     uri: "pessoal",
-    visible: false,
+    visible: true,
     children: [
+      {
+        name: "Colaboradores",
+        type: "link",
+        shortName: "C",
+        uri: "pessoal/colaboradores",
+        visible: checkUserPermission(["MASTER"]),
+      },
       {
         name: "Quadro",
         type: "link",

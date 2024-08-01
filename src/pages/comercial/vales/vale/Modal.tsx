@@ -23,7 +23,7 @@ const initialPropsVale: ValeProps = {
   created_at: "",
   updated_at: "",
   data_inicio_cobranca: "",
-  cpf: "",
+  cpf_colaborador: "",
   id_filial: "",
   valor: "",
   saldo: "",
@@ -33,6 +33,7 @@ const initialPropsVale: ValeProps = {
   obs: "",
   nome_colaborador: "",
   id_criador: "",
+  id_colaborador: "",
   filial: "",
   abatimentos: [],
 };

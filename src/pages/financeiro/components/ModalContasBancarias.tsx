@@ -133,7 +133,6 @@ const ModalContasBancarias = ({
   const pageCount = (data && data.data.pageCount) || 0;
   const [itemOpen, setItemOpen] = useState<string>("item-1");
 
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -202,6 +201,7 @@ const ModalContasBancarias = ({
           </Accordion>
         </DialogHeader>
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

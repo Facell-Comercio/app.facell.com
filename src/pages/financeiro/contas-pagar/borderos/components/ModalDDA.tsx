@@ -78,7 +78,10 @@ export const ModalDDA = () => {
     pageIndex: 0,
   });
 
-  const { data, refetch } = useDDA().getAllDDA({ pagination, filters });
+  const { data, isLoading, refetch } = useDDA().getAllDDA({
+    pagination,
+    filters,
+  });
 
   const vincularDDA = async ({
     id_dda,
@@ -98,7 +101,9 @@ export const ModalDDA = () => {
       });
       if (id_vencimento) {
         toggleModal(false);
-        queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
+        queryClient.invalidateQueries({
+          queryKey: ["financeiro", "contas_pagar"],
+        });
       }
       return true;
     } catch (error) {
@@ -129,7 +134,9 @@ export const ModalDDA = () => {
       if (id_vencimento) {
         toggleModal(false);
       }
-      queryClient.invalidateQueries({ queryKey: ["financeiro", "contas_pagar"] });
+      queryClient.invalidateQueries({
+        queryKey: ["financeiro", "contas_pagar"],
+      });
 
       return true;
     } catch (error) {
@@ -288,7 +295,6 @@ export const ModalDDA = () => {
   }));
 
   const pageCount = (data && data.data.pageCount) || 0;
-  // if (isLoading) return null;
   // if (isError) return null;
   if (!modalOpen) return null;
 
@@ -400,6 +406,7 @@ export const ModalDDA = () => {
           {header}
         </DialogHeader>
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

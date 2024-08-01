@@ -1,3 +1,5 @@
+import { isAfter, isBefore, isEqual } from "date-fns";
+
 export function checkEmail(email: string) {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return regex.test(email);
@@ -32,4 +34,25 @@ export function checkCPF(cpf: string) {
   if (resto !== parseInt(cpf.charAt(10))) return false;
 
   return true;
+}
+
+export function isBetweenDate(
+  date: Date | string,
+  from: Date | string,
+  to: Date | string,
+  inclusivity = "()"
+) {
+  if (!["()", "[]", "(]", "[)"].includes(inclusivity)) {
+    throw new Error("Inclusivity parameter must be one of (), [], (], [)");
+  }
+
+  const isBeforeEqual = inclusivity[0] === "[",
+    isAfterEqual = inclusivity[1] === "]";
+
+  return (
+    (isBeforeEqual
+      ? isEqual(from, date) || isBefore(from, date)
+      : isBefore(from, date)) &&
+    (isAfterEqual ? isEqual(to, date) || isAfter(to, date) : isAfter(to, date))
+  );
 }

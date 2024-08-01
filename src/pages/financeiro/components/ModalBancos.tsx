@@ -42,7 +42,7 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["financeiro", "banco", "lista", {termo: search, pagination}],
+    queryKey: ["financeiro", "banco", "lista", { termo: search, pagination }],
     queryFn: async () =>
       await api.get("financeiro/bancos", {
         params: { filters: { termo: search }, pagination },
@@ -64,7 +64,6 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
   }
 
   const pageCount = (data && data.data.pageCount) || 0;
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -81,6 +80,7 @@ const ModalBancos = ({ open, handleSelection, onOpenChange }: IModalBancos) => {
         </DialogHeader>
 
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

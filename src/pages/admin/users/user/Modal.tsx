@@ -43,7 +43,6 @@ const ModalUser = () => {
 
   const { data, isLoading } = useUsers().getOne(id);
   const userData = data;
-  console.log(data);
 
   for (const key in userData) {
     if (typeof userData[key] === "number") {

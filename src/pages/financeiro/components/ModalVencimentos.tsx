@@ -90,7 +90,14 @@ const ModalVencimentos = ({
   };
 
   const { data, isError, isLoading, refetch } = useQuery({
-    queryKey: ["financeiro", "contas_pagar", "vencimento", "em_bordero", "lista", {id_matriz, id_status, filters}],
+    queryKey: [
+      "financeiro",
+      "contas_pagar",
+      "vencimento",
+      "em_bordero",
+      "lista",
+      { id_matriz, id_status, filters },
+    ],
     staleTime: 0,
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/titulo/vencimentos-bordero", {
@@ -276,7 +283,6 @@ const ModalVencimentos = ({
     setFilial(filial.nome);
   }
 
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -355,6 +361,7 @@ const ModalVencimentos = ({
           </Accordion>
         </DialogHeader>
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

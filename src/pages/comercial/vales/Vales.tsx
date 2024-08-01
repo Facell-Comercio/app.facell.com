@@ -1,6 +1,7 @@
 import { DataTable } from "@/components/custom/DataTable";
 
 import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { normalizeCurrency } from "@/helpers/mask";
 import { useVales } from "@/hooks/comercial/useVales";
 import ButtonExportVale from "./components/ButtonExportVale";
 import ButtonImportVale from "./components/ButtonImportVale";
@@ -24,14 +25,32 @@ const Vales = () => {
     filters,
   });
   const rows = data?.rows || [];
+  // console.log(data);
 
   const rowCount = data?.rowCount || 0;
+  const saldoTotal = data?.saldoTotal;
+  const valorTotal = data?.valorTotal;
+  const valorAbatido = data?.valorAbatido;
 
   return (
-    <div className="flex flex-col gap-3 p-4">
-      <div className="flex justify-end">
+    <div className="flex flex-col  gap-3 p-4">
+      <div className="flex gap-2 justify-between">
         {/* <RadialChart /> */}
-        <span className="flex gap-2">
+        <span className="flex flex-col gap-1 text-xs">
+          <p className="flex gap-1">
+            <strong className="font-medium">Total:</strong>
+            {normalizeCurrency(valorTotal)}
+          </p>
+          <p className="flex gap-1">
+            <strong className="font-medium">Abatido:</strong>
+            {normalizeCurrency(valorAbatido)}
+          </p>
+          <p className="flex gap-1">
+            <strong className="font-medium">Saldo:</strong>
+            {normalizeCurrency(saldoTotal)}
+          </p>
+        </span>
+        <span className="flex flex-wrap gap-2 justify-end">
           {checkUserPermission(["GERENCIAR_VALES", "MASTER"]) && (
             <ButtonImportVale />
           )}

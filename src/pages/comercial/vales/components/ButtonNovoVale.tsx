@@ -20,7 +20,7 @@ const ButtonNovoVale = () => {
         onClick={() => handleClickNewVale()}
         // disabled={qtdPendencias > 0}
       >
-        <Plus className="me-2" size={18} /> Nova Solicitação
+        <Plus className="me-2" size={18} /> Novo Vale
       </Button>
     </span>
   );

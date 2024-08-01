@@ -118,7 +118,7 @@ export function ModalVencimento({
   }, [modalOpen]);
 
   const handleChangeVencimento = (val: Date) => {
-    console.log(String(calcularDataPrevisaoPagamento(val)));
+    // console.log(String(calcularDataPrevisaoPagamento(val)));
 
     form.setValue("data_prevista", String(calcularDataPrevisaoPagamento(val)));
   };
