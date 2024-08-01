@@ -23,11 +23,9 @@ const PrivateRoutes = () => {
         login({ token: token || "", user: decodedToken.user });
       })
       .catch((error: AxiosError) => {
-        console.log('Erro em validação');
-        console.log(error);
-
-        console.log(localStorage.getItem('auth-storage'));
-        
+        // console.log('Erro em validação');
+        // console.log(error);
+        // console.log(localStorage.getItem('auth-storage'));
         
         if (error.response?.status == 401) {
           // console.log(error.message);
