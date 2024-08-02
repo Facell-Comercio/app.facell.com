@@ -18,6 +18,7 @@ type TSelectFilial = {
   onChange?: (data: any) => any;
   id_grupo_economico?: string;
   id_matriz?: string;
+  isLojaTim?: boolean;
 };
 
 const SelectFilial = ({
@@ -32,6 +33,7 @@ const SelectFilial = ({
   id_grupo_economico,
   id_matriz,
   showAll,
+  isLojaTim,
 }: TSelectFilial) => {
   // Use a single state variable for fetching and storing data
 
@@ -39,6 +41,7 @@ const SelectFilial = ({
     filters: {
       id_grupo_economico: id_grupo_economico,
       id_matriz: id_matriz,
+      isLojaTim: isLojaTim ? 1 : 0,
     },
   });
   const rows = data?.data?.rows || [];
