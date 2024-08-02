@@ -1,15 +1,15 @@
-
-import * as grupo_economico from './modules/grupo_economico'
-import * as filial from './modules/filial'
-import * as user from './modules/user'
-import * as financeiro from './modules/financeiro'
-
-
-
+import * as comercial from "./modules/comercial";
+import * as filial from "./modules/filial";
+import * as financeiro from "./modules/financeiro";
+import * as grupo_economico from "./modules/grupo_economico";
+import * as pessoal from "./modules/pessoal";
+import * as user from "./modules/user";
 
 export default {
-    grupo_economico,
-    user,
-    financeiro,
-    filial,
-}
+  grupo_economico,
+  user,
+  financeiro,
+  filial,
+  comercial,
+  pessoal,
+};

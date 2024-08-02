@@ -14,8 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Skeleton } from "../ui/skeleton";
 
 interface ModalComponentProps {
+  isLoading: boolean;
   pageCount: number;
   refetch: () => void;
   pagination: PaginationProps;
@@ -37,6 +39,7 @@ type PaginationProps = {
 };
 
 export const ModalComponent = ({
+  isLoading,
   pageCount,
   refetch,
   pagination,
@@ -110,96 +113,130 @@ export const ModalComponent = ({
 
   return (
     <>
-      {multiSelection && handleRemoveAll && handleSelectAll && (
-        <div className="flex justify-between">
-          <Button
-            variant={"destructive"}
-            size={"sm"}
-            onClick={() => handleRemoveAll()}
-          >
-            Remover Todos
-          </Button>
+      {!isLoading ? (
+        <>
+          {multiSelection && handleRemoveAll && handleSelectAll && (
+            <div className="flex justify-between">
+              <Button
+                variant={"destructive"}
+                size={"sm"}
+                onClick={() => handleRemoveAll()}
+              >
+                Remover Todos
+              </Button>
 
-          <Button
-            variant={"outline"}
-            size={"sm"}
-            onClick={() => handleSelectAll()}
-          >
-            Selecionar Todos
-          </Button>
-        </div>
-      )}
-      <section
-        ref={scrollAreaRef}
-        className={
-          "max-h-[55vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin z-50"
-        }
-      >
-        {children}
-      </section>
-
-      {Info && <Info />}
-
-      <DialogFooter>
-        {multiSelection && (
-          <div className="flex items-center space-x-2">
-            <Select
-              value={`${pagination.pageSize}`}
-              onValueChange={handlePaginationSize}
-            >
-              <SelectTrigger className="h-8 w-[80px]">
-                <SelectValue placeholder={pagination.pageSize} />
-              </SelectTrigger>
-              <SelectContent side="top">
-                {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-sm font-medium min-w-fit">Linhas por página</p>
-          </div>
-        )}
-        <Pagination className="items-center">
-          <PaginationContent>
-            <PaginationItem>
               <Button
                 variant={"outline"}
-                disabled={pagination.pageIndex === 0}
-                onClick={handlePaginationDown}
+                size={"sm"}
+                onClick={() => handleSelectAll()}
               >
-                <ChevronLeft className="h-4 w-4" />
+                Selecionar Todos
               </Button>
-            </PaginationItem>
-            {arrayPages.map((i) => {
-              return (
-                <PaginationItem key={i}>
+            </div>
+          )}
+          <section
+            ref={scrollAreaRef}
+            className={
+              "max-h-[55vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin z-50"
+            }
+          >
+            {pageCount !== 0 ? (
+              children
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-sm opacity-75">
+                Sem resultados
+              </div>
+            )}
+          </section>
+
+          {Info && <Info />}
+
+          <DialogFooter>
+            {multiSelection && (
+              <div className="flex items-center space-x-2">
+                <Select
+                  value={`${pagination.pageSize}`}
+                  onValueChange={handlePaginationSize}
+                >
+                  <SelectTrigger className="h-8 w-[80px]">
+                    <SelectValue placeholder={pagination.pageSize} />
+                  </SelectTrigger>
+                  <SelectContent side="top">
+                    {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map(
+                      (pageSize) => (
+                        <SelectItem key={pageSize} value={`${pageSize}`}>
+                          {pageSize}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm font-medium min-w-fit">
+                  Linhas por página
+                </p>
+              </div>
+            )}
+            <Pagination className="items-center">
+              <PaginationContent>
+                <PaginationItem>
                   <Button
-                    variant={
-                      i - 1 === pagination.pageIndex ? "default" : "ghost"
-                    }
-                    onClick={() => handlePaginationChange(i - 1)}
+                    variant={"outline"}
+                    disabled={pagination.pageIndex === 0 || pageCount === 0}
+                    onClick={handlePaginationDown}
                   >
-                    {i}
+                    <ChevronLeft className="h-4 w-4" />
                   </Button>
                 </PaginationItem>
-              );
-            })}
-            <PaginationItem>
-              <Button
-                variant={"outline"}
-                disabled={pagination.pageIndex === pageCount - 1}
-                onClick={handlePaginationUp}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-        {multiSelection && ButtonSaveSelection && <ButtonSaveSelection />}
-        {/* <PaginationEllipsis /> */}
-      </DialogFooter>
+                {arrayPages.map((i) => {
+                  return (
+                    <PaginationItem key={i}>
+                      <Button
+                        variant={
+                          i - 1 === pagination.pageIndex ? "default" : "ghost"
+                        }
+                        onClick={() => handlePaginationChange(i - 1)}
+                      >
+                        {i}
+                      </Button>
+                    </PaginationItem>
+                  );
+                })}
+                <PaginationItem>
+                  <Button
+                    variant={"outline"}
+                    disabled={
+                      pagination.pageIndex === pageCount - 1 || pageCount === 0
+                    }
+                    onClick={handlePaginationUp}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+            {multiSelection && ButtonSaveSelection && <ButtonSaveSelection />}
+            {/* <PaginationEllipsis /> */}
+          </DialogFooter>
+        </>
+      ) : (
+        <>
+          <div className="max-h-[55vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin z-50 flex flex-col gap-0.5">
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+          </div>
+          <div>
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </>
+      )}
     </>
   );
 };

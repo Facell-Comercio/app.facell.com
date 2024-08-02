@@ -53,7 +53,12 @@ const ModalPlanosContas = ({
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["financeiro", "plano_contas", "lista", {id_matriz, id_grupo_economico}],
+    queryKey: [
+      "financeiro",
+      "plano_contas",
+      "lista",
+      { id_matriz, id_grupo_economico },
+    ],
     queryFn: async () =>
       await api.get("financeiro/plano-contas", {
         params: {
@@ -85,7 +90,6 @@ const ModalPlanosContas = ({
 
   const pageCount = (data && data.data.pageCount) || 0;
 
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -102,6 +106,7 @@ const ModalPlanosContas = ({
         </DialogHeader>
 
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

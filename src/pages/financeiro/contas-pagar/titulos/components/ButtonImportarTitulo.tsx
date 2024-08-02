@@ -3,17 +3,17 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { exportToExcel } from '@/helpers/importExportXLS';
-import { Upload } from 'lucide-react';
+} from "@/components/ui/dropdown-menu";
+import { exportToExcel } from "@/helpers/importExportXLS";
+import { Upload } from "lucide-react";
 
-import AlertPopUp from '@/components/custom/AlertPopUp';
-import { ToastAction } from '@/components/ui/toast';
-import { toast } from '@/components/ui/use-toast';
-import { importFromExcel } from '@/helpers/importExportXLS';
-import { useTituloPagar } from '@/hooks/financeiro/useTituloPagar';
-import { useEffect, useRef } from 'react';
-import { FaSpinner } from 'react-icons/fa6';
+import AlertPopUp from "@/components/custom/AlertPopUp";
+import { ToastAction } from "@/components/ui/toast";
+import { toast } from "@/components/ui/use-toast";
+import { importFromExcel } from "@/helpers/importExportXLS";
+import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
+import { useEffect, useRef } from "react";
+import { FaSpinner } from "react-icons/fa6";
 
 export type LancamentoLoteProps = {
   id_tipo_solicitacao?: string;
@@ -62,22 +62,22 @@ const ButtonImportTitulos = () => {
         const importedData = e.target?.result;
         const result = importFromExcel(importedData).filter(
           (value: any) =>
-            value.id_tipo_solicitacao !== '' &&
-            value.CNPJ_FORNECEDOR !== '' &&
-            value.CNPJ_FILIAL !== '' &&
-            value.CNPJ_FILIAL_RATEIO !== ''
+            value.id_tipo_solicitacao !== "" &&
+            value.CNPJ_FORNECEDOR !== "" &&
+            value.CNPJ_FILIAL !== "" &&
+            value.CNPJ_FILIAL_RATEIO !== ""
         ) as LancamentoLoteProps[];
         // console.log(result);
 
         const responseError: any[] = [];
         if (responseError.length > 0) {
-          toast({ title: 'Erro na importação', variant: 'destructive' });
+          toast({ title: "Erro na importação", variant: "destructive" });
           return;
         }
         lancamentoLote(result);
 
         if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+          fileInputRef.current.value = "";
         }
       };
     }
@@ -86,8 +86,8 @@ const ButtonImportTitulos = () => {
   useEffect(() => {
     if (isSuccess && resultadoLancamentoLote) {
       toast({
-        title: 'Sucesso',
-        description: 'Lançamento de solicitações realizado',
+        title: "Sucesso",
+        description: "Lançamento de solicitações realizado",
         action: (
           <ToastAction
             altText="Ver Resultados"
@@ -102,7 +102,7 @@ const ButtonImportTitulos = () => {
           </ToastAction>
         ),
         duration: 3500,
-        variant: 'success',
+        variant: "success",
       });
     }
   }, [isSuccess]);
@@ -131,7 +131,7 @@ const ButtonImportTitulos = () => {
           <AlertPopUp
             className="w-full hover:bg-accent hover:text-accent-foreground"
             title="Deseja realmente importar?"
-            description="Esta ação não pode ser desfeita. Todos as solicitações importadas serão adiconadas"
+            description="Esta ação não pode ser desfeita. Todos as solicitações importadas serão adicionadas"
             action={() => fileInputRef.current && fileInputRef.current.click()}
           >
             <div>
@@ -139,7 +139,7 @@ const ButtonImportTitulos = () => {
                 <>Importar Planilha</>
               ) : (
                 <>
-                  <FaSpinner size={18} className="me-2 animate-spin" />{' '}
+                  <FaSpinner size={18} className="me-2 animate-spin" />{" "}
                   Importando...
                 </>
               )}

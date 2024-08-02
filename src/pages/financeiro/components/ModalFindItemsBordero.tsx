@@ -322,7 +322,6 @@ const ModalFindItemsBordero = ({
     }
   }, [isError]);
 
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -401,6 +400,7 @@ const ModalFindItemsBordero = ({
           </Accordion>
         </DialogHeader>
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

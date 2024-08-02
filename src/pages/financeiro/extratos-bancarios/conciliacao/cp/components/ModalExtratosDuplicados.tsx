@@ -83,7 +83,6 @@ const ModalExtratosDuplicated = ({
   }
 
   const pageCount = (data && data.data.pageCount) || 0;
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -100,6 +99,7 @@ const ModalExtratosDuplicated = ({
         </DialogHeader>
 
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

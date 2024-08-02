@@ -115,9 +115,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
             Data Prevista Parcial
           </p>
         )}
-        <p className="min-w-56 text-center bg-slate-200 dark:bg-blue-950">
-          Observação
-        </p>
+        <p className="min-w-56 bg-slate-200 dark:bg-blue-950">Observação</p>
         <p className="flex-1 min-w-[88px] text-center bg-slate-200 dark:bg-blue-950">
           Em Remessa
         </p>
@@ -311,7 +309,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                 )
               )}
               <Input
-                className="min-w-56 h-8 text-xs p-2 text-center uppercase"
+                className="min-w-56 h-8 text-xs p-2 uppercase"
                 value={data[indexData].obs || ""}
                 readOnly
               />

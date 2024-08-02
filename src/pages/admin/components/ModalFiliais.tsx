@@ -56,17 +56,18 @@ const ModalFiliais = ({
     pageIndex: 0,
   });
 
-  
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["filial", "lista", id_matriz, id_grupo_economico],
     queryFn: async () =>
       await api.get("filial", {
         params: {
-          filters: { 
-              termo: search, 
-                id_matriz: id_matriz ? id_matriz : undefined, 
-                id_grupo_economico: id_grupo_economico ? id_grupo_economico : undefined
-               },
+          filters: {
+            termo: search,
+            id_matriz: id_matriz ? id_matriz : undefined,
+            id_grupo_economico: id_grupo_economico
+              ? id_grupo_economico
+              : undefined,
+          },
           pagination,
         },
       }),
@@ -144,7 +145,6 @@ const ModalFiliais = ({
   };
 
   const pageCount = (data && data.data.pageCount) || 0;
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -160,6 +160,7 @@ const ModalFiliais = ({
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

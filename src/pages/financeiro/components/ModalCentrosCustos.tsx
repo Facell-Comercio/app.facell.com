@@ -65,7 +65,6 @@ const ModalCentrosCustos = ({
   }
 
   const pageCount = (data && data.data.pageCount) || 0;
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -81,6 +80,7 @@ const ModalCentrosCustos = ({
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

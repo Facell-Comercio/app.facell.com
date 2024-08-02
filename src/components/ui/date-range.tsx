@@ -20,6 +20,11 @@ interface DatePickerWithRangeProps
   setDate?: (date: DateRange) => void;
   disabled?: boolean;
   description?: string;
+  numberOfMonths?: number;
+  toMonth?: Date;
+  fromMonth?: Date;
+  toYear?: number;
+  fromYear?: number;
 }
 
 export function DatePickerWithRange({
@@ -28,6 +33,11 @@ export function DatePickerWithRange({
   setDate,
   disabled,
   description,
+  numberOfMonths,
+  toMonth,
+  fromMonth,
+  toYear,
+  fromYear,
 }: DatePickerWithRangeProps) {
   // Não é necessário definir date e setDate no estado interno.
   // O código já recebe date e setDate das propriedades.
@@ -42,7 +52,8 @@ export function DatePickerWithRange({
             variant={"outline"}
             className={cn(
               "w-[300px] justify-start text-left font-normal",
-              !date && "text-muted-foreground"
+              !date && "text-muted-foreground",
+              className
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -69,7 +80,11 @@ export function DatePickerWithRange({
             selected={date}
             // @ts-ignore
             onSelect={setDate} // Chama a função setDate recebida como parâmetro
-            numberOfMonths={2}
+            numberOfMonths={numberOfMonths || 2}
+            toMonth={toMonth}
+            fromMonth={fromMonth}
+            toYear={toYear}
+            fromYear={fromYear}
           />
         </PopoverContent>
       </Popover>

@@ -133,7 +133,12 @@ const ModalMultiPlanosContas = ({
   }, [open]);
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["financeiro", "plano_contas", "lista", {id_matriz, search, id_grupo_economico, tipo}],
+    queryKey: [
+      "financeiro",
+      "plano_contas",
+      "lista",
+      { id_matriz, search, id_grupo_economico, tipo },
+    ],
     queryFn: async () =>
       await api.get("financeiro/plano-contas", {
         params: {
@@ -185,7 +190,6 @@ const ModalMultiPlanosContas = ({
 
   const pageCount = (data && data.data.pageCount) || 0;
 
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -202,6 +206,7 @@ const ModalMultiPlanosContas = ({
         </DialogHeader>
 
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}
@@ -214,7 +219,7 @@ const ModalMultiPlanosContas = ({
             // if (getFromMap(item.id)?.realizado !== undefined) {
             //   minValue = Number(getFromMap(item.id)?.realizado);
             // }
-            
+
             const error =
               parseFloat(getFromMap(item.id)?.valor || "0") <
               parseFloat(getFromMap(item.id)?.realizado || "0");

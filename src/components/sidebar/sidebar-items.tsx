@@ -1,4 +1,7 @@
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import {
+  checkUserDepartments,
+  checkUserPermission,
+} from "@/helpers/checkAuthorization";
 import { Play, Settings } from "lucide-react";
 import { ReactNode } from "react";
 import {
@@ -10,6 +13,7 @@ import {
 } from "react-icons/bs";
 import {
   FaBullhorn,
+  FaRankingStar,
   FaSackDollar,
   FaTruckRampBox,
   FaUsers,
@@ -55,12 +59,53 @@ export const sidebarItems: SidebarItem[] = [
     visible: true,
   },
   {
+    name: "Comercial",
+    type: "label",
+    icon: <FaRankingStar />,
+    uri: "comercial",
+    visible: true,
+    children: [
+      {
+        name: "Vales",
+        type: "link",
+        shortName: "M",
+        uri: "comercial/vales",
+        visible: checkUserPermission([
+          "GERENCIAR_VALES",
+          "VISUALIZAR_VALES",
+          "MASTER",
+        ]),
+      },
+      {
+        name: "Metas",
+        type: "link",
+        shortName: "M",
+        uri: "comercial/metas",
+        visible: true,
+      },
+      {
+        name: "Comissionamento",
+        type: "link",
+        shortName: "E",
+        uri: "comercial/comissionamento",
+        visible: true,
+      },
+    ],
+  },
+  {
     name: "Pessoal",
     type: "label",
     icon: <FaUsers />,
     uri: "pessoal",
-    visible: false,
+    visible: true,
     children: [
+      {
+        name: "Colaboradores",
+        type: "link",
+        shortName: "C",
+        uri: "pessoal/colaboradores",
+        visible: checkUserPermission(["MASTER"]),
+      },
       {
         name: "Quadro",
         type: "link",
@@ -98,7 +143,7 @@ export const sidebarItems: SidebarItem[] = [
         shortName: "V",
         uri: "treinamento/videoaula",
         visible: true,
-        icon: <Play />
+        icon: <Play />,
       },
       {
         name: "Cursos",
@@ -203,7 +248,8 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CBK",
         uri: "/financeiro/conciliacao-bancaria",
-        visible: checkUserDepartments('FINANCEIRO') || checkUserPermission('MASTER'),
+        visible:
+          checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
       },
       {
         name: "Cadastros",
@@ -257,6 +303,6 @@ export const sidebarItems: SidebarItem[] = [
     type: "link",
     icon: <Settings size={16} />,
     uri: "/administracao",
-    visible: checkUserPermission('MASTER'),
+    visible: checkUserPermission("MASTER"),
   },
 ];

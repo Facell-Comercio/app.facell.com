@@ -43,6 +43,7 @@ export const useBordero = () => {
           "contas_pagar",
           "bordero",
           "lista",
+
           pagination,
         ],
         queryFn: async () => {
@@ -157,6 +158,7 @@ export const useBordero = () => {
           vencimentos: TransferDataProps[];
         }) => {
           return await api
+
             .put("financeiro/contas-a-pagar/bordero/transfer", data)
             .then((response) => response.data);
         },
@@ -282,6 +284,7 @@ export const useBordero = () => {
           const form = new FormData();
           if (files) {
             for (let i = 0; i < files.length; i++) {
+              form.append("files", files[i]);
               form.append("files", files[i]);
             }
           }

@@ -59,7 +59,6 @@ const ModalUsers = ({ open, handleSelection, onOpenChange }: IModalUsers) => {
   }
 
   const pageCount = (data && data.data.pageCount) || 0;
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -76,6 +75,7 @@ const ModalUsers = ({ open, handleSelection, onOpenChange }: IModalUsers) => {
         </DialogHeader>
 
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}

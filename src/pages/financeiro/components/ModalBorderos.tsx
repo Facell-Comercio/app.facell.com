@@ -52,7 +52,13 @@ const ModalBorderos = ({
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["financeiro", "contas_pagar", "bordero", "lista", {id_matriz, termo: search}],
+    queryKey: [
+      "financeiro",
+      "contas_pagar",
+      "bordero",
+      "lista",
+      { id_matriz, termo: search },
+    ],
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/bordero/", {
         params: { filters: { termo: search, id_matriz }, pagination },
@@ -73,7 +79,6 @@ const ModalBorderos = ({
   }
 
   const pageCount = (data && data.data.pageCount) || 0;
-  if (isLoading) return null;
   if (isError) return null;
   if (!open) return null;
 
@@ -90,6 +95,7 @@ const ModalBorderos = ({
         </DialogHeader>
 
         <ModalComponent
+          isLoading={isLoading}
           pageCount={pageCount}
           refetch={refetch}
           pagination={pagination}
