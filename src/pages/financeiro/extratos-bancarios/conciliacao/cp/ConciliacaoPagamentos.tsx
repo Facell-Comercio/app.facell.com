@@ -56,10 +56,10 @@ const ConciliacaoCP = () => {
   const [modalExtratosDuplicatedOpen, setModalExtratosDuplicatedOpen] =
     useState(false);
 
-  const { id_conta_bancaria, ano, mes } = useExtratosStore(state => ({
+  const { contaBancaria, ano, mes } = useExtratosStore(state => ({
     ano: state.ano,
     mes: state.mes,
-    id_conta_bancaria: state?.contaBancaria?.id
+    contaBancaria: state?.contaBancaria
   }))
 
   const [
@@ -97,18 +97,17 @@ const ConciliacaoCP = () => {
   const openModal = useStoreConciliacaoCP.getState().openModal;
 
   const { data, refetch, isLoading, isError, isFetching } = useConciliacaoCP().getAll({
-    filters: { id_conta_bancaria, ano, mes, range_data: filters.range_data },
+    filters: { id_conta_bancaria: contaBancaria?.id, ano, mes, range_data: filters.range_data },
   });
   const dataChartConciliacaoPagamentos = data?.dataChartConciliacaoPagamentos;
-
-
+  
   // * Dados das conciliações realizadas:
   const {
     data: dataConciliacoes,
     refetch: refetchConciliacoes,
     isLoading: isLoadingConciliacoes,
   } = useConciliacaoCP().getConciliacoes({
-    filters: filtersConciliacoes,
+    filters: {...filtersConciliacoes, id_conta_bancaria: contaBancaria?.id, id_filial: contaBancaria?.id_matriz},
     pagination,
   });
 
@@ -311,7 +310,7 @@ const ConciliacaoCP = () => {
 
   function handleSelectionExtratosCredit(extrato: ItemExtratosCredit) {
     conciliacaoTransferenciaContas({
-      id_conta_bancaria: String(id_conta_bancaria) || '',
+      id_conta_bancaria: contaBancaria && String(contaBancaria?.id || '') ,
       id_saida: transacoesSelection[0].id,
       id_entrada: extrato.id,
       valor: extrato.valor,
@@ -342,7 +341,7 @@ const ConciliacaoCP = () => {
 
       <div className="flex gap-3 justify-end">
         <DatePickerWithRange
-          disabled={!id_conta_bancaria}
+          disabled={!contaBancaria}
           date={filters.range_data}
           fromMonth={firstDay}
           fromYear={parseInt(ano)}
@@ -352,7 +351,7 @@ const ConciliacaoCP = () => {
           setDate={(val) => { setFilters(({ range_data: val })); }}
         />
         <Button
-          disabled={isFetching || !id_conta_bancaria}
+          disabled={isFetching || !contaBancaria}
           onClick={() => refetch()}
         >
           <RefreshCcw
@@ -363,7 +362,7 @@ const ConciliacaoCP = () => {
       </div>
 
 
-      {id_conta_bancaria &&
+      {contaBancaria &&
         ano &&
         mes && (
           <Accordion
@@ -441,7 +440,7 @@ const ConciliacaoCP = () => {
                       conciliacaoAutomatica({
                         vencimentos: filteredTitulosConciliar,
                         transacoes: filteredTransacoesConciliar,
-                        id_conta_bancaria: String(id_conta_bancaria),
+                        id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ''),
                       });
                     }}
                   >
@@ -474,7 +473,7 @@ const ConciliacaoCP = () => {
                         // Talvez verificar a existência de um "TAR" na descrição
                         conciliacaoTarifas({
                           tarifas: transacoesSelection,
-                          id_conta_bancaria: String(id_conta_bancaria),
+                          id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ''),
                           data_transacao: transacoesSelection[0].data_transacao,
                         });
                       }}
@@ -631,7 +630,7 @@ const ConciliacaoCP = () => {
         )}
       <ModalConciliarCP />
 
-      {id_conta_bancaria && (
+      {contaBancaria && (
         <Accordion
           type="single"
           collapsible
@@ -676,7 +675,7 @@ const ConciliacaoCP = () => {
         onOpenChange={() => setModalExtratosDuplicatedOpen(false)}
         handleSelection={handleSelectionExtratosDuplicated}
         filters={{
-          id_conta_bancaria: String(id_conta_bancaria),
+          id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ''),
           id_extrato:
             transacoesSelection.length === 1
               ? transacoesSelection[0].id
