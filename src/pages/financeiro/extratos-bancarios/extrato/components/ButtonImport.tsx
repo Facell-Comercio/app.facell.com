@@ -6,6 +6,7 @@ import { useExtratoStore } from "./context";
 
 import { FaSpinner } from "react-icons/fa6";
 import { useQueryClient } from "@tanstack/react-query";
+import { Upload } from "lucide-react";
 
 const ButtonImport = () => {
     const queryClient = useQueryClient()
@@ -59,13 +60,13 @@ const ButtonImport = () => {
 
     return (<>
         <input ref={fileRef} type="file" className="hidden" onChange={handleUpload} />
-        <Button disabled={!contaBancaria || isLoading} onClick={handleClickImport} variant={'outline'}>
+        <Button disabled={!contaBancaria || isLoading} onClick={handleClickImport}>
             {isLoading ? (
                 <div className="flex gap-2">
                     <FaSpinner size={18} className="animate-spin" /> Importando...
                 </div>
             ) : (
-                "Importar Extrato"
+                <div className="flex gap-1"><Upload size={18} className="me-2"/>Importar Extrato</div>
             )
 
             }

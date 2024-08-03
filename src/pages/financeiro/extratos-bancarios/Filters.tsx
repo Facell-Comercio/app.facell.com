@@ -2,17 +2,11 @@ import SelectMes from "@/components/custom/SelectMes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ModalContasBancarias from "@/pages/financeiro/components/ModalContasBancarias";
-import { RefreshCcw, Search, Settings2 } from "lucide-react";
-import ButtonImport from "./ButtonImport";
-import { ContaBancaria, useExtratoStore } from "./context";
+import { Search } from "lucide-react";
+import { ContaBancaria } from "./extrato/components/context";
+import { useExtratosStore } from "./context";
 
-const Filters = ({
-  refetch,
-  isFetching,
-}: {
-  refetch: () => void;
-  isFetching: boolean;
-}) => {
+const Filters = () => {
   const [
     modalOpen,
     toggleModal,
@@ -22,7 +16,7 @@ const Filters = ({
     setMes,
     ano,
     setAno,
-  ] = useExtratoStore((state) => [
+  ] = useExtratosStore((state) => [
     state.modalOpen,
     state.toggleModal,
     state.contaBancaria,
@@ -55,6 +49,7 @@ const Filters = ({
           <div>
             <span className="text-gray-500 text-sm font-medium">Banco</span>
             <Input
+              onClick={toggleModal}
               className="font-semibold min-w-[20ch]"
               readOnly={true}
               value={contaBancaria.banco}
@@ -65,24 +60,16 @@ const Filters = ({
               Conta bancária
             </span>
             <Input
+              onClick={toggleModal}
               className="font-semibold min-w-[40ch]"
               readOnly={true}
               value={contaBancaria.descricao}
             />
           </div>
-          <Button
-            disabled={isFetching}
-            variant={"outline"}
-            onClick={toggleModal}
-          >
-            <Settings2 size={18} className="me-2" /> Trocar
-          </Button>
-          <ButtonImport />
 
           <div>
             <span className="text-gray-500 text-sm font-medium">Mês</span>
             <SelectMes
-              disabled={isFetching}
               value={mes}
               onValueChange={(mes) => setMes(mes)}
             />
@@ -93,19 +80,12 @@ const Filters = ({
             <Input
               type="number"
               min={2023}
-              disabled={isFetching}
               value={ano}
               className="max-w-[10ch]"
               onChange={(value) => setAno(value.target.value)}
             />
           </div>
-
-          <Button disabled={isFetching} onClick={() => refetch()}>
-            <RefreshCcw
-              size={20}
-              className={isFetching ? "animate-spin" : ""}
-            />
-          </Button>
+          
         </div>
       )}
 

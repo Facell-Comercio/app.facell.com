@@ -63,7 +63,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaRankingStar />,
     uri: "comercial",
-    visible: true,
+    visible: false,
     children: [
       {
         name: "Vales",
@@ -97,7 +97,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaUsers />,
     uri: "pessoal",
-    visible: true,
+    visible: false,
     children: [
       {
         name: "Colaboradores",

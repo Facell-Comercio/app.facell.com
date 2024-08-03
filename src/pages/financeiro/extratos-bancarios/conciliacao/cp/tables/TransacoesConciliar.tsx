@@ -89,7 +89,7 @@ const ReactTableVirtualized: React.FC<
         size: 100,
         cell: (info) => {
           let value = info.getValue<number>();
-          return <div className="w-full text-center">{value}</div>;
+          return <div className="w-full text-center truncate">{value}</div>;
         },
       },
       {

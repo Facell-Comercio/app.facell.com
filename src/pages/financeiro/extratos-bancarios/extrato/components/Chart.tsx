@@ -8,31 +8,31 @@ type ChartData = {
     data_transacao: string,
     'Transações': number,
 }
-const Chart = ({data, isLoading}:{data: ChartData[], isLoading: boolean}) => {
 
-    const chartData = data?.map((tr:ChartData)=>({
-        ...tr, 
+const Chart = ({ data, isLoading }: { data: ChartData[], isLoading: boolean }) => {
+
+    const chartData = data?.map((tr: ChartData) => ({
+        ...tr,
         'Crédito': parseFloat(tr['Crédito']),
         'Débito': parseFloat(tr['Débito']),
     })) || []
 
-    if(!chartData){
+    if (!chartData) {
         return null
     }
     const { theme } = useTheme()
-    if(isLoading){
+    if (isLoading) {
         return (
             <div className="flex flex-col gap-2">
-                <Skeleton className="w-100"/>
-                <Skeleton className="h-32"/>
+                <Skeleton className="w-100" />
+                <Skeleton className="h-32" />
             </div>
         )
     }
-    
-    if(!chartData || chartData?.length === 0){
+
+    if (!chartData || chartData?.length === 0) {
         return null
     }
-
     return (
         <ResponsiveContainer width={"100%"} height={200} className={'p-1'}>
             <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
