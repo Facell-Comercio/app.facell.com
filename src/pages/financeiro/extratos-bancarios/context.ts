@@ -7,6 +7,7 @@ export type ContaBancaria = {
   descricao: string;
   banco: string;
   id_matriz?: string;
+  id_filial?: string;
 };
 
 interface store {

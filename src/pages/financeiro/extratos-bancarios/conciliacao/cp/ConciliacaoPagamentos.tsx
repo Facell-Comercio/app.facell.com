@@ -107,7 +107,7 @@ const ConciliacaoCP = () => {
     refetch: refetchConciliacoes,
     isLoading: isLoadingConciliacoes,
   } = useConciliacaoCP().getConciliacoes({
-    filters: {...filtersConciliacoes, id_conta_bancaria: contaBancaria?.id, id_filial: contaBancaria?.id_matriz},
+    filters: {...filtersConciliacoes, id_conta_bancaria: contaBancaria?.id, id_filial: contaBancaria?.id_filial},
     pagination,
   });
 
