@@ -38,14 +38,17 @@ type ChartConciliacaoPagamentosProps = {
     isLoading: boolean
 }
 
-const ChartConciliacaoPagamentos = ({ data }: ChartConciliacaoPagamentosProps) => {
-    if (!data || data.length === 0) {
+const ChartConciliacaoPagamentos = ({ data, isLoading }: ChartConciliacaoPagamentosProps) => {
+    if (isLoading) {
         return (
             <div className="flex flex-col gap-2">
                 <Skeleton className="w-100" />
                 <Skeleton className="h-32" />
             </div>
         )
+    }
+    if (!data || data.length === 0) {
+        return null
     }
 
     const mes = useExtratosStore().mes

@@ -2,17 +2,17 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { useRef, useState } from "react";
-import { useExtratoStore } from "./context";
 
 import { FaSpinner } from "react-icons/fa6";
 import { useQueryClient } from "@tanstack/react-query";
 import { Upload } from "lucide-react";
+import { useExtratosStore } from "../../context";
 
 const ButtonImport = () => {
     const queryClient = useQueryClient()
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const contaBancaria = useExtratoStore().contaBancaria
+    const contaBancaria = useExtratosStore().contaBancaria
     let fileRef = useRef<null | HTMLInputElement>(null);
 
     const handleClickImport = () => {
