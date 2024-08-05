@@ -310,9 +310,7 @@ const FormBordero = ({
     }
   }
 
-  async function removeCheckedVencimentos(
-    checkedVencimentos: VencimentosProps[]
-  ) {
+  async function removeCheckedItens(checkedVencimentos: VencimentosProps[]) {
     const novosVencimentos = wVencimentos.filter(
       (v: VencimentosProps) =>
         !checkedVencimentos
@@ -322,7 +320,7 @@ const FormBordero = ({
 
     checkedVencimentos.forEach((v) => {
       if (v.id_status != "4" && v.id_status != "5") {
-        deleteVencimento(v.id_vencimento);
+        deleteVencimento({ id: v.id_vencimento, tipo: v.tipo });
       }
     });
     form.setValue("itens", novosVencimentos);
@@ -620,7 +618,7 @@ const FormBordero = ({
                         <AlertPopUp
                           title="Deseja realmente remover esses vencimentos?"
                           description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
-                          action={() => removeCheckedVencimentos(itensChecked)}
+                          action={() => removeCheckedItens(itensChecked)}
                         >
                           <Button
                             type={"button"}
@@ -745,9 +743,7 @@ const FormBordero = ({
                           <AlertPopUp
                             title="Deseja realmente remover esses vencimentos?"
                             description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
-                            action={() =>
-                              removeCheckedVencimentos(itensChecked)
-                            }
+                            action={() => removeCheckedItens(itensChecked)}
                           >
                             <Button
                               type={"button"}
