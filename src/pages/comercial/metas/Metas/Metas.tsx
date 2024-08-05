@@ -6,10 +6,10 @@ import { useMetas } from "@/hooks/comercial/useMetas";
 import ButtonExportMeta from "./components/ButtonExportMeta";
 import ButtonImportMeta from "./components/ButtonImportMeta";
 import ButtonNovaMeta from "./components/ButtonNovaMeta";
-import FiltersVale from "./table/Filters";
+import ModalMeta from "./meta/Modal";
 import { columnsTable } from "./table/columns";
+import FiltersMeta from "./table/Filters";
 import { useStoreTableMetas } from "./table/store-table";
-import ModalVale from "./vale/Modal";
 
 const Metas = () => {
   const [pagination, setPagination, filters, rowSelection, handleRowSelection] =
@@ -24,12 +24,13 @@ const Metas = () => {
     pagination,
     filters,
   });
+
   const rows = data?.rows || [];
 
   const rowCount = data?.rowCount || 0;
 
   return (
-    <div className="flex flex-col  gap-3 p-4">
+    <div className="flex flex-col gap-3">
       <div className="flex gap-2 justify-end">
         {checkUserPermission(["GERENCIAR_METAS", "MASTER"]) && (
           <ButtonImportMeta />
@@ -39,7 +40,7 @@ const Metas = () => {
           <ButtonNovaMeta />
         )}
       </div>
-      <FiltersVale refetch={refetch} />
+      <FiltersMeta refetch={refetch} />
 
       <DataTable
         sumField="valor"
@@ -52,7 +53,7 @@ const Metas = () => {
         columns={columnsTable}
         isLoading={isLoading}
       />
-      <ModalVale />
+      <ModalMeta />
     </div>
   );
 };

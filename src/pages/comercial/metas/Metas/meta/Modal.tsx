@@ -40,6 +40,7 @@ const initialPropsMeta: MetasProps = {
   pos: "0",
   upgrade: "0",
   receita: "0",
+  qtde_aparelho: "0",
   aparelho: "0",
   acessorio: "0",
   pitzi: "0",

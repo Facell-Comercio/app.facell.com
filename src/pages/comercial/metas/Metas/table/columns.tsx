@@ -6,7 +6,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
-import { useStoreMeta } from "../vale/store";
+import { useStoreMeta } from "../meta/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -109,22 +109,47 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
   {
     header: "Grupo econômico",
     accessorKey: "grupo_economico",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block max-w-96 uppercase">
+          {label}
+        </div>
+      );
+    },
   },
   {
     header: "Filial",
     accessorKey: "filial",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block max-w-96 truncate uppercase">
+          {label}
+        </div>
+      );
+    },
   },
   {
     header: "Cargo",
     accessorKey: "cargo",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <div title={label} className="block max-w-96 truncate uppercase">
+          {label}
+        </div>
+      );
+    },
   },
+
   {
     header: "Nome",
     accessorKey: "nome",
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label} className="block max-w-96 uppercase">
+        <div title={label} className="block max-w-96 truncate uppercase">
           {label}
         </div>
       );

@@ -56,15 +56,6 @@ const FormMeta = ({
     isSuccess: updateIsSuccess,
     isError: updateIsError,
   } = useMetas().update();
-  /*  
-    Itens atualizados
-      - CPF
-      - NOME COLABORADOR
-      - FILIAL
-      - INÍCIO COBRANÇA
-      - ORIGEM
-      - OBSERVAÇÃO
-  **/
 
   const [modalEditing, editModal, closeModal, editIsPending, isPending] =
     useStoreMeta((state) => [
@@ -84,11 +75,10 @@ const FormMeta = ({
   const onSubmitData = (data: MetasProps) => {
     if (id) update(data);
     if (!id) insertOne(data);
-    console.log(data);
   };
 
   useEffect(() => {
-    if (updateIsSuccess) {
+    if (updateIsSuccess || insertIsSuccess) {
       editModal(false);
       closeModal();
       editIsPending(false);
@@ -115,9 +105,9 @@ const FormMeta = ({
         <form
           ref={formRef}
           onSubmit={form.handleSubmit(onSubmitData)}
-          className="max-w-screen-xl w-full grid grid-cols-1 gap-3 z-[100]"
+          className="max-w-screen-xl w-full grid grid-cols-1 gap-3 "
         >
-          <div className="overflow-auto scroll-thin z-[100] flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
+          <div className="overflow-auto scroll-thin  flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
             {/* Primeira seção */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
@@ -135,7 +125,7 @@ const FormMeta = ({
                     name="ref"
                     label="Mês de Referência"
                     control={form.control}
-                    className="flex-1 min-w-[15ch]"
+                    className="flex-1 min-w-[20ch]"
                   />
                   <FormDateInput
                     disabled={disabled}
@@ -143,7 +133,7 @@ const FormMeta = ({
                     name="ciclo"
                     label="Ciclo de Pagamento"
                     control={form.control}
-                    className="flex-1 min-w-[15ch]"
+                    className="flex-1 min-w-[20ch]"
                   />
                   <FormDateInput
                     disabled={disabled}
@@ -151,7 +141,7 @@ const FormMeta = ({
                     name="data_inicial"
                     label="Data Inicial"
                     control={form.control}
-                    className="flex-1 min-w-[15ch]"
+                    className="flex-1 min-w-[20ch]"
                   />
                   <FormDateInput
                     disabled={disabled}
@@ -159,7 +149,7 @@ const FormMeta = ({
                     name="data_final"
                     label="Data Final"
                     control={form.control}
-                    className="flex-1 min-w-[15ch]"
+                    className="flex-1 min-w-[20ch]"
                   />
                   <FormInput
                     type="number"
@@ -170,14 +160,13 @@ const FormMeta = ({
                     min={0}
                     control={form.control}
                     icon={Percent}
-                    readOnly
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div className="overflow-auto scroll-thin z-[100] flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
-            {/* Primeira seção */}
+          <div className="overflow-auto scroll-thin  flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
+            {/* Segunda seção */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex justify-between mb-3">
@@ -187,16 +176,16 @@ const FormMeta = ({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-end">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 items-end">
                   <FormInput
-                    className="flex-1 min-w-[30ch] shrink-0"
+                    className="flex-1 shrink-0"
                     name="nome"
                     disabled={disabled}
                     label="Nome"
                     control={form.control}
                   />
                   <FormInput
-                    className="flex-1 min-w-[30ch] shrink-0"
+                    className="flex-1 shrink-0"
                     name="cpf"
                     disabled={disabled}
                     label="CPF"
@@ -204,7 +193,7 @@ const FormMeta = ({
                   />
 
                   <FormInput
-                    className="flex-1 min-w-full sm:min-w-[30ch] shrink-0"
+                    className="flex-1 shrink-0"
                     name="filial"
                     inputClass="min-w-full"
                     placeholder="SELECIONE A FILIAL"
@@ -215,7 +204,7 @@ const FormMeta = ({
                     onClick={() => !readOnly && setModalFilialOpen(true)}
                   />
                   <FormInput
-                    className="flex-1 min-w-full sm:min-w-[30ch] shrink-0"
+                    className="flex-1 shrink-0"
                     name="grupo_economico"
                     inputClass="min-w-full"
                     placeholder="SELECIONE A FILIAL"
@@ -254,8 +243,8 @@ const FormMeta = ({
               </div>
             </div>
           </div>
-          <div className="overflow-auto scroll-thin z-[100] flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
-            {/* Primeira seção */}
+          <div className="overflow-auto scroll-thin  flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
+            {/* Terceira seção */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex justify-between mb-3">
@@ -274,6 +263,7 @@ const FormMeta = ({
                       disabled={disabled}
                       label="Controle"
                       min={0}
+                      step={"1"}
                       control={form.control}
                     />
                     <FormInput
@@ -283,6 +273,7 @@ const FormMeta = ({
                       disabled={disabled}
                       label="Pos"
                       min={0}
+                      step={"1"}
                       control={form.control}
                     />
                     <FormInput
@@ -292,6 +283,7 @@ const FormMeta = ({
                       disabled={disabled}
                       label="Upgrade"
                       min={0}
+                      step={"1"}
                       control={form.control}
                     />
                   </div>
@@ -339,6 +331,7 @@ const FormMeta = ({
                       disabled={disabled}
                       label="Fixo"
                       min={0}
+                      step={"1"}
                       control={form.control}
                     />
                     <FormInput
@@ -348,6 +341,7 @@ const FormMeta = ({
                       disabled={disabled}
                       label="Wttx"
                       min={0}
+                      step={"1"}
                       control={form.control}
                     />
                     <FormInput
@@ -356,6 +350,28 @@ const FormMeta = ({
                       name="live"
                       disabled={disabled}
                       label="Live"
+                      min={0}
+                      step={"1"}
+                      control={form.control}
+                    />
+                  </div>
+                  <div className="flex gap-2 flex-wrap w-full">
+                    <FormInput
+                      type="number"
+                      className="flex-1 min-w-[20ch] shrink-0"
+                      name="qtde_aparelho"
+                      disabled={disabled}
+                      label="Qdte. Aparelho"
+                      min={0}
+                      step={"1"}
+                      control={form.control}
+                    />
+                    <FormInput
+                      type="number"
+                      className="flex-1 min-w-[20ch] shrink-0"
+                      name="aparelho"
+                      disabled={disabled}
+                      label="Aparelho"
                       min={0}
                       control={form.control}
                     />

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 // import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Plus } from "lucide-react";
-import { useStoreMeta } from "../vale/store";
+import { useStoreMeta } from "../meta/store";
 
 const ButtonNovaMeta = () => {
   const openModal = useStoreMeta().openModal;

@@ -31,6 +31,7 @@ export type MetasProps = {
   pos?: string;
   upgrade?: string;
   receita?: string;
+  qtde_aparelho?: string;
   aparelho?: string;
   acessorio?: string;
   pitzi?: string;
@@ -48,10 +49,7 @@ export const useMetas = () => {
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () =>
-        await fetchApi.comercial.metas.getAll({
-          pagination,
-          filters,
-        }),
+        await fetchApi.comercial.metas.getAll({ pagination, filters }),
       placeholderData: keepPreviousData,
     });
 
@@ -64,31 +62,6 @@ export const useMetas = () => {
       queryFn: async () => {
         try {
           const result = fetchApi.comercial.metas.getOne(id);
-          return result;
-        } catch (error) {
-          // @ts-expect-error "Vai funcionar"
-          const errorMessage = error.response?.data.message || error.message;
-          toast({
-            title: "Erro",
-            description: errorMessage,
-            duration: 3500,
-            variant: "destructive",
-          });
-        }
-      },
-    });
-
-  const getOneAbatimento = (id?: string | null) =>
-    useQuery({
-      enabled: !!id,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
-      queryKey: ["comercial", "metas", "metas", "detalhe", id],
-      queryFn: async () => {
-        try {
-          const result = await api
-            .get(`comercial/metas/abatimentos/${id}`)
-            .then((response) => response.data);
           return result;
         } catch (error) {
           // @ts-expect-error "Vai funcionar"
@@ -220,7 +193,6 @@ export const useMetas = () => {
   return {
     getAll,
     getOne,
-    getOneAbatimento,
     insertOne,
     lancamentoLote,
     update,

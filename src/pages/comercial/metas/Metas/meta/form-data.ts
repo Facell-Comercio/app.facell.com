@@ -49,6 +49,7 @@ const schemaMeta = z.object({
   upgrade: z.coerce.string({ required_error: "Campo obrigatório" }),
   receita: z.coerce.string({ required_error: "Campo obrigatório" }),
   aparelho: z.coerce.string({ required_error: "Campo obrigatório" }),
+  qtde_aparelho: z.coerce.string({ required_error: "Campo obrigatório" }),
   acessorio: z.coerce.string({ required_error: "Campo obrigatório" }),
   pitzi: z.coerce.string({ required_error: "Campo obrigatório" }),
   fixo: z.coerce.string({ required_error: "Campo obrigatório" }),
