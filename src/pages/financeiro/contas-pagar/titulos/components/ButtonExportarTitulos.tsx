@@ -14,10 +14,11 @@ import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeDate } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Download } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStoreExportDatasys } from "../export-datasys/store";
 import { useStoreTablePagar } from "../table/store-table";
 import { TituloSchemaProps } from "../titulo/form-data";
+import { Spinner } from "@/components/custom/Spinner";
 
 export type ExportAnexosProps = {
   type: string;
@@ -32,14 +33,29 @@ interface TituloProps extends TituloSchemaProps {
 }
 
 const ButtonExportTitulos = () => {
-  const { mutate: exportPrevisaoPagamento } =
+  const { mutate: exportPrevisaoPagamento, isPending: isPendingPrevisaoPagamento } =
     useTituloPagar().exportPrevisaoPagamento();
 
-  const { mutate: exportLayoutDespesas } =
+  const { mutate: exportLayoutDespesas, isPending: isPedingLayoutDespesas } =
     useTituloPagar().exportLayoutDespesas();
 
-  const { mutate: exportLayoutDRE } =
+  const { mutate: exportLayoutDRE, isPending: isPendingLayoutDRE } =
     useTituloPagar().exportLayoutDRE();
+
+  const [isPending, setIsPending] = useState(false);
+  useEffect(() => {
+    if (isPendingPrevisaoPagamento ||
+      isPendingLayoutDRE ||
+      isPedingLayoutDespesas) {
+      setIsPending(true)
+    } else {
+      setIsPending(false)
+    }
+  }, [
+    isPendingPrevisaoPagamento,
+    isPendingLayoutDRE,
+    isPedingLayoutDespesas,
+  ])
 
   const openModalExportDatasys = useStoreExportDatasys().openModal;
 
@@ -47,7 +63,7 @@ const ButtonExportTitulos = () => {
     checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const canExportDespesas = isMaster || checkUserPermission('FINANCEIRO_EXPORTAR_DESPESAS');
 
-  const [isPending, setIsPending] = useState(false);
+
   const [filters] = useStoreTablePagar((state) => [state.filters]);
 
   async function exportSolicitacao() {
@@ -93,7 +109,8 @@ const ButtonExportTitulos = () => {
         className="py-2 px-4 border border-emerald-200 dark:border-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm flex font-medium gap-2 items-center rounded-md"
         disabled={isPending}
       >
-        <Download className="me-2" size={18} /> Exportar
+        {isPending ? <><Spinner /> Exportando...</>
+          : <><Download className="me-2" size={18} /> Exportar</>}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem onClick={exportSolicitacao}>
@@ -109,7 +126,7 @@ const ButtonExportTitulos = () => {
             </DropdownMenuItem>
           </>
         )}
-        
+
         {canExportDespesas && (
           <DropdownMenuItem onClick={handleExportLayoutDespesas}>
             Layout Despesas
