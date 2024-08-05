@@ -140,13 +140,7 @@ export const ModalComponent = ({
               "max-h-[55vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin z-50"
             }
           >
-            {pageCount !== 0 ? (
-              children
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-sm opacity-75">
-                Sem resultados
-              </div>
-            )}
+              {children}
           </section>
 
           {Info && <Info />}
