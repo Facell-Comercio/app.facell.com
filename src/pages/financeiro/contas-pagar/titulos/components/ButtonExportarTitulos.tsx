@@ -39,6 +39,9 @@ const ButtonExportTitulos = () => {
   const { mutate: exportLayoutDespesas, isPending: isPedingLayoutDespesas } =
     useTituloPagar().exportLayoutDespesas();
 
+    const { mutate: exportLayoutVencimentos, isPending: isPedingLayoutVencimentos } =
+    useTituloPagar().exportLayoutVencimentos();
+
   const { mutate: exportLayoutDRE, isPending: isPendingLayoutDRE } =
     useTituloPagar().exportLayoutDRE();
 
@@ -46,7 +49,8 @@ const ButtonExportTitulos = () => {
   useEffect(() => {
     if (isPendingPrevisaoPagamento ||
       isPendingLayoutDRE ||
-      isPedingLayoutDespesas) {
+      isPedingLayoutDespesas || 
+      isPedingLayoutVencimentos) {
       setIsPending(true)
     } else {
       setIsPending(false)
@@ -55,6 +59,7 @@ const ButtonExportTitulos = () => {
     isPendingPrevisaoPagamento,
     isPendingLayoutDRE,
     isPedingLayoutDespesas,
+    isPedingLayoutVencimentos,
   ])
 
   const openModalExportDatasys = useStoreExportDatasys().openModal;
@@ -98,6 +103,9 @@ const ButtonExportTitulos = () => {
   function handleExportLayoutDespesas() {
     exportLayoutDespesas({ filters })
   }
+  function handleExportLayoutVencimentos(){
+    exportLayoutVencimentos({ filters })
+  }
   function handleExportLayoutDRE() {
     exportLayoutDRE({ filters })
   }
@@ -115,6 +123,9 @@ const ButtonExportTitulos = () => {
       <DropdownMenuContent>
         <DropdownMenuItem onClick={exportSolicitacao}>
           Layout Padrão
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleExportLayoutVencimentos}>
+          Layout Vencimentos
         </DropdownMenuItem>
         {isMaster && (
           <>
