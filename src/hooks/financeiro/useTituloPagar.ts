@@ -332,6 +332,56 @@ export const useTituloPagar = () => {
     },
   })
 
+  const exportLayoutDespesas = () => useMutation({
+    mutationFn: async ({ filters }: GetTitulosPagarProps) => {
+      
+      return await api
+        .get(`${uri}/export-layout-despesas`, {
+          params: { filters },
+          responseType: "blob",
+        })
+        .then((response) => {
+          downloadResponse(response);
+        });
+    },
+    onError: async (error) => {
+      // @ts-expect-error "Funciona"   
+      const errorText = await error.response.data.text();
+      const errorJSON = JSON.parse(errorText);
+
+      toast({
+        variant: "destructive",
+        title: 'Ops',
+        description: errorJSON.message
+      });
+    },
+  })
+
+  const exportLayoutDRE = () => useMutation({
+    mutationFn: async ({ filters }: GetTitulosPagarProps) => {
+      
+      return await api
+        .get(`${uri}/export-layout-dre`, {
+          params: { filters },
+          responseType: "blob",
+        })
+        .then((response) => {
+          downloadResponse(response);
+        });
+    },
+    onError: async (error) => {
+      // @ts-expect-error "Funciona"   
+      const errorText = await error.response.data.text();
+      const errorJSON = JSON.parse(errorText);
+
+      toast({
+        variant: "destructive",
+        title: 'Ops',
+        description: errorJSON.message
+      });
+    },
+  })
+
 
   return {
     getAll,
@@ -346,5 +396,7 @@ export const useTituloPagar = () => {
     changeRecorrencia,
     exportAnexo,
     exportPrevisaoPagamento,
+    exportLayoutDespesas,
+    exportLayoutDRE,
   };
 };

@@ -34,9 +34,19 @@ interface TituloProps extends TituloSchemaProps {
 const ButtonExportTitulos = () => {
   const { mutate: exportPrevisaoPagamento } =
     useTituloPagar().exportPrevisaoPagamento();
+
+  const { mutate: exportLayoutDespesas } =
+    useTituloPagar().exportLayoutDespesas();
+
+  const { mutate: exportLayoutDRE } =
+    useTituloPagar().exportLayoutDRE();
+
   const openModalExportDatasys = useStoreExportDatasys().openModal;
+
   const isMaster =
     checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+  const canExportDespesas = isMaster || checkUserPermission('FINANCEIRO_EXPORTAR_DESPESAS');
+
   const [isPending, setIsPending] = useState(false);
   const [filters] = useStoreTablePagar((state) => [state.filters]);
 
@@ -69,6 +79,12 @@ const ButtonExportTitulos = () => {
   function exportLayoutPrevisaoPagamento() {
     exportPrevisaoPagamento({ filters });
   }
+  function handleExportLayoutDespesas() {
+    exportLayoutDespesas({ filters })
+  }
+  function handleExportLayoutDRE() {
+    exportLayoutDRE({ filters })
+  }
 
   return (
     <DropdownMenu>
@@ -84,10 +100,22 @@ const ButtonExportTitulos = () => {
           Layout Padrão
         </DropdownMenuItem>
         {isMaster && (
-          <DropdownMenuItem onClick={exportLayoutPrevisaoPagamento}>
-            Layout Previsão Pagamento
+          <>
+            <DropdownMenuItem onClick={exportLayoutPrevisaoPagamento}>
+              Layout Previsão Pagamento
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportLayoutDRE}>
+              Layout DRE
+            </DropdownMenuItem>
+          </>
+        )}
+        
+        {canExportDespesas && (
+          <DropdownMenuItem onClick={handleExportLayoutDespesas}>
+            Layout Despesas
           </DropdownMenuItem>
         )}
+
         <DropdownMenuItem onClick={() => openModalExportDatasys("")}>
           Layout Datasys
         </DropdownMenuItem>
