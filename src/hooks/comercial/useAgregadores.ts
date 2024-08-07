@@ -8,8 +8,9 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { MetasProps } from "./useMetas";
 
-export type MetasProps = {
+export type AgregadoresProps = {
   id?: string;
   ref?: string;
   ciclo?: string;
@@ -18,40 +19,30 @@ export type MetasProps = {
   id_filial?: string;
   filial?: string;
   cargo?: string;
+  tipo_agregacao?: string;
   cpf?: string;
   nome?: string;
   tags?: string;
+  metas_agregadas?: string;
 
   data_inicial?: string;
   data_final?: string;
 
   proporcional?: string;
 
-  controle?: string;
-  pos?: string;
-  upgrade?: string;
-  receita?: string;
-  qtde_aparelho?: string;
-  aparelho?: string;
-  acessorio?: string;
-  pitzi?: string;
-  fixo?: string;
-  wttx?: string;
-  live?: string;
-
-  canEdit?: boolean;
+  metas?: MetasProps[];
 };
 
-export const useMetas = () => {
+export const useAgregadores = () => {
   const queryClient = useQueryClient();
 
   const getAll = ({ pagination, filters }: GetAllParams) =>
     useQuery({
-      queryKey: ["comercial", "metas", "lista", { pagination, filters }],
+      queryKey: ["comercial", "agregadores", "lista", { pagination, filters }],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () =>
-        await fetchApi.comercial.metas.getAll({ pagination, filters }),
+        await fetchApi.comercial.agregadores.getAll({ pagination, filters }),
       placeholderData: keepPreviousData,
     });
 
@@ -60,10 +51,10 @@ export const useMetas = () => {
       enabled: !!id,
       retry: false,
       staleTime: 5 * 1000 * 60,
-      queryKey: ["comercial", "metas", "detalhe", id],
+      queryKey: ["comercial", "agregadores", "detalhe", id],
       queryFn: async () => {
         try {
-          const result = fetchApi.comercial.metas.getOne(id);
+          const result = fetchApi.comercial.agregadores.getOne(id);
           return result;
         } catch (error) {
           // @ts-expect-error "Vai funcionar"
@@ -80,14 +71,14 @@ export const useMetas = () => {
 
   const insertOne = () =>
     useMutation({
-      mutationFn: async (data: MetasProps) => {
+      mutationFn: async (data: AgregadoresProps) => {
         return await api
-          .post(`comercial/metas`, data)
+          .post(`comercial/agregadores`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: ["comercial", "metas"],
+          queryKey: ["comercial", "agregadores"],
         });
         toast({
           variant: "success",
@@ -110,14 +101,14 @@ export const useMetas = () => {
 
   const lancamentoLote = () =>
     useMutation({
-      mutationFn: async (data: MetasProps[]) => {
+      mutationFn: async (data: AgregadoresProps[]) => {
         return await api
-          .post(`comercial/metas/lancamento-lote`, data)
+          .post(`comercial/agregadores/lancamento-lote`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: ["comercial", "metas"],
+          queryKey: ["comercial", "agregadores"],
         });
       },
       onError(error) {
@@ -134,14 +125,14 @@ export const useMetas = () => {
 
   const update = () =>
     useMutation({
-      mutationFn: async (data: MetasProps) => {
+      mutationFn: async (data: AgregadoresProps) => {
         return await api
-          .put(`comercial/metas`, data)
+          .put(`comercial/agregadores`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: ["comercial", "metas"],
+          queryKey: ["comercial", "agregadores"],
         });
         toast({
           variant: "success",
@@ -162,16 +153,16 @@ export const useMetas = () => {
       },
     });
 
-  const deleteMeta = () =>
+  const deleteAgregador = () =>
     useMutation({
       mutationFn: async (id: string | null | undefined) => {
         return await api
-          .delete(`comercial/metas/${id}`)
+          .delete(`comercial/agregadores/${id}`)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: ["comercial", "metas", "lista"],
+          queryKey: ["comercial", "agregadores", "lista"],
         });
         toast({
           variant: "success",
@@ -198,6 +189,6 @@ export const useMetas = () => {
     insertOne,
     lancamentoLote,
     update,
-    deleteMeta,
+    deleteAgregador,
   };
 };

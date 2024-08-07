@@ -5,15 +5,24 @@ import { exportToExcel } from "@/helpers/importExportXLS";
 import { MetasProps } from "@/hooks/comercial/useMetas";
 import { Download } from "lucide-react";
 import { useState } from "react";
+import { useStoreMetasAgregadores } from "../../store-metas-agregadores";
 import { useStoreTableMetas } from "../table/store-table";
 
 const ButtonExportMeta = () => {
   const [isPending, setIsPending] = useState(false);
   const [filters] = useStoreTableMetas((state) => [state.filters]);
+  const [mes, ano] = useStoreMetasAgregadores((state) => [
+    state.mes,
+    state.ano,
+  ]);
 
   async function handleClickExportMeta() {
     const { rows } = await fetchApi.comercial.metas.getAll({
-      filters,
+      filters: {
+        ...filters,
+        mes,
+        ano,
+      },
     });
     const data = rows.map((row: MetasProps) => {
       return {

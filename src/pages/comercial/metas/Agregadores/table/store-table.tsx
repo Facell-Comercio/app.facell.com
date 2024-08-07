@@ -39,7 +39,7 @@ export interface Actions {
   setPagination: (pagination: Pagination) => void;
 }
 
-export const useStoreTableMetas = create<State & Actions>((set) => ({
+export const useStoreTableAgregadores = create<State & Actions>((set) => ({
   // Table
   rowCount: 0,
   pagination: { pageIndex: 0, pageSize: 15 },

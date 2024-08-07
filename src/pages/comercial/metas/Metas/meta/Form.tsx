@@ -1,7 +1,6 @@
 import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
 import { Calendar, Crosshair, Percent, UserSearch } from "lucide-react";
@@ -12,19 +11,6 @@ import { MetasProps, useMetas } from "@/hooks/comercial/useMetas";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useFormMetaData } from "./form-data";
 import { useStoreMeta } from "./store";
-
-//* Cargos Agregadores
-// const cargosPrevistos = [
-//   "CAIXA",
-//   "PROMOTOR DE ACESSORIO E PITZI",
-//   "GERENTE DE LOJA",
-//   "GERENTE GERAL DE LOJA",
-//   "SUPERVISOR DE PROCESSOS",
-//   "SUPERVISOR DE RELACIONAMENTO",
-//   "COORDENADOR COMERCIAL",
-//   "COORDENADOR DE COMPRAS",
-//   "GERENTE REGIONAL",
-// ];
 
 const cargosPrevistos = [
   "FILIAL",
@@ -69,7 +55,8 @@ const FormMeta = ({
 
   const { form } = useFormMetaData(data);
 
-  const readOnly = !checkUserPermission(["GERENCIAR_METAS", "MASTER"]);
+  const readOnly = !data.canEdit;
+
   const disabled = (!modalEditing || isPending) && !readOnly;
 
   const onSubmitData = (data: MetasProps) => {
@@ -156,6 +143,7 @@ const FormMeta = ({
                     className="flex-1 min-w-[20ch] shrink-0"
                     name="proporcional"
                     disabled={disabled}
+                    readOnly={readOnly}
                     label="Proporcional"
                     min={0}
                     control={form.control}
@@ -217,7 +205,7 @@ const FormMeta = ({
                     name="cargo"
                     label="Cargo"
                     control={form.control}
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                     placeholder="Selecione o cargo"
                     options={
                       cargosPrevistos.map((cargo: any) => ({
@@ -230,7 +218,7 @@ const FormMeta = ({
                     name="tag"
                     label="Tag"
                     control={form.control}
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                     placeholder="Selecione a tag"
                     options={
                       tags.map((tag: any) => ({
@@ -261,6 +249,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="controle"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Controle"
                       min={0}
                       step={"1"}
@@ -271,6 +260,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="pos"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Pos"
                       min={0}
                       step={"1"}
@@ -281,6 +271,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="upgrade"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Upgrade"
                       min={0}
                       step={"1"}
@@ -294,6 +285,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="receita"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Receita"
                       min={0}
                       control={form.control}
@@ -305,6 +297,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="acessorio"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Acessório"
                       min={0}
                       control={form.control}
@@ -316,6 +309,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="pitzi"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Pitzi"
                       min={0}
                       control={form.control}
@@ -329,6 +323,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="fixo"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Fixo"
                       min={0}
                       step={"1"}
@@ -339,6 +334,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="wttx"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Wttx"
                       min={0}
                       step={"1"}
@@ -349,6 +345,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="live"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Live"
                       min={0}
                       step={"1"}
@@ -361,6 +358,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="qtde_aparelho"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Qdte. Aparelho"
                       min={0}
                       step={"1"}
@@ -371,6 +369,7 @@ const FormMeta = ({
                       className="flex-1 min-w-[20ch] shrink-0"
                       name="aparelho"
                       disabled={disabled}
+                      readOnly={readOnly}
                       label="Aparelho"
                       min={0}
                       control={form.control}

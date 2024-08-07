@@ -11,13 +11,17 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MetasProps, useMetas } from "@/hooks/comercial/useMetas";
+import { checkUserPermission } from "@/helpers/checkAuthorization";
+import {
+  AgregadoresProps,
+  useAgregadores,
+} from "@/hooks/comercial/useAgregadores";
 import { Trash } from "lucide-react";
 import { useEffect, useRef } from "react";
-import FormMeta from "./Form";
-import { useStoreMeta } from "./store";
+import FormAgregador from "./Form";
+import { useStoreAgregador } from "./store-agregador";
 
-const initialPropsMeta: MetasProps = {
+const initialPropsAgregador: AgregadoresProps = {
   id: "",
   ref: "",
   ciclo: "",
@@ -26,6 +30,7 @@ const initialPropsMeta: MetasProps = {
   id_filial: "",
   filial: "",
   cargo: "",
+  tipo_agregacao: "",
   cpf: "",
   nome: "",
   tags: "",
@@ -34,23 +39,12 @@ const initialPropsMeta: MetasProps = {
   data_final: "",
 
   proporcional: "100",
-
-  controle: "0",
-  pos: "0",
-  upgrade: "0",
-  receita: "0",
-  qtde_aparelho: "0",
-  aparelho: "0",
-  acessorio: "0",
-  pitzi: "0",
-  fixo: "0",
-  wttx: "0",
-  live: "0",
+  metas: [],
 };
 
-const ModalMeta = () => {
+const ModalAgregador = () => {
   const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreMeta((state) => [
+    useStoreAgregador((state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
@@ -61,22 +55,22 @@ const ModalMeta = () => {
 
   const formRef = useRef(null);
 
-  const { data, isLoading } = useMetas().getOne(id);
+  const { data, isLoading } = useAgregadores().getOne(id);
 
-  const { mutate: deleteMeta, isSuccess } = useMetas().deleteMeta();
-  const newDataMeta: MetasProps & Record<string, any> = {} as MetasProps &
-    Record<string, any>;
+  const { mutate: deleteAgregador, isSuccess } =
+    useAgregadores().deleteAgregador();
+  const newDataAgregador: AgregadoresProps & Record<string, any> =
+    {} as AgregadoresProps & Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
-      newDataMeta[key] = String(data[key]);
+      newDataAgregador[key] = String(data[key]);
     } else if (data[key] === null) {
-      newDataMeta[key] = "";
+      newDataAgregador[key] = "";
     } else {
-      newDataMeta[key] = data[key];
+      newDataAgregador[key] = data[key];
     }
   }
-  const readOnly = newDataMeta.canEdit;
 
   function handleClickCancel() {
     editModal(false);
@@ -94,13 +88,15 @@ const ModalMeta = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{id ? `Meta: ${id}` : "Nova Meta"}</DialogTitle>
+          <DialogTitle>
+            {id ? `Agregador: ${id}` : "Nova Agregador"}
+          </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <FormMeta
+            <FormAgregador
               id={id}
-              data={id ? newDataMeta : initialPropsMeta}
+              data={id ? newDataAgregador : initialPropsAgregador}
               formRef={formRef}
             />
           ) : (
@@ -118,13 +114,15 @@ const ModalMeta = () => {
             cancel={handleClickCancel}
             formRef={formRef}
             isLoading={isPending}
-            blockEdit={!readOnly}
+            blockEdit={
+              !checkUserPermission(["GERENCIAR_AGREGADORES", "MASTER"])
+            }
           >
             <AlertPopUp
               title={"Deseja realmente excluir"}
-              description="Essa ação não pode ser desfeita. A meta será excluída definitivamente do servidor."
+              description="Essa ação não pode ser desfeita. A agregador será excluída definitivamente do servidor."
               action={() => {
-                deleteMeta(id);
+                deleteAgregador(id);
               }}
             >
               <Button
@@ -136,7 +134,7 @@ const ModalMeta = () => {
                 }`}
               >
                 <Trash className="me-2" />
-                Excluir Meta
+                Excluir Agregador
               </Button>
             </AlertPopUp>
           </ModalButtons>
@@ -146,4 +144,4 @@ const ModalMeta = () => {
   );
 };
 
-export default ModalMeta;
+export default ModalAgregador;

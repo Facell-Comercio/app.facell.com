@@ -18,12 +18,12 @@ import {
 } from "@radix-ui/react-accordion";
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
-import { useStoreTableMetas } from "./store-table";
+import { useStoreTableAgregadores } from "./store-table";
 
-const FiltersMeta = ({ refetch }: { refetch: () => void }) => {
-  const filters = useStoreTableMetas((state) => state.filters);
-  const setFilters = useStoreTableMetas((state) => state.setFilters);
-  const resetFilters = useStoreTableMetas((state) => state.resetFilters);
+const FiltersAgregador = ({ refetch }: { refetch: () => void }) => {
+  const filters = useStoreTableAgregadores((state) => state.filters);
+  const setFilters = useStoreTableAgregadores((state) => state.setFilters);
+  const resetFilters = useStoreTableAgregadores((state) => state.resetFilters);
   const [itemOpen, setItemOpen] = useState<string>("item-1");
   const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
   const [filial, setFilial] = useState<string>("");
@@ -82,7 +82,6 @@ const FiltersMeta = ({ refetch }: { refetch: () => void }) => {
                     id_grupo_economico: id_grupo_economico,
                     id_filial: "",
                   });
-                  setFilial("");
                 }}
               >
                 <SelectTrigger className="w-[180px]">
@@ -132,4 +131,4 @@ const FiltersMeta = ({ refetch }: { refetch: () => void }) => {
   );
 };
 
-export default FiltersMeta;
+export default FiltersAgregador;

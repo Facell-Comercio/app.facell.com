@@ -2,27 +2,25 @@ import { DataTable } from "@/components/custom/DataTable";
 
 import { checkUserPermission } from "@/helpers/checkAuthorization";
 
-import { useMetas } from "@/hooks/comercial/useMetas";
+import { useAgregadores } from "@/hooks/comercial/useAgregadores";
 import { useStoreMetasAgregadores } from "../store-metas-agregadores";
-import ButtonExportMeta from "./components/ButtonExportMetas";
-import ButtonImportMeta from "./components/ButtonImportMeta";
-import ButtonNovaMeta from "./components/ButtonNovaMeta";
-import ModalMeta from "./meta/Modal";
+import ModalMeta from "./agregador/Modal";
+import ButtonExportMeta from "./components/ButtonExportAgregadores";
+import ButtonImportMeta from "./components/ButtonImportAgregador";
+import ButtonNovoAgregador from "./components/ButtonNovoAgregador";
 import { columnsTable } from "./table/columns";
 import FiltersMeta from "./table/Filters";
-import { useStoreTableMetas } from "./table/store-table";
+import { useStoreTableAgregadores } from "./table/store-table";
 
-const Metas = () => {
-  const [pagination, setPagination, filters] = useStoreTableMetas((state) => [
-    state.pagination,
-    state.setPagination,
-    state.filters,
-  ]);
+const Agregadores = () => {
+  const [pagination, setPagination, filters] = useStoreTableAgregadores(
+    (state) => [state.pagination, state.setPagination, state.filters]
+  );
   const [mes, ano] = useStoreMetasAgregadores((state) => [
     state.mes,
     state.ano,
   ]);
-  const { data, refetch, isLoading } = useMetas().getAll({
+  const { data, refetch, isLoading } = useAgregadores().getAll({
     pagination,
     filters: {
       ...filters,
@@ -37,13 +35,13 @@ const Metas = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-2 justify-end">
-        {checkUserPermission(["GERENCIAR_METAS", "MASTER"]) && (
+      <div className="flex gap-2 justify-end flex-wrap">
+        {checkUserPermission(["GERENCIAR_AGREGADORES", "MASTER"]) && (
           <ButtonImportMeta />
         )}
         <ButtonExportMeta />
-        {checkUserPermission(["GERENCIAR_METAS", "MASTER"]) && (
-          <ButtonNovaMeta />
+        {checkUserPermission(["GERENCIAR_AGREGADORES", "MASTER"]) && (
+          <ButtonNovoAgregador />
         )}
       </div>
       <FiltersMeta refetch={refetch} />
@@ -61,4 +59,4 @@ const Metas = () => {
   );
 };
 
-export default Metas;
+export default Agregadores;
