@@ -1,5 +1,6 @@
 import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
+import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
 import { GetAllParams } from "@/types/query-params-type";
 import {
@@ -183,6 +184,31 @@ export const useAgregadores = () => {
       },
     });
 
+  const exportAgregadores = () =>
+    useMutation({
+      mutationFn: async ({ filters }: GetAllParams) => {
+        return await api
+          .get(`/comercial/agregadores/export-agregadores`, {
+            params: { filters },
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Ops!",
+          description: errorJSON.message,
+        });
+      },
+    });
+
   return {
     getAll,
     getOne,
@@ -190,5 +216,7 @@ export const useAgregadores = () => {
     lancamentoLote,
     update,
     deleteAgregador,
+
+    exportAgregadores,
   };
 };

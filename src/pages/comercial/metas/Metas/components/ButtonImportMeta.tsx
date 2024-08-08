@@ -106,7 +106,7 @@ const ButtonImportMeta = () => {
         <DropdownMenuItem className="flex gap-2">
           <a
             target="_blank"
-            href="https://docs.google.com/spreadsheets/d/1U2RsmY4EhBxOutgd4i9QFg6q-C0IJGPo/export?format=xlsx"
+            href="https://docs.google.com/spreadsheets/d/1L4jPXJo6EgIqd_fuff14eRJVCkvY_fu_/export?format=xlsx"
           >
             Baixar Planilha Padrão
           </a>

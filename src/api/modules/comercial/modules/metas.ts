@@ -6,6 +6,11 @@ export namespace metas {
     return response.data;
   };
 
+  export const getComparison = async (params: unknown) => {
+    const response = await api.get("/comercial/metas/comparison", { params });
+    return response.data;
+  };
+
   export const getOne = async (id?: string | null) => {
     const response = await api.get(`/comercial/metas/${id}`);
     return response.data;

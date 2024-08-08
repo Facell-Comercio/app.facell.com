@@ -153,6 +153,7 @@ const ModalMetas = ({
             ...item,
           },
         ]);
+
         setIds([...ids, item.id || ""]);
       } else {
         setMetas((prevMetas) =>
@@ -370,9 +371,11 @@ const ModalMetas = ({
                     key={"metas:" + item.id + index}
                     className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md py-1 px-1. px-2 ${
                       isSelected &&
-                      "bg-primary/50 odd:bg-primary/60 border-transparent text-primary-foreground/40"
+                      "bg-primary/80 odd:bg-primary/90 border-transparent text-primary-foreground/40"
                     }`}
-                    onClick={() => pushSelection(item)}
+                    onClick={() => {
+                      pushSelection(item);
+                    }}
                   >
                     {/* <td className="text-center py-1 px-1.5">
                       <Button

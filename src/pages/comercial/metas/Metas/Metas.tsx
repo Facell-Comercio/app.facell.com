@@ -7,6 +7,7 @@ import { useStoreMetasAgregadores } from "../store-metas-agregadores";
 import ButtonExportMeta from "./components/ButtonExportMetas";
 import ButtonImportMeta from "./components/ButtonImportMeta";
 import ButtonNovaMeta from "./components/ButtonNovaMeta";
+import ComparisonTable from "./components/ComparisonTable";
 import ModalMeta from "./meta/Modal";
 import { columnsTable } from "./table/columns";
 import FiltersMeta from "./table/Filters";
@@ -31,6 +32,18 @@ const Metas = () => {
     },
   });
 
+  const {
+    data: comparisonData,
+    refetch: comparisonRefetch,
+    isLoading: comparisonIsLoading,
+  } = useMetas().getComparison({
+    filters: {
+      ...filters,
+      mes,
+      ano,
+    },
+  });
+
   const rows = data?.rows || [];
 
   const rowCount = data?.rowCount || 0;
@@ -46,8 +59,12 @@ const Metas = () => {
           <ButtonNovaMeta />
         )}
       </div>
-      <FiltersMeta refetch={refetch} />
-
+      <FiltersMeta
+        refetch={() => {
+          comparisonRefetch();
+          refetch();
+        }}
+      />
       <DataTable
         pagination={pagination}
         setPagination={setPagination}
@@ -56,6 +73,15 @@ const Metas = () => {
         columns={columnsTable}
         isLoading={isLoading}
       />
+      {!comparisonIsLoading && data?.canView && (
+        <>
+          <h1 className="font-medium text-lg mt-4">
+            Comparativo Meta Filiais X Metas Consultores {mes.padStart(2, "0")}/
+            {ano}
+          </h1>
+          <ComparisonTable data={comparisonData} />
+        </>
+      )}
       <ModalMeta />
     </div>
   );

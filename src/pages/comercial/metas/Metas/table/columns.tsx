@@ -211,6 +211,10 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
     accessorKey: "upgrade",
   },
   {
+    header: "Qtde Aparelho",
+    accessorKey: "qtde_aparelho",
+  },
+  {
     id: "receita",
     accessorKey: "receita",
     cell: (info) => {

@@ -1,5 +1,6 @@
 import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
+import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
 import { GetAllParams } from "@/types/query-params-type";
 import {
@@ -76,6 +77,15 @@ export const useMetas = () => {
           });
         }
       },
+    });
+
+  const getComparison = ({ filters }: GetAllParams) =>
+    useQuery({
+      queryKey: ["comercial", "metas", "comparison", "list", { filters }],
+      staleTime: 5 * 1000 * 60,
+      retry: false,
+      queryFn: async () =>
+        await fetchApi.comercial.metas.getComparison({ filters }),
     });
 
   const insertOne = () =>
@@ -192,12 +202,40 @@ export const useMetas = () => {
       },
     });
 
+  const exportMetas = () =>
+    useMutation({
+      mutationFn: async ({ filters }: GetAllParams) => {
+        return await api
+          .get(`/comercial/metas/export-metas`, {
+            params: { filters },
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Ops!",
+          description: errorJSON.message,
+        });
+      },
+    });
+
   return {
     getAll,
     getOne,
+    getComparison,
     insertOne,
     lancamentoLote,
     update,
     deleteMeta,
+
+    exportMetas,
   };
 };
