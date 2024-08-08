@@ -83,8 +83,8 @@ const FormTituloPagar = ({
   const [modalFornecedorOpen, setModalFornecedorOpen] =
     useState<boolean>(false);
 
-  const data = form?.getValues() || {}
-  const titulo = data
+  const data = form?.getValues() || {};
+  const titulo = data;
 
   const {
     reset: resetForm,
@@ -92,12 +92,12 @@ const FormTituloPagar = ({
     formState: { errors },
   } = form;
 
-  useEffect(()=>{
-    return ()=>{
+  useEffect(() => {
+    return () => {
       // Reseta o form ao desmontar o componente...
-      resetForm()
-    }
-  },[])
+      resetForm();
+    };
+  }, []);
   // console.log("ERROS_TITULO:", errors);
 
   // * [ WATCHES ]
@@ -117,6 +117,10 @@ const FormTituloPagar = ({
   });
   const id_forma_pagamento = useWatch({
     name: "id_forma_pagamento",
+    control: form.control,
+  });
+  const id_cartao = useWatch({
+    name: "id_cartao",
     control: form.control,
   });
   const valorTotalTitulo = parseFloat(
@@ -157,6 +161,8 @@ const FormTituloPagar = ({
     id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal);
   const podeExcluirNotaFiscal = id_status < 3 || isMaster;
 
+  const canSelectFilial = id_forma_pagamento == 6 ? !!id_cartao : true;
+
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
     setModalFornecedorOpen(true);
@@ -172,10 +178,11 @@ const FormTituloPagar = ({
         variant: "warning",
         title: "Atenção!",
         // @ts-ignore
-        description: `${result === 1
-          ? `Existe 1 solicitação`
-          : `Existem ${result} solicitações`
-          } no sistema com esse fornecedor e número de documento`,
+        description: `${
+          result === 1
+            ? `Existe 1 solicitação`
+            : `Existem ${result} solicitações`
+        } no sistema com esse fornecedor e número de documento`,
       });
     }
   }
@@ -210,7 +217,7 @@ const FormTituloPagar = ({
       );
       setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
-    } catch (error) { }
+    } catch (error) {}
     checkDoc();
   }
 
@@ -294,7 +301,7 @@ const FormTituloPagar = ({
 
   useEffect(() => {
     if (insertOneSuccess) {
-      resetForm()
+      resetForm();
       closeModal();
 
       if (titulo.id_recorrencia) {
@@ -356,38 +363,48 @@ const FormTituloPagar = ({
     });
   };
 
-  async function processarXml({ fileUrl }: { fileUrl: string }){
+  async function processarXml({ fileUrl }: { fileUrl: string }) {
     try {
-        if(!fileUrl){
-          return;
+      if (!fileUrl) {
+        return;
+      }
+      const data = await fetchApi.financeiro.contas_pagar.titulos.processarXml(
+        fileUrl
+      );
+
+      if (data) {
+        const { fornecedor, filial, num_doc, valor, data_emissao } = data;
+        if (fornecedor) {
+          form.setValue("id_fornecedor", String(fornecedor.id));
+          form.setValue(
+            "id_forma_pagamento",
+            String(fornecedor.id_forma_pagamento)
+          );
+          form.setValue("cnpj_fornecedor", String(fornecedor.cnpj));
+          form.setValue("nome_fornecedor", String(fornecedor.nome));
         }
-        const data = await fetchApi.financeiro.contas_pagar.titulos.processarXml(fileUrl)
-        
-        if(data){
-          const {fornecedor, filial, num_doc, valor, data_emissao} = data;
-          if(fornecedor){
-            form.setValue('id_fornecedor', String(fornecedor.id))
-            form.setValue('id_forma_pagamento', String(fornecedor.id_forma_pagamento))
-            form.setValue('cnpj_fornecedor', String(fornecedor.cnpj))
-            form.setValue('nome_fornecedor', String(fornecedor.nome))
-          }
-          if(filial){
-            form.setValue('filial', String(filial.nome))
-            form.setValue('id_filial', String(filial.id))
-            form.setValue('id_matriz', String(filial.id_matriz))
-            form.setValue('id_grupo_economico', String(filial.id_grupo_economico))
-          }
-          form.setValue('num_doc', String(num_doc))
-          if(valor){
-            form.setValue('valor', String(valor)) 
-          }
-          form.setValue('data_emissao', String(data_emissao))
+        if (filial) {
+          form.setValue("filial", String(filial.nome));
+          form.setValue("id_filial", String(filial.id));
+          form.setValue("id_matriz", String(filial.id_matriz));
+          form.setValue(
+            "id_grupo_economico",
+            String(filial.id_grupo_economico)
+          );
         }
-        
+        form.setValue("num_doc", String(num_doc));
+        if (valor) {
+          form.setValue("valor", String(valor));
+        }
+        form.setValue("data_emissao", String(data_emissao));
+      }
     } catch (error) {
-        toast({variant: 'destructive', title: 'Ops!', 
-          // @ts-ignore
-          description: error?.response?.data?.message || error.message})        
+      toast({
+        variant: "destructive",
+        title: "Ops!",
+        // @ts-ignore
+        description: error?.response?.data?.message || error.message,
+      });
     }
   }
 
@@ -403,7 +420,6 @@ const FormTituloPagar = ({
   const showModalFilial = () => {
     setModalFilialOpen(true);
   };
-
   return (
     <Form {...form}>
       <form
@@ -480,8 +496,9 @@ const FormTituloPagar = ({
                       className="flex-1 min-w-[15ch]"
                     />
                     <div
-                      className={`${showPix ? "flex w-full" : "hidden"
-                        } gap-3 flex-wrap`}
+                      className={`${
+                        showPix ? "flex w-full" : "hidden"
+                      } gap-3 flex-wrap`}
                     >
                       <SelectTipoChavePix
                         control={form.control}
@@ -500,8 +517,9 @@ const FormTituloPagar = ({
                       />
                     </div>
                     <div
-                      className={`flex gap-3 ${showCartao ? "flex w-full" : "hidden"
-                        }`}
+                      className={`flex gap-3 ${
+                        showCartao ? "flex w-full" : "hidden"
+                      }`}
                     >
                       <SelectCartao
                         control={form.control}
@@ -526,6 +544,7 @@ const FormTituloPagar = ({
                                 "id_grupo_economico",
                                 data.data.id_grupo_economico
                               );
+                              form.setValue("itens_rateio", []);
                             });
                         }}
                       />
@@ -667,7 +686,7 @@ const FormTituloPagar = ({
                         placeholder="SELECIONE A FILIAL"
                         control={form.control}
                         inputClass="sm:min-w-[100px]"
-                        disabled={disabled}
+                        disabled={disabled || !canSelectFilial}
                         onClick={showModalFilial}
                       />
                       <span className="lg:col-span-2 min-w-[20ch]">
@@ -838,10 +857,9 @@ const FormTituloPagar = ({
                   mediaType="xml"
                   control={form.control}
                   onChange={(fileUrl: string) => {
-                    handleChangeFile({ fileUrl, campo: "url_xml" })
-                    processarXml({ fileUrl })
-                  }
-                  }
+                    handleChangeFile({ fileUrl, campo: "url_xml" });
+                    processarXml({ fileUrl });
+                  }}
                 />
                 <FormFileUpload
                   folderName={"financeiro"}
