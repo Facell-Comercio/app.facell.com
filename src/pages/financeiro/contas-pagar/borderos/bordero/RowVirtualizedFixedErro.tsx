@@ -55,6 +55,10 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
     { id: "COM ACRÉSCIMO", label: "Com Acréscimo" },
   ];
 
+  const allChecked =
+    filteredData.length === filteredData.filter((item) => item.checked).length;
+  const someChecked = filteredData.some((item) => item.checked);
+
   return (
     <section
       ref={parentElement}
@@ -69,6 +73,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
         {modalEditing && (
           <Checkbox
             className="min-w-4 me-1"
+            checked={allChecked || (someChecked && "indeterminate")}
             onCheckedChange={(e) => {
               filteredData.forEach((filteredVencimento) => {
                 const indexData = data.findIndex(

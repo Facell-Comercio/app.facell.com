@@ -54,6 +54,7 @@ type TSelectMultiFormaPagamento = {
   disabled?: boolean;
   className?: string;
   value?: string[];
+  maxCount?: number;
   onChange: (data: any) => any;
 };
 
@@ -82,7 +83,7 @@ export const SelectMultiFormaPagamento = (
       placeholder="Formas de Pagamento"
       variant="inverted"
       animation={4}
-      maxCount={1}
+      maxCount={props.maxCount || 1}
     />
   );
 };
