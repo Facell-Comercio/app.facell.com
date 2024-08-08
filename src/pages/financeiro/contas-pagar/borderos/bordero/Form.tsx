@@ -27,6 +27,7 @@ import { useStoreBordero } from "./store";
 // Componentes
 import { Accordion } from "@/components/ui/accordion";
 
+import { SelectMultiFormaPagamento } from "@/components/custom/SelectFormaPagamento";
 import { Spinner } from "@/components/custom/Spinner";
 import { downloadResponse } from "@/helpers/download";
 import ModalFindItemsBordero, {
@@ -49,6 +50,13 @@ export type RemoveItemVencimentosProps = {
   tipo: string;
   id?: string;
   id_status?: string;
+};
+
+type FiltersProps = {
+  forma_pagamento_list: number[];
+};
+const initialFilters = {
+  forma_pagamento_list: [],
 };
 
 const FormBordero = ({
@@ -93,6 +101,7 @@ const FormBordero = ({
   ]);
 
   const [modalFindItemsOpen, setModalFindItemsOpen] = useState<boolean>(false);
+  const [filters, setFilters] = useState<FiltersProps>(initialFilters);
   const [modalContaBancariaOpen, setModalContaBancariaOpen] =
     useState<boolean>(false);
 
@@ -113,56 +122,67 @@ const FormBordero = ({
   // ITENS - PENDENTES
   const wVencimentosPendentes = form
     .watch("itens")
-    .filter((v) => v.status === "pendente");
+    .filter(
+      (v) =>
+        v.status === "pendente" &&
+        (filters.forma_pagamento_list.length > 0
+          ? filters.forma_pagamento_list.includes(v.id_forma_pagamento || 0)
+          : true)
+    );
   const wVencimentosPendentesValorTotal =
-    form
-      .watch("itens")
-      .filter((v) => v.status === "pendente")
-      .reduce(
-        (acc, item: VencimentosProps) => acc + parseFloat(item?.valor_total),
-        0
-      ) || 0;
+    wVencimentosPendentes.reduce(
+      (acc, item: VencimentosProps) => acc + parseFloat(item?.valor_total),
+      0
+    ) || 0;
 
   // ITENS - PROGRAMADOS
   const wVencimentosProgramados = form
     .watch("itens")
-    .filter((v) => v.status === "programado");
+    .filter(
+      (v) =>
+        v.status === "programado" &&
+        (filters.forma_pagamento_list.length > 0
+          ? filters.forma_pagamento_list.includes(v.id_forma_pagamento || 0)
+          : true)
+    );
   const wVencimentosProgramadosValorTotal =
-    form
-      .watch("itens")
-      .filter((v) => v.status === "programado")
-      .reduce(
-        (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
-        0
-      ) || 0;
+    wVencimentosProgramados.reduce(
+      (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
+      0
+    ) || 0;
 
   // ITENS - ERRO
   const wVencimentosErro = form
     .watch("itens")
-    .filter((v) => v.status === "erro");
+    .filter(
+      (v) =>
+        v.status === "erro" &&
+        (filters.forma_pagamento_list.length > 0
+          ? filters.forma_pagamento_list.includes(v.id_forma_pagamento || 0)
+          : true)
+    );
   const wVencimentosErroValorTotal =
-    form
-      .watch("itens")
-      .filter((v) => v.status === "erro")
-      .reduce(
-        (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
-        0
-      ) || 0;
+    wVencimentosErro.reduce(
+      (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
+      0
+    ) || 0;
 
   // ITENS - PAGOS
   const wVencimentosPago = form
     .watch("itens")
-    .filter((v) => v.status === "pago");
+    .filter(
+      (v) =>
+        v.status === "pago" &&
+        (filters.forma_pagamento_list.length > 0
+          ? filters.forma_pagamento_list.includes(v.id_forma_pagamento || 0)
+          : true)
+    );
 
   const wVencimentosPagoValorTotal =
-    form
-      .watch("itens")
-      .filter((v) => v.status === "pago")
-      .reduce(
-        (acc, item: VencimentosProps) =>
-          acc + parseFloat(item.valor_pago || "0"),
-        0
-      ) || 0;
+    wVencimentosPago.reduce(
+      (acc, item: VencimentosProps) => acc + parseFloat(item.valor_pago || "0"),
+      0
+    ) || 0;
 
   const itensChecked: VencimentosProps[] = form
     .watch("itens")
@@ -485,7 +505,19 @@ const FormBordero = ({
                 />
               </div>
             </div>
-
+            <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+              <SelectMultiFormaPagamento
+                maxCount={3}
+                className="w-full bg-background hover:bg-background/90 overflow-auto scroll-thin"
+                //@ts-ignore
+                value={filters.forma_pagamento_list || []}
+                onChange={(value) =>
+                  setFilters({
+                    forma_pagamento_list: value,
+                  })
+                }
+              />
+            </div>
             {/* Titúlos do Borderô */}
             <Accordion
               type="single"

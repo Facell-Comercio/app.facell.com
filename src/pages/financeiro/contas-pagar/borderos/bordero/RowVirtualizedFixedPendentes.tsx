@@ -57,6 +57,10 @@ const RowVirtualizerFixedPendentes: React.FC<
 
   const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
 
+  const allChecked =
+    filteredData.length === filteredData.filter((item) => item.checked).length;
+  const someChecked = filteredData.some((item) => item.checked);
+
   return (
     <section
       ref={parentElement}
@@ -66,6 +70,7 @@ const RowVirtualizerFixedPendentes: React.FC<
         {modalEditing && (
           <Checkbox
             className="min-w-4 me-1"
+            checked={allChecked || (someChecked && "indeterminate")}
             onCheckedChange={(e) => {
               filteredData.forEach((filteredVencimento) => {
                 const indexData = data.findIndex(
