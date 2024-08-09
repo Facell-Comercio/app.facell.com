@@ -51,7 +51,7 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
   return (
     <Accordion
       type="single"
-      collapsible
+      
       value={itemOpen}
       onValueChange={(e) => setItemOpen(e)}
       className="p-2 border dark:border-slate-800 rounded-lg "
@@ -72,6 +72,15 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
             <div className="flex w-max space-x-3">
+            <Input
+                placeholder="ID Bordero"
+                className="w-[13ch]"
+                value={filters.id_bordero}
+                onChange={(e) => {
+                  setFilters({ id_bordero: e.target.value });
+                }}
+              />
+
               <Input
                 value={contaBancaria}
                 className="flex-1 max-h-10 min-w-[26ch]"
@@ -87,7 +96,7 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
               />
               <Input
                 placeholder="Banco"
-                className="max-w-[200px]"
+                className="max-w-[20ch]"
                 value={filters.banco}
                 onChange={(e) => {
                   setFilters({ banco: e.target.value });
@@ -108,9 +117,10 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
                   setFilters({ fornecedor: e.target.value });
                 }}
               />
+              
               <Input
                 placeholder="ID Vencimento"
-                className="w-[20ch]"
+                className="w-[16ch]"
                 value={filters.id_vencimento}
                 onChange={(e) => {
                   setFilters({ id_vencimento: e.target.value });
@@ -118,7 +128,7 @@ const FiltersBorderos = ({ refetch }: { refetch: () => void }) => {
               />
               <Input
                 placeholder="ID Título"
-                className="w-[20ch]"
+                className="w-[13ch]"
                 value={filters.id_titulo}
                 onChange={(e) => {
                   setFilters({ id_titulo: e.target.value });
