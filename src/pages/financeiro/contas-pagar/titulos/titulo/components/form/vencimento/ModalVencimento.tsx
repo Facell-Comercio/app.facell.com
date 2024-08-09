@@ -107,7 +107,7 @@ export function ModalVencimento({
         calcularDataPrevisaoPagamento(proximaDataVencimento).toDateString()
       );
     }
-  }, [isCartao, dia_corte_cartao, dia_vencimento_cartao, form]);
+  }, [isCartao, dia_corte_cartao, dia_vencimento_cartao]);
   // const { formState: { errors } } = form;
 
   //* Ao abrir o modal, caso não tenha um valor predefinido, irá setar como valor o que falta para completar o valor do título

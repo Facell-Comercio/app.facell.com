@@ -36,7 +36,7 @@ const SecaoVencimentos = ({
     control: form.control,
     name: "vencimentos",
   });
-
+  
   const wvencimentos = form.watch("vencimentos");
 
   const { setValue } = form;
