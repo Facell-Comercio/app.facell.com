@@ -1,7 +1,6 @@
 import { RowSelectionState } from "@tanstack/react-table";
 import { DateRange } from "react-day-picker";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 export interface Pagination {
   pageIndex: number;
@@ -58,35 +57,28 @@ export interface Actions {
   handleRowSelection: (data: HandleRowSelectionProps) => void;
 }
 
-export const useStoreTablePagar = create(persist<State & Actions>(
+export const useStoreTablePagar = create<State & Actions>(
   (set) => ({
-  // Table
-  rowCount: 0,
-  // sorting: [],
-  pagination: { pageIndex: 0, pageSize: 15 },
-  isAllSelected: false,
-  rowSelection: {},
-  idSelection: [],
+    // Table
+    rowCount: 0,
+    // sorting: [],
+    pagination: { pageIndex: 0, pageSize: 15 },
+    isAllSelected: false,
+    rowSelection: {},
+    idSelection: [],
 
-  // Filters
-  filters: initialFilters,
-  setFilters: (novoFiltro) =>
-    set((state) => ({
-      ...state,
-      filters: { ...state.filters, ...novoFiltro },
-    })),
-  resetFilters: () => {
-    set({ filters: initialFilters });
-  },
+    // Filters
+    filters: initialFilters,
+    setFilters: (novoFiltro) =>
+      set((state) => ({
+        ...state,
+        filters: { ...state.filters, ...novoFiltro },
+      })),
+    resetFilters: () => {
+      set({ filters: initialFilters });
+    },
 
-  setPagination: (pagination) => set({ pagination }),
-  handleRowSelection: (data: HandleRowSelectionProps) =>
-    set({ rowSelection: data.rowSelection, idSelection: data.idSelection }),
-}), 
-{
-  name: 'store-table-cp-titulos',
-  // @ts-ignore
-  partialize: (state)=>({ filters: state.filters } as State),
-}
-)
-);
+    setPagination: (pagination) => set({ pagination }),
+    handleRowSelection: (data: HandleRowSelectionProps) =>
+      set({ rowSelection: data.rowSelection, idSelection: data.idSelection }),
+  }));
