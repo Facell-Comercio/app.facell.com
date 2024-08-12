@@ -68,7 +68,7 @@ export const sidebarItems: SidebarItem[] = [
       {
         name: "Vales",
         type: "link",
-        shortName: "M",
+        shortName: "V",
         uri: "comercial/vales",
         visible: checkUserPermission([
           "GERENCIAR_VALES",

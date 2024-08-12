@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import {
   normalizeCurrency,
   normalizeDate,
@@ -158,6 +159,17 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
   {
     header: "Tags",
     accessorKey: "tags",
+    cell: (info) => {
+      const label = info.getValue<string>()?.split(";");
+      return (
+        <div
+          title={label?.join(" & ")}
+          className="flex gap-1 flex-wrap truncate max-w-52 uppercase"
+        >
+          {label?.map((value) => value && <Badge>{value}</Badge>)}
+        </div>
+      );
+    },
   },
   {
     id: "data_inicial",

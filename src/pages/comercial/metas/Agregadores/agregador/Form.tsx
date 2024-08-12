@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormSelect from "@/components/custom/FormSelect";
 import { Button } from "@/components/ui/button";
+import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Table,
   TableBody,
@@ -270,20 +271,26 @@ const FormAgregador = ({
                       form.setValue("metas", []);
                     }}
                   />
-                  <FormSelect
-                    name="tag"
-                    label="Tag"
-                    selectClassName="min-w-full sm:min-w-[20ch]"
-                    control={form.control}
-                    disabled={disabled}
-                    placeholder="Selecione a tag"
-                    options={
-                      tags.map((tag: any) => ({
+                  <span className="flex gap-2 flex-col flex-1">
+                    <label className="text-sm font-medium">Tags</label>
+
+                    <MultiSelect
+                      options={tags.map((tag: any) => ({
                         value: tag,
                         label: tag,
-                      })) || []
-                    }
-                  />
+                      }))}
+                      onValueChange={(tag) => {
+                        form.setValue("tags", tag.join(";"));
+                      }}
+                      disabled={disabled || readOnly}
+                      defaultValue={form.watch("tags")?.split(";") || []}
+                      placeholder="Status"
+                      variant="inverted"
+                      animation={4}
+                      maxCount={2}
+                      className={`bg-background hover:bg-background`}
+                    />
+                  </span>
 
                   <FormSelect
                     name="cargo"

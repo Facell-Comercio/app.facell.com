@@ -100,11 +100,11 @@ export const useAgregadores = () => {
       },
     });
 
-  const lancamentoLote = () =>
+  const importAgregadores = () =>
     useMutation({
       mutationFn: async (data: AgregadoresProps[]) => {
         return await api
-          .post(`comercial/agregadores/lancamento-lote`, data)
+          .post(`comercial/agregadores/import`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -213,7 +213,7 @@ export const useAgregadores = () => {
     getAll,
     getOne,
     insertOne,
-    lancamentoLote,
+    importAgregadores,
     update,
     deleteAgregador,
 

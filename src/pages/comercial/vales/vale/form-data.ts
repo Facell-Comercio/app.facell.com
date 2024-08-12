@@ -1,3 +1,4 @@
+import { normalizeNumberOnly } from "@/helpers/mask";
 import { checkCPF } from "@/helpers/validator";
 import { AbatimentosProps, ValeProps } from "@/hooks/comercial/useVales";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,13 +12,13 @@ const schemaVale = z
     cpf_colaborador: z.coerce
       .string()
       .trim()
-      .refine((cpf) => checkCPF(cpf), "CPF Inválido"),
+      .refine((cpf) => checkCPF(cpf), "CPF Inválido")
+      .transform((cpf) => normalizeNumberOnly(cpf)),
     nome_colaborador: z
       .string()
       .trim()
       .min(3, "Campo Obrigatório")
       .transform((n) => String(n).toUpperCase()),
-    id_colaborador: z.coerce.number().min(1, "Campo Obrigatório"),
     id_filial: z.coerce.string().trim().min(1, "Campo Obrigatório"),
     filial: z.string().trim().min(1, "Campo Obrigatório"),
     data_inicio_cobranca: z.coerce.date({

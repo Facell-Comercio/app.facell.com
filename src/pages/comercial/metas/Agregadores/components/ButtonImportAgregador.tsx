@@ -10,11 +10,11 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
-import { normalizeNumberOnly } from "@/helpers/mask";
 import {
   AgregadoresProps,
   useAgregadores,
 } from "@/hooks/comercial/useAgregadores";
+import { formatDate } from "date-fns";
 import { useEffect, useRef } from "react";
 import { FaSpinner } from "react-icons/fa6";
 
@@ -25,11 +25,11 @@ export type ExportAnexosProps = {
 
 const ButtonImportAgregador = () => {
   const {
-    mutate: lancamentoLote,
+    mutate: importAgregadores,
     isPending,
     isSuccess,
-    data: resultadoLancamentoLote,
-  } = useAgregadores().lancamentoLote();
+    data: resultadoImportAgregadores,
+  } = useAgregadores().importAgregadores();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangeImportButton = (
@@ -42,29 +42,14 @@ const ButtonImportAgregador = () => {
       reader.readAsArrayBuffer(file);
       reader.onload = async (e) => {
         const importedData = e.target?.result;
-        const result = importFromExcel(importedData)
-          .filter(
-            (value: any) =>
-              value.cpf !== "" &&
-              value.filial !== "" &&
-              value.valor !== "" &&
-              value.data_inicio_cobranca !== "" &&
-              value.obs !== "" &&
-              value.origem !== ""
-          )
-          .map((value: any) => ({
-            ...value,
-            cpf: normalizeNumberOnly(String(value.cpf)),
-            filial: String(value.filial).trim(),
-            valor: parseFloat(String(value.valor)).toFixed(2),
-          })) as AgregadoresProps[];
+        const result = importFromExcel(importedData) as AgregadoresProps[];
 
         const responseError: any[] = [];
         if (responseError.length > 0) {
           toast({ title: "Erro na importação", variant: "destructive" });
           return;
         }
-        lancamentoLote(result);
+        importAgregadores(result);
 
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
@@ -74,17 +59,20 @@ const ButtonImportAgregador = () => {
   };
 
   useEffect(() => {
-    if (isSuccess && resultadoLancamentoLote) {
+    if (isSuccess && resultadoImportAgregadores) {
       toast({
         title: "Sucesso",
-        description: "Lançamento de agregadores realizado",
+        description: "Importação de agregadores realizada",
         action: (
           <ToastAction
             altText="Ver Resultados"
             onClick={() =>
               exportToExcel(
-                resultadoLancamentoLote,
-                `RESULTADO LANÇAMENTO AGREGADORES`
+                resultadoImportAgregadores,
+                `RESULTADO IMPORTAÇÃO AGREGADORES ${formatDate(
+                  new Date(),
+                  "dd-MM-yyyy hh.mm"
+                )}`
               )
             }
           >
@@ -115,7 +103,7 @@ const ButtonImportAgregador = () => {
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem
-          className="flex gap-2"
+          className="flex gap-2 p-0"
           onClick={(e) => e.preventDefault()}
         >
           <AlertPopUp
@@ -124,7 +112,7 @@ const ButtonImportAgregador = () => {
             description="Esta ação não pode ser desfeita. Todos os agregadores importados serão adicionados"
             action={() => fileInputRef.current && fileInputRef.current.click()}
           >
-            <div className="flex gap-1">
+            <div className="flex gap-1 px-2 py-1.5 rounded-sm">
               {!isPending ? (
                 <>Importar Planilha</>
               ) : (

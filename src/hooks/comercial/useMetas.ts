@@ -118,11 +118,11 @@ export const useMetas = () => {
       },
     });
 
-  const lancamentoLote = () =>
+  const importMetas = () =>
     useMutation({
       mutationFn: async (data: MetasProps[]) => {
         return await api
-          .post(`comercial/metas/lancamento-lote`, data)
+          .post(`comercial/metas/import`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -232,7 +232,7 @@ export const useMetas = () => {
     getOne,
     getComparison,
     insertOne,
-    lancamentoLote,
+    importMetas,
     update,
     deleteMeta,
 

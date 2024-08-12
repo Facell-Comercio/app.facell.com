@@ -141,7 +141,7 @@ export const MultiSelect = React.forwardRef<
         onOpenChange={setIsPopoverOpen}
         modal={modalPopover}
       >
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild disabled={disabled}>
           <Button
             ref={ref}
             {...props}
@@ -157,22 +157,26 @@ export const MultiSelect = React.forwardRef<
                   {selectedValues.slice(0, maxCount).map((value) => {
                     const option = options.find((o) => o.value === value);
                     return (
-                      <Badge
-                        variant={"secondary"}
-                        key={value}
-                        className={cn(multiSelectVariants({ variant }))}
-                      >
-                        <span className="text-white truncate">
-                          {option?.label}
-                        </span>
-                        <XCircle
-                          className="ml-2 h-4 w-4 cursor-pointer"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            toggleOption(value);
-                          }}
-                        />
-                      </Badge>
+                      value && (
+                        <Badge
+                          variant={"secondary"}
+                          key={value}
+                          className={cn(multiSelectVariants({ variant }))}
+                        >
+                          <span className="text-white truncate max-w-[10ch] sm:max-w-full">
+                            {option?.label}
+                          </span>
+                          <XCircle
+                            className="ml-2 h-4 w-4 cursor-pointer"
+                            onClick={(event) => {
+                              if (!disabled) {
+                                event.stopPropagation();
+                                toggleOption(value);
+                              }
+                            }}
+                          />
+                        </Badge>
+                      )
                     );
                   })}
                   {selectedValues.length > maxCount && (
@@ -255,6 +259,7 @@ export const MultiSelect = React.forwardRef<
                 </CommandItem>
                 {options.map((option) => {
                   const isSelected = selectedValues.includes(option.value);
+
                   return (
                     <CommandItem
                       key={option.value}

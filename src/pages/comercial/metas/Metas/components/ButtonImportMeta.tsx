@@ -10,8 +10,8 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 import { exportToExcel, importFromExcel } from "@/helpers/importExportXLS";
-import { normalizeNumberOnly } from "@/helpers/mask";
 import { MetasProps, useMetas } from "@/hooks/comercial/useMetas";
+import { formatDate } from "date-fns";
 import { useEffect, useRef } from "react";
 import { FaSpinner } from "react-icons/fa6";
 
@@ -22,11 +22,11 @@ export type ExportAnexosProps = {
 
 const ButtonImportMeta = () => {
   const {
-    mutate: lancamentoLote,
+    mutate: importMetas,
     isPending,
     isSuccess,
-    data: resultadoLancamentoLote,
-  } = useMetas().lancamentoLote();
+    data: resultadoImportMetas,
+  } = useMetas().importMetas();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangeImportButton = (
@@ -39,29 +39,14 @@ const ButtonImportMeta = () => {
       reader.readAsArrayBuffer(file);
       reader.onload = async (e) => {
         const importedData = e.target?.result;
-        const result = importFromExcel(importedData)
-          .filter(
-            (value: any) =>
-              value.cpf !== "" &&
-              value.filial !== "" &&
-              value.valor !== "" &&
-              value.data_inicio_cobranca !== "" &&
-              value.obs !== "" &&
-              value.origem !== ""
-          )
-          .map((value: any) => ({
-            ...value,
-            cpf: normalizeNumberOnly(String(value.cpf)),
-            filial: String(value.filial).trim(),
-            valor: parseFloat(String(value.valor)).toFixed(2),
-          })) as MetasProps[];
+        const result = importFromExcel(importedData) as MetasProps[];
 
         const responseError: any[] = [];
         if (responseError.length > 0) {
           toast({ title: "Erro na importação", variant: "destructive" });
           return;
         }
-        lancamentoLote(result);
+        importMetas(result);
 
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
@@ -71,17 +56,20 @@ const ButtonImportMeta = () => {
   };
 
   useEffect(() => {
-    if (isSuccess && resultadoLancamentoLote) {
+    if (isSuccess && resultadoImportMetas) {
       toast({
         title: "Sucesso",
-        description: "Lançamento de metas realizado",
+        description: "Importação de metas realizado",
         action: (
           <ToastAction
             altText="Ver Resultados"
             onClick={() =>
               exportToExcel(
-                resultadoLancamentoLote,
-                `RESULTADO LANÇAMENTO METAS`
+                resultadoImportMetas,
+                `RESULTADO IMPORTAÇÃO METAS ${formatDate(
+                  new Date(),
+                  "dd-MM-yyyy hh.mm"
+                )}`
               )
             }
           >
@@ -112,7 +100,7 @@ const ButtonImportMeta = () => {
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem
-          className="flex gap-2"
+          className="flex gap-2 p-0"
           onClick={(e) => e.preventDefault()}
         >
           <AlertPopUp
@@ -121,7 +109,7 @@ const ButtonImportMeta = () => {
             description="Esta ação não pode ser desfeita. Todos os metas importados serão adicionados"
             action={() => fileInputRef.current && fileInputRef.current.click()}
           >
-            <div className="flex gap-1">
+            <div className="flex gap-1 px-2 py-1.5 rounded-sm">
               {!isPending ? (
                 <>Importar Planilha</>
               ) : (

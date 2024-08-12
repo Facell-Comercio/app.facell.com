@@ -7,6 +7,7 @@ import { Calendar, Crosshair, Percent, UserSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import FormSelect from "@/components/custom/FormSelect";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { MetasProps, useMetas } from "@/hooks/comercial/useMetas";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useFormMetaData } from "./form-data";
@@ -164,16 +165,16 @@ const FormMeta = ({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 items-end">
+                <div className="flex flex-wrap gap-2 items-end">
                   <FormInput
-                    className="flex-1 shrink-0"
+                    className="flex-1 shrink-0 min-w-fit"
                     name="nome"
                     disabled={disabled}
                     label="Nome"
                     control={form.control}
                   />
                   <FormInput
-                    className="flex-1 shrink-0"
+                    className="flex-1 shrink-0 min-w-fit"
                     name="cpf"
                     disabled={disabled}
                     label="CPF"
@@ -181,7 +182,7 @@ const FormMeta = ({
                   />
 
                   <FormInput
-                    className="flex-1 shrink-0"
+                    className="flex-1 shrink-0 min-w-fit"
                     name="filial"
                     inputClass="min-w-full"
                     placeholder="SELECIONE A FILIAL"
@@ -192,7 +193,7 @@ const FormMeta = ({
                     onClick={() => !readOnly && setModalFilialOpen(true)}
                   />
                   <FormInput
-                    className="flex-1 shrink-0"
+                    className="flex-1 shrink-0 min-w-fit"
                     name="grupo_economico"
                     inputClass="min-w-full"
                     placeholder="SELECIONE A FILIAL"
@@ -214,19 +215,26 @@ const FormMeta = ({
                       })) || []
                     }
                   />
-                  <FormSelect
-                    name="tag"
-                    label="Tag"
-                    control={form.control}
-                    disabled={disabled || readOnly}
-                    placeholder="Selecione a tag"
-                    options={
-                      tags.map((tag: any) => ({
+                  <span className="flex gap-2 flex-col flex-1">
+                    <label className="text-sm font-medium">Tags</label>
+
+                    <MultiSelect
+                      options={tags.map((tag: any) => ({
                         value: tag,
                         label: tag,
-                      })) || []
-                    }
-                  />
+                      }))}
+                      onValueChange={(tag) => {
+                        form.setValue("tags", tag.join(";"));
+                      }}
+                      disabled={disabled || readOnly}
+                      defaultValue={form.watch("tags")?.split(";") || []}
+                      placeholder="Status"
+                      variant="inverted"
+                      animation={4}
+                      maxCount={2}
+                      className={`bg-background hover:bg-background`}
+                    />
+                  </span>
                 </div>
               </div>
             </div>

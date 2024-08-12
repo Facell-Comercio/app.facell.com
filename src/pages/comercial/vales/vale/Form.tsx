@@ -20,9 +20,6 @@ import { Edit2, Info, Plus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { CustomCombobox } from "../../../../components/custom/CustomCombobox";
-import ModalColaboradores, {
-  ItemColaboradores,
-} from "../../components/ModalColaboradores";
 import { useFormValeData } from "./form-data";
 import ModalAbatimento from "./ModalAbatimento";
 import { useStoreVale } from "./store";
@@ -88,8 +85,6 @@ const FormVale = ({
     state.editModalAbatimento,
   ]);
   const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
-  const [openModalColaboradores, setOpenModalColaboradores] =
-    useState<boolean>(false);
 
   const { form } = useFormValeData(data);
 
@@ -144,14 +139,6 @@ const FormVale = ({
     form.setValue("filial", filial.nome);
   }
 
-  const handleSelectionColaboradores = (colaboradores: ItemColaboradores) => {
-    form.setValue("id_colaborador", colaboradores.id);
-    form.setValue("nome_colaborador", colaboradores.nome);
-    form.setValue("cpf_colaborador", colaboradores.cpf);
-
-    setOpenModalColaboradores(false);
-  };
-
   return (
     <div className="max-w-full overflow-x-hidden">
       <Form {...form}>
@@ -176,19 +163,15 @@ const FormVale = ({
                     className="flex-1 min-w-[30ch] shrink-0"
                     name="cpf_colaborador"
                     disabled={disabled}
-                    readOnly
                     label="CPF Colaborador"
                     control={form.control}
-                    onClick={() => !disabled && setOpenModalColaboradores(true)}
                   />
                   <FormInput
                     className="flex-1 min-w-[30ch] sm:min-w-[45ch] shrink-0"
                     name="nome_colaborador"
                     disabled={disabled}
-                    readOnly
                     label="Nome Colaborador"
                     control={form.control}
-                    onClick={() => !disabled && setOpenModalColaboradores(true)}
                   />
 
                   <FormInput
@@ -377,12 +360,6 @@ const FormVale = ({
         handleSelection={handleSelectFilial}
         onOpenChange={setModalFilialOpen}
         closeOnSelection
-      />
-      <ModalColaboradores
-        handleSelection={handleSelectionColaboradores}
-        open={openModalColaboradores}
-        // @ts-ignore
-        onOpenChange={setOpenModalColaboradores}
       />
       <ModalAbatimento saldo={form.watch("saldo")} />
     </div>
