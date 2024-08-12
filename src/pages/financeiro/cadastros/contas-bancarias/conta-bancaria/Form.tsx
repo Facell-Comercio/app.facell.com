@@ -1,7 +1,7 @@
 import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
 import FormSwitch from "@/components/custom/FormSwitch";
-import SelectFilial from "@/components/custom/SelectFilial";
+import { SelectFilial } from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
 import { useContasBancarias } from "@/hooks/financeiro/useContasBancarias";
 import ModalBancos, {

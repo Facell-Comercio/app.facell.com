@@ -2,7 +2,7 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormInput from "@/components/custom/FormInput";
 import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
 import FormSwitch from "@/components/custom/FormSwitch";
-import SelectFilial from "@/components/custom/SelectFilial";
+import { SelectFilial } from "@/components/custom/SelectFilial";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
