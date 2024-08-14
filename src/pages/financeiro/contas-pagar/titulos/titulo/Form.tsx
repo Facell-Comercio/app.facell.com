@@ -24,6 +24,7 @@ import ModalFornecedores, {
 } from "@/pages/financeiro/components/ModalFornecedores";
 
 import fetchApi from "@/api/fetchApi";
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import SelectCartao from "@/components/custom/SelectCartao";
 import { SelectFormaPagamento } from "@/components/custom/SelectFormaPagamento";
 import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
@@ -48,6 +49,7 @@ import {
   FileText,
   History,
   Pen,
+  RotateCcw,
   Save,
   Undo2,
   X,
@@ -554,6 +556,7 @@ const FormTituloPagar = ({
                         readOnly
                         label="Dia do vencimento"
                         control={form.control}
+                        disabled={disabled}
                       />
                       <FormInput
                         className="flex-1 min-w-[20ch] shrink-0"
@@ -561,6 +564,7 @@ const FormTituloPagar = ({
                         readOnly
                         label="Dia de Corte"
                         control={form.control}
+                        disabled={disabled}
                       />
                     </div>
                     {/* Dados bancários do fornecedor */}
@@ -573,6 +577,7 @@ const FormTituloPagar = ({
                           readOnly={readOnly}
                           inputClass="flex-1 min-w-[30ch] sm:min-w-[40ch]"
                           className="flex-1"
+                          disabled={disabled}
                         />
 
                         <FormInput
@@ -583,6 +588,7 @@ const FormTituloPagar = ({
                           fnMask={normalizeCnpjNumber}
                           inputClass="min-w-[20ch]"
                           className="flex-1"
+                          disabled={disabled}
                         />
 
                         <FormInput
@@ -591,6 +597,7 @@ const FormTituloPagar = ({
                           className="min-w-[10ch]"
                           control={form.control}
                           readOnly={true}
+                          disabled={disabled}
                         />
 
                         <FormInput
@@ -599,6 +606,7 @@ const FormTituloPagar = ({
                           className="min-w-fit"
                           control={form.control}
                           readOnly={true}
+                          disabled={disabled}
                         />
 
                         <FormInput
@@ -606,6 +614,7 @@ const FormTituloPagar = ({
                           name="agencia"
                           control={form.control}
                           readOnly={true}
+                          disabled={disabled}
                         />
 
                         <FormInput
@@ -614,6 +623,7 @@ const FormTituloPagar = ({
                           className="min-w-[10ch]"
                           control={form.control}
                           readOnly={true}
+                          disabled={disabled}
                         />
 
                         <SelectTipoContaBancaria
@@ -629,6 +639,7 @@ const FormTituloPagar = ({
                           name="conta"
                           control={form.control}
                           readOnly={true}
+                          disabled={disabled}
                         />
 
                         <FormInput
@@ -637,6 +648,7 @@ const FormTituloPagar = ({
                           className="min-w-[10ch]"
                           control={form.control}
                           readOnly={true}
+                          disabled={disabled}
                         />
                       </>
                     )}
@@ -679,16 +691,41 @@ const FormTituloPagar = ({
                         ]}
                       />
 
-                      <FormInput
-                        readOnly={true}
-                        name="filial"
-                        label="Filial"
-                        placeholder="SELECIONE A FILIAL"
-                        control={form.control}
-                        inputClass="sm:min-w-[100px]"
-                        disabled={disabled || !canSelectFilial}
-                        onClick={showModalFilial}
-                      />
+                      <span className="space-y-2">
+                        <span className="flex justify-between gap-2">
+                          <label className="text-sm font-medium">Filial</label>
+                          <AlertPopUp
+                            title="Deseja realmente redefinir a filial?"
+                            description="Todos os campos relacionados a essa filial serão resetados"
+                            action={() => {
+                              form.setValue("itens_rateio", []);
+                              form.setValue("id_filial", "");
+                              form.setValue("filial", "");
+                              form.setValue("id_matriz", "");
+                              form.setValue("id_grupo_economico", "");
+                              form.setValue("id_cartao", "");
+                            }}
+                          >
+                            <Button
+                              variant={"destructive"}
+                              size={"xss"}
+                              title="Redefinir filial"
+                              disabled={disabled}
+                            >
+                              <RotateCcw size={13} />
+                            </Button>
+                          </AlertPopUp>
+                        </span>
+                        <FormInput
+                          readOnly={true}
+                          name="filial"
+                          placeholder="SELECIONE A FILIAL"
+                          control={form.control}
+                          inputClass="sm:min-w-[100px]"
+                          disabled={disabled || !canSelectFilial}
+                          onClick={showModalFilial}
+                        />
+                      </span>
                       <span className="lg:col-span-2 min-w-[20ch]">
                         <SelectUserDepartamento
                           label="Departamento"
@@ -716,6 +753,7 @@ const FormTituloPagar = ({
                         className={"flex-1 min-w-[15ch]"}
                         control={form.control}
                         onBlur={() => checkDoc()}
+                        disabled={disabled}
                       />
 
                       <FormInput
@@ -738,6 +776,7 @@ const FormTituloPagar = ({
                       inputClass="uppercase"
                       label="Descrição do pagamento"
                       control={form.control}
+                      disabled={disabled}
                     />
                   </div>
                 </div>
