@@ -29,6 +29,8 @@ const ConferenciaCaixa = () => {
     filters,
   });
 
+  console.log(data);
+
   return location.pathname === uriCaixas ? (
     <Outlet />
   ) : (
@@ -57,8 +59,11 @@ const ConferenciaCaixa = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.map((item: any) => (
-                <TableRow className="text-nowrap">
+              {data?.map((item: any, index: number) => (
+                <TableRow
+                  className="text-nowrap"
+                  key={`${index} - filial ${item.id_filial}`}
+                >
                   <TableCell className="text-primary hover:text-primary/90">
                     <Link to={`${uri}/filiais?id=${item.id_filial}`}>
                       <FileSearch />
@@ -70,7 +75,7 @@ const ConferenciaCaixa = () => {
                       className="w-full flex justify-center"
                       variant={"secondary"}
                     >
-                      10
+                      {item.a_conferir || 0}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -78,18 +83,20 @@ const ConferenciaCaixa = () => {
                       className="w-full flex justify-center"
                       variant={"success"}
                     >
-                      10
+                      {item.baixa_pendente || 0}
                     </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className="w-full flex justify-center">10</Badge>
                   </TableCell>
                   <TableCell>
                     <Badge
                       className="w-full flex justify-center"
                       variant={"destructive"}
                     >
-                      10
+                      {item.baixa_datasys_pendente || 0}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className="w-full flex justify-center">
+                      {item.ocorrencias || 0}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -97,7 +104,7 @@ const ConferenciaCaixa = () => {
                       className="w-full flex justify-center"
                       variant={"warning"}
                     >
-                      10
+                      {item.divergentes || 0}
                     </Badge>
                   </TableCell>
                 </TableRow>

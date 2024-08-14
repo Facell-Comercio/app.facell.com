@@ -9,14 +9,45 @@ import {
 } from "@tanstack/react-query";
 
 export type ConferenciasCaixaSchema = {
-  id?: string;
-  id_matriz: string;
-  descricao: string;
-  nome_portador: string;
-  dia_vencimento: string;
-  id_fornecedor: string;
-  nome_fornecedor: string;
-  active: boolean;
+  created_at?: string;
+  data?: string;
+  data_baixa_datasys?: string;
+  data_conferencia?: string;
+  divergente?: string;
+  id?: string | number;
+  id_filial?: string | number;
+  id_user_conferencia?: string;
+  ocorrencias?: string;
+  ocorrencias_resolvidas?: string;
+  saldo_anterior?: string;
+  saldo_atual?: string;
+  status?: string;
+  updated_at?: string;
+
+  valor_dinheiro?: string;
+  valor_retiradas?: string;
+  total_dinheiro?: string;
+
+  valor_cartao?: string;
+  valor_cartao_real?: string;
+  divergencia_cartao?: string;
+
+  valor_pitzi?: string;
+  valor_pitzi_real?: string;
+  divergencia_pitzi?: string;
+
+  valor_pix?: string;
+  valor_pix_banco?: string;
+  divergencia_pix?: string;
+
+  valor_recarga?: string;
+  valor_recarga_real?: string;
+  divergencia_recarga?: string;
+
+  valor_tradein?: string;
+  valor_tradein_disponivel?: string;
+  valor_tradein_utilizado?: string;
+  divergencia_tradein?: string;
 };
 
 export const useConferenciasCaixa = () => {
@@ -60,12 +91,19 @@ export const useConferenciasCaixa = () => {
         placeholderData: keepPreviousData,
       }),
 
-    getOne: (id: string | null | undefined) =>
+    getOne: (id?: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "banco", "detalhe", id],
+        queryKey: [
+          "financeiro",
+          "conferencia-de-caixa",
+          "caixas",
+          "detalhe",
+          ,
+          id,
+        ],
         queryFn: async () => {
-          return await api.get(`/financeiro/conferenciasCaixa/${id}`);
+          return await api.get(`/financeiro/conferencia-de-caixa/${id}`);
         },
       }),
 

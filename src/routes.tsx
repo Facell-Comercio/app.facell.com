@@ -17,7 +17,7 @@ import Vales from "./pages/comercial/vales/Vales.tsx";
 import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ConferenciaCaixa from "./pages/financeiro/conferecia-caixa/ConferenciaCaixa.tsx";
-import Caixas from "./pages/financeiro/conferecia-caixa/caixa/Caixas.tsx";
+import Caixas from "./pages/financeiro/conferecia-caixa/caixas/Caixas.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.tsx";
 import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
