@@ -3,9 +3,11 @@ import {
   ConferenciasCaixaSchema,
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
-import { useEffect } from "react";
+import { List } from "lucide-react";
+import { useEffect, useState } from "react";
 import CaixaCards from "./CaixaCards";
 import { useFormCaixaData } from "./form-data";
+import { ItemAccordionCaixa } from "./ItemAccordionCaixa";
 import RowVirtualizedFixedMovimentoCaixa from "./RowVirtualizedMovimentoCaixa";
 import StatusCaixa from "./StatusCaixa";
 import { useStoreCaixa } from "./store";
@@ -19,6 +21,10 @@ const FormCaixa = ({
   data: ConferenciasCaixaSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
+  const movimentos_caixa = data.movimentos_caixa || [];
+  const qtde_movimentos_caixa = parseInt(data.qtde_movimentos_caixa || "0");
+  const depositos_caixa = data.depositos_caixa || [];
+  const qtde_depositos_caixa = parseInt(data.qtde_depositos_caixa || "0");
   const {
     mutate: insertOne,
     isPending: insertIsPending,
@@ -63,6 +69,7 @@ const FormCaixa = ({
 
   // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
+  const [itemOpen, setItemOpen] = useState<string>("");
 
   return (
     <div className="max-w-full overflow-x-hidden">
@@ -76,12 +83,18 @@ const FormCaixa = ({
             {/* Primeira coluna */}
             <StatusCaixa data={data} />
             <CaixaCards data={data} />
+            <ItemAccordionCaixa
+              icon={List}
+              value={"movimento-caixa"}
+              qtde={qtde_movimentos_caixa}
+              title="Movimento de Caixa"
+              itemOpen={itemOpen}
+              onValueChange={setItemOpen}
+            >
+              <RowVirtualizedFixedMovimentoCaixa data={movimentos_caixa} />
+            </ItemAccordionCaixa>
             <div className="flex flex-1 flex-col gap-3 shrink-0">
-              <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg overflow-auto ">
-                <RowVirtualizedFixedMovimentoCaixa
-                  data={new Array(20).fill({ id: 1 })}
-                />
-              </div>
+              <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg overflow-auto "></div>
             </div>
           </div>
         </form>

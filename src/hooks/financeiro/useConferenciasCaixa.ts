@@ -8,6 +8,26 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
+export type MovimentoCaixaProps = {
+  id?: string;
+  data?: string;
+  documento?: string;
+  tipo_operacao?: string;
+  forma_pagamento?: string;
+  historico?: string;
+  valor?: string;
+};
+
+export type DepositosCaixaProps = {
+  id?: string;
+  hora?: string;
+  doc?: string;
+  tipo?: string;
+  forma_pagamento?: string;
+  historico?: string;
+  valor?: string;
+};
+
 export type ConferenciasCaixaSchema = {
   created_at?: string;
   data?: string;
@@ -48,6 +68,11 @@ export type ConferenciasCaixaSchema = {
   valor_tradein_disponivel?: string;
   valor_tradein_utilizado?: string;
   divergencia_tradein?: string;
+
+  movimentos_caixa?: MovimentoCaixaProps[];
+  qtde_movimentos_caixa?: string;
+  depositos_caixa?: DepositosCaixaProps[];
+  qtde_depositos_caixa?: string;
 };
 
 export const useConferenciasCaixa = () => {
