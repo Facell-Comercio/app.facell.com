@@ -223,18 +223,26 @@ export const sidebarItems: SidebarItem[] = [
     visible: true,
     children: [
       {
-        name: "Contas a pagar",
+        name: "Contas a Pagar",
         type: "link",
         shortName: "CP",
         uri: "/financeiro/contas-a-pagar",
         visible: true,
       },
       {
-        name: "Contas a receber",
+        name: "Contas a Receber",
         type: "link",
         shortName: "CR",
         uri: "/financeiro/contas-a-receber",
         visible: false,
+      },
+      {
+        name: "Conferência de Caixa",
+        type: "link",
+        shortName: "CC",
+        uri: "/financeiro/conferencia-de-caixa",
+        visible:
+          checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
       },
       {
         name: "Orçamento",

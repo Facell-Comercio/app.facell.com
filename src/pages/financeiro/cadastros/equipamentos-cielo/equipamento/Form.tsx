@@ -1,6 +1,6 @@
 import FormInput from "@/components/custom/FormInput";
 import FormSwitch from "@/components/custom/FormSwitch";
-import SelectFilial from "@/components/custom/SelectFilial";
+import { SelectFilial } from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
 import { useEquipamentos } from "@/hooks/financeiro/useEquipamentos";
 import { Contact } from "lucide-react";

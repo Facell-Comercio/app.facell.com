@@ -1,7 +1,7 @@
 import FormInput from "@/components/custom/FormInput";
 import FormSwitch from "@/components/custom/FormSwitch";
 
-import SelectFilial from "@/components/custom/SelectFilial";
+import { SelectFilial } from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
 import { Toggle } from "@/components/ui/toggle";
 import { useGrupoEconomico } from "@/hooks/useGrupoEconomico";
