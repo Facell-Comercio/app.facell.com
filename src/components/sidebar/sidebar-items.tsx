@@ -237,10 +237,10 @@ export const sidebarItems: SidebarItem[] = [
         visible: false,
       },
       {
-        name: "Conferência de Caixa",
+        name: "Controle de Caixa",
         type: "link",
         shortName: "CC",
-        uri: "/financeiro/conferencia-de-caixa",
+        uri: "/financeiro/controle-de-caixa",
         visible:
           checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
       },

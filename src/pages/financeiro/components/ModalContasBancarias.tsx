@@ -69,7 +69,7 @@ const ModalContasBancarias = ({
 
   const defaultFilters: Filters = {
     id_grupo_economico: "all",
-    id_matriz: "all",
+    id_matriz: id_matriz || "all",
     descricao: "",
     banco: "",
   };
@@ -181,13 +181,15 @@ const ModalContasBancarias = ({
                       placeholder="Descrição"
                       className="w-[20ch]"
                       value={filters.descricao}
-                      onChange={(e)=>setFilters({descricao: e.target.value})}
+                      onChange={(e) =>
+                        setFilters({ descricao: e.target.value })
+                      }
                     />
                     <Input
                       placeholder="Banco"
                       className="max-w-[200px]"
                       value={filters.banco}
-                      onChange={(e)=>setFilters({banco: e.target.value})}
+                      onChange={(e) => setFilters({ banco: e.target.value })}
                     />
                   </div>
                   <ScrollBar orientation="horizontal" />

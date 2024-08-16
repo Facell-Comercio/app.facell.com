@@ -16,10 +16,10 @@ import AdminPage from "./pages/admin/Page.tsx";
 import Vales from "./pages/comercial/vales/Vales.tsx";
 import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
-import ConferenciaCaixa from "./pages/financeiro/conferecia-caixa/ConferenciaCaixa.tsx";
-import Caixas from "./pages/financeiro/conferecia-caixa/caixas/Caixas.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.tsx";
+import ControleCaixa from "./pages/financeiro/controle-caixa/ControleCaixa.tsx";
+import Caixas from "./pages/financeiro/controle-caixa/conferecia-caixa/caixas/Caixas.tsx";
 import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
 import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
 import Perfil from "./pages/perfil/index.tsx";
@@ -72,8 +72,10 @@ const AppRoutes = () => {
           <Route path="/financeiro/">
             <Route element={<ContasPagarPage />} path="contas-a-pagar" />
             <Route element={<ContasReceberPage />} path="contas-a-receber" />
-            <Route element={<ConferenciaCaixa />} path="conferencia-de-caixa">
-              <Route element={<Caixas />} path="filiais" />
+            <Route element={<ControleCaixa />} path="controle-de-caixa">
+              <Route path="conferencia-de-caixa">
+                <Route element={<Caixas />} path="filiais" />
+              </Route>
             </Route>
             <Route element={<OrcamentoPage />} path="orcamento" />
             <Route

@@ -4,6 +4,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { normalizeCurrency } from "@/helpers/mask";
 import { ReactNode } from "react";
 
 export const ItemAccordionCaixa = ({
@@ -12,25 +14,21 @@ export const ItemAccordionCaixa = ({
   children,
   className,
   qtde,
+  valorTotal,
   icon: Icon,
-  itemOpen,
-  onValueChange,
 }: {
   value: string;
   title: string;
   children: ReactNode;
   className?: string;
   qtde: number;
+  valorTotal?: number;
   icon: React.ElementType;
-  itemOpen: string;
-  onValueChange: (e: string) => void;
 }) => {
   return (
     <Accordion
       type="single"
       collapsible
-      value={itemOpen}
-      onValueChange={onValueChange}
       className="px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg"
     >
       <AccordionItem
@@ -43,10 +41,15 @@ export const ItemAccordionCaixa = ({
             <h3 className="mr-2 text-sm sm:text-base text-left">
               {title} ({qtde})
             </h3>
+            {valorTotal && (
+              <Badge variant={"info"} className="text-xs">
+                Valor Total: {normalizeCurrency(valorTotal)}
+              </Badge>
+            )}
           </span>
         </AccordionTrigger>
         <AccordionContent
-          className={`flex max-w-full gap-2 flex-nowrap ${className}  rounded-md`}
+          className={`flex max-w-full gap-2 flex-nowrap ${className} rounded-md`}
         >
           {children}
         </AccordionContent>
