@@ -2,13 +2,13 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, useLocation } from "react-router-dom";
 import ConferenciaCaixa from "./conferecia-caixa/ConferenciaCaixa";
+import ImportacoesTab from "./importacoes/ImportacoesTab";
 
-const ControleCaixa = () => {
+const ControleCaixaPage = () => {
   const uri = `/financeiro/controle-de-caixa`;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("tab") || "";
-  console.log(searchParams);
 
   return (
     <div className="flex p-4">
@@ -23,7 +23,7 @@ const ControleCaixa = () => {
                 Conferência de Caixa
               </TabsTrigger>
             </Link>
-            <Link to={`${uri}/importacoes`}>
+            <Link to={`${uri}?tab=importacoes`}>
               <TabsTrigger value="importacoes">Importações</TabsTrigger>
             </Link>
 
@@ -36,10 +36,12 @@ const ControleCaixa = () => {
         <TabsContent value="conferencia-de-caixa">
           <ConferenciaCaixa />
         </TabsContent>
-        <TabsContent value="titulo"></TabsContent>
+        <TabsContent value="importacoes">
+          <ImportacoesTab />
+        </TabsContent>
       </Tabs>
     </div>
   );
 };
 
-export default ControleCaixa;
+export default ControleCaixaPage;
