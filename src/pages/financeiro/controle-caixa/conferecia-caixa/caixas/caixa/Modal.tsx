@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { normalizeDate } from "@/helpers/mask";
 import {
@@ -46,15 +46,15 @@ const initialPropsCaixa: ConferenciasCaixaSchema = {
 };
 
 const ModalCaixa = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreCaixa((state) => [
+  const [modalOpen, closeModal, id, id_filial, data_caixa] = useStoreCaixa(
+    (state) => [
       state.modalOpen,
       state.closeModal,
-      state.modalEditing,
-      state.editModal,
-      state.isPending,
       state.id,
-    ]);
+      state.id_filial,
+      state.data_caixa,
+    ]
+  );
 
   const formRef = useRef(null);
 
@@ -63,19 +63,17 @@ const ModalCaixa = () => {
   const newDataCaixa: ConferenciasCaixaSchema & Record<string, any> =
     {} as ConferenciasCaixaSchema & Record<string, any>;
 
-  for (const key in data?.data) {
-    if (typeof data?.data[key] === "number") {
-      newDataCaixa[key] = String(data?.data[key]);
-    } else if (data?.data[key] === null) {
+  for (const key in data) {
+    if (typeof data[key] === "number") {
+      newDataCaixa[key] = String(data[key]);
+    } else if (data[key] === null) {
       newDataCaixa[key] = "";
     } else {
-      newDataCaixa[key] = data?.data[key];
+      newDataCaixa[key] = data[key];
     }
   }
-  console.log(newDataCaixa);
 
   function handleClickCancel() {
-    editModal(false);
     closeModal();
   }
 
@@ -87,10 +85,14 @@ const ModalCaixa = () => {
             {id ? (
               <>
                 <span>{`Caixa: ${id}`}</span>
-                <span>{`Data: ${normalizeDate(
-                  newDataCaixa?.data || ""
-                )}`}</span>
-                <span>{`Filial: ${newDataCaixa.filial}`}</span>
+                {!isLoading && (
+                  <>
+                    <span>{`Data: ${normalizeDate(
+                      newDataCaixa?.data || ""
+                    )}`}</span>
+                    <span>{`Filial: ${newDataCaixa.filial}`}</span>
+                  </>
+                )}
               </>
             ) : (
               "Nova Caixa"
@@ -110,6 +112,7 @@ const ModalCaixa = () => {
               <Skeleton className="w-full row-span-3" />
             </div>
           )}
+          <ScrollBar />
         </ScrollArea>
         <DialogFooter className="sm:justify-between">
           <span className="flex gap-3 ">

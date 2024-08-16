@@ -9,10 +9,10 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableCaixas } from "./table/store-table";
 
 const Caixas = () => {
-  const uri = `/financeiro/conferencia-de-caixa/filiais`;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const id_filial = searchParams.get("id") || "";
+
   const [filters, pagination, setPagination] = useStoreTableCaixas((state) => [
     state.filters,
     state.pagination,
@@ -29,10 +29,12 @@ const Caixas = () => {
   );
 
   const rows = data?.rows;
+  const filial = data?.filial;
   const rowCount = data?.rowCount;
 
   return (
-    <section className="flex flex-col p-4 w-full">
+    <section className="flex flex-col gap-3 w-full">
+      <h3 className="text-md font-medium">{filial}</h3>
       <FiltersCaixas refetch={refetch} />
       {isSuccess && (
         <DataTable

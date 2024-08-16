@@ -14,6 +14,7 @@ export type RowConferenciaCaixa = {
   status: string;
   divergencia: string;
   ocorrencias: string;
+  id_filial: string;
 };
 
 export function badgeVariantCaixa(status?: string) {
@@ -35,14 +36,23 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
   {
     accessorKey: "id",
     header: "ID",
-    cell: (info) => (
-      <div
-        className="font-semibold cursor-pointer text-blue-500 rounded-lg"
-        onClick={() => openModal(info.getValue<string>())}
-      >
-        <FileSearch />
-      </div>
-    ),
+    cell: (info) => {
+      const id = info.getValue<string>();
+      const data_caixa = info.row.original.data;
+      const id_filial = info.row.original.id_filial;
+      return (
+        <div
+          className="font-semibold cursor-pointer text-blue-500 rounded-lg"
+          onClick={() => {
+            console.log({ id, data_caixa, id_filial });
+
+            openModal({ id, data_caixa, id_filial });
+          }}
+        >
+          <FileSearch />
+        </div>
+      );
+    },
     size: 30,
     enableSorting: false,
   },

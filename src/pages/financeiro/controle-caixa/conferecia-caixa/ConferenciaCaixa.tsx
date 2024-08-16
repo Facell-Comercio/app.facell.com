@@ -16,8 +16,9 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { useStoreConferenciaCaixa } from "./store";
 
 const ConferenciaCaixa = () => {
-  const uri = `/financeiro/conferencia-de-caixa`;
-  const uriCaixas = "/financeiro/conferencia-de-caixa/filiais";
+  const uri = `/financeiro/controle-de-caixa/conferencia-de-caixa`;
+  const uriCaixas =
+    "/financeiro/controle-de-caixa/conferencia-de-caixa/filiais";
   const location = useLocation();
 
   const [filters, setFilters] = useStoreConferenciaCaixa((state) => [
@@ -34,7 +35,7 @@ const ConferenciaCaixa = () => {
   return location.pathname === uriCaixas ? (
     <Outlet />
   ) : (
-    <section className="flex flex-col gap-3 p-4 max-w-full">
+    <section className="flex flex-col gap-3 max-w-full">
       <SelectMultiFilial
         className="max-w-full w-full"
         value={filters.filiais_list || []}

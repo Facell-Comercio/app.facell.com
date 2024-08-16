@@ -23,12 +23,12 @@ const RowVirtualizedFixedMovimentoCaixa: React.FC<
     overscan: 10,
   });
 
-  const gridClass =
-    "grid-cols-[minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)]";
+  // const gridClass =
+  //   "grid-cols-[minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)]";
   return (
     <div
       ref={parentElement}
-      className="pe-1 max-h-[200px] w-full overflow-auto scroll-thin"
+      className="pe-1 max-h-[200px] w-full rounded-md overflow-auto scroll-thin"
       // style={{
       //   height: `300px`,
       //   width: `100%`,

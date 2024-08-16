@@ -1,14 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { ConferenciasCaixaSchema } from "@/hooks/financeiro/useConferenciasCaixa";
-import { TriangleAlert } from "lucide-react";
-import { badgeVariantCaixa } from "../table/columns";
+import { TbAlertTriangle } from "react-icons/tb";
+import { badgeVariantCaixa } from "../../table/columns";
+import { useStoreCaixa } from "../store";
 
 const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
+  const [openModalOcorrencias] = useStoreCaixa((state) => [
+    state.openModalOcorrencias,
+  ]);
   const isDivergent = parseInt(data.divergente || "0");
   const ocorrencias = parseInt(data.ocorrencias || "0");
   const ocorrenciasResolvidas = parseInt(data.ocorrencias_resolvidas || "0");
   const todasResolvidas = ocorrencias === ocorrenciasResolvidas;
-
+  const ocorrenciasParaResolver = ocorrencias - ocorrenciasResolvidas;
   return (
     <div className="flex gap-3 flex-wrap text-center">
       <span>
@@ -31,8 +35,16 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
         <Button
           variant={!ocorrencias || todasResolvidas ? "success" : "destructive"}
           className="flex gap-1.5 w-full"
+          onClick={() => openModalOcorrencias()}
+          title={
+            ocorrenciasParaResolver > 0
+              ? `Há ${ocorrenciasParaResolver} ${
+                  ocorrenciasParaResolver > 1 ? "ocorrências" : "ocorrência"
+                } para resolver`
+              : ""
+          }
         >
-          <TriangleAlert />
+          <TbAlertTriangle size={22} />
           Ocorrências: ({ocorrencias})
         </Button>
       </span>
