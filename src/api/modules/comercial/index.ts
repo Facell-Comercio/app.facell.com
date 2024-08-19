@@ -1,3 +1,5 @@
-import * as vales from "./modules/vales";
+import { agregadores } from "./modules/agregadores";
+import { metas } from "./modules/metas";
+import { vales } from "./modules/vales";
 
-export { vales };
+export { agregadores, metas, vales };
