@@ -2,6 +2,8 @@ import {
     ModalComponent,
     ModalComponentRow,
 } from "@/components/custom/ModalComponent";
+import { Spinner } from "@/components/custom/Spinner";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -44,11 +46,11 @@ const ModalLogImportacaoRelatorios = ({
     });
     const [relatoriosList, setRelatoriosList] = useState<string[] | []>([])
     const { data, isLoading, isError, refetch } = useQuery({
-        queryKey: ['root', 'log_import_relatorio', 'lista'],
+        queryKey: ['root', 'log_import_relatorio', 'lista', { pagination, relatoriosList }],
         refetchOnMount: true,
         staleTime: 0,
         queryFn: async () => {
-            const result = await api.get('/financeiro/controle-de-caixa/importacoes/', { params: { pagination, filters: { relatorios } } })
+            const result = await api.get('/financeiro/controle-de-caixa/importacoes/', { params: { pagination, filters: { relatorios: relatoriosList } } })
             return result.data;
         }
     });
@@ -63,19 +65,20 @@ const ModalLogImportacaoRelatorios = ({
                 <DialogHeader>
                     <DialogTitle>Histórico de importação</DialogTitle>
 
-                    <div>
+                    <div className="flex gap-3">
                         <MultiSelect
                             options={relatorios.map(relatorio=> ({
                                 value: relatorio,
                                 label: relatorio,
                             }))}
                             onValueChange={setRelatoriosList}
-                            defaultValue={relatoriosList || []}
+                            defaultValue={relatorios || []}
                             placeholder="Relatórios"
                             variant="inverted"
                             animation={4}
                             maxCount={3}
                         />
+                        <Button onClick={()=>refetch()}>{isLoading ? <span className="flex gap-2"><Spinner/>Atualizando...</span> : <span>Atualizar</span>}</Button>
                     </div>
                 </DialogHeader>
                 <ModalComponent

@@ -17,10 +17,12 @@ import { useState } from "react";
 
 const RELATORIOS = [
     'CIELO-VENDAS',
-    'PITZI-VENDAS',
+    'PIX-ITAU',
+    'PIX-BRADESCO',
     'RECARGA-RVCELLCARD',
+    'PITZI-VENDAS',
     'RENOV-TRADEIN',
-
+    'CREDIARIO',
 ]
 
 const ImportacoesTab = () => {
