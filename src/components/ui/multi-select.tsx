@@ -42,14 +42,15 @@ const multiSelectVariants = cva(
   }
 );
 
+export type MultiSelectOptionProps = {
+  label: string;
+  value: string;
+  icon?: React.ComponentType<{ className?: string }>;
+}
 interface MultiSelectProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof multiSelectVariants> {
-  options: {
-    label: string;
-    value: string;
-    icon?: React.ComponentType<{ className?: string }>;
-  }[];
+  VariantProps<typeof multiSelectVariants> {
+  options: MultiSelectOptionProps[];
   onValueChange: (value: string[]) => void;
   defaultValue: string[];
   placeholder?: string;
@@ -240,10 +241,9 @@ export const MultiSelect = React.forwardRef<
                 <CommandItem
                   key="all"
                   onSelect={toggleAll}
-                  className={`${
-                    !disabled &&
+                  className={`${!disabled &&
                     "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
-                  }`}
+                    }`}
                 >
                   <div
                     className={cn(
@@ -264,10 +264,9 @@ export const MultiSelect = React.forwardRef<
                     <CommandItem
                       key={option.value}
                       onSelect={() => toggleOption(option.value)}
-                      className={`${
-                        !disabled &&
+                      className={`${!disabled &&
                         "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
-                      }`}
+                        }`}
                     >
                       <div
                         className={cn(
@@ -294,10 +293,9 @@ export const MultiSelect = React.forwardRef<
                     <>
                       <CommandItem
                         onSelect={handleClear}
-                        className={`${
-                          !disabled &&
+                        className={`${!disabled &&
                           "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
-                        } flex-1 justify-center cursor-pointer`}
+                          } flex-1 justify-center cursor-pointer`}
                       >
                         Limpar
                       </CommandItem>
@@ -310,10 +308,9 @@ export const MultiSelect = React.forwardRef<
                   <CommandSeparator />
                   <CommandItem
                     onSelect={() => setIsPopoverOpen(false)}
-                    className={`${
-                      !disabled &&
+                    className={`${!disabled &&
                       "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
-                    } flex-1 justify-center cursor-pointer`}
+                      } flex-1 justify-center cursor-pointer`}
                   >
                     Fechar
                   </CommandItem>
