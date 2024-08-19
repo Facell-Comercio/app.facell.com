@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
+import { useQueryClient } from "@tanstack/react-query";
 import { File, ImportIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -13,6 +14,8 @@ type ImportacaoItemProps = {
     icon?: React.ReactNode;
 }
 const ImportacaoItem = ({ icon = <File/>, label, uri, }: ImportacaoItemProps) => {
+    const queryClient = useQueryClient();
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement>(null)
     const handleChangeFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +28,7 @@ const ImportacaoItem = ({ icon = <File/>, label, uri, }: ImportacaoItemProps) =>
             const form = new FormData();
             form.append('file', files[0])
             await api.post('/financeiro/controle-de-caixa/importacoes/' + uri, form)
+            queryClient.invalidateQueries({queryKey: ['root', 'log_import_relatorio']})
             toast({
                 variant: 'success', title: 'Relatório importado com sucesso!',
             })
