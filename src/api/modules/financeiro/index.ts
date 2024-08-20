@@ -1,8 +1,4 @@
-import * as forma_pagamento from './modules/forma_pagamento'
-import * as contas_pagar from './modules/contas_pagar'
+import * as contas_pagar from "./modules/contas_pagar";
+import { forma_pagamento } from "./modules/forma_pagamento";
 
-
-export {
-    forma_pagamento,
-    contas_pagar,
-}
+export { contas_pagar, forma_pagamento };

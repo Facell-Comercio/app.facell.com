@@ -1,3 +1,3 @@
-import * as colaboradores from "./modules/colaboradores";
+import { colaboradores } from "./modules/colaboradores";
 
 export { colaboradores };

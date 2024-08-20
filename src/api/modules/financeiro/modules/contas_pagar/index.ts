@@ -1,8 +1,4 @@
-import * as cartoes from './modules/cartoes';
-import * as titulos from './modules/titulos';
+import { cartoes } from "./modules/cartoes";
+import { titulos } from "./modules/titulos";
 
-
-export {
-    cartoes,
-    titulos,
-}
+export { cartoes, titulos };

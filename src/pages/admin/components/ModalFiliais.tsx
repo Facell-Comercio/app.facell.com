@@ -26,6 +26,7 @@ interface IModalFiliais {
   id_grupo_economico?: string | null;
   closeOnSelection?: boolean;
   multiSelection?: boolean;
+  isLojaTim?: boolean;
 }
 
 type DataProps = {
@@ -47,6 +48,7 @@ const ModalFiliais = ({
   id_grupo_economico,
   closeOnSelection,
   multiSelection,
+  isLojaTim,
 }: IModalFiliais) => {
   const [ids, setIds] = useState<string[]>([]);
   const [filiais, setFiliais] = useState<Filial[]>([]);
@@ -67,6 +69,7 @@ const ModalFiliais = ({
             id_grupo_economico: id_grupo_economico
               ? id_grupo_economico
               : undefined,
+            isLojaTim: isLojaTim ? 1 : 0,
           },
           pagination,
         },

@@ -13,6 +13,7 @@ import HomePage from "./pages/Home.tsx";
 import LoginPage from "./pages/Login.tsx";
 import RecuperarSenha from "./pages/RecuperarSenha.tsx";
 import AdminPage from "./pages/admin/Page.tsx";
+import ComercialMetas from "./pages/comercial/metas/ComercialMetas.tsx";
 import Vales from "./pages/comercial/vales/Vales.tsx";
 import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
@@ -62,6 +63,7 @@ const AppRoutes = () => {
           {/* Comercial */}
           <Route path="/comercial/">
             <Route element={<Vales />} path="vales" />
+            <Route element={<ComercialMetas />} path="metas" />
           </Route>
 
           {/* Suprimentos */}
