@@ -7,11 +7,15 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { DateRange } from "react-day-picker";
 
 export type OcorrenciasProps = {
   id?: string;
-  data?: string;
-  resolvida?: boolean;
+  id_user_criador?: string;
+  id_user_resolvedor?: string;
+  data_caixa?: string | Date;
+  data_ocorrencia?: string | Date;
+  resolvida?: string | number | boolean;
   descricao?: string;
   user_criador?: string;
 };
@@ -79,9 +83,13 @@ export type ConferenciasCaixaSchema = {
   divergencia_tradein?: string;
 
   movimentos_caixa?: MovimentoCaixaProps[];
-  qtde_movimentos_caixa?: string;
   depositos_caixa?: DepositosCaixaProps[];
   qtde_depositos_caixa?: string;
+  historico?: {
+    id: string;
+    created_at: string;
+    descricao: string;
+  }[];
 };
 
 export const useConferenciasCaixa = () => {
@@ -99,7 +107,7 @@ export const useConferenciasCaixa = () => {
         ],
         queryFn: async () =>
           await api
-            .get(`/financeiro/controle-de-caixa/conferencia-de-caixa`, {
+            .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/filiais`, {
               params: params,
             })
             .then((response) => response.data),
@@ -119,7 +127,7 @@ export const useConferenciasCaixa = () => {
         ],
         queryFn: async () =>
           await api
-            .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/filiais`, {
+            .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/`, {
               params: params,
             })
             .then((response) => response.data),
@@ -129,7 +137,7 @@ export const useConferenciasCaixa = () => {
 
     getAllOcorrencias: (params?: GetAllParams) =>
       useQuery({
-        enabled: !!params?.filters.id_filial && !!params.filters.data_caixa,
+        enabled: !!params?.filters.id_filial,
         queryKey: [
           "financeiro",
           "conferencia-de-caixa",
@@ -242,6 +250,39 @@ export const useConferenciasCaixa = () => {
         },
       }),
 
+    insertOneOcorrencia: () =>
+      useMutation({
+        mutationFn: async (data: OcorrenciasProps) => {
+          return api
+            .post(
+              "/financeiro/controle-de-caixa/conferencia-de-caixa/ocorrencias",
+              data
+            )
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
     updateDeposito: () =>
       useMutation({
         mutationFn: async (data: DepositosCaixaProps) => {
@@ -275,12 +316,117 @@ export const useConferenciasCaixa = () => {
         },
       }),
 
+    updateOcorrencia: () =>
+      useMutation({
+        mutationFn: async (data: OcorrenciasProps) => {
+          return await api
+            .put(
+              "/financeiro/controle-de-caixa/conferencia-de-caixa/ocorrencias",
+              data
+            )
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    changeStatus: () =>
+      useMutation({
+        mutationFn: async (data: {
+          id?: string | null | undefined;
+          action: string;
+        }) => {
+          return await api
+            .put(
+              "/financeiro/controle-de-caixa/conferencia-de-caixa/change-status",
+              data
+            )
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
     deleteDeposito: () =>
       useMutation({
         mutationFn: async (id?: string | null | undefined) => {
           return api
             .delete(
               `/financeiro/controle-de-caixa/conferencia-de-caixa/depositos/${id}`
+            )
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    importDatasys: () =>
+      useMutation({
+        mutationFn: async (data: {
+          id_filial: string | number;
+          range_datas: DateRange;
+        }) => {
+          return await api
+            .put(
+              "/financeiro/controle-de-caixa/conferencia-de-caixa/import-caixas-datasys",
+              data
             )
             .then((response) => response.data);
         },

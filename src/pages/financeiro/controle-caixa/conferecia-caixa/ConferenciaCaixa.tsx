@@ -30,8 +30,6 @@ const ConferenciaCaixa = () => {
     filters,
   });
 
-  console.log(data);
-
   return location.pathname === uriCaixas ? (
     <Outlet />
   ) : (
@@ -88,15 +86,15 @@ const ConferenciaCaixa = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className="w-full flex justify-center"
-                      variant={"destructive"}
-                    >
+                    <Badge className="w-full flex justify-center">
                       {item.baixa_datasys_pendente || 0}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge className="w-full flex justify-center">
+                    <Badge
+                      className="w-full flex justify-center"
+                      variant={"destructive"}
+                    >
                       {item.ocorrencias || 0}
                     </Badge>
                   </TableCell>

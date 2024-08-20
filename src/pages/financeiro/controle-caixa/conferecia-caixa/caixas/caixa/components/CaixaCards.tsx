@@ -133,7 +133,7 @@ const CaixaCardComponent = ({
   return (
     <Card
       className={`bg-slate-200 dark:bg-blue-950 ${
-        hasDivergence && "dark:bg-red-500/80 border-red-500"
+        hasDivergence && "dark:bg-red-800/80"
       }`}
     >
       <CardHeader className="flex items-center justify-center p-3">

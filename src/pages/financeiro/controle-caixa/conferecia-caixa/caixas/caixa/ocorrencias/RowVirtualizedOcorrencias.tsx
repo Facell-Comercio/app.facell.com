@@ -16,7 +16,7 @@ const RowVirtualizedFixedOcorrencias: React.FC<
   const openModalOcorrencia = useStoreCaixa().openModalOcorrencia;
   const parentElement = React.useRef(null);
 
-  const count = data.length;
+  const count = data?.length;
 
   const virtualizer = useVirtualizer({
     count,
@@ -25,8 +25,6 @@ const RowVirtualizedFixedOcorrencias: React.FC<
     overscan: 10,
   });
 
-  // const gridClass =
-  //   "grid-cols-[minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)_minmax(20ch,_1fr)]";
   return (
     <div
       ref={parentElement}
@@ -41,7 +39,8 @@ const RowVirtualizedFixedOcorrencias: React.FC<
         className={`flex gap-1 font-medium text-sm w-full sticky top-0 z-10 bg-secondary px-1 py-2  uppercase`}
       >
         <span className="px-1 w-8">ID</span>
-        <span className="px-1 w-20">Data</span>
+        <span className="px-1 w-24">Data Caixa</span>
+        <span className="px-1 w-36">Data Ocorrência</span>
         <span className="px-1 w-24">Resolvida</span>
         <span className="px-1 flex-1">Descrição</span>
         <span className="px-1 flex-1 min-w-[20ch]">Usuário</span>
@@ -80,8 +79,12 @@ const RowVirtualizedFixedOcorrencias: React.FC<
                   onClick={() => openModalOcorrencia(data[index].id || "")}
                 />
               </span>
-              <span className="px-1 w-20">
-                {normalizeDate(data[index].data || "")}
+              <span className="px-1 w-24">
+                {normalizeDate(data[index].data_caixa || "")}
+              </span>
+
+              <span className="px-1 w-36">
+                {normalizeDate(data[index].data_ocorrencia || "")}
               </span>
               <span
                 className={`px-1 w-24 ${
@@ -90,7 +93,7 @@ const RowVirtualizedFixedOcorrencias: React.FC<
               >
                 {data[index].resolvida ? "SIM" : "NÃO"}
               </span>
-              <span className="px-1 flex-1 uppercase">
+              <span className="px-1 flex-1 uppercase truncate">
                 {data[index].descricao}
               </span>
               <span className="px-1 flex-1 min-w-[20ch] uppercase">

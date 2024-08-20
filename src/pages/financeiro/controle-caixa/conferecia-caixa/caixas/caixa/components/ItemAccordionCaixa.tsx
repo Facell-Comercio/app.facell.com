@@ -41,7 +41,7 @@ export const ItemAccordionCaixa = ({
             <h3 className="mr-2 text-sm sm:text-base text-left">
               {title} ({qtde})
             </h3>
-            {valorTotal && (
+            {valorTotal !== undefined && (
               <Badge variant={"info"} className="text-xs">
                 Valor Total: {normalizeCurrency(valorTotal)}
               </Badge>

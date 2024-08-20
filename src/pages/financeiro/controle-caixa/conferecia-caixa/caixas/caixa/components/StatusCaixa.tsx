@@ -5,8 +5,9 @@ import { badgeVariantCaixa } from "../../table/columns";
 import { useStoreCaixa } from "../store";
 
 const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
-  const [openModalOcorrencias] = useStoreCaixa((state) => [
+  const [openModalOcorrencias, isPending] = useStoreCaixa((state) => [
     state.openModalOcorrencias,
+    state.isPending,
   ]);
   const isDivergent = parseInt(data.divergente || "0");
   const ocorrencias = parseInt(data.ocorrencias || "0");
@@ -36,6 +37,7 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
           variant={!ocorrencias || todasResolvidas ? "success" : "destructive"}
           className="flex gap-1.5 w-full"
           onClick={() => openModalOcorrencias()}
+          disabled={isPending}
           title={
             ocorrenciasParaResolver > 0
               ? `Há ${ocorrenciasParaResolver} ${

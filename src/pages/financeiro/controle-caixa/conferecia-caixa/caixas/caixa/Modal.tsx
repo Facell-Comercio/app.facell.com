@@ -14,7 +14,8 @@ import {
   ConferenciasCaixaSchema,
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
-import { useRef } from "react";
+import { startOfDay } from "date-fns";
+import { useEffect, useRef } from "react";
 import FormCaixa from "./Form";
 import { useStoreCaixa } from "./store";
 
@@ -46,19 +47,34 @@ const initialPropsCaixa: ConferenciasCaixaSchema = {
 };
 
 const ModalCaixa = () => {
-  const [modalOpen, closeModal, id, id_filial, data_caixa] = useStoreCaixa(
-    (state) => [
-      state.modalOpen,
-      state.closeModal,
-      state.id,
-      state.id_filial,
-      state.data_caixa,
-    ]
-  );
+  const [
+    modalOpen,
+    closeModal,
+    id,
+    disabled,
+    setDisabled,
+    isPending,
+    setIsPending,
+  ] = useStoreCaixa((state) => [
+    state.modalOpen,
+    state.closeModal,
+    state.id,
+    state.disabled,
+    state.setDisabled,
+    state.isPending,
+    state.setIsPending,
+  ]);
 
   const formRef = useRef(null);
 
-  const { data, isLoading } = useConferenciasCaixa().getOne(id);
+  const { data, isLoading, isSuccess } = useConferenciasCaixa().getOne(id);
+  const { mutate: changeStatus, isSuccess: isSuccessChangeStatus } =
+    useConferenciasCaixa().changeStatus();
+  const {
+    mutate: importDatasys,
+    isSuccess: importDatasysIsSuccess,
+    isPending: importDatasysIsPending,
+  } = useConferenciasCaixa().importDatasys();
 
   const newDataCaixa: ConferenciasCaixaSchema & Record<string, any> =
     {} as ConferenciasCaixaSchema & Record<string, any>;
@@ -73,15 +89,37 @@ const ModalCaixa = () => {
     }
   }
 
+  const conferir = newDataCaixa.status === "A CONFERIR";
+  const conferido = newDataCaixa.status === "CONFERIDO / BAIXA PENDENTE";
+  const baixadoPendente = newDataCaixa.status === "BAIXADO / PENDENTE DATASYS";
+  const baixadoNoDatasys = newDataCaixa.status === "BAIXADO NO DATASYS";
+
   function handleClickCancel() {
     closeModal();
   }
+
+  useEffect(() => {
+    if (baixadoPendente || baixadoNoDatasys) {
+      setDisabled(true);
+    }
+    if (conferir || conferido) {
+      setDisabled(false);
+    }
+  }, [isSuccess, isSuccessChangeStatus, newDataCaixa.status]);
+
+  useEffect(() => {
+    if (importDatasysIsSuccess) {
+      setIsPending(false);
+    } else {
+      setIsPending(true);
+    }
+  }, [importDatasysIsPending]);
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex gap-4">
+          <DialogTitle className="flex gap-4 text-xs sm:text-base">
             {id ? (
               <>
                 <span>{`Caixa: ${id}`}</span>
@@ -102,7 +140,6 @@ const ModalCaixa = () => {
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
             <FormCaixa
-              id={id}
               data={newDataCaixa.id ? newDataCaixa : initialPropsCaixa}
               formRef={formRef}
             />
@@ -114,16 +151,64 @@ const ModalCaixa = () => {
           )}
           <ScrollBar />
         </ScrollArea>
-        <DialogFooter className="sm:justify-between">
-          <span className="flex gap-3 ">
-            <Button variant={"secondary"} size={"lg"}>
-              Reimportar Datasys
+        <DialogFooter
+          className={`${
+            newDataCaixa.status !== "BAIXADO / PENDENTE DATASYS" &&
+            "sm:justify-between"
+          }`}
+        >
+          {!disabled && (
+            <span className="flex gap-3 ">
+              <Button
+                variant={"secondary"}
+                size={"lg"}
+                onClick={() =>
+                  importDatasys({
+                    id_filial: newDataCaixa.id_filial || "",
+                    range_datas: {
+                      from: startOfDay(newDataCaixa.data || ""),
+                      to: startOfDay(newDataCaixa.data || ""),
+                    },
+                  })
+                }
+                disabled={isPending}
+              >
+                {isPending ? "Reimportando..." : "Reimportar Datasys"}
+              </Button>
+              <Button variant={"secondary"} size={"lg"} disabled={isPending}>
+                Conciliar C/ Bases
+              </Button>
+            </span>
+          )}
+          {conferir && (
+            <Button
+              size={"lg"}
+              onClick={() => changeStatus({ id, action: "conferir" })}
+              disabled={isPending}
+            >
+              Informar Conferência
             </Button>
-            <Button variant={"secondary"} size={"lg"}>
-              Conciliar C/ Bases
+          )}
+          {conferido && (
+            <Button
+              size={"lg"}
+              variant={"success"}
+              onClick={() => changeStatus({ id, action: "confirmar" })}
+              disabled={isPending}
+            >
+              Confirmar Caixa
             </Button>
-          </span>
-          <Button size={"lg"}>Baixar Caixa</Button>
+          )}
+          {baixadoPendente && (
+            <Button
+              size={"lg"}
+              variant={"warning"}
+              className="justify-self-end"
+              onClick={() => changeStatus({ id, action: "desconfirmar" })}
+            >
+              Desconfirmar Caixa
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

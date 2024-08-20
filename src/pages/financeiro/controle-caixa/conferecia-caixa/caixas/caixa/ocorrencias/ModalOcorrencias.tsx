@@ -13,28 +13,33 @@ import {
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
 import { Plus } from "lucide-react";
-import { useRef } from "react";
 import { TbAlertTriangle } from "react-icons/tb";
 import { useStoreCaixa } from "../store";
 import ModalOcorrencia from "./ModalOcorrencia";
 import RowVirtualizedFixedOcorrencias from "./RowVirtualizedOcorrencias";
 
-const ModalOcorrencias = () => {
-  const [modalOpen, closeModal, id_filial, data_caixa, openModalOcorrencia] =
-    useStoreCaixa((state) => [
-      state.modalOcorrenciasOpen,
-      state.closeModalOcorrencias,
-      state.id_filial,
-      state.data_caixa,
-      state.openModalOcorrencia,
-    ]);
-
-  const formRef = useRef(null);
+const ModalOcorrencias = ({ id_filial }: { id_filial?: string }) => {
+  const [
+    modalOpen,
+    closeModal,
+    data_caixa,
+    openModalOcorrencia,
+    ocorrencias_nao_resolvidas,
+    disabled,
+  ] = useStoreCaixa((state) => [
+    state.modalOcorrenciasOpen,
+    state.closeModalOcorrencias,
+    state.data_caixa,
+    state.openModalOcorrencia,
+    state.ocorrencias_nao_resolvidas,
+    state.disabled,
+  ]);
 
   const { data, isLoading } = useConferenciasCaixa().getAllOcorrencias({
     filters: {
       id_filial,
       data_caixa,
+      nao_resolvidas: Number(ocorrencias_nao_resolvidas),
     },
   });
 
@@ -64,20 +69,22 @@ const ModalOcorrencias = () => {
               <TbAlertTriangle size={22} className="text-red-500" />
               Ocorrências: ({data?.qtde_ocorrencias || 0})
             </span>
-            <Button
-              className="flex gap-2 me-4"
-              size={"sm"}
-              onClick={() => openModalOcorrencia("")}
-              variant={"destructive"}
-            >
-              <Plus />
-              Nova Ocorrência
-            </Button>
+            {!disabled && (
+              <Button
+                className="flex gap-2 me-4"
+                size={"sm"}
+                onClick={() => openModalOcorrencia("")}
+                variant={"destructive"}
+              >
+                <Plus />
+                Nova Ocorrência
+              </Button>
+            )}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <RowVirtualizedFixedOcorrencias data={data.ocorrencias} />
+            <RowVirtualizedFixedOcorrencias data={data?.ocorrencias} />
           ) : (
             <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
               <Skeleton className="w-full row-span-1" />

@@ -117,7 +117,7 @@ const ModalDeposito = ({ id_matriz }: { id_matriz?: string }) => {
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
-      <DialogContent>
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle className="flex gap-4">
             {id ? `Depósito: ${id}` : "Novo Depósito"}

@@ -58,10 +58,14 @@ export const useFormDepositoData = (data: DepositosCaixaProps) => {
 const schemaOcorrencia = z.object({
   // Dados Ocorrencia
   id: z.string().optional(),
-  data: z.coerce.string().trim().min(1, "Campo obrigatório"),
+  id_user_criador: z.coerce.string().optional(),
+  id_user_resolvedor: z.coerce.string().optional(),
+  id_filial: z.coerce.string().optional(),
+  data_ocorrencia: z.coerce.string().trim().min(1, "Campo obrigatório"),
+  data_caixa: z.coerce.string().trim().min(1, "Campo obrigatório"),
   descricao: z.string().trim().min(5, "Campo obrigatório"),
   user_criador: z.string().trim().min(1, "Campo obrigatório"),
-  resolvida: z.coerce.number().optional(),
+  resolvida: z.coerce.string().optional(),
 });
 
 export const useFormOcorrenciaData = (data: OcorrenciasProps) => {

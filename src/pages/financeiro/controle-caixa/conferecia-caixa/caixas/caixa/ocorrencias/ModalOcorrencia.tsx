@@ -6,8 +6,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
+import FormTextarea from "@/components/custom/FormTextarea";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -17,31 +19,53 @@ import {
   OcorrenciasProps,
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
-import { useRef } from "react";
+import { startOfDay } from "date-fns";
+import { useEffect, useRef, useState } from "react";
 import { TbAlertTriangle } from "react-icons/tb";
 import { useFormOcorrenciaData } from "../form-data";
 import { useStoreCaixa } from "../store";
+import ModalActionOcorrencia from "./ModalActionOcorrencia";
 
 const initialPropsOcorrencias: OcorrenciasProps = {
   id: "",
-  data: "",
+  data_caixa: "",
+  data_ocorrencia: "",
   user_criador: "",
   descricao: "",
+  resolvida: "0",
+  id_user_resolvedor: "",
 };
 
 const ModalOcorrencia = () => {
   const user = useAuthStore((state) => state.user);
-  const [modalOpen, closeModal, id] = useStoreCaixa((state) => [
-    state.modalOcorrenciaOpen,
-    state.closeModalOcorrencia,
-    state.id_ocorrencia,
-    state.openModalOcorrencia,
-    state.closeModalOcorrencia,
-    state.editModalOcorrencia,
-  ]);
-  const formRef = useRef(null);
+  const [modalActionOcorrenciaOpen, setModalActionOcorrenciaOpen] =
+    useState(false);
+  const [action, setAction] = useState<
+    "Transferência" | "Duplicação" | undefined
+  >();
+  const [modalOpen, closeModal, id, data_caixa, id_caixa, id_filial, disabled] =
+    useStoreCaixa((state) => [
+      state.modalOcorrenciaOpen,
+      state.closeModalOcorrencia,
+      state.id_ocorrencia,
+      state.data_caixa,
+      state.id,
+      state.id_filial,
+      state.disabled,
+    ]);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const { data, isLoading } = useConferenciasCaixa().getOneOcorrencia(id);
+  const {
+    mutate: update,
+    isSuccess: updateIsSuccess,
+    isPending: updateIsPending,
+  } = useConferenciasCaixa().updateOcorrencia();
+  const {
+    mutate: insertOne,
+    isSuccess: insertOneIsSuccess,
+    isPending: insertOneIsPending,
+  } = useConferenciasCaixa().insertOneOcorrencia();
 
   const newDataCaixa: OcorrenciasProps & Record<string, any> =
     {} as OcorrenciasProps & Record<string, any>;
@@ -56,22 +80,58 @@ const ModalOcorrencia = () => {
     }
   }
 
+  const resolvida = parseInt(String(newDataCaixa?.resolvida) || "0");
+
   const { form } = useFormOcorrenciaData(
-    id ? newDataCaixa : { ...initialPropsOcorrencias, user_criador: user?.nome }
+    id
+      ? newDataCaixa
+      : {
+          ...initialPropsOcorrencias,
+          id_filial,
+          id_user_criador: user?.id,
+          user_criador: user?.nome,
+          data_caixa: data_caixa || "",
+          data_ocorrencia: data_caixa || "",
+        }
   );
 
   function onSubmitData(data: OcorrenciasProps) {
-    // if (id) update(data);
-    // if (!id) insertOne(data);
+    if (id) update(data);
+    if (!id) insertOne(data);
+    console.log(data);
   }
+
+  useEffect(() => {
+    updateIsSuccess && closeModal();
+  }, [updateIsPending]);
+  useEffect(() => {
+    insertOneIsSuccess && closeModal();
+  }, [insertOneIsPending]);
 
   function handleClickCancel() {
     closeModal();
   }
 
+  function actionOcorrencia(date: Date) {
+    if (action === "Transferência") {
+      update({
+        ...newDataCaixa,
+        data_caixa: date,
+      });
+    }
+    if (action === "Duplicação") {
+      insertOne({
+        ...newDataCaixa,
+        data_caixa: date,
+        id: "",
+      });
+    }
+    setModalActionOcorrenciaOpen(false);
+  }
+
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
-      <DialogContent>
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle className="flex gap-4">
             <TbAlertTriangle size={22} className="text-red-500" />
@@ -91,20 +151,27 @@ const ModalOcorrencia = () => {
                 }}
               >
                 <FormDateInput
-                  readOnly={!!id}
-                  name="data"
-                  label="Data"
+                  readOnly={!!id || !!id_caixa}
+                  name="data_caixa"
+                  label="Data Caixa"
+                  control={form.control}
+                  className="flex-1 min-w-[30ch]"
+                />
+                <FormDateInput
+                  readOnly={!!id || !!id_caixa}
+                  name="data_ocorrencia"
+                  label="Data Ocorrência"
                   control={form.control}
                   className="flex-1 min-w-[30ch]"
                 />
                 <FormInput
-                  readOnly={!!id}
+                  readOnly
                   name="user_criador"
                   label="Usuário"
                   control={form.control}
                   className="flex-1 min-w-[30ch]"
                 />
-                <FormInput
+                <FormTextarea
                   className="flex-1 min-w-full shrink-0"
                   name="descricao"
                   readOnly={!!id}
@@ -121,19 +188,66 @@ const ModalOcorrencia = () => {
           )}
           <ScrollBar />
         </ScrollArea>
-        <DialogFooter>
-          {id ? (
-            <div></div>
-          ) : (
-            <div className="flex gap-2 justify-between">
-              <Button variant={"secondary"} onClick={handleClickCancel}>
-                Cancelar
-              </Button>
-              <Button>Salvar</Button>
-            </div>
-          )}
-        </DialogFooter>
+        {!disabled && (
+          <DialogFooter>
+            {!id && !resolvida && (
+              <div className="flex gap-2 justify-between">
+                <Button variant={"secondary"} onClick={handleClickCancel}>
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={() =>
+                    formRef.current && formRef.current.requestSubmit()
+                  }
+                >
+                  Salvar
+                </Button>
+              </div>
+            )}
+            {!!id && !resolvida && (
+              <div className="flex gap-2 justify-between w-full">
+                <span className="flex gap-2">
+                  <Button
+                    variant={"tertiary"}
+                    onClick={() => {
+                      setModalActionOcorrenciaOpen(true);
+                      setAction("Transferência");
+                    }}
+                  >
+                    Transferir
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setModalActionOcorrenciaOpen(true);
+                      setAction("Duplicação");
+                    }}
+                  >
+                    Duplicar
+                  </Button>
+                </span>
+                <AlertPopUp
+                  title={"Deseja realmente resolver essa ocorrência?"}
+                  description="Essa ação não pode ser desfeita. A ocorrência será definitivamente resolvida, não podendo voltar ao status anterior."
+                  action={() => {
+                    form.setValue("resolvida", 1);
+                    form.setValue("id_user_resolvedor", user?.id);
+                    formRef.current && formRef.current.requestSubmit();
+                  }}
+                >
+                  <Button variant={"success"}>Resolver</Button>
+                </AlertPopUp>
+              </div>
+            )}
+          </DialogFooter>
+        )}
       </DialogContent>
+      <ModalActionOcorrencia
+        modalOpen={modalActionOcorrenciaOpen}
+        handleClickCancel={() => setModalActionOcorrenciaOpen(false)}
+        actionOcorrencia={actionOcorrencia}
+        dataOcorrencia={startOfDay(form.watch("data_caixa") || "")}
+        action={action}
+      />
     </Dialog>
   );
 };

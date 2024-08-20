@@ -44,8 +44,6 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
         <div
           className="font-semibold cursor-pointer text-blue-500 rounded-lg"
           onClick={() => {
-            console.log({ id, data_caixa, id_filial });
-
             openModal({ id, data_caixa, id_filial });
           }}
         >
@@ -74,7 +72,11 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
     accessorKey: "status",
     cell: (info) => {
       const label = info.getValue<string>();
-      return <Badge variant={badgeVariantCaixa(label)}>{label}</Badge>;
+      return (
+        <Badge variant={badgeVariantCaixa(label)} className="text-nowrap">
+          {label}
+        </Badge>
+      );
     },
   },
   {
