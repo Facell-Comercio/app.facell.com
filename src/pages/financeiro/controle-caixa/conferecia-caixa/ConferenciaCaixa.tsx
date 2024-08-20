@@ -50,11 +50,30 @@ const ConferenciaCaixa = () => {
               <TableRow className="uppercase text-nowrap">
                 <TableHead>ID</TableHead>
                 <TableHead>Filial</TableHead>
-                <TableHead>A Conferir</TableHead>
-                <TableHead>Baixa Pendente</TableHead>
-                <TableHead>B. Datasys Pendente</TableHead>
-                <TableHead>Ocorrências</TableHead>
-                <TableHead>Caixas Divergentes</TableHead>
+                <TableHead><Badge
+                  className="w-full flex justify-center"
+                  variant={"secondary"}
+                >A Conferir</Badge></TableHead>
+                <TableHead><Badge
+                  className="w-full flex justify-center"
+                  variant={"success"}
+                >Baixa Pendente</Badge></TableHead>
+                <TableHead>
+                  <Badge className="w-full flex justify-center">
+                    B. Datasys Pendente</Badge>
+                </TableHead>
+                <TableHead><Badge
+                  className="w-full flex justify-center"
+                  variant={"destructive"}
+                >Ocorrências
+                </Badge>
+                </TableHead>
+                <TableHead>
+                  <Badge
+                    className="w-full flex justify-center"
+                    variant={"warning"}
+                  >Caixas Divergentes</Badge>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -70,41 +89,29 @@ const ConferenciaCaixa = () => {
                   </TableCell>
                   <TableCell>{item.filial}</TableCell>
                   <TableCell>
-                    <Badge
-                      className="w-full flex justify-center"
-                      variant={"secondary"}
-                    >
+                    <span className="flex text-center justify-center">
                       {item.a_conferir || 0}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className="w-full flex justify-center"
-                      variant={"success"}
-                    >
+                    <span className="flex text-center justify-center">
                       {item.baixa_pendente || 0}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <Badge className="w-full flex justify-center">
+                    <span className="flex text-center justify-center">
                       {item.baixa_datasys_pendente || 0}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className="w-full flex justify-center"
-                      variant={"destructive"}
-                    >
+                    <span className="flex text-center justify-center">
                       {item.ocorrencias || 0}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className="w-full flex justify-center"
-                      variant={"warning"}
-                    >
+                    <span className="flex text-center justify-center">
                       {item.divergentes || 0}
-                    </Badge>
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}
