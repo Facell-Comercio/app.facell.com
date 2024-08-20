@@ -85,7 +85,6 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
     set({
       modalOpen: false,
       id: null,
-      id_filial: null,
       data_caixa: null,
       disabled: false,
       isPending: false,
