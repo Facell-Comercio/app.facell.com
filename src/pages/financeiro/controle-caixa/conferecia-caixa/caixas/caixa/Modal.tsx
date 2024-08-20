@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,6 +17,7 @@ import {
 } from "@/hooks/financeiro/useConferenciasCaixa";
 import { startOfDay } from "date-fns";
 import { useEffect, useRef } from "react";
+import { FaSpinner } from "react-icons/fa6";
 import FormCaixa from "./Form";
 import { useStoreCaixa } from "./store";
 
@@ -74,7 +76,14 @@ const ModalCaixa = () => {
     mutate: importDatasys,
     isSuccess: importDatasysIsSuccess,
     isPending: importDatasysIsPending,
+    isError: importDatasysIsError,
   } = useConferenciasCaixa().importDatasys();
+  const {
+    mutate: cruzarRelatorios,
+    isSuccess: cruzarRelatoriosIsSuccess,
+    isPending: cruzarRelatoriosIsPending,
+    isError: cruzarRelatoriosIsError,
+  } = useConferenciasCaixa().cruzarRelatorios();
 
   const newDataCaixa: ConferenciasCaixaSchema & Record<string, any> =
     {} as ConferenciasCaixaSchema & Record<string, any>;
@@ -108,12 +117,16 @@ const ModalCaixa = () => {
   }, [isSuccess, isSuccessChangeStatus, newDataCaixa.status]);
 
   useEffect(() => {
-    if (importDatasysIsSuccess) {
+    if (importDatasysIsSuccess || cruzarRelatoriosIsSuccess) {
       setIsPending(false);
-    } else {
+    }
+    if (importDatasysIsError || cruzarRelatoriosIsError) {
+      setIsPending(false);
+    }
+    if (importDatasysIsPending || cruzarRelatoriosIsPending) {
       setIsPending(true);
     }
-  }, [importDatasysIsPending]);
+  }, [importDatasysIsPending, cruzarRelatoriosIsPending]);
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
@@ -155,59 +168,101 @@ const ModalCaixa = () => {
           className={`${
             newDataCaixa.status !== "BAIXADO / PENDENTE DATASYS" &&
             "sm:justify-between"
-          }`}
+          } flex-wrap gap-2`}
         >
           {!disabled && (
             <span className="flex gap-3 ">
-              <Button
-                variant={"secondary"}
-                size={"lg"}
-                onClick={() =>
+              <AlertPopUp
+                title={"Deseja realmente reimportar?"}
+                description="Essa ação não pode ser desfeita."
+                action={() => {
                   importDatasys({
                     id_filial: newDataCaixa.id_filial || "",
                     range_datas: {
                       from: startOfDay(newDataCaixa.data || ""),
                       to: startOfDay(newDataCaixa.data || ""),
                     },
-                  })
-                }
-                disabled={isPending}
+                  });
+                }}
               >
-                {isPending ? "Reimportando..." : "Reimportar Datasys"}
-              </Button>
-              <Button variant={"secondary"} size={"lg"} disabled={isPending}>
-                Conciliar C/ Bases
-              </Button>
+                <Button variant={"secondary"} size={"lg"} disabled={isPending}>
+                  {importDatasysIsPending ? (
+                    <span className="flex gap-2 w-full items-center justify-center">
+                      <FaSpinner size={18} className="me-2 animate-spin" />{" "}
+                      Reimportando...
+                    </span>
+                  ) : (
+                    "Reimportar Datasys"
+                  )}
+                </Button>
+              </AlertPopUp>
+              <AlertPopUp
+                title={
+                  "Deseja realmente realizar o cruzamento com os relatórios?"
+                }
+                description="Essa ação não pode ser desfeita."
+                action={() => {
+                  cruzarRelatorios({
+                    id_filial: Number(newDataCaixa.id_filial),
+                    data_caixa: newDataCaixa.data,
+                  });
+                }}
+              >
+                <Button variant={"secondary"} size={"lg"} disabled={isPending}>
+                  {cruzarRelatoriosIsPending ? (
+                    <span className="flex gap-2 w-full items-center justify-center">
+                      <FaSpinner size={18} className="me-2 animate-spin" />{" "}
+                      Cruzando C/ Relatórios...
+                    </span>
+                  ) : (
+                    "Cruzar C/ Relatórios"
+                  )}
+                </Button>
+              </AlertPopUp>
             </span>
           )}
           {conferir && (
-            <Button
-              size={"lg"}
-              onClick={() => changeStatus({ id, action: "conferir" })}
-              disabled={isPending}
+            <AlertPopUp
+              title={"Deseja realmente informar a conferência?"}
+              description="Essa ação poderá ser desfeita ao realizar a desconfirmação de caixa."
+              action={() => {
+                changeStatus({ id, action: "conferir" });
+              }}
             >
-              Informar Conferência
-            </Button>
+              <Button size={"lg"} variant={"success"} disabled={isPending}>
+                Informar Conferência
+              </Button>
+            </AlertPopUp>
           )}
           {conferido && (
-            <Button
-              size={"lg"}
-              variant={"success"}
-              onClick={() => changeStatus({ id, action: "confirmar" })}
-              disabled={isPending}
+            <AlertPopUp
+              title={"Deseja realmente confirmar o caixa?"}
+              description="Essa ação poderá ser desfeita ao realizar a desconfirmação de caixa."
+              action={() => {
+                changeStatus({ id, action: "confirmar" });
+              }}
             >
-              Confirmar Caixa
-            </Button>
+              <Button size={"lg"} disabled={isPending}>
+                Confirmar Caixa
+              </Button>
+            </AlertPopUp>
           )}
           {baixadoPendente && (
-            <Button
-              size={"lg"}
-              variant={"warning"}
-              className="justify-self-end"
-              onClick={() => changeStatus({ id, action: "desconfirmar" })}
+            <AlertPopUp
+              title={"Deseja realmente desconfirmar o caixa?"}
+              description='Essa ação fará com que o caixa retorne para o status "A CONFERIR".'
+              action={() => {
+                changeStatus({ id, action: "desconfirmar" });
+              }}
             >
-              Desconfirmar Caixa
-            </Button>
+              <Button
+                size={"lg"}
+                variant={"warning"}
+                className="justify-self-end"
+              >
+                Desconfirmar Caixa
+              </Button>
+            </AlertPopUp>
           )}
         </DialogFooter>
       </DialogContent>
