@@ -11,7 +11,17 @@ type FiltersMovimentosProps = {
 const FiltersMovimentos = ({ filters, setFilters }: FiltersMovimentosProps) => {
   return (
     <ScrollArea className="w-fill whitespace-nowrap border-1 border-background rounded-md py-3">
-      <div className="flex w-full space-x-3">
+      <div className="flex w-full space-x-3 p-1">
+        <span className="flex flex-1 gap-2 flex-col">
+          <label className="text-sm font-medium">Documento</label>
+          <Input
+            value={filters.documento}
+            onChange={(e) =>
+              setFilters({ ...filters, documento: e.target.value })
+            }
+            placeholder="Digite o documento..."
+          />
+        </span>
         <span className="flex flex-1 gap-2 flex-col">
           <label className="text-sm font-medium">Tipo Operação</label>
           <Input
@@ -30,6 +40,16 @@ const FiltersMovimentos = ({ filters, setFilters }: FiltersMovimentosProps) => {
               setFilters({ ...filters, forma_pgto: e.target.value })
             }
             placeholder="Digite a forma de pagamento..."
+          />
+        </span>
+        <span className="flex flex-1 gap-2 flex-col">
+          <label className="text-sm font-medium">Histórico</label>
+          <Input
+            value={filters.historico}
+            onChange={(e) =>
+              setFilters({ ...filters, historico: e.target.value })
+            }
+            placeholder="Digite o histórico..."
           />
         </span>
       </div>

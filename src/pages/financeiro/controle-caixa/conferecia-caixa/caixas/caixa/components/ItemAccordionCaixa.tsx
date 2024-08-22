@@ -4,8 +4,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
-import { normalizeCurrency } from "@/helpers/mask";
 import { ReactNode } from "react";
 
 export const ItemAccordionCaixa = ({
@@ -16,6 +14,7 @@ export const ItemAccordionCaixa = ({
   qtde,
   valorTotal,
   icon: Icon,
+  info: Info,
 }: {
   value: string;
   title: string;
@@ -24,6 +23,7 @@ export const ItemAccordionCaixa = ({
   qtde: number;
   valorTotal?: number;
   icon: React.ElementType;
+  info?: React.ElementType;
 }) => {
   return (
     <Accordion
@@ -41,11 +41,7 @@ export const ItemAccordionCaixa = ({
             <h3 className="mr-2 text-sm sm:text-base text-left">
               {title} ({qtde})
             </h3>
-            {valorTotal !== undefined && (
-              <Badge variant={"info"} className="text-xs">
-                Valor Total: {normalizeCurrency(valorTotal)}
-              </Badge>
-            )}
+            {Info && <Info />}
           </span>
         </AccordionTrigger>
         <AccordionContent

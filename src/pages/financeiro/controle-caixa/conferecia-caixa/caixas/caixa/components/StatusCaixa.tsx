@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ConferenciasCaixaSchema } from "@/hooks/financeiro/useConferenciasCaixa";
 import { TbAlertTriangle } from "react-icons/tb";
-import { badgeVariantCaixa } from "../../table/columns";
+import { badgeVariantCaixaClass } from "../../table/columns";
 import { useStoreCaixa } from "../store";
 
 const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
@@ -27,7 +27,7 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
       </span>
       <span>
         <p className="text-sm font-medium p-2">Status</p>
-        <Button variant={badgeVariantCaixa(data.status)} className="w-full">
+        <Button className={`w-full ${badgeVariantCaixaClass(data.status)}`}>
           {data.status}
         </Button>
       </span>
