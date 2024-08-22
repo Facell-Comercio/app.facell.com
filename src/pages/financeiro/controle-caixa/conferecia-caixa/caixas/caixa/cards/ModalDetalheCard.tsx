@@ -5,6 +5,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { Badge } from "@/components/ui/badge";
+import { normalizeCurrency } from "@/helpers/mask";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import { useStoreCaixa } from "../store";
 import { CaixaCardDetalheProps } from "./CaixaCards";
@@ -41,6 +43,14 @@ const ModalDetalheCard = () => {
   }
 
   const { movimento_caixa, columns, dados_reais } = newData;
+  const totalMovimentoCaixa = movimento_caixa?.reduce(
+    (acc, item) => acc + parseFloat(item.valor || "0"),
+    0
+  );
+  const totalDadosReais = dados_reais?.reduce(
+    (acc: number, item: any) => acc + parseFloat(item?.valor || "0"),
+    0
+  );
 
   function handleClickCancel() {
     closeModal();
@@ -54,11 +64,22 @@ const ModalDetalheCard = () => {
         </DialogHeader>
         <section className="max-h-[70vh] grid sm:grid-cols-2 gap-3 overflow-auto scroll-thin">
           <div className="sm:col-span-1 px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg">
-            <h3 className="font-medium text-center mb-2">Dados Datasys</h3>
+            <span className="flex items-center justify-between mb-2 px-1">
+              <h3 className="font-medium text-center">Dados Datasys</h3>
+              <Badge variant={"info"} className="w-fit">
+                Total: {normalizeCurrency(totalMovimentoCaixa)}
+              </Badge>
+            </span>
+
             <RowVirtualizedDetalheCardDatasys data={movimento_caixa} />
           </div>
           <div className="sm:col-span-1 px-2 py-1 border bg-slate-200 dark:bg-blue-950 rounded-lg">
-            <h3 className="font-medium text-center mb-2">Dados Reais</h3>
+            <span className="flex items-center justify-between mb-2 px-1">
+              <h3 className="font-medium text-center">Dados Reais</h3>
+              <Badge variant={"info"} className="w-fit">
+                Total: {normalizeCurrency(totalDadosReais)}
+              </Badge>
+            </span>
             <RowVirtualizedDetalheCardReal
               data={dados_reais}
               columns={columns}

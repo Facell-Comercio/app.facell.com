@@ -15,7 +15,7 @@ import {
   ConferenciasCaixaSchema,
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
-import { startOfDay } from "date-fns";
+import { formatDate, startOfDay } from "date-fns";
 import { useEffect, useRef } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import FormCaixa from "./Form";
@@ -206,7 +206,10 @@ const ModalCaixa = () => {
                 action={() => {
                   cruzarRelatorios({
                     id_filial: Number(newDataCaixa.id_filial),
-                    data_caixa: newDataCaixa.data,
+                    data_caixa: formatDate(
+                      startOfDay(newDataCaixa.data || ""),
+                      "yyyy-MM-dd"
+                    ),
                   });
                 }}
               >

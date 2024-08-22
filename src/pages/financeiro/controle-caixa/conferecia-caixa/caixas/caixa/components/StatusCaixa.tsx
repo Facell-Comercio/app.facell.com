@@ -19,7 +19,7 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
       <span>
         <p className="text-sm font-medium p-2">Divergente</p>
         <Button
-          variant={isDivergent ? "destructive" : "outline"}
+          variant={isDivergent ? "destructive" : "success"}
           className="w-full"
         >
           {isDivergent ? "SIM" : "NÃO"}

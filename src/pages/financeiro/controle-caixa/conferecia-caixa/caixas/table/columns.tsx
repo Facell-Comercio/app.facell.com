@@ -92,7 +92,7 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
     cell: (info) => {
       const label = info.getValue<number>();
       return (
-        <span className={`${label && "text-red-500"}`}>
+        <span className={`${label ? "text-red-500" : "text-green-500"}`}>
           {label ? "SIM" : "NÃO"}
         </span>
       );

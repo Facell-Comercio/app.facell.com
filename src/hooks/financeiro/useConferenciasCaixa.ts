@@ -415,6 +415,38 @@ export const useConferenciasCaixa = () => {
         },
       }),
 
+    cruzarRelatoriosLote: () =>
+      useMutation({
+        mutationFn: async () => {
+          return await api
+            .put(
+              "/financeiro/controle-de-caixa/conferencia-de-caixa/cruzar-relatorios-lote"
+            )
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia-de-caixa"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
     changeStatus: () =>
       useMutation({
         mutationFn: async (data: {

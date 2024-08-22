@@ -8,6 +8,7 @@ import {
 } from "@/hooks/financeiro/useConferenciasCaixa";
 import {
   ArrowUpDown,
+  Banknote,
   CreditCard,
   HandCoins,
   Landmark,
@@ -55,6 +56,7 @@ const CaixaCards = ({ data }: { data: ConferenciasCaixaSchema }) => {
           label: "Devoluções",
         },
       ],
+      icon: Banknote,
     },
     {
       title: "Cartão",

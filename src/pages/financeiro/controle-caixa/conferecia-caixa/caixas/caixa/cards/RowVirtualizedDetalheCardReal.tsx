@@ -39,7 +39,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
               value = normalizeCurrency(parseFloat(value));
             }
             if (column.type === "boolean") {
-              value = value === "true" ? "Sim" : "Não";
+              value = value === "true" ? "SIM" : "NÃO";
             }
             return <div className="w-full text-center truncate">{value}</div>;
           },
@@ -82,7 +82,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
       <div className="overflow-hidden rounded-md">
         <div
           ref={parentRef}
-          className="h-[450px] overflow-auto scroll-thin relative bg-background"
+          className="h-[60vh] overflow-auto scroll-thin relative bg-background"
         >
           {data && data.length > 0 ? (
             <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
