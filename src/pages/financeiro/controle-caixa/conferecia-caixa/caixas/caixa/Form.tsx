@@ -91,14 +91,14 @@ const FormCaixa = ({
   }
 
   function historicoColor(descricao: string) {
+    if (descricao.includes("CONFERIDO")) {
+      return "text-green-500";
+    }
     if (descricao.includes("DESCONFIRMADO ")) {
       return "text-orange-500";
     }
-    if (descricao.includes("CONFERIDO")) {
-      return "text-blue-400";
-    }
     if (descricao.includes("CONFIRMADO")) {
-      return "text-green-500";
+      return "text-blue-400";
     }
   }
 
@@ -137,7 +137,7 @@ const FormCaixa = ({
         >
           <div className="overflow-auto scroll-thin z-[100] flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
             {/* Primeira coluna */}
-            <StatusCaixa data={data} />
+            <StatusCaixa data={data}/>
             <CaixaCards data={data} />
             <ItemAccordionCaixa
               icon={List}

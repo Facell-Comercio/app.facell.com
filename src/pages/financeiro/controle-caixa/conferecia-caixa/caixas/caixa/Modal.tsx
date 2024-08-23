@@ -33,6 +33,8 @@ const initialPropsCaixa: ConferenciasCaixaSchema = {
   saldo_anterior: "",
   saldo_atual: "",
   status: "",
+  manual: false,
+  caixa_confirmado: false,
   valor_cartao: "",
   valor_cartao_real: "",
   valor_dinheiro: "",
@@ -187,7 +189,12 @@ const ModalCaixa = () => {
                   });
                 }}
               >
-                <Button variant={"secondary"} size={"lg"} disabled={isPending}>
+                <Button 
+                  variant={"secondary"} 
+                  size={"lg"} 
+                  disabled={isPending}
+                  title="Busca novamente os dados do Datasys e faz a apuração de divergência."
+                  >
                   {importDatasysIsPending ? (
                     <span className="flex gap-2 w-full items-center justify-center">
                       <FaSpinner size={18} className="me-2 animate-spin" />{" "}
@@ -213,7 +220,12 @@ const ModalCaixa = () => {
                   });
                 }}
               >
-                <Button variant={"secondary"} size={"lg"} disabled={isPending}>
+                <Button 
+                variant={"secondary"} 
+                size={"lg"} 
+                disabled={isPending}
+                title="Realiza a apuração de divergência do caixa, cruzando os relatórios."
+                >
                   {cruzarRelatoriosIsPending ? (
                     <span className="flex gap-2 w-full items-center justify-center">
                       <FaSpinner size={18} className="me-2 animate-spin" />{" "}
@@ -234,7 +246,12 @@ const ModalCaixa = () => {
                 changeStatus({ id, action: "conferir" });
               }}
             >
-              <Button size={"lg"} variant={"success"} disabled={isPending}>
+              <Button 
+              size={"lg"} 
+              variant={"success"} 
+              disabled={isPending}
+              title='Registra que foi feita a conferência do caixa, em seguida você poderá registrar a confirmação do caixa'
+              >
                 Informar Conferência
               </Button>
             </AlertPopUp>
@@ -258,6 +275,7 @@ const ModalCaixa = () => {
                 <Button
                   size={"lg"}
                   disabled={isPending || !newDataCaixa.caixa_anterior_fechado}
+                  title="Ao confirmar, você impede alterações no caixa, a menos que desfaça a confirmação."
                 >
                   Confirmar Caixa
                 </Button>
@@ -275,6 +293,7 @@ const ModalCaixa = () => {
               <Button
                 size={"lg"}
                 variant={"warning"}
+                title="Essa ação fará com que o caixa retorne para o status 'A CONFERIR'."
                 className="justify-self-end"
               >
                 Desconfirmar Caixa

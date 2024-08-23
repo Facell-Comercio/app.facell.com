@@ -102,4 +102,12 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
     header: "Ocorrências",
     accessorKey: "ocorrencias",
   },
+  {
+    header: "BAIXAR MANUAL",
+    accessorKey: "manual",
+    cell: (info)=>{
+      const val = info.getValue();
+      return val ? <span className="text-red-500">SIM</span> : 'NÃO'
+    }
+  },
 ];

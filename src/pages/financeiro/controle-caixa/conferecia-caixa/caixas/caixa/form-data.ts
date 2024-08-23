@@ -10,6 +10,7 @@ import { z } from "zod";
 const schemaCaixa = z.object({
   // Dados Caixa
   id: z.string().optional(),
+  manual: z.boolean().default(false).optional(),
   id_matriz: z.coerce.string().trim().min(1, "Campo Obrigatório"),
   descricao: z.string().trim().min(1, "Campo Obrigatório"),
   nome_portador: z.string().trim().min(1, "Campo Obrigatório"),

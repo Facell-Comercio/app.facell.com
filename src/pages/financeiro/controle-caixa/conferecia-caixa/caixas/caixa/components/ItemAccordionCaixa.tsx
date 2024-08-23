@@ -12,7 +12,6 @@ export const ItemAccordionCaixa = ({
   children,
   className,
   qtde,
-  valorTotal,
   icon: Icon,
   info: Info,
 }: {

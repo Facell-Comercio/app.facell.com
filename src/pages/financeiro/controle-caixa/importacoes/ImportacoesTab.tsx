@@ -62,6 +62,7 @@ const ImportacoesTab = () => {
                 className="flex gap-2"
                 variant={"outline"}
                 disabled={isPending}
+                title="Passa por todos os caixas não baixados e realizando a apuração de divergência."
               >
                 <RefreshCcw className={`${isPending && "animate-spin"}`} />{" "}
                 {isPending ? "Reprocessando..." : "Reprocessar Caixas"}

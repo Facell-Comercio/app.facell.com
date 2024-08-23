@@ -43,6 +43,8 @@ export type DepositosCaixaProps = {
 export type ConferenciasCaixaSchema = {
   created_at?: string;
   data?: string;
+  manual: boolean;
+  caixa_confirmado: boolean;
   data_baixa_datasys?: string;
   data_conferencia?: string;
   divergente?: string;
@@ -107,7 +109,7 @@ export const useConferenciasCaixa = () => {
       useQuery({
         queryKey: [
           "financeiro",
-          "conferencia-de-caixa",
+          "conferencia_de_caixa",
           "filiais",
           "list",
           [params],
@@ -127,7 +129,7 @@ export const useConferenciasCaixa = () => {
         enabled: !!params?.filters.id_filial,
         queryKey: [
           "financeiro",
-          "conferencia-de-caixa",
+          "conferencia_de_caixa",
           "caixas",
           "list",
           [params],
@@ -147,7 +149,7 @@ export const useConferenciasCaixa = () => {
         enabled: !!params?.filters.id_filial,
         queryKey: [
           "financeiro",
-          "conferencia-de-caixa",
+          "conferencia_de_caixa",
           "caixas",
           "ocorrencias",
           "list",
@@ -171,10 +173,9 @@ export const useConferenciasCaixa = () => {
         enabled: !!id,
         queryKey: [
           "financeiro",
-          "conferencia-de-caixa",
+          "conferencia_de_caixa",
           "caixas",
           "detalhe",
-          ,
           id,
         ],
         queryFn: async () => {
@@ -189,7 +190,7 @@ export const useConferenciasCaixa = () => {
         enabled: !!id,
         queryKey: [
           "financeiro",
-          "conferencia-de-caixa",
+          "conferencia_de_caixa",
           "caixas",
           "depositos",
           "detalhe",
@@ -209,7 +210,7 @@ export const useConferenciasCaixa = () => {
         enabled: !!id,
         queryKey: [
           "financeiro",
-          "conferencia-de-caixa",
+          "conferencia_de_caixa",
           "caixas",
           "ocorrencias",
           "detalhe",
@@ -232,7 +233,7 @@ export const useConferenciasCaixa = () => {
         enabled: !!params.id_caixa && !!params.type,
         queryKey: [
           "financeiro",
-          "conferencia-de-caixa",
+          "conferencia_de_caixa",
           "caixas",
           "cards",
           "detalhe",
@@ -259,7 +260,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
           });
           toast({
             variant: "success",
@@ -292,7 +293,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
           });
           toast({
             variant: "success",
@@ -325,7 +326,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
           });
           toast({
             variant: "success",
@@ -358,7 +359,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
           });
           toast({
             variant: "success",
@@ -394,7 +395,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
           });
           toast({
             variant: "success",
@@ -426,7 +427,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia-de-caixa"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -462,7 +463,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
           });
           toast({
             variant: "success",
@@ -494,7 +495,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
           });
           toast({
             variant: "success",
@@ -530,7 +531,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
           });
           toast({
             variant: "success",
