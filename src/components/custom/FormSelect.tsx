@@ -28,6 +28,7 @@ interface IFormSelect {
   readOnly?: boolean;
   disabled?: boolean;
   className?: string;
+  selectClassName?: string;
   placeholder?: string;
   options: Toption[];
 
@@ -45,6 +46,7 @@ const FormSelect = ({
   label,
   description,
   className,
+  selectClassName,
   showAll,
   disabled,
   placeholder,
@@ -58,7 +60,11 @@ const FormSelect = ({
         control={control}
         name={name}
         render={({ field }) => (
-          <FormItem className={`flex-1 ${type === "hidden" && "hidden"} `}>
+          <FormItem
+            className={`flex-1 ${
+              type === "hidden" && "hidden"
+            } ${selectClassName}`}
+          >
             {label && <FormLabel>{label}</FormLabel>}
             <Select
               disabled={disabled}

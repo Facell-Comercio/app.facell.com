@@ -3,7 +3,7 @@ import {
   ModalComponent,
   ModalComponentRow,
 } from "@/components/custom/ModalComponent";
-import SelectFilial from "@/components/custom/SelectFilial";
+import { SelectFilial } from "@/components/custom/SelectFilial";
 import {
   AlertDialog,
   AlertDialogAction,

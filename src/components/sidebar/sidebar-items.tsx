@@ -68,7 +68,7 @@ export const sidebarItems: SidebarItem[] = [
       {
         name: "Vales",
         type: "link",
-        shortName: "M",
+        shortName: "V",
         uri: "comercial/vales",
         visible: checkUserPermission([
           "GERENCIAR_VALES",
@@ -223,18 +223,26 @@ export const sidebarItems: SidebarItem[] = [
     visible: true,
     children: [
       {
-        name: "Contas a pagar",
+        name: "Contas a Pagar",
         type: "link",
         shortName: "CP",
         uri: "/financeiro/contas-a-pagar",
         visible: true,
       },
       {
-        name: "Contas a receber",
+        name: "Contas a Receber",
         type: "link",
         shortName: "CR",
         uri: "/financeiro/contas-a-receber",
         visible: false,
+      },
+      {
+        name: "Controle de Caixa",
+        type: "link",
+        shortName: "CC",
+        uri: "/financeiro/controle-de-caixa",
+        visible:
+          checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
       },
       {
         name: "Orçamento",

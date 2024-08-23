@@ -36,9 +36,6 @@ const ModalButtons = ({
               size="lg"
               className="dark:text-white"
               disabled
-              onClick={() => {
-                formRef.current && formRef.current.requestSubmit();
-              }}
             >
               <FaSpinner size={18} className="me-2 animate-spin" />
               Salvando...

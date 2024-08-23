@@ -1,5 +1,7 @@
 import { useFilial } from "@/hooks/useFilial";
+import { Register } from "@tanstack/react-query";
 import { Control } from "react-hook-form";
+import { MultiSelect } from "../ui/multi-select";
 import FormSelect from "./FormSelect";
 
 type Filial = {
@@ -18,9 +20,10 @@ type TSelectFilial = {
   onChange?: (data: any) => any;
   id_grupo_economico?: string;
   id_matriz?: string;
+  isLojaTim?: boolean;
 };
 
-const SelectFilial = ({
+export const SelectFilial = ({
   name,
   label,
   control,
@@ -32,6 +35,7 @@ const SelectFilial = ({
   id_grupo_economico,
   id_matriz,
   showAll,
+  isLojaTim,
 }: TSelectFilial) => {
   // Use a single state variable for fetching and storing data
 
@@ -39,6 +43,7 @@ const SelectFilial = ({
     filters: {
       id_grupo_economico: id_grupo_economico,
       id_matriz: id_matriz,
+      isLojaTim: isLojaTim ? 1 : 0,
     },
   });
   const rows = data?.data?.rows || [];
@@ -71,4 +76,38 @@ const SelectFilial = ({
   );
 };
 
-export default SelectFilial;
+type TSelectMultiFilial = {
+  showAll?: boolean;
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  control?: Control<any>;
+  register?: Register;
+  disabled?: boolean;
+  className?: string;
+  maxCount?: number;
+  value: string[];
+  onChange: (value: string[]) => any;
+};
+
+export const SelectMultiFilial = (props: TSelectMultiFilial) => {
+  const { data } = useFilial().getAll();
+  const filial = data?.data?.rows || [];
+
+  return (
+    // @ts-ignore
+    <MultiSelect
+      {...props}
+      options={filial.map((grupo: Filial) => ({
+        value: grupo.id,
+        label: grupo.nome,
+      }))}
+      onValueChange={props.onChange}
+      defaultValue={props.value}
+      placeholder="Filial"
+      variant="inverted"
+      animation={4}
+      maxCount={props.maxCount || 1}
+    />
+  );
+};

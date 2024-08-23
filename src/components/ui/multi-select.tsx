@@ -42,14 +42,15 @@ const multiSelectVariants = cva(
   }
 );
 
+export type MultiSelectOptionProps = {
+  label: string;
+  value: string;
+  icon?: React.ComponentType<{ className?: string }>;
+}
 interface MultiSelectProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof multiSelectVariants> {
-  options: {
-    label: string;
-    value: string;
-    icon?: React.ComponentType<{ className?: string }>;
-  }[];
+  VariantProps<typeof multiSelectVariants> {
+  options: MultiSelectOptionProps[];
   onValueChange: (value: string[]) => void;
   defaultValue: string[];
   placeholder?: string;
@@ -141,7 +142,7 @@ export const MultiSelect = React.forwardRef<
         onOpenChange={setIsPopoverOpen}
         modal={modalPopover}
       >
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild disabled={disabled}>
           <Button
             ref={ref}
             {...props}
@@ -153,26 +154,30 @@ export const MultiSelect = React.forwardRef<
           >
             {selectedValues.length > 0 ? (
               <div className="flex justify-between items-center w-full">
-                <div className="flex flex-nowrap items-center">
+                <div className="flex flex-wrap items-center">
                   {selectedValues.slice(0, maxCount).map((value) => {
                     const option = options.find((o) => o.value === value);
                     return (
-                      <Badge
-                        variant={"secondary"}
-                        key={value}
-                        className={cn(multiSelectVariants({ variant }))}
-                      >
-                        <span className="text-white truncate">
-                          {option?.label}
-                        </span>
-                        <XCircle
-                          className="ml-2 h-4 w-4 cursor-pointer"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            toggleOption(value);
-                          }}
-                        />
-                      </Badge>
+                      value && (
+                        <Badge
+                          variant={"secondary"}
+                          key={value}
+                          className={cn(multiSelectVariants({ variant }))}
+                        >
+                          <span className="text-white truncate max-w-[10ch] sm:max-w-full">
+                            {option?.label}
+                          </span>
+                          <XCircle
+                            className="ml-2 h-4 w-4 cursor-pointer"
+                            onClick={(event) => {
+                              if (!disabled) {
+                                event.stopPropagation();
+                                toggleOption(value);
+                              }
+                            }}
+                          />
+                        </Badge>
+                      )
                     );
                   })}
                   {selectedValues.length > maxCount && (
@@ -221,7 +226,7 @@ export const MultiSelect = React.forwardRef<
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0"
+          className="w-auto p-0 z-[60]"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
@@ -236,10 +241,9 @@ export const MultiSelect = React.forwardRef<
                 <CommandItem
                   key="all"
                   onSelect={toggleAll}
-                  className={`${
-                    !disabled &&
+                  className={`${!disabled &&
                     "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
-                  }`}
+                    }`}
                 >
                   <div
                     className={cn(
@@ -255,14 +259,14 @@ export const MultiSelect = React.forwardRef<
                 </CommandItem>
                 {options.map((option) => {
                   const isSelected = selectedValues.includes(option.value);
+
                   return (
                     <CommandItem
                       key={option.value}
                       onSelect={() => toggleOption(option.value)}
-                      className={`${
-                        !disabled &&
+                      className={`${!disabled &&
                         "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
-                      }`}
+                        }`}
                     >
                       <div
                         className={cn(
@@ -289,10 +293,9 @@ export const MultiSelect = React.forwardRef<
                     <>
                       <CommandItem
                         onSelect={handleClear}
-                        className={`${
-                          !disabled &&
+                        className={`${!disabled &&
                           "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
-                        } flex-1 justify-center cursor-pointer`}
+                          } flex-1 justify-center cursor-pointer`}
                       >
                         Limpar
                       </CommandItem>
@@ -305,10 +308,9 @@ export const MultiSelect = React.forwardRef<
                   <CommandSeparator />
                   <CommandItem
                     onSelect={() => setIsPopoverOpen(false)}
-                    className={`${
-                      !disabled &&
+                    className={`${!disabled &&
                       "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
-                    } flex-1 justify-center cursor-pointer`}
+                      } flex-1 justify-center cursor-pointer`}
                   >
                     Fechar
                   </CommandItem>

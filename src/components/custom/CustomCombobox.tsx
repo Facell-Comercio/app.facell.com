@@ -87,7 +87,7 @@ export function CustomCombobox({
                 <CommandItem
                   key={framework.value}
                   value={framework.value}
-                  onSelect={() => !!readOnly && handleSelect(framework.value)}
+                  onSelect={() => !readOnly && handleSelect(framework.value)}
                   className={`${
                     !disabled &&
                     "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
