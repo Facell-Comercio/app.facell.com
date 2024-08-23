@@ -17,15 +17,15 @@ export type RowConferenciaCaixa = {
   id_filial: string;
 };
 
-export function badgeVariantCaixa(status?: string) {
+export function badgeVariantCaixaClass(status?: string) {
   if (status === "A CONFERIR") {
-    return "secondary";
+    return "bg-secondary hover:bg-secondary hover:opacity-90 text-foreground";
   } else if (status === "CONFERIDO / BAIXA PENDENTE") {
-    return "success";
+    return "bg-success hover:bg-success hover:opacity-90 text-white";
   } else if (status === "BAIXADO / PENDENTE DATASYS") {
-    return "default";
+    return "bg-primary hover:bg-primary hover:opacity-90 text-white";
   } else if (status === "BAIXADO NO DATASYS") {
-    return "violet";
+    return "bg-violet-500 hover:bg-violet-500 hover:opacity-90 text-white";
   } else {
     undefined;
   }
@@ -60,7 +60,10 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label} className="block truncate max-w-96 uppercase">
+        <div
+          title={normalizeDate(label)}
+          className="block truncate max-w-96 uppercase"
+        >
           {normalizeDate(label)}
         </div>
       );
@@ -73,7 +76,11 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <Badge variant={badgeVariantCaixa(label)} className="text-nowrap">
+        <Badge
+          className={`text-nowrap text-foreground cursor-default ${badgeVariantCaixaClass(
+            label
+          )}`}
+        >
           {label}
         </Badge>
       );
@@ -85,7 +92,7 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
     cell: (info) => {
       const label = info.getValue<number>();
       return (
-        <span className={`${label && "text-red-500"}`}>
+        <span className={`${label ? "text-red-500" : "text-green-500"}`}>
           {label ? "SIM" : "NÃO"}
         </span>
       );

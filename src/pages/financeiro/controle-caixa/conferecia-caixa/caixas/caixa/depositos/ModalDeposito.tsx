@@ -81,6 +81,12 @@ const ModalDeposito = ({ id_matriz }: { id_matriz?: string }) => {
     id ? newDataCaixa : { ...initialPropsDepositos, id_caixa: id_caixa || "" }
   );
 
+  useEffect(() => {
+    if (!modalOpen) {
+      form.reset();
+    }
+  }, [modalOpen]);
+
   function onSubmitData(data: DepositosCaixaProps) {
     if (id) update(data);
     if (!id) insertOne(data);

@@ -15,7 +15,7 @@ import {
   ConferenciasCaixaSchema,
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
-import { startOfDay } from "date-fns";
+import { formatDate, startOfDay } from "date-fns";
 import { useEffect, useRef } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import FormCaixa from "./Form";
@@ -46,6 +46,7 @@ const initialPropsCaixa: ConferenciasCaixaSchema = {
   valor_tradein: "",
   valor_tradein_disponivel: "",
   valor_tradein_utilizado: "",
+  caixa_anterior_fechado: true,
 };
 
 const ModalCaixa = () => {
@@ -70,6 +71,7 @@ const ModalCaixa = () => {
   const formRef = useRef(null);
 
   const { data, isLoading, isSuccess } = useConferenciasCaixa().getOne(id);
+
   const { mutate: changeStatus, isSuccess: isSuccessChangeStatus } =
     useConferenciasCaixa().changeStatus();
   const {
@@ -204,7 +206,10 @@ const ModalCaixa = () => {
                 action={() => {
                   cruzarRelatorios({
                     id_filial: Number(newDataCaixa.id_filial),
-                    data_caixa: newDataCaixa.data,
+                    data_caixa: formatDate(
+                      startOfDay(newDataCaixa.data || ""),
+                      "yyyy-MM-dd"
+                    ),
                   });
                 }}
               >
@@ -242,9 +247,21 @@ const ModalCaixa = () => {
                 changeStatus({ id, action: "confirmar" });
               }}
             >
-              <Button size={"lg"} disabled={isPending}>
-                Confirmar Caixa
-              </Button>
+              <span
+                className="cursor-pointer"
+                title={
+                  newDataCaixa.caixa_anterior_fechado
+                    ? ""
+                    : "Ainda não foi realizada a confirmação no caixa anterior"
+                }
+              >
+                <Button
+                  size={"lg"}
+                  disabled={isPending || !newDataCaixa.caixa_anterior_fechado}
+                >
+                  Confirmar Caixa
+                </Button>
+              </span>
             </AlertPopUp>
           )}
           {baixadoPendente && (

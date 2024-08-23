@@ -60,6 +60,7 @@ export type ConferenciasCaixaSchema = {
   valor_dinheiro?: string;
   valor_retiradas?: string;
   total_dinheiro?: string;
+  valor_devolucoes?: string;
 
   valor_cartao?: string;
   valor_cartao_real?: string;
@@ -82,6 +83,10 @@ export type ConferenciasCaixaSchema = {
   valor_tradein_utilizado?: string;
   divergencia_tradein?: string;
 
+  valor_crediario?: string;
+  valor_crediario_real?: string;
+  divergencia_crediario?: string;
+
   movimentos_caixa?: MovimentoCaixaProps[];
   depositos_caixa?: DepositosCaixaProps[];
   qtde_depositos_caixa?: string;
@@ -90,6 +95,8 @@ export type ConferenciasCaixaSchema = {
     created_at: string;
     descricao: string;
   }[];
+
+  caixa_anterior_fechado: boolean;
 };
 
 export const useConferenciasCaixa = () => {
@@ -213,6 +220,29 @@ export const useConferenciasCaixa = () => {
             .get(
               `/financeiro/controle-de-caixa/conferencia-de-caixa/ocorrencias/${id}`
             )
+            .then((response) => response.data);
+        },
+      }),
+
+    getCardDetalhe: (params: {
+      id_caixa?: string | null;
+      type?: string | null;
+    }) =>
+      useQuery({
+        enabled: !!params.id_caixa && !!params.type,
+        queryKey: [
+          "financeiro",
+          "conferencia-de-caixa",
+          "caixas",
+          "cards",
+          "detalhe",
+          [params.id_caixa, params.type],
+        ],
+        queryFn: async () => {
+          return await api
+            .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/cards`, {
+              params: params,
+            })
             .then((response) => response.data);
         },
       }),
@@ -365,6 +395,38 @@ export const useConferenciasCaixa = () => {
         onSuccess() {
           queryClient.invalidateQueries({
             queryKey: ["financeiro", "conferencia-de-caixa", "caixas"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    cruzarRelatoriosLote: () =>
+      useMutation({
+        mutationFn: async () => {
+          return await api
+            .put(
+              "/financeiro/controle-de-caixa/conferencia-de-caixa/cruzar-relatorios-lote"
+            )
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia-de-caixa"],
           });
           toast({
             variant: "success",

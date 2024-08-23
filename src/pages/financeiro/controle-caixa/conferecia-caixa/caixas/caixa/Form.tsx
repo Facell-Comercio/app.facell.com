@@ -19,7 +19,7 @@ import {
 import { formatDate } from "date-fns";
 import { History, Landmark, List, Pencil, Plus, Trash } from "lucide-react";
 import { useState } from "react";
-import CaixaCards from "./components/CaixaCards";
+import CaixaCards from "./cards/CaixaCards";
 import { ItemAccordionCaixa } from "./components/ItemAccordionCaixa";
 import StatusCaixa from "./components/StatusCaixa";
 import ModalDeposito from "./depositos/ModalDeposito";
@@ -30,8 +30,10 @@ import RowVirtualizedMovimentoCaixa from "./RowVirtualizedMovimentoCaixa";
 import { useStoreCaixa } from "./store";
 
 export type FilterMovimentoProps = {
+  documento: string;
   tipo_operacao: string;
   forma_pgto: string;
+  historico: string;
 };
 
 const FormCaixa = ({
@@ -42,14 +44,22 @@ const FormCaixa = ({
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   const [filters, setFilters] = useState<FilterMovimentoProps>({
+    documento: "",
     tipo_operacao: "",
     forma_pgto: "",
+    historico: "",
   });
 
   const filteredMovimetoCaixa = data.movimentos_caixa?.filter(
     (movimento) =>
+      movimento.documento
+        ?.toUpperCase()
+        .startsWith(filters.documento.toUpperCase()) &&
       movimento.tipo_operacao?.includes(filters.tipo_operacao.toUpperCase()) &&
-      movimento.forma_pagamento?.includes(filters.forma_pgto.toUpperCase())
+      movimento.forma_pagamento?.includes(filters.forma_pgto.toUpperCase()) &&
+      movimento.historico
+        ?.toUpperCase()
+        .includes(filters.historico.toUpperCase())
   );
 
   const qtde_movimentos_caixa = filteredMovimetoCaixa?.length || 0;
@@ -92,6 +102,32 @@ const FormCaixa = ({
     }
   }
 
+  function InfoMovimentoCaixa() {
+    return (
+      <Badge variant={"info"} className="text-xs">
+        Valor Total: {normalizeCurrency(valor_total_movimentos_caixa)}
+      </Badge>
+    );
+  }
+
+  function InfoDepositos() {
+    return (
+      <span className="flex gap-1 items-center justify-center">
+        <Badge
+          variant={data.caixa_anterior_fechado ? "info" : "warning"}
+          title={
+            data.caixa_anterior_fechado ? "" : "Saldo passível de alteração"
+          }
+        >
+          {`Saldo anterior: ${normalizeCurrency(data.saldo_anterior)}`}
+        </Badge>
+        <Badge variant="info">
+          {`Saldo: ${normalizeCurrency(data.saldo_atual)}`}
+        </Badge>
+      </span>
+    );
+  }
+
   return (
     <div className="max-w-full overflow-x-hidden">
       <Form {...form}>
@@ -110,6 +146,7 @@ const FormCaixa = ({
               title="Movimento de Caixa"
               className="flex gap-3 flex-col"
               valorTotal={valor_total_movimentos_caixa}
+              info={InfoMovimentoCaixa}
             >
               <FiltersMovimentos filters={filters} setFilters={setFilters} />
               <RowVirtualizedMovimentoCaixa
@@ -121,30 +158,19 @@ const FormCaixa = ({
               value={"depositos-caixa"}
               qtde={qtde_depositos_caixa}
               title="Depósitos"
-              className="flex flex-col items-end"
+              info={InfoDepositos}
+              className="flex flex-col items-end justify-end"
             >
-              <div className="flex justify-between w-full">
-                <span className="flex gap-2 items-center justify-center">
-                  <Badge variant="info">
-                    {`Saldo anterior: ${normalizeCurrency(
-                      data.saldo_anterior
-                    )}`}
-                  </Badge>
-                  <Badge variant="info">
-                    {`Saldo: ${normalizeCurrency(data.saldo_atual)}`}
-                  </Badge>
-                </span>
-                {!disabled && (
-                  <Button
-                    className="flex gap-2"
-                    onClick={handleClickNewDeposito}
-                    disabled={isPending}
-                  >
-                    <Plus />
-                    Novo Depósito
-                  </Button>
-                )}
-              </div>
+              {!disabled && (
+                <Button
+                  className="flex gap-2"
+                  onClick={handleClickNewDeposito}
+                  disabled={isPending}
+                >
+                  <Plus />
+                  Novo Depósito
+                </Button>
+              )}
               <Table className="bg-background rounded-md">
                 <TableHeader>
                   <TableRow>
@@ -208,8 +234,11 @@ const FormCaixa = ({
                 </span>
 
                 <ScrollArea className={"flex flex-col gap-3 max-h-44 "}>
-                  {data.historico?.map((value) => (
-                    <span className="flex gap-1.5">
+                  {data.historico?.map((value, index) => (
+                    <span
+                      className="flex gap-1.5"
+                      key={`historico ${value.id} ${index}`}
+                    >
                       {formatDate(value.created_at, "dd/MM/yyyy hh:mm")}:
                       <p className={`${historicoColor(value.descricao)}`}>
                         {value.descricao}
