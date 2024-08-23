@@ -21,19 +21,19 @@ const ComercialMetas = () => {
 
   return (
     <div className="flex flex-col gap-2 p-4">
-      <div className="flex gap-2 w-full">
-        <div className="flex-1">
+      <div className="flex gap-2">
+        <div className="">
           <span className="text-gray-500 text-sm font-medium">Mês</span>
           <SelectMes value={mes} onValueChange={(mes) => setMes(mes)} />
         </div>
 
-        <div className="flex-1">
+        <div className="">
           <span className="text-gray-500 text-sm font-medium">Ano</span>
           <Input
             type="number"
             min={2023}
             value={ano}
-            className="w-full"
+            className="w-[10ch]"
             onChange={(value) => setAno(value.target.value)}
           />
         </div>

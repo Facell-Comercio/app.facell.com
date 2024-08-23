@@ -117,7 +117,7 @@ const FormAgregador = ({
   }, [updateIsPending, insertIsPending]);
 
   // ! Verificar a existênicia de erros
-  // console.log(form.formState.errors);
+  console.log(form.formState.errors);
 
   function handleSelectFilial(filial: Filial) {
     form.setValue("id_filial", filial.id || "");
@@ -216,7 +216,31 @@ const FormAgregador = ({
                   </div>
                 </div>
 
+                {/* Dados da estrutura comercial e colaborador */}
                 <div className="flex gap-2 items-end flex-wrap">
+                  <FormInput
+                    className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
+                    name="grupo_economico"
+                    inputClass="min-w-full"
+                    placeholder="SELECIONE A FILIAL"
+                    disabled={disabled}
+                    readOnly
+                    label="Grupo Econômico"
+                    control={form.control}
+                  />
+
+                  <FormInput
+                    className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
+                    name="filial"
+                    inputClass="min-w-full"
+                    placeholder="SELECIONE A FILIAL"
+                    disabled={disabled}
+                    readOnly
+                    label="Filial"
+                    control={form.control}
+                    onClick={() => !readOnly && setModalFilialOpen(true)}
+                  />
+
                   <FormInput
                     className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
                     name="nome"
@@ -232,27 +256,25 @@ const FormAgregador = ({
                     control={form.control}
                   />
 
-                  <FormInput
-                    className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
-                    name="filial"
-                    inputClass="min-w-full"
-                    placeholder="SELECIONE A FILIAL"
-                    disabled={disabled}
-                    readOnly
-                    label="Filial"
+                </div>
+
+                {/* Dados de agregador*/}
+                <div className="flex gap-2 items-end flex-wrap">
+                  <FormSelect
+                    name="cargo"
+                    label="Cargo"
+                    selectClassName="min-w-full sm:min-w-[20ch]"
                     control={form.control}
-                    onClick={() => !readOnly && setModalFilialOpen(true)}
-                  />
-                  <FormInput
-                    className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
-                    name="grupo_economico"
-                    inputClass="min-w-full"
-                    placeholder="SELECIONE A FILIAL"
                     disabled={disabled}
-                    readOnly
-                    label="Grupo Econômico"
-                    control={form.control}
+                    placeholder="Selecione o cargo"
+                    options={
+                      cargosPrevistos.map((cargo: any) => ({
+                        value: cargo,
+                        label: cargo,
+                      })) || []
+                    }
                   />
+
                   <FormSelect
                     name="tipo_agregacao"
                     label="Tipo de Agregação"
@@ -292,20 +314,7 @@ const FormAgregador = ({
                     />
                   </span>
 
-                  <FormSelect
-                    name="cargo"
-                    label="Cargo"
-                    selectClassName="min-w-full sm:min-w-[20ch]"
-                    control={form.control}
-                    disabled={disabled}
-                    placeholder="Selecione o cargo"
-                    options={
-                      cargosPrevistos.map((cargo: any) => ({
-                        value: cargo,
-                        label: cargo,
-                      })) || []
-                    }
-                  />
+
                 </div>
               </div>
             </div>
@@ -350,9 +359,8 @@ const FormAgregador = ({
                   </div>
 
                   <Table
-                    className={`bg-background rounded-sm pb-2 ${
-                      disabled && !readOnly && "opacity-65"
-                    }`}
+                    className={`bg-background rounded-sm pb-2 ${disabled && !readOnly && "opacity-65"
+                      }`}
                   >
                     <TableHeader>
                       <TableRow>
