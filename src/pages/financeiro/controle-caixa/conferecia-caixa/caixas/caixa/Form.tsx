@@ -17,10 +17,21 @@ import {
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
 import { formatDate } from "date-fns";
-import { History, Landmark, List, Pencil, Plus, Trash } from "lucide-react";
+import {
+  History,
+  Landmark,
+  List,
+  Pencil,
+  Plus,
+  Search,
+  Trash,
+} from "lucide-react";
 import { useState } from "react";
 import CaixaCards from "./cards/CaixaCards";
 import { ItemAccordionCaixa } from "./components/ItemAccordionCaixa";
+import ModalTransacoesCredit, {
+  TransacoesCreditProps,
+} from "./components/ModalTransacoesCredit";
 import StatusCaixa from "./components/StatusCaixa";
 import ModalDeposito from "./depositos/ModalDeposito";
 import FiltersMovimentos from "./FiltersMovimento";
@@ -49,6 +60,8 @@ const FormCaixa = ({
     forma_pgto: "",
     historico: "",
   });
+  const [modalTransacoesCreditOpen, setModalTransacoesCreditOpen] =
+    useState(false);
 
   const filteredMovimetoCaixa = data.movimentos_caixa?.filter(
     (movimento) =>
@@ -67,6 +80,8 @@ const FormCaixa = ({
     (acc: number, curr) => acc + parseFloat(curr.valor || "0"),
     0
   );
+  const saldo_anterior = parseFloat(data?.saldo_anterior || "0");
+  const saldo_atual = parseFloat(data?.saldo_atual || "0");
   const depositos_caixa = data.depositos_caixa || [];
   const qtde_depositos_caixa = parseInt(data.qtde_depositos_caixa || "0");
 
@@ -119,13 +134,42 @@ const FormCaixa = ({
             data.caixa_anterior_fechado ? "" : "Saldo passível de alteração"
           }
         >
-          {`Saldo anterior: ${normalizeCurrency(data.saldo_anterior)}`}
+          {`Saldo Anterior: ${normalizeCurrency(saldo_anterior)}`}
         </Badge>
         <Badge variant="info">
-          {`Saldo: ${normalizeCurrency(data.saldo_atual)}`}
+          {`Total Depósitos: ${normalizeCurrency(
+            depositos_caixa.reduce(
+              (acc, deposito) => acc + parseFloat(deposito.valor || "0"),
+              0
+            )
+          )}`}
         </Badge>
+        <Badge variant="info">
+          {`Saldo Final: ${normalizeCurrency(
+            saldo_atual < 0 ? "0" : saldo_atual
+          )}`}
+        </Badge>
+        {parseFloat(data.suprimento_caixa || "0") > 0 && (
+          <Badge variant="violet">
+            {`Suprimento de Caixa: ${normalizeCurrency(data.suprimento_caixa)}`}
+          </Badge>
+        )}
       </span>
     );
+  }
+
+  const { mutate: insertMultiDepositoExtrato } =
+    useConferenciasCaixa().insertMultiDepositoExtrato();
+
+  async function handleMultiSelectionDepositos(itens: TransacoesCreditProps[]) {
+    if (itens.length > 0) {
+      insertMultiDepositoExtrato({
+        id_caixa: data.id || "",
+        extratos: itens,
+      });
+    }
+
+    setModalTransacoesCreditOpen(false);
   }
 
   return (
@@ -137,7 +181,7 @@ const FormCaixa = ({
         >
           <div className="overflow-auto scroll-thin z-[100] flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
             {/* Primeira coluna */}
-            <StatusCaixa data={data}/>
+            <StatusCaixa data={data} />
             <CaixaCards data={data} />
             <ItemAccordionCaixa
               icon={List}
@@ -162,14 +206,25 @@ const FormCaixa = ({
               className="flex flex-col items-end justify-end"
             >
               {!disabled && (
-                <Button
-                  className="flex gap-2"
-                  onClick={handleClickNewDeposito}
-                  disabled={isPending}
-                >
-                  <Plus />
-                  Novo Depósito
-                </Button>
+                <span className="flex gap-3">
+                  <Button
+                    className="flex gap-2"
+                    onClick={() => setModalTransacoesCreditOpen(true)}
+                    disabled={isPending}
+                    variant={"tertiary"}
+                  >
+                    <Search />
+                    Procurar Depósito no Extrato
+                  </Button>
+                  <Button
+                    className="flex gap-2"
+                    onClick={handleClickNewDeposito}
+                    disabled={isPending}
+                  >
+                    <Plus />
+                    Novo Depósito
+                  </Button>
+                </span>
               )}
               <Table className="bg-background rounded-md">
                 <TableHeader>
@@ -253,6 +308,15 @@ const FormCaixa = ({
       </Form>
       <ModalDeposito id_matriz={data.id_matriz} />
       <ModalOcorrencias id_filial={id_filial || ""} />
+      <ModalTransacoesCredit
+        id_matriz={data.id_matriz || ""}
+        data_transacao={data.data || ""}
+        id_caixa={data.id || ""}
+        open={modalTransacoesCreditOpen}
+        multiSelection
+        handleMultiSelection={handleMultiSelectionDepositos}
+        onOpenChange={() => setModalTransacoesCreditOpen(false)}
+      />
     </div>
   );
 };
