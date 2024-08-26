@@ -75,7 +75,7 @@ const ModalContasBancarias = ({
     id_matriz: id_matriz || "all",
     descricao: "",
     banco: "",
-    onlyDatasys: undefined,
+    onlyDatasys: onlyDatasys,
   };
 
   const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
