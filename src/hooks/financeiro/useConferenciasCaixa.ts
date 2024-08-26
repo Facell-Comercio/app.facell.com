@@ -1,5 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
+import { TransacoesCreditProps } from "@/pages/financeiro/controle-caixa/conferecia-caixa/caixas/caixa/components/ModalTransacoesCredit";
 import { GetAllParams } from "@/types/query-params-type";
 import {
   keepPreviousData,
@@ -99,6 +100,12 @@ export type ConferenciasCaixaSchema = {
   }[];
 
   caixa_anterior_fechado: boolean;
+  suprimento_caixa?: string;
+};
+
+type MultiDepositoExtratoSchema = {
+  id_caixa: string | number;
+  extratos: TransacoesCreditProps[];
 };
 
 export const useConferenciasCaixa = () => {
@@ -254,6 +261,39 @@ export const useConferenciasCaixa = () => {
           return api
             .post(
               "/financeiro/controle-de-caixa/conferencia-de-caixa/depositos",
+              data
+            )
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    insertMultiDepositoExtrato: () =>
+      useMutation({
+        mutationFn: async (data: MultiDepositoExtratoSchema) => {
+          return api
+            .post(
+              "/financeiro/controle-de-caixa/conferencia-de-caixa/multi-depositos-extratos",
               data
             )
             .then((response) => response.data);
