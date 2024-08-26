@@ -184,6 +184,7 @@ const ModalDeposito = ({ id_matriz }: { id_matriz?: string }) => {
                 handleSelection={handleSelectionContaBancaria}
                 onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
                 id_matriz={id_matriz || ""}
+                onlyDatasys={true}
               />
             </Form>
           ) : (

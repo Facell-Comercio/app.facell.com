@@ -67,6 +67,8 @@ const FormCaixa = ({
     (acc: number, curr) => acc + parseFloat(curr.valor || "0"),
     0
   );
+  const saldo_anterior = parseFloat(data?.saldo_anterior || '0');
+  const saldo_atual = parseFloat(data?.saldo_atual || '0');
   const depositos_caixa = data.depositos_caixa || [];
   const qtde_depositos_caixa = parseInt(data.qtde_depositos_caixa || "0");
 
@@ -119,10 +121,10 @@ const FormCaixa = ({
             data.caixa_anterior_fechado ? "" : "Saldo passível de alteração"
           }
         >
-          {`Saldo anterior: ${normalizeCurrency(data.saldo_anterior)}`}
+          {`Saldo anterior: ${normalizeCurrency(saldo_anterior)}`}
         </Badge>
         <Badge variant="info">
-          {`Saldo: ${normalizeCurrency(data.saldo_atual)}`}
+          {`Saldo: ${normalizeCurrency(saldo_atual < 0 ? '0' : saldo_atual)}`}
         </Badge>
       </span>
     );

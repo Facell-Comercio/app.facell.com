@@ -31,6 +31,7 @@ interface IModalContaBancaria {
   closeOnSelection?: boolean;
   id_matriz?: string | null;
   id_grupo_economico?: string;
+  onlyDatasys?: boolean;
 }
 
 export type ItemContaBancariaProps = {
@@ -52,6 +53,7 @@ interface Filters {
   id_matriz?: string;
   descricao?: string;
   banco?: string;
+  onlyDatasys?: boolean;
 }
 
 const ModalContasBancarias = ({
@@ -61,6 +63,7 @@ const ModalContasBancarias = ({
   closeOnSelection,
   id_matriz,
   id_grupo_economico,
+  onlyDatasys,
 }: IModalContaBancaria) => {
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -72,7 +75,9 @@ const ModalContasBancarias = ({
     id_matriz: id_matriz || "all",
     descricao: "",
     banco: "",
+    onlyDatasys: undefined,
   };
+
   const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const [filters, setFilters] = useState(defaultFilters);
 
