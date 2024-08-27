@@ -12,6 +12,7 @@ import { useStoreGrupoEconomico } from "./store";
 const initialProps: GrupoEconomicoFormData = {
   id: "",
   id_matriz: "",
+  filial: "",
   active: true,
   orcamento: true,
   apelido: "",
