@@ -11,7 +11,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { DatePickerWithRange } from "@/components/ui/date-range";
 import { Input } from "@/components/ui/input";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  ScrollArea,
+  ScrollBar,
+} from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -19,29 +22,49 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EraserIcon, FilterIcon } from "lucide-react";
+import {
+  EraserIcon,
+  FilterIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { useStoreTablePagar } from "./table/store-table";
 
-const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
-  const filters = useStoreTablePagar((state) => state.filters);
-  const setFilters = useStoreTablePagar((state) => state.setFilters);
-  const resetFilters = useStoreTablePagar((state) => state.resetFilters);
+const FiltersTitulosPagar = ({
+  refetch,
+}: {
+  refetch: () => void;
+}) => {
+  const filters = useStoreTablePagar(
+    (state) => state.filters
+  );
+  const setFilters = useStoreTablePagar(
+    (state) => state.setFilters
+  );
+  const resetFilters = useStoreTablePagar(
+    (state) => state.resetFilters
+  );
 
-  const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClickFilter = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     e.stopPropagation();
     // console.log(filters);
 
     refetch();
   };
-  const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleResetFilter = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     e.stopPropagation();
-    await new Promise((resolve) => resolve(resetFilters()));
+    await new Promise((resolve) =>
+      resolve(resetFilters())
+    );
 
     refetch();
   };
 
-  const [itemOpen, setItemOpen] = useState<string>("item-1");
+  const [itemOpen, setItemOpen] =
+    useState<string>("item-1");
 
   return (
     <Accordion
@@ -51,17 +74,37 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
       onValueChange={(e) => setItemOpen(e)}
       className="p-2 border dark:border-slate-800 rounded-lg "
     >
-      <AccordionItem value="item-1" className="relative border-0">
+      <AccordionItem
+        value="item-1"
+        className="relative border-0"
+      >
         <div className="flex gap-3 items-center absolute start-16 top-1">
-          <Button size={"xs"} onClick={handleClickFilter}>
-            Aplicar <FilterIcon size={12} className="ms-2" />
+          <Button
+            size={"xs"}
+            onClick={handleClickFilter}
+          >
+            Aplicar{" "}
+            <FilterIcon
+              size={12}
+              className="ms-2"
+            />
           </Button>
-          <Button size={"xs"} variant="secondary" onClick={handleResetFilter}>
-            Limpar <EraserIcon size={12} className="ms-2" />
+          <Button
+            size={"xs"}
+            variant="secondary"
+            onClick={handleResetFilter}
+          >
+            Limpar{" "}
+            <EraserIcon
+              size={12}
+              className="ms-2"
+            />
           </Button>
         </div>
 
-        <AccordionTrigger className={`py-1 hover:no-underline`}>
+        <AccordionTrigger
+          className={`py-1 hover:no-underline`}
+        >
           <span className="">Filtros</span>
         </AccordionTrigger>
 
@@ -74,7 +117,9 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 className="w-[80px]"
                 value={filters?.id}
                 onChange={(e) => {
-                  setFilters({ id: e.target.value });
+                  setFilters({
+                    id: e.target.value,
+                  });
                 }}
                 min={0}
               />
@@ -83,53 +128,83 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 className="w-[80px]"
                 value={filters?.num_doc}
                 onChange={(e) => {
-                  setFilters({ num_doc: e.target.value });
+                  setFilters({
+                    num_doc: e.target.value,
+                  });
                 }}
               />
 
               <SelectMultiGrupoEconomico
                 className="w-fit"
-                value={filters.grupo_economico_list || []}
+                value={
+                  filters.grupo_economico_list ||
+                  []
+                }
                 onChange={(value) => {
-                  setFilters({ grupo_economico_list: value });
+                  setFilters({
+                    grupo_economico_list: value,
+                  });
                 }}
               />
               <SelectMultiFormaPagamento
-                className="w-fit"
-                value={filters.forma_pagamento_list || []}
+                className="min-w-fit"
+                value={
+                  filters.forma_pagamento_list ||
+                  []
+                }
                 onChange={(value) =>
-                  setFilters({ forma_pagamento_list: value })
+                  setFilters({
+                    forma_pagamento_list: value,
+                  })
                 }
               />
 
               <SelectMultiStatus
                 className="w-fit"
                 value={filters.status_list || []}
-                onChange={(value) => setFilters({ status_list: value })}
+                onChange={(value) =>
+                  setFilters({
+                    status_list: value,
+                  })
+                }
               />
 
               <Select
                 value={filters.tipo_data}
                 onValueChange={(tipo_data) => {
-                  setFilters({ tipo_data: tipo_data });
+                  setFilters({
+                    tipo_data: tipo_data,
+                  });
                 }}
               >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Tipo de data" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="created_at">Criação</SelectItem>
-                  <SelectItem value="data_emissao">Emissão</SelectItem>
-                  <SelectItem value="data_vencimento">Vencimento</SelectItem>
-                  <SelectItem value="data_prevista">Previsão</SelectItem>
-                  <SelectItem value="data_pagamento">Pagamento</SelectItem>
+                  <SelectItem value="created_at">
+                    Criação
+                  </SelectItem>
+                  <SelectItem value="data_emissao">
+                    Emissão
+                  </SelectItem>
+                  <SelectItem value="data_vencimento">
+                    Vencimento
+                  </SelectItem>
+                  <SelectItem value="data_prevista">
+                    Previsão
+                  </SelectItem>
+                  <SelectItem value="data_pagamento">
+                    Pagamento
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
               <DatePickerWithRange
                 date={filters.range_data}
                 setDate={(date) => {
-                  setFilters({ range_data: date });
+                  setFilters({
+                    range_data: date,
+                  });
                 }}
               />
 
@@ -137,7 +212,9 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 className="max-w-[200px]"
                 value={filters?.filial}
                 onChange={(e) => {
-                  setFilters({ filial: e.target.value });
+                  setFilters({
+                    filial: e.target.value,
+                  });
                 }}
                 placeholder="Nome Filial..."
               />
@@ -145,21 +222,32 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 className="max-w-[200px]"
                 value={filters?.nome_fornecedor}
                 onChange={(e) =>
-                  setFilters({ nome_fornecedor: e.target.value })
+                  setFilters({
+                    nome_fornecedor:
+                      e.target.value,
+                  })
                 }
                 placeholder="Nome Fornecedor..."
               />
               <Input
                 className="max-w-[200px]"
                 value={filters.descricao}
-                onChange={(e) => setFilters({ descricao: e.target.value })}
+                onChange={(e) =>
+                  setFilters({
+                    descricao: e.target.value,
+                  })
+                }
                 placeholder="Descrição..."
               />
 
               <Input
                 className="max-w-[200px]"
                 value={filters?.nome_user}
-                onChange={(e) => setFilters({ nome_user: e.target.value })}
+                onChange={(e) =>
+                  setFilters({
+                    nome_user: e.target.value,
+                  })
+                }
                 placeholder="Nome Usuário..."
               />
             </div>
