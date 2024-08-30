@@ -32,9 +32,11 @@ export function calcularDataPrevisaoPagamento(data_venc: Date | string) {
 
   const dataAtual = startOfDay(new Date());
   let dataMinima = isFriday(dataAtual)
-    ? addDays(dataAtual, 3)
+    ? addDays(dataAtual, 4)
     : addDays(dataAtual, 2);
 
+  console.log({dataVencimento, dataMinima});
+  
   while (
     (!isMonday(dataMinima) && !isThursday(dataMinima)) ||
     checkFeriado(dataMinima)
