@@ -21,6 +21,7 @@ import { useStoreBordero } from "./store";
 export type BorderoSchemaProps = {
   id: string;
   conta_bancaria?: string;
+  codigo_banco: string;
   banco?: string;
   id_conta_bancaria: string;
   data_pagamento: string;
@@ -32,6 +33,7 @@ const initialPropsBordero: BorderoSchemaProps = {
   id: "",
   conta_bancaria: "",
   banco: "",
+  codigo_banco: '',
   id_conta_bancaria: "",
   data_pagamento: "",
   id_matriz: "",

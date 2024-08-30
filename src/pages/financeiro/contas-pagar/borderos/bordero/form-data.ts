@@ -49,6 +49,7 @@ const schemaBorderos = z.object({
   id: z.string().trim().optional(),
   conta_bancaria: z.string().trim().toUpperCase().optional(),
   id_conta_bancaria: z.coerce.string(),
+  codigo_banco: z.string().optional(),
   banco: z.string().optional(),
   data_pagamento: z.coerce.date({ message: "Data Obrigatória" }),
   id_matriz: z.coerce.string().trim().optional(),
