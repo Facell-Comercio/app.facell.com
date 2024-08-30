@@ -21,7 +21,6 @@ type DownloadRemessaProps = {
   id: string;
   isPix?: boolean;
   itens?: VencimentosProps[];
-  codigo_banco: string;
 };
 
 type reverseManualPaymentProps = {
@@ -247,11 +246,11 @@ export const useBordero = () => {
 
     exportRemessa: () =>
       useMutation({
-        mutationFn: async ({ id, codigo_banco, isPix, itens }: DownloadRemessaProps) => {
+        mutationFn: async ({ id, isPix, itens }: DownloadRemessaProps) => {
           return await api
             .post(
               `/financeiro/contas-a-pagar/bordero/export-remessa`,
-              { id_bordero: id, itens, isPix, codigo_banco },
+              { id_bordero: id, itens, isPix },
               { responseType: "blob" }
             )
             .then(async (response) => {

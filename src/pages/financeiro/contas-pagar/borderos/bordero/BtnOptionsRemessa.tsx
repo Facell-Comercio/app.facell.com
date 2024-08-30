@@ -22,9 +22,8 @@ export type ExportAnexosProps = {
 };
 type OptionsRemessaProps = {
   id: string;
-  codigo_banco: string;
 };
-const BtnOptionsRemessa = ({ id, codigo_banco }: OptionsRemessaProps) => {
+const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
   const queryClient = useQueryClient();
   const {
     mutate: exportRemessa,
@@ -137,7 +136,7 @@ const BtnOptionsRemessa = ({ id, codigo_banco }: OptionsRemessaProps) => {
                 type={"button"}
                 onClick={(e) => {
                   e.preventDefault();
-                  exportRemessa({ id, codigo_banco });
+                  exportRemessa({ id });
                 }}
               >
                 {isLoadingDownload && !processing.remessaPix ? (
@@ -157,7 +156,7 @@ const BtnOptionsRemessa = ({ id, codigo_banco }: OptionsRemessaProps) => {
                 onClick={(e) => {
                   e.preventDefault();
                   setProcessing((prev) => ({ ...prev, remessaPix: true }));
-                  exportRemessa({ id, codigo_banco, isPix: true });
+                  exportRemessa({ id, isPix: true });
                 }}
               >
                 {isLoadingDownload && processing.remessaPix ? (

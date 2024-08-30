@@ -114,8 +114,6 @@ const FormBordero = ({
   });
 
   const id_conta_bancaria = form.watch("id_conta_bancaria");
-  const codigo_banco = form.watch("codigo_banco");
-  console.log({codigo_banco});
   
   const id_matriz = form.watch("id_matriz");
   const data_pagamento = form.watch("data_pagamento");
@@ -244,7 +242,6 @@ const FormBordero = ({
     const filteredData: BorderoSchemaProps = {
       id: newData.id,
       id_conta_bancaria: newData.id_conta_bancaria,
-      codigo_banco: newData.codigo_banco,
       data_pagamento: newData.data_pagamento,
       id_matriz: newData.id_matriz,
       itens: newData.itens?.filter(
@@ -371,7 +368,6 @@ const FormBordero = ({
         "financeiro/contas-a-pagar/bordero/export-remessa",
         {
           id_bordero: id,
-          codigo_banco: codigo_banco,
           itens: itensChecked,
         },
         { responseType: "blob" }
@@ -401,7 +397,6 @@ const FormBordero = ({
         "financeiro/contas-a-pagar/bordero/export-remessa",
         {
           id_bordero: id,
-          codigo_banco: codigo_banco,
           isPix: true,
           itens: itensChecked,
         },
@@ -454,7 +449,7 @@ const FormBordero = ({
                 {/* Exportação */}
                 {id && (
                   <div className="flex gap-3 items-center">
-                    <BtnOptionsRemessa id={id} codigo_banco={codigo_banco} />
+                    <BtnOptionsRemessa id={id} />
 
                     <Button
                       disabled={!!exporting}
