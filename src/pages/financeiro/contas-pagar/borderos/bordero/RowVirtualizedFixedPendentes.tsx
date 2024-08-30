@@ -75,10 +75,12 @@ const RowVirtualizerFixedPendentes: React.FC<
   ];
 
   const handleClickDDA = (
-    id_vencimento: string
+    id_vencimento: string,
+    id_forma_pagamento: string
   ) => {
     openModalDDA({
       id_vencimento,
+      id_forma_pagamento,
       filters: { vinculados: false },
     });
   };
@@ -94,6 +96,7 @@ const RowVirtualizerFixedPendentes: React.FC<
   const someChecked = filteredData.some(
     (item) => item.checked
   );
+  console.log(filteredData);
 
   return (
     <section
@@ -216,6 +219,10 @@ const RowVirtualizerFixedPendentes: React.FC<
               (data[indexData]
                 ?.id_forma_pagamento || null) ==
               1;
+            const isFatura =
+              (data[indexData]
+                ?.id_forma_pagamento || null) ==
+              6;
             const emRemessa =
               data[indexData].remessa;
 
@@ -447,7 +454,7 @@ const RowVirtualizerFixedPendentes: React.FC<
                   }}
                 />
                 {/* DDA */}
-                {isBoleto ? (
+                {isBoleto || isFatura ? (
                   vinculoDDA ? (
                     <Button
                       disabled
@@ -461,7 +468,11 @@ const RowVirtualizerFixedPendentes: React.FC<
                     <Button
                       onClick={() =>
                         handleClickDDA(
-                          id_vencimento
+                          id_vencimento,
+                          String(
+                            data[indexData]
+                              .id_forma_pagamento
+                          )
                         )
                       }
                       disabled={!modalEditing}

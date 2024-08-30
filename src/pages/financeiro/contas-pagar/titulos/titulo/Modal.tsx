@@ -7,7 +7,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { BtnCopiarTitulo } from "./components/BtnCopiarTitulo";
 import { BtnCriarRecorrencia } from "./components/BtnCriarRecorrencia";
 import FormTituloPagar from "./Form";
@@ -44,6 +44,10 @@ const ModalTituloPagar = () => {
     state.copyData,
   ]);
 
+  const id_vencimento_recorrencia = useMemo(
+    () => new Date().getTime().toString(),
+    [modalOpen]
+  );
   // const formRef = useRef(null);
   useEffect(() => {}, [id]);
 
@@ -99,6 +103,7 @@ const ModalTituloPagar = () => {
       valor: recorrencia.valor,
       cod_barras: "",
       qr_code: "",
+      id: id_vencimento_recorrencia,
     });
   }
 
