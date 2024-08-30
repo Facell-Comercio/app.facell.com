@@ -33,7 +33,7 @@
     "@tanstack/react-query-devtools": "^5.27.8",
     "@tanstack/react-table": "^8.13.2",
     "@tanstack/react-virtual": "^3.2.0",
-    "axios": "^1.6.7",
+    "axios": "^1.7.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.0.0",
