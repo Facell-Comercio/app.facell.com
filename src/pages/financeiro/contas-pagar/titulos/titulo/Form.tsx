@@ -437,9 +437,7 @@ const FormTituloPagar = ({
         variant: "destructive",
         title: "Erro!",
         // @ts-ignore
-        description:
-          error?.response?.data?.message ||
-          error?.message,
+        description:  error?.response?.data?.message || error?.message,
       });
     }
   };
@@ -544,9 +542,7 @@ const FormTituloPagar = ({
         variant: "destructive",
         title: "Ops!",
         // @ts-ignore
-        description:
-          error?.response?.data?.message ||
-          error.message,
+        description: error?.response?.data?.message || error.message,
       });
     }
   }
@@ -1139,8 +1135,7 @@ const FormTituloPagar = ({
                   >
                     {
                       // @ts-ignore
-                      data?.historico?.map(
-                        (h, index) => (
+                      data?.historico?.map((h, index) => (
                           <p
                             key={`hist.${h.id}.${index}`}
                             className="text-xs my-2"

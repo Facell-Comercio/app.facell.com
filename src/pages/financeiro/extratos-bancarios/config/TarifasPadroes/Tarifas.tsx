@@ -69,7 +69,6 @@ const TarifasPadroes = () => {
                 columns={columnsTable}
                 isLoading={isLoading}
               />
-              )
               <ModalTarifas />
             </div>
           )}
