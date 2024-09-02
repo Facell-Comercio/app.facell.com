@@ -19,9 +19,19 @@ export interface GetVencimentosProps {
 export const useVencimentos = () => {
   const queryClient = useQueryClient();
 
-  const getVencimentosAPagar = ({ pagination, filters }: GetVencimentosProps) =>
+  const getVencimentosAPagar = ({
+    pagination,
+    filters,
+  }: GetVencimentosProps) =>
     useQuery({
-      queryKey: ["financeiro", "contas_pagar", "vencimento", "pagamento_pendente", "lista", {pagination, filters}],
+      queryKey: [
+        "financeiro",
+        "contas_pagar",
+        "vencimento",
+        "pagamento_pendente",
+        "lista",
+        { pagination, filters },
+      ],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
@@ -33,6 +43,7 @@ export const useVencimentos = () => {
               filters,
               minStatusTitulo: 3,
               pago: 0,
+              closed: 1,
               emBordero: 0,
             },
           }
@@ -46,7 +57,14 @@ export const useVencimentos = () => {
     filters,
   }: GetVencimentosProps) =>
     useQuery({
-      queryKey: ["financeiro", "contas_pagar", "vencimento", "em_bordero", "lista", {pagination, filters}],
+      queryKey: [
+        "financeiro",
+        "contas_pagar",
+        "vencimento",
+        "em_bordero",
+        "lista",
+        { pagination, filters },
+      ],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
@@ -58,6 +76,7 @@ export const useVencimentos = () => {
               filters,
               minStatusTitulo: 3,
               pago: 0,
+              closed: 1,
               emBordero: 1,
             },
           }
@@ -66,9 +85,19 @@ export const useVencimentos = () => {
       placeholderData: keepPreviousData,
     });
 
-  const getVencimentosPagos = ({ pagination, filters }: GetVencimentosProps) =>
+  const getVencimentosPagos = ({
+    pagination,
+    filters,
+  }: GetVencimentosProps) =>
     useQuery({
-      queryKey: ["financeiro", "contas_pagar", "vencimento", "pago", "lista", {pagination, filters}],
+      queryKey: [
+        "financeiro",
+        "contas_pagar",
+        "vencimento",
+        "pago",
+        "lista",
+        { pagination, filters },
+      ],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => {
@@ -80,6 +109,7 @@ export const useVencimentos = () => {
               filters,
               minStatusTitulo: 4,
               pago: 1,
+              closed: 1,
               emBordero: 1,
             },
           }
@@ -90,29 +120,40 @@ export const useVencimentos = () => {
 
   const changeVencimentos = () =>
     useMutation({
-      mutationFn: async ({ ...rest }: AlteracaoLoteVencimentosSchemaProps) => {
+      mutationFn: async ({
+        ...rest
+      }: AlteracaoLoteVencimentosSchemaProps) => {
         return await api
-          .put("/financeiro/contas-a-pagar/vencimentos/change-fields", {
-            ...rest,
-          })
+          .put(
+            "/financeiro/contas-a-pagar/vencimentos/change-fields",
+            {
+              ...rest,
+            }
+          )
           .then((response) => response.data);
       },
       onSuccess() {
         toast({
           variant: "success",
           title: "Sucesso!",
-          description: "Alterações realizadas com sucesso!",
+          description:
+            "Alterações realizadas com sucesso!",
         });
         queryClient.invalidateQueries({
-          queryKey: ["financeiro", "contas_pagar"],
+          queryKey: [
+            "financeiro",
+            "contas_pagar",
+          ],
         });
       },
       onError(error) {
         toast({
           variant: "destructive",
           title: "Ocorreu o seguinte erro",
-          // @ts-expect-error "Funciona"
-          description: error?.response?.data?.message || error.message,
+          description:
+            // @ts-expect-error "Funciona"
+            error?.response?.data?.message ||
+            error.message,
         });
         console.log(error);
       },

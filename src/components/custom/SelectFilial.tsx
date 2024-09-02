@@ -55,7 +55,11 @@ export const SelectFilial = ({
       control={control}
       disabled={disabled}
       className={className}
-      placeholder={placeholder ? placeholder : "Selecione a filial"}
+      placeholder={
+        placeholder
+          ? placeholder
+          : "Selecione a filial"
+      }
       value={value}
       onChange={onChange}
       options={
@@ -90,7 +94,9 @@ type TSelectMultiFilial = {
   onChange: (value: string[]) => any;
 };
 
-export const SelectMultiFilial = (props: TSelectMultiFilial) => {
+export const SelectMultiFilial = (
+  props: TSelectMultiFilial
+) => {
   const { data } = useFilial().getAll();
   const filial = data?.data?.rows || [];
 
@@ -105,7 +111,7 @@ export const SelectMultiFilial = (props: TSelectMultiFilial) => {
       onValueChange={props.onChange}
       defaultValue={props.value}
       placeholder="Filial"
-      variant="inverted"
+      variant="secondary"
       animation={4}
       maxCount={props.maxCount || 1}
     />

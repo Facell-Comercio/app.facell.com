@@ -7,8 +7,14 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
+import { useEffect, useMemo } from "react";
+import { BtnCopiarTitulo } from "./components/BtnCopiarTitulo";
+import { BtnCriarRecorrencia } from "./components/BtnCriarRecorrencia";
 import FormTituloPagar from "./Form";
-import { TituloSchemaProps, useFormTituloData } from "./form-data";
+import {
+  TituloSchemaProps,
+  useFormTituloData,
+} from "./form-data";
 import { calcularDataPrevisaoPagamento } from "./helpers/helper";
 import {
   Historico,
@@ -16,9 +22,6 @@ import {
   initialPropsTitulo,
   useStoreTitulo,
 } from "./store";
-import { useEffect } from "react";
-import { BtnCopiarTitulo } from "./components/BtnCopiarTitulo";
-import { BtnCriarRecorrencia } from "./components/BtnCriarRecorrencia";
 
 export type DataSchemaProps = {
   titulo: TituloSchemaProps;
@@ -27,17 +30,29 @@ export type DataSchemaProps = {
 };
 
 const ModalTituloPagar = () => {
-  const modalOpen = useStoreTitulo().modalOpen;
-  const closeModal = useStoreTitulo().closeModal;
-  const id = useStoreTitulo().id;
-  const recorrencia = useStoreTitulo().recorrencia;
-  const copyData = useStoreTitulo().copyData;
+  const [
+    modalOpen,
+    closeModal,
+    id,
+    recorrencia,
+    copyData,
+  ] = useStoreTitulo((state) => [
+    state.modalOpen,
+    state.closeModal,
+    state.id,
+    state.recorrencia,
+    state.copyData,
+  ]);
+
+  const id_vencimento_recorrencia = useMemo(
+    () => new Date().getTime().toString(),
+    [modalOpen]
+  );
   // const formRef = useRef(null);
-  useEffect(()=>{
+  useEffect(() => {}, [id]);
 
-  }, [id])
-
-  const { data, isLoading } = useTituloPagar().getOne(id);
+  const { data, isLoading } =
+    useTituloPagar().getOne(id);
 
   const titulo = data?.data.titulo;
   let vencimentos = data?.data.vencimentos || [];
@@ -49,61 +64,88 @@ const ModalTituloPagar = () => {
     Object.keys(titulo).forEach((propriedade) => {
       if (titulo[propriedade] === null) {
         titulo[propriedade] = "";
-      } else if (typeof titulo[propriedade] === "number") {
-        titulo[propriedade] = titulo[propriedade].toString();
+      } else if (
+        typeof titulo[propriedade] === "number"
+      ) {
+        titulo[propriedade] =
+          titulo[propriedade].toString();
       }
     });
   }
 
   if (vencimentos && vencimentos.length > 0) {
     vencimentos.forEach((objeto: any) => {
-      Object.keys(objeto).forEach((propriedade) => {
-        if (objeto[propriedade] === null) {
-          objeto[propriedade] = "";
-        } else if (typeof objeto[propriedade] === "number") {
-          objeto[propriedade] = objeto[propriedade].toString();
+      Object.keys(objeto).forEach(
+        (propriedade) => {
+          if (objeto[propriedade] === null) {
+            objeto[propriedade] = "";
+          } else if (
+            typeof objeto[propriedade] ===
+            "number"
+          ) {
+            objeto[propriedade] =
+              objeto[propriedade].toString();
+          }
         }
-      });
+      );
     });
   }
+
   if (recorrencia) {
     vencimentos = [];
     vencimentos.push({
-      data_vencimento: recorrencia.data_vencimento,
-      data_prevista: calcularDataPrevisaoPagamento(
-        new Date(recorrencia.data_vencimento)
-      ),
+      data_vencimento:
+        recorrencia.data_vencimento,
+      data_prevista:
+        calcularDataPrevisaoPagamento(
+          new Date(recorrencia.data_vencimento)
+        ),
       valor: recorrencia.valor,
       cod_barras: "",
       qr_code: "",
+      id: id_vencimento_recorrencia,
     });
   }
 
   if (itens_rateio) {
     itens_rateio.forEach((objeto: any) => {
-      Object.keys(objeto).forEach((propriedade) => {
-        if (objeto[propriedade] === null) {
-          objeto[propriedade] = "";
-        } else if (typeof objeto[propriedade] === "number") {
-          objeto[propriedade] = objeto[propriedade].toString();
-        }
+      Object.keys(objeto).forEach(
+        (propriedade) => {
+          if (objeto[propriedade] === null) {
+            objeto[propriedade] = "";
+          } else if (
+            typeof objeto[propriedade] ===
+            "number"
+          ) {
+            objeto[propriedade] =
+              objeto[propriedade].toString();
+          }
 
-        if (propriedade == "valor") {
-          objeto[propriedade] = parseFloat(objeto[propriedade]).toFixed(4);
+          if (propriedade == "valor") {
+            objeto[propriedade] = parseFloat(
+              objeto[propriedade]
+            ).toFixed(4);
+          }
         }
-      });
+      );
     });
   }
 
   if (historico) {
     historico.forEach((objeto: any) => {
-      Object.keys(objeto).forEach((propriedade) => {
-        if (objeto[propriedade] === null) {
-          objeto[propriedade] = "";
-        } else if (typeof objeto[propriedade] === "number") {
-          objeto[propriedade] = objeto[propriedade].toString();
+      Object.keys(objeto).forEach(
+        (propriedade) => {
+          if (objeto[propriedade] === null) {
+            objeto[propriedade] = "";
+          } else if (
+            typeof objeto[propriedade] ===
+            "number"
+          ) {
+            objeto[propriedade] =
+              objeto[propriedade].toString();
+          }
         }
-      });
+      );
     });
   }
 
@@ -112,7 +154,7 @@ const ModalTituloPagar = () => {
     modalData = {
       ...titulo,
       id: "",
-      status: "Solicitado",
+      status: "",
       id_status: "1",
       url_boleto: "",
       url_contrato: "",
@@ -121,42 +163,59 @@ const ModalTituloPagar = () => {
       url_txt: "",
       url_xml: "",
       valor: recorrencia.valor,
-      data_vencimento: recorrencia.data_vencimento,
+      data_vencimento:
+        recorrencia.data_vencimento,
       data_emissao: new Date().toDateString(),
-      data_prevista: calcularDataPrevisaoPagamento(
-        new Date(recorrencia.data_vencimento)
-      ),
+      data_prevista:
+        calcularDataPrevisaoPagamento(
+          new Date(recorrencia.data_vencimento)
+        ),
       vencimentos,
       itens_rateio,
       id_departamento: "",
       id_recorrencia: recorrencia.id,
       created_at: undefined,
     };
-  } else if(copyData){
+  } else if (copyData) {
     // @ts-ignore
-    modalData = {...copyData}
-  }else if (id) {
-    modalData = { ...titulo, vencimentos, itens_rateio, historico };
+    modalData = { ...copyData };
+  } else if (id) {
+    modalData = {
+      ...titulo,
+      vencimentos,
+      itens_rateio,
+      historico,
+    };
   }
 
-
   // * [ FORM ]
-  const { form } = useFormTituloData({
-    ...modalData,
-    update_vencimentos: false,
-    update_rateio: false,
-  } || initialPropsTitulo);
-  const podeCriarRecorrencia = id && (parseInt(modalData?.id_status) || 0) > 0;
+  const { form } = useFormTituloData(
+    {
+      ...modalData,
+      update_vencimentos: false,
+      update_rateio: false,
+    } || initialPropsTitulo
+  );
+  const podeCriarRecorrencia =
+    id &&
+    (parseInt(modalData?.id_status) || 0) > 0;
 
   return (
-    <Dialog open={modalOpen} onOpenChange={closeModal}>
+    <Dialog
+      open={modalOpen}
+      onOpenChange={closeModal}
+    >
       <DialogContent className="min-w-[96vw] xl:min-w-1">
         <DialogHeader className="flex flex-row items-center gap-3">
           <DialogTitle>
-            {!!id && !recorrencia ? `Solicitação: ${id}` : "Nova Solicitação"}
+            {!!id && !recorrencia
+              ? `Solicitação: ${id}`
+              : "Nova Solicitação"}
           </DialogTitle>
-          <BtnCopiarTitulo copyData={modalData}/>
-          {podeCriarRecorrencia && <BtnCriarRecorrencia form={form} />}
+          <BtnCopiarTitulo copyData={modalData} />
+          {podeCriarRecorrencia && (
+            <BtnCriarRecorrencia form={form} />
+          )}
         </DialogHeader>
         {/* <section className="min-h-[80vh] sm:min-h-[70vh] z-[999] overflow-auto scroll-thin">
           

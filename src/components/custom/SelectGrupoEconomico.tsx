@@ -33,24 +33,36 @@ export const SelectGrupoEconomico = ({
   const gruposEconomicos = data?.data?.rows || [];
 
   return (
-    <Select value={value} onValueChange={onChange} disabled={disabled}>
+    <Select
+      value={value}
+      onValueChange={onChange}
+      disabled={disabled}
+    >
       {/* Estilização sendo usada no cadastro de orçamentos */}
-      <SelectTrigger className={`w-[180px] ${className}`}>
+      <SelectTrigger
+        className={`w-[180px] ${className}`}
+      >
         <SelectValue placeholder="Selecione o grupo" />
       </SelectTrigger>
       <SelectContent>
-        {showAll && gruposEconomicos && gruposEconomicos.length > 1 && (
-          <SelectItem value="all">TODOS</SelectItem>
+        {showAll &&
+          gruposEconomicos &&
+          gruposEconomicos.length > 1 && (
+            <SelectItem value="all">
+              TODOS
+            </SelectItem>
+          )}
+        {gruposEconomicos?.map(
+          (item: GrupoEconomico) => (
+            <SelectItem
+              className="text-left"
+              key={item.id}
+              value={item.id.toString()}
+            >
+              {item.nome}
+            </SelectItem>
+          )
         )}
-        {gruposEconomicos?.map((item: GrupoEconomico) => (
-          <SelectItem
-            className="text-left"
-            key={item.id}
-            value={item.id.toString()}
-          >
-            {item.nome}
-          </SelectItem>
-        ))}
       </SelectContent>
     </Select>
   );
@@ -83,14 +95,16 @@ export const SelectMultiGrupoEconomico = (
     // @ts-ignore
     <MultiSelect
       {...props}
-      options={gruposEconomicos.map((grupo: GrupoEconomico) => ({
-        value: grupo.id,
-        label: grupo.nome,
-      }))}
+      options={gruposEconomicos.map(
+        (grupo: GrupoEconomico) => ({
+          value: grupo.id,
+          label: grupo.nome,
+        })
+      )}
       onValueChange={props.onChange}
       defaultValue={props.value}
       placeholder="Grupo Econômico"
-      variant="inverted"
+      variant="secondary"
       animation={4}
       maxCount={1}
     />
