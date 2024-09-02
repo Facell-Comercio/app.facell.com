@@ -1,12 +1,12 @@
 import FormInput from "@/components/custom/FormInput";
 import FormSwitch from "@/components/custom/FormSwitch";
 
+import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
+import { SelectFilial } from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
 import { useFilial } from "@/hooks/useFilial";
 import { FilialFormData, useFormFilialData } from "./form-data";
 import { useStoreFilial } from "./store";
-import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomico";
-import SelectFilial from "@/components/custom/SelectFilial";
 
 const FormUsers = ({
   id,
@@ -17,7 +17,6 @@ const FormUsers = ({
   data: FilialFormData;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-
   const { mutate: insertOne } = useFilial().insertOne();
   const { mutate: update } = useFilial().update();
 
@@ -33,24 +32,20 @@ const FormUsers = ({
 
     editModal(false);
     closeModal();
-  }
+  };
 
   return (
     <div className="max-w-full ">
       <Form {...form}>
         <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
           <div className="flex flex-col gap-3 p-2">
-
-
             <div className="mb-3">
-              <h3 className="text-primary font-light">Informações principais</h3>
+              <h3 className="text-primary font-light">
+                Informações principais
+              </h3>
 
               <div className="flex gap-5 mb-3">
-                <FormInput
-                  name="id"
-                  type="hidden"
-                  control={form.control}
-                />
+                <FormInput name="id" type="hidden" control={form.control} />
 
                 <FormInput
                   control={form.control}
@@ -66,7 +61,8 @@ const FormUsers = ({
                   readOnly={!modalEditing}
                 />
 
-                <FormSwitch control={form.control}
+                <FormSwitch
+                  control={form.control}
                   label="Ativo"
                   name="active"
                   disabled={!modalEditing}
@@ -99,7 +95,6 @@ const FormUsers = ({
                   name="cnpj_datasys"
                   readOnly={!modalEditing}
                 />
-
               </div>
 
               <div className="flex gap-5 mb-3">
@@ -109,9 +104,7 @@ const FormUsers = ({
                   name="apelido"
                   readOnly={!modalEditing}
                 />
-
               </div>
-
             </div>
 
             <div className="mb-3">
@@ -195,7 +188,6 @@ const FormUsers = ({
                 />
               </div>
             </div>
-
           </div>
         </form>
       </Form>

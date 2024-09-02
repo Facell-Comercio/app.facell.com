@@ -41,17 +41,22 @@ export const useConciliacaoCP = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
+        enabled: !!filters?.id_conta_bancaria,
+        refetchOnMount: false,
         queryKey: ["financeiro", "conciliacao", "lista", filters],
         queryFn: async () => {
-          return await api.get(`/financeiro/conciliacao-cp/`, {
+          const result = await api.get(`/financeiro/conciliacao-cp/`, {
             params: { pagination, filters },
           });
+          return result.data
         },
         placeholderData: keepPreviousData,
       }),
 
     getConciliacoes: ({ pagination, filters }: GetAllParams) =>
       useQuery({
+        enabled: !!filters?.id_conta_bancaria,
+        refetchOnMount: false,
         queryKey: [
           "financeiro",
           "conciliacao",
@@ -60,9 +65,10 @@ export const useConciliacaoCP = () => {
           { pagination, filters },
         ],
         queryFn: async () => {
-          return await api.get(`/financeiro/conciliacao-cp/conciliacoes`, {
+          const result = await api.get(`/financeiro/conciliacao-cp/conciliacoes`, {
             params: { pagination, filters },
           });
+          return result.data;
         },
         placeholderData: keepPreviousData,
       }),

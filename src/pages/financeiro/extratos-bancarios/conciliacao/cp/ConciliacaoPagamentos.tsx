@@ -29,7 +29,7 @@ import ModalExtratosDuplicated, {
   ItemExtratosDuplicated,
 } from "./components/ModalExtratosDuplicados";
 import { useStoreConciliacaoCP } from "./components/store";
-import { FiltersConciliacaoCP, FiltersRealizados } from "./tables/Filters";
+import { FiltersRealizados } from "./tables/Filters";
 import { SearchComponent } from "./tables/SearchComponent";
 import TitulosConciliados, {
   TitulosConciliadosProps,
@@ -46,13 +46,23 @@ import TransacoesConciliar, {
 import { columnsTable } from "./tables/columns";
 import { useStoreTableConciliacaoCP } from "./tables/store-tables";
 
+import { useExtratosStore } from "../../context";
+import { RefreshCcw } from "lucide-react";
+import ChartConciliacaoPagamentos from "./components/ChartConciliacaoPagamentos";
+import { DatePickerWithRange } from "@/components/ui/date-range";
+
 const ConciliacaoCP = () => {
   const [modalExtratosCreditOpen, setModalExtratosCreditOpen] = useState(false);
   const [modalExtratosDuplicatedOpen, setModalExtratosDuplicatedOpen] =
     useState(false);
 
+  const { contaBancaria, ano, mes } = useExtratosStore(state => ({
+    ano: state.ano,
+    mes: state.mes,
+    contaBancaria: state?.contaBancaria
+  }))
+
   const [
-    filters,
     filtersConciliacoes,
     rowVencimentosSelection,
     handlerowVencimentosSelection,
@@ -63,11 +73,11 @@ const ConciliacaoCP = () => {
     transacoesSelection,
     setDataPagamento,
     dataPagamento,
-    showAccordion,
     pagination,
     setPagination,
+    filters,
+    setFilters
   ] = useStoreTableConciliacaoCP((state) => [
-    state.filters,
     state.filtersConciliacoes,
     state.rowVencimentosSelection,
     state.handlerowVencimentosSelection,
@@ -78,27 +88,34 @@ const ConciliacaoCP = () => {
     state.transacoesSelection,
     state.setDataPagamento,
     state.data_pagamento,
-    state.showAccordion,
     state.pagination,
     state.setPagination,
+    state.filters,
+    state.setFilters
   ]);
+
   const openModal = useStoreConciliacaoCP.getState().openModal;
 
-  const { data, refetch, isLoading, isError } = useConciliacaoCP().getAll({
-    filters,
+  const { data, refetch, isLoading, isError, isFetching } = useConciliacaoCP().getAll({
+    filters: { id_conta_bancaria: contaBancaria?.id, ano, mes, range_data: filters.range_data },
   });
+  const dataChartConciliacaoPagamentos = data?.dataChartConciliacaoPagamentos;
+  
+  // * Dados das conciliações realizadas:
   const {
     data: dataConciliacoes,
     refetch: refetchConciliacoes,
     isLoading: isLoadingConciliacoes,
   } = useConciliacaoCP().getConciliacoes({
-    filters: filtersConciliacoes,
+    filters: {...filtersConciliacoes, id_conta_bancaria: contaBancaria?.id, id_filial: contaBancaria?.id_filial},
     pagination,
   });
 
-  const rowsConciliacoes = dataConciliacoes?.data?.rows || [];
-  const rowCountConciliacoes = dataConciliacoes?.data?.rowCount || 0;
+  const rowsConciliacoes = dataConciliacoes?.rows || [];
+  const rowCountConciliacoes = dataConciliacoes?.rowCount || 0;
 
+  // ~ Operações
+  // * Conciliação Automática
   const {
     mutate: conciliacaoAutomatica,
     isPending,
@@ -106,6 +123,7 @@ const ConciliacaoCP = () => {
     data: resultadoConciliacaoAutomatica,
   } = useConciliacaoCP().conciliacaoAutomatica();
 
+  // * Conciliação de Tarifas + Criação título
   const {
     mutate: conciliacaoTarifas,
     isPending: isPendingTarifas,
@@ -113,12 +131,14 @@ const ConciliacaoCP = () => {
     data: resultadoConciliacaoTarifas,
   } = useConciliacaoCP().conciliacaoTarifas();
 
+  // * Conciliação Transferência entre contas
   const {
     mutate: conciliacaoTransferenciaContas,
     isPending: isPendingTransferenciaContas,
     isSuccess: isSuccessTransferenciaContas,
   } = useConciliacaoCP().conciliacaoTransferenciaContas();
 
+  // * Tratamento de duplicidade
   const {
     mutate: tratarDuplicidade,
     isPending: isPendingTratarDuplicidade,
@@ -131,11 +151,11 @@ const ConciliacaoCP = () => {
     }
   }, [isSuccessTransferenciaContas || isSuccessTratarDuplicidade]);
 
-  const titulosConciliar = data?.data?.titulosConciliar || [];
-  const transacoesConciliar = data?.data?.transacoesConciliar || [];
-  const titulosConciliados = data?.data?.titulosConciliados || [];
-  const transacoesConciliadas = data?.data?.transacoesConciliadas || [];
-  const bancoComFornecedor = data?.data?.bancoComFornecedor || false;
+  const titulosConciliar = data?.titulosConciliar || [];
+  const transacoesConciliar = data?.transacoesConciliar || [];
+  const titulosConciliados = data?.titulosConciliados || [];
+  const transacoesConciliadas = data?.transacoesConciliadas || [];
+  const bancoComFornecedor = data?.bancoComFornecedor || false;
 
   const [searchFilters, setSearchFilters] = useState({
     tituloConciliar: "",
@@ -290,7 +310,7 @@ const ConciliacaoCP = () => {
 
   function handleSelectionExtratosCredit(extrato: ItemExtratosCredit) {
     conciliacaoTransferenciaContas({
-      id_conta_bancaria: filters.id_conta_bancaria,
+      id_conta_bancaria: contaBancaria && String(contaBancaria?.id || '') ,
       id_saida: transacoesSelection[0].id,
       id_entrada: extrato.id,
       valor: extrato.valor,
@@ -304,16 +324,47 @@ const ConciliacaoCP = () => {
     });
   }
 
+  // * Quando o ano ou mês forem alterados, vamos resetar o range_datas:
+  const firstDay = new Date(parseInt(ano), parseInt(mes)-1, 1)
+  const endDay = new Date(parseInt(ano), parseInt(mes), 0)
+
+  useEffect(()=>{
+    setFilters({range_data: {from: firstDay, to: endDay}})
+  }, 
+  [ano, mes])
+
   const [itemOpen, setItemOpen] = useState<string>("nao-conciliado");
   const [realizadosOpen, setRealizadosOpen] = useState<string>("");
   return (
     <div className="flex flex-col gap-3">
-      <FiltersConciliacaoCP refetch={refetch} />
-      {filters.id_conta_bancaria &&
-        filters.range_data &&
-        filters.range_data.from &&
-        filters.range_data.to &&
-        showAccordion && (
+      <ChartConciliacaoPagamentos data={dataChartConciliacaoPagamentos} isLoading={isFetching} />
+
+      <div className="flex gap-3 justify-end">
+        <DatePickerWithRange
+          disabled={!contaBancaria}
+          date={filters.range_data}
+          fromMonth={firstDay}
+          fromYear={parseInt(ano)}
+          toMonth={endDay}
+          toYear={parseInt(ano)}
+          numberOfMonths={1}
+          setDate={(val) => { setFilters(({ range_data: val })); }}
+        />
+        <Button
+          disabled={isFetching || !contaBancaria}
+          onClick={() => refetch()}
+        >
+          <RefreshCcw
+            size={20}
+            className={`${isFetching ? "animate-spin" : ""} me-2`}
+          /> Atualizar
+        </Button>
+      </div>
+
+
+      {contaBancaria &&
+        ano &&
+        mes && (
           <Accordion
             type="single"
             collapsible
@@ -389,7 +440,7 @@ const ConciliacaoCP = () => {
                       conciliacaoAutomatica({
                         vencimentos: filteredTitulosConciliar,
                         transacoes: filteredTransacoesConciliar,
-                        id_conta_bancaria: filters.id_conta_bancaria,
+                        id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ''),
                       });
                     }}
                   >
@@ -411,8 +462,8 @@ const ConciliacaoCP = () => {
                       !bancoComFornecedor
                         ? "Defina o fornecedor deste banco em cadastro de bancos para poder lançar as tarifas"
                         : transacoesSelection.length > 0
-                        ? ""
-                        : "Selecione no mínimo 1 tarifa"
+                          ? ""
+                          : "Selecione no mínimo 1 tarifa"
                     }
                   >
                     <AlertPopUp
@@ -422,7 +473,7 @@ const ConciliacaoCP = () => {
                         // Talvez verificar a existência de um "TAR" na descrição
                         conciliacaoTarifas({
                           tarifas: transacoesSelection,
-                          id_conta_bancaria: filters.id_conta_bancaria,
+                          id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ''),
                           data_transacao: transacoesSelection[0].data_transacao,
                         });
                       }}
@@ -579,7 +630,7 @@ const ConciliacaoCP = () => {
         )}
       <ModalConciliarCP />
 
-      {filters.id_conta_bancaria && (
+      {contaBancaria && (
         <Accordion
           type="single"
           collapsible
@@ -624,7 +675,7 @@ const ConciliacaoCP = () => {
         onOpenChange={() => setModalExtratosDuplicatedOpen(false)}
         handleSelection={handleSelectionExtratosDuplicated}
         filters={{
-          id_conta_bancaria: filters.id_conta_bancaria,
+          id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ''),
           id_extrato:
             transacoesSelection.length === 1
               ? transacoesSelection[0].id

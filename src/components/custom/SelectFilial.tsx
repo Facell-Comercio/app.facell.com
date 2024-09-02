@@ -1,5 +1,7 @@
 import { useFilial } from "@/hooks/useFilial";
+import { Register } from "@tanstack/react-query";
 import { Control } from "react-hook-form";
+import { MultiSelect } from "../ui/multi-select";
 import FormSelect from "./FormSelect";
 
 type Filial = {
@@ -21,7 +23,7 @@ type TSelectFilial = {
   isLojaTim?: boolean;
 };
 
-const SelectFilial = ({
+export const SelectFilial = ({
   name,
   label,
   control,
@@ -53,7 +55,11 @@ const SelectFilial = ({
       control={control}
       disabled={disabled}
       className={className}
-      placeholder={placeholder ? placeholder : "Selecione a filial"}
+      placeholder={
+        placeholder
+          ? placeholder
+          : "Selecione a filial"
+      }
       value={value}
       onChange={onChange}
       options={
@@ -74,4 +80,40 @@ const SelectFilial = ({
   );
 };
 
-export default SelectFilial;
+type TSelectMultiFilial = {
+  showAll?: boolean;
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  control?: Control<any>;
+  register?: Register;
+  disabled?: boolean;
+  className?: string;
+  maxCount?: number;
+  value: string[];
+  onChange: (value: string[]) => any;
+};
+
+export const SelectMultiFilial = (
+  props: TSelectMultiFilial
+) => {
+  const { data } = useFilial().getAll();
+  const filial = data?.data?.rows || [];
+
+  return (
+    // @ts-ignore
+    <MultiSelect
+      {...props}
+      options={filial.map((grupo: Filial) => ({
+        value: grupo.id,
+        label: grupo.nome,
+      }))}
+      onValueChange={props.onChange}
+      defaultValue={props.value}
+      placeholder="Filial"
+      variant="secondary"
+      animation={4}
+      maxCount={props.maxCount || 1}
+    />
+  );
+};

@@ -2,7 +2,7 @@ import {
   ModalComponent,
   ModalComponentRow,
 } from "@/components/custom/ModalComponent";
-import { SelectGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
+import SelectMatriz from "@/components/custom/SelectMatriz";
 import { AccordionItem } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +31,7 @@ interface IModalContaBancaria {
   closeOnSelection?: boolean;
   id_matriz?: string | null;
   id_grupo_economico?: string;
+  onlyDatasys?: boolean;
 }
 
 export type ItemContaBancariaProps = {
@@ -49,8 +50,10 @@ type PaginationProps = {
 
 interface Filters {
   id_grupo_economico?: string;
+  id_matriz?: string;
   descricao?: string;
   banco?: string;
+  onlyDatasys?: boolean;
 }
 
 const ModalContasBancarias = ({
@@ -60,6 +63,7 @@ const ModalContasBancarias = ({
   closeOnSelection,
   id_matriz,
   id_grupo_economico,
+  onlyDatasys,
 }: IModalContaBancaria) => {
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -67,26 +71,29 @@ const ModalContasBancarias = ({
   });
 
   const defaultFilters: Filters = {
-    id_grupo_economico: "",
+    id_grupo_economico: "all",
+    id_matriz: id_matriz || "all",
     descricao: "",
     banco: "",
-  };
-  const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
-  const [filters, setFilters] = useState(defaultFilters);
-  const setInputRef = (key: string, element: HTMLInputElement | null) => {
-    if (inputsRef.current) inputsRef.current[key] = element;
+    onlyDatasys: onlyDatasys,
   };
 
+  const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
+  const [filters, setFilters] = useState(defaultFilters);
+
   const { data, isLoading, isError, refetch } = useQuery({
+    staleTime: 0,
+    refetchOnMount: true,
     queryKey: [
       "financeiro",
       "conta_bancaria",
+      "lista",
       { filters, pagination, id_matriz, id_grupo_economico },
     ],
     queryFn: async () =>
       await api.get("financeiro/contas-bancarias/", {
         params: {
-          filters: { ...filters, id_matriz },
+          filters: { ...filters },
           pagination,
         },
       }),
@@ -95,14 +102,6 @@ const ModalContasBancarias = ({
 
   async function handleClickFilter() {
     await new Promise((resolve) => {
-      if (inputsRef.current) {
-        setFilters((prev) => ({
-          ...prev,
-          descricao: inputsRef.current["descricao"]?.value || "",
-          banco: inputsRef.current["banco"]?.value || "",
-        }));
-        // console.log(filters);
-      }
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       resolve(true);
     });
@@ -172,13 +171,13 @@ const ModalContasBancarias = ({
               <AccordionContent className="p-0 pt-3">
                 <ScrollArea className="whitespace-nowrap rounded-md pb-1 flex flex-wrap w-max max-w-full  ">
                   <div className="flex gap-2 sm:gap-3 w-max">
-                    {!id_grupo_economico && (
-                      <SelectGrupoEconomico
+                    {!id_matriz && (
+                      <SelectMatriz
                         showAll
-                        value={filters.id_grupo_economico}
-                        onChange={(id_grupo_economico) => {
+                        value={filters.id_matriz}
+                        onChange={(id_matriz) => {
                           setFilters({
-                            id_grupo_economico: id_grupo_economico,
+                            id_matriz: id_matriz,
                           });
                         }}
                       />
@@ -186,12 +185,16 @@ const ModalContasBancarias = ({
                     <Input
                       placeholder="Descrição"
                       className="w-[20ch]"
-                      ref={(el) => setInputRef("descricao", el)}
+                      value={filters.descricao}
+                      onChange={(e) =>
+                        setFilters({ descricao: e.target.value })
+                      }
                     />
                     <Input
                       placeholder="Banco"
                       className="max-w-[200px]"
-                      ref={(el) => setInputRef("banco", el)}
+                      value={filters.banco}
+                      onChange={(e) => setFilters({ banco: e.target.value })}
                     />
                   </div>
                   <ScrollBar orientation="horizontal" />

@@ -329,7 +329,7 @@ const ModalFatura = () => {
                       />
                     </span>
                     <span className="flex flex-1 flex-col gap-2 min-w-[20ch]">
-                      <label className="text-sm font-medium">Valor</label>
+                      <label className="text-sm font-medium">Valor da Fatura</label>
                       <FormInput
                         type="number"
                         name={`valor`}

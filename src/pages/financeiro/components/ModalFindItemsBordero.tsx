@@ -15,21 +15,40 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  ScrollArea,
+  ScrollBar,
+} from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import {
+  normalizeCurrency,
+  normalizeDate,
+} from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import { Filial } from "@/types/filial-type";
 import { useQuery } from "@tanstack/react-query";
-import { EraserIcon, FilterIcon } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import {
+  EraserIcon,
+  FilterIcon,
+} from "lucide-react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { DateRange } from "react-day-picker";
 import ModalFiliais from "../../admin/components/ModalFiliais";
 
 interface IModalVencimentos {
   open: boolean;
-  handleSelection?: (item: VencimentosProps) => void;
-  handleMultiSelection?: (item: VencimentosProps[]) => void;
+  handleSelection?: (
+    item: VencimentosProps
+  ) => void;
+  handleMultiSelection?: (
+    item: VencimentosProps[]
+  ) => void;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   id_matriz?: string;
   id_status?: string;
@@ -97,11 +116,14 @@ const ModalFindItemsBordero = ({
   multiSelection,
 }: IModalVencimentos) => {
   const [ids, setIds] = useState<string[]>([]);
-  const [titulos, setTitulos] = useState<VencimentosProps[]>([]);
-  const [pagination, setPagination] = useState<PaginationProps>({
-    pageSize: 15,
-    pageIndex: 0,
-  });
+  const [titulos, setTitulos] = useState<
+    VencimentosProps[]
+  >([]);
+  const [pagination, setPagination] =
+    useState<PaginationProps>({
+      pageSize: 15,
+      pageIndex: 0,
+    });
   const defaultFilters: Filters = {
     id_vencimento: "",
     id_titulo: "",
@@ -111,36 +133,55 @@ const ModalFindItemsBordero = ({
     id_filial: "",
   };
 
-  const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
-  const [filters, setFilters] = useState(initialFilters);
+  const inputsRef = useRef<{
+    [key: string]: HTMLInputElement | null;
+  }>({});
+  const [filters, setFilters] = useState(
+    initialFilters
+  );
 
-  const setInputRef = (key: string, element: HTMLInputElement | null) => {
-    if (inputsRef.current) inputsRef.current[key] = element;
+  const setInputRef = (
+    key: string,
+    element: HTMLInputElement | null
+  ) => {
+    if (inputsRef.current)
+      inputsRef.current[key] = element;
   };
 
-  const { data, isError, isLoading, refetch } = useQuery({
-    queryKey: [
-      "financeiro",
-      "contas_pagar",
-      "bordero",
-      "novos_itens",
-      "lista",
-      { id_matriz, id_status },
-    ],
-    staleTime: 0,
-    retry: false,
-    queryFn: async () =>
-      await api.get("financeiro/contas-a-pagar/bordero/procurar-novos-itens", {
-        params: {
-          filters: { ...filters, id_matriz, id_status },
-          pagination,
-        },
-      }),
-    enabled: open == true,
-  });
+  const { data, isError, isLoading, refetch } =
+    useQuery({
+      queryKey: [
+        "financeiro",
+        "contas_pagar",
+        "bordero",
+        "novos_itens",
+        "lista",
+        { id_matriz, id_status },
+      ],
+      staleTime: 0,
+      retry: false,
+      queryFn: async () =>
+        await api.get(
+          "financeiro/contas-a-pagar/bordero/procurar-novos-itens",
+          {
+            params: {
+              filters: {
+                ...filters,
+                id_matriz,
+                id_status,
+              },
+              pagination,
+            },
+          }
+        ),
+      enabled: open == true,
+    });
 
   useEffect(() => {
-    setFilters((prev) => ({ ...prev, ...initialFilters }));
+    setFilters((prev) => ({
+      ...prev,
+      ...initialFilters,
+    }));
     // refetch(); Causa o erro de uso dos hooks
   }, [initialFilters]);
 
@@ -149,14 +190,27 @@ const ModalFindItemsBordero = ({
       if (inputsRef.current) {
         setFilters((prev) => ({
           ...prev,
-          id_vencimento: inputsRef.current["id_vencimento"]?.value || "",
-          id_titulo: inputsRef.current["id_titulo"]?.value || "",
-          fornecedor: inputsRef.current["fornecedor"]?.value || "",
-          descricao: inputsRef.current["descricao"]?.value || "",
-          num_doc: inputsRef.current["num_doc"]?.value || "",
+          id_vencimento:
+            inputsRef.current["id_vencimento"]
+              ?.value || "",
+          id_titulo:
+            inputsRef.current["id_titulo"]
+              ?.value || "",
+          fornecedor:
+            inputsRef.current["fornecedor"]
+              ?.value || "",
+          descricao:
+            inputsRef.current["descricao"]
+              ?.value || "",
+          num_doc:
+            inputsRef.current["num_doc"]?.value ||
+            "",
         }));
       }
-      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: 0,
+      }));
       resolve(true);
     });
     refetch();
@@ -164,13 +218,21 @@ const ModalFindItemsBordero = ({
 
   async function handleClickResetFilters() {
     await new Promise((resolve) => {
-      setFilters((prev) => ({ ...prev, ...defaultFilters }));
-      Object.keys(inputsRef.current).forEach((key) => {
-        if (inputsRef.current[key]) {
-          inputsRef.current[key]!.value = "";
+      setFilters((prev) => ({
+        ...prev,
+        ...defaultFilters,
+      }));
+      Object.keys(inputsRef.current).forEach(
+        (key) => {
+          if (inputsRef.current[key]) {
+            inputsRef.current[key]!.value = "";
+          }
         }
-      });
-      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+      );
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: 0,
+      }));
       resolve(true);
     });
     refetch();
@@ -181,40 +243,47 @@ const ModalFindItemsBordero = ({
     setIds([]);
   }
   function handleSelectAll() {
-    data?.data?.rows?.forEach((item: VencimentosProps) => {
-      // const isAlreadyInVencimentos = titulos.some(
-      //   (existingItem) =>
-      //     existingItem.id_vencimento === item.id_vencimento &&
-      //     existingItem.id_forma_pagamento === item.id_forma_pagamento
-      // );
+    data?.data?.rows?.forEach(
+      (item: VencimentosProps) => {
+        // const isAlreadyInVencimentos = titulos.some(
+        //   (existingItem) =>
+        //     existingItem.id_vencimento === item.id_vencimento &&
+        //     existingItem.id_forma_pagamento === item.id_forma_pagamento
+        // );
 
-      const isAlreadyInVencimentos = ids.some(
-        (id) => id === `${item.id_vencimento}-${item.id_forma_pagamento}`
-      );
+        const isAlreadyInVencimentos = ids.some(
+          (id) =>
+            id ===
+            `${item.id_vencimento}-${item.id_forma_pagamento}`
+        );
 
-      if (!isAlreadyInVencimentos) {
-        setTitulos((prevVencimentos) => [
-          ...prevVencimentos,
-          {
-            ...item,
-            num_doc: item.num_doc || "",
-            data_pagamento: item.data_pagamento || "",
-            tipo_baixa: item.tipo_baixa || "",
-          },
-        ]);
+        if (!isAlreadyInVencimentos) {
+          setTitulos((prevVencimentos) => [
+            ...prevVencimentos,
+            {
+              ...item,
+              num_doc: item.num_doc || "",
+              data_pagamento:
+                item.data_pagamento || "",
+              tipo_baixa: item.tipo_baixa || "",
+            },
+          ]);
 
-        setIds((prevIds) => [
-          ...prevIds,
-          `${item.id_vencimento}-${item.id_forma_pagamento}`,
-        ]);
+          setIds((prevIds) => [
+            ...prevIds,
+            `${item.id_vencimento}-${item.id_forma_pagamento}`,
+          ]);
+        }
       }
-    });
+    );
   }
 
   function pushSelection(item: VencimentosProps) {
     if (multiSelection) {
       const isAlreadyInVencimentos = ids.some(
-        (id) => id === `${item.id_vencimento}-${item.id_forma_pagamento}`
+        (id) =>
+          id ===
+          `${item.id_vencimento}-${item.id_forma_pagamento}`
       );
 
       if (!isAlreadyInVencimentos) {
@@ -223,40 +292,56 @@ const ModalFindItemsBordero = ({
           {
             ...item,
             num_doc: item.num_doc || "",
-            data_pagamento: item.data_pagamento || "",
+            data_pagamento:
+              item.data_pagamento || "",
             tipo_baixa: item.tipo_baixa || "",
           },
         ]);
-        setIds([...ids, `${item.id_vencimento}-${item.id_forma_pagamento}`]);
+        setIds([
+          ...ids,
+          `${item.id_vencimento}-${item.id_forma_pagamento}`,
+        ]);
       } else {
         setTitulos((prevTitulos) =>
           prevTitulos.filter(
             (titulo) =>
-              titulo.id_vencimento !== item.id_vencimento &&
-              titulo.id_forma_pagamento !== item.id_forma_pagamento
+              titulo.id_vencimento !==
+                item.id_vencimento &&
+              titulo.id_forma_pagamento !==
+                item.id_forma_pagamento
           )
         );
 
         setIds((prevId) =>
           prevId.filter((id) => {
-            return id !== `${item.id_vencimento}-${item.id_forma_pagamento}`;
+            return (
+              id !==
+              `${item.id_vencimento}-${item.id_forma_pagamento}`
+            );
           })
         );
       }
     } else {
       handleSelection && handleSelection(item);
-      if (onOpenChange !== undefined && closeOnSelection) {
+      if (
+        onOpenChange !== undefined &&
+        closeOnSelection
+      ) {
         onOpenChange(false);
       }
     }
   }
 
-  const pageCount = (data && data.data.pageCount) || 0;
+  const pageCount =
+    (data && data.data.pageCount) || 0;
 
   const ButtonSaveSelection = () => {
     return (
       <Button
-        onClick={() => handleMultiSelection && handleMultiSelection(titulos)}
+        onClick={() =>
+          handleMultiSelection &&
+          handleMultiSelection(titulos)
+        }
       >
         Salvar seleção
       </Button>
@@ -275,8 +360,12 @@ const ModalFindItemsBordero = ({
             <p className="mr-1">Valor Total: </p>
             {normalizeCurrency(
               data?.data.rows.reduce(
-                (acc: number, titulo: VencimentosProps) =>
-                  acc + parseFloat(titulo.valor_total),
+                (
+                  acc: number,
+                  titulo: VencimentosProps
+                ) =>
+                  acc +
+                  parseFloat(titulo.valor_total),
                 0
               ) || 0
             )}
@@ -293,8 +382,10 @@ const ModalFindItemsBordero = ({
               <p className="mr-1">Valor: </p>
               {normalizeCurrency(
                 titulos?.reduce(
-                  (acc: number, titulo: VencimentosProps) =>
-                    acc + +titulo.valor_total,
+                  (
+                    acc: number,
+                    titulo: VencimentosProps
+                  ) => acc + +titulo.valor_total,
                   0
                 ) || 0
               )}
@@ -304,12 +395,18 @@ const ModalFindItemsBordero = ({
       </div>
     );
   };
-  const [itemOpen, setItemOpen] = useState<string>("item-1");
-  const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
-  const [filial, setFilial] = useState<string>("");
+  const [itemOpen, setItemOpen] =
+    useState<string>("item-1");
+  const [modalFilialOpen, setModalFilialOpen] =
+    useState<boolean>(false);
+  const [filial, setFilial] =
+    useState<string>("");
 
   function handleSelectFilial(filial: Filial) {
-    setFilters({ ...filters, id_filial: filial.id });
+    setFilters({
+      ...filters,
+      id_filial: filial.id,
+    });
     setFilial(filial.nome);
   }
   useEffect(() => {
@@ -317,7 +414,8 @@ const ModalFindItemsBordero = ({
       toast({
         title: "Ops!",
         variant: "destructive",
-        description: "Ocorreu um erro ao tentar buscar os vencimentos",
+        description:
+          "Ocorreu um erro ao tentar buscar os vencimentos",
       });
     }
   }, [isError]);
@@ -326,12 +424,18 @@ const ModalFindItemsBordero = ({
   if (!open) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <DialogContent className="flex flex-col sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Vencimentos a pagar</DialogTitle>
+          <DialogTitle>
+            Vencimentos a pagar
+          </DialogTitle>
           <DialogDescription>
-            Selecione ao clicar no botão à direita.
+            Selecione ao clicar no botão à
+            direita.
           </DialogDescription>
           <Accordion
             type="single"
@@ -340,21 +444,41 @@ const ModalFindItemsBordero = ({
             onValueChange={(e) => setItemOpen(e)}
             className="p-2 border dark:border-slate-800 rounded-lg flex-1"
           >
-            <AccordionItem value="item-1" className="relative border-0">
+            <AccordionItem
+              value="item-1"
+              className="relative border-0"
+            >
               <div className="flex gap-3 items-center absolute start-16 top-1">
-                <Button size={"xs"} onClick={() => handleClickFilter()}>
-                  Aplicar <FilterIcon size={12} className="ms-2" />
+                <Button
+                  size={"xs"}
+                  onClick={() =>
+                    handleClickFilter()
+                  }
+                >
+                  Aplicar
+                  <FilterIcon
+                    size={12}
+                    className="ms-2"
+                  />
                 </Button>
                 <Button
                   size={"xs"}
                   variant="secondary"
-                  onClick={() => handleClickResetFilters()}
+                  onClick={() =>
+                    handleClickResetFilters()
+                  }
                 >
-                  Limpar <EraserIcon size={12} className="ms-2" />
+                  Limpar
+                  <EraserIcon
+                    size={12}
+                    className="ms-2"
+                  />
                 </Button>
               </div>
 
-              <AccordionTrigger className={`py-1 hover:no-underline`}>
+              <AccordionTrigger
+                className={`py-1 hover:no-underline`}
+              >
                 <span className="">Filtros</span>
               </AccordionTrigger>
               <AccordionContent className="p-0 pt-3">
@@ -363,34 +487,58 @@ const ModalFindItemsBordero = ({
                     <Input
                       placeholder="ID"
                       className="w-[10ch]"
-                      ref={(el) => setInputRef("id_vencimento", el)}
+                      ref={(el) =>
+                        setInputRef(
+                          "id_vencimento",
+                          el
+                        )
+                      }
                     />
                     <Input
                       placeholder="ID Título"
                       className="w-[20ch]"
-                      ref={(el) => setInputRef("id_titulo", el)}
+                      ref={(el) =>
+                        setInputRef(
+                          "id_titulo",
+                          el
+                        )
+                      }
                     />
                     <Input
                       placeholder="Fornecedor"
                       className="max-w-[200px]"
-                      ref={(el) => setInputRef("fornecedor", el)}
+                      ref={(el) =>
+                        setInputRef(
+                          "fornecedor",
+                          el
+                        )
+                      }
                     />
                     <Input
                       placeholder="Descrição"
                       className="w-[20ch]"
-                      ref={(el) => setInputRef("descricao", el)}
+                      ref={(el) =>
+                        setInputRef(
+                          "descricao",
+                          el
+                        )
+                      }
                     />
                     <Input
                       placeholder="Nº Doc"
                       className="w-[20ch]"
-                      ref={(el) => setInputRef("num_doc", el)}
+                      ref={(el) =>
+                        setInputRef("num_doc", el)
+                      }
                     />
                     <Input
                       placeholder="Filial"
                       className="w-[30ch]"
                       readOnly
                       value={filial}
-                      onClick={() => setModalFilialOpen(true)}
+                      onClick={() =>
+                        setModalFilialOpen(true)
+                      }
                     />
                   </div>
                   <ScrollBar orientation="horizontal" />
@@ -406,7 +554,9 @@ const ModalFindItemsBordero = ({
           pagination={pagination}
           setPagination={setPagination}
           multiSelection={multiSelection}
-          buttonSaveSelection={ButtonSaveSelection}
+          buttonSaveSelection={
+            ButtonSaveSelection
+          }
           info={Info}
           handleRemoveAll={handleRemoveAll}
           handleSelectAll={handleSelectAll}
@@ -416,7 +566,9 @@ const ModalFindItemsBordero = ({
               <tr className="text-sm">
                 <th className="p-1">ID</th>
                 <th className="p-1">ID Título</th>
-                <th className="p-1">Fornecedor</th>
+                <th className="p-1">
+                  Fornecedor
+                </th>
                 <th className="p-1">Descrição</th>
                 <th className="p-1">Previsão</th>
                 <th className="p-1">Doc</th>
@@ -426,62 +578,95 @@ const ModalFindItemsBordero = ({
               </tr>
             </thead>
             <tbody>
-              {data?.data?.rows.map((item: VencimentosProps, index: number) => {
-                const isSelected = ids.includes(
-                  `${item.id_vencimento}-${item.id_forma_pagamento}`
-                );
-                const isFatura = (item?.id_forma_pagamento || 0) == 6;
+              {data?.data?.rows.map(
+                (
+                  item: VencimentosProps,
+                  index: number
+                ) => {
+                  const isSelected = ids.includes(
+                    `${item.id_vencimento}-${item.id_forma_pagamento}`
+                  );
+                  const isFatura =
+                    (item?.id_forma_pagamento ||
+                      0) == 6;
 
-                return (
-                  <tr
-                    key={"titulos:" + item.id_titulo + index}
-                    className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2 ${
-                      isSelected &&
-                      "bg-secondary/50 text-secondary-foreground/40"
-                    }`}
-                  >
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {" "}
-                      {item.id_vencimento}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {" "}
-                      {isFatura ? "Fatura" : item.id_titulo}
-                    </td>
-                    <td className="text-xs text-nowrap p-1">
-                      {item.nome_fornecedor.slice(0, 20) +
-                        (item.nome_fornecedor.length > 20 ? "..." : "")}
-                    </td>
-                    <td className="text-xs text-nowrap p-1">
-                      {item.descricao.slice(0, 30) +
-                        (item.descricao.length > 30 ? "..." : "")}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {normalizeDate(item.previsao)}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {item.num_doc}
-                    </td>
-                    <td className="text-xs text-nowrap p-1">
-                      {normalizeCurrency(item.valor_total)}
-                    </td>
-                    <td className="text-xs text-nowrap p-1">{item.filial}</td>
-                    <td className="text-center p-1">
-                      <Button
-                        size={"xs"}
-                        className={`p-1 ${
-                          isSelected &&
-                          "bg-secondary hover:bg-secondary hover:opacity-90"
-                        }`}
-                        variant={"outline"}
-                        onClick={() => pushSelection(item)}
-                      >
-                        {isSelected ? "Desmarcar" : "Selecionar"}
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
+                  return (
+                    <tr
+                      key={
+                        "titulos:" +
+                        item.id_titulo +
+                        index
+                      }
+                      className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2 ${
+                        isSelected &&
+                        "bg-secondary/50 text-secondary-foreground/40"
+                      }`}
+                    >
+                      <td className="text-xs text-nowrap p-1 text-center">
+                        {item.id_vencimento}
+                      </td>
+                      <td className="text-xs text-nowrap p-1 text-center">
+                        {isFatura
+                          ? "Fatura"
+                          : item.id_titulo}
+                      </td>
+                      <td className="text-xs text-nowrap p-1">
+                        {item.nome_fornecedor.slice(
+                          0,
+                          20
+                        ) +
+                          (item.nome_fornecedor
+                            .length > 20
+                            ? "..."
+                            : "")}
+                      </td>
+                      <td className="text-xs text-nowrap p-1">
+                        {item.descricao.slice(
+                          0,
+                          30
+                        ) +
+                          (item.descricao.length >
+                          30
+                            ? "..."
+                            : "")}
+                      </td>
+                      <td className="text-xs text-nowrap p-1 text-center">
+                        {normalizeDate(
+                          item.previsao
+                        )}
+                      </td>
+                      <td className="text-xs text-nowrap p-1 text-center">
+                        {item.num_doc}
+                      </td>
+                      <td className="text-xs text-nowrap p-1">
+                        {normalizeCurrency(
+                          item.valor_total
+                        )}
+                      </td>
+                      <td className="text-xs text-nowrap p-1">
+                        {item.filial}
+                      </td>
+                      <td className="text-center p-1">
+                        <Button
+                          size={"xs"}
+                          className={`p-1 ${
+                            isSelected &&
+                            "bg-secondary hover:bg-secondary hover:opacity-90"
+                          }`}
+                          variant={"outline"}
+                          onClick={() =>
+                            pushSelection(item)
+                          }
+                        >
+                          {isSelected
+                            ? "Desmarcar"
+                            : "Selecionar"}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
             </tbody>
           </table>
         </ModalComponent>

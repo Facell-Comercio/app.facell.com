@@ -57,8 +57,41 @@ export const columnsTableFaturas: ColumnDef<FaturaSchema>[] = [
     },
   },
   {
-    id: "valor",
-    header: "VALOR",
+    header: "VALOR TOTAL",
+    accessorKey: "valor_total",
+    cell: (info) => {
+      const value = info.getValue<string>();
+      return (
+        <span title={value} className="block text-nowrap">
+          R${" "}
+          {parseFloat(value).toLocaleString("pt-BR", {
+            useGrouping: true,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </span>
+      );
+    },
+  },
+  {
+    header: "VALOR APROVADO",
+    accessorKey: "valor_aprovado",
+    cell: (info) => {
+      const value = info.getValue<string>();
+      return (
+        <span title={value} className="block text-nowrap">
+          R${" "}
+          {parseFloat(value).toLocaleString("pt-BR", {
+            useGrouping: true,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </span>
+      );
+    },
+  },
+  {
+    header: "VALOR FATURA",
     accessorKey: "valor",
     cell: (info) => {
       const label = info.getValue<string>();

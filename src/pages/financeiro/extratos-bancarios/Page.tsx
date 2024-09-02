@@ -5,9 +5,10 @@ import {
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
 import { Navigate } from "react-router-dom";
-import ConciliacaoCP from "./conciliacao/cp/ConciliacaoCP";
+import ConciliacaoCP from "./conciliacao/cp/ConciliacaoPagamentos";
 import ConfigTab from "./config/ConfigTab";
 import ExtratoTab from "./extrato/ExtratoTab";
+import Filters from "./Filters";
 
 const ConciliacaoBancaria = () => {
   const authorized =
@@ -16,8 +17,10 @@ const ConciliacaoBancaria = () => {
     return <Navigate to={"/not-authorized"} />;
   }
   return (
-    <div className="flex p-4">
-      <Tabs defaultValue="conciliacao" className="w-full">
+    <div className="flex flex-col gap-3 p-4">
+      <Filters/>
+
+      <Tabs defaultValue="extratos" className="w-full">
         <TabsList className="w-full justify-start">
           <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
             <TabsTrigger value="extratos">Extratos Bancários</TabsTrigger>

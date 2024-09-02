@@ -139,7 +139,7 @@ export const schemaTitulo = z
     (data) =>
       (data.vencimentos?.reduce((acc, curr) => {
         return acc + parseFloat(curr.valor);
-      }, 0) || 0) == parseFloat(data.valor),
+      }, 0) || 0).toFixed(2) == parseFloat(data.valor).toFixed(2),
     {
       path: ["vencimentos"],
       message:

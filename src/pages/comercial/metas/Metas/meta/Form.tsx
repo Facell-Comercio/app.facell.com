@@ -3,12 +3,20 @@ import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
-import { Calendar, Crosshair, Percent, UserSearch } from "lucide-react";
+import {
+  Calendar,
+  Crosshair,
+  Percent,
+  UserSearch,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 import FormSelect from "@/components/custom/FormSelect";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { MetasProps, useMetas } from "@/hooks/comercial/useMetas";
+import {
+  MetasProps,
+  useMetas,
+} from "@/hooks/comercial/useMetas";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useFormMetaData } from "./form-data";
 import { useStoreMeta } from "./store";
@@ -44,21 +52,28 @@ const FormMeta = ({
     isError: updateIsError,
   } = useMetas().update();
 
-  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
-    useStoreMeta((state) => [
-      state.modalEditing,
-      state.editModal,
-      state.closeModal,
-      state.editIsPending,
-      state.isPending,
-    ]);
-  const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
+  const [
+    modalEditing,
+    editModal,
+    closeModal,
+    editIsPending,
+    isPending,
+  ] = useStoreMeta((state) => [
+    state.modalEditing,
+    state.editModal,
+    state.closeModal,
+    state.editIsPending,
+    state.isPending,
+  ]);
+  const [modalFilialOpen, setModalFilialOpen] =
+    useState<boolean>(false);
 
   const { form } = useFormMetaData(data);
 
   const readOnly = !data.canEdit;
 
-  const disabled = (!modalEditing || isPending) && !readOnly;
+  const disabled =
+    (!modalEditing || isPending) && !readOnly;
 
   const onSubmitData = (data: MetasProps) => {
     if (id) update(data);
@@ -72,7 +87,10 @@ const FormMeta = ({
       editIsPending(false);
     } else if (updateIsError || insertIsError) {
       editIsPending(false);
-    } else if (updateIsPending || insertIsPending) {
+    } else if (
+      updateIsPending ||
+      insertIsPending
+    ) {
       editIsPending(true);
     }
   }, [updateIsPending, insertIsPending]);
@@ -83,8 +101,14 @@ const FormMeta = ({
   function handleSelectFilial(filial: Filial) {
     form.setValue("id_filial", filial.id || "");
     form.setValue("filial", filial.nome);
-    form.setValue("id_grupo_economico", filial.id_grupo_economico);
-    form.setValue("grupo_economico", filial.grupo_economico);
+    form.setValue(
+      "id_grupo_economico",
+      filial.id_grupo_economico
+    );
+    form.setValue(
+      "grupo_economico",
+      filial.grupo_economico
+    );
   }
 
   return (
@@ -92,7 +116,9 @@ const FormMeta = ({
       <Form {...form}>
         <form
           ref={formRef}
-          onSubmit={form.handleSubmit(onSubmitData)}
+          onSubmit={form.handleSubmit(
+            onSubmitData
+          )}
           className="max-w-screen-xl w-full grid grid-cols-1 gap-3 "
         >
           <div className="overflow-auto scroll-thin  flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
@@ -102,7 +128,9 @@ const FormMeta = ({
                 <div className="flex justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <Calendar />
-                    <span className="text-lg font-bold ">Competência</span>
+                    <span className="text-lg font-bold ">
+                      Competência
+                    </span>
                   </div>
                 </div>
 
@@ -161,7 +189,9 @@ const FormMeta = ({
                 <div className="flex justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <UserSearch />
-                    <span className="text-lg font-bold ">Responsável</span>
+                    <span className="text-lg font-bold ">
+                      Responsável
+                    </span>
                   </div>
                 </div>
 
@@ -190,7 +220,10 @@ const FormMeta = ({
                     readOnly
                     label="Filial"
                     control={form.control}
-                    onClick={() => !readOnly && setModalFilialOpen(true)}
+                    onClick={() =>
+                      !readOnly &&
+                      setModalFilialOpen(true)
+                    }
                   />
                   <FormInput
                     className="flex-1 shrink-0 min-w-fit"
@@ -206,30 +239,47 @@ const FormMeta = ({
                     name="cargo"
                     label="Cargo"
                     control={form.control}
-                    disabled={disabled || readOnly}
+                    disabled={
+                      disabled || readOnly
+                    }
                     placeholder="Selecione o cargo"
                     options={
-                      cargosPrevistos.map((cargo: any) => ({
-                        value: cargo,
-                        label: cargo,
-                      })) || []
+                      cargosPrevistos.map(
+                        (cargo: any) => ({
+                          value: cargo,
+                          label: cargo,
+                        })
+                      ) || []
                     }
                   />
                   <span className="flex gap-2 flex-col flex-1">
-                    <label className="text-sm font-medium">Tags</label>
+                    <label className="text-sm font-medium">
+                      Tags
+                    </label>
 
                     <MultiSelect
-                      options={tags.map((tag: any) => ({
-                        value: tag,
-                        label: tag,
-                      }))}
+                      options={tags.map(
+                        (tag: any) => ({
+                          value: tag,
+                          label: tag,
+                        })
+                      )}
                       onValueChange={(tag) => {
-                        form.setValue("tags", tag.join(";"));
+                        form.setValue(
+                          "tags",
+                          tag.join(";")
+                        );
                       }}
-                      disabled={disabled || readOnly}
-                      defaultValue={form.watch("tags")?.split(";") || []}
+                      disabled={
+                        disabled || readOnly
+                      }
+                      defaultValue={
+                        form
+                          .watch("tags")
+                          ?.split(";") || []
+                      }
                       placeholder="Status"
-                      variant="inverted"
+                      variant="secondary"
                       animation={4}
                       maxCount={2}
                       className={`bg-background hover:bg-background`}
@@ -246,7 +296,9 @@ const FormMeta = ({
                 <div className="flex justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <Crosshair />
-                    <span className="text-lg font-bold ">Metas</span>
+                    <span className="text-lg font-bold ">
+                      Metas
+                    </span>
                   </div>
                 </div>
 
@@ -395,7 +447,9 @@ const FormMeta = ({
         onOpenChange={setModalFilialOpen}
         closeOnSelection
         isLojaTim
-        id_grupo_economico={form.watch("id_grupo_economico")}
+        id_grupo_economico={form.watch(
+          "id_grupo_economico"
+        )}
       />
     </div>
   );

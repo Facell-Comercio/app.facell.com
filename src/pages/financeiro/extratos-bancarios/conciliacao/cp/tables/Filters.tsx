@@ -94,7 +94,7 @@ export const FiltersConciliacaoCP = ({ refetch }: { refetch: () => void }) => {
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-1">
             <div className="flex w-max space-x-3">
-            <Input
+              <Input
                 value={filters.conta_bancaria}
                 className="flex-1 max-h-10 min-w-[36ch]"
                 readOnly
@@ -109,12 +109,12 @@ export const FiltersConciliacaoCP = ({ refetch }: { refetch: () => void }) => {
                   setFilters({ range_data: range_data });
                 }}
               />
-              
+
               <ModalContasBancarias
                 open={modalContaBancariaOpen}
                 handleSelection={handleSelectionContaBancaria}
                 onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
-                // id_matriz={id_matriz || ""}
+              // id_matriz={id_matriz || ""}
               />
             </div>
             <ScrollBar orientation="horizontal" />

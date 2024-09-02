@@ -19,6 +19,8 @@ import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
 import ContasReceberPage from "./pages/financeiro/contas-receber/ContasReceber.tsx";
+import ControleCaixaPage from "./pages/financeiro/controle-caixa/ControleCaixaPage.tsx";
+import Caixas from "./pages/financeiro/controle-caixa/conferecia-caixa/caixas/Caixas.tsx";
 import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
 import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
 import Perfil from "./pages/perfil/index.tsx";
@@ -72,6 +74,11 @@ const AppRoutes = () => {
           <Route path="/financeiro/">
             <Route element={<ContasPagarPage />} path="contas-a-pagar" />
             <Route element={<ContasReceberPage />} path="contas-a-receber" />
+            <Route element={<ControleCaixaPage />} path="controle-de-caixa">
+              <Route path="conferencia-de-caixa">
+                <Route element={<Caixas />} path="filiais" />
+              </Route>
+            </Route>
             <Route element={<OrcamentoPage />} path="orcamento" />
             <Route
               element={<ConciliacaoBancariaPage />}

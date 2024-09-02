@@ -37,7 +37,9 @@ type TSelectMultiStatus = {
   onChange: (value: string[]) => any;
 };
 
-export const SelectMultiStatus = (props: TSelectMultiStatus) => {
+export const SelectMultiStatus = (
+  props: TSelectMultiStatus
+) => {
   return (
     // @ts-ignore
     <MultiSelect
@@ -49,7 +51,7 @@ export const SelectMultiStatus = (props: TSelectMultiStatus) => {
       onValueChange={props.onChange}
       defaultValue={props.value}
       placeholder="Status"
-      variant="inverted"
+      variant="secondary"
       animation={4}
       maxCount={1}
     />
@@ -69,7 +71,9 @@ type TSelectStatus = {
   onChange: (id?: string) => any;
 };
 
-export const SelectStatus = (props: TSelectStatus) => {
+export const SelectStatus = (
+  props: TSelectStatus
+) => {
   return (
     <FormSelect
       name={props.name}
