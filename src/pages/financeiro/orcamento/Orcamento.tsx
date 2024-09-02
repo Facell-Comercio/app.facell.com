@@ -6,11 +6,15 @@ import {
 } from "@/helpers/checkAuthorization";
 import Cadastros from "./components/cadastros/Cadastros";
 import MeuOrcamento from "./components/meu-orcamento/MeuOrcamento";
+import { Navigate } from "react-router-dom";
 
 // import { useAuthStore } from "@/context/auth-store";
 
 const OrcamentoPage = () => {
-  //   const user = useAuthStore(state=>state.user)
+  const allowedUser = checkUserPermission('MASTER') || checkUserPermission('FINANCEIRO_SOLICITAR_PAGAMENTO') || checkUserDepartments('FINANCEIRO')
+  if(!allowedUser){
+    return <Navigate to={'/not-authorized'}/>
+  }
 
   return (
     <div className="flex p-4">

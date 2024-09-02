@@ -6,7 +6,7 @@ import {
   checkUserPermission,
 } from "@/helpers/checkAuthorization";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import Borderos from "./borderos/Borderos";
 import Cartoes from "./cartoes/Cartoes";
 import MovimentoContabil from "./movimento-contabil/MovimentoContabil";
@@ -15,7 +15,12 @@ import TitulosPagar from "./titulos/TitulosPagar";
 import Vencimentos from "./vencimentos/Vencimentos";
 
 const ContasPagarPage = () => {
-  const uri = `/financeiro/contas-a-pagar`;
+  const allowedUser = checkUserPermission('MASTER') || checkUserPermission('FINANCEIRO_SOLICITAR_PAGAMENTO') || checkUserDepartments('FINANCEIRO')
+  if(!allowedUser){
+    return <Navigate to={'/not-authorized'}/>
+  }
+  
+  const uri = `/financeiro/contas-a-pagar`; 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("tab") || "";

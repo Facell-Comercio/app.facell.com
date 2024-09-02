@@ -1,12 +1,40 @@
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link, useLocation } from "react-router-dom";
+import { PowerBI } from "./powerbi/PowerBI";
+import ParcialPage from "./parcial/ParcialPage";
+
 export const PageDashboard = () => {
-    return (
-        <div className="max-w-full h-[90%] border" >
-            <iframe 
-                title="Análise Geral"
-                className="w-full h-[90vh]" 
-                src="https://app.powerbi.com/reportEmbed?reportId=6048a98f-6bf7-4a9b-8144-ad53f2984a14&appId=ce0cc60b-3ce3-477d-a121-8c90940020e4&autoAuth=true&ctid=08ab4505-0a79-4c64-be50-0e99c51e0af0" 
-                allowFullScreen
-            ></iframe>
-        </div>
-    )
-}
+  const uri = `/dashboard`;
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const activeTab = searchParams.get("tab") || "";
+
+  return (
+    <div className="flex p-4 scroll-thin overflow-auto max-w-[100dvw]">
+      <Tabs defaultValue={activeTab || "parcial"} className="w-full">
+        <TabsList className="w-full justify-start">
+          <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
+            <Link to={`${uri}?tab=parcial`}>
+              <TabsTrigger value="parcial">Parcial</TabsTrigger>
+            </Link>
+            <Link to={`${uri}?tab=powerbi`}>
+              <TabsTrigger value="powerbi">Power BI</TabsTrigger>
+            </Link>
+           
+            <ScrollBar
+              orientation="horizontal"
+              thumbColor="dark:bg-slate-400 bg-gray-450"
+            />
+          </ScrollArea>
+        </TabsList>
+        <TabsContent value="parcial">
+            <ParcialPage />
+        </TabsContent>
+        <TabsContent value="powerbi">
+            <PowerBI/>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};

@@ -21,6 +21,8 @@ interface DatePickerWithRangeProps
   disabled?: boolean;
   description?: string;
   numberOfMonths?: number;
+  toDate?: Date;
+  fromDate?: Date;
   toMonth?: Date;
   fromMonth?: Date;
   toYear?: number;
@@ -34,6 +36,8 @@ export function DatePickerWithRange({
   disabled,
   description,
   numberOfMonths,
+  toDate,
+  fromDate,
   toMonth,
   fromMonth,
   toYear,
@@ -85,6 +89,8 @@ export function DatePickerWithRange({
             fromMonth={fromMonth}
             toYear={toYear}
             fromYear={fromYear}
+            toDate={toDate}
+            fromDate={fromDate}
           />
         </PopoverContent>
       </Popover>

@@ -11,11 +11,15 @@ import EquipamentosCielo from "./equipamentos-cielo/EquipamentosCielo";
 import Fornecedores from "./fornecedores/Fornecedores";
 import PlanoContas from "./plano-de-contas/PlanoContas";
 import Rateios from "./rateios/Rateios";
+import { Navigate } from "react-router-dom";
 
 // import { useAuthStore } from "@/context/auth-store";
 
 const CadastrosPage = () => {
-  //   const user = useAuthStore(state=>state.user)
+  const allowedUser = checkUserPermission('MASTER') || checkUserPermission('FINANCEIRO_SOLICITAR_PAGAMENTO') || checkUserDepartments('FINANCEIRO')
+  if(!allowedUser){
+    return <Navigate to={'/not-authorized'}/>
+  }
 
   return (
     <div className="flex p-4">
