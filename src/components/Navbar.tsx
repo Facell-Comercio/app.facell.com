@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ToggleTheme } from "./ui/toogle-theme";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Navbar = () => {
   const user = useAuthStore((state) => state.user);
@@ -48,7 +49,12 @@ const Navbar = () => {
         <DropdownMenu>
           <DropdownMenuTrigger className="shrink-0 overflow-hidden">
             {user?.img_url ? (
-              <img src={user.img_url} className=" w-10 h-10 rounded-sm" />
+              <Avatar className="rounded-sm">
+                <AvatarFallback>
+                  <User className="w-10 h-10 p-2 text-gray-400 bg-gray-200 dark:bg-gray-800 rounded-sm" />
+                </AvatarFallback>
+                <AvatarImage src={user.img_url} />
+              </Avatar>
             ) : (
               <span className="">
                 <User className="w-10 h-10 p-2 text-gray-400 bg-gray-200 dark:bg-gray-800 rounded-sm" />

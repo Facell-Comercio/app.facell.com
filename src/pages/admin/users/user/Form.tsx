@@ -237,7 +237,7 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
                   <div className="flex flex-wrap gap-3 items-end">
                     <div className="flex flex-col justify-end gap-2 overflow-hidden">
                       <FormLabel>Foto</FormLabel>
-                      <div className="w-24">
+                      <div className="w-24 h-24 rounded-lg overflow-hidden">
                         <FormFileUpload
                           name="img_url"
                           mediaType="img"
