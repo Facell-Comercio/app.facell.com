@@ -2,26 +2,45 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+interface ExtendedTableProps
+  extends React.HTMLAttributes<HTMLTableElement> {
+  divClassname?: string;
+}
+
 const Table = React.forwardRef<
   HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  //^ Foi adicionada a class scroll-thin
-  <div className="relative w-full overflow-auto scroll-thin">
-    <table
-      ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
-      {...props}
-    />
-  </div>
-));
+  ExtendedTableProps
+>(
+  (
+    { className, divClassname, ...props },
+    ref
+  ) => (
+    //^ Foi adicionada a class scroll-thin
+    <div
+      className={`relative w-full overflow-auto scroll-thin ${divClassname}`}
+    >
+      <table
+        ref={ref}
+        className={cn(
+          "w-full caption-bottom text-sm",
+          className
+        )}
+        {...props}
+      />
+    </div>
+  )
+);
 Table.displayName = "Table";
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  <thead
+    ref={ref}
+    className={cn("[&_tr]:border-b", className)}
+    {...props}
+  />
 ));
 TableHeader.displayName = "TableHeader";
 
@@ -31,7 +50,10 @@ const TableBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
+    className={cn(
+      "[&_tr:last-child]:border-0",
+      className
+    )}
     {...props}
   />
 ));
@@ -103,7 +125,10 @@ const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn("mt-4 text-sm text-muted-foreground", className)}
+    className={cn(
+      "mt-4 text-sm text-muted-foreground",
+      className
+    )}
     {...props}
   />
 ));

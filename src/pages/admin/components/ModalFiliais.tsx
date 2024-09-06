@@ -15,7 +15,12 @@ import { normalizeCnpjNumber } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import { Filial } from "@/types/filial-type";
 import { useQuery } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 
 interface IModalFiliais {
   open: boolean;
@@ -27,6 +32,8 @@ interface IModalFiliais {
   closeOnSelection?: boolean;
   multiSelection?: boolean;
   isLojaTim?: boolean;
+  initialData?: Filial[];
+  initialIds?: string[];
 }
 
 type DataProps = {
@@ -49,64 +56,114 @@ const ModalFiliais = ({
   closeOnSelection,
   multiSelection,
   isLojaTim,
+
+  initialData,
+  initialIds,
 }: IModalFiliais) => {
   const [ids, setIds] = useState<string[]>([]);
-  const [filiais, setFiliais] = useState<Filial[]>([]);
-  const [search, setSearch] = useState<string>("");
-  const [pagination, setPagination] = useState<PaginationProps>({
-    pageSize: 15,
-    pageIndex: 0,
-  });
+  const [filiais, setFiliais] = useState<
+    Filial[]
+  >([]);
 
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["filial", "lista", id_matriz, id_grupo_economico],
-    queryFn: async () =>
-      await api.get("filial", {
-        params: {
-          filters: {
-            termo: search,
-            id_matriz: id_matriz ? id_matriz : undefined,
-            id_grupo_economico: id_grupo_economico
-              ? id_grupo_economico
-              : undefined,
-            isLojaTim: isLojaTim ? 1 : 0,
+  useEffect(() => {
+    if (open && initialData && initialData) {
+      setFiliais(initialData);
+      setIds(initialIds || []);
+    }
+  }, [open]);
+
+  const [search, setSearch] =
+    useState<string>("");
+  const [pagination, setPagination] =
+    useState<PaginationProps>({
+      pageSize: 15,
+      pageIndex: 0,
+    });
+
+  const { data, isLoading, isError, refetch } =
+    useQuery({
+      queryKey: [
+        "filial",
+        "lista",
+        id_matriz,
+        id_grupo_economico,
+      ],
+      queryFn: async () =>
+        await api.get("filial", {
+          params: {
+            filters: {
+              termo: search,
+              id_matriz: id_matriz
+                ? id_matriz
+                : undefined,
+              id_grupo_economico:
+                id_grupo_economico
+                  ? id_grupo_economico
+                  : undefined,
+              isLojaTim: isLojaTim ? 1 : 0,
+            },
+            pagination,
           },
-          pagination,
-        },
-      }),
-    enabled: open,
-  });
+        }),
+      enabled: open,
+    });
 
-  const dataRows = data?.data?.rows.map((item: Filial) => ({
-    description: `${item.grupo_economico} - ${
-      item.nome
-    } - ${normalizeCnpjNumber(item.cnpj)}`,
-    item,
-  }));
+  const dataRows = data?.data?.rows.map(
+    (item: Filial) => ({
+      description: `${item.grupo_economico} - ${
+        item.nome
+      } - ${normalizeCnpjNumber(item.cnpj)}`,
+      item,
+    })
+  );
 
   function pushSelection(item: any) {
     if (multiSelection) {
-      const isAlreadyInFiliais = ids.some((id) => parseInt(id) === item.id);
+      const isAlreadyInFiliais = ids.includes(
+        String(item.id)
+      );
 
       if (!isAlreadyInFiliais) {
-        setIds((prevIds) => [...prevIds, String(item.id)]);
-        setFiliais((prevFiliais) => [...prevFiliais, item]);
+        setIds((prevIds) => [
+          ...prevIds,
+          String(item.id),
+        ]);
+        setFiliais((prevFiliais) => [
+          ...prevFiliais,
+          item,
+        ]);
       } else {
-        setIds((prevIds) => prevIds.filter((id) => parseInt(id) !== item.id));
-        setFiliais((prevFiliais) => prevFiliais.filter((id) => id !== item.id));
+        setIds((prevIds) =>
+          prevIds.filter(
+            (id) => parseInt(id) !== item.id
+          )
+        );
+        setFiliais((prevFiliais) =>
+          prevFiliais.filter(
+            (filial) => filial.id != item.id
+          )
+        );
       }
     } else {
       handleSelection && handleSelection(item);
-      if (onOpenChange !== undefined && closeOnSelection) {
+      if (
+        onOpenChange !== undefined &&
+        closeOnSelection
+      ) {
         onOpenChange(false);
       }
     }
   }
 
-  async function handleSearch(searchText: string) {
+  async function handleSearch(
+    searchText: string
+  ) {
     await new Promise((resolve) => {
       setSearch(searchText);
-      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: 0,
+      }));
       resolve(true);
     });
     refetch();
@@ -118,8 +175,8 @@ const ModalFiliais = ({
   }
   function handleSelectAll() {
     data?.data?.rows.forEach((item: Filial) => {
-      const isAlreadyInFiliais = filiais.some(
-        (existingItem) => existingItem.id === item.id
+      const isAlreadyInFiliais = ids.includes(
+        String(item.id)
       );
 
       if (!isAlreadyInFiliais) {
@@ -130,7 +187,10 @@ const ModalFiliais = ({
           },
         ]);
 
-        setIds((prevIds) => [...prevIds, String(item.id)]);
+        setIds((prevIds) => [
+          ...prevIds,
+          String(item.id),
+        ]);
       }
     });
   }
@@ -139,7 +199,8 @@ const ModalFiliais = ({
     return (
       <Button
         onClick={() => {
-          handleMultiSelection && handleMultiSelection(filiais);
+          handleMultiSelection &&
+            handleMultiSelection(filiais);
         }}
       >
         Salvar seleção
@@ -147,20 +208,29 @@ const ModalFiliais = ({
     );
   };
 
-  const pageCount = (data && data.data.pageCount) || 0;
+  const pageCount =
+    (data && data.data.pageCount) || 0;
   if (isError) return null;
   if (!open) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Lista de filiais</DialogTitle>
+          <DialogTitle>
+            Lista de filiais
+          </DialogTitle>
           <DialogDescription>
-            Selecione ao clicar no botão à direita.
+            Selecione ao clicar no botão à
+            direita.
           </DialogDescription>
 
-          <SearchComponent handleSearch={handleSearch} />
+          <SearchComponent
+            handleSearch={handleSearch}
+          />
         </DialogHeader>
         <ModalComponent
           isLoading={isLoading}
@@ -171,41 +241,53 @@ const ModalFiliais = ({
           multiSelection={multiSelection}
           handleRemoveAll={handleRemoveAll}
           handleSelectAll={handleSelectAll}
-          buttonSaveSelection={ButtonSaveSelection}
+          buttonSaveSelection={
+            ButtonSaveSelection
+          }
         >
           {dataRows &&
-            dataRows.map((row: DataProps, index: number) => {
-              const isSelected = ids.includes(String(row.item.id));
-              return (
-                <ModalComponentRow
-                  className={
-                    isSelected
-                      ? "bg-secondary/50 text-secondary-foreground/40"
-                      : ""
-                  }
-                  key={"modal_filial_item_row:" + index + row.item}
-                >
-                  <>
-                    <span className="flex items-center text-sm">
-                      {row.description}
-                    </span>
-                    <Button
-                      size={"xs"}
-                      className={`p-1 ${
-                        isSelected &&
-                        "bg-secondary hover:bg-secondary hover:opacity-90"
-                      }`}
-                      variant={"outline"}
-                      onClick={() => {
-                        pushSelection(row.item);
-                      }}
-                    >
-                      {isSelected ? "Desmarcar" : "Selecionar"}
-                    </Button>
-                  </>
-                </ModalComponentRow>
-              );
-            })}
+            dataRows.map(
+              (row: DataProps, index: number) => {
+                const isSelected = ids.includes(
+                  String(row.item.id)
+                );
+                return (
+                  <ModalComponentRow
+                    className={
+                      isSelected
+                        ? "bg-secondary/50 text-secondary-foreground/40"
+                        : ""
+                    }
+                    key={
+                      "modal_filial_item_row:" +
+                      index +
+                      row.item
+                    }
+                  >
+                    <>
+                      <span className="flex items-center text-sm">
+                        {row.description}
+                      </span>
+                      <Button
+                        size={"xs"}
+                        className={`p-1 ${
+                          isSelected &&
+                          "bg-secondary hover:bg-secondary hover:opacity-90"
+                        }`}
+                        variant={"outline"}
+                        onClick={() => {
+                          pushSelection(row.item);
+                        }}
+                      >
+                        {isSelected
+                          ? "Desmarcar"
+                          : "Selecionar"}
+                      </Button>
+                    </>
+                  </ModalComponentRow>
+                );
+              }
+            )}
         </ModalComponent>
       </DialogContent>
     </Dialog>

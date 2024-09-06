@@ -242,6 +242,7 @@ const FormVale = ({
                           value
                         )
                       }
+                      hasCustomValue
                       disabled={disabled}
                       readOnly={readOnly}
                       defaultValues={

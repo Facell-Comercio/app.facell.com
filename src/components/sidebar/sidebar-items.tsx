@@ -63,7 +63,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaRankingStar />,
     uri: "comercial",
-    visible: false,
+    visible: true,
     children: [
       {
         name: "Vales",
@@ -242,7 +242,8 @@ export const sidebarItems: SidebarItem[] = [
         shortName: "CC",
         uri: "/financeiro/controle-de-caixa",
         visible:
-          checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
+          checkUserDepartments("FINANCEIRO") ||
+          checkUserPermission("MASTER"),
       },
       {
         name: "Orçamento",
@@ -257,7 +258,8 @@ export const sidebarItems: SidebarItem[] = [
         shortName: "CBK",
         uri: "/financeiro/conciliacao-bancaria",
         visible:
-          checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
+          checkUserDepartments("FINANCEIRO") ||
+          checkUserPermission("MASTER"),
       },
       {
         name: "Cadastros",
