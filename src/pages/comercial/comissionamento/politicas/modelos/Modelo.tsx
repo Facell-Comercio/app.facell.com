@@ -70,7 +70,6 @@ const Modelo = ({
     () => data.id_cargo_politica,
     [data.id_cargo_politica]
   );
-  console.log(id_modelo, id_cargo_politica);
 
   return (
     <section className="p-2 border bg-slate-200 dark:bg-blue-950 rounded-lg ">
@@ -98,12 +97,6 @@ const Modelo = ({
             size={"sm"}
             onClick={() => {
               openModalModeloItem({
-                id: "",
-                id_modelo,
-                escalonamento: escalonamentoCargo,
-                id_cargo_politica,
-              });
-              console.log("TESTANDO", {
                 id: "",
                 id_modelo,
                 escalonamento: escalonamentoCargo,

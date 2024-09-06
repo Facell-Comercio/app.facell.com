@@ -136,8 +136,6 @@ const ModalModeloItem = () => {
   function onSubmitData(
     data: ModeloItemFormData
   ) {
-    console.log(data);
-
     if (id) updateModeloItem(data);
     if (!id) insertModeloItem(data);
   }
