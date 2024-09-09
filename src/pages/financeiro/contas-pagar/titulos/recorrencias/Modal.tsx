@@ -47,6 +47,8 @@ import {
 import { useStoreTitulo } from "../titulo/store";
 import ModalEditarRecorrencias from "./ModalEditarRecorrencia";
 import { useStoreRecorrencias } from "./store";
+import { useMemo } from "react";
+import { formatDate } from "date-fns";
 
 type recorrenciaProps = {
   id: string;
@@ -86,7 +88,32 @@ const ModalRecorrencias = () => {
 
   const { mutate: deleteRecorrencia } =
     useTituloPagar().deleteRecorrencia();
-  const rows = data?.data.rows;
+
+  const { termo } = filters;
+
+  const rows: recorrenciaProps[] = data?.data.rows;
+  const recorrencias: recorrenciaProps[] = useMemo(() => {
+    let array
+    if (termo) {
+      let termoLower = termo.toLowerCase();
+      array = rows.filter(rec=>{
+        let fornecedor = rec.fornecedor.toLowerCase();
+        let descricao = rec.descricao.toLowerCase();
+        let filial = rec.filial.toLowerCase();
+        let grupo_economico = rec.grupo_economico.toLowerCase();
+        let data_vencimento = formatDate(rec.data_vencimento,'dd/MM/yyyy');
+        
+        if(fornecedor.includes(termoLower) || descricao.includes(termoLower) || filial.includes(termoLower) || grupo_economico.includes(termoLower)|| data_vencimento.includes(termoLower)){
+          return true
+        }else{
+          return false;
+        }
+      })
+    }else{
+      array = rows;
+    } 
+    return array;
+  }, [data, filters])
 
   async function exportRecorrencias() {
     const exportedData: any[] = [];
@@ -194,6 +221,13 @@ const ModalRecorrencias = () => {
                 </SelectItem>
               </SelectContent>
             </Select>
+            <Input
+              type="search"
+              value={filters.termo}
+              onChange={(e) => setFilters({ termo: e.target.value })}
+              placeholder="Pesquisar..."
+              title="PROCURAR FORNECEDOR, GRUPO, FILIAL, VENCIMENTO, DESCRIÇÃO..."
+            />
           </div>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
@@ -229,7 +263,7 @@ const ModalRecorrencias = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data?.data.rows?.map(
+                  {recorrencias.map(
                     (
                       rec: recorrenciaProps,
                       index: number
@@ -259,12 +293,12 @@ const ModalRecorrencias = () => {
                                   recorrencia: {
                                     data_vencimento:
                                       rec[
-                                        "data_vencimento"
+                                      "data_vencimento"
                                       ],
                                     id: rec["id"],
                                     valor:
                                       rec[
-                                        "valor"
+                                      "valor"
                                       ],
                                   },
                                 });
@@ -279,7 +313,7 @@ const ModalRecorrencias = () => {
                                 rec["id"],
                                 new Date(
                                   rec[
-                                    "data_vencimento"
+                                  "data_vencimento"
                                   ]
                                 ),
                                 parseFloat(

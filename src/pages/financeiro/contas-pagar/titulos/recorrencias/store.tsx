@@ -4,12 +4,14 @@ type Filters = {
   ano?: string | number;
   mes?: string | number;
   a_lancar?: string;
+  termo?: string;
 };
 
 const initialFilters: Filters = {
   ano: new Date().getFullYear(),
   mes: new Date().getMonth() + 1,
   a_lancar: "1",
+  termo: '',
 };
 
 interface UseStoreRecorrencias {
