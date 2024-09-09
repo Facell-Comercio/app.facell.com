@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePoliticas } from "@/hooks/comercial/usePoliticas";
-import { RefreshCcw } from "lucide-react";
 import { useEffect } from "react";
 import ButtonCopyPolitica from "./components/ButtonCopyPolitica";
 import ButtonNovaPolitica from "./components/ButtonNovaPolitica";
@@ -13,6 +11,7 @@ import CargoPolitica, {
 } from "./modelos/CargoPolitica";
 import ModalModeloItem from "./modelos/item/ModalModeloItem";
 import ModalModelo from "./modelos/modelo/ModalModelo";
+import ModalPolitica from "./politica/Modal";
 import ModalPoliticas from "./politicas/ModalPoliticas";
 import { useStorePoliticas } from "./politicas/store-politicas";
 
@@ -22,40 +21,34 @@ const Politicas = () => {
       state.id,
       state.setIdPolitica,
     ]);
-  const { data, isLoading, isSuccess, refetch } =
+  const { data, isLoading, isSuccess } =
     usePoliticas().getOne(id_politica);
   useEffect(() => {
     isSuccess && setIdPolitica(data.id);
   }, [isLoading]);
 
+  const disabled = !data;
+
   return (
     <div className="flex flex-col gap-3">
-      {/* <div className="flex gap-2 justify-end">
-        {checkUserPermission([
-          "GERENCIAR_POLITICAS",
-          "MASTER",
-        ]) && <ButtonImportMeta />}
-        {checkUserPermission([
-          "GERENCIAR_POLITICAS",
-          "MASTER",
-        ]) && <ButtonNovaMeta />}
-      </div> */}
       <div className="flex gap-2 justify-end flex-wrap">
-        {isLoading ? (
-          <span className="flex flex-1 justify-end">
-            <Skeleton className="w-44 h-10" />
-          </span>
-        ) : (
-          <ButtonSelectPolitica
-            refDate={data.refDate}
-          />
-        )}
-        <ButtonCopyPolitica />
-        <ButtonNovoCargo />
-        <ButtonNovaPolitica />
-        <Button onClick={() => refetch()}>
-          <RefreshCcw />
-        </Button>
+        <ButtonSelectPolitica
+          refDate={data?.refDate}
+          isLoading={isLoading}
+          disabled={disabled}
+        />
+        <ButtonCopyPolitica
+          isLoading={isLoading}
+          disabled={disabled}
+        />
+        <ButtonNovoCargo
+          isLoading={isLoading}
+          disabled={disabled}
+        />
+        <ButtonNovaPolitica
+          isLoading={isLoading}
+          disabled={disabled}
+        />
       </div>
       {isLoading ? (
         <div className="w-full min-h-full grid gap-3">
@@ -79,6 +72,7 @@ const Politicas = () => {
       )}
 
       <ModalPoliticas />
+      <ModalPolitica />
       <ModalCargo />
       <ModalModelo />
       <ModalModeloItem />

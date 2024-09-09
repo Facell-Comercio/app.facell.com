@@ -12,36 +12,10 @@ import {
 } from "@tanstack/react-query";
 
 export type PoliticasProps = {
-  id?: string;
-  ref?: string;
-  ciclo?: string;
-  id_grupo_economico?: string;
-  grupo_economico?: string;
-  id_filial?: string;
-  filial?: string;
-  cargo?: string;
-  cpf?: string;
-  nome?: string;
-  tags?: string;
-
-  data_inicial?: string;
-  data_final?: string;
-
-  proporcional?: string;
-
-  controle?: string;
-  pos?: string;
-  upgrade?: string;
-  receita?: string;
-  qtde_aparelho?: string;
-  aparelho?: string;
-  acessorio?: string;
-  pitzi?: string;
-  fixo?: string;
-  wttx?: string;
-  live?: string;
-
-  canEdit?: boolean;
+  descricao: string;
+  month: string;
+  year: string;
+  current_id?: number | string;
 };
 
 type CargoPoliticasProps = {
@@ -180,6 +154,90 @@ export const usePoliticas = () => {
       },
     });
 
+  const insertOne = () =>
+    useMutation({
+      mutationFn: async (
+        data: PoliticasProps
+      ) => {
+        return await api
+          .post(
+            `comercial/comissionamento/politicas`,
+            data
+          )
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: [
+            "comercial",
+            "comissionamento",
+            "politicas",
+          ],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description:
+            "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        const errorMessage =
+          // @ts-expect-error 'Vai funcionar'
+          error.response?.data.message ||
+          error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const copyPolitica = () =>
+    useMutation({
+      mutationFn: async (
+        data: PoliticasProps
+      ) => {
+        return await api
+          .post(
+            `comercial/comissionamento/politicas/copy`,
+            data
+          )
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: [
+            "comercial",
+            "comissionamento",
+            "politicas",
+          ],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description:
+            "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        const errorMessage =
+          // @ts-expect-error 'Vai funcionar'
+          error.response?.data.message ||
+          error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
   const insertCargoPolitica = () =>
     useMutation({
       mutationFn: async (
@@ -272,48 +330,6 @@ export const usePoliticas = () => {
         return await api
           .post(
             `comercial/comissionamento/politicas/modelos/itens`,
-            data
-          )
-          .then((response) => response.data);
-      },
-      onSuccess() {
-        queryClient.invalidateQueries({
-          queryKey: [
-            "comercial",
-            "comissionamento",
-            "politicas",
-          ],
-        });
-        toast({
-          variant: "success",
-          title: "Sucesso",
-          description:
-            "Atualização realizada com sucesso",
-          duration: 3500,
-        });
-      },
-      onError(error) {
-        const errorMessage =
-          // @ts-expect-error 'Vai funcionar'
-          error.response?.data.message ||
-          error.message;
-        toast({
-          title: "Erro",
-          description: errorMessage,
-          duration: 3500,
-          variant: "destructive",
-        });
-      },
-    });
-
-  const update = () =>
-    useMutation({
-      mutationFn: async (
-        data: PoliticasProps
-      ) => {
-        return await api
-          .put(
-            `comercial/comissionamento/politicas`,
             data
           )
           .then((response) => response.data);
@@ -479,11 +495,12 @@ export const usePoliticas = () => {
     getOneModelo,
     getOneModeloItem,
 
+    insertOne,
+    copyPolitica,
     insertCargoPolitica,
     insertModelo,
     insertModeloItem,
 
-    update,
     updateModelo,
     updateModeloItem,
 

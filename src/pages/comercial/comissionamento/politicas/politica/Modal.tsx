@@ -6,162 +6,218 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import AlertPopUp from "@/components/custom/AlertPopUp";
-import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
 
-import {
-  PoliticasProps,
-  usePoliticas,
-} from "@/hooks/comercial/usePoliticas";
-import { Trash } from "lucide-react";
-import { useEffect, useRef } from "react";
-import FormPolitica from "./Form";
+import AlertPopUp from "@/components/custom/AlertPopUp";
+import { Input } from "@/components/custom/FormInput";
+import SelectMes from "@/components/custom/SelectMes";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
+import { usePoliticas } from "@/hooks/comercial/usePoliticas";
+import { Ban, Save } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FaSpinner } from "react-icons/fa6";
+import { useStorePoliticas } from "../politicas/store-politicas";
 import { useStorePolitica } from "./store";
 
-const initialPropsPolitica: PoliticasProps = {
-  id: "",
-  ref: "",
-  ciclo: "",
-  id_grupo_economico: "",
-  grupo_economico: "",
-  id_filial: "",
-  filial: "",
-  cargo: "",
-  cpf: "",
-  nome: "",
-  tags: "",
-
-  data_inicial: "",
-  data_final: "",
-
-  proporcional: "100",
-
-  controle: "0",
-  pos: "0",
-  upgrade: "0",
-  receita: "0",
-  qtde_aparelho: "0",
-  aparelho: "0",
-  acessorio: "0",
-  pitzi: "0",
-  fixo: "0",
-  wttx: "0",
-  live: "0",
+const initialFormData = {
+  descricao: "",
+  month: String(new Date().getMonth() + 2),
+  year: String(new Date().getFullYear()),
 };
 
 const ModalPolitica = () => {
+  const [formData, setFormData] = useState(
+    initialFormData
+  );
+  const {
+    data: resultInsertOne,
+    mutate: insertOne,
+    isPending: insertIsPending,
+    isSuccess: insertIsSuccess,
+    isError: insertIsError,
+  } = usePoliticas().insertOne();
+  const {
+    data: resultCopy,
+    mutate: copyPolitica,
+    isPending: copyIsPending,
+    isSuccess: copyIsSuccess,
+    isError: copyIsError,
+  } = usePoliticas().copyPolitica();
+
   const [
+    action,
     modalOpen,
     closeModal,
-    modalEditing,
-    editModal,
+    editIsPending,
     isPending,
-    id,
   ] = useStorePolitica((state) => [
+    state.action,
     state.modalOpen,
     state.closeModal,
-    state.modalEditing,
-    state.editModal,
+    state.editIsPending,
     state.isPending,
-    state.id,
   ]);
 
-  const formRef = useRef(null);
+  const [current_id, setIdPolitica] =
+    useStorePoliticas((state) => [
+      state.id,
+      state.setIdPolitica,
+    ]);
 
-  const { data, isLoading } =
-    usePoliticas().getOne(id);
-
-  const { mutate: deletePolitica, isSuccess } =
-    usePoliticas().deletePolitica();
-  const newDataPolitica: PoliticasProps &
-    Record<string, any> = {} as PoliticasProps &
-    Record<string, any>;
-
-  for (const key in data) {
-    if (typeof data[key] === "number") {
-      newDataPolitica[key] = String(data[key]);
-    } else if (data[key] === null) {
-      newDataPolitica[key] = "";
-    } else {
-      newDataPolitica[key] = data[key];
+  const onSubmitData = () => {
+    if (!formData.descricao) {
+      toast({
+        title: "Informe a descricao!",
+        variant: "warning",
+      });
+      return;
     }
-  }
+    if (action === "insert") {
+      setIdPolitica(null);
+      insertOne(formData);
+    }
+    if (action === "copy") {
+      copyPolitica({
+        ...formData,
+        current_id: current_id || "",
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (insertIsSuccess) {
+      closeModal();
+      setIdPolitica(
+        resultInsertOne.new_id_politica
+      );
+      editIsPending(false);
+    } else if (insertIsError) {
+      editIsPending(false);
+    } else if (insertIsPending) {
+      editIsPending(true);
+    }
+  }, [insertIsPending]);
+
+  useEffect(() => {
+    if (copyIsSuccess) {
+      closeModal();
+      setIdPolitica(resultCopy.new_id_politica);
+      editIsPending(false);
+    } else if (copyIsError) {
+      editIsPending(false);
+    } else if (copyIsPending) {
+      editIsPending(true);
+    }
+  }, [copyIsPending]);
 
   function handleClickCancel() {
-    editModal(false);
     closeModal();
   }
 
   useEffect(() => {
-    if (isSuccess) {
-      editModal(false);
-      closeModal();
-    }
-  }, [isSuccess]);
+    !modalOpen && setFormData(initialFormData);
+  }, [modalOpen]);
 
   return (
     <Dialog
       open={modalOpen}
       onOpenChange={handleClickCancel}
     >
-      <DialogContent>
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {id
-              ? `Politica: ${id}`
-              : "Novo Politica"}
+            {action === "copy"
+              ? "Copiar Política"
+              : "Nova Política"}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[70vh]">
-          {modalOpen && !isLoading ? (
-            <FormPolitica
-              id={id}
-              data={
-                id
-                  ? newDataPolitica
-                  : initialPropsPolitica
+        <div className="flex gap-2">
+          <span className="flex flex-1 gap-2 flex-col">
+            <label className="text-sm font-medium">
+              Mês de Referência
+            </label>
+            <SelectMes
+              value={formData.month}
+              onValueChange={(month) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  month,
+                }))
               }
-              formRef={formRef}
             />
-          ) : (
-            <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
-              <Skeleton className="w-full row-span-1" />
-              <Skeleton className="w-full row-span-3" />
-            </div>
-          )}
-        </ScrollArea>
+          </span>
+          <span className="flex flex-1 gap-2 flex-col">
+            <label className="text-sm font-medium">
+              Ano de Referência
+            </label>
+            <Input
+              value={formData.year}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  year: e.target.value,
+                }))
+              }
+              type="number"
+              min={2023}
+            />
+          </span>
+        </div>
+        <div className="flex gap-2 flex-col">
+          <label className="text-sm font-medium">
+            Descrição
+          </label>
+          <Textarea
+            value={formData.descricao}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                descricao: e.target.value,
+              }))
+            }
+            placeholder="Descreva sobre as alterações que serão realizadas nessa nova política..."
+          />
+        </div>
         <DialogFooter>
-          <ModalButtons
-            id={id}
-            modalEditing={modalEditing}
-            edit={() => editModal(true)}
-            cancel={handleClickCancel}
-            formRef={formRef}
-            isLoading={isPending}
+          <Button
+            variant={"secondary"}
+            size={"lg"}
+            onClick={handleClickCancel}
+            disabled={isPending}
           >
-            <AlertPopUp
-              title={"Deseja realmente excluir"}
-              description="Essa ação não pode ser desfeita. A politica será excluída definitivamente do servidor."
-              action={() => {
-                deletePolitica(id);
-              }}
+            <Ban className="me-2 text-xl" />
+            Cancelar
+          </Button>
+          <AlertPopUp
+            title={`Deseja realmente ${
+              action === "copy"
+                ? "copiar essa política?"
+                : "incluir essa política?"
+            }`}
+            description="Essa ação não pode ser desfeita. A política com os dados fornecidos será definitivamento incluida no servidor."
+            action={onSubmitData}
+          >
+            <Button
+              size={"lg"}
+              disabled={isPending}
             >
-              <Button
-                type={"button"}
-                size="lg"
-                variant={"destructive"}
-                className={`text-white justify-self-start ${
-                  !modalEditing && "hidden"
-                }`}
-              >
-                <Trash className="me-2" />
-                Excluir Politica
-              </Button>
-            </AlertPopUp>
-          </ModalButtons>
+              {isPending ? (
+                <>
+                  <FaSpinner
+                    size={18}
+                    className="me-2 animate-spin"
+                  />
+                  Salvando
+                </>
+              ) : (
+                <>
+                  <Save className="me-2" />
+                  Salvar
+                </>
+              )}
+            </Button>
+          </AlertPopUp>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,56 +1,29 @@
 import { create } from "zustand";
 
-export interface Pagination {
-  pageIndex: number;
-  pageSize: number;
-}
-
 interface useStorePolitica {
-  id?: string | null;
-  id_abatimento?: string | null;
-  modalEditing: boolean;
-  modalEditingAbatimento: boolean;
+  action: "insert" | "copy" | null;
   modalOpen: boolean;
-  modalOpenAbatimento: boolean;
   isPending: boolean;
 
-  openModal: (id: string) => void;
+  openModal: ({
+    action,
+  }: {
+    action: "insert" | "copy";
+  }) => void;
   closeModal: () => void;
-  openModalAbatimento: (id: string) => void;
-  closeModalAbatimento: () => void;
-  editModal: (bool: boolean) => void;
-  editModalAbatimento: (bool: boolean) => void;
   editIsPending: (bool: boolean) => void;
 }
 
 export const useStorePolitica =
   create<useStorePolitica>((set) => ({
-    id: null,
-    id_abatimento: null,
-    modalEditing: false,
-    modalEditingAbatimento: false,
+    action: null,
     modalOpen: false,
-    modalOpenAbatimento: false,
     isPending: false,
 
-    openModal: (id: string) =>
-      set({ modalOpen: true, id: id }),
+    openModal: ({ action }) =>
+      set({ modalOpen: true, action }),
     closeModal: () =>
-      set({ modalOpen: false, id: null }),
-    openModalAbatimento: (id: string) =>
-      set({
-        modalOpenAbatimento: true,
-        id_abatimento: id,
-      }),
-    closeModalAbatimento: () =>
-      set({
-        modalOpenAbatimento: false,
-        id_abatimento: null,
-      }),
-    editModal: (bool) =>
-      set({ modalEditing: bool }),
-    editModalAbatimento: (bool) =>
-      set({ modalEditingAbatimento: bool }),
+      set({ modalOpen: false, action: null }),
     editIsPending: (bool: boolean) =>
       set({
         isPending: bool,

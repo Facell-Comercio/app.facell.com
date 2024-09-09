@@ -12,7 +12,7 @@ interface useStorePolitica {
   openModal: () => void;
   closeModal: () => void;
   setPagination: (pagination: Pagination) => void;
-  setIdPolitica: (id: string) => void;
+  setIdPolitica: (id: string | null) => void;
 }
 
 export const useStorePoliticas =
@@ -33,5 +33,6 @@ export const useStorePoliticas =
       set({
         modalOpen: false,
       }),
-    setIdPolitica: (id: string) => set({ id }),
+    setIdPolitica: (id: string | null) =>
+      set({ id }),
   }));
