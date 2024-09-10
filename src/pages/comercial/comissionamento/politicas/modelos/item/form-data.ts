@@ -31,7 +31,7 @@ const schemaModeloItem = z
     id_cargo_politica: z.coerce
       .string()
       .min(1, "Campo Obrigatório"),
-    id_modelo: z.string().optional(),
+    id_modelo: z.coerce.string().optional(),
     tipo: z.coerce
       .string()
       .min(1, "Campo Obrigatório"),
@@ -58,7 +58,27 @@ const schemaModeloItem = z
       message:
         "É necessario definir no mínimo 1 item do escalonamento",
     }
-  );
+  )
+  .transform((item) => {
+    if (item.tipo_premiacao === "percentual") {
+      const newItensEscalonamento =
+        item.itens_escalonamento.map(
+          (escalonamento) => ({
+            ...escalonamento,
+            valor:
+              parseFloat(escalonamento.valor) /
+              100,
+          })
+        );
+      return {
+        ...item,
+        itens_escalonamento:
+          newItensEscalonamento,
+      };
+    } else {
+      return item;
+    }
+  });
 export type ModeloItemFormData = z.infer<
   typeof schemaModeloItem
 >;

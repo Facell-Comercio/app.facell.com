@@ -213,7 +213,7 @@ const ModalModeloItem = () => {
                 },
               ]}
               disabled={!modalEditing}
-              className="flex-1 max-w-[30ch]"
+              className="flex-1"
             />
             <FormSelect
               name="tipo_premiacao"
@@ -234,17 +234,7 @@ const ModalModeloItem = () => {
                 },
               ]}
               disabled={!modalEditing}
-              className="flex-1 max-w-[30ch]"
-            />
-
-            <FormInput
-              name="escalonamento"
-              label="Escalonamento"
-              inputClass="uppercase"
-              className="flex-1 max-w-[20ch]"
-              control={form.control}
-              disabled={!modalEditing}
-              readOnly
+              className="flex-1"
             />
 
             <FormInput
@@ -332,29 +322,15 @@ const ModalModeloItem = () => {
                           </Button>
                           <Input
                             className="rounded-none rounded-r-md"
-                            value={
-                              tipo_premiacao ===
-                              "percentual"
-                                ? (
-                                    parseFloat(
-                                      item.valor
-                                    ) * 100
-                                  ).toFixed(2)
-                                : item.valor
-                            }
+                            value={item.valor}
                             onChange={(e) =>
                               form.setValue(
                                 `itens_escalonamento.${index}.valor`,
-                                tipo_premiacao ===
-                                  "percentual"
-                                  ? (
-                                      parseFloat(
-                                        e.target
-                                          .value
-                                      ) / 100
-                                    ).toFixed(4)
-                                  : e.target.value
+                                e.target.value
                               )
+                            }
+                            disabled={
+                              !modalEditing
                             }
                             type="number"
                             min={0.0}

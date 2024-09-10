@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +14,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+} from "@/components/ui/popover";
 import {
   ScrollArea,
   ScrollBar,
@@ -29,9 +34,11 @@ import {
   SegmentoProps,
   useConfiguracoes,
 } from "@/hooks/comercial/useConfiguracoes";
+import { PopoverTrigger } from "@radix-ui/react-popover";
 import {
   EraserIcon,
   FilterIcon,
+  Info,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -219,11 +226,27 @@ const ModalSegmentos = ({
                     Selecionar
                   </Button>
                 </TableCell>
-                <TableCell className="text-xs text-wrap">
+                <TableCell
+                  className="max-w-[15ch] truncate text-xs text-wrap "
+                  title={item.categoria}
+                >
                   {item.categoria}
                 </TableCell>
                 <TableCell className="text-nowrap text-xs">
                   {item.segmento}
+                  <Popover>
+                    <PopoverTrigger>
+                      <Badge
+                        variant={"outline"}
+                        className="ml-2 border-none"
+                      >
+                        <Info size={14} />
+                      </Badge>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-fit bg-background text-destructive-foreground whitespace-pre-wrap text-wrap normal-case">
+                      {item.obs}
+                    </PopoverContent>
+                  </Popover>
                 </TableCell>
               </TableRow>
             ))}

@@ -108,8 +108,11 @@ const Modelo = ({
             Add Item
           </Button>
         </span>
-        <Table>
-          <TableHeader className="bg-secondary">
+        <Table
+          className="rounded-md border-border w-full h-10 overflow-clip relative"
+          divClassname="overflow-auto scroll-thin max-h-[40vh] border rounded-md"
+        >
+          <TableHeader className="sticky w-full top-0 h-10 border-b-2 border-border rounded-t-md bg-secondary">
             <TableRow className="text-nowrap">
               <TableHead>Ação</TableHead>
               <TableHead>Tipo</TableHead>
@@ -147,7 +150,10 @@ const Modelo = ({
                   </Button>
                 </TableCell>
                 <TableCell>{item.tipo}</TableCell>
-                <TableCell>
+                <TableCell
+                  className="max-w-[15ch] truncate"
+                  title={item.categoria}
+                >
                   {item.categoria}
                 </TableCell>
                 <TableCell>
