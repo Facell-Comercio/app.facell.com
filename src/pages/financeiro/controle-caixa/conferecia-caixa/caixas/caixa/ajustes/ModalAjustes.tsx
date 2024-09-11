@@ -61,8 +61,6 @@ const ModalAjustes = () => {
       },
     });
 
-  console.log(data, id_caixa);
-
   const newDataAjustes: GetAllAjustesProps &
     Record<string, any> =
     {} as GetAllAjustesProps &

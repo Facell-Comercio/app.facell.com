@@ -26,7 +26,13 @@ import {
   AjustesProps,
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
-import { Settings2 } from "lucide-react";
+import {
+  Ban,
+  Check,
+  Save,
+  Settings2,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useFormAjusteData } from "../form-data";
 import { useStoreCaixa } from "../store";
@@ -105,6 +111,11 @@ const ModalAjuste = () => {
     isSuccess: insertOneIsSuccess,
     isPending: insertOneIsPending,
   } = useConferenciasCaixa().insertOneAjuste();
+  const {
+    mutate: deleteAjuste,
+    isSuccess: deleteAjusteIsSuccess,
+    isPending: deleteAjusteIsPending,
+  } = useConferenciasCaixa().deleteAjuste();
 
   const newDataCaixa: AjustesProps &
     Record<string, any> = {} as AjustesProps &
@@ -152,6 +163,9 @@ const ModalAjuste = () => {
   useEffect(() => {
     insertOneIsSuccess && closeModal();
   }, [insertOneIsPending]);
+  useEffect(() => {
+    deleteAjusteIsSuccess && closeModal();
+  }, [deleteAjusteIsPending]);
 
   function handleClickCancel() {
     closeModal();
@@ -218,6 +232,7 @@ const ModalAjuste = () => {
                     </Button>
                   )}
                 </span>
+
                 <FormSelect
                   name={"saida"}
                   label={"De"}
@@ -264,6 +279,10 @@ const ModalAjuste = () => {
                   variant={"secondary"}
                   onClick={handleClickCancel}
                 >
+                  <Ban
+                    className="me-2"
+                    size={18}
+                  />
                   Cancelar
                 </Button>
                 <Button
@@ -272,27 +291,56 @@ const ModalAjuste = () => {
                     formRef.current.requestSubmit()
                   }
                 >
+                  <Save
+                    size={18}
+                    className="me-2"
+                  />
                   Salvar
                 </Button>
               </div>
             )}
             {!!id && !aprovado && podeAprovar && (
-              <AlertPopUp
-                title={
-                  "Deseja realmente aprovar esse ajuste?"
-                }
-                description="Essa ação não pode ser desfeita. A ajuste será definitivamente aprovado, não podendo voltar ao status anterior."
-                action={() => {
-                  form.setValue("aprovado", "1");
+              <div className="flex items-end gap-2 justify-between w-full">
+                <AlertPopUp
+                  title={
+                    "Deseja realmente remover esse ajuste?"
+                  }
+                  description="Essa ação não pode ser desfeita. A ajuste será definitivamente removido do servidor e todas as mudanças realizaadas por ele desfeitas."
+                  action={() => deleteAjuste(id)}
+                >
+                  <Button variant={"destructive"}>
+                    <Trash2
+                      size={18}
+                      className="me-2"
+                    />
+                    Remover Ajuste
+                  </Button>
+                </AlertPopUp>
 
-                  formRef.current &&
-                    formRef.current.requestSubmit();
-                }}
-              >
-                <Button variant={"success"}>
-                  Aprovar
-                </Button>
-              </AlertPopUp>
+                <AlertPopUp
+                  title={
+                    "Deseja realmente aprovar esse ajuste?"
+                  }
+                  description="Essa ação não pode ser desfeita. A ajuste será definitivamente aprovado, não podendo voltar ao status anterior."
+                  action={() => {
+                    form.setValue(
+                      "aprovado",
+                      "1"
+                    );
+
+                    formRef.current &&
+                      formRef.current.requestSubmit();
+                  }}
+                >
+                  <Button variant={"success"}>
+                    <Check
+                      size={18}
+                      className="me-2"
+                    />
+                    Aprovar
+                  </Button>
+                </AlertPopUp>
+              </div>
             )}
           </DialogFooter>
         )}

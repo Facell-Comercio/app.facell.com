@@ -791,6 +791,47 @@ export const useConferenciasCaixa = () => {
         },
       }),
 
+    deleteAjuste: () =>
+      useMutation({
+        mutationFn: async (
+          id?: string | null | undefined
+        ) => {
+          return api
+            .delete(
+              `/financeiro/controle-de-caixa/conferencia-de-caixa/ajustes/${id}`
+            )
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: [
+              "financeiro",
+              "conferencia_de_caixa",
+              "caixas",
+            ],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description:
+              "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          const errorMessage =
+            // @ts-expect-error 'Vai funcionar'
+            error.response?.data.message ||
+            error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
     importDatasys: () =>
       useMutation({
         mutationFn: async (data: {
