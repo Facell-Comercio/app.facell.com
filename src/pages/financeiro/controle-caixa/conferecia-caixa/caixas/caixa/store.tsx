@@ -13,13 +13,23 @@ interface useStoreCaixa {
   id?: string | null;
   id_deposito?: string | null;
   id_ocorrencia?: string | null;
-  modalOcorrenciaEditing: boolean;
-  modalDepositoEditing: boolean;
+  id_ajuste?: string | null;
+  id_caixa?: string | null;
+
   modalOpen: boolean;
   modalDepositoOpen: boolean;
-  modalOcorrenciasOpen: boolean;
+
   modalOcorrenciaOpen: boolean;
+  modalOcorrenciasOpen: boolean;
+
   modalDetalheCardOpen: boolean;
+
+  modalAjustesOpen: boolean;
+  modalAjusteOpen: boolean;
+
+  modalOcorrenciaEditing: boolean;
+  modalDepositoEditing: boolean;
+  modalAjusteEditing: boolean;
 
   data_caixa?: string | null;
   id_filial?: string | null;
@@ -45,12 +55,21 @@ interface useStoreCaixa {
   closeModalDeposito: () => void;
   editModalDeposito: (bool: boolean) => void;
 
-  openModalOcorrencias: (props?: OpenOcorrenciaProps) => void;
+  openModalOcorrencias: (
+    props?: OpenOcorrenciaProps
+  ) => void;
   closeModalOcorrencias: () => void;
 
   openModalOcorrencia: (id: string) => void;
   closeModalOcorrencia: () => void;
   editModalOcorrencia: (bool: boolean) => void;
+
+  openModalAjustes: (id: string) => void;
+  closeModalAjustes: () => void;
+
+  openModalAjuste: (id: string) => void;
+  closeModalAjuste: () => void;
+  editModalAjuste: (bool: boolean) => void;
 
   openModalDetalheCard: ({
     type,
@@ -66,79 +85,150 @@ interface useStoreCaixa {
   setIsPending: (bool: boolean) => void;
 }
 
-export const useStoreCaixa = create<useStoreCaixa>((set) => ({
-  id: null,
-  id_deposito: null,
-  id_ocorrencia: null,
-  modalOcorrenciaEditing: false,
-  modalDepositoEditing: false,
-  modalOpen: false,
-  modalDepositoOpen: false,
-  modalOcorrenciaOpen: false,
-  modalOcorrenciasOpen: false,
-  modalDetalheCardOpen: false,
+export const useStoreCaixa =
+  create<useStoreCaixa>((set) => ({
+    id: null,
+    id_deposito: null,
+    id_ocorrencia: null,
+    id_ajuste: null,
+    id_caixa: null,
 
-  data_caixa: null,
-  id_filial: null,
-  ocorrencias_nao_resolvidas: false,
-  type_detalhe: null,
-  title_detalhe: null,
+    modalOpen: false,
+    modalDepositoOpen: false,
 
-  disabled: false,
-  isPending: false,
+    modalOcorrenciasOpen: false,
+    modalOcorrenciaOpen: false,
 
-  openModal: ({
-    id,
-    id_filial,
-    data_caixa,
-  }: {
-    id: string;
-    id_filial: string;
-    data_caixa: string;
-  }) => set({ modalOpen: true, id, id_filial, data_caixa }),
-  closeModal: () =>
-    set({
-      modalOpen: false,
-      id: null,
-      data_caixa: null,
-      disabled: false,
-      isPending: false,
-    }),
+    modalAjustesOpen: false,
+    modalAjusteOpen: false,
 
-  openModalDeposito: (id: string) =>
-    set({ modalDepositoOpen: true, id_deposito: id }),
-  closeModalDeposito: () =>
-    set({ modalDepositoOpen: false, id_deposito: null }),
-  editModalDeposito: (bool) => set({ modalDepositoEditing: bool }),
+    modalOcorrenciaEditing: false,
+    modalDepositoEditing: false,
+    modalDetalheCardOpen: false,
+    modalAjusteEditing: false,
 
-  openModalOcorrencias: (props?: OpenOcorrenciaProps) =>
-    set({
-      modalOcorrenciasOpen: true,
-      ocorrencias_nao_resolvidas: props?.ocorrencias_nao_resolvidas,
-    }),
-  closeModalOcorrencias: () =>
-    set({ modalOcorrenciasOpen: false, ocorrencias_nao_resolvidas: false }),
+    data_caixa: null,
+    id_filial: null,
+    ocorrencias_nao_resolvidas: false,
+    type_detalhe: null,
+    title_detalhe: null,
 
-  openModalOcorrencia: (id: string) =>
-    set({ modalOcorrenciaOpen: true, id_ocorrencia: id }),
-  closeModalOcorrencia: () =>
-    set({ modalOcorrenciaOpen: false, id_ocorrencia: null }),
-  editModalOcorrencia: (bool) => set({ modalOcorrenciaEditing: bool }),
+    disabled: false,
+    isPending: false,
 
-  openModalDetalheCard: ({ type, title }: { type: string; title: string }) =>
-    set({
-      modalDetalheCardOpen: true,
-      type_detalhe: type,
-      title_detalhe: title,
-    }),
-  closeModalDetalheCard: () =>
-    set({
-      modalDetalheCardOpen: false,
-      type_detalhe: null,
-      title_detalhe: null,
-    }),
+    openModal: ({
+      id,
+      id_filial,
+      data_caixa,
+    }: {
+      id: string;
+      id_filial: string;
+      data_caixa: string;
+    }) =>
+      set({
+        modalOpen: true,
+        id,
+        id_filial,
+        data_caixa,
+      }),
+    closeModal: () =>
+      set({
+        modalOpen: false,
+        id: null,
+        data_caixa: null,
+        disabled: false,
+        isPending: false,
+      }),
 
-  setFilial: (id: string) => set({ id_filial: id }),
-  setDisabled: (bool: boolean) => set({ disabled: bool }),
-  setIsPending: (bool: boolean) => set({ isPending: bool }),
-}));
+    openModalDeposito: (id: string) =>
+      set({
+        modalDepositoOpen: true,
+        id_deposito: id,
+      }),
+    closeModalDeposito: () =>
+      set({
+        modalDepositoOpen: false,
+        id_deposito: null,
+      }),
+    editModalDeposito: (bool) =>
+      set({ modalDepositoEditing: bool }),
+
+    openModalOcorrencias: (
+      props?: OpenOcorrenciaProps
+    ) =>
+      set({
+        modalOcorrenciasOpen: true,
+        ocorrencias_nao_resolvidas:
+          props?.ocorrencias_nao_resolvidas,
+      }),
+    closeModalOcorrencias: () =>
+      set({
+        modalOcorrenciasOpen: false,
+        ocorrencias_nao_resolvidas: false,
+      }),
+
+    openModalOcorrencia: (id: string) =>
+      set({
+        modalOcorrenciaOpen: true,
+        id_ocorrencia: id,
+      }),
+    closeModalOcorrencia: () =>
+      set({
+        modalOcorrenciaOpen: false,
+        id_ocorrencia: null,
+      }),
+    editModalOcorrencia: (bool) =>
+      set({ modalOcorrenciaEditing: bool }),
+
+    openModalAjustes: (id: string) =>
+      set({
+        modalAjustesOpen: true,
+        id_caixa: id,
+      }),
+
+    closeModalAjustes: () =>
+      set({
+        modalAjustesOpen: false,
+        id_caixa: null,
+      }),
+
+    openModalAjuste: (id: string) =>
+      set({
+        modalAjusteOpen: true,
+        id_ajuste: id,
+      }),
+
+    closeModalAjuste: () =>
+      set({
+        modalAjusteOpen: false,
+        id_ajuste: null,
+      }),
+    editModalAjuste: (bool) =>
+      set({ modalAjusteEditing: bool }),
+
+    openModalDetalheCard: ({
+      type,
+      title,
+    }: {
+      type: string;
+      title: string;
+    }) =>
+      set({
+        modalDetalheCardOpen: true,
+        type_detalhe: type,
+        title_detalhe: title,
+      }),
+    closeModalDetalheCard: () =>
+      set({
+        modalDetalheCardOpen: false,
+        type_detalhe: null,
+        title_detalhe: null,
+      }),
+
+    setFilial: (id: string) =>
+      set({ id_filial: id }),
+    setDisabled: (bool: boolean) =>
+      set({ disabled: bool }),
+    setIsPending: (bool: boolean) =>
+      set({ isPending: bool }),
+  }));
