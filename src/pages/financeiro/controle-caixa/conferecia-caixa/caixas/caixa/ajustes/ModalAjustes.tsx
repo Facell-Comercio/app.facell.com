@@ -5,6 +5,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -111,11 +112,12 @@ const ModalAjustes = () => {
             )}
           </DialogTitle>
         </DialogHeader>
-        <div className="rounded-md overflow-clip">
+        <div className="rounded-md overflow-auto scroll-thin">
           <Table>
             <TableHeader className="bg-secondary">
               <TableRow>
                 <TableHead>Ação</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Tipo</TableHead>
                 <TableHead>De</TableHead>
                 <TableHead>Para</TableHead>
@@ -127,7 +129,7 @@ const ModalAjustes = () => {
             <TableBody>
               {newDataAjustes?.ajustes?.map(
                 (ajuste) => (
-                  <TableRow className="bg-secondary/40 odd:bg-secondary/60 uppercase">
+                  <TableRow className="bg-secondary/40 odd:bg-secondary/60 uppercase text-nowrap">
                     <TableCell>
                       <Button
                         size={"xs"}
@@ -141,6 +143,21 @@ const ModalAjustes = () => {
                       >
                         <Pen size={14} />
                       </Button>
+                    </TableCell>
+                    <TableCell>
+                      {ajuste.aprovado ? (
+                        <Badge
+                          variant={"success"}
+                        >
+                          Aprovado
+                        </Badge>
+                      ) : (
+                        <Badge
+                          variant={"warning"}
+                        >
+                          Aprovação Pendente
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       {
@@ -174,7 +191,10 @@ const ModalAjustes = () => {
                         ajuste.valor
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell
+                      title={ajuste.obs}
+                      className="max-w-[50ch] truncate"
+                    >
                       {ajuste.obs}
                     </TableCell>
                     <TableCell>

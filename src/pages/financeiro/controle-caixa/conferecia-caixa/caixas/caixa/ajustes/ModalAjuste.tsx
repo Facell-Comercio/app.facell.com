@@ -203,22 +203,20 @@ const ModalAjuste = () => {
                     className="flex-1 min-w-[30ch]"
                     type="number"
                   />
-                  <Button
-                    className={`${
-                      aprovado
-                        ? "hover:bg-primary"
-                        : "hoverbg-success"
-                    } cursor-default`}
-                    variant={
-                      aprovado
-                        ? "success"
-                        : "default"
-                    }
-                  >
-                    {aprovado
-                      ? "Aprovado"
-                      : "Aprovação Pendente"}
-                  </Button>
+                  {id && (
+                    <Button
+                      className={`cursor-default`}
+                      variant={
+                        aprovado
+                          ? "success"
+                          : "warning"
+                      }
+                    >
+                      {aprovado
+                        ? "Aprovado"
+                        : "Aprovação Pendente"}
+                    </Button>
+                  )}
                 </span>
                 <FormSelect
                   name={"saida"}
@@ -235,7 +233,7 @@ const ModalAjuste = () => {
                   options={tiposCaixa}
                 />
                 <FormTextarea
-                  className="flex-1 min-w-full shrink-0"
+                  className="flex-1 min-w-full shrink-0 scroll-thin"
                   name="obs"
                   readOnly={!!id}
                   label="Observação"
