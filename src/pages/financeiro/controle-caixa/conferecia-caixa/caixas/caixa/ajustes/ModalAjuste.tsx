@@ -10,6 +10,7 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormInput from "@/components/custom/FormInput";
 import FormSelect from "@/components/custom/FormSelect";
 import FormTextarea from "@/components/custom/FormTextarea";
+import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import {
@@ -27,9 +28,7 @@ import {
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
 import {
-  Ban,
   Check,
-  Save,
   Settings2,
   Trash2,
 } from "lucide-react";
@@ -87,13 +86,19 @@ const ModalAjuste = () => {
     closeModal,
     id,
     id_caixa,
-    disabled,
+    editModal,
+    modalEditing,
+    setIsPending,
+    isPending,
   ] = useStoreCaixa((state) => [
     state.modalAjusteOpen,
     state.closeModalAjuste,
     state.id_ajuste,
     state.id,
-    state.disabled,
+    state.editModalAjuste,
+    state.modalAjusteEditing,
+    state.setIsPending,
+    state.isPending,
   ]);
   const formRef = useRef<HTMLFormElement | null>(
     null
@@ -154,17 +159,36 @@ const ModalAjuste = () => {
   function onSubmitData(data: AjustesProps) {
     if (id) update(data);
     if (!id) insertOne(data);
-    console.log(data);
   }
 
   useEffect(() => {
-    updateIsSuccess && closeModal();
+    if (updateIsPending) {
+      setIsPending(true);
+    }
+    if (updateIsSuccess) {
+      closeModal();
+      setIsPending(false);
+    }
   }, [updateIsPending]);
+
   useEffect(() => {
-    insertOneIsSuccess && closeModal();
+    if (insertOneIsPending) {
+      setIsPending(true);
+    }
+    if (insertOneIsSuccess) {
+      closeModal();
+      setIsPending(false);
+    }
   }, [insertOneIsPending]);
+
   useEffect(() => {
-    deleteAjusteIsSuccess && closeModal();
+    if (deleteAjusteIsPending) {
+      setIsPending(true);
+    }
+    if (deleteAjusteIsSuccess) {
+      closeModal();
+      setIsPending(false);
+    }
   }, [deleteAjusteIsPending]);
 
   function handleClickCancel() {
@@ -207,29 +231,33 @@ const ModalAjuste = () => {
                     name={"tipo_ajuste"}
                     label={"Tipo"}
                     control={form.control}
-                    disabled={disabled}
+                    disabled={
+                      isPending || !modalEditing
+                    }
                     options={tiposAjuste}
                   />
                   <FormInput
                     name="valor"
                     label="Valor"
                     control={form.control}
+                    disabled={
+                      isPending || !modalEditing
+                    }
                     className="flex-1 min-w-[30ch]"
                     type="number"
                   />
                   {id && (
-                    <Button
-                      className={`cursor-default`}
-                      variant={
+                    <div
+                      className={`flex items-center justify-center py-2 px-3 text-sm min-h-10 rounded-md font-medium ${
                         aprovado
-                          ? "success"
-                          : "warning"
-                      }
+                          ? "bg-success"
+                          : "bg-warning"
+                      }`}
                     >
                       {aprovado
                         ? "Aprovado"
                         : "Aprovação Pendente"}
-                    </Button>
+                    </div>
                   )}
                 </span>
 
@@ -237,14 +265,18 @@ const ModalAjuste = () => {
                   name={"saida"}
                   label={"De"}
                   control={form.control}
-                  disabled={disabled}
+                  disabled={
+                    isPending || !modalEditing
+                  }
                   options={tiposCaixa}
                 />
                 <FormSelect
                   name={"entrada"}
                   label={"Para"}
                   control={form.control}
-                  disabled={disabled}
+                  disabled={
+                    isPending || !modalEditing
+                  }
                   options={tiposCaixa}
                 />
                 <FormTextarea
@@ -253,12 +285,17 @@ const ModalAjuste = () => {
                   readOnly={!!id}
                   label="Observação"
                   control={form.control}
+                  disabled={
+                    isPending || !modalEditing
+                  }
                 />
                 <FormInput
                   name="user"
                   label="Usuário"
                   control={form.control}
-                  disabled={disabled}
+                  disabled={
+                    isPending || !modalEditing
+                  }
                   readOnly
                 />
               </form>
@@ -271,36 +308,17 @@ const ModalAjuste = () => {
           )}
           <ScrollBar />
         </ScrollArea>
-        {!disabled && (
-          <DialogFooter>
-            {!id && !aprovado && (
-              <div className="flex gap-2 justify-between">
-                <Button
-                  variant={"secondary"}
-                  onClick={handleClickCancel}
-                >
-                  <Ban
-                    className="me-2"
-                    size={18}
-                  />
-                  Cancelar
-                </Button>
-                <Button
-                  onClick={() =>
-                    formRef.current &&
-                    formRef.current.requestSubmit()
-                  }
-                >
-                  <Save
-                    size={18}
-                    className="me-2"
-                  />
-                  Salvar
-                </Button>
-              </div>
-            )}
+        <DialogFooter>
+          <ModalButtons
+            id={id}
+            modalEditing={modalEditing}
+            edit={() => editModal(true)}
+            cancel={handleClickCancel}
+            formRef={formRef}
+            isLoading={isPending}
+          >
             {!!id && !aprovado && podeAprovar && (
-              <div className="flex items-end gap-2 justify-between w-full">
+              <div className="flex items-end gap-2">
                 <AlertPopUp
                   title={
                     "Deseja realmente remover esse ajuste?"
@@ -308,7 +326,10 @@ const ModalAjuste = () => {
                   description="Essa ação não pode ser desfeita. A ajuste será definitivamente removido do servidor e todas as mudanças realizaadas por ele desfeitas."
                   action={() => deleteAjuste(id)}
                 >
-                  <Button variant={"destructive"}>
+                  <Button
+                    variant={"destructive"}
+                    size={"lg"}
+                  >
                     <Trash2
                       size={18}
                       className="me-2"
@@ -332,7 +353,10 @@ const ModalAjuste = () => {
                       formRef.current.requestSubmit();
                   }}
                 >
-                  <Button variant={"success"}>
+                  <Button
+                    variant={"success"}
+                    size={"lg"}
+                  >
                     <Check
                       size={18}
                       className="me-2"
@@ -342,8 +366,8 @@ const ModalAjuste = () => {
                 </AlertPopUp>
               </div>
             )}
-          </DialogFooter>
-        )}
+          </ModalButtons>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

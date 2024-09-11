@@ -201,6 +201,7 @@ export const useStoreCaixa =
     closeModalAjuste: () =>
       set({
         modalAjusteOpen: false,
+        modalAjusteEditing: false,
         id_ajuste: null,
       }),
     editModalAjuste: (bool) =>
