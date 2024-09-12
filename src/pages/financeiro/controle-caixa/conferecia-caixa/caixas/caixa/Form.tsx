@@ -11,7 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import {
+  normalizeCurrency,
+  normalizeDate,
+} from "@/helpers/mask";
 import {
   ConferenciasCaixaSchema,
   useConferenciasCaixa,
@@ -27,6 +30,7 @@ import {
   Trash,
 } from "lucide-react";
 import { useState } from "react";
+import ModalAjustes from "./ajustes/ModalAjustes";
 import CaixaCards from "./cards/CaixaCards";
 import { ItemAccordionCaixa } from "./components/ItemAccordionCaixa";
 import ModalTransacoesCredit, {
@@ -54,48 +58,76 @@ const FormCaixa = ({
   data: ConferenciasCaixaSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  const [filters, setFilters] = useState<FilterMovimentoProps>({
-    documento: "",
-    tipo_operacao: "",
-    forma_pgto: "",
-    historico: "",
-  });
-  const [modalTransacoesCreditOpen, setModalTransacoesCreditOpen] =
-    useState(false);
+  const [filters, setFilters] =
+    useState<FilterMovimentoProps>({
+      documento: "",
+      tipo_operacao: "",
+      forma_pgto: "",
+      historico: "",
+    });
+  const [
+    modalTransacoesCreditOpen,
+    setModalTransacoesCreditOpen,
+  ] = useState(false);
 
-  const filteredMovimetoCaixa = data.movimentos_caixa?.filter(
-    (movimento) =>
-      movimento.documento
-        ?.toUpperCase()
-        .startsWith(filters.documento.toUpperCase()) &&
-      movimento.tipo_operacao?.includes(filters.tipo_operacao.toUpperCase()) &&
-      movimento.forma_pagamento?.includes(filters.forma_pgto.toUpperCase()) &&
-      movimento.historico
-        ?.toUpperCase()
-        .includes(filters.historico.toUpperCase())
+  const filteredMovimetoCaixa =
+    data.movimentos_caixa?.filter(
+      (movimento) =>
+        movimento.documento
+          ?.toUpperCase()
+          .startsWith(
+            filters.documento.toUpperCase()
+          ) &&
+        movimento.tipo_operacao?.includes(
+          filters.tipo_operacao.toUpperCase()
+        ) &&
+        movimento.forma_pagamento?.includes(
+          filters.forma_pgto.toUpperCase()
+        ) &&
+        movimento.historico
+          ?.toUpperCase()
+          .includes(
+            filters.historico.toUpperCase()
+          )
+    );
+
+  const qtde_movimentos_caixa =
+    filteredMovimetoCaixa?.length || 0;
+  const valor_total_movimentos_caixa =
+    filteredMovimetoCaixa?.reduce(
+      (acc: number, curr) =>
+        acc + parseFloat(curr.valor || "0"),
+      0
+    );
+  const saldo_anterior = parseFloat(
+    data?.saldo_anterior || "0"
+  );
+  const saldo_atual = parseFloat(
+    data?.saldo_atual || "0"
+  );
+  const depositos_caixa =
+    data.depositos_caixa || [];
+  const qtde_depositos_caixa = parseInt(
+    data.qtde_depositos_caixa || "0"
   );
 
-  const qtde_movimentos_caixa = filteredMovimetoCaixa?.length || 0;
-  const valor_total_movimentos_caixa = filteredMovimetoCaixa?.reduce(
-    (acc: number, curr) => acc + parseFloat(curr.valor || "0"),
-    0
-  );
-  const saldo_anterior = parseFloat(data?.saldo_anterior || "0");
-  const saldo_atual = parseFloat(data?.saldo_atual || "0");
-  const depositos_caixa = data.depositos_caixa || [];
-  const qtde_depositos_caixa = parseInt(data.qtde_depositos_caixa || "0");
-
-  const [openModalDeposito, editModalDeposito, id_filial, disabled, isPending] =
-    useStoreCaixa((state) => [
-      state.openModalDeposito,
-      state.editModalDeposito,
-      state.id_filial,
-      state.disabled,
-      state.isPending,
-    ]);
+  const [
+    openModalDeposito,
+    editModalDeposito,
+    id_filial,
+    disabled,
+    isPending,
+  ] = useStoreCaixa((state) => [
+    state.openModalDeposito,
+    state.editModalDeposito,
+    state.id_filial,
+    state.disabled,
+    state.isPending,
+  ]);
 
   const { form } = useFormCaixaData(data);
-  const { mutate: deleteDeposito } = useConferenciasCaixa().deleteDeposito();
+  const { mutate: deleteDeposito } =
+    useConferenciasCaixa().deleteDeposito();
 
   // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
@@ -120,7 +152,10 @@ const FormCaixa = ({
   function InfoMovimentoCaixa() {
     return (
       <Badge variant={"info"} className="text-xs">
-        Valor Total: {normalizeCurrency(valor_total_movimentos_caixa)}
+        Valor Total:{" "}
+        {normalizeCurrency(
+          valor_total_movimentos_caixa
+        )}
       </Badge>
     );
   }
@@ -129,17 +164,27 @@ const FormCaixa = ({
     return (
       <span className="flex gap-1 items-center justify-center">
         <Badge
-          variant={data.caixa_anterior_fechado ? "info" : "warning"}
+          variant={
+            data.caixa_anterior_fechado
+              ? "info"
+              : "warning"
+          }
           title={
-            data.caixa_anterior_fechado ? "" : "Saldo passível de alteração"
+            data.caixa_anterior_fechado
+              ? ""
+              : "Saldo passível de alteração"
           }
         >
-          {`Saldo Anterior: ${normalizeCurrency(saldo_anterior)}`}
+          {`Saldo Anterior: ${normalizeCurrency(
+            saldo_anterior
+          )}`}
         </Badge>
         <Badge variant="info">
           {`Total Depósitos: ${normalizeCurrency(
             depositos_caixa.reduce(
-              (acc, deposito) => acc + parseFloat(deposito.valor || "0"),
+              (acc, deposito) =>
+                acc +
+                parseFloat(deposito.valor || "0"),
               0
             )
           )}`}
@@ -149,9 +194,13 @@ const FormCaixa = ({
             saldo_atual < 0 ? "0" : saldo_atual
           )}`}
         </Badge>
-        {parseFloat(data.suprimento_caixa || "0") > 0 && (
+        {parseFloat(
+          data.suprimento_caixa || "0"
+        ) > 0 && (
           <Badge variant="violet">
-            {`Suprimento de Caixa: ${normalizeCurrency(data.suprimento_caixa)}`}
+            {`Suprimento de Caixa: ${normalizeCurrency(
+              data.suprimento_caixa
+            )}`}
           </Badge>
         )}
       </span>
@@ -161,7 +210,9 @@ const FormCaixa = ({
   const { mutate: insertMultiDepositoExtrato } =
     useConferenciasCaixa().insertMultiDepositoExtrato();
 
-  async function handleMultiSelectionDepositos(itens: TransacoesCreditProps[]) {
+  async function handleMultiSelectionDepositos(
+    itens: TransacoesCreditProps[]
+  ) {
     if (itens.length > 0) {
       insertMultiDepositoExtrato({
         id_caixa: data.id || "",
@@ -189,10 +240,15 @@ const FormCaixa = ({
               qtde={qtde_movimentos_caixa}
               title="Movimento de Caixa"
               className="flex gap-3 flex-col"
-              valorTotal={valor_total_movimentos_caixa}
+              valorTotal={
+                valor_total_movimentos_caixa
+              }
               info={InfoMovimentoCaixa}
             >
-              <FiltersMovimentos filters={filters} setFilters={setFilters} />
+              <FiltersMovimentos
+                filters={filters}
+                setFilters={setFilters}
+              />
               <RowVirtualizedMovimentoCaixa
                 data={filteredMovimetoCaixa || []}
               />
@@ -209,7 +265,11 @@ const FormCaixa = ({
                 <span className="flex gap-3">
                   <Button
                     className="flex gap-2"
-                    onClick={() => setModalTransacoesCreditOpen(true)}
+                    onClick={() =>
+                      setModalTransacoesCreditOpen(
+                        true
+                      )
+                    }
                     disabled={isPending}
                     variant={"tertiary"}
                   >
@@ -218,7 +278,9 @@ const FormCaixa = ({
                   </Button>
                   <Button
                     className="flex gap-2"
-                    onClick={handleClickNewDeposito}
+                    onClick={
+                      handleClickNewDeposito
+                    }
                     disabled={isPending}
                   >
                     <Plus />
@@ -229,94 +291,153 @@ const FormCaixa = ({
               <Table className="bg-background rounded-md">
                 <TableHeader>
                   <TableRow>
-                    {!disabled && <TableHead>Ações</TableHead>}
-                    <TableHead>Conta Bancária</TableHead>
+                    {!disabled && (
+                      <TableHead>Ações</TableHead>
+                    )}
+                    <TableHead>
+                      Conta Bancária
+                    </TableHead>
                     <TableHead>Valor</TableHead>
-                    <TableHead>Comprovante</TableHead>
+                    <TableHead>
+                      Comprovante
+                    </TableHead>
                     <TableHead>Data</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {depositos_caixa.map((deposito, index) => (
-                    <TableRow key={`deposito ${deposito.id} ${index}`}>
-                      {!disabled && (
-                        <TableCell className="flex gap-2">
-                          <Button
-                            variant={"warning"}
-                            size={"xs"}
-                            className="min-w-10"
-                            onClick={() => {
-                              openModalDeposito(deposito.id || "");
-                            }}
-                            disabled={isPending}
-                          >
-                            <Pencil size={14} />
-                          </Button>
-                          <AlertPopUp
-                            title={"Deseja realmente excluir"}
-                            description="Essa ação não pode ser desfeita. O depósito será excluído definitivamente do servidor."
-                            action={() => {
-                              deleteDeposito(deposito.id || "");
-                            }}
-                          >
+                  {depositos_caixa.map(
+                    (deposito, index) => (
+                      <TableRow
+                        key={`deposito ${deposito.id} ${index}`}
+                      >
+                        {!disabled && (
+                          <TableCell className="flex gap-2">
                             <Button
-                              variant={"destructive"}
+                              variant={"warning"}
                               size={"xs"}
                               className="min-w-10"
+                              onClick={() => {
+                                openModalDeposito(
+                                  deposito.id ||
+                                    ""
+                                );
+                              }}
                               disabled={isPending}
                             >
-                              <Trash size={14} />
+                              <Pencil size={14} />
                             </Button>
-                          </AlertPopUp>
+                            <AlertPopUp
+                              title={
+                                "Deseja realmente excluir"
+                              }
+                              description="Essa ação não pode ser desfeita. O depósito será excluído definitivamente do servidor."
+                              action={() => {
+                                deleteDeposito(
+                                  deposito.id ||
+                                    ""
+                                );
+                              }}
+                            >
+                              <Button
+                                variant={
+                                  "destructive"
+                                }
+                                size={"xs"}
+                                className="min-w-10"
+                                disabled={
+                                  isPending
+                                }
+                              >
+                                <Trash
+                                  size={14}
+                                />
+                              </Button>
+                            </AlertPopUp>
+                          </TableCell>
+                        )}
+                        <TableCell>
+                          {
+                            deposito.conta_bancaria
+                          }
                         </TableCell>
-                      )}
-                      <TableCell>{deposito.conta_bancaria}</TableCell>
-                      <TableCell>{normalizeCurrency(deposito.valor)}</TableCell>
-                      <TableCell>{deposito.comprovante}</TableCell>
-                      <TableCell>
-                        {normalizeDate(deposito.data_deposito || "")}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        <TableCell>
+                          {normalizeCurrency(
+                            deposito.valor
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {deposito.comprovante}
+                        </TableCell>
+                        <TableCell>
+                          {normalizeDate(
+                            deposito.data_deposito ||
+                              ""
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )}
                 </TableBody>
               </Table>
             </ItemAccordionCaixa>
-            {data?.historico && data?.historico.length > 0 && (
-              <section className="flex gap-2 flex-col px-2 py-3 border bg-slate-200 dark:bg-blue-950 rounded-lg">
-                <span className="flex gap-3 font-medium">
-                  <History />
-                  <h3>Histórico</h3>
-                </span>
+            {data?.historico &&
+              data?.historico.length > 0 && (
+                <section className="flex gap-2 flex-col px-2 py-3 border bg-slate-200 dark:bg-blue-950 rounded-lg">
+                  <span className="flex gap-3 font-medium">
+                    <History />
+                    <h3>Histórico</h3>
+                  </span>
 
-                <ScrollArea className={"flex flex-col gap-3 max-h-44 "}>
-                  {data.historico?.map((value, index) => (
-                    <span
-                      className="flex gap-1.5"
-                      key={`historico ${value.id} ${index}`}
-                    >
-                      {formatDate(value.created_at, "dd/MM/yyyy hh:mm")}:
-                      <p className={`${historicoColor(value.descricao)}`}>
-                        {value.descricao}
-                      </p>
-                    </span>
-                  ))}
-                </ScrollArea>
-              </section>
-            )}
+                  <ScrollArea
+                    className={
+                      "flex flex-col gap-3 max-h-44 "
+                    }
+                  >
+                    {data.historico?.map(
+                      (value, index) => (
+                        <span
+                          className="flex gap-1.5"
+                          key={`historico ${value.id} ${index}`}
+                        >
+                          {formatDate(
+                            value.created_at,
+                            "dd/MM/yyyy hh:mm"
+                          )}
+                          :
+                          <p
+                            className={`${historicoColor(
+                              value.descricao
+                            )}`}
+                          >
+                            {value.descricao}
+                          </p>
+                        </span>
+                      )
+                    )}
+                  </ScrollArea>
+                </section>
+              )}
           </div>
         </form>
       </Form>
       <ModalDeposito id_matriz={data.id_matriz} />
-      <ModalOcorrencias id_filial={id_filial || ""} />
+      <ModalOcorrencias
+        id_filial={id_filial || ""}
+      />
       <ModalTransacoesCredit
         id_matriz={data.id_matriz || ""}
         data_transacao={data.data || ""}
         id_caixa={data.id || ""}
         open={modalTransacoesCreditOpen}
         multiSelection
-        handleMultiSelection={handleMultiSelectionDepositos}
-        onOpenChange={() => setModalTransacoesCreditOpen(false)}
+        handleMultiSelection={
+          handleMultiSelectionDepositos
+        }
+        onOpenChange={() =>
+          setModalTransacoesCreditOpen(false)
+        }
       />
+      <ModalAjustes />
     </div>
   );
 };
