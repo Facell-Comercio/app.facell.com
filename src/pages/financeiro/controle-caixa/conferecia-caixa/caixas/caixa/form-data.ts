@@ -141,26 +141,51 @@ export const useFormOcorrenciaData = (
   };
 };
 
-const schemaAjuste = z.object({
-  // Dados Ajuste
-  id: z.string().optional(),
-  id_caixa: z.coerce.string().optional(),
-  user: z.coerce.string().optional(),
-  valor: z.coerce
-    .number()
-    .min(1, "Campo obrigatório"),
-  entrada: z.coerce.string().optional(),
-  saida: z.coerce.string().optional(),
-  obs: z
-    .string()
-    .trim()
-    .min(1, "Campo obrigatório"),
-  tipo_ajuste: z
-    .string()
-    .trim()
-    .min(1, "Campo obrigatório"),
-  aprovado: z.coerce.number().optional(),
-});
+const schemaAjuste = z
+  .object({
+    // Dados Ajuste
+    id: z.string().optional(),
+    id_caixa: z.coerce.string().optional(),
+    user: z.coerce.string().optional(),
+    valor: z.coerce
+      .number()
+      .min(1, "Campo obrigatório"),
+    entrada: z.coerce.string().optional(),
+    saida: z.coerce.string().optional(),
+    obs: z
+      .string()
+      .trim()
+      .min(1, "Campo obrigatório"),
+    tipo_ajuste: z
+      .string()
+      .trim()
+      .min(1, "Campo obrigatório"),
+    aprovado: z.coerce.number().optional(),
+  })
+  .refine(
+    (ajuste) =>
+      !(
+        (ajuste.tipo_ajuste === "transferencia" ||
+          ajuste.tipo_ajuste === "retirada") &&
+        !ajuste.saida
+      ),
+    {
+      path: ["saida"],
+      message: "Campo obrigatório",
+    }
+  )
+  .refine(
+    (ajuste) =>
+      !(
+        (ajuste.tipo_ajuste === "transferencia" ||
+          ajuste.tipo_ajuste === "inclusao") &&
+        !ajuste.entrada
+      ),
+    {
+      path: ["entrada"],
+      message: "Campo obrigatório",
+    }
+  );
 
 export const useFormAjusteData = (
   data: AjustesProps

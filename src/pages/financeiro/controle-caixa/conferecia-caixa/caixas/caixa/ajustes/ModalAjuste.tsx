@@ -208,6 +208,15 @@ const ModalAjuste = () => {
     !modalOpen && form.reset();
   }, [modalOpen]);
 
+  useEffect(() => {
+    if (tipoAjuste === "inclusao") {
+      form.setValue("saida", "");
+    }
+    if (tipoAjuste === "retirada") {
+      form.setValue("entrada", "");
+    }
+  }, [tipoAjuste]);
+
   function handleClickCancel() {
     closeModal();
   }
