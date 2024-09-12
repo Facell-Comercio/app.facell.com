@@ -167,22 +167,18 @@ const ModalAjustes = () => {
                       }
                     </TableCell>
                     <TableCell>
-                      {
-                        tiposCaixa.filter(
-                          (tipo) =>
-                            tipo.value ===
-                            ajuste.saida
-                        )[0].label
-                      }
+                      {tiposCaixa.filter(
+                        (tipo) =>
+                          tipo.value ===
+                          ajuste.saida
+                      )[0]?.label || " - "}
                     </TableCell>
                     <TableCell>
-                      {
-                        tiposCaixa.filter(
-                          (tipo) =>
-                            tipo.value ===
-                            ajuste.entrada
-                        )[0].label
-                      }
+                      {tiposCaixa.filter(
+                        (tipo) =>
+                          tipo.value ===
+                          ajuste.entrada
+                      )[0]?.label || " - "}
                     </TableCell>
                     <TableCell>
                       {normalizeCurrency(

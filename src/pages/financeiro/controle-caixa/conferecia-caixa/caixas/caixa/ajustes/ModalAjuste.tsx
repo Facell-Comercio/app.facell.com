@@ -33,6 +33,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { TbCurrencyReal } from "react-icons/tb";
 import { useFormAjusteData } from "../form-data";
 import { useStoreCaixa } from "../store";
 
@@ -110,16 +111,19 @@ const ModalAjuste = () => {
     mutate: update,
     isSuccess: updateIsSuccess,
     isPending: updateIsPending,
+    isError: updateIsError,
   } = useConferenciasCaixa().updateAjuste();
   const {
     mutate: insertOne,
     isSuccess: insertOneIsSuccess,
     isPending: insertOneIsPending,
+    isError: insertOneIsError,
   } = useConferenciasCaixa().insertOneAjuste();
   const {
     mutate: deleteAjuste,
     isSuccess: deleteAjusteIsSuccess,
     isPending: deleteAjusteIsPending,
+    isError: deleteAjusteIsError,
   } = useConferenciasCaixa().deleteAjuste();
 
   const newDataCaixa: AjustesProps &
@@ -169,6 +173,9 @@ const ModalAjuste = () => {
       closeModal();
       setIsPending(false);
     }
+    if (updateIsError) {
+      setIsPending(false);
+    }
   }, [updateIsPending]);
 
   useEffect(() => {
@@ -177,6 +184,9 @@ const ModalAjuste = () => {
     }
     if (insertOneIsSuccess) {
       closeModal();
+      setIsPending(false);
+    }
+    if (insertOneIsError) {
       setIsPending(false);
     }
   }, [insertOneIsPending]);
@@ -189,7 +199,14 @@ const ModalAjuste = () => {
       closeModal();
       setIsPending(false);
     }
+    if (deleteAjusteIsError) {
+      setIsPending(false);
+    }
   }, [deleteAjusteIsPending]);
+
+  useEffect(() => {
+    !modalOpen && form.reset();
+  }, [modalOpen]);
 
   function handleClickCancel() {
     closeModal();
@@ -245,6 +262,9 @@ const ModalAjuste = () => {
                     }
                     className="flex-1 min-w-[30ch]"
                     type="number"
+                    iconLeft
+                    icon={TbCurrencyReal}
+                    iconClass="bg-secondary"
                   />
                   {id && (
                     <div
@@ -261,24 +281,32 @@ const ModalAjuste = () => {
                   )}
                 </span>
 
-                <FormSelect
-                  name={"saida"}
-                  label={"De"}
-                  control={form.control}
-                  disabled={
-                    isPending || !modalEditing
-                  }
-                  options={tiposCaixa}
-                />
-                <FormSelect
-                  name={"entrada"}
-                  label={"Para"}
-                  control={form.control}
-                  disabled={
-                    isPending || !modalEditing
-                  }
-                  options={tiposCaixa}
-                />
+                {(tipoAjuste ===
+                  "transferencia" ||
+                  tipoAjuste === "retirada") && (
+                  <FormSelect
+                    name={"saida"}
+                    label={"Saída"}
+                    control={form.control}
+                    disabled={
+                      isPending || !modalEditing
+                    }
+                    options={tiposCaixa}
+                  />
+                )}
+                {(tipoAjuste ===
+                  "transferencia" ||
+                  tipoAjuste === "inclusao") && (
+                  <FormSelect
+                    name={"entrada"}
+                    label={"Entrada"}
+                    control={form.control}
+                    disabled={
+                      isPending || !modalEditing
+                    }
+                    options={tiposCaixa}
+                  />
+                )}
                 <FormTextarea
                   className="flex-1 min-w-full shrink-0 scroll-thin"
                   name="obs"
@@ -317,55 +345,56 @@ const ModalAjuste = () => {
             formRef={formRef}
             isLoading={isPending}
           >
-            {!!id && !aprovado && podeAprovar && (
-              <div className="flex items-end gap-2">
-                <AlertPopUp
-                  title={
-                    "Deseja realmente remover esse ajuste?"
-                  }
-                  description="Essa ação não pode ser desfeita. A ajuste será definitivamente removido do servidor e todas as mudanças realizaadas por ele desfeitas."
-                  action={() => deleteAjuste(id)}
+            <div className="flex items-end gap-2">
+              <AlertPopUp
+                title={
+                  "Deseja realmente remover esse ajuste?"
+                }
+                description="Essa ação não pode ser desfeita. A ajuste será definitivamente removido do servidor e todas as mudanças realizaadas por ele desfeitas."
+                action={() => deleteAjuste(id)}
+              >
+                <Button
+                  variant={"destructive"}
+                  size={"lg"}
                 >
-                  <Button
-                    variant={"destructive"}
-                    size={"lg"}
-                  >
-                    <Trash2
-                      size={18}
-                      className="me-2"
-                    />
-                    Remover Ajuste
-                  </Button>
-                </AlertPopUp>
+                  <Trash2
+                    size={18}
+                    className="me-2"
+                  />
+                  Remover Ajuste
+                </Button>
+              </AlertPopUp>
+              {!!id &&
+                !aprovado &&
+                podeAprovar && (
+                  <AlertPopUp
+                    title={
+                      "Deseja realmente aprovar esse ajuste?"
+                    }
+                    description="Essa ação não pode ser desfeita. A ajuste será definitivamente aprovado, não podendo voltar ao status anterior."
+                    action={() => {
+                      form.setValue(
+                        "aprovado",
+                        "1"
+                      );
 
-                <AlertPopUp
-                  title={
-                    "Deseja realmente aprovar esse ajuste?"
-                  }
-                  description="Essa ação não pode ser desfeita. A ajuste será definitivamente aprovado, não podendo voltar ao status anterior."
-                  action={() => {
-                    form.setValue(
-                      "aprovado",
-                      "1"
-                    );
-
-                    formRef.current &&
-                      formRef.current.requestSubmit();
-                  }}
-                >
-                  <Button
-                    variant={"success"}
-                    size={"lg"}
+                      formRef.current &&
+                        formRef.current.requestSubmit();
+                    }}
                   >
-                    <Check
-                      size={18}
-                      className="me-2"
-                    />
-                    Aprovar
-                  </Button>
-                </AlertPopUp>
-              </div>
-            )}
+                    <Button
+                      variant={"success"}
+                      size={"lg"}
+                    >
+                      <Check
+                        size={18}
+                        className="me-2"
+                      />
+                      Aprovar
+                    </Button>
+                  </AlertPopUp>
+                )}
+            </div>
           </ModalButtons>
         </DialogFooter>
       </DialogContent>
