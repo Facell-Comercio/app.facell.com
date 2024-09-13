@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { normalizeDate } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch } from "lucide-react";
 import { ReactNode } from "react";
@@ -60,10 +60,7 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div
-          title={normalizeDate(label)}
-          className="block truncate max-w-96 uppercase"
-        >
+        <div title={normalizeDate(label)} className="block truncate max-w-96 uppercase">
           {normalizeDate(label)}
         </div>
       );
@@ -77,9 +74,7 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
       const label = info.getValue<string>();
       return (
         <Badge
-          className={`text-nowrap text-foreground cursor-default ${badgeVariantCaixaClass(
-            label
-          )}`}
+          className={`text-nowrap text-foreground cursor-default ${badgeVariantCaixaClass(label)}`}
         >
           {label}
         </Badge>
@@ -105,9 +100,17 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
   {
     header: "BAIXAR MANUAL",
     accessorKey: "manual",
-    cell: (info)=>{
+    cell: (info) => {
       const val = info.getValue();
-      return val ? <span className="text-red-500">SIM</span> : 'NÃO'
-    }
+      return val ? <span className="text-red-500">SIM</span> : "NÃO";
+    },
+  },
+  {
+    header: "Saldo Caixa",
+    accessorKey: "saldo",
+    cell: (info) => {
+      const label = info.getValue<number>();
+      return <span>{normalizeCurrency(label)}</span>;
+    },
   },
 ];
