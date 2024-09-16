@@ -110,7 +110,6 @@ export type ConferenciasCaixaSchema = {
     descricao: string;
   }[];
 
-  caixa_anterior_fechado: boolean;
   suprimento_caixa?: string;
 };
 
@@ -257,6 +256,17 @@ export const useConferenciasCaixa = () => {
         },
       }),
 
+    getOneBoleto: (id?: string | null | undefined) =>
+      useQuery({
+        enabled: !!id,
+        queryKey: ["financeiro", "conferencia_de_caixa", "boletos", "detalhe", id],
+        queryFn: async () => {
+          return await api
+            .get(`/financeiro/controle-de-caixa/boletos/${id}`)
+            .then((response) => response.data);
+        },
+      }),
+
     getCardDetalhe: (params: { id_caixa?: string | null; type?: string | null }) =>
       useQuery({
         enabled: !!params.id_caixa && !!params.type,
@@ -286,7 +296,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -320,7 +330,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -351,7 +361,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -382,7 +392,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -413,7 +423,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -444,7 +454,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -475,7 +485,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -506,7 +516,38 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          const errorMessage =
+            // @ts-expect-error 'Vai funcionar'
+            error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    cancelarBoleto: () =>
+      useMutation({
+        mutationFn: async (id?: string | null | undefined) => {
+          return await api
+            .put("/financeiro/controle-de-caixa/boletos/cancelar", { id })
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -539,7 +580,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -570,7 +611,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -632,7 +673,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -663,7 +704,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -694,7 +735,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -725,7 +766,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",

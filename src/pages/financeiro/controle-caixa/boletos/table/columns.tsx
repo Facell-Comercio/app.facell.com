@@ -17,40 +17,40 @@ export type RowConferenciaCaixa = {
   id_filial: string;
 };
 
-export function BadgeBoletoStatus({ status }: { status?: string }) {
+export function BadgeBoletoStatus({ status, className }: { status?: string; className?: string }) {
   if (status === "aguardando_emissao") {
     return (
-      <Badge variant={"warning"} className="uppercase">
+      <Badge variant={"warning"} className={`uppercase text-nowrap ${className}`}>
         Aguardando Emissão
       </Badge>
     );
   } else if (status === "pago") {
     return (
-      <Badge variant={"default"} className="uppercase">
+      <Badge variant={"default"} className={`uppercase text-nowrap ${className}`}>
         Pago
       </Badge>
     );
   } else if (status === "em_pagamento") {
     return (
-      <Badge variant={"violet"} className="uppercase">
+      <Badge variant={"violet"} className={`uppercase text-nowrap ${className}`}>
         Em Pagamento
       </Badge>
     );
   } else if (status === "emitido") {
     return (
-      <Badge className="uppercase" variant={"success"}>
+      <Badge className={`uppercase text-nowrap ${className}`} variant={"success"}>
         Emitido
       </Badge>
     );
   } else if (status === "cancelado") {
     return (
-      <Badge variant={"secondary"} className="uppercase">
+      <Badge variant={"secondary"} className={`uppercase text-nowrap ${className}`}>
         Cancelado
       </Badge>
     );
   } else if (status === "atrasado") {
     return (
-      <Badge variant={"destructive"} className="uppercase">
+      <Badge variant={"destructive"} className={`uppercase text-nowrap ${className}`}>
         Atrasado
       </Badge>
     );

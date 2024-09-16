@@ -1,93 +1,210 @@
-// import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-// import ModalButtons from "@/components/custom/ModalButtons";
-// import { Button } from "@/components/ui/button";
-// import { Skeleton } from "@/components/ui/skeleton";
-// import { useOrcamento } from "@/hooks/financeiro/useOrcamento";
-// import { ScrollArea } from "@radix-ui/react-scroll-area";
-// import { CircleFadingPlusIcon } from "lucide-react";
-// import { useRef } from "react";
-// import FormBoleto from "./Form";
-// import { useStoreBoleto } from "./store";
+import AlertPopUp from "@/components/custom/AlertPopUp";
+import { Input } from "@/components/custom/FormInput";
+import ModalButtons from "@/components/custom/ModalButtons";
+import { Button } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
+import { CircleX } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { TbCurrencyReal } from "react-icons/tb";
+import { BadgeBoletoStatus } from "../table/columns";
+import { useStoreBoleto } from "./store";
 
-// const ModalBoleto = () => {
-//   const modalOpen = useStoreBoleto().modalOpen;
-//   // const closeModal = useStoreBoleto().closeModal;
-//   const toggleModal = useStoreBoleto().toggleModal;
-//   const openReplicateModal = useStoreBoleto().openReplicateModal;
-//   const [modalEditing, editModal, isPending] = useStoreBoleto((state) => [
-//     state.modalEditing,
-//     state.editModal,
-//     state.isPending,
-//   ]);
+export type NewBoletoProps = {
+  id_filial?: string;
+  valor?: string;
+};
 
-//   const id = useStoreBoleto().id;
-//   const formRef = useRef(null);
+type CaixaProps = {
+  id?: string;
+  data?: string;
+  saldo?: string;
+  saldo_no_boleto?: string;
+  saldo_final?: string;
+  status?: string;
+};
 
-//   const { data, isLoading } = useOrcamento().getOne(id);
+const initialPropsBoleto: NewBoletoProps = {
+  id_filial: "",
+  valor: "0",
+};
 
-//   const newData: boletoSchemaProps & Record<string, any> =
-//     {} as boletoSchemaProps & Record<string, any>;
+const ModalBoleto = () => {
+  const [modalOpen, closeModal, id, modalEditing, editModal, isPending, setIsPending] =
+    useStoreBoleto((state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.id,
+      state.modalEditing,
+      state.editModal,
+      state.isPending,
+      state.setIsPending,
+    ]);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
-//   for (const key in data?.data) {
-//     if (typeof data?.data[key] === "number") {
-//       newData[key] = String(data?.data[key]);
-//     } else if (data?.data[key] === null) {
-//       newData[key] = "";
-//     } else {
-//       newData[key] = data?.data[key];
-//     }
-//   }
+  const { data } = useConferenciasCaixa().getOneBoleto(id);
 
-//   function handleClickCancel() {
-//     editModal(false);
-//     // closeModal();
-//   }
+  const {
+    mutate: cancelar,
+    isSuccess: cancelarIsSuccess,
+    isPending: cancelarIsPending,
+    isError: cancelarIsError,
+  } = useConferenciasCaixa().cancelarBoleto();
 
-//   return (
-//     <div>
-//       <Dialog open={modalOpen} onOpenChange={toggleModal}>
-//         <DialogContent>
-//           <ScrollArea className="max-h-[80vh]">
-//             {modalOpen && !isLoading ? (
-//               <FormBoleto
-//                 id={id}
-//                 data={id ? newData : initialPropsBoleto}
-//                 formRef={formRef}
-//               />
-//             ) : (
-//               <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
-//                 <Skeleton className="w-full row-span-1" />
-//                 <Skeleton className="w-full row-span-3" />
-//               </div>
-//             )}
-//           </ScrollArea>
-//           <DialogFooter>
-//             <ModalButtons
-//               id={id}
-//               modalEditing={modalEditing}
-//               edit={() => editModal(true)}
-//               cancel={handleClickCancel}
-//               formRef={formRef}
-//               isLoading={isPending}
-//             >
-//               <Button
-//                 type={"submit"}
-//                 size="lg"
-//                 variant={"secondary"}
-//                 disabled={isPending}
-//                 className="dark:text-white justify-self-start	mx-3"
-//                 onClick={() => openReplicateModal(id || "")}
-//               >
-//                 <CircleFadingPlusIcon className="me-2" />
-//                 Replicar
-//               </Button>
-//             </ModalButtons>
-//           </DialogFooter>
-//         </DialogContent>
-//       </Dialog>
-//     </div>
-//   );
-// };
+  // function onSubmitData() {
+  //   if (!formData.id_filial) {
+  //     toast({ title: "Por algum motivo não há um id_filial", variant: "warning" });
+  //     return;
+  //   }
+  //   insertOne(formData);
+  // }
 
-// export default ModalBoleto;
+  useEffect(() => {
+    if (cancelarIsPending) {
+      setIsPending(true);
+    }
+    if (cancelarIsSuccess) {
+      closeModal();
+      setIsPending(false);
+    }
+    if (cancelarIsError) {
+      setIsPending(false);
+    }
+  }, [cancelarIsPending]);
+
+  function handleClickCancel() {
+    closeModal();
+  }
+
+  return (
+    <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Boleto: {id}</DialogTitle>
+        </DialogHeader>
+        <ScrollArea className="max-h-[70vh]">
+          {modalOpen && (
+            <form
+              className="flex gap-2 flex-wrap p-1"
+              ref={formRef}
+              onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // onSubmitData();
+              }}
+            >
+              <BadgeBoletoStatus
+                status={data?.status}
+                className="min-w-full flex justify-center py-2 mb-1"
+              />
+              <section className="flex gap-2 w-full">
+                <div className="flex flex-col gap-2 flex-1">
+                  <label className="font-medium text-sm">Filial</label>
+                  <Input readOnly value={data?.filial || ""} />
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <label className="font-medium text-sm">Valor do Boleto</label>
+                  <span className="flex">
+                    <Button variant={"secondary"} className="rounded-none rounded-l-md">
+                      <TbCurrencyReal size={18} />
+                    </Button>
+                    <Input
+                      value={data?.valor || ""}
+                      type="number"
+                      className="rounded-none rounded-r-md"
+                      readOnly
+                    />
+                  </span>
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <label className="font-medium text-sm">Data de Criação</label>
+                  <Input readOnly value={normalizeDate(data?.data)} />
+                </div>
+              </section>
+              <section className="flex gap-2 w-full">
+                <div className="flex flex-col gap-2 flex-1">
+                  <label className="font-medium text-sm">Data de Emissão</label>
+                  <Input readOnly value={normalizeDate(data?.data_emissao) || "-"} />
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <label className="font-medium text-sm">Data de Vencimento</label>
+                  <Input readOnly value={normalizeDate(data?.data_vencimento) || "-"} />
+                </div>
+              </section>
+              <div className="flex flex-col gap-2 flex-1">
+                <label className="font-medium text-sm">Código de Barras</label>
+                <Input readOnly value={data?.cod_barras || "-"} />
+              </div>
+              <Table
+                className="rounded-md border-border w-full h-10 overflow-clip relative"
+                divClassname="overflow-auto scroll-thin max-h-[40vh] border rounded-md mt-2"
+              >
+                <TableHeader className="sticky w-full top-0 h-10 border-b-2 border-border rounded-t-md bg-secondary">
+                  <TableRow>
+                    <TableHead>Data Caixa</TableHead>
+                    <TableHead>Valor</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data?.caixas.map((row: any, index: number) => (
+                    <TableRow
+                      key={`boleto_caixa: ${index} - ${row.data_caixa}`}
+                      className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
+                    >
+                      <TableCell>{normalizeDate(row.data_caixa)}</TableCell>
+                      <TableCell>{normalizeCurrency(row.valor)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </form>
+          )}
+          <ScrollBar />
+        </ScrollArea>
+        <DialogFooter>
+          <ModalButtons
+            id={id}
+            cancel={handleClickCancel}
+            edit={() => editModal(true)}
+            modalEditing={modalEditing}
+            formRef={formRef}
+          >
+            <AlertPopUp
+              title={"Deseja realmente cancelar esse boleto?"}
+              description="Essa ação fará com que todos os caixas relacionados a ele recuperem o saldo usado."
+              action={() => {
+                cancelar(id || "");
+              }}
+            >
+              {data && (data.status === "aguardando_emissao" || data.status === "emitido") && (
+                <Button variant={"destructive"} size={"lg"}>
+                  <CircleX className="me-2" />
+                  Cancelar Boleto
+                </Button>
+              )}
+            </AlertPopUp>
+          </ModalButtons>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default ModalBoleto;

@@ -66,16 +66,14 @@ const ModalNewBoleto = () => {
     isSuccess: insertOneIsSuccess,
     isPending: insertOneIsPending,
     isError: insertOneIsError,
-  } = useConferenciasCaixa().insertOneAjuste();
+  } = useConferenciasCaixa().insertOneBoleto();
 
   function onSubmitData() {
-    console.log(formData);
-
     if (!formData.id_filial) {
       toast({ title: "Por algum motivo não há um id_filial", variant: "warning" });
       return;
-      insertOne(formData);
     }
+    insertOne(formData);
   }
 
   useEffect(() => {
@@ -93,8 +91,7 @@ const ModalNewBoleto = () => {
 
   useEffect(() => {
     !modalOpen && setFormData({ ...initialPropsBoleto, id_filial: id_filial || "" });
-    modalOpen &&
-      setFormData((prev) => ({ valor: data?.total_disponivel, id_filial: id_filial || "" }));
+    modalOpen && setFormData({ valor: data?.total_disponivel, id_filial: id_filial || "" });
   }, [modalOpen]);
 
   function handleClickCancel() {
@@ -102,10 +99,10 @@ const ModalNewBoleto = () => {
   }
 
   function StatusCaixa({ status }: { status: string }) {
-    if (status === "a_pagar") {
+    if (status === "a_liquidar") {
       return <p className="font-semibold text-green-500">A Liquidar</p>;
     }
-    if (status === "pagar_parcialmente") {
+    if (status === "a_abater") {
       return <p className="font-semibold text-yellow-500">A abater</p>;
     }
     if (status === "pendente") {
@@ -123,18 +120,18 @@ const ModalNewBoleto = () => {
 
       //* Se ainda houver valor para debitar
       if (valor > 0) {
-        if (valor >= rowSaldo) {
+        if (parseFloat(valor.toFixed(2)) >= rowSaldo) {
           //* Se o valor a ser debitado for maior ou igual ao saldo da caixa
           saldo_no_boleto = rowSaldo; //* Debita todo o saldo do caixa
           valor -= rowSaldo; //* Subtrai o saldo do caixa do valor total
           rowSaldo = 0; //* O saldo final do caixa fica 0
-          status = "a_pagar"; //* O caixa é marcado como a pagar
+          status = "a_liquidar"; //* O caixa é marcado como a pagar
         } else {
           //* Se o valor a ser debitado for menor que o saldo do caixa
           saldo_no_boleto = valor; //* Debita o valor parcial do caixa
           rowSaldo -= valor; //* Subtrai o valor parcial do saldo do caixa
           valor = 0; //* Todo o valor foi debitado, zera o valor
-          status = "pagar_parcialmente"; //* O caixa é marcado como pagar parcialmente
+          status = "a_abater"; //* O caixa é marcado como pagar parcialmente
         }
       }
 

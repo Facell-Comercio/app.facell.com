@@ -2,6 +2,7 @@
 
 import { DataTable } from "@/components/custom/DataTable";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
+import ModalBoleto from "./boleto/Modal";
 import FiltersBoletos from "./FiltersBoletos";
 import { columnsTable } from "./table/columns";
 import { useStoreTableBoletos } from "./table/store-table";
@@ -32,6 +33,7 @@ const Boletos = () => {
           isLoading={isLoading}
         />
       )}
+      <ModalBoleto />
     </section>
   );
 };

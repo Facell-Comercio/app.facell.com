@@ -9,68 +9,39 @@ import { TbAlertTriangle } from "react-icons/tb";
 import { badgeVariantCaixaClass } from "../../table/columns";
 import { useStoreCaixa } from "../store";
 
-const StatusCaixa = ({
-  data,
-}: {
-  data: ConferenciasCaixaSchema;
-}) => {
+const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
   const queryClient = useQueryClient();
 
-  const [
-    openModalOcorrencias,
-    openModalAjustes,
-    isPending,
-  ] = useStoreCaixa((state) => [
+  const [openModalOcorrencias, openModalAjustes, isPending] = useStoreCaixa((state) => [
     state.openModalOcorrencias,
     state.openModalAjustes,
     state.isPending,
   ]);
-  const caixaConfirmado =
-    !!+data.caixa_confirmado;
+  const caixaConfirmado = !!+data.caixa_confirmado;
 
-  const isDivergent = parseInt(
-    data.divergente || "0"
-  );
-  const ocorrencias = parseInt(
-    data.ocorrencias || "0"
-  );
+  const isDivergent = parseInt(data.divergente || "0");
+  const ocorrencias = parseInt(data.ocorrencias || "0");
   const ajustes = parseInt(data.ajustes || "0");
-  const ocorrenciasResolvidas = parseInt(
-    data.ocorrencias_resolvidas || "0"
-  );
-  const todasResolvidas =
-    ocorrencias === ocorrenciasResolvidas;
-  const ocorrenciasParaResolver =
-    ocorrencias - ocorrenciasResolvidas;
+  const ocorrenciasResolvidas = parseInt(data.ocorrencias_resolvidas || "0");
+  const todasResolvidas = ocorrencias === ocorrenciasResolvidas;
+  const ocorrenciasParaResolver = ocorrencias - ocorrenciasResolvidas;
   const baixa_manual = !!+data.manual;
 
-  const handleChangeBaixaManual = async (
-    checked: boolean
-  ) => {
+  const handleChangeBaixaManual = async (checked: boolean) => {
     try {
-      await api.put(
-        `/financeiro/controle-de-caixa/conferencia-de-caixa/change-value`,
-        {
-          id: data.id,
-          campo: "manual",
-          valor: checked,
-        }
-      );
+      await api.put(`/financeiro/controle-de-caixa/conferencia-de-caixa/change-value`, {
+        id: data.id,
+        campo: "manual",
+        valor: checked,
+      });
       queryClient.setQueryData(
-        [
-          "financeiro",
-          "conferencia_de_caixa",
-          "caixas",
-          "detalhe",
-          parseInt(`${data?.id}`),
-        ],
+        ["financeiro", "conferencia_de_caixa", "caixas", "detalhe", parseInt(`${data?.id}`)],
         { ...data, manual: checked ? 1 : 0 }
       );
     } catch (error) {
       toast({
         variant: "destructive",
-        title:
-          "Erro ao tentar alterar o tipo de baixa do caixa",
+        title: "Erro ao tentar alterar o tipo de baixa do caixa",
         description:
           // @ts-ignore
           error?.response?.data?.message ||
@@ -83,51 +54,26 @@ const StatusCaixa = ({
   return (
     <div className="flex items-center gap-3 flex-wrap text-center">
       <span>
-        <p className="text-sm font-medium p-2">
-          Divergente
-        </p>
-        <Button
-          variant={
-            isDivergent
-              ? "destructive"
-              : "success"
-          }
-          className="w-full"
-        >
+        <p className="text-sm font-medium p-2">Divergente</p>
+        <Button variant={isDivergent ? "destructive" : "success"} className="w-full">
           {isDivergent ? "SIM" : "NÃO"}
         </Button>
       </span>
       <span>
-        <p className="text-sm font-medium p-2">
-          Status
-        </p>
-        <Button
-          className={`w-full ${badgeVariantCaixaClass(
-            data.status
-          )}`}
-        >
-          {data.status}
-        </Button>
+        <p className="text-sm font-medium p-2">Status</p>
+        <Button className={`w-full ${badgeVariantCaixaClass(data.status)}`}>{data.status}</Button>
       </span>
       <span>
-        <p className="text-sm font-medium p-2">
-          Ocorrências
-        </p>
+        <p className="text-sm font-medium p-2">Ocorrências</p>
         <Button
-          variant={
-            !ocorrencias || todasResolvidas
-              ? "success"
-              : "destructive"
-          }
+          variant={!ocorrencias || todasResolvidas ? "success" : "destructive"}
           className="flex gap-1.5 w-full"
           onClick={() => openModalOcorrencias()}
           disabled={isPending}
           title={
             ocorrenciasParaResolver > 0
               ? `Há ${ocorrenciasParaResolver} ${
-                  ocorrenciasParaResolver > 1
-                    ? "ocorrências"
-                    : "ocorrência"
+                  ocorrenciasParaResolver > 1 ? "ocorrências" : "ocorrência"
                 } para resolver`
               : ""
           }
@@ -137,25 +83,13 @@ const StatusCaixa = ({
         </Button>
       </span>
       <span>
-        <p className="text-sm font-medium p-2">
-          Ajustes
-        </p>
+        <p className="text-sm font-medium p-2">Ajustes</p>
         <Button
-          variant={"tertiary"}
+          variant={"destructive"}
           className="flex gap-1.5 w-full"
-          onClick={() =>
-            openModalAjustes(data.id || "")
-          }
+          onClick={() => openModalAjustes(data.id || "")}
           disabled={isPending}
-          title={
-            ajustes > 0
-              ? `Há ${ajustes} ${
-                  ajustes > 1
-                    ? "ajustes"
-                    : "ajuste"
-                }`
-              : ""
-          }
+          title={ajustes > 0 ? `Há ${ajustes} ${ajustes > 1 ? "ajustes" : "ajuste"}` : ""}
         >
           <Settings2 size={22} />
           Ajustes: ({ajustes})
@@ -169,9 +103,7 @@ const StatusCaixa = ({
         <Switch
           checked={baixa_manual}
           disabled={caixaConfirmado}
-          onCheckedChange={
-            handleChangeBaixaManual
-          }
+          onCheckedChange={handleChangeBaixaManual}
         />
       </div>
     </div>

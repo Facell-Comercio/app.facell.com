@@ -20,11 +20,11 @@ export type RowConferenciaCaixa = {
 export function badgeVariantCaixaClass(status?: string) {
   if (status === "A CONFERIR") {
     return "bg-secondary hover:bg-secondary hover:opacity-90 text-foreground";
-  } else if (status === "CONFERIDO / BAIXA PENDENTE") {
+  } else if (status === "CONFERIDO") {
     return "bg-success hover:bg-success hover:opacity-90 text-white";
-  } else if (status === "BAIXADO / PENDENTE DATASYS") {
+  } else if (status === "CONFIRMADO") {
     return "bg-primary hover:bg-primary hover:opacity-90 text-white";
-  } else if (status === "BAIXADO NO DATASYS") {
+  } else if (status === "CONFIRMADO") {
     return "bg-violet-500 hover:bg-violet-500 hover:opacity-90 text-white";
   } else {
     undefined;

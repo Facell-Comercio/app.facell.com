@@ -6,15 +6,7 @@ import {
   ConferenciasCaixaSchema,
   MovimentoCaixaProps,
 } from "@/hooks/financeiro/useConferenciasCaixa";
-import {
-  ArrowUpDown,
-  Banknote,
-  CreditCard,
-  HandCoins,
-  Landmark,
-  List,
-  Shield,
-} from "lucide-react";
+import { ArrowUpDown, Banknote, CreditCard, HandCoins, Landmark, List, Shield } from "lucide-react";
 import { useStoreCaixa } from "../store";
 import ModalDetalheCard from "./ModalDetalheCard";
 
@@ -36,24 +28,34 @@ const CaixaCards = ({ data }: { data: ConferenciasCaixaSchema }) => {
       title: "Dinheiro",
       valuesList: [
         {
-          value: normalizeCurrency(data.valor_dinheiro),
-          label: "Dinheiro",
+          value: normalizeCurrency(-Math.abs(parseFloat(data.valor_devolucoes || "0"))),
+          label: "Devoluções",
+          groupName: "outro",
         },
         {
-          value: normalizeCurrency(
-            -Math.abs(parseFloat(data.valor_retiradas || "0"))
-          ),
-          label: "Retiradas",
+          value: normalizeCurrency(data.valor_dinheiro),
+          label: "Entrada",
+          groupName: "entrada",
+        },
+        {
+          value: normalizeCurrency(data.valor_dinheiro),
+          label: "Despesas",
+          groupName: "saida",
+        },
+        {
+          value: normalizeCurrency(-Math.abs(parseFloat(data.valor_retiradas || "0"))),
+          label: "Depósitos",
+          groupName: "saida",
+        },
+        {
+          value: normalizeCurrency(data.valor_dinheiro),
+          label: "Boletos",
+          groupName: "saida",
         },
         {
           value: normalizeCurrency(data.total_dinheiro),
-          label: "Total",
-        },
-        {
-          value: normalizeCurrency(
-            -Math.abs(parseFloat(data.valor_devolucoes || "0"))
-          ),
-          label: "Devoluções",
+          label: "Saldo",
+          groupName: "saldo",
         },
       ],
       icon: Banknote,
@@ -174,8 +176,9 @@ const CaixaCards = ({ data }: { data: ConferenciasCaixaSchema }) => {
       icon: ArrowUpDown,
     },
   ];
+
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  last:lg:grid-cols-2 last-child:bg-green-500 gap-3">
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 last:lg:grid-cols-2 last-child:bg-green-500 gap-3">
       {objs.map((obj, index: number) => (
         <CaixaCardComponent
           key={`${index} - ${obj.title}`}
@@ -207,16 +210,30 @@ const CaixaCardComponent = ({
   icon?: React.ElementType;
 }) => {
   const hasDivergence = valuesList.some(
-    (value) =>
-      value.label === "Divergência" &&
-      parseFloat(normalizeNumberOnly(value.value)) > 0
+    (value) => value.label === "Divergência" && parseFloat(normalizeNumberOnly(value.value)) > 0
   );
+
+  const isDinheiro = title === "Dinheiro";
+  const isTradein = title === "Tradein";
+
+  const groupedData = Object.values(
+    valuesList.reduce((acc: any, item: any) => {
+      // Verifica se o grupo já existe no acumulador
+      if (!acc[item.groupName]) {
+        acc[item.groupName] = [];
+      }
+      // Adiciona o item ao grupo correspondente
+      acc[item.groupName].push(item);
+      return acc;
+    }, {})
+  ); // Converte o objeto de grupos em um array de arrays
+
   const openModal = useStoreCaixa().openModalDetalheCard;
   return (
     <Card
       className={` bg-slate-200 dark:bg-blue-950 ${
         hasDivergence && "bg-red-500 text-white dark:bg-red-800/80"
-      } sm:last:col-span-2 lg:last:col-span-1 lg:last:col-start-2`}
+      }  ${isDinheiro && "row-span-2 "} ${isTradein && "col-start-2"} `}
     >
       <CardHeader className="flex flex-row items-center justify-between p-3">
         <span className="flex gap-3 items-center">
@@ -234,31 +251,43 @@ const CaixaCardComponent = ({
           </Button>
         )}
       </CardHeader>
-      <CardContent className="flex flex-col gap-1 p-3">
-        {valuesList.map((value, index) => (
-          <CaixaCardComponentValue key={index} {...value} />
-        ))}
+      <CardContent className={`flex justify-between flex-col p-0`}>
+        {groupedData.map((group: any, groupIndex) => {
+          return (
+            <div className="flex flex-col gap-1 p-3">
+              {group[0].groupName === "saida" && (
+                <span>
+                  <p className="text-sm font-medium">Saídas:</p>
+                  <hr className={"my-1 border-slate-900 dark:border-blue-750"} />
+                </span>
+              )}
+              {group.map((value: any, valueIndex: number) => (
+                <CaixaCardComponentValue key={`${groupIndex}-${valueIndex}`} {...value} />
+              ))}
+            </div>
+          );
+        })}
       </CardContent>
     </Card>
   );
 };
 
-const CaixaCardComponentValue = ({
-  label,
-  value,
-}: {
-  value: string;
-  label: string;
-}) => {
+const CaixaCardComponentValue = ({ label, value }: { value: string; label: string }) => {
   const isNegative = value.includes("-");
+
   return (
-    <span className="flex gap-2 items-center">
+    <span className={`flex gap-1 items-center `}>
       <label className="font-medium text-sm min-w-24">{label}</label>
       <Input
         value={value}
         readOnly
         className={`h-8 text-foreground ${isNegative && "text-red-400"}`}
       />
+      {(label === "Entrada" || label === "Despesas") && (
+        <Button size={"xs"} className="h-8" variant={"outline"}>
+          <List size={16} />
+        </Button>
+      )}
     </span>
   );
 };
