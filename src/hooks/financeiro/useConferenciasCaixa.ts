@@ -71,7 +71,7 @@ export type ConferenciasCaixaSchema = {
   updated_at?: string;
 
   valor_dinheiro?: string;
-  valor_retiradas?: string;
+  valor_despesas?: string;
   total_dinheiro?: string;
   valor_devolucoes?: string;
 

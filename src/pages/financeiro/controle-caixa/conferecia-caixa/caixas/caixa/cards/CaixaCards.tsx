@@ -41,7 +41,7 @@ const CaixaCards = ({ data }: { data: ConferenciasCaixaSchema }) => {
         },
         {
           value: normalizeCurrency(
-            -Math.abs(parseFloat(data.valor_retiradas || "0"))
+            -Math.abs(parseFloat(data.valor_despesas || "0"))
           ),
           label: "Retiradas",
         },

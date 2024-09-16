@@ -44,7 +44,7 @@ const initialPropsCaixa: ConferenciasCaixaSchema = {
   valor_pix_banco: "",
   valor_recarga: "",
   valor_recarga_real: "",
-  valor_retiradas: "",
+  valor_despesas: "",
   valor_tradein: "",
   valor_tradein_disponivel: "",
   valor_tradein_utilizado: "",
