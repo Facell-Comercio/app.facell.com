@@ -38,22 +38,22 @@ const CaixaCards = ({ data }: { data: ConferenciasCaixaSchema }) => {
           groupName: "entrada",
         },
         {
-          value: normalizeCurrency(data.valor_dinheiro),
+          value: normalizeCurrency(-parseFloat(data.valor_despesas || "0")),
           label: "Despesas",
           groupName: "saida",
         },
         {
-          value: normalizeCurrency(-Math.abs(parseFloat(data.valor_retiradas || "0"))),
+          value: normalizeCurrency(-Math.abs(parseFloat(data.valor_depositos || "0"))),
           label: "Depósitos",
           groupName: "saida",
         },
         {
-          value: normalizeCurrency(data.valor_dinheiro),
+          value: normalizeCurrency(-parseFloat(data.valor_boletos || "0")),
           label: "Boletos",
           groupName: "saida",
         },
         {
-          value: normalizeCurrency(data.total_dinheiro),
+          value: normalizeCurrency(data.saldo),
           label: "Saldo",
           groupName: "saldo",
         },
@@ -274,6 +274,7 @@ const CaixaCardComponent = ({
 
 const CaixaCardComponentValue = ({ label, value }: { value: string; label: string }) => {
   const isNegative = value.includes("-");
+  const openModalDinheiro = useStoreCaixa().openModalDinheiro;
 
   return (
     <span className={`flex gap-1 items-center `}>
@@ -284,7 +285,12 @@ const CaixaCardComponentValue = ({ label, value }: { value: string; label: strin
         className={`h-8 text-foreground ${isNegative && "text-red-400"}`}
       />
       {(label === "Entrada" || label === "Despesas") && (
-        <Button size={"xs"} className="h-8" variant={"outline"}>
+        <Button
+          size={"xs"}
+          className="h-8"
+          variant={"outline"}
+          onClick={() => openModalDinheiro(label === "Entrada" ? "entrada" : "saida")}
+        >
           <List size={16} />
         </Button>
       )}

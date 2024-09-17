@@ -10,18 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { formatarDataHora } from "@/helpers/format";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { normalizeCnpjNumber } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { api } from "@/lib/axios";
-import ModalFornecedores, {
-  ItemFornecedor,
-} from "@/pages/financeiro/components/ModalFornecedores";
+import ModalFornecedores, { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
 
 import fetchApi from "@/api/fetchApi";
 import AlertPopUp from "@/components/custom/AlertPopUp";
@@ -30,11 +25,7 @@ import { SelectFormaPagamento } from "@/components/custom/SelectFormaPagamento";
 import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
@@ -72,9 +63,11 @@ import { useStoreTitulo } from "./store";
 const FormTituloPagar = ({
   id,
   form,
+  handleInsertTitulo,
 }: {
   id: string | null | undefined;
   form: UseFormReturn<TituloSchemaProps> | any | undefined;
+  handleInsertTitulo?: (id_titulo: number) => void;
   // formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
   const queryClient = useQueryClient();
@@ -82,8 +75,7 @@ const FormTituloPagar = ({
   const modalEditing = useStoreTitulo().modalEditing;
   const editModal = useStoreTitulo().editModal;
   const closeModal = useStoreTitulo().closeModal;
-  const [modalFornecedorOpen, setModalFornecedorOpen] =
-    useState<boolean>(false);
+  const [modalFornecedorOpen, setModalFornecedorOpen] = useState<boolean>(false);
 
   const data = form?.getValues() || {};
   const titulo = data;
@@ -136,13 +128,9 @@ const FormTituloPagar = ({
   const status = titulo?.status || "Solicitado";
   const id_status = parseInt(titulo?.id_status) ?? 1;
 
-  const isMaster =
-    checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+  const isMaster = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
 
-  const canEdit =
-    !id ||
-    status === "Solicitado" ||
-    (isMaster && id_status > 0 && id_status < 3);
+  const canEdit = !id || status === "Solicitado" || (isMaster && id_status > 0 && id_status < 3);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
@@ -151,16 +139,12 @@ const FormTituloPagar = ({
   const podeResolicitar =
     id &&
     status !== "Solicitado" &&
-    (id_status < 3 ||
-      (isMaster === true && status === "Aprovado" ? true : false));
+    (id_status < 3 || (isMaster === true && status === "Aprovado" ? true : false));
 
-  const podeNegar =
-    isMaster && id && status !== "Negado" && id_status > 0 && id_status < 4;
-  const podeAprovar =
-    isMaster && id && status !== "Aprovado" && id_status > 0 && id_status < 4;
+  const podeNegar = isMaster && id && status !== "Negado" && id_status > 0 && id_status < 4;
+  const podeAprovar = isMaster && id && status !== "Aprovado" && id_status > 0 && id_status < 4;
 
-  const podeAnexarNotaFiscal =
-    id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal);
+  const podeAnexarNotaFiscal = id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal);
   const podeExcluirNotaFiscal = id_status < 3 || isMaster;
 
   const canSelectFilial = id_forma_pagamento == 6 ? !!id_cartao : true;
@@ -181,9 +165,7 @@ const FormTituloPagar = ({
         title: "Atenção!",
         // @ts-ignore
         description: `${
-          result === 1
-            ? `Existe 1 solicitação`
-            : `Existem ${result} solicitações`
+          result === 1 ? `Existe 1 solicitação` : `Existem ${result} solicitações`
         } no sistema com esse fornecedor e número de documento`,
       });
     }
@@ -208,15 +190,9 @@ const FormTituloPagar = ({
       setValue("dv_agencia", fornecedor.dv_agencia || "");
       setValue("conta", fornecedor.conta || "");
       setValue("dv_conta", fornecedor.dv_conta || "");
-      setValue(
-        "id_forma_pagamento",
-        fornecedor.id_forma_pagamento?.toString() || ""
-      );
+      setValue("id_forma_pagamento", fornecedor.id_forma_pagamento?.toString() || "");
       setValue("id_tipo_conta", fornecedor.id_tipo_conta?.toString() || "");
-      setValue(
-        "id_tipo_chave_pix",
-        fornecedor.id_tipo_chave_pix?.toString() || ""
-      );
+      setValue("id_tipo_chave_pix", fornecedor.id_tipo_chave_pix?.toString() || "");
       setValue("chave_pix", fornecedor.chave_pix || "");
       setModalFornecedorOpen(false);
     } catch (error) {}
@@ -225,23 +201,14 @@ const FormTituloPagar = ({
 
   // * [ ANEXOS ]
   // Quando um anexo for alterado:
-  async function handleChangeFile({
-    campo,
-    fileUrl,
-  }: {
-    campo: string;
-    fileUrl?: string;
-  }) {
+  async function handleChangeFile({ campo, fileUrl }: { campo: string; fileUrl?: string }) {
     try {
       if (id) {
-        const result = await api.post(
-          "financeiro/contas-a-pagar/titulo/update-anexo",
-          {
-            campo,
-            fileUrl,
-            id,
-          }
-        );
+        const result = await api.post("financeiro/contas-a-pagar/titulo/update-anexo", {
+          campo,
+          fileUrl,
+          id,
+        });
         // @ts-ignore
         form.setValue(campo, result.data.fileUrl || "");
       }
@@ -264,6 +231,7 @@ const FormTituloPagar = ({
   const [isSubmtting, setIsSubmitting] = useState<boolean>(false);
 
   const {
+    data: dataInsertOne,
     mutate: insertOne,
     isSuccess: insertOneSuccess,
     isPending: isPendingInsert,
@@ -303,6 +271,8 @@ const FormTituloPagar = ({
 
   useEffect(() => {
     if (insertOneSuccess) {
+      handleInsertTitulo && handleInsertTitulo(dataInsertOne.id_titulo);
+
       resetForm();
       closeModal();
 
@@ -318,10 +288,7 @@ const FormTituloPagar = ({
     id_novo_status: string;
     motivo?: string;
   };
-  const changeStatusTitulo = async ({
-    id_novo_status,
-    motivo,
-  }: changeStatusTituloProps) => {
+  const changeStatusTitulo = async ({ id_novo_status, motivo }: changeStatusTituloProps) => {
     try {
       await api.post(`financeiro/contas-a-pagar/titulo/change-status`, {
         id_titulo: id,
@@ -370,18 +337,13 @@ const FormTituloPagar = ({
       if (!fileUrl) {
         return;
       }
-      const data = await fetchApi.financeiro.contas_pagar.titulos.processarXml(
-        fileUrl
-      );
+      const data = await fetchApi.financeiro.contas_pagar.titulos.processarXml(fileUrl);
 
       if (data) {
         const { fornecedor, filial, num_doc, valor, data_emissao } = data;
         if (fornecedor) {
           form.setValue("id_fornecedor", String(fornecedor.id));
-          form.setValue(
-            "id_forma_pagamento",
-            String(fornecedor.id_forma_pagamento)
-          );
+          form.setValue("id_forma_pagamento", String(fornecedor.id_forma_pagamento));
           form.setValue("cnpj_fornecedor", String(fornecedor.cnpj));
           form.setValue("nome_fornecedor", String(fornecedor.nome));
         }
@@ -389,10 +351,7 @@ const FormTituloPagar = ({
           form.setValue("filial", String(filial.nome));
           form.setValue("id_filial", String(filial.id));
           form.setValue("id_matriz", String(filial.id_matriz));
-          form.setValue(
-            "id_grupo_economico",
-            String(filial.id_grupo_economico)
-          );
+          form.setValue("id_grupo_economico", String(filial.id_grupo_economico));
         }
         form.setValue("num_doc", String(num_doc));
         if (valor) {
@@ -460,9 +419,7 @@ const FormTituloPagar = ({
                     <span className="text-lg font-bold">Fornecedor</span>
                     <div>
                       {errors.id_fornecedor?.message && (
-                        <Badge variant={"destructive"}>
-                          {errors.id_fornecedor?.message || ""}
-                        </Badge>
+                        <Badge variant={"destructive"}>{errors.id_fornecedor?.message || ""}</Badge>
                       )}
                     </div>
                   </div>
@@ -497,11 +454,7 @@ const FormTituloPagar = ({
                       disabled={disabled}
                       className="flex-1 min-w-[15ch]"
                     />
-                    <div
-                      className={`${
-                        showPix ? "flex w-full" : "hidden"
-                      } gap-3 flex-wrap`}
-                    >
+                    <div className={`${showPix ? "flex w-full" : "hidden"} gap-3 flex-wrap`}>
                       <SelectTipoChavePix
                         control={form.control}
                         name="id_tipo_chave_pix"
@@ -518,11 +471,7 @@ const FormTituloPagar = ({
                         className="flex-1 min-w-[20ch]"
                       />
                     </div>
-                    <div
-                      className={`flex gap-3 ${
-                        showCartao ? "flex w-full" : "hidden"
-                      }`}
-                    >
+                    <div className={`flex gap-3 ${showCartao ? "flex w-full" : "hidden"}`}>
                       <SelectCartao
                         control={form.control}
                         name="id_cartao"
@@ -530,24 +479,13 @@ const FormTituloPagar = ({
                         disabled={disabled}
                         className={`flex-1 min-w-[30ch]`}
                         onChange={async (id) => {
-                          await api
-                            .get(`/financeiro/contas-a-pagar/cartoes/${id}`)
-                            .then((data) => {
-                              form.setValue(
-                                "dia_vencimento_cartao",
-                                data.data.dia_vencimento
-                              );
-                              form.setValue(
-                                "dia_corte_cartao",
-                                data.data.dia_corte
-                              );
-                              form.setValue("id_matriz", data.data.id_matriz);
-                              form.setValue(
-                                "id_grupo_economico",
-                                data.data.id_grupo_economico
-                              );
-                              form.setValue("itens_rateio", []);
-                            });
+                          await api.get(`/financeiro/contas-a-pagar/cartoes/${id}`).then((data) => {
+                            form.setValue("dia_vencimento_cartao", data.data.dia_vencimento);
+                            form.setValue("dia_corte_cartao", data.data.dia_corte);
+                            form.setValue("id_matriz", data.data.id_matriz);
+                            form.setValue("id_grupo_economico", data.data.id_grupo_economico);
+                            form.setValue("itens_rateio", []);
+                          });
                         }}
                       />
                       <FormInput
@@ -656,9 +594,7 @@ const FormTituloPagar = ({
                     <ModalFornecedores
                       open={canEdit && modalFornecedorOpen}
                       handleSelection={handleSelectionFornecedor}
-                      onOpenChange={() =>
-                        setModalFornecedorOpen((prev) => !prev)
-                      }
+                      onOpenChange={() => setModalFornecedorOpen((prev) => !prev)}
                     />
                   </div>
                 </div>
@@ -666,10 +602,7 @@ const FormTituloPagar = ({
                 {/* Dados da solicitação */}
                 <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex gap-2 mb-3">
-                    <FileText />{" "}
-                    <span className="text-lg font-bold ">
-                      Dados da solicitação
-                    </span>
+                    <FileText /> <span className="text-lg font-bold ">Dados da solicitação</span>
                   </div>
 
                   <div className="grid gap-3 flex-wrap items-end">
@@ -818,10 +751,7 @@ const FormTituloPagar = ({
                         </TabsTrigger>
                       </TabsList>
 
-                      <TabsContent
-                        value="vencimentos"
-                        className="orverflow-auto"
-                      >
+                      <TabsContent value="vencimentos" className="orverflow-auto">
                         <SecaoVencimentos
                           id={id}
                           form={form}
@@ -847,9 +777,7 @@ const FormTituloPagar = ({
                   <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>
-                      {valorTotalTitulo > 0
-                        ? "Selecione a filial!"
-                        : "Preencha o valor!"}
+                      {valorTotalTitulo > 0 ? "Selecione a filial!" : "Preencha o valor!"}
                     </AlertTitle>
                   </Alert>
                 )}
@@ -857,21 +785,14 @@ const FormTituloPagar = ({
                 {/* Histórico */}
                 <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex gap-2 mb-3">
-                    <History />{" "}
-                    <span className="text-lg font-bold ">Histórico</span>
+                    <History /> <span className="text-lg font-bold ">Histórico</span>
                   </div>
-                  <ScrollArea
-                    className={"flex flex-col gap-3 max-h-72 z-[999]"}
-                  >
+                  <ScrollArea className={"flex flex-col gap-3 max-h-72 z-[999]"}>
                     {
                       // @ts-ignore
                       data?.historico?.map((h, index) => (
-                        <p
-                          key={`hist.${h.id}.${index}`}
-                          className="text-xs my-2"
-                        >
-                          {formatarDataHora(h.created_at)}:{" "}
-                          {formatarHistorico(h.descricao)}
+                        <p key={`hist.${h.id}.${index}`} className="text-xs my-2">
+                          {formatarDataHora(h.created_at)}: {formatarHistorico(h.descricao)}
                         </p>
                       ))
                     }
@@ -919,9 +840,7 @@ const FormTituloPagar = ({
                   name="url_boleto"
                   mediaType="pdf"
                   control={form.control}
-                  onChange={(fileUrl: string) =>
-                    handleChangeFile({ fileUrl, campo: "url_boleto" })
-                  }
+                  onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: "url_boleto" })}
                 />
                 <FormFileUpload
                   folderName={"financeiro"}
@@ -952,9 +871,7 @@ const FormTituloPagar = ({
                   name="url_txt"
                   mediaType="remessa"
                   control={form.control}
-                  onChange={(fileUrl: string) =>
-                    handleChangeFile({ fileUrl, campo: "url_txt" })
-                  }
+                  onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: "url_txt" })}
                 />
               </div>
             </div>
@@ -964,8 +881,7 @@ const FormTituloPagar = ({
         <div className="max-w-full flex justify-between sm:items-center mt-4 gap-3 sm:gap-0 col-span-2">
           {isSubmtting ? (
             <div className="flex gap-3 items-center">
-              <span className="font-lg">Aguarde...</span>{" "}
-              {<FaSpinner className="animate-spin" />}
+              <span className="font-lg">Aguarde...</span> {<FaSpinner className="animate-spin" />}
             </div>
           ) : (
             <>
@@ -993,11 +909,7 @@ const FormTituloPagar = ({
                   </ButtonMotivation>
                 )}
                 {podeNegar && (
-                  <ButtonMotivation
-                    variant={"destructive"}
-                    size={"lg"}
-                    action={handleChangeNegar}
-                  >
+                  <ButtonMotivation variant={"destructive"} size={"lg"} action={handleChangeNegar}>
                     <X className="me-2" size={18} />
                     Negar
                   </ButtonMotivation>
@@ -1033,11 +945,7 @@ const FormTituloPagar = ({
                   </>
                 )}
                 {canEdit && !modalEditing && (
-                  <Button
-                    onClick={() => editModal(true)}
-                    size="lg"
-                    variant={"warning"}
-                  >
+                  <Button onClick={() => editModal(true)} size="lg" variant={"warning"}>
                     <Pen size={18} className="me-2" /> Editar
                   </Button>
                 )}

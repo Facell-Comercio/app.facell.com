@@ -51,6 +51,14 @@ export type DepositosCaixaProps = {
   data_deposito?: string;
 };
 
+export type BoletosCaixaProps = {
+  id?: string;
+  data?: string;
+  status?: string;
+  valor_boleto?: string;
+  saldo_utilizado?: string;
+};
+
 export type ConferenciasCaixaSchema = {
   id?: string;
   created_at?: string;
@@ -67,14 +75,16 @@ export type ConferenciasCaixaSchema = {
   ajustes?: string;
   ocorrencias_resolvidas?: string;
   saldo_anterior?: string;
-  saldo_atual?: string;
+  saldo?: string;
   status?: string;
   updated_at?: string;
 
-  valor_dinheiro?: string;
-  valor_retiradas?: string;
-  total_dinheiro?: string;
   valor_devolucoes?: string;
+  valor_dinheiro?: string;
+  valor_despesas?: string;
+  valor_depositos?: string;
+  valor_boletos?: string;
+  total_dinheiro?: string;
 
   valor_cartao?: string;
   valor_cartao_real?: string;
@@ -104,6 +114,8 @@ export type ConferenciasCaixaSchema = {
   movimentos_caixa?: MovimentoCaixaProps[];
   depositos_caixa?: DepositosCaixaProps[];
   qtde_depositos_caixa?: string;
+  boletos_caixa?: BoletosCaixaProps[];
+  qtde_boletos_caixa?: string;
   historico?: {
     id: string;
     created_at: string;
@@ -269,7 +281,11 @@ export const useConferenciasCaixa = () => {
 
     getCardDetalhe: (params: { id_caixa?: string | null; type?: string | null }) =>
       useQuery({
-        enabled: !!params.id_caixa && !!params.type,
+        enabled:
+          !!params.id_caixa &&
+          !!params.type &&
+          params.type !== "entrada" &&
+          params.type !== "saida",
         queryKey: [
           "financeiro",
           "conferencia_de_caixa",
@@ -281,6 +297,26 @@ export const useConferenciasCaixa = () => {
         queryFn: async () => {
           return await api
             .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/cards`, {
+              params: params,
+            })
+            .then((response) => response.data);
+        },
+      }),
+
+    getCardDetalheDinheiro: (params: { id_caixa?: string | null; type?: string | null }) =>
+      useQuery({
+        enabled: !!params.id_caixa && !!params.type,
+        queryKey: [
+          "financeiro",
+          "conferencia_de_caixa",
+          "caixas",
+          "cards",
+          "detalhe",
+          [params.id_caixa, params.type],
+        ],
+        queryFn: async () => {
+          return await api
+            .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/cards/dinheiro`, {
               params: params,
             })
             .then((response) => response.data);
@@ -767,6 +803,42 @@ export const useConferenciasCaixa = () => {
         onSuccess() {
           queryClient.invalidateQueries({
             queryKey: ["financeiro", "conferencia_de_caixa"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          const errorMessage =
+            // @ts-expect-error 'Vai funcionar'
+            error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    lancamentoDespesa: () =>
+      useMutation({
+        mutationFn: async (data: {
+          data_caixa: string;
+          id_titulo: string | number;
+          id_conta_bancaria: string | number;
+          id_despesa: string | number;
+        }) => {
+          return api
+            .post("/financeiro/controle-de-caixa/conferencia-de-caixa/lancamento-despesa", data)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro"],
           });
           toast({
             variant: "success",

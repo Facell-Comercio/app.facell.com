@@ -43,7 +43,6 @@ const Caixas = () => {
   const rows = data?.rows;
   const filial = data?.filial;
   const rowCount = data?.rowCount;
-  console.log(data);
 
   useEffect(() => {
     setFilial(id_filial);

@@ -23,6 +23,7 @@ interface useStoreCaixa {
   modalOcorrenciasOpen: boolean;
 
   modalDetalheCardOpen: boolean;
+  modalDetalheDinheiroOpen: boolean;
 
   modalAjustesOpen: boolean;
   modalAjusteOpen: boolean;
@@ -75,6 +76,9 @@ interface useStoreCaixa {
   openModalDetalheCard: ({ type, title }: { type: string; title: string }) => void;
   closeModalDetalheCard: () => void;
 
+  openModalDinheiro: (type: string) => void;
+  closeModalDinheiro: () => void;
+
   openModalBoleto: (data: { id_filial: string; filial: string }) => void;
   closeModalBoleto: () => void;
 
@@ -102,6 +106,7 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
   modalOcorrenciaEditing: false,
   modalDepositoEditing: false,
   modalDetalheCardOpen: false,
+  modalDetalheDinheiroOpen: false,
   modalAjusteEditing: false,
 
   modalBoletoOpen: false,
@@ -213,6 +218,17 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
       modalDetalheCardOpen: false,
       type_detalhe: null,
       title_detalhe: null,
+    }),
+
+  openModalDinheiro: (type: string) =>
+    set({
+      modalDetalheDinheiroOpen: true,
+      type_detalhe: type,
+    }),
+  closeModalDinheiro: () =>
+    set({
+      modalDetalheDinheiroOpen: false,
+      type_detalhe: null,
     }),
 
   openModalBoleto: ({ id_filial, filial }) =>
