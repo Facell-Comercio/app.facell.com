@@ -20,6 +20,8 @@ import {
 import { useState } from "react";
 import ImportacaoItem from "./components/ImportacaoItem";
 import ModalLogImportacaoRelatorios from "./components/ModalLogImportacaoRelatorios";
+import ImportacaoCaixasLote from "./components/ImportacaoCaixasLote";
+import { checkUserPermission } from "@/helpers/checkAuthorization";
 
 const RELATORIOS = [
   "CIELO-VENDAS",
@@ -32,6 +34,8 @@ const RELATORIOS = [
 ];
 
 const ImportacoesTab = () => {
+  const isMaster = checkUserPermission('MASTER');
+  
   const [modalHistoricoOpen, setModalHistoricoOpen] = useState<boolean>(false);
   const { mutate: cruzarRelatoriosLote, isPending } =
     useConferenciasCaixa().cruzarRelatoriosLote();
@@ -111,6 +115,8 @@ const ImportacoesTab = () => {
             uri="/import-renov-tradein"
           />
           {/* <ImportacaoItem label="Crediario" uri="/import-crediario"/> */}
+
+          {isMaster && <ImportacaoCaixasLote />}
         </Accordion>
       </CardContent>
     </Card>
