@@ -320,7 +320,7 @@ const ModalAjuste = () => {
               >
                 <Button variant={"destructive"} size={"lg"}>
                   <Trash2 size={18} className="me-2" />
-                  Remover Ajuste
+                  Excluir
                 </Button>
               </AlertPopUp>
               {!!id && !aprovado && podeAprovar && (

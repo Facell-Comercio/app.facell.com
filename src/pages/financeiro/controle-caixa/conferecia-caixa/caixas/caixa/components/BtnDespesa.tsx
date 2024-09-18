@@ -21,7 +21,10 @@ export default function BtnDespesa({
   const { mutate: lancamentoDespesa } = useConferenciasCaixa().lancamentoDespesa();
 
   // State do Título
-  const [openModalTitulo] = useStoreTitulo((state) => [state.openModal]);
+  const [openModalTitulo, closeModalTitulo] = useStoreTitulo((state) => [
+    state.openModal,
+    state.closeModal,
+  ]);
 
   useEffect(() => {
     if (contaBancaria) {
@@ -57,7 +60,10 @@ export default function BtnDespesa({
   }, [contaBancaria, modalContasBancariasOpen]);
 
   useEffect(() => {
-    !modalContasBancariasOpen && setContaBancaria(null);
+    if (!modalContasBancariasOpen) {
+      setContaBancaria(null);
+      closeModalTitulo();
+    }
   }, [modalContasBancariasOpen]);
 
   const handleClick = () => {

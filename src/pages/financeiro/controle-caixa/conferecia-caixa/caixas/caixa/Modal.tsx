@@ -17,6 +17,7 @@ import {
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
 import { formatDate, startOfDay } from "date-fns";
+import { Check, CheckCheck, Undo2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import FormCaixa from "./Form";
@@ -32,7 +33,7 @@ const initialPropsCaixa: ConferenciasCaixaSchema = {
   id_user_conferencia: "",
   ocorrencias: "",
   saldo_anterior: "",
-  saldo_atual: "",
+  saldo: "",
   status: "",
   manual: false,
   caixa_confirmado: false,
@@ -45,7 +46,7 @@ const initialPropsCaixa: ConferenciasCaixaSchema = {
   valor_pix_banco: "",
   valor_recarga: "",
   valor_recarga_real: "",
-  valor_retiradas: "",
+  valor_despesas: "",
   valor_tradein: "",
   valor_tradein_disponivel: "",
   valor_tradein_utilizado: "",
@@ -241,6 +242,7 @@ const ModalCaixa = () => {
                 disabled={isPending}
                 title="Registra que foi feita a conferência do caixa, em seguida você poderá registrar a confirmação do caixa"
               >
+                <Check className="me-2" />
                 Informar Conferência
               </Button>
             </AlertPopUp>
@@ -258,6 +260,7 @@ const ModalCaixa = () => {
                 disabled={isPending}
                 title="Ao confirmar, você impede alterações no caixa, a menos que desfaça a confirmação."
               >
+                <CheckCheck className="me-2" />
                 Confirmar Caixa
               </Button>
             </AlertPopUp>
@@ -272,10 +275,11 @@ const ModalCaixa = () => {
             >
               <Button
                 size={"lg"}
-                variant={"warning"}
+                variant={"destructive"}
                 title="Essa ação fará com que o caixa retorne para o status 'A CONFERIR'."
                 className="justify-self-end"
               >
+                <Undo2 className="me-2" />
                 Desconfirmar Caixa
               </Button>
             </AlertPopUp>

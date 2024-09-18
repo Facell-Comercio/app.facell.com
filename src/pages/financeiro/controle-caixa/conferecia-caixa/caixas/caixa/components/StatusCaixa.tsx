@@ -4,7 +4,7 @@ import { toast } from "@/components/ui/use-toast";
 import { ConferenciasCaixaSchema } from "@/hooks/financeiro/useConferenciasCaixa";
 import { api } from "@/lib/axios";
 import { useQueryClient } from "@tanstack/react-query";
-import { Settings2 } from "lucide-react";
+import { Check, CheckCheck, CircleDashed, Settings2 } from "lucide-react";
 import { TbAlertTriangle } from "react-icons/tb";
 import { badgeVariantCaixaClass } from "../../table/columns";
 import { useStoreCaixa } from "../store";
@@ -51,6 +51,34 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
     }
   };
 
+  const ComponentStatusCaixa = ({ status }: { status: string }) => {
+    if (status === "A CONFERIR") {
+      return (
+        <Button className={`w-full ${badgeVariantCaixaClass(status)}`}>
+          <CircleDashed size={22} className="me-2" />
+          {status}
+        </Button>
+      );
+    }
+    if (status === "CONFERIDO") {
+      return (
+        <Button className={`w-full ${badgeVariantCaixaClass(status)}`}>
+          <Check size={22} className="me-2" />
+          {status}
+        </Button>
+      );
+    }
+    if (status === "CONFIRMADO") {
+      return (
+        <Button className={`w-full ${badgeVariantCaixaClass(status)}`}>
+          <CheckCheck size={22} className="me-2" />
+          {status}
+        </Button>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="flex items-center gap-3 flex-wrap text-center">
       <span>
@@ -61,7 +89,7 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
       </span>
       <span>
         <p className="text-sm font-medium p-2">Status</p>
-        <Button className={`w-full ${badgeVariantCaixaClass(data.status)}`}>{data.status}</Button>
+        <ComponentStatusCaixa status={data.status || ""} />
       </span>
       <span>
         <p className="text-sm font-medium p-2">Ocorrências</p>
@@ -96,7 +124,7 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
         </Button>
       </span>
       <div
-        className="flex gap-2 ms-auto mt-4 me-2"
+        className="gap-2 ms-auto mt-4 me-2 hidden"
         title="Aqui você informa se vai realizar a confirmação manualmente ou se o robô quem irá realizar. O padrão é o robô realizar."
       >
         <label>Baixar Manualmente</label>
