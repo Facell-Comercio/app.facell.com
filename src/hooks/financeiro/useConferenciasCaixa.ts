@@ -1,5 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
+import { NewBoletoProps } from "@/pages/financeiro/controle-caixa/conferecia-caixa/caixas/caixa/components/ModalBoleto";
 import { TransacoesCreditProps } from "@/pages/financeiro/controle-caixa/conferecia-caixa/caixas/caixa/components/ModalTransacoesCredit";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -50,6 +51,14 @@ export type DepositosCaixaProps = {
   data_deposito?: string;
 };
 
+export type BoletosCaixaProps = {
+  id?: string;
+  data?: string;
+  status?: string;
+  valor_boleto?: string;
+  saldo_utilizado?: string;
+};
+
 export type ConferenciasCaixaSchema = {
   id?: string;
   created_at?: string;
@@ -66,14 +75,16 @@ export type ConferenciasCaixaSchema = {
   ajustes?: string;
   ocorrencias_resolvidas?: string;
   saldo_anterior?: string;
-  saldo_atual?: string;
+  saldo?: string;
   status?: string;
   updated_at?: string;
 
+  valor_devolucoes?: string;
   valor_dinheiro?: string;
   valor_despesas?: string;
+  valor_depositos?: string;
+  valor_boletos?: string;
   total_dinheiro?: string;
-  valor_devolucoes?: string;
 
   valor_cartao?: string;
   valor_cartao_real?: string;
@@ -103,13 +114,14 @@ export type ConferenciasCaixaSchema = {
   movimentos_caixa?: MovimentoCaixaProps[];
   depositos_caixa?: DepositosCaixaProps[];
   qtde_depositos_caixa?: string;
+  boletos_caixa?: BoletosCaixaProps[];
+  qtde_boletos_caixa?: string;
   historico?: {
     id: string;
     created_at: string;
     descricao: string;
   }[];
 
-  caixa_anterior_fechado: boolean;
   suprimento_caixa?: string;
 };
 
@@ -177,6 +189,41 @@ export const useConferenciasCaixa = () => {
         placeholderData: keepPreviousData,
       }),
 
+    getAllBoletos: (params?: GetAllParams) =>
+      useQuery({
+        enabled: !!params,
+        queryKey: ["financeiro", "conferencia_de_caixa", "boletos", "list", [params]],
+        queryFn: async () =>
+          await api
+            .get(`/financeiro/controle-de-caixa/boletos`, {
+              params: params,
+            })
+            .then((response) => response.data),
+
+        placeholderData: keepPreviousData,
+      }),
+
+    getAllCaixasComSaldo: (id_filial?: string | null | undefined) =>
+      useQuery({
+        enabled: !!id_filial,
+        queryKey: [
+          "financeiro",
+          "conferencia_de_caixa",
+          "boletos",
+          "caixas_com_saldo",
+          "list",
+          [id_filial],
+        ],
+        queryFn: async () =>
+          await api
+            .get(`/financeiro/controle-de-caixa/boletos/caixas-com-saldo`, {
+              params: { id_filial },
+            })
+            .then((response) => response.data),
+
+        placeholderData: keepPreviousData,
+      }),
+
     getOne: (id?: string | null | undefined) =>
       useQuery({
         enabled: !!id,
@@ -221,9 +268,24 @@ export const useConferenciasCaixa = () => {
         },
       }),
 
+    getOneBoleto: (id?: string | null | undefined) =>
+      useQuery({
+        enabled: !!id,
+        queryKey: ["financeiro", "conferencia_de_caixa", "boletos", "detalhe", id],
+        queryFn: async () => {
+          return await api
+            .get(`/financeiro/controle-de-caixa/boletos/${id}`)
+            .then((response) => response.data);
+        },
+      }),
+
     getCardDetalhe: (params: { id_caixa?: string | null; type?: string | null }) =>
       useQuery({
-        enabled: !!params.id_caixa && !!params.type,
+        enabled:
+          !!params.id_caixa &&
+          !!params.type &&
+          params.type !== "entrada" &&
+          params.type !== "saida",
         queryKey: [
           "financeiro",
           "conferencia_de_caixa",
@@ -241,6 +303,26 @@ export const useConferenciasCaixa = () => {
         },
       }),
 
+    getCardDetalheDinheiro: (params: { id_caixa?: string | null; type?: string | null }) =>
+      useQuery({
+        enabled: !!params.id_caixa && !!params.type,
+        queryKey: [
+          "financeiro",
+          "conferencia_de_caixa",
+          "caixas",
+          "cards",
+          "detalhe",
+          [params.id_caixa, params.type],
+        ],
+        queryFn: async () => {
+          return await api
+            .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/cards/dinheiro`, {
+              params: params,
+            })
+            .then((response) => response.data);
+        },
+      }),
+
     insertOneDeposito: () =>
       useMutation({
         mutationFn: async (data: DepositosCaixaProps) => {
@@ -250,7 +332,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -284,7 +366,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -315,7 +397,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -346,7 +428,38 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          const errorMessage =
+            // @ts-expect-error 'Vai funcionar'
+            error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    insertOneBoleto: () =>
+      useMutation({
+        mutationFn: async (data: NewBoletoProps) => {
+          return api
+            .post("/financeiro/controle-de-caixa/boletos", data)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -377,7 +490,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -408,7 +521,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -439,7 +552,38 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          const errorMessage =
+            // @ts-expect-error 'Vai funcionar'
+            error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    cancelarBoleto: () =>
+      useMutation({
+        mutationFn: async (id?: string | null | undefined) => {
+          return await api
+            .put("/financeiro/controle-de-caixa/boletos/cancelar", { id })
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -472,7 +616,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -503,7 +647,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -565,7 +709,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -596,7 +740,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -627,7 +771,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -658,7 +802,43 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa", "caixas"],
+            queryKey: ["financeiro", "conferencia_de_caixa"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          const errorMessage =
+            // @ts-expect-error 'Vai funcionar'
+            error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    lancamentoDespesa: () =>
+      useMutation({
+        mutationFn: async (data: {
+          data_caixa: string;
+          id_titulo: string | number;
+          id_conta_bancaria: string | number;
+          id_despesa: string | number;
+        }) => {
+          return api
+            .post("/financeiro/controle-de-caixa/conferencia-de-caixa/lancamento-despesa", data)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro"],
           });
           toast({
             variant: "success",

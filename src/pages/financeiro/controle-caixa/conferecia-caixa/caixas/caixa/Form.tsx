@@ -11,16 +11,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  normalizeCurrency,
-  normalizeDate,
-} from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import {
   ConferenciasCaixaSchema,
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
 import { formatDate } from "date-fns";
 import {
+  Barcode,
+  FileSearch,
   History,
   Landmark,
   List,
@@ -30,12 +29,13 @@ import {
   Trash,
 } from "lucide-react";
 import { useState } from "react";
+import ModalBoleto from "../../../boletos/boleto/Modal";
+import { useStoreBoleto } from "../../../boletos/boleto/store";
 import ModalAjustes from "./ajustes/ModalAjustes";
 import CaixaCards from "./cards/CaixaCards";
+import ModalDetalheDinheiro from "./cards/ModalDetalheDinheiro";
 import { ItemAccordionCaixa } from "./components/ItemAccordionCaixa";
-import ModalTransacoesCredit, {
-  TransacoesCreditProps,
-} from "./components/ModalTransacoesCredit";
+import ModalTransacoesCredit, { TransacoesCreditProps } from "./components/ModalTransacoesCredit";
 import StatusCaixa from "./components/StatusCaixa";
 import ModalDeposito from "./depositos/ModalDeposito";
 import FiltersMovimentos from "./FiltersMovimento";
@@ -58,76 +58,48 @@ const FormCaixa = ({
   data: ConferenciasCaixaSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
 }) => {
-  const [filters, setFilters] =
-    useState<FilterMovimentoProps>({
-      documento: "",
-      tipo_operacao: "",
-      forma_pgto: "",
-      historico: "",
-    });
-  const [
-    modalTransacoesCreditOpen,
-    setModalTransacoesCreditOpen,
-  ] = useState(false);
+  const [filters, setFilters] = useState<FilterMovimentoProps>({
+    documento: "",
+    tipo_operacao: "",
+    forma_pgto: "",
+    historico: "",
+  });
+  const [modalTransacoesCreditOpen, setModalTransacoesCreditOpen] = useState(false);
 
-  const filteredMovimetoCaixa =
-    data.movimentos_caixa?.filter(
-      (movimento) =>
-        movimento.documento
-          ?.toUpperCase()
-          .startsWith(
-            filters.documento.toUpperCase()
-          ) &&
-        movimento.tipo_operacao?.includes(
-          filters.tipo_operacao.toUpperCase()
-        ) &&
-        movimento.forma_pagamento?.includes(
-          filters.forma_pgto.toUpperCase()
-        ) &&
-        movimento.historico
-          ?.toUpperCase()
-          .includes(
-            filters.historico.toUpperCase()
-          )
-    );
-
-  const qtde_movimentos_caixa =
-    filteredMovimetoCaixa?.length || 0;
-  const valor_total_movimentos_caixa =
-    filteredMovimetoCaixa?.reduce(
-      (acc: number, curr) =>
-        acc + parseFloat(curr.valor || "0"),
-      0
-    );
-  const saldo_anterior = parseFloat(
-    data?.saldo_anterior || "0"
-  );
-  const saldo_atual = parseFloat(
-    data?.saldo_atual || "0"
-  );
-  const depositos_caixa =
-    data.depositos_caixa || [];
-  const qtde_depositos_caixa = parseInt(
-    data.qtde_depositos_caixa || "0"
+  const filteredMovimetoCaixa = data.movimentos_caixa?.filter(
+    (movimento) =>
+      movimento.documento?.toUpperCase().startsWith(filters.documento.toUpperCase()) &&
+      movimento.tipo_operacao?.includes(filters.tipo_operacao.toUpperCase()) &&
+      movimento.forma_pagamento?.includes(filters.forma_pgto.toUpperCase()) &&
+      movimento.historico?.toUpperCase().includes(filters.historico.toUpperCase())
   );
 
-  const [
-    openModalDeposito,
-    editModalDeposito,
-    id_filial,
-    disabled,
-    isPending,
-  ] = useStoreCaixa((state) => [
-    state.openModalDeposito,
-    state.editModalDeposito,
-    state.id_filial,
-    state.disabled,
-    state.isPending,
-  ]);
+  const qtde_movimentos_caixa = filteredMovimetoCaixa?.length || 0;
+  const valor_total_movimentos_caixa = filteredMovimetoCaixa?.reduce(
+    (acc: number, curr) => acc + parseFloat(curr.valor || "0"),
+    0
+  );
+
+  const depositos_caixa = data.depositos_caixa || [];
+  const qtde_depositos_caixa = parseInt(data.qtde_depositos_caixa || "0");
+
+  const boletos_caixa = data.boletos_caixa || [];
+  const qtde_boletos_caixa = parseInt(data.qtde_boletos_caixa || "0");
+
+  const [openModalDeposito, editModalDeposito, id_filial, disabled, isPending] = useStoreCaixa(
+    (state) => [
+      state.openModalDeposito,
+      state.editModalDeposito,
+      state.id_filial,
+      state.disabled,
+      state.isPending,
+    ]
+  );
+
+  const openModalBoleto = useStoreBoleto().openModal;
 
   const { form } = useFormCaixaData(data);
-  const { mutate: deleteDeposito } =
-    useConferenciasCaixa().deleteDeposito();
+  const { mutate: deleteDeposito } = useConferenciasCaixa().deleteDeposito();
 
   // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
@@ -152,67 +124,15 @@ const FormCaixa = ({
   function InfoMovimentoCaixa() {
     return (
       <Badge variant={"info"} className="text-xs">
-        Valor Total:{" "}
-        {normalizeCurrency(
-          valor_total_movimentos_caixa
-        )}
+        Valor Total: {normalizeCurrency(valor_total_movimentos_caixa)}
       </Badge>
-    );
-  }
-
-  function InfoDepositos() {
-    return (
-      <span className="flex gap-1 items-center justify-center">
-        <Badge
-          variant={
-            data.caixa_anterior_fechado
-              ? "info"
-              : "warning"
-          }
-          title={
-            data.caixa_anterior_fechado
-              ? ""
-              : "Saldo passível de alteração"
-          }
-        >
-          {`Saldo Anterior: ${normalizeCurrency(
-            saldo_anterior
-          )}`}
-        </Badge>
-        <Badge variant="info">
-          {`Total Depósitos: ${normalizeCurrency(
-            depositos_caixa.reduce(
-              (acc, deposito) =>
-                acc +
-                parseFloat(deposito.valor || "0"),
-              0
-            )
-          )}`}
-        </Badge>
-        <Badge variant="info">
-          {`Saldo Final: ${normalizeCurrency(
-            saldo_atual < 0 ? "0" : saldo_atual
-          )}`}
-        </Badge>
-        {parseFloat(
-          data.suprimento_caixa || "0"
-        ) > 0 && (
-          <Badge variant="violet">
-            {`Suprimento de Caixa: ${normalizeCurrency(
-              data.suprimento_caixa
-            )}`}
-          </Badge>
-        )}
-      </span>
     );
   }
 
   const { mutate: insertMultiDepositoExtrato } =
     useConferenciasCaixa().insertMultiDepositoExtrato();
 
-  async function handleMultiSelectionDepositos(
-    itens: TransacoesCreditProps[]
-  ) {
+  async function handleMultiSelectionDepositos(itens: TransacoesCreditProps[]) {
     if (itens.length > 0) {
       insertMultiDepositoExtrato({
         id_caixa: data.id || "",
@@ -226,10 +146,7 @@ const FormCaixa = ({
   return (
     <div className="max-w-full overflow-x-hidden">
       <Form {...form}>
-        <form
-          ref={formRef}
-          className="gap-3 max-w-screen-xl w-full grid grid-cols-1 z-[100]"
-        >
+        <form ref={formRef} className="gap-3 max-w-screen-xl w-full grid grid-cols-1 z-[100]">
           <div className="overflow-auto scroll-thin z-[100] flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
             {/* Primeira coluna */}
             <StatusCaixa data={data} />
@@ -240,36 +157,24 @@ const FormCaixa = ({
               qtde={qtde_movimentos_caixa}
               title="Movimento de Caixa"
               className="flex gap-3 flex-col"
-              valorTotal={
-                valor_total_movimentos_caixa
-              }
+              valorTotal={valor_total_movimentos_caixa}
               info={InfoMovimentoCaixa}
             >
-              <FiltersMovimentos
-                filters={filters}
-                setFilters={setFilters}
-              />
-              <RowVirtualizedMovimentoCaixa
-                data={filteredMovimetoCaixa || []}
-              />
+              <FiltersMovimentos filters={filters} setFilters={setFilters} />
+              <RowVirtualizedMovimentoCaixa data={filteredMovimetoCaixa || []} />
             </ItemAccordionCaixa>
             <ItemAccordionCaixa
               icon={Landmark}
               value={"depositos-caixa"}
               qtde={qtde_depositos_caixa}
               title="Depósitos"
-              info={InfoDepositos}
               className="flex flex-col items-end justify-end"
             >
               {!disabled && (
                 <span className="flex gap-3">
                   <Button
                     className="flex gap-2"
-                    onClick={() =>
-                      setModalTransacoesCreditOpen(
-                        true
-                      )
-                    }
+                    onClick={() => setModalTransacoesCreditOpen(true)}
                     disabled={isPending}
                     variant={"tertiary"}
                   >
@@ -278,9 +183,7 @@ const FormCaixa = ({
                   </Button>
                   <Button
                     className="flex gap-2"
-                    onClick={
-                      handleClickNewDeposito
-                    }
+                    onClick={handleClickNewDeposito}
                     disabled={isPending}
                   >
                     <Plus />
@@ -291,153 +194,130 @@ const FormCaixa = ({
               <Table className="bg-background rounded-md">
                 <TableHeader>
                   <TableRow>
-                    {!disabled && (
-                      <TableHead>Ações</TableHead>
-                    )}
-                    <TableHead>
-                      Conta Bancária
-                    </TableHead>
+                    {!disabled && <TableHead>Ações</TableHead>}
+                    <TableHead>Conta Bancária</TableHead>
                     <TableHead>Valor</TableHead>
-                    <TableHead>
-                      Comprovante
-                    </TableHead>
+                    <TableHead>Comprovante</TableHead>
                     <TableHead>Data</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {depositos_caixa.map(
-                    (deposito, index) => (
-                      <TableRow
-                        key={`deposito ${deposito.id} ${index}`}
-                      >
-                        {!disabled && (
-                          <TableCell className="flex gap-2">
+                  {depositos_caixa.map((deposito, index) => (
+                    <TableRow key={`deposito ${deposito.id} ${index}`}>
+                      {!disabled && (
+                        <TableCell className="flex gap-2">
+                          <Button
+                            variant={"warning"}
+                            size={"xs"}
+                            className="min-w-10"
+                            onClick={() => {
+                              openModalDeposito(deposito.id || "");
+                            }}
+                            disabled={isPending}
+                          >
+                            <Pencil size={14} />
+                          </Button>
+                          <AlertPopUp
+                            title={"Deseja realmente excluir"}
+                            description="Essa ação não pode ser desfeita. O depósito será excluído definitivamente do servidor."
+                            action={() => {
+                              deleteDeposito(deposito.id || "");
+                            }}
+                          >
                             <Button
-                              variant={"warning"}
+                              variant={"destructive"}
                               size={"xs"}
                               className="min-w-10"
-                              onClick={() => {
-                                openModalDeposito(
-                                  deposito.id ||
-                                    ""
-                                );
-                              }}
                               disabled={isPending}
                             >
-                              <Pencil size={14} />
+                              <Trash size={14} />
                             </Button>
-                            <AlertPopUp
-                              title={
-                                "Deseja realmente excluir"
-                              }
-                              description="Essa ação não pode ser desfeita. O depósito será excluído definitivamente do servidor."
-                              action={() => {
-                                deleteDeposito(
-                                  deposito.id ||
-                                    ""
-                                );
-                              }}
-                            >
-                              <Button
-                                variant={
-                                  "destructive"
-                                }
-                                size={"xs"}
-                                className="min-w-10"
-                                disabled={
-                                  isPending
-                                }
-                              >
-                                <Trash
-                                  size={14}
-                                />
-                              </Button>
-                            </AlertPopUp>
-                          </TableCell>
-                        )}
-                        <TableCell>
-                          {
-                            deposito.conta_bancaria
-                          }
+                          </AlertPopUp>
                         </TableCell>
-                        <TableCell>
-                          {normalizeCurrency(
-                            deposito.valor
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {deposito.comprovante}
-                        </TableCell>
-                        <TableCell>
-                          {normalizeDate(
-                            deposito.data_deposito ||
-                              ""
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  )}
+                      )}
+                      <TableCell>{deposito.conta_bancaria}</TableCell>
+                      <TableCell>{normalizeCurrency(deposito.valor)}</TableCell>
+                      <TableCell>{deposito.comprovante}</TableCell>
+                      <TableCell>{normalizeDate(deposito.data_deposito || "")}</TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </ItemAccordionCaixa>
-            {data?.historico &&
-              data?.historico.length > 0 && (
-                <section className="flex gap-2 flex-col px-2 py-3 border bg-slate-200 dark:bg-blue-950 rounded-lg">
-                  <span className="flex gap-3 font-medium">
-                    <History />
-                    <h3>Histórico</h3>
-                  </span>
-
-                  <ScrollArea
-                    className={
-                      "flex flex-col gap-3 max-h-44 "
-                    }
-                  >
-                    {data.historico?.map(
-                      (value, index) => (
-                        <span
-                          className="flex gap-1.5"
-                          key={`historico ${value.id} ${index}`}
+            <ItemAccordionCaixa
+              icon={Barcode}
+              value={"boletos-caixa"}
+              qtde={qtde_boletos_caixa}
+              title="Boletos"
+              className="flex flex-col items-end justify-end"
+            >
+              <Table className="bg-background rounded-md">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Ação</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Valor Boleto</TableHead>
+                    <TableHead>Saldo Utilizado</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {boletos_caixa.map((boleto, index) => (
+                    <TableRow key={`boleto ${boleto.id} ${index}`}>
+                      <TableCell className="flex gap-2">
+                        <Button
+                          size={"xs"}
+                          onClick={() => {
+                            openModalBoleto(boleto.id || "");
+                          }}
+                          disabled={isPending}
                         >
-                          {formatDate(
-                            value.created_at,
-                            "dd/MM/yyyy hh:mm"
-                          )}
-                          :
-                          <p
-                            className={`${historicoColor(
-                              value.descricao
-                            )}`}
-                          >
-                            {value.descricao}
-                          </p>
-                        </span>
-                      )
-                    )}
-                  </ScrollArea>
-                </section>
-              )}
+                          <FileSearch size={14} />
+                        </Button>
+                      </TableCell>
+                      <TableCell>{normalizeDate(boleto.data || "")}</TableCell>
+                      <TableCell>{boleto.status?.replace("_", " ").toUpperCase()}</TableCell>
+                      <TableCell>{normalizeCurrency(boleto.valor_boleto)}</TableCell>
+                      <TableCell>{normalizeCurrency(boleto.saldo_utilizado)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ItemAccordionCaixa>
+            {data?.historico && data?.historico.length > 0 && (
+              <section className="flex gap-2 flex-col px-2 py-3 border bg-slate-200 dark:bg-blue-950 rounded-lg">
+                <span className="flex gap-3 font-medium">
+                  <History />
+                  <h3>Histórico</h3>
+                </span>
+
+                <ScrollArea className={"flex flex-col gap-3 max-h-44 "}>
+                  {data.historico?.map((value, index) => (
+                    <span className="flex gap-1.5" key={`historico ${value.id} ${index}`}>
+                      {formatDate(value.created_at, "dd/MM/yyyy hh:mm")}:
+                      <p className={`${historicoColor(value.descricao)}`}>{value.descricao}</p>
+                    </span>
+                  ))}
+                </ScrollArea>
+              </section>
+            )}
           </div>
         </form>
       </Form>
       <ModalDeposito id_matriz={data.id_matriz} />
-      <ModalOcorrencias
-        id_filial={id_filial || ""}
-      />
+      <ModalOcorrencias id_filial={id_filial || ""} />
       <ModalTransacoesCredit
         id_matriz={data.id_matriz || ""}
         data_transacao={data.data || ""}
         id_caixa={data.id || ""}
         open={modalTransacoesCreditOpen}
         multiSelection
-        handleMultiSelection={
-          handleMultiSelectionDepositos
-        }
-        onOpenChange={() =>
-          setModalTransacoesCreditOpen(false)
-        }
+        handleMultiSelection={handleMultiSelectionDepositos}
+        onOpenChange={() => setModalTransacoesCreditOpen(false)}
       />
       <ModalAjustes />
+      <ModalBoleto />
+      <ModalDetalheDinheiro />
     </div>
   );
 };

@@ -10,12 +10,14 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { normalizeDate } from "@/helpers/mask";
 import {
   ConferenciasCaixaSchema,
   useConferenciasCaixa,
 } from "@/hooks/financeiro/useConferenciasCaixa";
 import { formatDate, startOfDay } from "date-fns";
+import { Check, CheckCheck, Undo2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import FormCaixa from "./Form";
@@ -31,7 +33,7 @@ const initialPropsCaixa: ConferenciasCaixaSchema = {
   id_user_conferencia: "",
   ocorrencias: "",
   saldo_anterior: "",
-  saldo_atual: "",
+  saldo: "",
   status: "",
   manual: false,
   caixa_confirmado: false,
@@ -48,27 +50,20 @@ const initialPropsCaixa: ConferenciasCaixaSchema = {
   valor_tradein: "",
   valor_tradein_disponivel: "",
   valor_tradein_utilizado: "",
-  caixa_anterior_fechado: true,
 };
 
 const ModalCaixa = () => {
-  const [
-    modalOpen,
-    closeModal,
-    id,
-    disabled,
-    setDisabled,
-    isPending,
-    setIsPending,
-  ] = useStoreCaixa((state) => [
-    state.modalOpen,
-    state.closeModal,
-    state.id,
-    state.disabled,
-    state.setDisabled,
-    state.isPending,
-    state.setIsPending,
-  ]);
+  const [modalOpen, closeModal, id, disabled, setDisabled, isPending, setIsPending] = useStoreCaixa(
+    (state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.id,
+      state.disabled,
+      state.setDisabled,
+      state.isPending,
+      state.setIsPending,
+    ]
+  );
 
   const formRef = useRef(null);
 
@@ -103,16 +98,18 @@ const ModalCaixa = () => {
   }
 
   const conferir = newDataCaixa.status === "A CONFERIR";
-  const conferido = newDataCaixa.status === "CONFERIDO / BAIXA PENDENTE";
-  const baixadoPendente = newDataCaixa.status === "BAIXADO / PENDENTE DATASYS";
-  const baixadoNoDatasys = newDataCaixa.status === "BAIXADO NO DATASYS";
+  const conferido = newDataCaixa.status === "CONFERIDO";
+  const confirmado = newDataCaixa.status === "CONFIRMADO";
+
+  const isMaster = checkUserPermission("MASTER");
+  const gestorFinanceiro = checkUserDepartments("FINANCEIRO", true);
 
   function handleClickCancel() {
     closeModal();
   }
 
   useEffect(() => {
-    if (baixadoPendente || baixadoNoDatasys) {
+    if (confirmado || confirmado) {
       setDisabled(true);
     }
     if (conferir || conferido) {
@@ -142,9 +139,7 @@ const ModalCaixa = () => {
                 <span>{`Caixa: ${id}`}</span>
                 {!isLoading && (
                   <>
-                    <span>{`Data: ${normalizeDate(
-                      newDataCaixa?.data || ""
-                    )}`}</span>
+                    <span>{`Data: ${normalizeDate(newDataCaixa?.data || "")}`}</span>
                     <span>{`Filial: ${newDataCaixa.filial}`}</span>
                   </>
                 )}
@@ -170,66 +165,61 @@ const ModalCaixa = () => {
         </ScrollArea>
         <DialogFooter
           className={`${
-            newDataCaixa.status !== "BAIXADO / PENDENTE DATASYS" &&
-            "sm:justify-between"
+            newDataCaixa.status !== "CONFIRMADO" && "sm:justify-between"
           } flex-wrap gap-2`}
         >
           {!disabled && (
             <span className="flex gap-3 ">
-              <AlertPopUp
-                title={"Deseja realmente reimportar?"}
-                description="Essa ação não pode ser desfeita."
-                action={() => {
-                  importDatasys({
-                    id_filial: newDataCaixa.id_filial || "",
-                    range_datas: {
-                      from: startOfDay(newDataCaixa.data || ""),
-                      to: startOfDay(newDataCaixa.data || ""),
-                    },
-                  });
-                }}
-              >
-                <Button 
-                  variant={"secondary"} 
-                  size={"lg"} 
-                  disabled={isPending}
-                  title="Busca novamente os dados do Datasys e faz a apuração de divergência."
+              {isMaster && !confirmado && (
+                <AlertPopUp
+                  title={"Deseja realmente reimportar?"}
+                  description="Essa ação não pode ser desfeita."
+                  action={() => {
+                    importDatasys({
+                      id_filial: newDataCaixa.id_filial || "",
+                      range_datas: {
+                        from: startOfDay(newDataCaixa.data || ""),
+                        to: startOfDay(newDataCaixa.data || ""),
+                      },
+                    });
+                  }}
+                >
+                  <Button
+                    variant={"secondary"}
+                    size={"lg"}
+                    disabled={isPending}
+                    title="Busca novamente os dados do Datasys e faz a apuração de divergência."
                   >
-                  {importDatasysIsPending ? (
-                    <span className="flex gap-2 w-full items-center justify-center">
-                      <FaSpinner size={18} className="me-2 animate-spin" />{" "}
-                      Reimportando...
-                    </span>
-                  ) : (
-                    "Reimportar Datasys"
-                  )}
-                </Button>
-              </AlertPopUp>
+                    {importDatasysIsPending ? (
+                      <span className="flex gap-2 w-full items-center justify-center">
+                        <FaSpinner size={18} className="me-2 animate-spin" /> Reimportando...
+                      </span>
+                    ) : (
+                      "Reimportar Datasys"
+                    )}
+                  </Button>
+                </AlertPopUp>
+              )}
               <AlertPopUp
-                title={
-                  "Deseja realmente realizar o cruzamento com os relatórios?"
-                }
+                title={"Deseja realmente realizar o cruzamento com os relatórios?"}
                 description="Essa ação não pode ser desfeita."
                 action={() => {
                   cruzarRelatorios({
                     id_filial: Number(newDataCaixa.id_filial),
-                    data_caixa: formatDate(
-                      startOfDay(newDataCaixa.data || ""),
-                      "yyyy-MM-dd"
-                    ),
+                    data_caixa: formatDate(startOfDay(newDataCaixa.data || ""), "yyyy-MM-dd"),
                   });
                 }}
               >
-                <Button 
-                variant={"secondary"} 
-                size={"lg"} 
-                disabled={isPending}
-                title="Realiza a apuração de divergência do caixa, cruzando os relatórios."
+                <Button
+                  variant={"secondary"}
+                  size={"lg"}
+                  disabled={isPending}
+                  title="Realiza a apuração de divergência do caixa, cruzando os relatórios."
                 >
                   {cruzarRelatoriosIsPending ? (
                     <span className="flex gap-2 w-full items-center justify-center">
-                      <FaSpinner size={18} className="me-2 animate-spin" />{" "}
-                      Cruzando C/ Relatórios...
+                      <FaSpinner size={18} className="me-2 animate-spin" /> Cruzando C/
+                      Relatórios...
                     </span>
                   ) : (
                     "Cruzar C/ Relatórios"
@@ -246,12 +236,13 @@ const ModalCaixa = () => {
                 changeStatus({ id, action: "conferir" });
               }}
             >
-              <Button 
-              size={"lg"} 
-              variant={"success"} 
-              disabled={isPending}
-              title='Registra que foi feita a conferência do caixa, em seguida você poderá registrar a confirmação do caixa'
+              <Button
+                size={"lg"}
+                variant={"success"}
+                disabled={isPending}
+                title="Registra que foi feita a conferência do caixa, em seguida você poderá registrar a confirmação do caixa"
               >
+                <Check className="me-2" />
                 Informar Conferência
               </Button>
             </AlertPopUp>
@@ -264,25 +255,17 @@ const ModalCaixa = () => {
                 changeStatus({ id, action: "confirmar" });
               }}
             >
-              <span
-                className="cursor-pointer"
-                title={
-                  newDataCaixa.caixa_anterior_fechado
-                    ? ""
-                    : "Ainda não foi realizada a confirmação no caixa anterior"
-                }
+              <Button
+                size={"lg"}
+                disabled={isPending}
+                title="Ao confirmar, você impede alterações no caixa, a menos que desfaça a confirmação."
               >
-                <Button
-                  size={"lg"}
-                  disabled={isPending || !newDataCaixa.caixa_anterior_fechado}
-                  title="Ao confirmar, você impede alterações no caixa, a menos que desfaça a confirmação."
-                >
-                  Confirmar Caixa
-                </Button>
-              </span>
+                <CheckCheck className="me-2" />
+                Confirmar Caixa
+              </Button>
             </AlertPopUp>
           )}
-          {baixadoPendente && (
+          {confirmado && (gestorFinanceiro || isMaster) && (
             <AlertPopUp
               title={"Deseja realmente desconfirmar o caixa?"}
               description='Essa ação fará com que o caixa retorne para o status "A CONFERIR".'
@@ -292,10 +275,11 @@ const ModalCaixa = () => {
             >
               <Button
                 size={"lg"}
-                variant={"warning"}
+                variant={"destructive"}
                 title="Essa ação fará com que o caixa retorne para o status 'A CONFERIR'."
                 className="justify-self-end"
               >
+                <Undo2 className="me-2" />
                 Desconfirmar Caixa
               </Button>
             </AlertPopUp>

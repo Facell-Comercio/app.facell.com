@@ -26,12 +26,7 @@ import {
 import { useState } from "react";
 import { useStoreTableCaixas } from "./table/store-table";
 
-const status = [
-  "A CONFERIR",
-  "CONFERIDO / BAIXA PENDENTE",
-  "BAIXADO / PENDENTE DATASYS",
-  "BAIXADO NO DATASYS",
-];
+const status = ["A CONFERIR", "CONFERIDO", "CONFIRMADO"];
 
 const FiltersCaixas = ({
   refetch,

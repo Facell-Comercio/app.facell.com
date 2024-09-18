@@ -1,13 +1,8 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { BtnCopiarTitulo } from "./components/BtnCopiarTitulo";
 import { BtnCriarRecorrencia } from "./components/BtnCriarRecorrencia";
 import FormTituloPagar from "./Form";
@@ -16,12 +11,7 @@ import {
   useFormTituloData,
 } from "./form-data";
 import { calcularDataPrevisaoPagamento } from "./helpers/helper";
-import {
-  Historico,
-  ItemRateioTitulo,
-  initialPropsTitulo,
-  useStoreTitulo,
-} from "./store";
+import { Historico, ItemRateioTitulo, initialPropsTitulo, useStoreTitulo } from "./store";
 
 export type DataSchemaProps = {
   titulo: TituloSchemaProps;
@@ -29,30 +19,20 @@ export type DataSchemaProps = {
   historico: Historico[];
 };
 
-const ModalTituloPagar = () => {
-  const [
-    modalOpen,
-    closeModal,
-    id,
-    recorrencia,
-    copyData,
-  ] = useStoreTitulo((state) => [
-    state.modalOpen,
-    state.closeModal,
-    state.id,
-    state.recorrencia,
-    state.copyData,
-  ]);
-
-  const id_vencimento_recorrencia = useMemo(
-    () => new Date().getTime().toString(),
-    [modalOpen]
-  );
+const ModalTituloPagar = ({
+  handleInsertTitulo,
+}: {
+  handleInsertTitulo?: (id_titulo: number) => void;
+}) => {
+  const modalOpen = useStoreTitulo().modalOpen;
+  const closeModal = useStoreTitulo().closeModal;
+  const id = useStoreTitulo().id;
+  const recorrencia = useStoreTitulo().recorrencia;
+  const copyData = useStoreTitulo().copyData;
   // const formRef = useRef(null);
   useEffect(() => {}, [id]);
 
-  const { data, isLoading } =
-    useTituloPagar().getOne(id);
+  const { data, isLoading } = useTituloPagar().getOne(id);
 
   const titulo = data?.data.titulo;
   let vencimentos = data?.data.vencimentos || [];
@@ -94,12 +74,8 @@ const ModalTituloPagar = () => {
   if (recorrencia) {
     vencimentos = [];
     vencimentos.push({
-      data_vencimento:
-        recorrencia.data_vencimento,
-      data_prevista:
-        calcularDataPrevisaoPagamento(
-          new Date(recorrencia.data_vencimento)
-        ),
+      data_vencimento: recorrencia.data_vencimento,
+      data_prevista: calcularDataPrevisaoPagamento(new Date(recorrencia.data_vencimento)),
       valor: recorrencia.valor,
       cod_barras: "",
       qr_code: "",
@@ -166,10 +142,7 @@ const ModalTituloPagar = () => {
       data_vencimento:
         recorrencia.data_vencimento,
       data_emissao: new Date().toDateString(),
-      data_prevista:
-        calcularDataPrevisaoPagamento(
-          new Date(recorrencia.data_vencimento)
-        ),
+      data_prevista: calcularDataPrevisaoPagamento(new Date(recorrencia.data_vencimento)),
       vencimentos,
       itens_rateio,
       id_departamento: "",
@@ -180,12 +153,7 @@ const ModalTituloPagar = () => {
     // @ts-ignore
     modalData = { ...copyData };
   } else if (id) {
-    modalData = {
-      ...titulo,
-      vencimentos,
-      itens_rateio,
-      historico,
-    };
+    modalData = { ...titulo, vencimentos, itens_rateio, historico };
   }
 
   // * [ FORM ]
@@ -196,9 +164,11 @@ const ModalTituloPagar = () => {
       update_rateio: false,
     } || initialPropsTitulo
   );
-  const podeCriarRecorrencia =
-    id &&
-    (parseInt(modalData?.id_status) || 0) > 0;
+  const podeCriarRecorrencia = id && (parseInt(modalData?.id_status) || 0) > 0;
+
+  // console.log(form.formState.errors);
+
+  if (!modalOpen) return null;
 
   return (
     <Dialog
@@ -213,17 +183,16 @@ const ModalTituloPagar = () => {
               : "Nova Solicitação"}
           </DialogTitle>
           <BtnCopiarTitulo copyData={modalData} />
-          {podeCriarRecorrencia && (
-            <BtnCriarRecorrencia form={form} />
-          )}
+          {podeCriarRecorrencia && <BtnCriarRecorrencia form={form} />}
         </DialogHeader>
         {/* <section className="min-h-[80vh] sm:min-h-[70vh] z-[999] overflow-auto scroll-thin">
           
         </section> */}
-        {modalOpen && !isLoading && form ? (
+        {!isLoading && form ? (
           <FormTituloPagar
             id={!!id && !recorrencia ? id : ""}
             form={form}
+            handleInsertTitulo={handleInsertTitulo}
             // formRef={formRef}
           />
         ) : (

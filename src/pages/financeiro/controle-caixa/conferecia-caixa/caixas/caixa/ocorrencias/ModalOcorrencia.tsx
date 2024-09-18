@@ -15,11 +15,9 @@ import { Form } from "@/components/ui/form";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/context/auth-store";
-import {
-  OcorrenciasProps,
-  useConferenciasCaixa,
-} from "@/hooks/financeiro/useConferenciasCaixa";
+import { OcorrenciasProps, useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import { startOfDay } from "date-fns";
+import { ArrowLeftRight, Ban, Check, Copy, Save } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TbAlertTriangle } from "react-icons/tb";
 import { useFormOcorrenciaData } from "../form-data";
@@ -38,13 +36,10 @@ const initialPropsOcorrencias: OcorrenciasProps = {
 
 const ModalOcorrencia = () => {
   const user = useAuthStore((state) => state.user);
-  const [modalActionOcorrenciaOpen, setModalActionOcorrenciaOpen] =
-    useState(false);
-  const [action, setAction] = useState<
-    "Transferência" | "Duplicação" | undefined
-  >();
-  const [modalOpen, closeModal, id, data_caixa, id_caixa, id_filial, disabled] =
-    useStoreCaixa((state) => [
+  const [modalActionOcorrenciaOpen, setModalActionOcorrenciaOpen] = useState(false);
+  const [action, setAction] = useState<"Transferência" | "Duplicação" | undefined>();
+  const [modalOpen, closeModal, id, data_caixa, id_caixa, id_filial, disabled] = useStoreCaixa(
+    (state) => [
       state.modalOcorrenciaOpen,
       state.closeModalOcorrencia,
       state.id_ocorrencia,
@@ -52,7 +47,8 @@ const ModalOcorrencia = () => {
       state.id,
       state.id_filial,
       state.disabled,
-    ]);
+    ]
+  );
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const { data, isLoading } = useConferenciasCaixa().getOneOcorrencia(id);
@@ -67,8 +63,8 @@ const ModalOcorrencia = () => {
     isPending: insertOneIsPending,
   } = useConferenciasCaixa().insertOneOcorrencia();
 
-  const newDataCaixa: OcorrenciasProps & Record<string, any> =
-    {} as OcorrenciasProps & Record<string, any>;
+  const newDataCaixa: OcorrenciasProps & Record<string, any> = {} as OcorrenciasProps &
+    Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
@@ -193,13 +189,11 @@ const ModalOcorrencia = () => {
             {!id && !resolvida && (
               <div className="flex gap-2 justify-between">
                 <Button variant={"secondary"} onClick={handleClickCancel}>
+                  <Ban className="me-2" />
                   Cancelar
                 </Button>
-                <Button
-                  onClick={() =>
-                    formRef.current && formRef.current.requestSubmit()
-                  }
-                >
+                <Button onClick={() => formRef.current && formRef.current.requestSubmit()}>
+                  <Save className="me-2" />
                   Salvar
                 </Button>
               </div>
@@ -214,15 +208,18 @@ const ModalOcorrencia = () => {
                       setAction("Transferência");
                     }}
                   >
+                    <ArrowLeftRight className="me-2" />
                     Transferir
                   </Button>
                   <Button
+                    title="Copiar para outro caixa"
                     onClick={() => {
                       setModalActionOcorrenciaOpen(true);
                       setAction("Duplicação");
                     }}
                   >
-                    Duplicar
+                    <Copy className="me-2" />
+                    Copiar
                   </Button>
                 </span>
                 <AlertPopUp
@@ -234,7 +231,10 @@ const ModalOcorrencia = () => {
                     formRef.current && formRef.current.requestSubmit();
                   }}
                 >
-                  <Button variant={"success"}>Resolver</Button>
+                  <Button variant={"success"}>
+                    <Check className="me-2" />
+                    Resolver
+                  </Button>
                 </AlertPopUp>
               </div>
             )}
