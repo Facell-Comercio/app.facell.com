@@ -1,7 +1,4 @@
-import {
-  ModalComponent,
-  ModalComponentRow,
-} from "@/components/custom/ModalComponent";
+import { ModalComponent, ModalComponentRow } from "@/components/custom/ModalComponent";
 import SelectMatriz from "@/components/custom/SelectMatriz";
 import { AccordionItem } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -15,11 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { api } from "@/lib/axios";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionTrigger,
-} from "@radix-ui/react-accordion";
+import { Accordion, AccordionContent, AccordionTrigger } from "@radix-ui/react-accordion";
 import { useQuery } from "@tanstack/react-query";
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useRef, useState } from "react";
@@ -88,12 +81,12 @@ const ModalContasBancarias = ({
       "financeiro",
       "conta_bancaria",
       "lista",
-      { filters, pagination, id_matriz, id_grupo_economico },
+      [{ filters, pagination, id_matriz, id_grupo_economico }],
     ],
     queryFn: async () =>
       await api.get("financeiro/contas-bancarias/", {
         params: {
-          filters: { ...filters },
+          filters: { ...filters, id_grupo_economico },
           pagination,
         },
       }),
@@ -140,9 +133,7 @@ const ModalContasBancarias = ({
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>Contas bancárias</DialogTitle>
-          <DialogDescription>
-            Selecione uma ao clicar no botão à direita.
-          </DialogDescription>
+          <DialogDescription>Selecione uma ao clicar no botão à direita.</DialogDescription>
 
           <Accordion
             type="single"
@@ -156,11 +147,7 @@ const ModalContasBancarias = ({
                 <Button size={"xs"} onClick={() => handleClickFilter()}>
                   Aplicar <FilterIcon size={12} className="ms-2" />
                 </Button>
-                <Button
-                  size={"xs"}
-                  variant="secondary"
-                  onClick={() => handleClickResetFilters()}
-                >
+                <Button size={"xs"} variant="secondary" onClick={() => handleClickResetFilters()}>
                   Limpar <EraserIcon size={12} className="ms-2" />
                 </Button>
               </div>
@@ -186,9 +173,7 @@ const ModalContasBancarias = ({
                       placeholder="Descrição"
                       className="w-[20ch]"
                       value={filters.descricao}
-                      onChange={(e) =>
-                        setFilters({ descricao: e.target.value })
-                      }
+                      onChange={(e) => setFilters({ descricao: e.target.value })}
                     />
                     <Input
                       placeholder="Banco"
@@ -210,31 +195,27 @@ const ModalContasBancarias = ({
           pagination={pagination}
           setPagination={setPagination}
         >
-          {data?.data?.rows.map(
-            (item: ItemContaBancariaProps, index: number) => (
-              <ModalComponentRow
-                key={`contasBancariasRow: ${item.id} ${index}`}
-              >
-                <>
-                  <span>
-                    {item.grupo_economico && item.grupo_economico.toUpperCase()}{" "}
-                    - {item.descricao && item.descricao.toUpperCase()} -{" "}
-                    {item.banco && item.banco.toUpperCase()}
-                  </span>
-                  <Button
-                    size={"xs"}
-                    className="p-1"
-                    variant={"outline"}
-                    onClick={() => {
-                      pushSelection(item);
-                    }}
-                  >
-                    Selecionar
-                  </Button>
-                </>
-              </ModalComponentRow>
-            )
-          )}
+          {data?.data?.rows.map((item: ItemContaBancariaProps, index: number) => (
+            <ModalComponentRow key={`contasBancariasRow: ${item.id} ${index}`}>
+              <>
+                <span>
+                  {item.grupo_economico && item.grupo_economico.toUpperCase()} -{" "}
+                  {item.descricao && item.descricao.toUpperCase()} -{" "}
+                  {item.banco && item.banco.toUpperCase()}
+                </span>
+                <Button
+                  size={"xs"}
+                  className="p-1"
+                  variant={"outline"}
+                  onClick={() => {
+                    pushSelection(item);
+                  }}
+                >
+                  Selecionar
+                </Button>
+              </>
+            </ModalComponentRow>
+          ))}
         </ModalComponent>
       </DialogContent>
     </Dialog>

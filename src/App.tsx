@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import { Sidebar } from "./components/sidebar/Sidebar";
+
 function App() {
   return (
     <div className="app flex h-full w-full overflow-hidden">
