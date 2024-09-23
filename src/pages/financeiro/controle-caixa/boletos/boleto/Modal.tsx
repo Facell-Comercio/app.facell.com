@@ -81,7 +81,6 @@ const ModalBoleto = () => {
 
   const [modalContaBancariaOpen, setModalContaBancariaOpen] = useState<boolean>(false);
   const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] = useState<boolean>(false);
-  console.log(data);
 
   async function handleSelectionContaBancaria(conta_bancaria: ItemContaBancariaProps) {
     try {
@@ -128,8 +127,6 @@ const ModalBoleto = () => {
   function handleClickCancel() {
     closeModal();
   }
-
-  console.log(data);
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
