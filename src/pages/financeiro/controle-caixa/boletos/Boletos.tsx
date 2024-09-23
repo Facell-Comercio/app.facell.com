@@ -7,6 +7,7 @@ import ExportBoleto from "./components/ExportBoleto";
 import FiltersBoletos from "./FiltersBoletos";
 import { columnsTable } from "./table/columns";
 import { useStoreTableBoletos } from "./table/store-table";
+import ModalReceptoresBoletos from "./components/ModalReceptores";
 
 const Boletos = () => {
   const [pagination, setPagination, filters] = useStoreTableBoletos((state) => [
@@ -23,7 +24,8 @@ const Boletos = () => {
 
   return (
     <section className="flex flex-col gap-3 max-w-full">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3 items-center">
+        <ModalReceptoresBoletos/>
         <ExportBoleto />
       </div>
       <FiltersBoletos refetch={refetch} />
