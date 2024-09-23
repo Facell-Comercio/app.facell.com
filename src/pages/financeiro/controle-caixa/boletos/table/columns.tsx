@@ -24,6 +24,12 @@ export function BadgeBoletoStatus({ status, className }: { status?: string; clas
         Aguardando Emissão
       </Badge>
     );
+  } else if (status === "erro") {
+    return (
+      <Badge variant={"destructive"} className={`uppercase text-nowrap ${className}`}>
+        Erro
+      </Badge>
+    );
   } else if (status === "pago") {
     return (
       <Badge variant={"default"} className={`uppercase text-nowrap ${className}`}>

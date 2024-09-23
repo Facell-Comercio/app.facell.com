@@ -19,10 +19,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
+import { downloadResponse } from "@/helpers/download";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
-import { CircleX } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { api } from "@/lib/axios";
+import ModalContasBancarias, {
+  ItemContaBancariaProps,
+} from "@/pages/financeiro/components/ModalContasBancarias";
+import { useQueryClient } from "@tanstack/react-query";
+import { CircleX, Download } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { FaSpinner } from "react-icons/fa6";
 import { TbCurrencyReal } from "react-icons/tb";
 import { BadgeBoletoStatus } from "../table/columns";
 import { useStoreBoleto } from "./store";
@@ -68,13 +77,40 @@ const ModalBoleto = () => {
     isError: cancelarIsError,
   } = useConferenciasCaixa().cancelarBoleto();
 
-  // function onSubmitData() {
-  //   if (!formData.id_filial) {
-  //     toast({ title: "Por algum motivo não há um id_filial", variant: "warning" });
-  //     return;
-  //   }
-  //   insertOne(formData);
-  // }
+  const queryClient = useQueryClient();
+
+  const [modalContaBancariaOpen, setModalContaBancariaOpen] = useState<boolean>(false);
+  const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] = useState<boolean>(false);
+  console.log(data);
+
+  async function handleSelectionContaBancaria(conta_bancaria: ItemContaBancariaProps) {
+    try {
+      setIsLoadingRemessaSelecao(true);
+      const response = await api.post(
+        "financeiro/controle-de-caixa/boletos/export-remessa",
+        {
+          id_grupo_economico: data.id_grupo_economico,
+          id_conta_bancaria: conta_bancaria.id,
+          id_boleto: data.id,
+        },
+        { responseType: "blob" }
+      );
+      downloadResponse(response);
+      queryClient.invalidateQueries({
+        queryKey: ["financeiro", "contas_pagar", "bordero", "detalhe"],
+      });
+      handleClickCancel();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Ops!",
+        // @ts-ignore
+        description: error?.response?.data?.message || error.message,
+      });
+    } finally {
+      setIsLoadingRemessaSelecao(false);
+    }
+  }
 
   useEffect(() => {
     if (cancelarIsPending) {
@@ -92,6 +128,8 @@ const ModalBoleto = () => {
   function handleClickCancel() {
     closeModal();
   }
+
+  console.log(data);
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
@@ -152,6 +190,12 @@ const ModalBoleto = () => {
                 <label className="font-medium text-sm">Código de Barras</label>
                 <Input readOnly value={data?.cod_barras || "-"} />
               </div>
+              {data?.obs && (
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="font-medium text-sm">Observação</label>
+                  <Textarea readOnly value={data?.obs || "-"} />
+                </div>
+              )}
               <Table
                 className="rounded-md border-border w-full h-10 overflow-clip relative"
                 divClassname="overflow-auto scroll-thin max-h-[40vh] border rounded-md mt-2"
@@ -177,6 +221,12 @@ const ModalBoleto = () => {
             </form>
           )}
           <ScrollBar />
+          <ModalContasBancarias
+            open={modalContaBancariaOpen}
+            handleSelection={handleSelectionContaBancaria}
+            onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
+            id_grupo_economico={data?.id_grupo_economico || ""}
+          />
         </ScrollArea>
         <DialogFooter>
           <ModalButtons
@@ -186,20 +236,44 @@ const ModalBoleto = () => {
             modalEditing={modalEditing}
             formRef={formRef}
           >
-            <AlertPopUp
-              title={"Deseja realmente cancelar esse boleto?"}
-              description="Essa ação fará com que todos os caixas relacionados a ele recuperem o saldo usado."
-              action={() => {
-                cancelar(id || "");
-              }}
-            >
-              {data && (data.status === "aguardando_emissao" || data.status === "emitido") && (
-                <Button variant={"destructive"} size={"lg"}>
-                  <CircleX className="me-2" />
-                  Cancelar Boleto
-                </Button>
-              )}
-            </AlertPopUp>
+            <div className="flex gap-2">
+              <AlertPopUp
+                title={"Deseja realmente cancelar esse boleto?"}
+                description="Essa ação fará com que todos os caixas relacionados a ele recuperem o saldo usado."
+                action={() => {
+                  cancelar(id || "");
+                }}
+              >
+                {data && (data.status === "aguardando_emissao" || data.status === "emitido") && (
+                  <Button variant={"destructive"} size={"lg"}>
+                    <CircleX className="me-2" />
+                    Cancelar Boleto
+                  </Button>
+                )}
+              </AlertPopUp>
+              {modalEditing &&
+                data &&
+                (data.status === "aguardando_emissao" || data.status === "erro") && (
+                  <Button
+                    variant={"violet"}
+                    size={"lg"}
+                    disabled={isLoadingRemessaSelecao}
+                    onClick={() => setModalContaBancariaOpen(true)}
+                  >
+                    {isLoadingRemessaSelecao ? (
+                      <>
+                        <FaSpinner size={18} className="me-2 animate-spin" />
+                        Exportando...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="me-2" size={18} />
+                        Exportar Remessa
+                      </>
+                    )}
+                  </Button>
+                )}
+            </div>
           </ModalButtons>
         </DialogFooter>
       </DialogContent>

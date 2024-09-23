@@ -4,6 +4,8 @@ import { DataTable } from "@/components/custom/DataTable";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import ModalBoleto from "./boleto/Modal";
 import ExportBoleto from "./components/ExportBoleto";
+import HistoricoLogs from "./components/HistoricoLogs";
+import RetornoRemessa from "./components/RetornoRemessaBoleto";
 import FiltersBoletos from "./FiltersBoletos";
 import { columnsTable } from "./table/columns";
 import { useStoreTableBoletos } from "./table/store-table";
@@ -23,7 +25,9 @@ const Boletos = () => {
 
   return (
     <section className="flex flex-col gap-3 max-w-full">
-      <div className="flex justify-end">
+      <div className="flex gap-2 justify-end">
+        <HistoricoLogs />
+        <RetornoRemessa />
         <ExportBoleto />
       </div>
       <FiltersBoletos refetch={refetch} />
