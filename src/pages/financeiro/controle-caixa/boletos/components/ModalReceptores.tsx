@@ -5,9 +5,9 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Filter, Trash, UserPlus } from "lucide-react";
+import { Filter, Trash } from "lucide-react";
 import { useState } from "react";
 import { BsPeople } from "react-icons/bs";
 import ModalNovoReceptorBoletos from "./ModalNovoReceptor";
@@ -33,7 +33,7 @@ export default function ModalReceptoresBoletos() {
     const [pagination, setPagination] = useState<Pagination>({ pageIndex: 0, pageSize: 15 })
     const [filters, setFilters] = useState<FiltersReceptores>({ filiais_list: [], email: '' })
 
-    const { data, isLoading, isError, refetch } = useQuery({
+    const { data, isLoading, refetch } = useQuery({
         queryKey: ["financeiro", "controle_de_caixa", "boletos", "receptores", "list", { filters }],
         queryFn: async () => {
             const result = await api.get('/financeiro/controle-de-caixa/boletos/receptores/', { params: { filters, pagination } })

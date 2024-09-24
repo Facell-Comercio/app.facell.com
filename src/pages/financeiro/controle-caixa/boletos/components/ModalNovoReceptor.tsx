@@ -1,6 +1,3 @@
-import AlertPopUp from "@/components/custom/AlertPopUp";
-import { DataTable } from "@/components/custom/DataTable";
-import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -8,28 +5,10 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ColumnDef, PaginationDefaultOptions, PaginationOptions } from "@tanstack/react-table";
-import { Filter, Save, Trash, UserPlus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { BsPeople } from "react-icons/bs";
+import { useQueryClient } from "@tanstack/react-query";
+import { Save, UserPlus } from "lucide-react";
+import { useState } from "react";
 
-type Pagination = {
-    pageIndex: number;
-    pageSize: number;
-}
-
-type ReceptorBoleto = {
-    id: number,
-    id_filial: number,
-    filial: string,
-    email: string,
-}
-
-type FiltersReceptores = {
-    filial: string,
-    email: string,
-}
 export default function ModalNovoReceptorBoletos() {
     const queryClient = useQueryClient();
 
