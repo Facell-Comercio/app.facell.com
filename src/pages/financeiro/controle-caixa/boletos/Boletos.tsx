@@ -26,11 +26,11 @@ const Boletos = () => {
 
   return (
     <section className="flex flex-col gap-3 max-w-full">
-      <div className="flex gap-2 justify-end gap-3 items-center">
-        <HistoricoLogs />
+      <div className="flex justify-end gap-3 items-center">
         <RetornoRemessa />
-        <ModalReceptoresBoletos/>
         <ExportBoleto />
+        <ModalReceptoresBoletos/>
+        <HistoricoLogs />
       </div>
       <FiltersBoletos refetch={refetch} />
       {isSuccess && (

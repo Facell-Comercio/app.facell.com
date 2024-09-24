@@ -7,7 +7,7 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Filter, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import { useState } from "react";
 import { BsPeople } from "react-icons/bs";
 import ModalNovoReceptorBoletos from "./ModalNovoReceptor";
@@ -87,7 +87,7 @@ export default function ModalReceptoresBoletos() {
 
     return (
         <Dialog>
-            <DialogTrigger><Button variant={'tertiary'}><BsPeople size={18} className="me-2" /> Receptores</Button></DialogTrigger>
+            <DialogTrigger><Button variant={'outline'}><BsPeople size={18} className="me-2" /> Receptores</Button></DialogTrigger>
             <DialogContent className="max-w-[800px]">
                 <DialogTitle>
                     {/* Titulo */}
