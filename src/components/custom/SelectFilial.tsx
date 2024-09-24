@@ -92,19 +92,23 @@ type TSelectMultiFilial = {
   maxCount?: number;
   value: string[];
   onChange: (value: string[]) => any;
+  isLojaTim?: boolean;
+  nowrap?: boolean;
 };
 
-export const SelectMultiFilial = (
-  props: TSelectMultiFilial
-) => {
-  const { data } = useFilial().getAll();
-  const filial = data?.data?.rows || [];
+export const SelectMultiFilial = (props: TSelectMultiFilial) => {
+  const { data } = useFilial().getAll({
+    filters: {
+      isLojaTim: props.isLojaTim ? 1 : 0,
+    },
+  });
+  const filiais = data?.data?.rows || [];
 
   return (
     // @ts-ignore
     <MultiSelect
       {...props}
-      options={filial.map((grupo: Filial) => ({
+      options={filiais.map((grupo: Filial) => ({
         value: grupo.id,
         label: grupo.nome,
       }))}

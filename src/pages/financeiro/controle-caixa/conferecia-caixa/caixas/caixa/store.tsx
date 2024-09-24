@@ -13,16 +13,30 @@ interface useStoreCaixa {
   id?: string | null;
   id_deposito?: string | null;
   id_ocorrencia?: string | null;
-  modalOcorrenciaEditing: boolean;
-  modalDepositoEditing: boolean;
+  id_ajuste?: string | null;
+  id_caixa?: string | null;
+
   modalOpen: boolean;
   modalDepositoOpen: boolean;
-  modalOcorrenciasOpen: boolean;
+
   modalOcorrenciaOpen: boolean;
+  modalOcorrenciasOpen: boolean;
+
   modalDetalheCardOpen: boolean;
+  modalDetalheDinheiroOpen: boolean;
+
+  modalAjustesOpen: boolean;
+  modalAjusteOpen: boolean;
+
+  modalOcorrenciaEditing: boolean;
+  modalDepositoEditing: boolean;
+  modalAjusteEditing: boolean;
+
+  modalBoletoOpen: boolean;
 
   data_caixa?: string | null;
   id_filial?: string | null;
+  filial?: string | null;
   ocorrencias_nao_resolvidas: boolean;
   type_detalhe?: string | null;
   title_detalhe?: string | null;
@@ -52,14 +66,21 @@ interface useStoreCaixa {
   closeModalOcorrencia: () => void;
   editModalOcorrencia: (bool: boolean) => void;
 
-  openModalDetalheCard: ({
-    type,
-    title,
-  }: {
-    type: string;
-    title: string;
-  }) => void;
+  openModalAjustes: (id: string) => void;
+  closeModalAjustes: () => void;
+
+  openModalAjuste: (id: string) => void;
+  closeModalAjuste: () => void;
+  editModalAjuste: (bool: boolean) => void;
+
+  openModalDetalheCard: ({ type, title }: { type: string; title: string }) => void;
   closeModalDetalheCard: () => void;
+
+  openModalDinheiro: (type: string) => void;
+  closeModalDinheiro: () => void;
+
+  openModalBoleto: (data: { id_filial: string; filial: string }) => void;
+  closeModalBoleto: () => void;
 
   setFilial: (id: string) => void;
   setDisabled: (bool: boolean) => void;
@@ -70,16 +91,29 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
   id: null,
   id_deposito: null,
   id_ocorrencia: null,
-  modalOcorrenciaEditing: false,
-  modalDepositoEditing: false,
+  id_ajuste: null,
+  id_caixa: null,
+
   modalOpen: false,
   modalDepositoOpen: false,
-  modalOcorrenciaOpen: false,
+
   modalOcorrenciasOpen: false,
+  modalOcorrenciaOpen: false,
+
+  modalAjustesOpen: false,
+  modalAjusteOpen: false,
+
+  modalOcorrenciaEditing: false,
+  modalDepositoEditing: false,
   modalDetalheCardOpen: false,
+  modalDetalheDinheiroOpen: false,
+  modalAjusteEditing: false,
+
+  modalBoletoOpen: false,
 
   data_caixa: null,
   id_filial: null,
+  filial: null,
   ocorrencias_nao_resolvidas: false,
   type_detalhe: null,
   title_detalhe: null,
@@ -95,7 +129,13 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
     id: string;
     id_filial: string;
     data_caixa: string;
-  }) => set({ modalOpen: true, id, id_filial, data_caixa }),
+  }) =>
+    set({
+      modalOpen: true,
+      id,
+      id_filial,
+      data_caixa,
+    }),
   closeModal: () =>
     set({
       modalOpen: false,
@@ -106,9 +146,15 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
     }),
 
   openModalDeposito: (id: string) =>
-    set({ modalDepositoOpen: true, id_deposito: id }),
+    set({
+      modalDepositoOpen: true,
+      id_deposito: id,
+    }),
   closeModalDeposito: () =>
-    set({ modalDepositoOpen: false, id_deposito: null }),
+    set({
+      modalDepositoOpen: false,
+      id_deposito: null,
+    }),
   editModalDeposito: (bool) => set({ modalDepositoEditing: bool }),
 
   openModalOcorrencias: (props?: OpenOcorrenciaProps) =>
@@ -117,13 +163,49 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
       ocorrencias_nao_resolvidas: props?.ocorrencias_nao_resolvidas,
     }),
   closeModalOcorrencias: () =>
-    set({ modalOcorrenciasOpen: false, ocorrencias_nao_resolvidas: false }),
+    set({
+      modalOcorrenciasOpen: false,
+      ocorrencias_nao_resolvidas: false,
+    }),
 
   openModalOcorrencia: (id: string) =>
-    set({ modalOcorrenciaOpen: true, id_ocorrencia: id }),
+    set({
+      modalOcorrenciaOpen: true,
+      id_ocorrencia: id,
+    }),
   closeModalOcorrencia: () =>
-    set({ modalOcorrenciaOpen: false, id_ocorrencia: null }),
+    set({
+      modalOcorrenciaOpen: false,
+      id_ocorrencia: null,
+    }),
   editModalOcorrencia: (bool) => set({ modalOcorrenciaEditing: bool }),
+
+  openModalAjustes: (id: string) =>
+    set({
+      modalAjustesOpen: true,
+      id_caixa: id,
+    }),
+
+  closeModalAjustes: () =>
+    set({
+      modalAjustesOpen: false,
+      id_caixa: null,
+    }),
+
+  openModalAjuste: (id: string) =>
+    set({
+      modalAjusteOpen: true,
+      id_ajuste: id,
+      modalAjusteEditing: !id,
+    }),
+
+  closeModalAjuste: () =>
+    set({
+      modalAjusteOpen: false,
+      modalAjusteEditing: false,
+      id_ajuste: null,
+    }),
+  editModalAjuste: (bool) => set({ modalAjusteEditing: bool }),
 
   openModalDetalheCard: ({ type, title }: { type: string; title: string }) =>
     set({
@@ -136,6 +218,31 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
       modalDetalheCardOpen: false,
       type_detalhe: null,
       title_detalhe: null,
+    }),
+
+  openModalDinheiro: (type: string) =>
+    set({
+      modalDetalheDinheiroOpen: true,
+      type_detalhe: type,
+    }),
+  closeModalDinheiro: () =>
+    set({
+      modalDetalheDinheiroOpen: false,
+      type_detalhe: null,
+    }),
+
+  openModalBoleto: ({ id_filial, filial }) =>
+    set({
+      modalBoletoOpen: true,
+      id_filial,
+      filial,
+    }),
+
+  closeModalBoleto: () =>
+    set({
+      modalBoletoOpen: false,
+      id_filial: null,
+      filial: null,
     }),
 
   setFilial: (id: string) => set({ id_filial: id }),

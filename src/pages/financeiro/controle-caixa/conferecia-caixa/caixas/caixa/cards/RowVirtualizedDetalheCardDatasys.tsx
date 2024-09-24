@@ -17,12 +17,15 @@ interface RowVirtualizerMovimentoCaixaProps {
   data: MovimentoCaixaProps[];
 }
 
-const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
-  data,
-}) => {
-  const [sorting, setSorting] = useState<SortingState>([]);
+const ReactTableVirtualized: React.FC<
+  RowVirtualizerMovimentoCaixaProps
+> = ({ data }) => {
+  const [sorting, setSorting] =
+    useState<SortingState>([]);
 
-  const columns = useMemo<ColumnDef<MovimentoCaixaProps>[]>(
+  const columns = useMemo<
+    ColumnDef<MovimentoCaixaProps>[]
+  >(
     () => [
       {
         accessorKey: "documento",
@@ -30,7 +33,11 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
         cell: (info) => {
           let value = info.getValue<string>();
 
-          return <div className="w-full text-center">{value}</div>;
+          return (
+            <div className="w-full text-center">
+              {value}
+            </div>
+          );
         },
         size: 100,
       },
@@ -40,7 +47,14 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
         cell: (info) => {
           let value = info.getValue<string>();
 
-          return <div className="w-full text-center truncate">{value}</div>;
+          return (
+            <div
+              title={value?.toUpperCase()}
+              className="w-full text-center truncate"
+            >
+              {value}
+            </div>
+          );
         },
         size: 100,
       },
@@ -50,7 +64,14 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
         cell: (info) => {
           let value = info.getValue<string>();
 
-          return <div className="w-full text-center truncate">{value}</div>;
+          return (
+            <div
+              title={value?.toUpperCase()}
+              className="w-full text-center truncate"
+            >
+              {value}
+            </div>
+          );
         },
         size: 200,
       },
@@ -58,9 +79,15 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
         accessorKey: "valor",
         header: "Valor",
         cell: (info) => {
-          let value = normalizeCurrency(info.getValue<string>());
+          let value = normalizeCurrency(
+            info.getValue<string>()
+          );
 
-          return <div className="w-full text-center">{value}</div>;
+          return (
+            <div className="w-full text-center">
+              {value}
+            </div>
+          );
         },
         size: 100,
       },
@@ -91,8 +118,11 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
     overscan: 10,
     measureElement:
       typeof window !== "undefined" &&
-      navigator.userAgent.indexOf("Firefox") === -1
-        ? (element) => element?.getBoundingClientRect().height
+      navigator.userAgent.indexOf("Firefox") ===
+        -1
+        ? (element) =>
+            element?.getBoundingClientRect()
+              .height
         : undefined,
   });
 
@@ -104,48 +134,74 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
           className="h-[60vh] overflow-auto scroll-thin relative bg-background"
         >
           {data && data.length > 0 ? (
-            <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
+            <div
+              style={{
+                height: `${virtualizer.getTotalSize()}px`,
+              }}
+            >
               <table className="grid text-nowrap text-xs hover:">
                 <thead className="grid sticky top-0 z-10 border-y bg-secondary uppercase">
-                  {table.getHeaderGroups().map((headerGroup, index) => (
-                    <tr
-                      className="flex w-full"
-                      key={"movimentoCaixa thead" + headerGroup.id + index}
-                    >
-                      {headerGroup.headers.map((header, index) => {
-                        return (
-                          <th
-                            className="py-2"
-                            key={"movimentoCaixa th" + header.id + index}
-                            colSpan={header.colSpan}
-                            style={{ width: header.getSize() }}
-                          >
-                            {header.isPlaceholder ? null : (
-                              <div
-                                {...{
-                                  className: header.column.getCanSort()
-                                    ? "cursor-pointer select-none"
-                                    : "",
-                                  onClick:
-                                    header.column.getToggleSortingHandler(),
+                  {table
+                    .getHeaderGroups()
+                    .map((headerGroup, index) => (
+                      <tr
+                        className="flex w-full"
+                        key={
+                          "movimentoCaixa thead" +
+                          headerGroup.id +
+                          index
+                        }
+                      >
+                        {headerGroup.headers.map(
+                          (header, index) => {
+                            return (
+                              <th
+                                className="py-2"
+                                key={
+                                  "movimentoCaixa th" +
+                                  header.id +
+                                  index
+                                }
+                                colSpan={
+                                  header.colSpan
+                                }
+                                style={{
+                                  width:
+                                    header.getSize(),
                                 }}
                               >
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
+                                {header.isPlaceholder ? null : (
+                                  <div
+                                    {...{
+                                      className:
+                                        header.column.getCanSort()
+                                          ? "cursor-pointer select-none"
+                                          : "",
+                                      onClick:
+                                        header.column.getToggleSortingHandler(),
+                                    }}
+                                  >
+                                    {flexRender(
+                                      header
+                                        .column
+                                        .columnDef
+                                        .header,
+                                      header.getContext()
+                                    )}
+                                    {{
+                                      asc: " 🔼",
+                                      desc: " 🔽",
+                                    }[
+                                      header.column.getIsSorted() as string
+                                    ] ?? null}
+                                  </div>
                                 )}
-                                {{
-                                  asc: " 🔼",
-                                  desc: " 🔽",
-                                }[header.column.getIsSorted() as string] ??
-                                  null}
-                              </div>
-                            )}
-                          </th>
-                        );
-                      })}
-                    </tr>
-                  ))}
+                              </th>
+                            );
+                          }
+                        )}
+                      </tr>
+                    ))}
                 </thead>
                 <tbody
                   style={{
@@ -154,41 +210,59 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
                     position: "relative", //needed for absolute positioning of rows
                   }}
                 >
-                  {virtualizer.getVirtualItems().map((virtualRow, index) => {
-                    const row = rows[
-                      virtualRow.index
-                    ] as Row<MovimentoCaixaProps>;
-                    return (
-                      <tr
-                        key={"movimentoCaixa tr" + virtualRow.index + index}
-                        style={{
-                          display: "flex",
-                          position: "absolute",
-                          transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
-                          width: "100%",
-                        }}
-                        className="bg-background"
-                      >
-                        {row.getVisibleCells().map((cell, index) => {
-                          return (
-                            <td
-                              className="flex items-center p-2 "
-                              key={"movimentoCaixa td" + cell.id + index}
-                              style={{
-                                display: "flex",
-                                width: cell.column.getSize(),
-                              }}
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
+                  {virtualizer
+                    .getVirtualItems()
+                    .map((virtualRow, index) => {
+                      const row = rows[
+                        virtualRow.index
+                      ] as Row<MovimentoCaixaProps>;
+                      return (
+                        <tr
+                          key={
+                            "movimentoCaixa tr" +
+                            virtualRow.index +
+                            index
+                          }
+                          style={{
+                            display: "flex",
+                            position: "absolute",
+                            transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
+                            width: "100%",
+                          }}
+                          className="bg-background uppercase"
+                        >
+                          {row
+                            .getVisibleCells()
+                            .map(
+                              (cell, index) => {
+                                return (
+                                  <td
+                                    className="flex items-center p-2 "
+                                    key={
+                                      "movimentoCaixa td" +
+                                      cell.id +
+                                      index
+                                    }
+                                    style={{
+                                      display:
+                                        "flex",
+                                      width:
+                                        cell.column.getSize(),
+                                    }}
+                                  >
+                                    {flexRender(
+                                      cell.column
+                                        .columnDef
+                                        .cell,
+                                      cell.getContext()
+                                    )}
+                                  </td>
+                                );
+                              }
+                            )}
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>

@@ -10,17 +10,16 @@ type RowSelection = Record<number, boolean>;
 
 export interface Filters {
   status_list?: string[];
+  filiais_list?: string[];
+  tipo_data?: string;
   range_data?: DateRange;
-
-  divergentes?: string;
-  nao_resolvidos?: string;
 }
 
 const initialFilters: Filters = {
-  status_list: ["A CONFERIR", "CONFERIDO"],
+  status_list: [],
+  filiais_list: [],
+  tipo_data: "data",
   range_data: { from: undefined, to: undefined },
-  divergentes: undefined,
-  nao_resolvidos: undefined,
 };
 
 export interface State {
@@ -42,7 +41,7 @@ export interface Actions {
   setPagination: (pagination: Pagination) => void;
 }
 
-export const useStoreTableCaixas = create<State & Actions>((set) => ({
+export const useStoreTableBoletos = create<State & Actions>((set) => ({
   // Table
   rowCount: 0,
   pagination: { pageIndex: 0, pageSize: 15 },

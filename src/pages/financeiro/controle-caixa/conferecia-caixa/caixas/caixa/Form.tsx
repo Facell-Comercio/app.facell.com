@@ -18,6 +18,8 @@ import {
 } from "@/hooks/financeiro/useConferenciasCaixa";
 import { formatDate } from "date-fns";
 import {
+  Barcode,
+  FileSearch,
   History,
   Landmark,
   List,
@@ -27,11 +29,13 @@ import {
   Trash,
 } from "lucide-react";
 import { useState } from "react";
+import ModalBoleto from "../../../boletos/boleto/Modal";
+import { useStoreBoleto } from "../../../boletos/boleto/store";
+import ModalAjustes from "./ajustes/ModalAjustes";
 import CaixaCards from "./cards/CaixaCards";
+import ModalDetalheDinheiro from "./cards/ModalDetalheDinheiro";
 import { ItemAccordionCaixa } from "./components/ItemAccordionCaixa";
-import ModalTransacoesCredit, {
-  TransacoesCreditProps,
-} from "./components/ModalTransacoesCredit";
+import ModalTransacoesCredit, { TransacoesCreditProps } from "./components/ModalTransacoesCredit";
 import StatusCaixa from "./components/StatusCaixa";
 import ModalDeposito from "./depositos/ModalDeposito";
 import FiltersMovimentos from "./FiltersMovimento";
@@ -60,19 +64,14 @@ const FormCaixa = ({
     forma_pgto: "",
     historico: "",
   });
-  const [modalTransacoesCreditOpen, setModalTransacoesCreditOpen] =
-    useState(false);
+  const [modalTransacoesCreditOpen, setModalTransacoesCreditOpen] = useState(false);
 
   const filteredMovimetoCaixa = data.movimentos_caixa?.filter(
     (movimento) =>
-      movimento.documento
-        ?.toUpperCase()
-        .startsWith(filters.documento.toUpperCase()) &&
+      movimento.documento?.toUpperCase().startsWith(filters.documento.toUpperCase()) &&
       movimento.tipo_operacao?.includes(filters.tipo_operacao.toUpperCase()) &&
       movimento.forma_pagamento?.includes(filters.forma_pgto.toUpperCase()) &&
-      movimento.historico
-        ?.toUpperCase()
-        .includes(filters.historico.toUpperCase())
+      movimento.historico?.toUpperCase().includes(filters.historico.toUpperCase())
   );
 
   const qtde_movimentos_caixa = filteredMovimetoCaixa?.length || 0;
@@ -80,19 +79,24 @@ const FormCaixa = ({
     (acc: number, curr) => acc + parseFloat(curr.valor || "0"),
     0
   );
-  const saldo_anterior = parseFloat(data?.saldo_anterior || "0");
-  const saldo_atual = parseFloat(data?.saldo_atual || "0");
+
   const depositos_caixa = data.depositos_caixa || [];
   const qtde_depositos_caixa = parseInt(data.qtde_depositos_caixa || "0");
 
-  const [openModalDeposito, editModalDeposito, id_filial, disabled, isPending] =
-    useStoreCaixa((state) => [
+  const boletos_caixa = data.boletos_caixa || [];
+  const qtde_boletos_caixa = parseInt(data.qtde_boletos_caixa || "0");
+
+  const [openModalDeposito, editModalDeposito, id_filial, disabled, isPending] = useStoreCaixa(
+    (state) => [
       state.openModalDeposito,
       state.editModalDeposito,
       state.id_filial,
       state.disabled,
       state.isPending,
-    ]);
+    ]
+  );
+
+  const openModalBoleto = useStoreBoleto().openModal;
 
   const { form } = useFormCaixaData(data);
   const { mutate: deleteDeposito } = useConferenciasCaixa().deleteDeposito();
@@ -125,39 +129,6 @@ const FormCaixa = ({
     );
   }
 
-  function InfoDepositos() {
-    return (
-      <span className="flex gap-1 items-center justify-center">
-        <Badge
-          variant={data.caixa_anterior_fechado ? "info" : "warning"}
-          title={
-            data.caixa_anterior_fechado ? "" : "Saldo passível de alteração"
-          }
-        >
-          {`Saldo Anterior: ${normalizeCurrency(saldo_anterior)}`}
-        </Badge>
-        <Badge variant="info">
-          {`Total Depósitos: ${normalizeCurrency(
-            depositos_caixa.reduce(
-              (acc, deposito) => acc + parseFloat(deposito.valor || "0"),
-              0
-            )
-          )}`}
-        </Badge>
-        <Badge variant="info">
-          {`Saldo Final: ${normalizeCurrency(
-            saldo_atual < 0 ? "0" : saldo_atual
-          )}`}
-        </Badge>
-        {parseFloat(data.suprimento_caixa || "0") > 0 && (
-          <Badge variant="violet">
-            {`Suprimento de Caixa: ${normalizeCurrency(data.suprimento_caixa)}`}
-          </Badge>
-        )}
-      </span>
-    );
-  }
-
   const { mutate: insertMultiDepositoExtrato } =
     useConferenciasCaixa().insertMultiDepositoExtrato();
 
@@ -175,10 +146,7 @@ const FormCaixa = ({
   return (
     <div className="max-w-full overflow-x-hidden">
       <Form {...form}>
-        <form
-          ref={formRef}
-          className="gap-3 max-w-screen-xl w-full grid grid-cols-1 z-[100]"
-        >
+        <form ref={formRef} className="gap-3 max-w-screen-xl w-full grid grid-cols-1 z-[100]">
           <div className="overflow-auto scroll-thin z-[100] flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
             {/* Primeira coluna */}
             <StatusCaixa data={data} />
@@ -193,16 +161,13 @@ const FormCaixa = ({
               info={InfoMovimentoCaixa}
             >
               <FiltersMovimentos filters={filters} setFilters={setFilters} />
-              <RowVirtualizedMovimentoCaixa
-                data={filteredMovimetoCaixa || []}
-              />
+              <RowVirtualizedMovimentoCaixa data={filteredMovimetoCaixa || []} />
             </ItemAccordionCaixa>
             <ItemAccordionCaixa
               icon={Landmark}
               value={"depositos-caixa"}
               qtde={qtde_depositos_caixa}
               title="Depósitos"
-              info={InfoDepositos}
               className="flex flex-col items-end justify-end"
             >
               {!disabled && (
@@ -273,9 +238,47 @@ const FormCaixa = ({
                       <TableCell>{deposito.conta_bancaria}</TableCell>
                       <TableCell>{normalizeCurrency(deposito.valor)}</TableCell>
                       <TableCell>{deposito.comprovante}</TableCell>
-                      <TableCell>
-                        {normalizeDate(deposito.data_deposito || "")}
+                      <TableCell>{normalizeDate(deposito.data_deposito || "")}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ItemAccordionCaixa>
+            <ItemAccordionCaixa
+              icon={Barcode}
+              value={"boletos-caixa"}
+              qtde={qtde_boletos_caixa}
+              title="Boletos"
+              className="flex flex-col items-end justify-end"
+            >
+              <Table className="bg-background rounded-md">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Ação</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Valor Boleto</TableHead>
+                    <TableHead>Saldo Utilizado</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {boletos_caixa.map((boleto, index) => (
+                    <TableRow key={`boleto ${boleto.id} ${index}`}>
+                      <TableCell className="flex gap-2">
+                        <Button
+                          size={"xs"}
+                          onClick={() => {
+                            openModalBoleto(boleto.id || "");
+                          }}
+                          disabled={isPending}
+                        >
+                          <FileSearch size={14} />
+                        </Button>
                       </TableCell>
+                      <TableCell>{normalizeDate(boleto.data || "")}</TableCell>
+                      <TableCell>{boleto.status?.replace("_", " ").toUpperCase()}</TableCell>
+                      <TableCell>{normalizeCurrency(boleto.valor_boleto)}</TableCell>
+                      <TableCell>{normalizeCurrency(boleto.saldo_utilizado)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -290,14 +293,9 @@ const FormCaixa = ({
 
                 <ScrollArea className={"flex flex-col gap-3 max-h-44 "}>
                   {data.historico?.map((value, index) => (
-                    <span
-                      className="flex gap-1.5"
-                      key={`historico ${value.id} ${index}`}
-                    >
+                    <span className="flex gap-1.5" key={`historico ${value.id} ${index}`}>
                       {formatDate(value.created_at, "dd/MM/yyyy hh:mm")}:
-                      <p className={`${historicoColor(value.descricao)}`}>
-                        {value.descricao}
-                      </p>
+                      <p className={`${historicoColor(value.descricao)}`}>{value.descricao}</p>
                     </span>
                   ))}
                 </ScrollArea>
@@ -317,6 +315,9 @@ const FormCaixa = ({
         handleMultiSelection={handleMultiSelectionDepositos}
         onOpenChange={() => setModalTransacoesCreditOpen(false)}
       />
+      <ModalAjustes />
+      <ModalBoleto />
+      <ModalDetalheDinheiro />
     </div>
   );
 };

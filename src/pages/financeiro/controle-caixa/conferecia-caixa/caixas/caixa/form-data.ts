@@ -1,4 +1,5 @@
 import {
+  AjustesProps,
   ConferenciasCaixaSchema,
   DepositosCaixaProps,
   OcorrenciasProps,
@@ -72,6 +73,62 @@ const schemaOcorrencia = z.object({
 export const useFormOcorrenciaData = (data: OcorrenciasProps) => {
   const form = useForm<OcorrenciasProps>({
     resolver: zodResolver(schemaOcorrencia),
+    defaultValues: data,
+    values: data,
+  });
+
+  return {
+    form,
+  };
+};
+
+const schemaAjuste = z
+  .object({
+    // Dados Ajuste
+    id: z.string().optional(),
+    id_caixa: z.coerce.string().optional(),
+    user: z.coerce.string().optional(),
+    valor: z.coerce.number().min(1, "Campo obrigatório"),
+    entrada: z.coerce.string().optional(),
+    saida: z.coerce.string().optional(),
+    obs: z.string().trim().min(1, "Campo obrigatório"),
+    tipo_ajuste: z.string().trim().min(1, "Campo obrigatório"),
+    aprovado: z.coerce.number().optional(),
+  })
+  .refine(
+    (ajuste) =>
+      !(
+        (ajuste.tipo_ajuste === "transferencia" || ajuste.tipo_ajuste === "retirada") &&
+        !ajuste.saida
+      ),
+    {
+      path: ["saida"],
+      message: "Campo obrigatório",
+    }
+  )
+  .refine(
+    (ajuste) =>
+      !(
+        (ajuste.tipo_ajuste === "transferencia" || ajuste.tipo_ajuste === "inclusao") &&
+        !ajuste.entrada
+      ),
+    {
+      path: ["entrada"],
+      message: "Campo obrigatório",
+    }
+  )
+  .refine((ajuste) => ajuste.entrada !== ajuste.saida, {
+    path: ["entrada"],
+    message: "Dados idênticos",
+  })
+  .refine((ajuste) => ajuste.entrada !== ajuste.saida, {
+    path: ["saida"],
+    message: "Dados idênticos",
+  });
+
+export const useFormAjusteData = (data: AjustesProps) => {
+  const form = useForm<AjustesProps>({
+    resolver: zodResolver(schemaAjuste),
     defaultValues: data,
     values: data,
   });
