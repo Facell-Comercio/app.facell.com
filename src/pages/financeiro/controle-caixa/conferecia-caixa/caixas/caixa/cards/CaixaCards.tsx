@@ -172,7 +172,7 @@ const CaixaCards = ({ data }: { data: ConferenciasCaixaSchema }) => {
           label: "Divergência",
         },
       ],
-      // type: "crediario",
+      type: "crediario",
       icon: ArrowUpDown,
     },
   ];

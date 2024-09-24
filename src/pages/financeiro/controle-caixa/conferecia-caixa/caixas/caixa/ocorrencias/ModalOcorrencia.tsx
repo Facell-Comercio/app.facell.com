@@ -94,7 +94,7 @@ const ModalOcorrencia = () => {
   function onSubmitData(data: OcorrenciasProps) {
     if (id) update(data);
     if (!id) insertOne(data);
-    console.log(data);
+    // console.log(data);
   }
 
   useEffect(() => {
