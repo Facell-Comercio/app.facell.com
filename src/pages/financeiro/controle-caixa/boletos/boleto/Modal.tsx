@@ -78,7 +78,6 @@ const ModalBoleto = () => {
   
   const handleCopyLink = async ()=>{
     try {
-      
       await copyToClipboard(`${baseURL}/visualizar.boleto.caixa?id=${data?.id}`);
       setLinkCopiado(true)
     } catch (error) {

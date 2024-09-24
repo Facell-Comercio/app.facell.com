@@ -213,7 +213,7 @@ const ModalNewBoleto = () => {
                 <TableBody>
                   {caixas.map((row: any) => (
                     <TableRow
-                      key={row.id}
+                      key={'novo-boleto-caixa:'+row.id}
                       className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
                     >
                       <TableCell>

@@ -7,7 +7,7 @@ import { FilePlus2 } from "lucide-react";
 import { useEffect } from "react";
 import { TbAlertTriangle } from "react-icons/tb";
 import { useLocation } from "react-router-dom";
-import ModalNewBoleto from "./caixa/components/ModalBoleto";
+import ModalNewBoleto from "./caixa/components/ModalNovoBoleto";
 import ModalCaixa from "./caixa/Modal";
 import ModalOcorrencias from "./caixa/ocorrencias/ModalOcorrencias";
 import { useStoreCaixa } from "./caixa/store";

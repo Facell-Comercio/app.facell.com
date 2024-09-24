@@ -1,6 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
-import { NewBoletoProps } from "@/pages/financeiro/controle-caixa/conferencia-caixa/caixas/caixa/components/ModalBoleto";
+import { NewBoletoProps } from "@/pages/financeiro/controle-caixa/conferencia-caixa/caixas/caixa/components/ModalNovoBoleto";
 import { TransacoesCreditProps } from "@/pages/financeiro/controle-caixa/conferencia-caixa/caixas/caixa/components/ModalTransacoesCredit";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

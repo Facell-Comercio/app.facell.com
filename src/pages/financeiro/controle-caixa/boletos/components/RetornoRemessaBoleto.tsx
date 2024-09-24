@@ -29,6 +29,9 @@ const RetornoRemessa = () => {
 
   useEffect(() => {
     if (importRetornoIsSuccess && result) {
+      if(fileRef?.current){
+        fileRef.current.value = ''
+      }
       exportToExcel(result, "RESULTADO IMPORTAÇÃO DE REMESSA");
     }
   }, [result]);
