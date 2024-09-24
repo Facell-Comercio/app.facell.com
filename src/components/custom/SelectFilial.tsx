@@ -99,7 +99,7 @@ type TSelectMultiFilial = {
 export const SelectMultiFilial = (props: TSelectMultiFilial) => {
   const { data } = useFilial().getAll({
     filters: {
-      isLojaTim: props.isLojaTim ? 1 : 0,
+      isLojaTim: props?.isLojaTim ? 1 : 0,
     },
   });
   const filiais = data?.data?.rows || [];
