@@ -4,11 +4,11 @@ import FormSwitch from "@/components/custom/FormSwitch";
 import { Form } from "@/components/ui/form";
 import { Toggle } from "@/components/ui/toggle";
 import { useGrupoEconomico } from "@/hooks/useGrupoEconomico";
+import { Filial } from "@/types/filial-type";
+import { useState } from "react";
+import ModalFiliais from "../../components/ModalFiliais";
 import { GrupoEconomicoFormData, useFormGrupoEconomico } from "./form-data";
 import { useStoreGrupoEconomico } from "./store";
-import ModalFiliais from "../../components/ModalFiliais";
-import { useState } from "react";
-import { Filial } from "@/types/filial-type";
 
 const FormUsers = ({
   id,
@@ -36,15 +36,14 @@ const FormUsers = ({
     editModal(false);
     closeModal();
   };
-  console.log(form.formState.errors);
-  
-  const handleSelectionFilial = (filial: Filial)=>{
-    console.log(filial);
-    
-    form.setValue('id_matriz', String(filial.id) ?? '')
-    form.setValue('filial', filial.nome)
+  // console.log(form.formState.errors);
 
-  }
+  const handleSelectionFilial = (filial: Filial) => {
+    // console.log(filial);
+
+    form.setValue("id_matriz", String(filial.id) ?? "");
+    form.setValue("filial", filial.nome);
+  };
 
   const isActive = !!+form.watch("orcamento");
 
@@ -68,12 +67,7 @@ const FormUsers = ({
             />
           </div>
           <div className="flex gap-2 items-center">
-            <FormInput
-              control={form.control}
-              label="Nome"
-              name="nome"
-              readOnly={!modalEditing}
-            />
+            <FormInput control={form.control} label="Nome" name="nome" readOnly={!modalEditing} />
 
             <FormInput
               control={form.control}
@@ -83,7 +77,9 @@ const FormUsers = ({
             />
 
             <FormInput
-              onClick={()=>{setModalFilialOpen(true)}}
+              onClick={() => {
+                setModalFilialOpen(true);
+              }}
               control={form.control}
               label="Matriz"
               name="filial"

@@ -8,6 +8,7 @@ import {
   HandCoins,
   History,
   Landmark,
+  Receipt,
   RefreshCcw,
   Shield,
 } from "lucide-react";
@@ -90,7 +91,7 @@ const ImportacoesTab = () => {
             label="Renov Tradein"
             uri="/import-renov-tradein"
           />
-          {/* <ImportacaoItem label="Crediario" uri="/import-crediario"/> */}
+          <ImportacaoItem icon={<Receipt />} label="Crediario" uri="/import-crediario" />
 
           {isMaster && <ImportacaoCaixasLote />}
         </Accordion>
