@@ -1,12 +1,6 @@
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import {
   ArrowUpDown,
@@ -18,6 +12,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useState } from "react";
+import ModalLogsMovimentoArquivos from "../../components/ModalLogsMovimentoArquivos";
 import ImportacaoItem from "./components/ImportacaoItem";
 import ModalLogImportacaoRelatorios from "./components/ModalLogImportacaoRelatorios";
 import ImportacaoCaixasLote from "./components/ImportacaoCaixasLote";
@@ -37,8 +32,7 @@ const ImportacoesTab = () => {
   const isMaster = checkUserPermission('MASTER');
   
   const [modalHistoricoOpen, setModalHistoricoOpen] = useState<boolean>(false);
-  const { mutate: cruzarRelatoriosLote, isPending } =
-    useConferenciasCaixa().cruzarRelatoriosLote();
+  const { mutate: cruzarRelatoriosLote, isPending } = useConferenciasCaixa().cruzarRelatoriosLote();
 
   return (
     <Card>
@@ -47,12 +41,11 @@ const ImportacoesTab = () => {
           <div className="flex flex-col gap-2">
             <CardTitle>Importações</CardTitle>
             <CardDescription>
-              Aqui você importa os relatórios que são necessários para os
-              cruzamentos de informações
+              Aqui você importa os relatórios que são necessários para os cruzamentos de informações
             </CardDescription>
           </div>
           <div>
-            <ModalLogImportacaoRelatorios
+            <ModalLogsMovimentoArquivos
               open={modalHistoricoOpen}
               // @ts-ignore
               onOpenChange={(val) => {
@@ -84,31 +77,15 @@ const ImportacoesTab = () => {
       </CardHeader>
       <CardContent>
         <Accordion type="multiple" className="flex flex-col gap-2">
-          <ImportacaoItem
-            icon={<CreditCard />}
-            label="Cielo Vendas"
-            uri="/import-cielo-vendas"
-          />
-          <ImportacaoItem
-            icon={<Landmark />}
-            label="PIX Bradesco"
-            uri="/import-pix-bradesco"
-          />
-          <ImportacaoItem
-            icon={<Landmark />}
-            label="PIX Itaú"
-            uri="/import-pix-itau"
-          />
+          <ImportacaoItem icon={<CreditCard />} label="Cielo Vendas" uri="/import-cielo-vendas" />
+          <ImportacaoItem icon={<Landmark />} label="PIX Bradesco" uri="/import-pix-bradesco" />
+          <ImportacaoItem icon={<Landmark />} label="PIX Itaú" uri="/import-pix-itau" />
           <ImportacaoItem
             icon={<HandCoins />}
             label="Recarga RV Cellcard"
             uri="/import-recarga-rvcellcard"
           />
-          <ImportacaoItem
-            icon={<Shield />}
-            label="Pitzi Vendas"
-            uri="/import-pitzi-vendas"
-          />
+          <ImportacaoItem icon={<Shield />} label="Pitzi Vendas" uri="/import-pitzi-vendas" />
           <ImportacaoItem
             icon={<ArrowUpDown />}
             label="Renov Tradein"

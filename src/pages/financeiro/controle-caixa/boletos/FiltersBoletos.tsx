@@ -28,6 +28,7 @@ const status = [
   { label: "PAGO", value: "pago" },
   { label: "CANCELADO", value: "cancelado" },
   { label: "ATRASADO", value: "atrasado" },
+  { label: "ERRO", value: "erro" },
 ];
 
 const FiltersBoletos = ({ refetch }: { refetch: () => void }) => {

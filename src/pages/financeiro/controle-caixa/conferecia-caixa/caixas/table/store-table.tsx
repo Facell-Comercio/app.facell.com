@@ -17,7 +17,7 @@ export interface Filters {
 }
 
 const initialFilters: Filters = {
-  status_list: [],
+  status_list: ["A CONFERIR", "CONFERIDO"],
   range_data: { from: undefined, to: undefined },
   divergentes: undefined,
   nao_resolvidos: undefined,

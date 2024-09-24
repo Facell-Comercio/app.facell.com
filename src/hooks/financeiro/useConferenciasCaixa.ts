@@ -824,6 +824,32 @@ export const useConferenciasCaixa = () => {
         },
       }),
 
+    importRemessaBoleto: () =>
+      useMutation({
+        mutationFn: (files: FileList | null) => {
+          return new Promise(async (resolve, reject) => {
+            try {
+              const form = new FormData();
+              if (files) {
+                for (let i = 0; i < files.length; i++) {
+                  form.append("files", files[i]);
+                  form.append("files", files[i]);
+                }
+              }
+              const result = await api.postForm(
+                `/financeiro/controle-de-caixa/boletos/import-retorno-remessa`,
+                form
+              );
+              queryClient.invalidateQueries({ queryKey: ["financeiro", "conferencia_de_caixa"] });
+
+              resolve(result.data);
+            } catch (error) {
+              reject(error);
+            }
+          });
+        },
+      }),
+
     lancamentoDespesa: () =>
       useMutation({
         mutationFn: async (data: {

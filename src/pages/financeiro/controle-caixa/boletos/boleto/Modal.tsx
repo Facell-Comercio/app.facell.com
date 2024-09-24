@@ -8,7 +8,6 @@ import {
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/custom/FormInput";
-import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
@@ -19,10 +18,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
+import { downloadResponse } from "@/helpers/download";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
-import { CircleX } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { api } from "@/lib/axios";
+import ModalContasBancarias, {
+  ItemContaBancariaProps,
+} from "@/pages/financeiro/components/ModalContasBancarias";
+import { copyToClipboard } from "@/pages/financeiro/contas-pagar/titulos/titulo/helpers/helper";
+import { useQueryClient } from "@tanstack/react-query";
+import { CircleX, Copy, Download, Eye } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { FaSpinner } from "react-icons/fa6";
 import { TbCurrencyReal } from "react-icons/tb";
 import { BadgeBoletoStatus } from "../table/columns";
 import { useStoreBoleto } from "./store";
@@ -41,22 +50,14 @@ type CaixaProps = {
   status?: string;
 };
 
-const initialPropsBoleto: NewBoletoProps = {
-  id_filial: "",
-  valor: "0",
-};
-
 const ModalBoleto = () => {
-  const [modalOpen, closeModal, id, modalEditing, editModal, isPending, setIsPending] =
-    useStoreBoleto((state) => [
-      state.modalOpen,
-      state.closeModal,
-      state.id,
-      state.modalEditing,
-      state.editModal,
-      state.isPending,
-      state.setIsPending,
-    ]);
+  const [modalOpen, closeModal, id, isPending, setIsPending] = useStoreBoleto((state) => [
+    state.modalOpen,
+    state.closeModal,
+    state.id,
+    state.isPending,
+    state.setIsPending,
+  ]);
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const { data } = useConferenciasCaixa().getOneBoleto(id);
@@ -68,13 +69,39 @@ const ModalBoleto = () => {
     isError: cancelarIsError,
   } = useConferenciasCaixa().cancelarBoleto();
 
-  // function onSubmitData() {
-  //   if (!formData.id_filial) {
-  //     toast({ title: "Por algum motivo não há um id_filial", variant: "warning" });
-  //     return;
-  //   }
-  //   insertOne(formData);
-  // }
+  const queryClient = useQueryClient();
+
+  const [modalContaBancariaOpen, setModalContaBancariaOpen] = useState<boolean>(false);
+  const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] = useState<boolean>(false);
+
+  async function handleSelectionContaBancaria(conta_bancaria: ItemContaBancariaProps) {
+    try {
+      setIsLoadingRemessaSelecao(true);
+      const response = await api.post(
+        "financeiro/controle-de-caixa/boletos/export-remessa",
+        {
+          id_grupo_economico: data.id_grupo_economico,
+          id_conta_bancaria: conta_bancaria.id,
+          id_boleto: data.id,
+        },
+        { responseType: "blob" }
+      );
+      downloadResponse(response);
+      queryClient.invalidateQueries({
+        queryKey: ["financeiro", "contas_pagar", "bordero", "detalhe"],
+      });
+      handleClickCancel();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Ops!",
+        // @ts-ignore
+        description: error?.response?.data?.message || error.message,
+      });
+    } finally {
+      setIsLoadingRemessaSelecao(false);
+    }
+  }
 
   useEffect(() => {
     if (cancelarIsPending) {
@@ -92,12 +119,36 @@ const ModalBoleto = () => {
   function handleClickCancel() {
     closeModal();
   }
-
+  const baseURL = import.meta.env.VITE_BASE_URL_API;
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Boleto: {id}</DialogTitle>
+          <DialogTitle className="flex justify-between pe-4">
+            Boleto: {id}
+            <span className="flex gap-2">
+              <Button
+                onClick={async () => {
+                  await copyToClipboard(`${baseURL}visualizar.boleto.caixa?id=${data?.id}`);
+                }}
+                size={"xs"}
+                variant={"secondary"}
+              >
+                <Copy size={14} className="me-1" />
+                Copiar Link
+              </Button>
+              <Button
+                onClick={() => {
+                  window.open(`${baseURL}visualizar.boleto.caixa?id=${data?.id}`, "_blank");
+                }}
+                size={"xs"}
+                variant={"secondary"}
+              >
+                <Eye size={14} className="me-1" />
+                Visualizar
+              </Button>
+            </span>
+          </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && (
@@ -123,7 +174,7 @@ const ModalBoleto = () => {
                   <label className="font-medium text-sm">Valor do Boleto</label>
                   <span className="flex">
                     <Button variant={"secondary"} className="rounded-none rounded-l-md">
-                      <TbCurrencyReal size={18} />
+                      <TbCurrencyReal size={16} />
                     </Button>
                     <Input
                       value={data?.valor || ""}
@@ -148,10 +199,13 @@ const ModalBoleto = () => {
                   <Input readOnly value={normalizeDate(data?.data_vencimento) || "-"} />
                 </div>
               </section>
-              <div className="flex flex-col gap-2 flex-1">
-                <label className="font-medium text-sm">Código de Barras</label>
-                <Input readOnly value={data?.cod_barras || "-"} />
-              </div>
+
+              {data?.obs && (
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="font-medium text-sm">Observação</label>
+                  <Textarea readOnly value={data?.obs || "-"} />
+                </div>
+              )}
               <Table
                 className="rounded-md border-border w-full h-10 overflow-clip relative"
                 divClassname="overflow-auto scroll-thin max-h-[40vh] border rounded-md mt-2"
@@ -177,15 +231,15 @@ const ModalBoleto = () => {
             </form>
           )}
           <ScrollBar />
+          <ModalContasBancarias
+            open={modalContaBancariaOpen}
+            handleSelection={handleSelectionContaBancaria}
+            onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
+            id_grupo_economico={data?.id_grupo_economico || ""}
+          />
         </ScrollArea>
         <DialogFooter>
-          <ModalButtons
-            id={id}
-            cancel={handleClickCancel}
-            edit={() => editModal(true)}
-            modalEditing={modalEditing}
-            formRef={formRef}
-          >
+          <div className="flex gap-2 justify-between w-full">
             <AlertPopUp
               title={"Deseja realmente cancelar esse boleto?"}
               description="Essa ação fará com que todos os caixas relacionados a ele recuperem o saldo usado."
@@ -194,13 +248,32 @@ const ModalBoleto = () => {
               }}
             >
               {data && (data.status === "aguardando_emissao" || data.status === "emitido") && (
-                <Button variant={"destructive"} size={"lg"}>
-                  <CircleX className="me-2" />
+                <Button variant={"destructive"}>
+                  <CircleX size={18} className="me-2" />
                   Cancelar Boleto
                 </Button>
               )}
             </AlertPopUp>
-          </ModalButtons>
+            {data && (data.status === "aguardando_emissao" || data.status === "erro") && (
+              <Button
+                variant={"violet"}
+                disabled={isLoadingRemessaSelecao}
+                onClick={() => setModalContaBancariaOpen(true)}
+              >
+                {isLoadingRemessaSelecao ? (
+                  <>
+                    <FaSpinner size={16} className="me-2 animate-spin" />
+                    Exportando...
+                  </>
+                ) : (
+                  <>
+                    <Download className="me-2" size={16} />
+                    Exportar Remessa
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
