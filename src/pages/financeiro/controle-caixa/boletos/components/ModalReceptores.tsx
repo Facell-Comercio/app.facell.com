@@ -96,7 +96,7 @@ export default function ModalReceptoresBoletos() {
                         <h3> Receptores de Boletos</h3>
                     </div>
                 </DialogTitle>
-                <DialogDescription></DialogDescription>
+                <DialogDescription className="hidden">Modal Receptores de Boletos</DialogDescription>
 
                 <div className="flex justify-end">
                     <ModalNovoReceptorBoletos />
@@ -122,7 +122,6 @@ export default function ModalReceptoresBoletos() {
                             <label>Email</label>
                             <Input placeholder="Digite o email" value={filters.email} onChange={(e) => setFilters(state => ({ ...state, email: e.target.value }))} />
                         </div>
-                        <Button><Filter size={18} className="me-2" /> Filtrar</Button>
                     </div>
                 </div>
                 
