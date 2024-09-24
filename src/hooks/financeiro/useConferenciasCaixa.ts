@@ -1,7 +1,7 @@
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
-import { NewBoletoProps } from "@/pages/financeiro/controle-caixa/conferecia-caixa/caixas/caixa/components/ModalBoleto";
-import { TransacoesCreditProps } from "@/pages/financeiro/controle-caixa/conferecia-caixa/caixas/caixa/components/ModalTransacoesCredit";
+import { NewBoletoProps } from "@/pages/financeiro/controle-caixa/conferencia-caixa/caixas/caixa/components/ModalBoleto";
+import { TransacoesCreditProps } from "@/pages/financeiro/controle-caixa/conferencia-caixa/caixas/caixa/components/ModalTransacoesCredit";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DateRange } from "react-day-picker";
