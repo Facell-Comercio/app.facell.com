@@ -57,23 +57,21 @@ const ConferenciaCaixa = () => {
                 <TableHead><Badge
                   className="w-full flex justify-center"
                   variant={"success"}
-                >Baixa Pendente</Badge></TableHead>
-                <TableHead>
-                  <Badge className="w-full flex justify-center">
-                    B. Datasys Pendente</Badge>
-                </TableHead>
-                <TableHead><Badge
-                  className="w-full flex justify-center"
-                  variant={"destructive"}
-                >Ocorrências
-                </Badge>
-                </TableHead>
+                >Conferidos</Badge></TableHead>
                 <TableHead>
                   <Badge
                     className="w-full flex justify-center"
                     variant={"warning"}
-                  >Caixas Divergentes</Badge>
+                  >Divergentes</Badge>
                 </TableHead>
+                <TableHead>
+                  <Badge
+                    className="w-full flex justify-center"
+                    variant={"destructive"}
+                  >Ocorrências
+                  </Badge>
+                </TableHead>
+
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -100,7 +98,7 @@ const ConferenciaCaixa = () => {
                   </TableCell>
                   <TableCell>
                     <span className="flex text-center justify-center">
-                      {item.baixa_datasys_pendente || 0}
+                      {item.divergentes || 0}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -108,11 +106,7 @@ const ConferenciaCaixa = () => {
                       {item.ocorrencias || 0}
                     </span>
                   </TableCell>
-                  <TableCell>
-                    <span className="flex text-center justify-center">
-                      {item.divergentes || 0}
-                    </span>
-                  </TableCell>
+
                 </TableRow>
               ))}
             </TableBody>

@@ -2,7 +2,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, useLocation } from "react-router-dom";
 import Boletos from "./boletos/Boletos";
-import ConferenciaCaixa from "./conferecia-caixa/ConferenciaCaixa";
+import ConferenciaCaixa from "./conferencia-caixa/ConferenciaCaixa";
 import ImportacoesTab from "./importacoes/ImportacoesTab";
 
 const ControleCaixaPage = () => {

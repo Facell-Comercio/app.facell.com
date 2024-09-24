@@ -14,7 +14,6 @@ import {
 import { useState } from "react";
 import ModalLogsMovimentoArquivos from "../../components/ModalLogsMovimentoArquivos";
 import ImportacaoItem from "./components/ImportacaoItem";
-import ModalLogImportacaoRelatorios from "./components/ModalLogImportacaoRelatorios";
 import ImportacaoCaixasLote from "./components/ImportacaoCaixasLote";
 import { checkUserPermission } from "@/helpers/checkAuthorization";
 

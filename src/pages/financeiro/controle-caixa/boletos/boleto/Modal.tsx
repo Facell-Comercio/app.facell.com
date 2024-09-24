@@ -29,7 +29,7 @@ import ModalContasBancarias, {
 } from "@/pages/financeiro/components/ModalContasBancarias";
 import { copyToClipboard } from "@/pages/financeiro/contas-pagar/titulos/titulo/helpers/helper";
 import { useQueryClient } from "@tanstack/react-query";
-import { CircleX, Copy, Download, Eye } from "lucide-react";
+import { CircleX, Copy, CopyCheck, Download, Eye } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { TbCurrencyReal } from "react-icons/tb";
@@ -41,17 +41,17 @@ export type NewBoletoProps = {
   valor?: string;
 };
 
-type CaixaProps = {
-  id?: string;
-  data?: string;
-  saldo?: string;
-  saldo_no_boleto?: string;
-  saldo_final?: string;
-  status?: string;
-};
+// type CaixaProps = {
+//   id?: string;
+//   data?: string;
+//   saldo?: string;
+//   saldo_no_boleto?: string;
+//   saldo_final?: string;
+//   status?: string;
+// };
 
 const ModalBoleto = () => {
-  const [modalOpen, closeModal, id, isPending, setIsPending] = useStoreBoleto((state) => [
+  const [modalOpen, closeModal, id, setIsPending] = useStoreBoleto((state) => [
     state.modalOpen,
     state.closeModal,
     state.id,
@@ -59,6 +59,8 @@ const ModalBoleto = () => {
     state.setIsPending,
   ]);
   const formRef = useRef<HTMLFormElement | null>(null);
+
+  const baseURL = import.meta.env.VITE_BASE_URL_API;
 
   const { data } = useConferenciasCaixa().getOneBoleto(id);
 
@@ -73,6 +75,22 @@ const ModalBoleto = () => {
 
   const [modalContaBancariaOpen, setModalContaBancariaOpen] = useState<boolean>(false);
   const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] = useState<boolean>(false);
+  const [linkCopiado, setLinkCopiado] = useState<boolean>(false);
+  
+  const handleCopyLink = async ()=>{
+    try {
+      
+      await copyToClipboard(`${baseURL}/visualizar.boleto.caixa?id=${data?.id}`);
+      setLinkCopiado(true)
+    } catch (error) {
+      
+    }finally{
+      setTimeout(()=>{
+        setLinkCopiado(false)
+      }, 3000)
+    }
+      
+  }
 
   async function handleSelectionContaBancaria(conta_bancaria: ItemContaBancariaProps) {
     try {
@@ -119,7 +137,7 @@ const ModalBoleto = () => {
   function handleClickCancel() {
     closeModal();
   }
-  const baseURL = import.meta.env.VITE_BASE_URL_API;
+
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent className="max-w-3xl">
@@ -128,18 +146,24 @@ const ModalBoleto = () => {
             Boleto: {id}
             <span className="flex gap-2">
               <Button
-                onClick={async () => {
-                  await copyToClipboard(`${baseURL}visualizar.boleto.caixa?id=${data?.id}`);
-                }}
+                onClick={handleCopyLink}
                 size={"xs"}
-                variant={"secondary"}
+                variant={linkCopiado ? "success" : "secondary"}
               >
-                <Copy size={14} className="me-1" />
-                Copiar Link
+                {linkCopiado ? <>
+                  <CopyCheck size={14} className="me-1" />
+                  Copiado!
+                </>
+                  :
+                  <>
+                    <Copy size={14} className="me-1" />
+                    Copiar Link
+                  </>
+                }
               </Button>
               <Button
                 onClick={() => {
-                  window.open(`${baseURL}visualizar.boleto.caixa?id=${data?.id}`, "_blank");
+                  window.open(`${baseURL}/visualizar.boleto.caixa?id=${data?.id}`, "_blank");
                 }}
                 size={"xs"}
                 variant={"secondary"}

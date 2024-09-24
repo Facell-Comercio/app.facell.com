@@ -24,10 +24,8 @@ export function badgeVariantCaixaClass(status?: string) {
     return "bg-success hover:bg-success hover:opacity-90 text-white";
   } else if (status === "CONFIRMADO") {
     return "bg-primary hover:bg-primary hover:opacity-90 text-white";
-  } else if (status === "CONFIRMADO") {
-    return "bg-violet-500 hover:bg-violet-500 hover:opacity-90 text-white";
   } else {
-    undefined;
+    return "";
   }
 }
 const openModal = useStoreCaixa.getState().openModal;
