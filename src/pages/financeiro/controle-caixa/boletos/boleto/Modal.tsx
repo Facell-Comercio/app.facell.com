@@ -55,7 +55,6 @@ const ModalBoleto = () => {
     state.modalOpen,
     state.closeModal,
     state.id,
-    state.isPending,
     state.setIsPending,
   ]);
   const formRef = useRef<HTMLFormElement | null>(null);

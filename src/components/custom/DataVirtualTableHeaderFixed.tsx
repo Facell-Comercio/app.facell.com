@@ -62,7 +62,7 @@ export const DataVirtualTableHeaderFixed = ({
         <div
           ref={parentRef}
           className={cn(
-            `h-[200px] overflow-auto scroll-thin   z-50 relative min-w-full`,
+            `h-[200px] overflow-auto scroll-thin z-50 relative min-w-full`,
             className
           )}
         >

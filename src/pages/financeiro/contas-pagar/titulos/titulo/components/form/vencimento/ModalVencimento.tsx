@@ -139,7 +139,7 @@ export function ModalVencimento({
               return acc + parseFloat(curr.valor);
             }, 0) || 0) + parseFloat(data.valor);
         const dif = totalPrevisto - valorTotalTitulo;
-        if (dif > 0) {
+        if (dif > 0 && totalPrevisto.toFixed(2) != valorTotalTitulo.toFixed(2)) {
           const difFormatada = normalizeCurrency(dif);
           toast({
             variant: "destructive",
@@ -155,7 +155,7 @@ export function ModalVencimento({
           return acc + parseFloat(curr.valor);
         }, 0) || 0) + parseFloat(data.valor);
       const dif = totalPrevisto - valorTotalTitulo;
-      if (dif > 0) {
+      if (dif > 0 && totalPrevisto.toFixed(2) != valorTotalTitulo.toFixed(2)) {
         const difFormatada = normalizeCurrency(dif);
         toast({
           variant: "destructive",
