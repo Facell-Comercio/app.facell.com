@@ -98,7 +98,7 @@ const FiltersBoletos = ({ refetch }: { refetch: () => void }) => {
                   refetch();
                 }}
                 maxCount={2}
-                isLojaTim
+                isLojaTim={true}
                 nowrap
               />
               <Select
