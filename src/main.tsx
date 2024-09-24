@@ -37,31 +37,31 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
 // main.tsx ou main.js
 
-if ("serviceWorker" in navigator && "PushManager" in window) {
-  window.addEventListener("load", async () => {
-    try {
-      const registration = await navigator.serviceWorker.register("/service-worker.js");
+// if ("serviceWorker" in navigator && "PushManager" in window) {
+//   window.addEventListener("load", async () => {
+//     try {
+//       const registration = await navigator.serviceWorker.register("/service-worker.js");
 
-      console.log("Service Worker registered with scope:", registration.scope);
+//       console.log("Service Worker registered with scope:", registration.scope);
 
-      // Solicita permissão para enviar notificações
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        console.log("Permissão concedida para notificações.");
+//       // Solicita permissão para enviar notificações
+//       const permission = await Notification.requestPermission();
+//       if (permission === "granted") {
+//         console.log("Permissão concedida para notificações.");
 
-        // Subscribe ao Push Manager
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true, // A notificação sempre será visível para o usuário
-          applicationServerKey: "YOUR_PUBLIC_VAPID_KEY", // Substitua pela sua chave pública VAPID
-        });
+//         // Subscribe ao Push Manager
+//         const subscription = await registration.pushManager.subscribe({
+//           userVisibleOnly: true, // A notificação sempre será visível para o usuário
+//           applicationServerKey: "YOUR_PUBLIC_VAPID_KEY", // Substitua pela sua chave pública VAPID
+//         });
 
-        console.log("Push subscription:", JSON.stringify(subscription));
-        // Envie a assinatura para o servidor, que será usada para enviar notificações push.
-      } else {
-        console.log("Permissão para notificações não foi concedida.");
-      }
-    } catch (error) {
-      console.error("Falha ao registrar o Service Worker ou Push Manager:", error);
-    }
-  });
-}
+//         console.log("Push subscription:", JSON.stringify(subscription));
+//         // Envie a assinatura para o servidor, que será usada para enviar notificações push.
+//       } else {
+//         console.log("Permissão para notificações não foi concedida.");
+//       }
+//     } catch (error) {
+//       console.error("Falha ao registrar o Service Worker ou Push Manager:", error);
+//     }
+//   });
+// }
