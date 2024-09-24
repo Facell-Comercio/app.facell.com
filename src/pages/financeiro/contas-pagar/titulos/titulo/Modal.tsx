@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
@@ -79,7 +79,7 @@ const ModalTituloPagar = ({
       valor: recorrencia.valor,
       cod_barras: "",
       qr_code: "",
-      id: id_vencimento_recorrencia,
+      id: 'fake',
     });
   }
 
@@ -182,6 +182,7 @@ const ModalTituloPagar = ({
               ? `Solicitação: ${id}`
               : "Nova Solicitação"}
           </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
           <BtnCopiarTitulo copyData={modalData} />
           {podeCriarRecorrencia && <BtnCriarRecorrencia form={form} />}
         </DialogHeader>

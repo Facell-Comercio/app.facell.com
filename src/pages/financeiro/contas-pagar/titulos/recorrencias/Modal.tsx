@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -162,6 +163,7 @@ const ModalRecorrencias = () => {
               Exportar
             </Button>
           </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
           <div className="flex gap-2 flex-wrap sm:flex-nowrap">
             <SelectMes
               placeholder="Selecione o mês..."

@@ -41,21 +41,20 @@ export type NewBoletoProps = {
   valor?: string;
 };
 
-type CaixaProps = {
-  id?: string;
-  data?: string;
-  saldo?: string;
-  saldo_no_boleto?: string;
-  saldo_final?: string;
-  status?: string;
-};
+// type CaixaProps = {
+//   id?: string;
+//   data?: string;
+//   saldo?: string;
+//   saldo_no_boleto?: string;
+//   saldo_final?: string;
+//   status?: string;
+// };
 
 const ModalBoleto = () => {
-  const [modalOpen, closeModal, id, isPending, setIsPending] = useStoreBoleto((state) => [
+  const [modalOpen, closeModal, id, setIsPending] = useStoreBoleto((state) => [
     state.modalOpen,
     state.closeModal,
     state.id,
-    state.isPending,
     state.setIsPending,
   ]);
   const formRef = useRef<HTMLFormElement | null>(null);
