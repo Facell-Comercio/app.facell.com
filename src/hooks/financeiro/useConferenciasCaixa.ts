@@ -29,6 +29,8 @@ export type AjustesProps = {
   obs?: string;
   aprovado?: string;
   id_user_aprovador?: string;
+  filial?: string;
+  data_caixa?: string | Date;
 };
 
 export type MovimentoCaixaProps = {
@@ -177,7 +179,7 @@ export const useConferenciasCaixa = () => {
 
     getAllAjustes: (params?: GetAllParams) =>
       useQuery({
-        enabled: !!params?.filters.id_caixa,
+        enabled: !!params?.filters,
         queryKey: ["financeiro", "conferencia_de_caixa", "caixas", "ajustes", "list", [params]],
         queryFn: async () =>
           await api
