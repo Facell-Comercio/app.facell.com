@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import ModalContasBancarias from "@/pages/financeiro/components/ModalContasBancarias";
 import ModalTituloPagar from "@/pages/financeiro/contas-pagar/titulos/titulo/Modal";
-import { useStoreTitulo } from "@/pages/financeiro/contas-pagar/titulos/titulo/store";
+import { useStoreTituloPagar } from "@/pages/financeiro/contas-pagar/titulos/titulo/store";
 import { ContaBancaria } from "@/pages/financeiro/extratos-bancarios/context";
 import { useEffect, useState } from "react";
 
@@ -21,7 +21,7 @@ export default function BtnDespesa({
   const { mutate: lancamentoDespesa } = useConferenciasCaixa().lancamentoDespesa();
 
   // State do Título
-  const [openModalTitulo, closeModalTitulo] = useStoreTitulo((state) => [
+  const [openModalTitulo, closeModalTitulo] = useStoreTituloPagar((state) => [
     state.openModal,
     state.closeModal,
   ]);

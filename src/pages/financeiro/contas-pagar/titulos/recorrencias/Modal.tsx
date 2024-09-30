@@ -45,7 +45,7 @@ import {
   Plus,
   Trash,
 } from "lucide-react";
-import { useStoreTitulo } from "../titulo/store";
+import { useStoreTituloPagar } from "../titulo/store";
 import ModalEditarRecorrencias from "./ModalEditarRecorrencia";
 import { useStoreRecorrencias } from "./store";
 import { useMemo } from "react";
@@ -80,7 +80,7 @@ const ModalRecorrencias = () => {
   ]);
 
   const openModal =
-    useStoreTitulo.getState().openModal;
+    useStoreTituloPagar.getState().openModal;
 
   const { data, isLoading, refetch } =
     useTituloPagar().getRecorrencias({
