@@ -30,11 +30,11 @@ type FiltersReceptores = {
     email: string,
 }
 export default function ModalReceptoresBoletos() {
-    const [pagination, setPagination] = useState<Pagination>({ pageIndex: 0, pageSize: 15 })
+    const [pagination, setPagination] = useState<Pagination>({ pageIndex: 0, pageSize: 10 })
     const [filters, setFilters] = useState<FiltersReceptores>({ filiais_list: [], email: '' })
 
     const { data, isLoading, refetch } = useQuery({
-        queryKey: ["financeiro", "controle_de_caixa", "boletos", "receptores", "list", { filters }],
+        queryKey: ["financeiro", "controle_de_caixa", "boletos", "receptores", "list", { filters, pagination }],
         queryFn: async () => {
             const result = await api.get('/financeiro/controle-de-caixa/boletos/receptores/', { params: { filters, pagination } })
             return result.data;
@@ -124,7 +124,6 @@ export default function ModalReceptoresBoletos() {
                         </div>
                     </div>
                 </div>
-                
                 {/* Table */}
                 <DataTable
                     pagination={pagination}
@@ -134,7 +133,6 @@ export default function ModalReceptoresBoletos() {
                     rowCount={data?.rowCount || 0}
                     isLoading={isLoading}
                 />
-
             </DialogContent>
         </Dialog>
     )
