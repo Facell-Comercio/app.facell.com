@@ -23,6 +23,7 @@ import ControleCaixaPage from "./pages/financeiro/controle-caixa/ControleCaixaPa
 import Caixas from "./pages/financeiro/controle-caixa/conferencia-caixa/caixas/Caixas.tsx";
 import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
 import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
+import TesourariaPage from "./pages/financeiro/tesouraria/Tesouraria.tsx";
 import Perfil from "./pages/perfil/index.tsx";
 import Colaboradores from "./pages/pessoal/colaboradores/Colaboradores.tsx";
 import { VideoAulaPage } from "./pages/treinamento/videoaula/Page.tsx";
@@ -49,13 +50,7 @@ const AppRoutes = () => {
           {/* Pessoal */}
           <Route path="/pessoal/">
             <Route
-              element={
-                checkUserPermission("MASTER") ? (
-                  <Colaboradores />
-                ) : (
-                  <NotAuthorizedPage />
-                )
-              }
+              element={checkUserPermission("MASTER") ? <Colaboradores /> : <NotAuthorizedPage />}
               path="colaboradores"
             />
           </Route>
@@ -80,22 +75,14 @@ const AppRoutes = () => {
               </Route>
             </Route>
             <Route element={<OrcamentoPage />} path="orcamento" />
-            <Route
-              element={<ConciliacaoBancariaPage />}
-              path="conciliacao-bancaria"
-            />
+            <Route element={<ConciliacaoBancariaPage />} path="conciliacao-bancaria" />
+            <Route element={<TesourariaPage />} path="tesouraria" />
             <Route element={<CadastrosPage />} path="cadastros" />
           </Route>
 
           {/* Administração */}
           <Route
-            element={
-              checkUserPermission("MASTER") ? (
-                <AdminPage />
-              ) : (
-                <NotAuthorizedPage />
-              )
-            }
+            element={checkUserPermission("MASTER") ? <AdminPage /> : <NotAuthorizedPage />}
             path="administracao"
           />
 
