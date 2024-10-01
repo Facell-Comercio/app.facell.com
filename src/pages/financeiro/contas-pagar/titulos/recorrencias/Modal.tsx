@@ -50,6 +50,7 @@ import ModalEditarRecorrencias from "./ModalEditarRecorrencia";
 import { useStoreRecorrencias } from "./store";
 import { useMemo } from "react";
 import { formatDate } from "date-fns";
+import { Switch } from "@/components/ui/switch";
 
 type recorrenciaProps = {
   id: string;
@@ -166,6 +167,7 @@ const ModalRecorrencias = () => {
           <DialogDescription className="hidden"></DialogDescription>
           <div className="flex gap-2 flex-wrap sm:flex-nowrap">
             <SelectMes
+            className="max-w-32"
               placeholder="Selecione o mês..."
               value={filters.mes?.toString()}
               onValueChange={async (mes) => {
@@ -179,6 +181,7 @@ const ModalRecorrencias = () => {
             />
             <Input
               type="number"
+              className="max-w-32"
               step={"1"}
               min={2023}
               placeholder="Digite o ano"
@@ -204,7 +207,7 @@ const ModalRecorrencias = () => {
             >
               {/* Estilização sendo usada no cadastro de orçamentos */}
               <SelectTrigger
-                className={`min-w-fit`}
+                className={`max-w-32`}
               >
                 <SelectValue placeholder="Selecione a matriz" />
               </SelectTrigger>
@@ -213,23 +216,30 @@ const ModalRecorrencias = () => {
                   className="text-left"
                   value={"0"}
                 >
-                  TODAS RECORRÊNCIAS
+                  TODAS
                 </SelectItem>
                 <SelectItem
                   className="text-left"
                   value={"1"}
                 >
-                  RECORRÊNCIAS A LANÇAR
+                  A LANÇAR
                 </SelectItem>
               </SelectContent>
             </Select>
+            
             <Input
               type="search"
               value={filters.termo}
               onChange={(e) => setFilters({ termo: e.target.value })}
               placeholder="Pesquisar..."
               title="PROCURAR FORNECEDOR, GRUPO, FILIAL, VENCIMENTO, DESCRIÇÃO..."
+              className="max-w-72"
             />
+
+            <span className="min-w-40 flex items-center text-nowrap gap-2">
+              <label>Apenas as minhas</label>
+              <Switch checked={filters.ownerOnly} onCheckedChange={(val)=>{setFilters({ownerOnly: val})}}/>
+            </span>
           </div>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">

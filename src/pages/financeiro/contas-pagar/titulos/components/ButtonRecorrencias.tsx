@@ -5,7 +5,7 @@ import { Repeat2 } from "lucide-react";
 import { useStoreRecorrencias } from "../recorrencias/store";
 
 const ButtonRecorrencias = () => {
-  const { data } = useTituloPagar().getRecorrencias({ filters: {} });
+  const { data } = useTituloPagar().getRecorrencias({ filters: { ownerOnly: true } });
   const openModalRecorrencias = useStoreRecorrencias().openModal;
   const recorrencias = data?.data?.rows || [];
   // @ts-ignore
