@@ -81,8 +81,11 @@ export const columnsTableMovimentacao: ColumnDef<RowConferenciaCaixa>[] = [
     header: "Tipo",
     accessorKey: "tipo_transacao",
     cell: (info) => {
-      const label = info.getValue<string>() === "CREDIT" ? "CRÉDITO" : "DÉBITO";
-      return <span className="uppercase">{label}</span>;
+      const isCredit = info.getValue<string>() === "CREDIT";
+      const label = isCredit ? "CRÉDITO" : "DÉBITO";
+      return (
+        <span className={`uppercase ${isCredit ? "text-success" : "text-red-500"}`}>{label}</span>
+      );
     },
   },
   {
@@ -98,7 +101,12 @@ export const columnsTableMovimentacao: ColumnDef<RowConferenciaCaixa>[] = [
     accessorKey: "valor",
     cell: (info) => {
       const label = info.getValue<number>();
-      return <span>{normalizeCurrency(label)}</span>;
+      const isCredit = label >= 0;
+      return (
+        <span className={`${isCredit ? "text-success" : "text-red-500"}`}>
+          {normalizeCurrency(label)}
+        </span>
+      );
     },
   },
 ];
