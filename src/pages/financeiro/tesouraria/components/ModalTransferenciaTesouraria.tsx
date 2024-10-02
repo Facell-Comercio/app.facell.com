@@ -56,7 +56,6 @@ const ModalTransferenciaTesouraria = () => {
 
   const onSubmitData = (data: TransferenciaTesourariaSchema) => {
     transferSaldo(data);
-    console.log(data);
   };
 
   function handleClickCancel() {

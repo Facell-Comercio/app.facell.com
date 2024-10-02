@@ -4,12 +4,7 @@ import { api } from "@/lib/axios";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/borderos/bordero/Modal";
 import { GetAllParams } from "@/types/query-params-type";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 type TransferDataProps = {
@@ -26,6 +21,7 @@ type DownloadRemessaProps = {
 type reverseManualPaymentProps = {
   id?: string | null;
   tipo?: string;
+  forma_pagamento?: string;
 };
 
 type ImportRetornoRemessaProps = {
@@ -38,14 +34,7 @@ export const useBordero = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: [
-          "financeiro",
-          "contas_pagar",
-          "bordero",
-          "lista",
-
-          pagination,
-        ],
+        queryKey: ["financeiro", "contas_pagar", "bordero", "lista", pagination],
         queryFn: async () => {
           return await api.get(`/financeiro/contas-a-pagar/bordero/`, {
             params: { pagination, filters },
@@ -121,12 +110,9 @@ export const useBordero = () => {
 
     reverseManualPayment: () =>
       useMutation({
-        mutationFn: async ({ id, tipo }: reverseManualPaymentProps) => {
+        mutationFn: async ({ id, ...rest }: reverseManualPaymentProps) => {
           return await api
-            .put(
-              `/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`,
-              { tipo }
-            )
+            .put(`/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`, { ...rest })
             .then((response) => response.data);
         },
         onSuccess() {
@@ -214,9 +200,7 @@ export const useBordero = () => {
 
     deleteBordero: () =>
       useMutation({
-        mutationFn: async (params: {
-          id: string | null | undefined | number;
-        }) => {
+        mutationFn: async (params: { id: string | null | undefined | number }) => {
           const { id } = params;
           return await api
             .delete(`/financeiro/contas-a-pagar/bordero/${id}`)
