@@ -90,7 +90,7 @@ const InputWithLabel = ({
   return (
     <div className={`flex gap-2 flex-col ${className}`}>
       <label className={`text-sm font-medium ${labelClass}`}>{label}</label>
-      <span>
+      <span className={`flex ${iconLeft && "flex-row-reverse"}`}>
         <Input
           {...props}
           className={`${inputClass} ${

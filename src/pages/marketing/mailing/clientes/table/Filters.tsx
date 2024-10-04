@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EraserIcon, FilterIcon } from "lucide-react";
+import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreTableClientes } from "./store-table";
 
 const defaultValuesGrupoEstoque = [
@@ -100,7 +101,7 @@ const FilterClientes = ({ refetch }: { refetch: () => void }) => {
           </div>
 
           <div className="w-full gap-2">
-            <label className="text-sm font-medium">Data de Pagamento</label>
+            <label className="text-sm font-medium">Data da Compra</label>
             <InputDate
               className="mt-2 w-full"
               value={filters.data_pedido || ""}
@@ -115,15 +116,23 @@ const FilterClientes = ({ refetch }: { refetch: () => void }) => {
               </AccordionTrigger>
               <AccordionContent className="flex gap-2 flex-col p-2">
                 <InputWithLabel
+                  iconLeft
+                  iconClass="bg-secondary"
+                  icon={TbCurrencyReal}
                   label="Valo Mínimo"
                   value={filters.valor_minimo || ""}
                   onChange={(e) => setFilters({ valor_minimo: e.target.value })}
                   labelClass="text-xs"
                   type="number"
                   step="0.01"
+                  min={0}
                 />
                 <InputWithLabel
+                  iconLeft
+                  iconClass="bg-secondary"
+                  icon={TbCurrencyReal}
                   label="Valor Máximo"
+                  min={parseFloat(filters.valor_minimo || "0")}
                   value={filters.valor_maximo || ""}
                   onChange={(e) => setFilters({ valor_maximo: e.target.value })}
                   labelClass="text-xs"
@@ -140,12 +149,12 @@ const FilterClientes = ({ refetch }: { refetch: () => void }) => {
             onChange={(e) => setFilters({ filial: e.target.value })}
           />
           <InputWithLabel
-            label="Descrição"
+            label="Descrição Produto"
             value={filters.descricao || ""}
             onChange={(e) => setFilters({ descricao: e.target.value })}
           />
           <InputWithLabel
-            label="Plano Anterior"
+            label="Plano Habilitado"
             value={filters.plano_habilitacao || ""}
             onChange={(e) => setFilters({ plano_habilitacao: e.target.value })}
           />

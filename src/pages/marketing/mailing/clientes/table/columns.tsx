@@ -1,6 +1,6 @@
-import { normalizeCnpjNumber, normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
-import { useStoreCliente } from "../cliente/store";
+// import { useStoreCliente } from "../cliente/store";
 // import { useStoreClientes } from "../orcamento/store";
 
 // This type is used to define the shape of our data.
@@ -19,7 +19,7 @@ export type RowClientes = {
   area: string;
 };
 
-const openModal = useStoreCliente.getState().openModal;
+// const openModal = useStoreCliente.getState().openModal;
 
 // ^ Realizar a filtragem dinâmica para a apresentação do grupo econômico ++ Liberar ou não a visualização para o usuário dependendo da quantidade de centro de custos dele
 
@@ -36,12 +36,12 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     header: "CPF DO CLIENTE",
     accessorKey: "cpf",
     cell: (info) => {
-      const label = normalizeCnpjNumber(info.getValue<string>());
+      const label = info.getValue<string>();
       return <span title={label}>{label}</span>;
     },
   },
   {
-    header: "DATA DA ÚLTIMA COMPRA",
+    header: "DATA DA COMPRA",
     accessorKey: "data_ultima_compra",
     cell: (info) => {
       const label = normalizeDate(info.getValue<string>());
@@ -49,7 +49,7 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     },
   },
   {
-    header: "PLANO ANTERIOR",
+    header: "PLANO HABILITADO",
     accessorKey: "plano_habilitado",
     cell: (info) => {
       const label = info.getValue<string>();
@@ -57,7 +57,7 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     },
   },
   {
-    header: "APARELHO DA ÚLTIMA COMPRA",
+    header: "DESCRICÃO PRODUTO",
     accessorKey: "produto_ultima_compra",
     cell: (info) => {
       const label = info.getValue<string>();
@@ -65,7 +65,7 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     },
   },
   {
-    header: "ÚLTIMO DESCONTO RECEBIDO",
+    header: "DESCONTO RECEBIDO",
     accessorKey: "desconto_plano",
     cell: (info) => {
       const label = normalizeCurrency(info.getValue<string>());
@@ -81,7 +81,7 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     },
   },
   {
-    header: "LOJA DA ÚLTIMA COMPRA",
+    header: "FILIAL",
     accessorKey: "filial",
     cell: (info) => {
       const label = info.getValue<string>();

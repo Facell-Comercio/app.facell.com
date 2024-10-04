@@ -30,7 +30,7 @@ const initialFilters: Filters = {
   subgrupo: "",
   areas: [],
   data_pedido: "",
-  valor_minimo: "",
+  valor_minimo: "0.00",
   valor_maximo: "",
   filial: "",
   descricao: "",
