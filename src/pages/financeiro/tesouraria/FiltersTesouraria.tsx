@@ -13,15 +13,15 @@ import { EraserIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
 import { useStoreTableTesouraria } from "./table/store-table";
 
-const status = [
-  { label: "AGUARDANDO EMISSÃO", value: "aguardando_emissao" },
-  { label: "EMITIDO", value: "emitido" },
-  { label: "EM PAGAMENTO", value: "em_pagamento" },
-  { label: "PAGO", value: "pago" },
-  { label: "CANCELADO", value: "cancelado" },
-  { label: "ATRASADO", value: "atrasado" },
-  { label: "ERRO", value: "erro" },
-];
+// const status = [
+//   { label: "AGUARDANDO EMISSÃO", value: "aguardando_emissao" },
+//   { label: "EMITIDO", value: "emitido" },
+//   { label: "EM PAGAMENTO", value: "em_pagamento" },
+//   { label: "PAGO", value: "pago" },
+//   { label: "CANCELADO", value: "cancelado" },
+//   { label: "ATRASADO", value: "atrasado" },
+//   { label: "ERRO", value: "erro" },
+// ];
 
 const FiltersTesouraria = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableTesouraria((state) => state.filters);
