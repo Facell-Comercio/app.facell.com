@@ -17,9 +17,15 @@ export type TransferenciaTesourariaSchema = {
   valor_transferir?: string;
 };
 
-export type AdiantamentoTesourariaSchema = {
+export type TransacaoTesourariaSchema = {
+  id?: string;
   descricao: string;
   valor: string;
+  id_conta_bancaria: string;
+};
+
+export type FechamentoTesourariaSchema = {
+  data_fechamento?: Date;
   id_conta_bancaria: string;
 };
 
@@ -44,6 +50,17 @@ export const useTesouraria = () => {
         queryFn: async () => {
           return await api
             .get(`/financeiro/tesouraria/${id}`, { params })
+            .then((response) => response.data);
+        },
+        placeholderData: keepPreviousData,
+      }),
+    getOneTransacao: (id: string) =>
+      useQuery({
+        enabled: !!id,
+        queryKey: ["financeiro", "tesouraria", "transacao", "detalhe", [id]],
+        queryFn: async () => {
+          return await api
+            .get(`/financeiro/tesouraria/transacao/${id}`)
             .then((response) => response.data);
         },
         placeholderData: keepPreviousData,
@@ -77,11 +94,101 @@ export const useTesouraria = () => {
           });
         },
       }),
-    adiantamento: () =>
+    insertAdiantamento: () =>
       useMutation({
-        mutationFn: async (data: AdiantamentoTesourariaSchema) => {
+        mutationFn: async (data: TransacaoTesourariaSchema) => {
           return await api
             .post(`/financeiro/tesouraria/adiantamento`, data)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "tesouraria"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    insertSuprimento: () =>
+      useMutation({
+        mutationFn: async (data: TransacaoTesourariaSchema) => {
+          return await api
+            .post(`/financeiro/tesouraria/suprimento`, data)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "tesouraria"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    fechamento: () =>
+      useMutation({
+        mutationFn: async (data: FechamentoTesourariaSchema) => {
+          return await api
+            .put(`/financeiro/tesouraria/data-fechamento`, data)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "tesouraria"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    updateTransacao: () =>
+      useMutation({
+        mutationFn: async (data: TransacaoTesourariaSchema) => {
+          return await api
+            .put(`/financeiro/tesouraria/transacao`, data)
             .then((response) => response.data);
         },
         onSuccess() {
@@ -117,6 +224,36 @@ export const useTesouraria = () => {
         onSuccess() {
           queryClient.invalidateQueries({
             queryKey: ["financeiro"],
+          });
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+        },
+        onError(error) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    deleteTransacao: () =>
+      useMutation({
+        mutationFn: async (id: string) => {
+          return await api
+            .delete(`/financeiro/tesouraria/transacao/${id}`)
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ["financeiro", "tesouraria"],
           });
           toast({
             variant: "success",

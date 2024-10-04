@@ -25,28 +25,30 @@ const initialDataForm: TransacaoTesourariaSchema = {
   id_conta_bancaria: "",
 };
 
-const ModalAdiantamento = () => {
+const ModalSuprimento = () => {
   const [modalOpen, closeModal, setIsPending, id_conta_bancaria, id_extrato_bancario] =
     useStoreTesouraria((state) => [
-      state.modalAdiantamentoOpen,
-      state.closeAdiantamentoModal,
+      state.modalSuprimentoOpen,
+      state.closeSuprimentoModal,
       state.setIsPending,
       state.id,
       state.id_extrato_bancario,
     ]);
 
   const { data } = useTesouraria().getOneTransacao(id_extrato_bancario || "");
+
+  console.log("DATA", data);
   const formRef = useRef<HTMLFormElement | null>(null);
   const [formData, setFormData] = useState<TransacaoTesourariaSchema>(
-    id_extrato_bancario ? data : initialDataForm
+    id_extrato_bancario && data ? data : initialDataForm
   );
 
   const {
-    mutate: insertAdiantamento,
-    isPending: insertAdiantamentoIsPending,
-    isSuccess: insertAdiantamentoIsSuccess,
-    isError: insertAdiantamentoIsError,
-  } = useTesouraria().insertAdiantamento();
+    mutate: insertSuprimento,
+    isPending: insertSuprimentoIsPending,
+    isSuccess: insertSuprimentoIsSuccess,
+    isError: insertSuprimentoIsError,
+  } = useTesouraria().insertSuprimento();
 
   const {
     mutate: updateTransacao,
@@ -63,14 +65,14 @@ const ModalAdiantamento = () => {
     if (!formData.descricao || !formData.valor) {
       toast({
         title: "Dados insuficientes!",
-        description: "Defina qual será a descrição e o valor do adiantamento",
+        description: "Defina qual será a descrição e o valor do suprimento",
         variant: "destructive",
       });
       return;
     }
 
     if (!id_extrato_bancario) {
-      insertAdiantamento({ ...formData, id_conta_bancaria: id_conta_bancaria || "" });
+      insertSuprimento({ ...formData, id_conta_bancaria: id_conta_bancaria || "" });
     }
     if (id_extrato_bancario) {
       updateTransacao(formData);
@@ -83,15 +85,15 @@ const ModalAdiantamento = () => {
   }, [modalOpen, data]);
 
   useEffect(() => {
-    if (insertAdiantamentoIsSuccess) {
+    if (insertSuprimentoIsSuccess) {
       closeModal();
       setIsPending(false);
-    } else if (insertAdiantamentoIsPending) {
+    } else if (insertSuprimentoIsPending) {
       setIsPending(true);
-    } else if (insertAdiantamentoIsError) {
+    } else if (insertSuprimentoIsError) {
       setIsPending(false);
     }
-  }, [insertAdiantamentoIsPending]);
+  }, [insertSuprimentoIsPending]);
 
   useEffect(() => {
     if (updateTransacaoIsSuccess) {
@@ -109,7 +111,7 @@ const ModalAdiantamento = () => {
       <DialogContent className="max-w-fit xl:min-w-1">
         <DialogHeader>
           <DialogTitle className="flex justify-between pe-4">
-            {id_extrato_bancario ? `Adiantamento: ${id_extrato_bancario}` : "Novo adiantamento:"}
+            {id_extrato_bancario ? `Suprimento: ${id_extrato_bancario}` : "Novo suprimento:"}
           </DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
@@ -128,12 +130,7 @@ const ModalAdiantamento = () => {
               <Textarea
                 maxLength={250}
                 value={formData.descricao || ""}
-                onChange={(e) =>
-                  setFormData((prev: TransacaoTesourariaSchema) => ({
-                    ...prev,
-                    descricao: e.target.value,
-                  }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, descricao: e.target.value }))}
               />
             </span>
             <span className="flex flex-1 flex-col gap-2">
@@ -169,4 +166,4 @@ const ModalAdiantamento = () => {
   );
 };
 
-export default ModalAdiantamento;
+export default ModalSuprimento;
