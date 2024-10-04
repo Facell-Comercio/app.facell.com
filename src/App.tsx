@@ -11,7 +11,7 @@ import { api } from "./lib/axios";
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(`/service-worker.js?v=1.0.0`).then((serviceWorker) => {
-      serviceWorker.update().then((value) => console.log(value));
+      serviceWorker.update();
       const user = useAuthStore.getState().user;
       serviceWorker.pushManager.getSubscription().then(async (subscription) => {
         if (!subscription) {

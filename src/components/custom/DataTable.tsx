@@ -42,9 +42,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   rowCount: number;
   pagination?: PaginationState;
-  setPagination?: (
-    pagination: PaginationState
-  ) => void;
+  setPagination?: (pagination: PaginationState) => void;
   rowSelection?: RowSelectionState;
   handleRowSelection?: (data: any) => void;
   isLoading?: boolean;
@@ -61,8 +59,7 @@ export function DataTable<TData, TValue>({
   handleRowSelection,
   isLoading,
 }: DataTableProps<TData, TValue>) {
-  const [valorTotal, setValorTotal] =
-    useState<number>(0);
+  const [valorTotal, setValorTotal] = useState<number>(0);
 
   const table = useReactTable({
     data,
@@ -109,24 +106,22 @@ export function DataTable<TData, TValue>({
   function calcularTotal() {
     const valorTotalCalculado =
       sumField !== undefined
-        ? table
-            .getFilteredSelectedRowModel()
-            .rows.reduce((acc, curr) => {
-              if (
-                curr.original &&
-                // @ts-ignore
-                curr.original[sumField]
-              ) {
-                return (
-                  acc +
-                  parseFloat(
-                    // @ts-ignore
-                    curr.original[sumField]
-                  )
-                );
-              }
-              return acc;
-            }, 0)
+        ? table.getFilteredSelectedRowModel().rows.reduce((acc, curr) => {
+            if (
+              curr.original &&
+              // @ts-ignore
+              curr.original[sumField]
+            ) {
+              return (
+                acc +
+                parseFloat(
+                  // @ts-ignore
+                  curr.original[sumField]
+                )
+              );
+            }
+            return acc;
+          }, 0)
         : 0;
     setValorTotal(valorTotalCalculado);
   }
@@ -145,93 +140,54 @@ export function DataTable<TData, TValue>({
     <div className="rounded-md border">
       <Table>
         <TableHeader>
-          {table
-            .getHeaderGroups()
-            .map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(
-                  (header) => {
-                    return (
-                      <TableHead
-                        key={header.id}
-                        onClick={() =>
-                          header.column.toggleSorting()
-                        }
-                        className="text-nowrap cursor-pointer text-xs"
-                      >
-                        {header.isPlaceholder ? null : (
-                          <div>
-                            {flexRender(
-                              header.column
-                                .columnDef.header,
-                              header.getContext()
-                            )}
-                            {/* Se for do tipo id não reenderiza os ícones */}
-                            {header.column.getCanSort() &&
-                              header.column.getIsSorted() ===
-                                "asc" &&
-                              " 🔼"}
-                            {header.column.getCanSort() &&
-                              header.column.getIsSorted() ===
-                                "desc" &&
-                              " 🔽"}
-                          </div>
-                        )}
-                      </TableHead>
-                    );
-                  }
-                )}
-              </TableRow>
-            ))}
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead
+                    key={header.id}
+                    onClick={() => header.column.toggleSorting()}
+                    className="text-nowrap cursor-pointer text-xs"
+                  >
+                    {header.isPlaceholder ? null : (
+                      <div>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {/* Se for do tipo id não reenderiza os ícones */}
+                        {header.column.getCanSort() &&
+                          header.column.getIsSorted() === "asc" &&
+                          " 🔼"}
+                        {header.column.getCanSort() &&
+                          header.column.getIsSorted() === "desc" &&
+                          " 🔽"}
+                      </div>
+                    )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
         </TableHeader>
         <TableBody className="scroll-thin">
           {table.getRowModel().rows?.length ? (
-            table
-              .getRowModel()
-              .rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={
-                    row.getIsSelected() &&
-                    "selected"
-                  }
-                >
-                  {row
-                    .getVisibleCells()
-                    .map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className="text-xs"
-                      >
-                        {flexRender(
-                          cell.column.columnDef
-                            .cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                </TableRow>
-              ))
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id} className="text-xs">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
           ) : (
             <TableRow>
               {isLoading ? (
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   <span className="flex gap-2 w-full items-center justify-center">
-                    <FaSpinner
-                      size={18}
-                      className="me-2 animate-spin"
-                    />{" "}
-                    Carregando...
+                    <FaSpinner size={18} className="me-2 animate-spin" /> Carregando...
                   </span>
                 </TableCell>
               ) : (
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                ></TableCell>
+                <TableCell colSpan={columns.length} className="h-24 text-center"></TableCell>
               )}
             </TableRow>
           )}
@@ -244,26 +200,15 @@ export function DataTable<TData, TValue>({
             !handleRowSelection && "hidden"
           }`}
         >
-          {
-            table.getFilteredSelectedRowModel()
-              .rows.length
-          }{" "}
-          de{" "}
-          {
-            table.getFilteredRowModel().rows
-              .length
-          }{" "}
-          selecionado(s).{" "}
-          {sumField &&
-          table.getFilteredSelectedRowModel().rows
-            .length
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} selecionado(s).{" "}
+          {sumField && table.getFilteredSelectedRowModel().rows.length
             ? normalizeCurrency(valorTotal)
             : null}
         </div>
         <div
           className={`flex flex-row gap-3 items-center ${
-            !handleRowSelection &&
-            "w-full justify-between"
+            !handleRowSelection && "w-full justify-between"
           } sm:space-x-6 lg:space-x-8`}
         >
           <div className="flex items-center space-x-0 sm:space-x-2">
@@ -271,33 +216,17 @@ export function DataTable<TData, TValue>({
               Linhas por página
             </p>
             <Select
-              value={`${
-                table
-                  .getState()
-                  .pagination.pageSize?.toString() ||
-                ""
-              }`}
+              value={`${table.getState().pagination.pageSize?.toString() || ""}`}
               onValueChange={(value) => {
                 table.setPageSize(Number(value));
               }}
             >
               <SelectTrigger className="h-8 text-xs sm:text-sm w-[70px]">
-                <SelectValue
-                  placeholder={
-                    table.getState().pagination
-                      .pageSize
-                  }
-                />
+                <SelectValue placeholder={table.getState().pagination.pageSize} />
               </SelectTrigger>
               <SelectContent side="top">
-                {[
-                  5, 10, 15, 20, 30, 40, 50, 100,
-                  200, 300,
-                ].map((pageSize) => (
-                  <SelectItem
-                    key={pageSize}
-                    value={`${pageSize}`}
-                  >
+                {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
                     {pageSize}
                   </SelectItem>
                 ))}
@@ -305,25 +234,16 @@ export function DataTable<TData, TValue>({
             </Select>
           </div>
           <div className="flex items-center justify-center text-xs sm:text-sm font-medium">
-            Página{" "}
-            {table.getState().pagination
-              .pageIndex + 1}{" "}
-            de {table.getPageCount()}
+            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
-              onClick={() =>
-                table.setPageIndex(0)
-              }
-              disabled={
-                !table.getCanPreviousPage()
-              }
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
             >
-              <span className="sr-only">
-                Vá para a primeira
-              </span>
+              <span className="sr-only">Vá para a primeira</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
             </Button>
 
@@ -331,13 +251,9 @@ export function DataTable<TData, TValue>({
               variant="outline"
               className="h-8 w-8 p-0"
               onClick={() => table.previousPage()}
-              disabled={
-                !table.getCanPreviousPage()
-              }
+              disabled={!table.getCanPreviousPage()}
             >
-              <span className="sr-only">
-                Anterior
-              </span>
+              <span className="sr-only">Anterior</span>
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -346,24 +262,16 @@ export function DataTable<TData, TValue>({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              <span className="sr-only">
-                Próxima
-              </span>
+              <span className="sr-only">Próxima</span>
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
-              onClick={() =>
-                table.setPageIndex(
-                  table.getPageCount() - 1
-                )
-              }
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
-              <span className="sr-only">
-                Vá para a última página
-              </span>
+              <span className="sr-only">Vá para a última página</span>
               <DoubleArrowRightIcon className="h-4 w-4" />
             </Button>
           </div>
