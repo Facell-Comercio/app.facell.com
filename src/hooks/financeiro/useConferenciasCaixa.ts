@@ -138,7 +138,7 @@ export const useConferenciasCaixa = () => {
   return {
     getFiliais: (params?: GetAllParams) =>
       useQuery({
-        queryKey: ["financeiro", "conferencia_de_caixa", "filiais", "list", [params]],
+        queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "filiais", "list", [params]],
         queryFn: async () =>
           await api
             .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/filiais`, {
@@ -152,7 +152,7 @@ export const useConferenciasCaixa = () => {
     getAll: (params?: GetAllParams) =>
       useQuery({
         enabled: !!params?.filters.id_filial,
-        queryKey: ["financeiro", "conferencia_de_caixa", "caixas", "list", [params]],
+        queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "caixas", "list", [params]],
         queryFn: async () =>
           await api
             .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/`, {
@@ -166,7 +166,7 @@ export const useConferenciasCaixa = () => {
     getAllOcorrencias: (params?: GetAllParams) =>
       useQuery({
         enabled: !!params?.filters.id_filial,
-        queryKey: ["financeiro", "conferencia_de_caixa", "caixas", "ocorrencias", "list", [params]],
+        queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "caixas", "ocorrencias", "list", [params]],
         queryFn: async () =>
           await api
             .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/ocorrencias`, {
@@ -180,7 +180,7 @@ export const useConferenciasCaixa = () => {
     getAllAjustes: (params?: GetAllParams) =>
       useQuery({
         enabled: !!params?.filters,
-        queryKey: ["financeiro", "conferencia_de_caixa", "caixas", "ajustes", "list", [params]],
+        queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "caixas", "ajustes", "list", [params]],
         queryFn: async () =>
           await api
             .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/ajustes`, {
@@ -194,7 +194,7 @@ export const useConferenciasCaixa = () => {
     getAllBoletos: (params?: GetAllParams) =>
       useQuery({
         enabled: !!params,
-        queryKey: ["financeiro", "conferencia_de_caixa", "boletos", "list", [params]],
+        queryKey: ["financeiro", "controle_de_caixa", "boletos", "list", [params]],
         queryFn: async () =>
           await api
             .get(`/financeiro/controle-de-caixa/boletos`, {
@@ -209,10 +209,7 @@ export const useConferenciasCaixa = () => {
       useQuery({
         enabled: !!id_filial,
         queryKey: [
-          "financeiro",
-          "conferencia_de_caixa",
-          "boletos",
-          "caixas_com_saldo",
+          "financeiro", "controle_de_caixa", "boletos", "caixas_com_saldo",
           "list",
           [id_filial],
         ],
@@ -229,7 +226,7 @@ export const useConferenciasCaixa = () => {
     getOne: (id?: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "conferencia_de_caixa", "caixas", "detalhe", id],
+        queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "caixas", "detalhe", id],
         queryFn: async () => {
           return await api
             .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/${id}`)
@@ -240,7 +237,7 @@ export const useConferenciasCaixa = () => {
     getOneDeposito: (id?: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "conferencia_de_caixa", "caixas", "depositos", "detalhe", id],
+        queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "caixas", "depositos", "detalhe", id],
         queryFn: async () => {
           return await api
             .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/depositos/${id}`)
@@ -251,7 +248,7 @@ export const useConferenciasCaixa = () => {
     getOneOcorrencia: (id?: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "conferencia_de_caixa", "caixas", "ocorrencias", "detalhe", id],
+        queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "caixas", "ocorrencias", "detalhe", id],
         queryFn: async () => {
           return await api
             .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/ocorrencias/${id}`)
@@ -262,7 +259,7 @@ export const useConferenciasCaixa = () => {
     getOneAjuste: (id?: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "conferencia_de_caixa", "caixas", "ajustes", "detalhe", id],
+        queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "caixas", "ajustes", "detalhe", id],
         queryFn: async () => {
           return await api
             .get(`/financeiro/controle-de-caixa/conferencia-de-caixa/ajustes/${id}`)
@@ -273,7 +270,7 @@ export const useConferenciasCaixa = () => {
     getOneBoleto: (id?: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "conferencia_de_caixa", "boletos", "detalhe", id],
+        queryKey: ["financeiro", "controle_de_caixa", "boletos", "detalhe", id],
         queryFn: async () => {
           return await api
             .get(`/financeiro/controle-de-caixa/boletos/${id}`)
@@ -289,8 +286,7 @@ export const useConferenciasCaixa = () => {
           params.type !== "entrada" &&
           params.type !== "saida",
         queryKey: [
-          "financeiro",
-          "conferencia_de_caixa",
+          "financeiro", "controle_de_caixa", "conferencia_de_caixa",
           "caixas",
           "cards",
           "detalhe",
@@ -309,8 +305,7 @@ export const useConferenciasCaixa = () => {
       useQuery({
         enabled: !!params.id_caixa && !!params.type,
         queryKey: [
-          "financeiro",
-          "conferencia_de_caixa",
+          "financeiro", "controle_de_caixa", "conferencia_de_caixa",
           "caixas",
           "cards",
           "detalhe",
@@ -334,7 +329,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -368,7 +363,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -399,7 +394,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -430,7 +425,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -461,7 +456,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa"],
           });
           toast({
             variant: "success",
@@ -492,7 +487,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -523,7 +518,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -554,7 +549,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -585,7 +580,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa"],
           });
           toast({
             variant: "success",
@@ -618,7 +613,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -649,7 +644,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -680,7 +675,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -711,7 +706,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -742,7 +737,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -773,7 +768,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -804,7 +799,7 @@ export const useConferenciasCaixa = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conferencia_de_caixa"],
+            queryKey: ["financeiro", "controle_de_caixa", "conferencia_de_caixa"],
           });
           toast({
             variant: "success",
@@ -842,7 +837,7 @@ export const useConferenciasCaixa = () => {
                 `/financeiro/controle-de-caixa/boletos/import-retorno-remessa`,
                 form
               );
-              queryClient.invalidateQueries({ queryKey: ["financeiro", "conferencia_de_caixa"] });
+              queryClient.invalidateQueries({ queryKey: ["financeiro", "controle_de_caixa"] });
 
               resolve(result.data);
             } catch (error) {

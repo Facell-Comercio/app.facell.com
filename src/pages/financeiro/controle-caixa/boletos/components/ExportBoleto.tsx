@@ -55,7 +55,7 @@ const ModalExportBoleto = ({ modalOpen, handleClickCancel }: ModalExportBoletoPr
       );
       downloadResponse(response);
       queryClient.invalidateQueries({
-        queryKey: ["financeiro", "conferencia_de_caixa", "boletos"],
+        queryKey: ["financeiro", "controle_de_caixa", "boletos"],
       });
       handleClickCancel();
     } catch (error) {

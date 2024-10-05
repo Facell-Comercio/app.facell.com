@@ -35,7 +35,7 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
         valor: checked,
       });
       queryClient.setQueryData(
-        ["financeiro", "conferencia_de_caixa", "caixas", "detalhe", parseInt(`${data?.id}`)],
+        ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "caixas", "detalhe", parseInt(`${data?.id}`)],
         { ...data, manual: checked ? 1 : 0 }
       );
     } catch (error) {
