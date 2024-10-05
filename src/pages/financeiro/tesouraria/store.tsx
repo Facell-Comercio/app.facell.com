@@ -3,11 +3,14 @@ import { create } from "zustand";
 
 export interface State {
   id: string | null;
+  data_fechamento: Date | null;
   id_extrato_bancario: string | null;
   valor_maximo_adiantamento: string | null;
   modalOpen: boolean;
   modalTransferOpen: boolean;
   modalAdiantamentoOpen: boolean;
+  modalSuprimentoOpen: boolean;
+  modalFechamentoOpen: boolean;
   modalTitulosPagarOpen: boolean;
 
   modalEditing: boolean;
@@ -47,8 +50,14 @@ export interface Actions {
   openTransferModal: () => void;
   closeTransferModal: () => void;
 
-  openModalAdiantamento: () => void;
+  openModalAdiantamento: (id: string) => void;
   closeAdiantamentoModal: () => void;
+
+  openModalSuprimento: (id: string) => void;
+  closeSuprimentoModal: () => void;
+
+  openModalFechamento: (data_fechamento: Date) => void;
+  closeFechamentoModal: () => void;
 
   openModalTitulosPagar: (data: { id: string; valor: string }) => void;
   closeTitulosPagarModal: () => void;
@@ -64,12 +73,15 @@ export interface Actions {
 
 export const useStoreTesouraria = create<State & Actions>((set) => ({
   id: null,
+  data_fechamento: null,
   id_extrato_bancario: null,
   valor_maximo_adiantamento: null,
   isPending: false,
   modalOpen: false,
   modalTransferOpen: false,
   modalAdiantamentoOpen: false,
+  modalSuprimentoOpen: false,
+  modalFechamentoOpen: false,
   modalTitulosPagarOpen: false,
   modalEditing: false,
 
@@ -86,8 +98,14 @@ export const useStoreTesouraria = create<State & Actions>((set) => ({
   openTransferModal: () => set({ modalTransferOpen: true }),
   closeTransferModal: () => set({ modalTransferOpen: false }),
 
-  openModalAdiantamento: () => set({ modalAdiantamentoOpen: true }),
-  closeAdiantamentoModal: () => set({ modalAdiantamentoOpen: false }),
+  openModalAdiantamento: (id) => set({ modalAdiantamentoOpen: true, id_extrato_bancario: id }),
+  closeAdiantamentoModal: () => set({ modalAdiantamentoOpen: false, id_extrato_bancario: null }),
+
+  openModalSuprimento: (id) => set({ modalSuprimentoOpen: true, id_extrato_bancario: id }),
+  closeSuprimentoModal: () => set({ modalSuprimentoOpen: false, id_extrato_bancario: null }),
+
+  openModalFechamento: (data_fechamento) => set({ modalFechamentoOpen: true, data_fechamento }),
+  closeFechamentoModal: () => set({ modalFechamentoOpen: false, data_fechamento: null }),
 
   openModalTitulosPagar: ({ id, valor }) =>
     set({

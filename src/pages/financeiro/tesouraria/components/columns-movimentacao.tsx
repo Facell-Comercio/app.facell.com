@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { useTesouraria } from "@/hooks/financeiro/useTesouraria";
 import { ColumnDef } from "@tanstack/react-table";
-import { Ban, Check, Search } from "lucide-react";
+import { Ban, Check, Pen, Search, Trash2 } from "lucide-react";
 import { useStoreTesouraria } from "../store";
 
 // This type is used to define the shape of our data.
@@ -9,11 +11,13 @@ import { useStoreTesouraria } from "../store";
 export type RowConferenciaCaixa = {
   id: string;
   adiantamento: boolean;
+  suprimento: boolean;
   id_titulo_adiantamento: string;
   data_transacao: string;
   descricao: string;
   tipo: string;
   valor: string;
+  allowAction: boolean;
 };
 
 const openModal = useStoreTesouraria.getState().openModalTitulosPagar;
@@ -50,22 +54,62 @@ function ButtonAdiantamento({
   }
 }
 
+const openModalAdiantamento = useStoreTesouraria.getState().openModalAdiantamento;
+const openModalSuprimento = useStoreTesouraria.getState().openModalSuprimento;
+
 export const columnsTableMovimentacao: ColumnDef<RowConferenciaCaixa>[] = [
   {
     header: "Ação",
     accessorKey: "id_titulo_adiantamento",
     cell: (info) => {
       const id = info.getValue<string>();
+
       const isAdiantamento = info.row.original.adiantamento;
+      const isSuprimento = info.row.original.suprimento;
+
       const id_extrato_bancario = info.row.original.id;
       const valor = info.row.original.valor;
+      const allowAction = !!info.row.original.allowAction;
+      const gestorOuMaster =
+        checkUserDepartments("FINANCEIRO", true) || checkUserPermission("MASTER");
+
+      function handleClickUpdate(id: string) {
+        //! ATUALIZAR SALDO DA CONTA NO BACK-END
+        if (isAdiantamento) {
+          openModalAdiantamento(id);
+        }
+        if (isSuprimento) {
+          openModalSuprimento(id);
+        }
+      }
+      const { mutate: deleteTransacao } = useTesouraria().deleteTransacao();
 
       return (
-        <ButtonAdiantamento
-          isAdiantamento={isAdiantamento}
-          id_titulo={id}
-          onClick={() => openModal({ id: id_extrato_bancario, valor })}
-        />
+        <span className="flex gap-1">
+          <ButtonAdiantamento
+            isAdiantamento={isAdiantamento}
+            id_titulo={id}
+            onClick={() => openModal({ id: id_extrato_bancario, valor })}
+          />
+          {allowAction && gestorOuMaster && (
+            <>
+              <Button
+                size={"xs"}
+                variant={"warning"}
+                onClick={() => handleClickUpdate(id_extrato_bancario)}
+              >
+                <Pen size={14} />
+              </Button>
+              <Button
+                size={"xs"}
+                variant={"destructive"}
+                onClick={() => deleteTransacao(id_extrato_bancario)}
+              >
+                <Trash2 size={14} />
+              </Button>
+            </>
+          )}
+        </span>
       );
     },
   },

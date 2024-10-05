@@ -1,13 +1,9 @@
-import { format } from "date-fns";
+import { format, formatDate } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
@@ -17,12 +13,20 @@ type InputDateProps = {
   value?: Date;
   onChange: (date: Date) => void;
   className?: string;
+
+  max?: Date;
+  min?: Date;
+  uniqueDayMonth?: string | number;
 };
 export function InputDate({
   disabled,
   value,
   onChange,
   className,
+
+  max,
+  min,
+  uniqueDayMonth,
 }: InputDateProps) {
   const [date, setDate] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
@@ -55,6 +59,21 @@ export function InputDate({
             setDate(e || new Date());
             onChange(e || new Date());
             setOpen(false);
+          }}
+          disabled={(date) => {
+            if (min && date < min) {
+              return true;
+            }
+            if (max && date > max) {
+              return true;
+            }
+            if (
+              uniqueDayMonth !== undefined &&
+              parseInt(formatDate(date, "dd")) !== uniqueDayMonth
+            ) {
+              return true;
+            }
+            return date < new Date("1900-01-01");
           }}
           initialFocus
         />
