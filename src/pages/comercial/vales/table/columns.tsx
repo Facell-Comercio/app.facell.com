@@ -68,6 +68,7 @@ export const columnsTable: ColumnDef<RowVale>[] = [
     cell: (info) => {
       const label = normalizeDate(info.getValue<string>());
       return (
+        // @ts-ignore
         <div title={label} className="block truncate max-w-96 uppercase">
           {label}
         </div>

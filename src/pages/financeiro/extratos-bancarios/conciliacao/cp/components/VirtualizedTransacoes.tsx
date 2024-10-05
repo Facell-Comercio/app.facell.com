@@ -68,6 +68,7 @@ const VirtualizedTransacoes: React.FC<VirtualizerTransacoesProps> = ({
               />
               <Input
                 className="text-xs w-28 h-8 p-2 text-center"
+                // @ts-ignore
                 value={
                   data[item.index].data_transacao &&
                   normalizeDate(data[item.index].data_transacao)
