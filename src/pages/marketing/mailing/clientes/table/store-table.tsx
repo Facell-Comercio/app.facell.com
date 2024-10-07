@@ -1,4 +1,5 @@
 // import { mountStoreDevtool } from "simple-zustand-devtools";
+import { DateRange } from "react-day-picker";
 import { create } from "zustand";
 
 export interface Pagination {
@@ -9,35 +10,38 @@ export interface Pagination {
 type RowSelection = Record<number, boolean>;
 
 export interface Filters {
-  grupo_estoque?: string;
-  subgrupo?: string;
-  areas?: string[];
-  data_pedido?: Date | string;
+  //* LISTAS
+  grupo_estoque_list?: string[];
+  subgrupo_list?: string[];
+  uf_list?: string[];
+  filiais_list?: string[];
+  plano_habilitado_list?: string[];
+  modalidade_venda_list?: string[];
+  fabricante_list?: string[];
+  tipo_pedido_list?: string[];
+
+  range_data_pedido?: DateRange;
   valor_minimo?: string;
   valor_maximo?: string;
-  filial?: string;
   descricao?: string;
-  plano_habilitacao?: string;
-  modalidade_venda?: string;
-  fabricante?: string;
-  tipo_pedido?: string;
   fidelizacao_aparelho?: string;
   fidelizacao_plano?: string;
 }
 
 const initialFilters: Filters = {
-  grupo_estoque: "APARELHO",
-  subgrupo: "",
-  areas: [],
-  data_pedido: "",
+  grupo_estoque_list: [],
+  subgrupo_list: [],
+  uf_list: [],
+  filiais_list: [],
+  plano_habilitado_list: [],
+  modalidade_venda_list: [],
+  fabricante_list: [],
+  tipo_pedido_list: [],
+
+  range_data_pedido: { from: undefined, to: undefined },
   valor_minimo: "0.00",
   valor_maximo: "",
-  filial: "",
   descricao: "",
-  plano_habilitacao: "",
-  modalidade_venda: "",
-  fabricante: "",
-  tipo_pedido: "",
   fidelizacao_aparelho: "all",
   fidelizacao_plano: "all",
 };

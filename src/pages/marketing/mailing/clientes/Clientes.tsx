@@ -12,13 +12,14 @@ const Clientes = () => {
     state.setPagination,
     state.filters,
   ]);
-  const { data, refetch, isLoading } = useMailing().getClientes({
+  const { data, refetch, isLoading, isSuccess } = useMailing().getClientes({
     pagination,
     filters,
   });
 
   const rows = data?.rows || [];
   const rowCount = data?.rowCount || 0;
+  const defaultFilters = data?.filters || {};
 
   return (
     <div className="flex flex-col gap-3 ">
@@ -29,7 +30,7 @@ const Clientes = () => {
         </Button>
       </div>
       <section className="grid grid-cols-[240px_1fr] max-w-full gap-2 max-h-full">
-        <FilterClientes refetch={refetch} />
+        {isSuccess && <FilterClientes refetch={refetch} defaultFiltersFetched={defaultFilters} />}
         <div className=" overflow-y-auto max-h-full scroll-thin">
           <DataTable
             pagination={pagination}

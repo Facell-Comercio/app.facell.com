@@ -1,6 +1,6 @@
 import fetchApi from "@/api/fetchApi";
 import { GetAllParams } from "@/types/query-params-type";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export type ClientesProps = {
   gsm?: string;
@@ -16,11 +16,11 @@ export type ClientesProps = {
 };
 
 export const useMailing = () => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const getClientes = ({ pagination, filters }: GetAllParams) =>
     useQuery({
-      queryKey: ["marketing", "mailing", "lista", { pagination, filters }],
+      queryKey: ["marketing", "mailing", "lista", { pagination }],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => await fetchApi.marketing.mailing.getClientes({ pagination, filters }),

@@ -14,16 +14,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import {
-  cva,
-  type VariantProps,
-} from "class-variance-authority";
-import {
-  CheckIcon,
-  ChevronDown,
-  XCircle,
-  XIcon,
-} from "lucide-react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { CheckIcon, ChevronDown, XCircle, XIcon } from "lucide-react";
 import * as React from "react";
 
 const multiSelectVariants = cva("m-1 transition ease-in-out delay-150 duration-300", {
@@ -47,7 +39,7 @@ export type MultiSelectOptionProps = {
   value: string;
   icon?: React.ComponentType<{ className?: string }>;
 };
-interface MultiSelectProps
+export interface MultiSelectProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof multiSelectVariants> {
   options: MultiSelectOptionProps[];
@@ -91,13 +83,8 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
     const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
         setIsPopoverOpen(true);
-      } else if (
-        event.key === "Backspace" &&
-        !event.currentTarget.value
-      ) {
-        const newSelectedValues = [
-          ...selectedValues,
-        ];
+      } else if (event.key === "Backspace" && !event.currentTarget.value) {
+        const newSelectedValues = [...selectedValues];
         newSelectedValues.pop();
         setSelectedValues(newSelectedValues);
         onValueChange(newSelectedValues);
@@ -105,12 +92,9 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
     };
 
     const toggleOption = (value: string) => {
-      const newSelectedValues =
-        selectedValues.includes(value)
-          ? selectedValues.filter(
-              (v) => v !== value
-            )
-          : [...selectedValues, value];
+      const newSelectedValues = selectedValues.includes(value)
+        ? selectedValues.filter((v) => v !== value)
+        : [...selectedValues, value];
       setSelectedValues(newSelectedValues);
       onValueChange(newSelectedValues);
     };
@@ -125,21 +109,16 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
     };
 
     const clearExtraOptions = () => {
-      const newSelectedValues =
-        selectedValues.slice(0, maxCount);
+      const newSelectedValues = selectedValues.slice(0, maxCount);
       setSelectedValues(newSelectedValues);
       onValueChange(newSelectedValues);
     };
 
     const toggleAll = () => {
-      if (
-        selectedValues.length === options.length
-      ) {
+      if (selectedValues.length === options.length) {
         handleClear();
       } else {
-        const allValues = options.map(
-          (option) => option.value
-        );
+        const allValues = options.map((option) => option.value);
         setSelectedValues(allValues);
         onValueChange(allValues);
       }
@@ -196,10 +175,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                         })
                       )}
                     >
-                      {`+ ${
-                        selectedValues.length -
-                        maxCount
-                      } outros`}
+                      {`+ ${selectedValues.length - maxCount} outros`}
                       <XCircle
                         className="ml-2 h-4 w-4 cursor-pointer"
                         onClick={(event) => {
@@ -233,16 +209,12 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
         <PopoverContent
           className="w-auto p-0 z-[60]"
           align="start"
-          onEscapeKeyDown={() =>
-            setIsPopoverOpen(false)
-          }
+          onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
           <Command>
             <CommandInput placeholder="Pesquisar..." onKeyDown={handleInputKeyDown} />
             <CommandList className="overflow-y scroll-thin w-full">
-              <CommandEmpty>
-                Nenhum resultado encontrado.
-              </CommandEmpty>
+              <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
               <CommandGroup role="group">
                 <CommandItem
                   key="all"
@@ -255,8 +227,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                   <div
                     className={cn(
                       "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                      selectedValues.length ===
-                        options.length
+                      selectedValues.length === options.length
                         ? "bg-primary text-primary-foreground"
                         : "opacity-50 [&_svg]:invisible"
                     )}
@@ -266,10 +237,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                   <span>(Selecione todos)</span>
                 </CommandItem>
                 {options.map((option) => {
-                  const isSelected =
-                    selectedValues.includes(
-                      option.value
-                    );
+                  const isSelected = selectedValues.includes(option.value);
 
                   return (
                     <CommandItem
