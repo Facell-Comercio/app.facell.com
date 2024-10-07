@@ -4,12 +4,7 @@ import { api } from "@/lib/axios";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { BorderoSchemaProps } from "@/pages/financeiro/contas-pagar/borderos/bordero/Modal";
 import { GetAllParams } from "@/types/query-params-type";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 type TransferDataProps = {
@@ -23,7 +18,7 @@ type DownloadRemessaProps = {
   itens?: VencimentosProps[];
 };
 
-type reverseManualPaymentProps = {
+type reversePaymentProps = {
   id?: string | null;
   tipo?: string;
 };
@@ -38,14 +33,7 @@ export const useBordero = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: [
-          "financeiro",
-          "contas_pagar",
-          "bordero",
-          "lista",
-
-          pagination,
-        ],
+        queryKey: ["financeiro", "contas_pagar", "bordero", "lista", pagination],
         queryFn: async () => {
           return await api.get(`/financeiro/contas-a-pagar/bordero/`, {
             params: { pagination, filters },
@@ -121,12 +109,37 @@ export const useBordero = () => {
 
     reverseManualPayment: () =>
       useMutation({
-        mutationFn: async ({ id, tipo }: reverseManualPaymentProps) => {
+        mutationFn: async ({ id, tipo }: reversePaymentProps) => {
           return await api
-            .put(
-              `/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`,
-              { tipo }
-            )
+            .put(`/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`, { tipo })
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+        },
+        onError(error: AxiosError) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    reversePending: () =>
+      useMutation({
+        mutationFn: async ({ id, tipo }: reversePaymentProps) => {
+          return await api
+            .put(`/financeiro/contas-a-pagar/bordero/reverse-pending`, { id, tipo })
             .then((response) => response.data);
         },
         onSuccess() {
@@ -214,9 +227,7 @@ export const useBordero = () => {
 
     deleteBordero: () =>
       useMutation({
-        mutationFn: async (params: {
-          id: string | null | undefined | number;
-        }) => {
+        mutationFn: async (params: { id: string | null | undefined | number }) => {
           const { id } = params;
           return await api
             .delete(`/financeiro/contas-a-pagar/bordero/${id}`)
