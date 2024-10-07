@@ -37,7 +37,6 @@ const ModalSuprimento = () => {
 
   const { data } = useTesouraria().getOneTransacao(id_extrato_bancario || "");
 
-  console.log("DATA", data);
   const formRef = useRef<HTMLFormElement | null>(null);
   const [formData, setFormData] = useState<TransacaoTesourariaSchema>(
     id_extrato_bancario && data ? data : initialDataForm
