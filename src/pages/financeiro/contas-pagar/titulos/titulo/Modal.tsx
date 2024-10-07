@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
@@ -6,10 +12,7 @@ import { useEffect } from "react";
 import { BtnCopiarTitulo } from "./components/BtnCopiarTitulo";
 import { BtnCriarRecorrencia } from "./components/BtnCriarRecorrencia";
 import FormTituloPagar from "./Form";
-import {
-  TituloSchemaProps,
-  useFormTituloData,
-} from "./form-data";
+import { TituloSchemaProps, useFormTituloData } from "./form-data";
 import { calcularDataPrevisaoPagamento } from "./helpers/helper";
 import { Historico, ItemRateioTitulo, initialPropsTitulo, useStoreTitulo } from "./store";
 
@@ -44,30 +47,21 @@ const ModalTituloPagar = ({
     Object.keys(titulo).forEach((propriedade) => {
       if (titulo[propriedade] === null) {
         titulo[propriedade] = "";
-      } else if (
-        typeof titulo[propriedade] === "number"
-      ) {
-        titulo[propriedade] =
-          titulo[propriedade].toString();
+      } else if (typeof titulo[propriedade] === "number") {
+        titulo[propriedade] = titulo[propriedade].toString();
       }
     });
   }
 
   if (vencimentos && vencimentos.length > 0) {
     vencimentos.forEach((objeto: any) => {
-      Object.keys(objeto).forEach(
-        (propriedade) => {
-          if (objeto[propriedade] === null) {
-            objeto[propriedade] = "";
-          } else if (
-            typeof objeto[propriedade] ===
-            "number"
-          ) {
-            objeto[propriedade] =
-              objeto[propriedade].toString();
-          }
+      Object.keys(objeto).forEach((propriedade) => {
+        if (objeto[propriedade] === null) {
+          objeto[propriedade] = "";
+        } else if (typeof objeto[propriedade] === "number") {
+          objeto[propriedade] = objeto[propriedade].toString();
         }
-      );
+      });
     });
   }
 
@@ -79,49 +73,35 @@ const ModalTituloPagar = ({
       valor: recorrencia.valor,
       cod_barras: "",
       qr_code: "",
-      id: 'fake',
+      id: "fake",
     });
   }
 
   if (itens_rateio) {
     itens_rateio.forEach((objeto: any) => {
-      Object.keys(objeto).forEach(
-        (propriedade) => {
-          if (objeto[propriedade] === null) {
-            objeto[propriedade] = "";
-          } else if (
-            typeof objeto[propriedade] ===
-            "number"
-          ) {
-            objeto[propriedade] =
-              objeto[propriedade].toString();
-          }
-
-          if (propriedade == "valor") {
-            objeto[propriedade] = parseFloat(
-              objeto[propriedade]
-            ).toFixed(4);
-          }
+      Object.keys(objeto).forEach((propriedade) => {
+        if (objeto[propriedade] === null) {
+          objeto[propriedade] = "";
+        } else if (typeof objeto[propriedade] === "number") {
+          objeto[propriedade] = objeto[propriedade].toString();
         }
-      );
+
+        if (propriedade == "valor") {
+          objeto[propriedade] = parseFloat(objeto[propriedade]).toFixed(4);
+        }
+      });
     });
   }
 
   if (historico) {
     historico.forEach((objeto: any) => {
-      Object.keys(objeto).forEach(
-        (propriedade) => {
-          if (objeto[propriedade] === null) {
-            objeto[propriedade] = "";
-          } else if (
-            typeof objeto[propriedade] ===
-            "number"
-          ) {
-            objeto[propriedade] =
-              objeto[propriedade].toString();
-          }
+      Object.keys(objeto).forEach((propriedade) => {
+        if (objeto[propriedade] === null) {
+          objeto[propriedade] = "";
+        } else if (typeof objeto[propriedade] === "number") {
+          objeto[propriedade] = objeto[propriedade].toString();
         }
-      );
+      });
     });
   }
 
@@ -139,8 +119,7 @@ const ModalTituloPagar = ({
       url_txt: "",
       url_xml: "",
       valor: recorrencia.valor,
-      data_vencimento:
-        recorrencia.data_vencimento,
+      data_vencimento: recorrencia.data_vencimento,
       data_emissao: new Date().toDateString(),
       data_prevista: calcularDataPrevisaoPagamento(new Date(recorrencia.data_vencimento)),
       vencimentos,
@@ -157,13 +136,11 @@ const ModalTituloPagar = ({
   }
 
   // * [ FORM ]
-  const { form } = useFormTituloData(
-    {
-      ...modalData,
-      update_vencimentos: false,
-      update_rateio: false,
-    } || initialPropsTitulo
-  );
+  const { form } = useFormTituloData({
+    ...modalData,
+    update_vencimentos: false,
+    update_rateio: false,
+  });
   const podeCriarRecorrencia = id && (parseInt(modalData?.id_status) || 0) > 0;
 
   // console.log(form.formState.errors);
@@ -171,16 +148,11 @@ const ModalTituloPagar = ({
   if (!modalOpen) return null;
 
   return (
-    <Dialog
-      open={modalOpen}
-      onOpenChange={closeModal}
-    >
+    <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent className="min-w-[96vw] xl:min-w-1">
         <DialogHeader className="flex flex-row items-center gap-3">
           <DialogTitle>
-            {!!id && !recorrencia
-              ? `Solicitação: ${id}`
-              : "Nova Solicitação"}
+            {!!id && !recorrencia ? `Solicitação: ${id}` : "Nova Solicitação"}
           </DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
           <BtnCopiarTitulo copyData={modalData} />

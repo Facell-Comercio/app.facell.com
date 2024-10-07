@@ -3,11 +3,7 @@ import { normalizeDate } from "@/helpers/mask";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  checkIsCartao,
-  checkIsPIX,
-  checkIsTransferenciaBancaria,
-} from "./helpers/helper";
+import { checkIsCartao, checkIsPIX, checkIsTransferenciaBancaria } from "./helpers/helper";
 import { initialPropsTitulo } from "./store";
 
 export const vencimentoSchema = z.object({
@@ -33,9 +29,7 @@ export const rateioSchema = z.object({
   centro_custo: z.string().optional(),
   id_plano_conta: z.string(),
   plano_conta: z.string().optional(),
-  percentual: z.coerce
-    .string()
-    .transform((value) => String(parseFloat(value) / 100)),
+  percentual: z.coerce.string().transform((value) => String(parseFloat(value) / 100)),
   valor: z.string(),
 });
 
@@ -72,8 +66,8 @@ export const schemaTitulo = z
     filial: z.string().optional(),
 
     // Fornecedor
-    cnpj_fornecedor: z.string().optional(),
-    nome_fornecedor: z.string().optional(),
+    cnpj_fornecedor: z.string({ required_error: "Campo obrigatório" }),
+    nome_fornecedor: z.string({ required_error: "Campo obrigatório" }),
     favorecido: z.string().optional(),
     cnpj_favorecido: z.string().optional(),
     id_tipo_chave_pix: z.string().optional(),
@@ -96,9 +90,7 @@ export const schemaTitulo = z
     dia_vencimento_cartao: z.coerce.string().optional(), //~ Usado somente na forma de pagamento Cartão
     dia_corte_cartao: z.coerce.string().optional(), //~ Usado somente na forma de pagamento Cartão
 
-    num_doc: z
-      .string({ message: "Campo obrigatório" })
-      .min(1, { message: "Campo obrigatório" }),
+    num_doc: z.string({ message: "Campo obrigatório" }).min(1, { message: "Campo obrigatório" }),
     valor: z.coerce.string().min(0.01, "Preencha o valor"),
 
     descricao: z
@@ -137,13 +129,14 @@ export const schemaTitulo = z
   //^ Validar se vencimentos == valor total
   .refine(
     (data) =>
-      (data.vencimentos?.reduce((acc, curr) => {
-        return acc + parseFloat(curr.valor);
-      }, 0) || 0).toFixed(2) == parseFloat(data.valor).toFixed(2),
+      (
+        data.vencimentos?.reduce((acc, curr) => {
+          return acc + parseFloat(curr.valor);
+        }, 0) || 0
+      ).toFixed(2) == parseFloat(data.valor).toFixed(2),
     {
       path: ["vencimentos"],
-      message:
-        "O valor dos vencimentos precisa bater com o valor total da solicitação.",
+      message: "O valor dos vencimentos precisa bater com o valor total da solicitação.",
     }
   )
   //^ Validar se rateio == valor total
@@ -156,53 +149,35 @@ export const schemaTitulo = z
       ).toFixed(2) == parseFloat(data.valor).toFixed(2),
     {
       path: ["itens_rateio"],
-      message:
-        "O valor total do rateio precisa bater com o valor total da solicitação.",
+      message: "O valor total do rateio precisa bater com o valor total da solicitação.",
     }
   )
 
   //^ Cobra Agência e Conta
   .refine(
-    (data) =>
-      checkIsTransferenciaBancaria(data.id_forma_pagamento)
-        ? !!data.agencia
-        : true,
+    (data) => (checkIsTransferenciaBancaria(data.id_forma_pagamento) ? !!data.agencia : true),
     { path: ["agencia"], message: "Obrigatório para esta forma de pagamento." }
   )
-  .refine(
-    (data) =>
-      checkIsTransferenciaBancaria(data.id_forma_pagamento)
-        ? !!data.conta
-        : true,
-    { path: ["conta"], message: "Obrigatório para esta forma de pagamento." }
-  )
+  .refine((data) => (checkIsTransferenciaBancaria(data.id_forma_pagamento) ? !!data.conta : true), {
+    path: ["conta"],
+    message: "Obrigatório para esta forma de pagamento.",
+  })
 
   //^ Cobrança PIX
-  .refine(
-    (data) =>
-      checkIsPIX(data.id_forma_pagamento) ? !!data.id_tipo_chave_pix : true,
-    {
-      path: ["id_tipo_chave_pix"],
-      message: "Obrigatório para esta forma de pagamento.",
-    }
-  )
+  .refine((data) => (checkIsPIX(data.id_forma_pagamento) ? !!data.id_tipo_chave_pix : true), {
+    path: ["id_tipo_chave_pix"],
+    message: "Obrigatório para esta forma de pagamento.",
+  })
 
-  .refine(
-    (data) => (checkIsPIX(data.id_forma_pagamento) ? !!data.chave_pix : true),
-    {
-      path: ["chave_pix"],
-      message: "Obrigatório para esta forma de pagamento.",
-    }
-  )
+  .refine((data) => (checkIsPIX(data.id_forma_pagamento) ? !!data.chave_pix : true), {
+    path: ["chave_pix"],
+    message: "Obrigatório para esta forma de pagamento.",
+  })
   //^ Cobrança cartão
-  .refine(
-    (data) =>
-      checkIsCartao(data.id_forma_pagamento) ? !!data.id_cartao : true,
-    {
-      path: ["id_cartao"],
-      message: "Obrigatório para esta forma de pagamento.",
-    }
-  )
+  .refine((data) => (checkIsCartao(data.id_forma_pagamento) ? !!data.id_cartao : true), {
+    path: ["id_cartao"],
+    message: "Obrigatório para esta forma de pagamento.",
+  })
 
   // // ^ Validar se forma de pagamento for PIX Copia e Cola, cobrar o PIX Copia e Cola
   // .refine(
@@ -257,8 +232,7 @@ export const schemaTitulo = z
           //   parseInt(data.dia_vencimento_cartao || "")
           // );
           if (
-            new Date(v.data_vencimento).getDate() !==
-            parseInt(data.dia_vencimento_cartao || "")
+            new Date(v.data_vencimento).getDate() !== parseInt(data.dia_vencimento_cartao || "")
           ) {
             toast({
               title: "Data de vencimento inválida",
@@ -277,14 +251,14 @@ export const schemaTitulo = z
   )
 
   // ^ Validação de Anexos
-  .refine(
-    (data) => (data.id_tipo_solicitacao == "1" ? !!data.url_nota_fiscal : true),
-    { path: ["url_nota_fiscal"], message: "Anexo Obrigatório!" }
-  )
-  .refine(
-    (data) => (data.id_tipo_solicitacao == "4" ? !!data.url_boleto : true),
-    { path: ["url_boleto"], message: "Anexo Obrigatório!" }
-  )
+  .refine((data) => (data.id_tipo_solicitacao == "1" ? !!data.url_nota_fiscal : true), {
+    path: ["url_nota_fiscal"],
+    message: "Anexo Obrigatório!",
+  })
+  .refine((data) => (data.id_tipo_solicitacao == "4" ? !!data.url_boleto : true), {
+    path: ["url_boleto"],
+    message: "Anexo Obrigatório!",
+  })
   .refine(
     (data) =>
       data.id_tipo_solicitacao != "1" &&
