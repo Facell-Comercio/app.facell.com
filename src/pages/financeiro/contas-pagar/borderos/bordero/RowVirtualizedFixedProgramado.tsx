@@ -153,6 +153,7 @@ const RowVirtualizerFixedProgramado: React.FC<RowVirtualizerFixedProgramadoProps
               />
               <Input
                 className="w-24 h-8 text-xs p-2 text-center"
+                // @ts-ignore
                 value={data[indexData].previsao && normalizeDate(data[indexData].previsao || "")}
                 readOnly
               />
