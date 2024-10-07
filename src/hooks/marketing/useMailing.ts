@@ -1,6 +1,9 @@
 import fetchApi from "@/api/fetchApi";
+import { toast } from "@/components/ui/use-toast";
+import { api } from "@/lib/axios";
+import { NovaCampanhaSchema } from "@/pages/marketing/mailing/clientes/nova-campanha/form-data";
 import { GetAllParams } from "@/types/query-params-type";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type ClientesProps = {
   gsm?: string;
@@ -16,7 +19,7 @@ export type ClientesProps = {
 };
 
 export const useMailing = () => {
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const getClientes = ({ pagination, filters }: GetAllParams) =>
     useQuery({
@@ -50,33 +53,33 @@ export const useMailing = () => {
   //     },
   //   });
 
-  // const insertOne = () =>
-  //   useMutation({
-  //     mutationFn: async (data: MailingProps) => {
-  //       return await api.post(`marketing/mailing`, data).then((response) => response.data);
-  //     },
-  //     onSuccess() {
-  //       queryClient.invalidateQueries({
-  //         queryKey: ["marketing", "mailing"],
-  //       });
-  //       toast({
-  //         variant: "success",
-  //         title: "Sucesso",
-  //         description: "Atualização realizada com sucesso",
-  //         duration: 3500,
-  //       });
-  //     },
-  //     onError(error) {
-  //       // @ts-expect-error 'Vai funcionar'
-  //       const errorMessage = error.response?.data.message || error.message;
-  //       toast({
-  //         title: "Erro",
-  //         description: errorMessage,
-  //         duration: 3500,
-  //         variant: "destructive",
-  //       });
-  //     },
-  //   });
+  const insertOneCampanha = () =>
+    useMutation({
+      mutationFn: async (data: NovaCampanhaSchema) => {
+        return await api.post(`marketing/mailing`, data).then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["marketing", "mailing"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
 
   // const importMailing = () =>
   //   useMutation({
@@ -183,5 +186,6 @@ export const useMailing = () => {
 
   return {
     getClientes,
+    insertOneCampanha,
   };
 };

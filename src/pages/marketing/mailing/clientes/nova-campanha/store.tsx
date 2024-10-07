@@ -1,21 +1,21 @@
 import { create } from "zustand";
 
 interface useStoreNovaCampanha {
-  id?: string | null;
+  qtde_total: number | null;
   modalEditing: boolean;
   modalOpen: boolean;
 
-  openModal: (id: string) => void;
+  openModal: (qtde_total: number) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
 }
 
 export const useStoreNovaCampanha = create<useStoreNovaCampanha>((set) => ({
-  id: null,
+  qtde_total: null,
   modalEditing: false,
   modalOpen: false,
 
-  openModal: (id: string) => set({ modalOpen: true, id: id }),
-  closeModal: () => set({ modalOpen: false }),
+  openModal: (qtde_total: number) => set({ modalOpen: true, qtde_total }),
+  closeModal: () => set({ modalOpen: false, qtde_total: null }),
   editModal: (bool) => set({ modalEditing: bool }),
 }));

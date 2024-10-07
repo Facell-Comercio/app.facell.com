@@ -2,11 +2,30 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const schemaNovaCampanha = z.object({
-  nome: z.coerce.string(),
-  quantidade_lotes: z.coerce.string(),
-  quantidade_clientes: z.coerce.string(),
-});
+const schemaNovaCampanha = z
+  .object({
+    nome: z.coerce.string({ required_error: "Campo obrigatório" }),
+    quantidade_lotes: z.coerce.string({ required_error: "Campo obrigatório" }),
+    quantidade_total_clientes: z.coerce.string({ required_error: "Campo obrigatório" }),
+    lotes: z.array(
+      z.object({
+        nome: z.coerce.string({ required_error: "Campo obrigatório" }),
+        quantidade_itens: z.coerce.string().trim().min(1, "Obrigatório"),
+      })
+    ),
+  })
+  .refine(
+    (data) =>
+      (
+        data.lotes?.reduce((acc, curr) => {
+          return acc + parseFloat(curr.quantidade_itens);
+        }, 0) || 0
+      ).toFixed(2) == parseFloat(data.quantidade_total_clientes).toFixed(2),
+    {
+      path: ["lotes"],
+      message: "A quantidade de clientes em lote precisa bater com a quantidade total de clientes.",
+    }
+  );
 
 export type NovaCampanhaSchema = z.infer<typeof schemaNovaCampanha>;
 

@@ -2,6 +2,8 @@ import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { Plus } from "lucide-react";
+import ModalNovaCampanha from "./nova-campanha/Modal";
+import { useStoreNovaCampanha } from "./nova-campanha/store";
 import { columnsTable } from "./table/columns";
 import FilterClientes from "./table/Filters";
 import { useStoreTableClientes } from "./table/store-table";
@@ -12,6 +14,7 @@ const Clientes = () => {
     state.setPagination,
     state.filters,
   ]);
+  const openModalCampanha = useStoreNovaCampanha().openModal;
   const { data, refetch, isLoading, isSuccess } = useMailing().getClientes({
     pagination,
     filters,
@@ -24,7 +27,11 @@ const Clientes = () => {
   return (
     <div className="flex flex-col gap-3 ">
       <div className="flex justify-end w-full">
-        <Button variant={"outline"} className="border-primary w-fit">
+        <Button
+          variant={"outline"}
+          className="border-primary w-fit"
+          onClick={() => openModalCampanha(parseFloat(rowCount))}
+        >
           <Plus className="me-2" />
           Criar Campanha
         </Button>
@@ -42,6 +49,7 @@ const Clientes = () => {
           />
         </div>
       </section>
+      <ModalNovaCampanha />
     </div>
   );
 };
