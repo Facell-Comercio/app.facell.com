@@ -75,6 +75,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
   ) => {
     const [selectedValues, setSelectedValues] = React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+    const [search, setSearch] = React.useState("");
 
     React.useEffect(() => {
       setSelectedValues(defaultValue);
@@ -118,7 +119,9 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       if (selectedValues.length === options.length) {
         handleClear();
       } else {
-        const allValues = options.map((option) => option.value);
+        const allValues = options
+          .filter((option) => option.value.toUpperCase().includes(search.toUpperCase()))
+          .map((option) => option.value);
         setSelectedValues(allValues);
         onValueChange(allValues);
       }
@@ -211,7 +214,17 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
-          <Command>
+          <Command
+            filter={(value: string, search) => {
+              setSearch(search);
+              if (
+                value.toUpperCase().includes(search.toUpperCase()) ||
+                value.includes("(Selecione todos)")
+              )
+                return 1;
+              return 0;
+            }}
+          >
             <CommandInput placeholder="Pesquisar..." onKeyDown={handleInputKeyDown} />
             <CommandList className="overflow-y scroll-thin w-full">
               <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>

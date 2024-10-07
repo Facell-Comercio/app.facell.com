@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { subMonths } from "date-fns";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreTableClientes } from "./store-table";
 
@@ -46,6 +46,7 @@ const FilterClientes = ({
 
   const defaultFilters = useMemo(() => defaultFiltersFetched, [defaultFiltersFetched]);
 
+  const [itemOpen, setItemOpen] = useState<string>("valor_caixa");
   return (
     <aside className="flex flex-col gap-2 border rounded-md p-2 pt-3 h-fit max-h-[75vh] bg-secondary/40">
       <div className="flex gap-2 justify-between">
@@ -131,7 +132,13 @@ const FilterClientes = ({
             />
           </div>
 
-          <Accordion type="single" collapsible className="border rounded-md">
+          <Accordion
+            type="single"
+            collapsible
+            value={itemOpen}
+            onValueChange={(e) => setItemOpen(e)}
+            className="border rounded-md"
+          >
             <AccordionItem value="valor_caixa" className="border-0">
               <AccordionTrigger className="p-3 border-0 rounded-md py-1 hover:no-underline">
                 Valor do Caixa
