@@ -1,6 +1,7 @@
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { useMailing } from "@/hooks/marketing/useMailing";
+import { useState } from "react";
 import { NovaCampanhaSchema, useFormNovaCampanhaData } from "./form-data";
 import { useStoreNovaCampanha } from "./store";
 
@@ -15,12 +16,33 @@ const FormNovaCampanha = ({
     state.closeModal,
     state.qtde_total,
   ]);
+
+  const [lotes, setLotes] = useState([]);
+
   const { form } = useFormNovaCampanhaData({
     nome: "",
     quantidade_lotes: "4",
     quantidade_total_clientes: String(qtde_total || "0"),
-    lotes: [],
+    lotes,
   });
+
+  const quantidade_lotes = parseFloat(form.watch("quantidade_lotes"));
+  const quantidade_total_clientes = parseFloat(form.watch("quantidade_total_clientes"));
+
+  // useEffect(() => {
+  //   // Função que divide os clientes igualmente entre os lotes
+  //   const clientesPorLote = Math.floor(quantidade_total_clientes / quantidade_lotes);
+  //   const lotesDistribuidos = [];
+  //   for (let i = 0; i < quantidade_lotes; i++) {
+  //     if (i === quantidade_lotes - 1) {
+  //       // O último lote recebe o restante
+  //       lotesDistribuidos.push(clientesPorLote + (quantidade_total_clientes % quantidade_lotes));
+  //     } else {
+  //       lotesDistribuidos.push(clientesPorLote);
+  //     }
+  //   }
+  //   setLotes(lotesDistribuidos);
+  // }, [quantidade_total_clientes, quantidade_lotes]);
 
   const onSubmitData = (data: NovaCampanhaSchema) => {
     insertOneCampanha(data);
