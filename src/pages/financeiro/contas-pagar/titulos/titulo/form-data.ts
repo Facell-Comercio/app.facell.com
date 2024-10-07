@@ -66,8 +66,8 @@ export const schemaTitulo = z
     filial: z.string().optional(),
 
     // Fornecedor
-    cnpj_fornecedor: z.string().optional(),
-    nome_fornecedor: z.string().optional(),
+    cnpj_fornecedor: z.string({ required_error: "Campo obrigatório" }),
+    nome_fornecedor: z.string({ required_error: "Campo obrigatório" }),
     favorecido: z.string().optional(),
     cnpj_favorecido: z.string().optional(),
     id_tipo_chave_pix: z.string().optional(),
