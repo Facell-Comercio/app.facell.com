@@ -71,6 +71,8 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
   const allChecked = filteredData.length === filteredData.filter((item) => item.checked).length;
   const someChecked = filteredData.some((item) => item.checked);
   // console.log(filteredData);
+  const allChecked = filteredData.length === filteredData.filter((item) => item.checked).length;
+  const someChecked = filteredData.some((item) => item.checked);
 
   return (
     <section ref={parentElement} className="pe-2 h-[300px] w-full overflow-auto scroll-thin">
@@ -213,7 +215,6 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
               />
               <Input
                 className="w-24 h-8 text-xs p-2 text-center"
-                // @ts-ignore
                 value={data[indexData].previsao && normalizeDate(data[indexData].previsao || "")}
                 readOnly
               />

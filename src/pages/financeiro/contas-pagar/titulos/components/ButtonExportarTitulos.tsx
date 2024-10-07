@@ -25,6 +25,7 @@ export type ExportAnexosProps = {
 interface TituloProps extends TituloSchemaProps {
   solicitante?: string;
   forma_pagamento?: string;
+  fornecedor?: string;
 }
 
 const ButtonExportTitulos = () => {

@@ -18,7 +18,7 @@ type DownloadRemessaProps = {
   itens?: VencimentosProps[];
 };
 
-type reverseManualPaymentProps = {
+type reversePaymentProps = {
   id?: string | null;
   tipo?: string;
   forma_pagamento?: string;
@@ -110,9 +110,37 @@ export const useBordero = () => {
 
     reverseManualPayment: () =>
       useMutation({
-        mutationFn: async ({ id, ...rest }: reverseManualPaymentProps) => {
+        mutationFn: async ({ id, tipo }: reversePaymentProps) => {
           return await api
-            .put(`/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`, { ...rest })
+            .put(`/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`, { tipo })
+            .then((response) => response.data);
+        },
+        onSuccess() {
+          toast({
+            variant: "success",
+            title: "Sucesso",
+            description: "Atualização realizada com sucesso",
+            duration: 3500,
+          });
+          queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+        },
+        onError(error: AxiosError) {
+          // @ts-expect-error 'Vai funcionar'
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        },
+      }),
+
+    reversePending: () =>
+      useMutation({
+        mutationFn: async ({ id, tipo }: reversePaymentProps) => {
+          return await api
+            .put(`/financeiro/contas-a-pagar/bordero/reverse-pending`, { id, tipo })
             .then((response) => response.data);
         },
         onSuccess() {
