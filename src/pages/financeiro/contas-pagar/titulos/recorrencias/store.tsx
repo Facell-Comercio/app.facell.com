@@ -5,6 +5,7 @@ type Filters = {
   mes?: string | number;
   a_lancar?: string;
   termo?: string;
+  ownerOnly?: boolean;
 };
 
 const initialFilters: Filters = {
@@ -12,6 +13,7 @@ const initialFilters: Filters = {
   mes: new Date().getMonth() + 1,
   a_lancar: "1",
   termo: '',
+  ownerOnly: false
 };
 
 interface UseStoreRecorrencias {

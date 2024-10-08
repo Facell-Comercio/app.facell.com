@@ -1,22 +1,9 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 import { Button } from "../ui/button";
 import { DialogFooter } from "../ui/dialog";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-} from "../ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Pagination, PaginationContent, PaginationItem } from "../ui/pagination";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Skeleton } from "../ui/skeleton";
 
 interface ModalComponentProps {
@@ -25,11 +12,7 @@ interface ModalComponentProps {
   refetch: () => void;
   pagination: PaginationProps;
   setPagination: (
-    pagination:
-      | PaginationProps
-      | ((
-          prev: PaginationProps
-        ) => PaginationProps)
+    pagination: PaginationProps | ((prev: PaginationProps) => PaginationProps)
   ) => void;
   children: JSX.Element;
   className?: string;
@@ -62,26 +45,18 @@ export const ModalComponent = ({
   handleRemoveAll,
   handleSelectAll,
 }: ModalComponentProps) => {
-  const pages = [
-    ...Array(pageCount || 0).keys(),
-  ].map((page) => page + 1);
-  const scrollAreaRef =
-    useRef<HTMLDivElement>(null);
+  const pages = [...Array(pageCount || 0).keys()].map((page) => page + 1);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const arrayPages = pages.filter((i) => {
     if (i === 1 || i === pages.length) {
       return true;
-    } else if (
-      i >= pagination.pageIndex - 2 &&
-      i <= pagination.pageIndex + 2
-    ) {
+    } else if (i >= pagination.pageIndex - 2 && i <= pagination.pageIndex + 2) {
       return true;
     }
     return false;
   });
 
-  async function handlePaginationChange(
-    index: number
-  ) {
+  async function handlePaginationChange(index: number) {
     await new Promise((resolve) => {
       setPagination((prev) => ({
         ...prev,
@@ -132,9 +107,7 @@ export const ModalComponent = ({
     }
   }
 
-  async function handlePaginationSize(
-    value: string
-  ) {
+  async function handlePaginationSize(value: string) {
     await new Promise((resolve) => {
       setPagination((prev) => ({
         ...prev,
@@ -149,73 +122,42 @@ export const ModalComponent = ({
     <>
       {!isLoading ? (
         <>
-          {multiSelection &&
-            handleRemoveAll &&
-            handleSelectAll && (
-              <div className="flex justify-between">
-                <Button
-                  variant={"destructive"}
-                  size={"sm"}
-                  onClick={() =>
-                    handleRemoveAll()
-                  }
-                >
-                  Remover Todos
-                </Button>
+          {multiSelection && handleRemoveAll && handleSelectAll && (
+            <div className="flex justify-between">
+              <Button variant={"destructive"} size={"sm"} onClick={() => handleRemoveAll()}>
+                Remover Todos
+              </Button>
 
-                <Button
-                  variant={"outline"}
-                  size={"sm"}
-                  onClick={() =>
-                    handleSelectAll()
-                  }
-                >
-                  Selecionar Todos
-                </Button>
-              </div>
-            )}
+              <Button variant={"outline"} size={"sm"} onClick={() => handleSelectAll()}>
+                Selecionar Todos
+              </Button>
+            </div>
+          )}
           <section
             ref={scrollAreaRef}
-            className={`max-h-[55vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin z-50 ${className}`}
+            className={`max-h-[55vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin ${className}`}
           >
             {children}
           </section>
 
           {Info && <Info />}
 
-          <DialogFooter>
+          <DialogFooter className="mt-2">
             {multiSelection && (
               <div className="flex items-center space-x-2">
-                <Select
-                  value={`${pagination.pageSize}`}
-                  onValueChange={
-                    handlePaginationSize
-                  }
-                >
+                <Select value={`${pagination.pageSize}`} onValueChange={handlePaginationSize}>
                   <SelectTrigger className="h-8 w-[80px]">
-                    <SelectValue
-                      placeholder={
-                        pagination.pageSize
-                      }
-                    />
+                    <SelectValue placeholder={pagination.pageSize} />
                   </SelectTrigger>
                   <SelectContent side="top">
-                    {[
-                      5, 10, 15, 20, 30, 40, 50,
-                      100, 200, 300,
-                    ].map((pageSize) => (
-                      <SelectItem
-                        key={pageSize}
-                        value={`${pageSize}`}
-                      >
+                    {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
+                      <SelectItem key={pageSize} value={`${pageSize}`}>
                         {pageSize}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-sm font-medium min-w-fit">
-                  Linhas por página
-                </p>
+                <p className="text-sm font-medium min-w-fit">Linhas por página</p>
               </div>
             )}
             <Pagination className="items-center">
@@ -223,10 +165,7 @@ export const ModalComponent = ({
                 <PaginationItem>
                   <Button
                     variant={"outline"}
-                    disabled={
-                      pagination.pageIndex ===
-                        0 || pageCount === 0
-                    }
+                    disabled={pagination.pageIndex === 0 || pageCount === 0}
                     onClick={handlePaginationDown}
                   >
                     <ChevronLeft className="h-4 w-4" />
@@ -236,17 +175,8 @@ export const ModalComponent = ({
                   return (
                     <PaginationItem key={i}>
                       <Button
-                        variant={
-                          i - 1 ===
-                          pagination.pageIndex
-                            ? "default"
-                            : "ghost"
-                        }
-                        onClick={() =>
-                          handlePaginationChange(
-                            i - 1
-                          )
-                        }
+                        variant={i - 1 === pagination.pageIndex ? "default" : "ghost"}
+                        onClick={() => handlePaginationChange(i - 1)}
                       >
                         {i}
                       </Button>
@@ -256,11 +186,7 @@ export const ModalComponent = ({
                 <PaginationItem>
                   <Button
                     variant={"outline"}
-                    disabled={
-                      pagination.pageIndex ===
-                        pageCount - 1 ||
-                      pageCount === 0
-                    }
+                    disabled={pagination.pageIndex === pageCount - 1 || pageCount === 0}
                     onClick={handlePaginationUp}
                   >
                     <ChevronRight className="h-4 w-4" />
@@ -268,16 +194,13 @@ export const ModalComponent = ({
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
-            {multiSelection &&
-              ButtonSaveSelection && (
-                <ButtonSaveSelection />
-              )}
+            {multiSelection && ButtonSaveSelection && <ButtonSaveSelection />}
             {/* <PaginationEllipsis /> */}
           </DialogFooter>
         </>
       ) : (
         <>
-          <div className="max-h-[55vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin z-50 flex flex-col gap-0.5">
+          <div className="max-h-[55vh] sm:h-96 border p-1 rounded-md overflow-auto scroll-thin flex flex-col gap-0.5">
             <Skeleton className="h-9 w-full" />
             <Skeleton className="h-9 w-full" />
             <Skeleton className="h-9 w-full" />
@@ -303,13 +226,10 @@ type ModalComponentRowProps = {
   className?: string;
 };
 
-export const ModalComponentRow = ({
-  children,
-  className,
-}: ModalComponentRowProps) => {
+export const ModalComponentRow = ({ children, className }: ModalComponentRowProps) => {
   return (
     <div
-      className={`flex items-center justify-between bg-secondary odd:bg-secondary/70 text-secondary-foreground mb-1 border rounded-md p-1 px-2 ${className}`}
+      className={`flex min-w-fit items-center justify-between bg-secondary odd:bg-secondary/70 text-secondary-foreground mb-1 border rounded-md p-1 px-2 ${className}`}
     >
       {children}
     </div>

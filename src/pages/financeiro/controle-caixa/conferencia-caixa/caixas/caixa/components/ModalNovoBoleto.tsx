@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -91,7 +92,8 @@ const ModalNewBoleto = () => {
 
   useEffect(() => {
     !modalOpen && setFormData({ ...initialPropsBoleto, id_filial: id_filial || "" });
-    modalOpen && setFormData({ valor: data?.total_disponivel, id_filial: id_filial || "" });
+    modalOpen &&
+      setFormData({ valor: String(parseInt(data?.total_disponivel)), id_filial: id_filial || "" });
   }, [modalOpen]);
 
   function handleClickCancel() {
@@ -213,7 +215,7 @@ const ModalNewBoleto = () => {
                 <TableBody>
                   {caixas.map((row: any) => (
                     <TableRow
-                      key={'novo-boleto-caixa:'+row.id}
+                      key={"novo-boleto-caixa:" + row.id}
                       className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
                     >
                       <TableCell>
@@ -242,17 +244,18 @@ const ModalNewBoleto = () => {
             <Ban className="me-2 text-xl" />
             Cancelar
           </Button>
-          <Button
-            type={"submit"}
-            size="lg"
-            className="dark:text-white"
-            onClick={() => {
+          <AlertPopUp
+            title="Deseja realmente prosseguir?"
+            description="Um boleto será criado e será enviado por email para cada receptor da loja."
+            action={() => {
               formRef.current && formRef.current.requestSubmit();
             }}
           >
-            <Save className="me-2" />
-            Salvar
-          </Button>
+            <Button type={"submit"} size="lg" className="dark:text-white" disabled={isPending}>
+              <Save className="me-2" />
+              Salvar
+            </Button>
+          </AlertPopUp>
         </DialogFooter>
       </DialogContent>
     </Dialog>

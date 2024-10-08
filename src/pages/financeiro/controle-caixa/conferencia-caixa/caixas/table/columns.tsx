@@ -58,7 +58,10 @@ export const columnsTable: ColumnDef<RowConferenciaCaixa>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={normalizeDate(label)} className="block truncate max-w-96 uppercase">
+        <div
+          // @ts-ignore
+          title={normalizeDate(label)}
+          className="block truncate max-w-96 uppercase">
           {normalizeDate(label)}
         </div>
       );

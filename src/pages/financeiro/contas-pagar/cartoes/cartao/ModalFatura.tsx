@@ -312,6 +312,7 @@ const ModalFatura = () => {
                       </label>
                       <Input
                         disabled={disabled}
+                        // @ts-ignore
                         value={normalizeDate(dados?.data_vencimento || "")}
                         readOnly
                       />
