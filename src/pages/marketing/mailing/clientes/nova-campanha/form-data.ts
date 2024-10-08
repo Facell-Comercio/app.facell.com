@@ -4,15 +4,30 @@ import { z } from "zod";
 
 const schemaNovaCampanha = z
   .object({
-    nome: z.coerce.string({ required_error: "Campo obrigatório" }),
+    nome: z.coerce
+      .string({ required_error: "Campo obrigatório" })
+      .min(5, "Campo obrigatório")
+      .max(50, "O máximo de caracteres é 50"),
     quantidade_lotes: z.coerce.string({ required_error: "Campo obrigatório" }),
     quantidade_total_clientes: z.coerce.string({ required_error: "Campo obrigatório" }),
-    lotes: z.array(
-      z.object({
-        nome: z.coerce.string({ required_error: "Campo obrigatório" }),
-        quantidade_itens: z.coerce.string().trim().min(1, "Obrigatório"),
-      })
-    ),
+    lotes: z
+      .array(
+        z.object({
+          nome: z.coerce.string({ required_error: "Campo obrigatório" }),
+          quantidade_itens: z.coerce.string().trim().min(1, "Obrigatório"),
+        })
+      )
+      .refine(
+        (lotes) => {
+          const nomes = lotes.map((lote) => lote.nome);
+          const nomesUnicos = new Set(nomes);
+          return nomes.length === nomesUnicos.size;
+        },
+        {
+          message: "Os nomes dos lotes precisam ser únicos.",
+          path: ["lotes"], // Refere-se à propriedade "lotes"
+        }
+      ),
   })
   .refine(
     (data) =>

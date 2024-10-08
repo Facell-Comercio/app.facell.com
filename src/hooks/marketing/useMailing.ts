@@ -18,6 +18,10 @@ export type ClientesProps = {
   area?: string;
 };
 
+interface InsertClientesProps extends NovaCampanhaSchema {
+  filters: any;
+}
+
 export const useMailing = () => {
   const queryClient = useQueryClient();
 
@@ -55,8 +59,8 @@ export const useMailing = () => {
 
   const insertOneCampanha = () =>
     useMutation({
-      mutationFn: async (data: NovaCampanhaSchema) => {
-        return await api.post(`marketing/mailing`, data).then((response) => response.data);
+      mutationFn: async (data: InsertClientesProps) => {
+        return await api.post(`marketing/mailing/clientes`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
