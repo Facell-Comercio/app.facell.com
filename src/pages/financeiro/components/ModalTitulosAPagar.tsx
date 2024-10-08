@@ -21,7 +21,7 @@ import { EraserIcon, FilterIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import ModalTituloPagar from "../contas-pagar/titulos/titulo/Modal";
-import { useStoreTitulo } from "../contas-pagar/titulos/titulo/store";
+import { useStoreTituloPagar } from "../contas-pagar/titulos/titulo/store";
 
 interface IModalTitulosAPagar {
   open: boolean;
@@ -140,7 +140,7 @@ const ModalTitulosAPagar = ({
   const pageCount = (data && data.pageCount) || 0;
 
   const [itemOpen, setItemOpen] = useState<string>("item-1");
-  const openModal = useStoreTitulo().openModal;
+  const openModal = useStoreTituloPagar().openModal;
   if (isError) return null;
   if (!open) return null;
 
