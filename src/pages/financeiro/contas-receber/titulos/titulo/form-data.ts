@@ -1,21 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { initialPropsTitulo } from "./store";
+import { initialPropsTituloCR } from "./store";
 
 export const vencimentoSchema = z.object({
   id: z.string().optional(),
+  status: z.string().optional(),
   data_vencimento: z.coerce.string({ required_error: "Campo obrigatório" }),
-  data_prevista: z.coerce.string({ required_error: "Campo obrigatório" }),
   valor: z.string().min(0),
-  cod_barras: z
-    .string()
-    .optional()
-    .transform((v) => v?.trim() || ""),
-  qr_code: z
-    .string()
-    .optional()
-    .transform((v) => v?.trim() || ""),
 });
 
 export const rateioSchema = z.object({
@@ -26,18 +18,15 @@ export const rateioSchema = z.object({
   centro_custo: z.string().optional(),
   id_plano_conta: z.string(),
   plano_conta: z.string().optional(),
-  percentual: z.coerce
-    .string()
-    .transform((value) => String(parseFloat(value) / 100)),
+  percentual: z.coerce.string().transform((value) => String(parseFloat(value) / 100)),
   valor: z.string(),
 });
 
-export const schemaTitulo = z
+export const schemaTituloCR = z
   .object({
     id: z.string().optional(),
     id_status: z.string(),
     status: z.string().optional(),
-    id_recorrencia: z.number().optional(),
     // IDs
     id_fornecedor: z.coerce
       .string({ message: "Campo obrigatório" })
@@ -45,53 +34,25 @@ export const schemaTitulo = z
     id_filial: z.coerce
       .string({ required_error: "Campo obrigatório" })
       .min(1, { message: "Selecione a Filial!" }),
-    id_departamento: z.coerce
-      .string({ required_error: "Campo obrigatório" })
-      .min(1, { message: "Selecione o departamento!" }),
     id_grupo_economico: z.coerce
       .string({ required_error: "Campo obrigatório" })
       .min(1, { message: "Selecione a Filial!" }),
     id_matriz: z.coerce
       .string({ required_error: "Campo obrigatório" })
       .min(1, { message: "Selecione a Filial!" }),
-    id_tipo_solicitacao: z.coerce
-      .string({ required_error: "Campo obrigatório" })
-      .min(1, { message: "Selecione o Tipo de Solicitação!" }),
-    id_forma_pagamento: z.coerce
-      .string({ required_error: "Campo obrigatório" })
-      .min(1, { message: "Selecione a Forma de Pagamento!" }),
 
     id_solicitante: z.string().optional(),
     filial: z.string().optional(),
 
     // Fornecedor
-    cnpj_fornecedor: z.string().optional(),
-    nome_fornecedor: z.string().optional(),
-    favorecido: z.string().optional(),
-    cnpj_favorecido: z.string().optional(),
-    id_tipo_chave_pix: z.string().optional(),
-    chave_pix: z.string().optional(),
-    id_cartao: z.string().optional(),
-
-    id_banco: z.string().optional(),
-    banco: z.string().optional(),
-    codigo_banco: z.string().optional(),
-
-    agencia: z.string().optional(),
-    dv_agencia: z.string().optional(),
-    id_tipo_conta: z.string().optional(),
-    conta: z.string().optional(),
-    dv_conta: z.string().optional(),
+    cnpj_fornecedor: z.string({ required_error: "Campo obrigatório" }),
+    nome_fornecedor: z.string({ required_error: "Campo obrigatório" }),
 
     // Outros
     created_at: z.coerce.date().optional(),
-    data_emissao: z.coerce.string({ required_error: "Campo obrigatório" }),
-    dia_vencimento_cartao: z.coerce.string().optional(), //~ Usado somente na forma de pagamento Cartão
-    dia_corte_cartao: z.coerce.string().optional(), //~ Usado somente na forma de pagamento Cartão
+    data_emissao: z.coerce.string().optional(),
 
-    num_doc: z
-      .string({ message: "Campo obrigatório" })
-      .min(1, { message: "Campo obrigatório" }),
+    num_doc: z.string().optional(),
     valor: z.coerce.string().min(0.01, "Preencha o valor"),
 
     descricao: z
@@ -99,8 +60,8 @@ export const schemaTitulo = z
       .min(10, { message: "Precisa conter mais que 10 caracteres" })
       .toUpperCase(),
 
-    update_vencimentos: z.boolean(),
     vencimentos: z.array(vencimentoSchema),
+    update_vencimentos: z.boolean(),
 
     // Rateio:
     id_rateio: z.string().optional(),
@@ -120,23 +81,23 @@ export const schemaTitulo = z
       .optional(),
 
     // Anexos:
+    url_xml_nota: z.string().optional(),
     url_nota_fiscal: z.string().optional(),
-    url_xml: z.string().optional(),
-    url_boleto: z.string().optional(),
-    url_contrato: z.string().optional(),
+    url_nota_debito: z.string().optional(),
     url_planilha: z.string().optional(),
     url_txt: z.string().optional(),
   })
   //^ Validar se vencimentos == valor total
   .refine(
     (data) =>
-      (data.vencimentos?.reduce((acc, curr) => {
-        return acc + parseFloat(curr.valor);
-      }, 0) || 0).toFixed(2) == parseFloat(data.valor).toFixed(2),
+      (
+        data.vencimentos?.reduce((acc, curr) => {
+          return acc + parseFloat(curr.valor);
+        }, 0) || 0
+      ).toFixed(2) == parseFloat(data.valor).toFixed(2),
     {
       path: ["vencimentos"],
-      message:
-        "O valor dos vencimentos precisa bater com o valor total da solicitação.",
+      message: "O valor dos vencimentos precisa bater com o valor total da solicitação.",
     }
   )
   //^ Validar se rateio == valor total
@@ -149,36 +110,16 @@ export const schemaTitulo = z
       ).toFixed(2) == parseFloat(data.valor).toFixed(2),
     {
       path: ["itens_rateio"],
-      message:
-        "O valor total do rateio precisa bater com o valor total da solicitação.",
+      message: "O valor total do rateio precisa bater com o valor total da solicitação.",
     }
-  )
-
-  // ^ Validação de Anexos
-  .refine(
-    (data) => (data.id_tipo_solicitacao == "1" ? !!data.url_nota_fiscal : true),
-    { path: ["url_nota_fiscal"], message: "Anexo Obrigatório!" }
-  )
-  .refine(
-    (data) => (data.id_tipo_solicitacao == "4" ? !!data.url_boleto : true),
-    { path: ["url_boleto"], message: "Anexo Obrigatório!" }
-  )
-  .refine(
-    (data) =>
-      data.id_tipo_solicitacao != "1" &&
-      data.id_tipo_solicitacao != "4" &&
-      data.id_forma_pagamento != "2"
-        ? !!data.url_contrato
-        : true,
-    { path: ["url_contrato"], message: "Anexo Obrigatória!" }
   );
 
-export type TituloSchemaProps = z.infer<typeof schemaTitulo>;
+export type TituloCRSchemaProps = z.infer<typeof schemaTituloCR>;
 
-export const useFormTituloData = (data: TituloSchemaProps) => {
-  const form = useForm<TituloSchemaProps>({
-    resolver: zodResolver(schemaTitulo),
-    defaultValues: initialPropsTitulo,
+export const useFormTituloCRData = (data: TituloCRSchemaProps) => {
+  const form = useForm<TituloCRSchemaProps>({
+    resolver: zodResolver(schemaTituloCR),
+    defaultValues: initialPropsTituloCR,
     values: data,
     mode: "all",
   });

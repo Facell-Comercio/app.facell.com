@@ -1,16 +1,13 @@
 import { DataTable } from "@/components/custom/DataTable";
-import { useStoreTableReceber } from "./table/store-table";
 import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
 import Filters from "./table/Filters";
+import { useStoreTableReceber } from "./table/store-table";
 
-import ButtonExportTitulos from "./components/ButtonExportarTitulos";
-import ButtonImportTitulos from "./components/ButtonImportarTitulo";
 import ButtonNovoTitulo from "./components/ButtonNovoTitulo";
 import { columnsTable } from "./table/columns";
 import ModalTituloReceber from "./titulo/ModalTituloReceber";
 
 const TitulosReceber = () => {
-
   const [pagination, setPagination, filters] = useStoreTableReceber((state) => [
     state.pagination,
     state.setPagination,
@@ -38,8 +35,8 @@ const TitulosReceber = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap justify-end gap-3 ">
-        <ButtonExportTitulos />
-        <ButtonImportTitulos />
+        {/* <ButtonExportTitulos />
+        <ButtonImportTitulos /> */}
         <ButtonNovoTitulo />
       </div>
       <Filters refetch={refetchTitulos} />

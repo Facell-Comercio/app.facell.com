@@ -16,15 +16,19 @@ import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
-import { addMonths, isBefore, setDate, subDays } from "date-fns";
+import { subDays } from "date-fns";
 import { Plus, Save } from "lucide-react";
 import { useEffect } from "react";
+import { TbCurrencyReal } from "react-icons/tb";
 import z from "zod";
-import { TituloSchemaProps, vencimentoSchema } from "../../../form-data";
-import { calcularDataPrevisaoPagamento } from "../../../helpers/helper";
+import { TituloCRSchemaProps, vencimentoSchema } from "../../../form-data";
 import { initialStateVencimento, useStoreVencimento } from "./context";
 
-export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<TituloSchemaProps> }) {
+export function ModalVencimento({
+  form: formTitulo,
+}: {
+  form: UseFormReturn<TituloCRSchemaProps>;
+}) {
   const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
@@ -61,37 +65,6 @@ export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<Titu
     control: formTitulo.control,
   });
 
-  const id_forma_pagamento = formTitulo.watch("id_forma_pagamento");
-  const dia_corte_cartao = formTitulo.watch("dia_corte_cartao");
-  const dia_vencimento_cartao = formTitulo.watch("dia_vencimento_cartao");
-  const isCartao = id_forma_pagamento == "6";
-
-  const uniqueDayMonth = isCartao ? dia_vencimento_cartao : undefined;
-
-  // * Lógica de cartões:
-  useEffect(() => {
-    if (isCartao) {
-      const dataAtual = new Date();
-      const corteCartaoDate = setDate(dataAtual, Number(dia_corte_cartao));
-      const vencimentoCartaoDate = setDate(dataAtual, Number(dia_vencimento_cartao));
-
-      let proximaDataVencimento;
-
-      if (isBefore(dataAtual, corteCartaoDate)) {
-        // Se a data atual for antes do dia de corte, o vencimento é no mês atual
-        proximaDataVencimento = addMonths(vencimentoCartaoDate, 1);
-      } else {
-        // Se a data atual for depois do dia de corte, o vencimento é no próximo mês
-        proximaDataVencimento = addMonths(vencimentoCartaoDate, 2);
-      }
-
-      form.setValue("data_vencimento", proximaDataVencimento.toDateString());
-      form.setValue(
-        "data_prevista",
-        calcularDataPrevisaoPagamento(proximaDataVencimento).toDateString()
-      );
-    }
-  }, [isCartao, dia_corte_cartao, dia_vencimento_cartao]);
   // const { formState: { errors } } = form;
 
   //* Ao abrir o modal, caso não tenha um valor predefinido, irá setar como valor o que falta para completar o valor do título
@@ -102,9 +75,7 @@ export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<Titu
   }, [modalOpen]);
 
   const handleChangeVencimento = (val: Date) => {
-    // console.log(String(calcularDataPrevisaoPagamento(val)));
-
-    form.setValue("data_prevista", String(calcularDataPrevisaoPagamento(val)));
+    form.setValue("data_vencimento", String(val));
   };
   const isUpdate = !!vencimento.id;
 
@@ -150,10 +121,7 @@ export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<Titu
       addVencimento({
         id: new Date().getTime().toString(),
         data_vencimento: String(data.data_vencimento),
-        data_prevista: String(data.data_prevista),
         valor: data.valor,
-        cod_barras: data.cod_barras || "",
-        qr_code: data.qr_code || "",
       });
     }
     formTitulo.setValue("update_vencimentos", true);
@@ -184,19 +152,15 @@ export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<Titu
                 <FormDateInput
                   name="data_vencimento"
                   label="Vencimento"
-                  uniqueDayMonth={uniqueDayMonth}
                   min={!isMaster ? subDays(new Date(), 1) : undefined}
                   control={form.control}
                   onChange={(val) => handleChangeVencimento(val)}
                 />
-                <FormDateInput
-                  name="data_prevista"
-                  label="Prevista"
-                  control={form.control}
-                  disabled={!isMaster}
-                />
 
                 <FormInput
+                  icon={TbCurrencyReal}
+                  iconClass="bg-secondary"
+                  iconLeft
                   name="valor"
                   type="number"
                   label="Valor"
@@ -205,10 +169,6 @@ export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<Titu
                   control={form.control}
                 />
               </div>
-
-              <FormInput name="cod_barras" label="Código de Barras" control={form.control} />
-
-              <FormInput name="qr_code" label="PIX Copia e Cola" control={form.control} />
             </div>
 
             <DialogFooter>

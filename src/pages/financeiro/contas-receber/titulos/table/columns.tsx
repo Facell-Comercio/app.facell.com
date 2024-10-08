@@ -53,7 +53,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     cell: (info) => (
       <div
         className="font-semibold cursor-pointer text-blue-500 rounded-lg"
-        onClick={() => openModal({id: info.getValue<string>()})}
+        onClick={() => openModal({ id: info.getValue<string>() })}
       >
         {info.getValue<string>()}
       </div>
@@ -69,12 +69,12 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
 
       const status = info.getValue<string>();
       const color = generateStatusColor({ status: status, text: true });
-      return <span onClick={()=>openModal({id: id_titulo})} className={`${color} cursor-pointer`}>{status}</span>;
+      return (
+        <span onClick={() => openModal({ id: id_titulo })} className={`${color} cursor-pointer`}>
+          {status}
+        </span>
+      );
     },
-  },
-  {
-    header: "Forma Pgto",
-    accessorKey: "forma_pagamento",
   },
   {
     header: "Solicitação",
@@ -123,7 +123,6 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
         </div>
       );
     },
-    
   },
   {
     header: "Valor",
@@ -152,8 +151,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     },
     header: "Descrição",
   },
- 
-  
+
   {
     header: "Solicitante",
     accessorKey: "solicitante",

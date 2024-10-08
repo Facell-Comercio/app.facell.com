@@ -3,10 +3,18 @@ import { Control } from "react-hook-form";
 import { MultiSelect } from "../ui/multi-select";
 import FormSelect from "./FormSelect";
 
-const multiData = [
+const multiDataCP = [
   { id: "1", label: "Solicitado" },
   { id: "2", label: "Negado" },
   { id: "3", label: "Aprovado" },
+  { id: "4", label: "Pago Parcial" },
+  { id: "5", label: "Pago" },
+];
+
+const multiDataCR = [
+  { id: "1", label: "Criado" },
+  { id: "2", label: "Cancelado" },
+  { id: "3", label: "Emitido" },
   { id: "4", label: "Pago Parcial" },
   { id: "5", label: "Pago" },
 ];
@@ -37,14 +45,31 @@ type TSelectMultiStatus = {
   onChange: (value: string[]) => any;
 };
 
-export const SelectMultiStatus = (
-  props: TSelectMultiStatus
-) => {
+export const SelectMultiStatusCP = (props: TSelectMultiStatus) => {
   return (
     // @ts-ignore
     <MultiSelect
       {...props}
-      options={multiData.map((forma: Status) => ({
+      options={multiDataCP.map((forma: Status) => ({
+        value: forma.id,
+        label: forma.label,
+      }))}
+      onValueChange={props.onChange}
+      defaultValue={props.value}
+      placeholder="Status"
+      variant="secondary"
+      animation={4}
+      maxCount={1}
+    />
+  );
+};
+
+export const SelectMultiStatusCR = (props: TSelectMultiStatus) => {
+  return (
+    // @ts-ignore
+    <MultiSelect
+      {...props}
+      options={multiDataCR.map((forma: Status) => ({
         value: forma.id,
         label: forma.label,
       }))}
@@ -71,9 +96,7 @@ type TSelectStatus = {
   onChange: (id?: string) => any;
 };
 
-export const SelectStatus = (
-  props: TSelectStatus
-) => {
+export const SelectStatus = (props: TSelectStatus) => {
   return (
     <FormSelect
       name={props.name}
