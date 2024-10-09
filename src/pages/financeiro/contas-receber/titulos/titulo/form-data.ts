@@ -41,7 +41,7 @@ export const schemaTituloCR = z
       .string({ required_error: "Campo obrigatório" })
       .min(1, { message: "Selecione a Filial!" }),
 
-    id_solicitante: z.string().optional(),
+    id_user: z.string().optional(),
     filial: z.string().optional(),
 
     // Fornecedor
@@ -51,6 +51,10 @@ export const schemaTituloCR = z
     // Outros
     created_at: z.coerce.date().optional(),
     data_emissao: z.coerce.string().optional(),
+
+    id_tipo_documento: z.coerce.string().optional(),
+    tim_pedido: z.string().optional(),
+    tim_pedido_sap: z.string().optional(),
 
     num_doc: z.string().optional(),
     valor: z.coerce.string().min(0.01, "Preencha o valor"),
@@ -85,7 +89,8 @@ export const schemaTituloCR = z
     url_nota_fiscal: z.string().optional(),
     url_nota_debito: z.string().optional(),
     url_planilha: z.string().optional(),
-    url_txt: z.string().optional(),
+    url_outros: z.string().optional(),
+    url_recibo: z.string().optional(),
   })
   //^ Validar se vencimentos == valor total
   .refine(

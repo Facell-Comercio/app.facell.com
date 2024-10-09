@@ -28,7 +28,7 @@ const initialFilters: Filters = {
   forma_pagamento_list: [],
   grupo_economico_list: [],
   status_list: [],
-  tipo_data: "data_vencimento",
+  tipo_data: "created_at",
   range_data: { from: undefined, to: undefined },
   descricao: "",
   nome_user: "",
@@ -57,28 +57,27 @@ export interface Actions {
   handleRowSelection: (data: HandleRowSelectionProps) => void;
 }
 
-export const useStoreTableReceber = create<State & Actions>(
-  (set) => ({
-    // Table
-    rowCount: 0,
-    // sorting: [],
-    pagination: { pageIndex: 0, pageSize: 15 },
-    isAllSelected: false,
-    rowSelection: {},
-    idSelection: [],
+export const useStoreTableReceber = create<State & Actions>((set) => ({
+  // Table
+  rowCount: 0,
+  // sorting: [],
+  pagination: { pageIndex: 0, pageSize: 15 },
+  isAllSelected: false,
+  rowSelection: {},
+  idSelection: [],
 
-    // Filters
-    filters: initialFilters,
-    setFilters: (novoFiltro) =>
-      set((state) => ({
-        ...state,
-        filters: { ...state.filters, ...novoFiltro },
-      })),
-    resetFilters: () => {
-      set({ filters: initialFilters });
-    },
+  // Filters
+  filters: initialFilters,
+  setFilters: (novoFiltro) =>
+    set((state) => ({
+      ...state,
+      filters: { ...state.filters, ...novoFiltro },
+    })),
+  resetFilters: () => {
+    set({ filters: initialFilters });
+  },
 
-    setPagination: (pagination) => set({ pagination }),
-    handleRowSelection: (data: HandleRowSelectionProps) =>
-      set({ rowSelection: data.rowSelection, idSelection: data.idSelection }),
-  }));
+  setPagination: (pagination) => set({ pagination }),
+  handleRowSelection: (data: HandleRowSelectionProps) =>
+    set({ rowSelection: data.rowSelection, idSelection: data.idSelection }),
+}));

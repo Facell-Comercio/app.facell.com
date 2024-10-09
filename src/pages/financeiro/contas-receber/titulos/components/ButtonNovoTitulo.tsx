@@ -10,9 +10,9 @@ const ButtonNovoTitulo = () => {
       <Button
         variant={"outline"}
         className="border-blue-200 dark:border-primary"
-        onClick={() => openModal({id: ''})}
+        onClick={() => openModal({ id: "" })}
       >
-        <Plus className="me-2" size={18} /> Novo Título
+        <Plus className="me-2" size={18} /> Nova Solicitação
       </Button>
     </span>
   );

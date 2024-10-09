@@ -11,7 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UseFormReturn, useFieldArray, useForm, useWatch } from "react-hook-form";
 
 import FormInput from "@/components/custom/FormInput";
-import { DotsLoading } from "@/components/custom/Loading";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
@@ -28,7 +27,6 @@ import { AlertCircle, Percent, Plus, Save } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import z from "zod";
 import { TituloCRSchemaProps, rateioSchema } from "../../../form-data";
-import { checkIfValidateBudget } from "../../../helpers/helper";
 import { ItemRateioTituloCR } from "../../../store";
 import { initialStateRateio, useStoreRateio } from "./context";
 
@@ -49,8 +47,6 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
     description?: string;
   };
   const [feedback, setFeedback] = useState<Feedback | null>(null);
-  const [validarOrcamento, setValidarOrcamento] = useState<boolean>(true);
-  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   // Dados obtidos do Título:
   const id_matriz = useWatch({
@@ -171,14 +167,10 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
   };
   const fetchOrcamento = async (props: FetchOrcamento) => {
     try {
-      setIsFetching(true);
       const result = await api.get("/financeiro/orcamento/find-account", {
         params: { ...props },
       });
       const contaOrcamento = result.data;
-
-      const aplicarOrcamento = checkIfValidateBudget(contaOrcamento);
-      setValidarOrcamento(aplicarOrcamento);
 
       const valOrcamento = parseFloat(contaOrcamento.saldo);
       setValorOrcamento(valOrcamento);
@@ -190,8 +182,6 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
         description: error?.response?.data?.message || error.message,
       });
       setValorOrcamento(0);
-    } finally {
-      setIsFetching(false);
     }
   };
 
@@ -231,7 +221,6 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
         return acc + parseFloat(curr.valor);
       }, 0) || 0) + valor;
 
-  const saldoFuturoOrcamento = valorOrcamento - previsaoConsumoOrcamento;
   const valorExcessoOrcamento = previsaoConsumoOrcamento - valorOrcamento;
 
   const excedeOrcamento = valorExcessoOrcamento > 0;
@@ -256,14 +245,7 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
       });
       return;
     }
-    if (validarOrcamento && excedeOrcamento) {
-      setFeedback({
-        variant: "destructive",
-        title: "Orçamento excedido!",
-        description: `O valor excede o orçamento em ${normalizeCurrency(valorExcessoOrcamento)}`,
-      });
-      return;
-    }
+
     if (excedeTotalTitulo) {
       setFeedback({
         variant: "destructive",
@@ -282,14 +264,13 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
   }, [percentual, valor, valorOrcamento]);
 
   const btnDisabled =
-    validarOrcamento &&
-    (excedeOrcamento ||
-      excedeTotalTitulo ||
-      valorOrcamento <= 0 ||
-      !valor ||
-      valor <= 0 ||
-      !percentual ||
-      percentual <= 0);
+    excedeOrcamento ||
+    excedeTotalTitulo ||
+    valorOrcamento <= 0 ||
+    !valor ||
+    valor <= 0 ||
+    !percentual ||
+    percentual <= 0;
 
   const onSubmit = (data: z.infer<typeof rateioSchema>) => {
     try {
@@ -469,25 +450,6 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
                   control={formItemRateio.control}
                 />
               </span>
-
-              {isFetching ? (
-                <div className="w-full flex justify-center">
-                  <DotsLoading size={3} />
-                </div>
-              ) : (
-                validarOrcamento && (
-                  <>
-                    <div className="flex gap-3 text-muted-foreground">
-                      <span>Saldo Orçamento</span>
-                      <span>{normalizeCurrency(valorOrcamento)}</span>
-                    </div>
-                    <div className="flex gap-3 text-muted-foreground">
-                      <span>Saldo Orçamento Futuro</span>
-                      <span>{normalizeCurrency(saldoFuturoOrcamento)}</span>
-                    </div>
-                  </>
-                )
-              )}
 
               <div className="flex gap-3">
                 {feedback && (

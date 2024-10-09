@@ -1,5 +1,4 @@
 import FormInput from "@/components/custom/FormInput";
-import { DotsLoading } from "@/components/custom/Loading";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button, ButtonProps } from "@/components/ui/button";
 import {
@@ -13,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-import { normalizeCurrency } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import ModalCentrosCustos from "@/pages/financeiro/components/ModalCentrosCustos";
 import ModalPlanosContas, {
@@ -26,7 +24,6 @@ import { forwardRef, useEffect, useState } from "react";
 import { UseFormReturn, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { TituloCRSchemaProps } from "../../../form-data";
-import { checkIfValidateBudget } from "../../../helpers/helper";
 import { ItemRateioTituloCR } from "../../../store";
 
 type PadronizarAlocacaoProps = {
@@ -59,8 +56,6 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
     description?: string;
   };
   const [feedback, setFeedback] = useState<Feedback | null>(null);
-  const [validarOrcamento, setValidarOrcamento] = useState<boolean>(true);
-  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const itens_rateio = useWatch({
     name: "itens_rateio",
@@ -115,10 +110,6 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
       return acc + parseFloat(curr.valor);
     }, 0) || 0;
 
-  const valorExcessoOrcamento = valorTotalItens - saldoOrcamento;
-  const excedeOrcamento = saldoOrcamento < valorTotalItens;
-  const saldoFuturoOrcamento = saldoOrcamento - valorTotalItens;
-
   type FetchOrcamento = {
     id_grupo_economico: number | string;
     id_centro_custo: number | string;
@@ -126,15 +117,11 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
   };
   const fetchOrcamento = async (props: FetchOrcamento) => {
     try {
-      setIsFetching(true);
       const result = await api.get("/financeiro/orcamento/find-account", {
         params: { ...props },
       });
 
       const contaOrcamento = result.data;
-
-      const aplicarOrcamento = checkIfValidateBudget(contaOrcamento);
-      setValidarOrcamento(aplicarOrcamento);
 
       const valOrcamento = parseFloat(contaOrcamento.saldo);
       setSaldoOrcamento(valOrcamento);
@@ -146,8 +133,6 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
         description: error?.response?.data?.message || error.message,
       });
       setSaldoOrcamento(0);
-    } finally {
-      setIsFetching(false);
     }
   };
 
@@ -171,14 +156,6 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
       setFeedback({
         variant: "destructive",
         title: "Preencha o percentual",
-      });
-      return;
-    }
-    if (validarOrcamento && excedeOrcamento) {
-      setFeedback({
-        variant: "destructive",
-        title: "Orçamento excedido!",
-        description: `O valor excede o orçamento em ${normalizeCurrency(valorExcessoOrcamento)}`,
       });
       return;
     }
@@ -215,7 +192,7 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
     }
   };
 
-  const btnDisabled = validarOrcamento && saldoOrcamento < valorTotalItens;
+  const btnDisabled = saldoOrcamento < valorTotalItens;
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -283,7 +260,7 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
                 />
               </span>
 
-              {isFetching ? (
+              {/* {isFetching ? (
                 <div className="w-full flex justify-center">
                   <DotsLoading size={3} />
                 </div>
@@ -304,7 +281,7 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
                     </div>
                   </>
                 )
-              )}
+              )} */}
 
               <div className="flex gap-3">
                 {feedback && (

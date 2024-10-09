@@ -1,5 +1,5 @@
 import { SelectMultiGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
-import { SelectMultiStatusCP } from "@/components/custom/SelectMultiStatus";
+import { SelectMultiStatusCR } from "@/components/custom/SelectMultiStatus";
 import {
   Accordion,
   AccordionContent,
@@ -111,7 +111,7 @@ const FiltersTitulosReceber = ({ refetch }: { refetch: () => void }) => {
                 }
               /> */}
 
-              <SelectMultiStatusCP
+              <SelectMultiStatusCR
                 className="w-fit"
                 value={filters.status_list || []}
                 onChange={(value) =>

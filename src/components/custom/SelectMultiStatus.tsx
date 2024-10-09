@@ -12,11 +12,11 @@ const multiDataCP = [
 ];
 
 const multiDataCR = [
-  { id: "1", label: "Criado" },
-  { id: "2", label: "Cancelado" },
-  { id: "3", label: "Emitido" },
-  { id: "4", label: "Pago Parcial" },
-  { id: "5", label: "Pago" },
+  { id: "10", label: "Criado" },
+  { id: "20", label: "Cancelado" },
+  { id: "30", label: "Emitido" },
+  { id: "40", label: "Pago Parcial" },
+  { id: "50", label: "Pago" },
 ];
 
 const data = [

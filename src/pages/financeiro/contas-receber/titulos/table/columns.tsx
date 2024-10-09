@@ -1,4 +1,3 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { ColumnDef } from "@tanstack/react-table";
 import { ReactNode } from "react";
@@ -21,32 +20,32 @@ export type RowTitulo = {
 const openModal = useStoreTituloReceber.getState().openModal;
 
 export const columnsTable: ColumnDef<RowTitulo>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="px-1">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <Checkbox
-          {...{
-            checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            indeterminate: row.getIsSomeSelected().toString(),
-            onCheckedChange: row.getToggleSelectedHandler(),
-          }}
-        />
-      </div>
-    ),
-  },
+  // {
+  //   id: "select",
+  //   header: ({ table }) => (
+  //     <div className="px-1">
+  //       <Checkbox
+  //         checked={
+  //           table.getIsAllPageRowsSelected() ||
+  //           (table.getIsSomePageRowsSelected() && "indeterminate")
+  //         }
+  //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       />
+  //     </div>
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="flex items-center">
+  //       <Checkbox
+  //         {...{
+  //           checked: row.getIsSelected(),
+  //           disabled: !row.getCanSelect(),
+  //           indeterminate: row.getIsSomeSelected().toString(),
+  //           onCheckedChange: row.getToggleSelectedHandler(),
+  //         }}
+  //       />
+  //     </div>
+  //   ),
+  // },
   {
     accessorKey: "id",
     header: "ID",
@@ -77,7 +76,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     },
   },
   {
-    header: "Solicitação",
+    header: "Data Criação",
     accessorKey: "created_at",
     cell: (info) => {
       const data = info.getValue<Date>();
@@ -128,7 +127,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     header: "Valor",
     accessorKey: "valor",
     cell: (info) => (
-      <span className="block text-right text-nowrap">
+      <span className="block text-nowrap">
         R${" "}
         {parseFloat(info.getValue<string>()).toLocaleString("pt-BR", {
           useGrouping: true,
@@ -153,8 +152,8 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
   },
 
   {
-    header: "Solicitante",
-    accessorKey: "solicitante",
+    header: "Criador",
+    accessorKey: "criador",
     cell: (info) => {
       const label = info.getValue<string>();
       return (

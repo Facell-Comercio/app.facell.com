@@ -44,6 +44,7 @@ import { SubmitHandler, UseFormReturn, useWatch } from "react-hook-form";
 import { FaSpinner } from "react-icons/fa6";
 import { TbCurrencyReal } from "react-icons/tb";
 
+import FormSelect from "@/components/custom/FormSelect";
 import SecaoRateioCR from "./components/form/rateio/SecaoRateioCR";
 import SecaoVencimentosCR from "./components/form/vencimento/SecaoVencimentosCR";
 import { TituloCRSchemaProps } from "./form-data";
@@ -87,10 +88,6 @@ const FormTituloReceber = ({
   // * [ WATCHES ]
   // const wfull = form.watch();
   // console.log(wfull);
-  const url_nota_fiscal = useWatch({
-    name: "url_nota_fiscal",
-    control: form.control,
-  });
   const id_grupo_economico = useWatch({
     name: "id_grupo_economico",
     control: form.control,
@@ -107,27 +104,25 @@ const FormTituloReceber = ({
   );
 
   // * [ VERIFICAÇÕES ]
-  const status = titulo?.status || "Solicitado";
+  const status = titulo?.status || "Criado";
   const id_status = parseInt(titulo?.id_status) ?? 10;
 
   const isMaster = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
 
-  const canEdit = !id || status === "Solicitado" || (isMaster && id_status > 0 && id_status < 30);
+  const canEdit = !id || status === "Criado" || (isMaster && id_status > 0 && id_status < 30);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
-  const emitido = form.watch("status") === "Emitido";
 
-  const podeArquivar = id && (status == "Solicitado" || status == "Negado");
+  const podeArquivar = id && (status == "Criado" || status == "Cancelado");
 
   const podeResolicitar =
     id &&
-    status !== "Solicitado" &&
-    (id_status < 30 || (isMaster === true && status === "Aprovado" ? true : false));
+    status !== "Criado" &&
+    (id_status < 30 || (isMaster === true && status === "Emitido" ? true : false));
 
-  const podeNegar = isMaster && id && status !== "Negado" && id_status > 0 && id_status < 40;
-  const podeAprovar = isMaster && id && status !== "Aprovado" && id_status > 0 && id_status < 40;
-
-  const podeAnexarNotaFiscal = id_status == 30 || (id_status >= 30 && !!url_nota_fiscal);
+  const podeNegar = isMaster && id && status !== "Cancelado" && id_status > 0 && id_status < 40;
+  const podeAprovar = isMaster && id && status !== "Emitido" && id_status > 0 && id_status < 40;
+  const podeEditarPedido = !id || !form.watch("id_user");
   const podeExcluirNotaFiscal = id_status < 30 || isMaster;
 
   // * [ FORNECEDOR ]
@@ -196,6 +191,8 @@ const FormTituloReceber = ({
   }, [isPendingInsert, isPendingUpdate]);
 
   const onSubmit: SubmitHandler<TituloCRSchemaProps> = async (data) => {
+    console.log(data);
+
     if (!id) insertOne(data);
     if (id) update(data);
   };
@@ -245,7 +242,7 @@ const FormTituloReceber = ({
       motivo,
     });
   };
-  const handleChangeVoltarSolicitado = (motivo: string) => {
+  const handleChangeVoltarCriado = (motivo: string) => {
     changeStatusTitulo({
       id_novo_status: "10",
       motivo,
@@ -395,57 +392,97 @@ const FormTituloReceber = ({
                   </div>
 
                   <div className="grid gap-3 flex-wrap items-end">
-                    <span className="space-y-2">
-                      <span className="flex justify-between gap-2">
-                        <label className="text-sm font-medium">Filial</label>
-                        <AlertPopUp
-                          title="Deseja realmente redefinir a filial?"
-                          description="Todos os campos relacionados a essa filial serão resetados"
-                          action={() => {
-                            form.setValue("itens_rateio", []);
-                            form.setValue("id_filial", "");
-                            form.setValue("filial", "");
-                            form.setValue("id_matriz", "");
-                            form.setValue("id_grupo_economico", "");
-                          }}
-                        >
-                          <Button
-                            variant={"destructive"}
-                            size={"xss"}
-                            title="Redefinir filial"
-                            disabled={disabled}
-                          >
-                            <RotateCcw size={13} />
-                          </Button>
-                        </AlertPopUp>
-                      </span>
-                      <FormInput
-                        readOnly={true}
-                        name="filial"
-                        placeholder="SELECIONE A FILIAL"
-                        control={form.control}
-                        inputClass="sm:min-w-[100px]"
+                    <div className="flex items-end flex-wrap gap-3">
+                      <FormSelect
                         disabled={disabled}
-                        onClick={showModalFilial}
+                        name="id_tipo_documento"
+                        label={"Tipo de documento"}
+                        control={form.control}
+                        className="flex-1 min-w-[32ch]"
+                        options={[
+                          {
+                            value: "1",
+                            label: "Nota Fiscal",
+                          },
+                          {
+                            value: "2",
+                            label: "Nota de Débito",
+                          },
+                          {
+                            value: "3",
+                            label: "Recibo",
+                          },
+                        ]}
                       />
-                    </span>
+                      <span className="space-y-2 flex-1 min-w-[32ch]">
+                        <span className="flex justify-between gap-2">
+                          <label className="text-sm font-medium">Filial</label>
+                          <AlertPopUp
+                            title="Deseja realmente redefinir a filial?"
+                            description="Todos os campos relacionados a essa filial serão resetados"
+                            action={() => {
+                              form.setValue("itens_rateio", []);
+                              form.setValue("id_filial", "");
+                              form.setValue("filial", "");
+                              form.setValue("id_matriz", "");
+                              form.setValue("id_grupo_economico", "");
+                            }}
+                          >
+                            <Button
+                              variant={"destructive"}
+                              size={"xss"}
+                              title="Redefinir filial"
+                              disabled={disabled}
+                            >
+                              <RotateCcw size={13} />
+                            </Button>
+                          </AlertPopUp>
+                        </span>
+                        <FormInput
+                          readOnly={true}
+                          name="filial"
+                          placeholder="SELECIONE A FILIAL"
+                          control={form.control}
+                          inputClass="sm:min-w-[100px]"
+                          disabled={disabled}
+                          onClick={showModalFilial}
+                        />
+                      </span>
+                    </div>
 
                     <div className="max-w-full flex flex-wrap gap-3">
-                      <FormDateInput
-                        disabled={disabled || !emitido}
-                        name="data_emissao"
-                        label="Data de emissão"
-                        control={form.control}
-                        className="flex-1 min-w-[15ch]"
-                      />
-
                       <FormInput
-                        readOnly={readOnly}
+                        readOnly={disabled}
                         name="num_doc"
                         label="Núm. Doc."
                         className={"flex-1 min-w-[15ch]"}
                         control={form.control}
-                        disabled={disabled || !emitido}
+                        disabled={disabled}
+                      />
+                      <FormInput
+                        readOnly={!podeEditarPedido}
+                        name="pedido_tim"
+                        label="Pedido TIM"
+                        className={"flex-1 min-w-[15ch]"}
+                        control={form.control}
+                        disabled={disabled}
+                      />
+                      <FormInput
+                        readOnly={!podeEditarPedido}
+                        name="pedido_tim_sap"
+                        label="Pedido TIM SAP"
+                        className={"flex-1 min-w-[15ch]"}
+                        control={form.control}
+                        disabled={disabled}
+                      />
+                    </div>
+                    <div className="max-w-full flex flex-wrap gap-3">
+                      <FormDateInput
+                        disabled={disabled}
+                        name="data_emissao"
+                        label="Data de emissão"
+                        control={form.control}
+                        className="flex-1 min-w-[15ch]"
                       />
 
                       <FormInput
@@ -570,7 +607,7 @@ const FormTituloReceber = ({
 
                 <FormFileUpload
                   folderName={"financeiro"}
-                  disabled={!podeAnexarNotaFiscal}
+                  disabled={disabled}
                   label="XML Nota Fiscal"
                   name="url_xml_nota"
                   mediaType="xml"
@@ -585,7 +622,7 @@ const FormTituloReceber = ({
                 />
                 <FormFileUpload
                   folderName={"financeiro"}
-                  disabled={!podeAnexarNotaFiscal}
+                  disabled={disabled}
                   canDelete={podeExcluirNotaFiscal}
                   label="Nota Fiscal"
                   name="url_nota_fiscal"
@@ -600,7 +637,7 @@ const FormTituloReceber = ({
                 />
                 <FormFileUpload
                   folderName={"financeiro"}
-                  disabled={!podeAnexarNotaFiscal}
+                  disabled={disabled}
                   canDelete={podeExcluirNotaFiscal}
                   label="Nota Débito"
                   name="url_nota_debito"
@@ -615,7 +652,22 @@ const FormTituloReceber = ({
                 />
                 <FormFileUpload
                   folderName={"financeiro"}
-                  disabled={!podeAnexarNotaFiscal}
+                  disabled={disabled}
+                  canDelete={podeExcluirNotaFiscal}
+                  label="Recibo"
+                  name="url_recibo"
+                  mediaType="etc"
+                  control={form.control}
+                  onChange={(fileUrl: string) => {
+                    handleChangeFile({
+                      fileUrl,
+                      campo: "url_recibo",
+                    });
+                  }}
+                />
+                <FormFileUpload
+                  folderName={"financeiro"}
+                  disabled={disabled}
                   label="Planilha"
                   name="url_planilha"
                   mediaType="excel"
@@ -629,12 +681,12 @@ const FormTituloReceber = ({
                 />
                 <FormFileUpload
                   folderName={"financeiro"}
-                  disabled={!podeAnexarNotaFiscal}
-                  label="Arquivo remessa"
-                  name="url_txt"
-                  mediaType="remessa"
+                  disabled={disabled}
+                  label="Outros"
+                  name="url_outros"
+                  mediaType="etc"
                   control={form.control}
-                  onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: "url_txt" })}
+                  onChange={(fileUrl: string) => handleChangeFile({ fileUrl, campo: "url_outros" })}
                 />
               </div>
             </div>
@@ -665,7 +717,7 @@ const FormTituloReceber = ({
                     title="Volta o status da solicitação para 'Criado', possibilitando a edição..."
                     variant={"secondary"}
                     size={"lg"}
-                    action={handleChangeVoltarSolicitado}
+                    action={handleChangeVoltarCriado}
                   >
                     <Undo2 className="me-2" size={18} />
                     Status Inicial

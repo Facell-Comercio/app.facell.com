@@ -8,10 +8,9 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
-import { BtnCriarRecorrencia } from "@/pages/financeiro/contas-pagar/titulos/titulo/components/BtnCriarRecorrencia";
 import { useEffect } from "react";
 import { BtnCopiarTituloReceber } from "./components/BtnCopiarTituloReceber";
-import FormTituloReceber from "./Form";
+import FormTituloReceber from "./form";
 import { TituloCRSchemaProps, useFormTituloCRData } from "./form-data";
 import {
   Historico,
@@ -40,11 +39,11 @@ const ModalTituloReceber = ({
 
   const { data, isLoading } = useTituloReceber().getOne(id);
 
-  const titulo = data?.data.titulo;
-  let vencimentos = data?.data.vencimentos || [];
-  const itens_rateio = data?.data.itens_rateio;
+  const titulo = data?.titulo;
+  let vencimentos = data?.vencimentos || [];
+  const itens_rateio = data?.itens_rateio;
 
-  const historico = data?.data.historico;
+  const historico = data?.historico;
 
   if (titulo && itens_rateio && historico) {
     Object.keys(titulo).forEach((propriedade) => {
@@ -107,9 +106,9 @@ const ModalTituloReceber = ({
   // * [ FORM ]
   const { form } = useFormTituloCRData({
     ...modalData,
+    update_vencimentos: false,
     update_rateio: false,
   });
-  const podeCriarRecorrencia = id && (parseInt(modalData?.id_status) || 0) > 0;
 
   // console.log(form.formState.errors);
 
@@ -122,7 +121,6 @@ const ModalTituloReceber = ({
           <DialogTitle>{!!id ? `Solicitação: ${id}` : "Nova Solicitação"}</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
           <BtnCopiarTituloReceber copyData={modalData} />
-          {podeCriarRecorrencia && <BtnCriarRecorrencia form={form} />}
         </DialogHeader>
         {/* <section className="min-h-[80vh] sm:min-h-[70vh] z-[999] overflow-auto scroll-thin">
           

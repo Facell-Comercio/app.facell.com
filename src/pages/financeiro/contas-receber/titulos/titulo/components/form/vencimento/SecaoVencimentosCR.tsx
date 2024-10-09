@@ -123,7 +123,7 @@ const SecaoVencimentosCR = ({ form, canEdit, modalEditing }: SecaoVencimentosCRP
         size: 120,
         cell: (info) => {
           const status = info.getValue<string>();
-          return <div className={`w-full px-2 text-end`}>{status}</div>;
+          return <div className={`w-full px-2 text-end capitalize`}>{status}</div>;
         },
       },
     ],

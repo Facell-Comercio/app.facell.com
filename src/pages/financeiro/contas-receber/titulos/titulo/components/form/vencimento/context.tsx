@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { calcularDataPrevisaoPagamento } from "../../../helpers/helper";
 
 export interface State {
   indexFieldArray?: number;
@@ -15,7 +14,7 @@ export const initialStateVencimento = {
   indexFieldArray: undefined,
   vencimento: {
     id: "",
-    data_vencimento: String(calcularDataPrevisaoPagamento(new Date())),
+    data_vencimento: "",
     valor: "",
   },
   modalOpen: false,

@@ -9,6 +9,11 @@ export namespace titulos {
     return response.data;
   };
 
+  export const getOne = async (id: string | null) => {
+    const response = await api.get(`${uri}/${id}`);
+    return response.data;
+  };
+
   export const processarXml = async function (fileUrl: string) {
     try {
       const result = await api.post(`${uri}/processar-xml`, { fileUrl });

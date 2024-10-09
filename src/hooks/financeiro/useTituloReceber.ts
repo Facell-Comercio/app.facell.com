@@ -37,21 +37,7 @@ export const useTituloReceber = () => {
       retry: false,
       staleTime: 5 * 1000 * 60,
       queryKey: ["financeiro", "contas_receber", "titulo", "detalhe", id],
-      queryFn: async () => {
-        try {
-          const result = await api.get(`${uri}/${id}`);
-          return result;
-        } catch (error) {
-          // @ts-expect-error "Vai funcionar"
-          const errorMessage = error.response?.data.message || error.message;
-          toast({
-            title: "Erro",
-            description: errorMessage,
-            duration: 3500,
-            variant: "destructive",
-          });
-        }
-      },
+      queryFn: () => fetchApi.financeiro.contas_receber.titulos.getOne(id),
     });
 
   // const getPendencias = () =>
