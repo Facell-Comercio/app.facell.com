@@ -26,7 +26,7 @@ const RowVirtualizerFixedProgramado: React.FC<RowVirtualizerFixedProgramadoProps
   modalEditing,
 }) => {
   const { mutate: reversePending } = useBordero().reversePending();
-  const authorized = checkUserDepartments("FINANCEIRO", true) || checkUserPermission("MASTER");
+  const authorized = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
 
   const parentElement = React.useRef(null);
 
