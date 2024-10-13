@@ -124,6 +124,7 @@ const FormTituloReceber = ({
   const podeAprovar = isMaster && id && status !== "Emitido" && id_status > 0 && id_status < 40;
   const podeEditarPedido = !id || !form.watch("id_user");
   const podeExcluirNotaFiscal = id_status < 30 || isMaster;
+  const emitido = id_status === 30;
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
@@ -158,11 +159,13 @@ const FormTituloReceber = ({
         form.setValue(campo, result.data.fileUrl || "");
       }
     } catch (error) {
+      console.log(error);
+
       toast({
         variant: "destructive",
         title: "Erro!",
         description:
-          "O arquivo pode ter sido excluído, mas não foi possível remover o anexo da solicitação, tente excluir novamente mais tarde!",
+          "O arquivo pode ter sido excluído, mas não foi possível remover o anexo do título, tente excluir novamente mais tarde!",
       });
     }
   }
@@ -385,10 +388,10 @@ const FormTituloReceber = ({
                   </div>
                 </div>
 
-                {/* Dados da solicitação */}
+                {/* Dados do título */}
                 <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex gap-2 mb-3">
-                    <FileText /> <span className="text-lg font-bold ">Dados da solicitação</span>
+                    <FileText /> <span className="text-lg font-bold ">Dados do título</span>
                   </div>
 
                   <div className="grid gap-3 flex-wrap items-end">
@@ -494,6 +497,7 @@ const FormTituloReceber = ({
                         icon={TbCurrencyReal}
                         label="Valor Total"
                         disabled={disabled}
+                        min={0}
                         className="flex-1 min-w-[20ch]"
                       />
                     </div>
@@ -532,7 +536,7 @@ const FormTituloReceber = ({
                         </TabsTrigger>
                         <TabsTrigger value="rateio">
                           <div className="flex gap-3">
-                            <span>Rateio da solicitação</span>
+                            <span>Rateio do título</span>
                             {errors.itens_rateio?.message && (
                               <Popover>
                                 <PopoverTrigger>
@@ -552,6 +556,7 @@ const FormTituloReceber = ({
                           id={id}
                           form={form}
                           canEdit={canEdit}
+                          emitido={emitido}
                           modalEditing={modalEditing}
                           disabled={disabled}
                           readOnly={readOnly}
@@ -714,7 +719,7 @@ const FormTituloReceber = ({
                 )}
                 {podeResolicitar && (
                   <ButtonMotivation
-                    title="Volta o status da solicitação para 'Criado', possibilitando a edição..."
+                    title="Volta o status do título para 'Criado', possibilitando a edição..."
                     variant={"secondary"}
                     size={"lg"}
                     action={handleChangeVoltarCriado}

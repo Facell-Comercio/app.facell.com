@@ -5,6 +5,7 @@ import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthor
 import { Link, useLocation } from "react-router-dom";
 import MovimentoContabilReceber from "./movimento-contabil/MovimentoContabil";
 import { PainelContasReceber } from "./painel/PainelContasReceber";
+import { Recebimentos } from "./recebimentos/Recebimentos";
 import TitulosReceber from "./titulos/TitulosReceber";
 
 const ContasReceberPage = () => {
@@ -26,6 +27,9 @@ const ContasReceberPage = () => {
                 <Link to={`${uri}?tab=titulo`}>
                   <TabsTrigger value="titulo">Títulos</TabsTrigger>
                 </Link>
+                <Link to={`${uri}?tab=recebimentos`}>
+                  <TabsTrigger value="recebimentos">Recebimentos</TabsTrigger>
+                </Link>
                 <Link to={`${uri}?tab=movimento-contabil`}>
                   <TabsTrigger value="movimento-contabil">Movimento Contábil</TabsTrigger>
                 </Link>
@@ -39,6 +43,9 @@ const ContasReceberPage = () => {
         </TabsContent>
         <TabsContent value="titulo">
           <TitulosReceber />
+        </TabsContent>
+        <TabsContent value="recebimentos">
+          <Recebimentos />
         </TabsContent>
         <TabsContent value="movimento-contabil">
           <MovimentoContabilReceber />

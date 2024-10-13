@@ -21,12 +21,13 @@ type SecaoVencimentosCRProps = {
   id?: string | null;
   form: UseFormReturn<TituloCRSchemaProps>;
   canEdit: boolean;
+  emitido: boolean;
   disabled: boolean;
   modalEditing: boolean;
   readOnly: boolean;
 };
 
-const SecaoVencimentosCR = ({ form, canEdit, modalEditing }: SecaoVencimentosCRProps) => {
+const SecaoVencimentosCR = ({ form, canEdit, modalEditing, emitido }: SecaoVencimentosCRProps) => {
   const { remove: removeVencimento } = useFieldArray({
     control: form.control,
     name: "vencimentos",
@@ -43,13 +44,13 @@ const SecaoVencimentosCR = ({ form, canEdit, modalEditing }: SecaoVencimentosCRP
   }
 
   const updateVencimento = useStoreVencimento().updateVencimento;
-  const canEditVencimentos = canEdit && modalEditing;
+  const canEditVencimentos = (canEdit && modalEditing) || emitido;
 
   const columns = useMemo<ColumnDef<VencimentoTituloCR>[]>(
     () => [
       {
         accessorKey: "id",
-        header: modalEditing ? "AÇÃO" : "",
+        header: canEditVencimentos ? "AÇÃO" : "",
         cell: (info) => {
           const index = info.row.index;
           return (
@@ -71,22 +72,24 @@ const SecaoVencimentosCR = ({ form, canEdit, modalEditing }: SecaoVencimentosCRP
                     <Pen size={18} />
                   </Button>
 
-                  <AlertPopUp
-                    title="Deseja realmente remover o vencimento?"
-                    description=""
-                    action={() => handleRemoveVencimento(index)}
-                    children={
-                      <Button type="button" variant="destructive" size={"xs"}>
-                        <Trash size={18} />
-                      </Button>
-                    }
-                  />
+                  {!emitido && (
+                    <AlertPopUp
+                      title="Deseja realmente remover o vencimento?"
+                      description=""
+                      action={() => handleRemoveVencimento(index)}
+                      children={
+                        <Button type="button" variant="destructive" size={"xs"}>
+                          <Trash size={18} />
+                        </Button>
+                      }
+                    />
+                  )}
                 </>
               )}
             </div>
           );
         },
-        size: modalEditing ? 100 : 0,
+        size: canEditVencimentos ? 100 : 0,
       },
       {
         accessorKey: "data_vencimento",

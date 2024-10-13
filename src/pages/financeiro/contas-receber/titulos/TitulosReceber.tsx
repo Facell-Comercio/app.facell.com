@@ -3,7 +3,8 @@ import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
 import Filters from "./table/Filters";
 import { useStoreTableReceber } from "./table/store-table";
 
-import ButtonNovoTitulo from "./components/ButtonNovoTitulo";
+import ButtonExportTitulosReceber from "./components/ButtonExportarTitulosReceber";
+import ButtonNovoTituloReceber from "./components/ButtonNovoTituloReceber";
 import { columnsTable } from "./table/columns";
 import ModalTituloReceber from "./titulo/ModalTituloReceber";
 
@@ -35,9 +36,9 @@ const TitulosReceber = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap justify-end gap-3 ">
-        {/* <ButtonExportTitulos />
-        <ButtonImportTitulos /> */}
-        <ButtonNovoTitulo />
+        <ButtonExportTitulosReceber />
+        {/* <ButtonImportTitulos /> */}
+        <ButtonNovoTituloReceber />
       </div>
       <Filters refetch={refetchTitulos} />
 

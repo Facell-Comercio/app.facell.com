@@ -118,7 +118,7 @@ const ModalTituloReceber = ({
     <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent className="min-w-[96vw] xl:min-w-1">
         <DialogHeader className="flex flex-row items-center gap-3">
-          <DialogTitle>{!!id ? `Solicitação: ${id}` : "Nova Solicitação"}</DialogTitle>
+          <DialogTitle>{!!id ? `Titulo a Receber: ${id}` : "Novo Título a Receber"}</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
           <BtnCopiarTituloReceber copyData={modalData} />
         </DialogHeader>

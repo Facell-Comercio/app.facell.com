@@ -27,8 +27,9 @@ export const BtnCopiarTituloReceber = ({
         url_xml_nota: "",
         url_nota_fiscal: "",
         url_nota_debito: "",
+        url_recibo: "",
         url_planilha: "",
-        url_txt: "",
+        url_outros: "",
       },
     });
     setTituloReceberCopiado(true);

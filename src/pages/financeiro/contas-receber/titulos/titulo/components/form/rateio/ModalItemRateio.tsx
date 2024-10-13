@@ -15,7 +15,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { normalizeCurrency } from "@/helpers/mask";
-import { api } from "@/lib/axios";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import ModalCentrosCustos from "@/pages/financeiro/components/ModalCentrosCustos";
 import ModalPlanosContas, {
@@ -39,7 +38,6 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
   const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
   const [modalPlanoContasOpen, setModalPlanoContasOpen] = useState<boolean>(false);
   const [modalCentrosCustosOpen, setModalCentrosCustosOpen] = useState<boolean>(false);
-  const [valorOrcamento, setValorOrcamento] = useState<number>(0);
 
   type Feedback = {
     variant?: "success" | "warning" | "destructive" | "default" | null;
@@ -92,7 +90,7 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
       toast({
         variant: "destructive",
         title: "Erro!",
-        description: "Selecione primeiro a filial no corpo da solicitação!",
+        description: "Selecione primeiro a filial no corpo do título!",
       });
       return;
     }
@@ -113,7 +111,7 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
       toast({
         variant: "destructive",
         title: "Erro!",
-        description: "Selecione primeiro a filial no corpo da solicitação!",
+        description: "Selecione primeiro a filial no corpo do título!",
       });
       return;
     }
@@ -156,49 +154,6 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
   const valor = parseFloat(formItemRateio.watch("valor"));
   const percentual = parseFloat(formItemRateio.watch("percentual"));
   const id_centro_custo = formItemRateio.watch("id_centro_custo");
-  const id_plano_conta = formItemRateio.watch("id_plano_conta");
-
-  // * ORÇAMENTO
-  type FetchOrcamento = {
-    id_grupo_economico: number | string;
-    id_centro_custo: number | string;
-    id_plano_conta: number | string;
-    data_titulo?: Date | string;
-  };
-  const fetchOrcamento = async (props: FetchOrcamento) => {
-    try {
-      const result = await api.get("/financeiro/orcamento/find-account", {
-        params: { ...props },
-      });
-      const contaOrcamento = result.data;
-
-      const valOrcamento = parseFloat(contaOrcamento.saldo);
-      setValorOrcamento(valOrcamento);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao buscar valor do orçamento",
-        // @ts-ignore
-        description: error?.response?.data?.message || error.message,
-      });
-      setValorOrcamento(0);
-    }
-  };
-
-  const data_titulo = formTitulo.watch("created_at");
-
-  useEffect(() => {
-    if (id_grupo_economico && id_centro_custo && id_plano_conta) {
-      fetchOrcamento({
-        id_grupo_economico,
-        id_centro_custo,
-        id_plano_conta,
-        data_titulo: isUpdate ? data_titulo : undefined,
-      });
-    } else {
-      setValorOrcamento(0);
-    }
-  }, [id_grupo_economico, id_centro_custo, id_plano_conta]);
 
   const valorTotalItens =
     itens_rateio
@@ -206,24 +161,6 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
       .reduce((acc: number, curr: { valor: string }) => {
         return acc + parseFloat(curr.valor);
       }, 0) || 0;
-
-  const previsaoConsumoOrcamento =
-    (itens_rateio
-      ?.filter((i: ItemRateioTituloCR, index: number) => {
-        if (i.id_centro_custo == id_centro_custo && i.id_plano_conta == id_plano_conta) {
-          if (isUpdate ? index != indexFieldArray : true) {
-            return true;
-          }
-        }
-        return false;
-      })
-      .reduce((acc: number, curr: { valor: string }) => {
-        return acc + parseFloat(curr.valor);
-      }, 0) || 0) + valor;
-
-  const valorExcessoOrcamento = previsaoConsumoOrcamento - valorOrcamento;
-
-  const excedeOrcamento = valorExcessoOrcamento > 0;
 
   const valorPrevisto = parseFloat((valor + valorTotalItens).toFixed(2));
   const valorExcessoTitulo = valorPrevisto - parseFloat(valorTotalTitulo);
@@ -250,7 +187,7 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
       setFeedback({
         variant: "destructive",
         title: "Valor excedido!",
-        description: `O valor excede o valor total da solicitação em ${parseFloat(
+        description: `O valor excede o valor total do título em ${parseFloat(
           valorExcessoTitulo.toFixed(2)
         )}`,
       });
@@ -261,16 +198,9 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
       variant: "success",
       title: "Tudo certo",
     });
-  }, [percentual, valor, valorOrcamento]);
+  }, [percentual, valor]);
 
-  const btnDisabled =
-    excedeOrcamento ||
-    excedeTotalTitulo ||
-    valorOrcamento <= 0 ||
-    !valor ||
-    valor <= 0 ||
-    !percentual ||
-    percentual <= 0;
+  const btnDisabled = excedeTotalTitulo || !valor || valor <= 0 || !percentual || percentual <= 0;
 
   const onSubmit = (data: z.infer<typeof rateioSchema>) => {
     try {
@@ -404,7 +334,7 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
         <ModalPlanosContas
           open={canEdit && modalPlanoContasOpen && !!id_grupo_economico}
           id_grupo_economico={id_grupo_economico}
-          tipo="Despesa"
+          tipo="Receita"
           // @ts-ignore
           onOpenChange={setModalPlanoContasOpen}
           handleSelection={handleSelectionPlanoContas}

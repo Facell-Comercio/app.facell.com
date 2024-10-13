@@ -48,7 +48,7 @@ export const initialPropsTituloCR: TituloCRSchemaProps = {
   id_grupo_economico: "",
 
   // Solicitante
-  id_solicitante: "",
+  id_user: "",
 
   // Fornecedor
   id_fornecedor: "",
@@ -69,8 +69,9 @@ export const initialPropsTituloCR: TituloCRSchemaProps = {
   url_xml_nota: "",
   url_nota_fiscal: "",
   url_nota_debito: "",
+  url_recibo: "",
   url_planilha: "",
-  url_txt: "",
+  url_outros: "",
 };
 
 interface useStoreTituloReceber {

@@ -8,6 +8,8 @@ export interface State {
     valor: string;
   };
   modalOpen: boolean;
+
+  isPending: boolean;
 }
 
 export const initialStateVencimento = {
@@ -18,6 +20,8 @@ export const initialStateVencimento = {
     valor: "",
   },
   modalOpen: false,
+
+  isPending: false,
 };
 type UpdateVencimentoProps = {
   index?: number;
@@ -28,6 +32,8 @@ export interface Actions {
   updateVencimento: (data: UpdateVencimentoProps) => void;
   toggleModal: () => void;
   resetFilters: () => void;
+
+  editIsPending: (bool: boolean) => void;
 }
 
 export const useStoreVencimento = create<State & Actions>((set) => ({
@@ -50,4 +56,6 @@ export const useStoreVencimento = create<State & Actions>((set) => ({
   resetFilters: () => {
     set({ ...initialStateVencimento });
   },
+
+  editIsPending: (bool) => set({ isPending: bool }),
 }));

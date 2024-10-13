@@ -14,7 +14,7 @@ const RemoverVencimentos = ({ form }: { form: UseFormReturn<TituloCRSchemaProps>
   return (
     <AlertPopUp
       action={handleRemoverVencimentos}
-      title="Deseja realmente remover todos os vencimentos da solicitação?!"
+      title="Deseja realmente remover todos os vencimentos do título?!"
       description="Ação não poderá ser desfeita, caso sejam vencimentos ainda não salvos no sistema"
     >
       <Button variant={"destructive"} size={"sm"}>

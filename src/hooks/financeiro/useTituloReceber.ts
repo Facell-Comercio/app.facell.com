@@ -13,6 +13,22 @@ export interface GetTitulosReceberProps {
   filters: any;
 }
 
+export type RecebimentoProps = {
+  id_titulo?: string;
+  id_vencimento?: string;
+  data: Date;
+  valor?: string;
+  id_conta_bancaria?: string;
+  conta_bancaria?: string;
+  num_doc?: string;
+  id_fornecedor?: string;
+  fornecedor?: string;
+  id_filial?: string;
+  filial?: string;
+  descricao?: string;
+  criador?: string;
+};
+
 const uri = "/financeiro/contas-a-receber/titulo";
 
 export const useTituloReceber = () => {
@@ -39,29 +55,6 @@ export const useTituloReceber = () => {
       queryKey: ["financeiro", "contas_receber", "titulo", "detalhe", id],
       queryFn: () => fetchApi.financeiro.contas_receber.titulos.getOne(id),
     });
-
-  // const getPendencias = () =>
-  //   useQuery({
-  //     retry: false,
-  //     queryKey: ["financeiro", "contas_receber", "pendencia", "lista"],
-  //     queryFn: async () => {
-  //       try {
-  //         const result = await api.get(
-  //           `${uri}/pendencias`
-  //         );
-  //         return result;
-  //       } catch (error) {
-  //         // @ts-expect-error "Vai funcionar"
-  //         const errorMessage = error.response?.data.message || error.message;
-  //         toast({
-  //           title: "Erro",
-  //           description: errorMessage,
-  //           duration: 3500,
-  //           variant: "destructive",
-  //         });
-  //       }
-  //     },
-  //   });
 
   const insertOne = () =>
     useMutation({
@@ -113,10 +106,107 @@ export const useTituloReceber = () => {
       },
     });
 
+  //* RECEBIMENTOS
+  const getAllRecebimentos = ({ pagination, filters }: GetTitulosReceberProps) =>
+    useQuery({
+      queryKey: [
+        "financeiro",
+        "contas_receber",
+        "titulo",
+        "vencimentos",
+        "recebimentos",
+        "lista",
+        { pagination, filters },
+      ],
+      staleTime: 5 * 1000 * 60,
+      retry: false,
+      queryFn: () =>
+        fetchApi.financeiro.contas_receber.titulos.getAllRecebimentos({
+          pagination,
+          filters,
+        }),
+      placeholderData: keepPreviousData,
+    });
+  const getAllRecebimentosVencimento = (id_vencimento: string | null) =>
+    useQuery({
+      enabled: !!id_vencimento,
+      retry: false,
+      staleTime: 5 * 1000 * 60,
+      queryKey: [
+        "financeiro",
+        "contas_receber",
+        "titulo",
+        "vencimentos",
+        "recebimentos",
+        "lista",
+        [id_vencimento],
+      ],
+      queryFn: () =>
+        fetchApi.financeiro.contas_receber.titulos.getAllRecebimentosVencimento(id_vencimento),
+    });
+
+  const insertOneRecebimento = () =>
+    useMutation({
+      mutationFn: async (data: RecebimentoProps) => {
+        return await api
+          .post(`${uri}/vencimentos/recebimentos`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        toast({
+          variant: "success",
+          title: "Sucesso!",
+          description: "Solicitação criada com sucesso!",
+        });
+        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+      },
+      onError(error) {
+        // @ts-expect-error "Vai funcionar"
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const deleteRecebimento = () =>
+    useMutation({
+      mutationFn: async (id: string) => {
+        return await api
+          .delete(`${uri}/vencimentos/recebimentos/${id}`)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        toast({
+          variant: "success",
+          title: "Sucesso!",
+          description: "Solicitação atualizada com sucesso!",
+        });
+        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+      },
+      onError(error) {
+        // @ts-expect-error "Vai funcionar"
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
   return {
     getAll,
     getOne,
     insertOne,
     update,
+
+    getAllRecebimentos,
+    getAllRecebimentosVencimento,
+    insertOneRecebimento,
+    deleteRecebimento,
   };
 };

@@ -167,13 +167,13 @@ const ModalTransferenciaTesouraria = () => {
               open={modalContaBancariaSaidaOpen}
               handleSelection={handleSelectionContaBancariaSaida}
               onOpenChange={() => setModalContaBancariaSaidaOpen(false)}
-              onlyCaixa
+              isCaixa
             />
             <ModalContasBancarias
               open={modalContaBancariaEntradaOpen}
               handleSelection={handleSelectionContaBancariaEntrada}
               onOpenChange={() => setModalContaBancariaEntradaOpen(false)}
-              onlyCaixa
+              isCaixa
             />
           </Form>
         </ScrollArea>

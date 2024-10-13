@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { useStoreTituloReceber } from "../titulo/store";
 
-const ButtonEditTitulos = () => {
+const ButtonEditTitulosReceber = () => {
   const openModalAlteracoesLote = useStoreTituloReceber().openAlteracaoLoteModal;
 
   return (
@@ -16,4 +16,4 @@ const ButtonEditTitulos = () => {
   );
 };
 
-export default ButtonEditTitulos;
+export default ButtonEditTitulosReceber;

@@ -41,7 +41,7 @@ export type ExportAnexosProps = {
   idSelection: number[];
 };
 
-const ButtonImportTitulos = () => {
+const ButtonImportTitulosReceber = () => {
   const {
     mutate: lancamentoLote,
     isPending,
@@ -50,9 +50,7 @@ const ButtonImportTitulos = () => {
   } = useTituloPagar().lancamentoLote();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleChangeImportButton = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeImportButton = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       const file = files[0];
@@ -92,10 +90,7 @@ const ButtonImportTitulos = () => {
           <ToastAction
             altText="Ver Resultados"
             onClick={() =>
-              exportToExcel(
-                resultadoLancamentoLote,
-                `RESULTADO LANÇAMENTO SOLICITAÇÕES`
-              )
+              exportToExcel(resultadoLancamentoLote, `RESULTADO LANÇAMENTO SOLICITAÇÕES`)
             }
           >
             Ver Resultados
@@ -124,10 +119,7 @@ const ButtonImportTitulos = () => {
             Baixar Planilha Padrão
           </a>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="flex gap-2"
-          onClick={(e) => e.preventDefault()}
-        >
+        <DropdownMenuItem className="flex gap-2" onClick={(e) => e.preventDefault()}>
           <AlertPopUp
             className="w-full hover:bg-accent hover:text-accent-foreground"
             title="Deseja realmente importar?"
@@ -139,8 +131,7 @@ const ButtonImportTitulos = () => {
                 <>Importar Planilha</>
               ) : (
                 <>
-                  <FaSpinner size={18} className="me-2 animate-spin" />{" "}
-                  Importando...
+                  <FaSpinner size={18} className="me-2 animate-spin" /> Importando...
                 </>
               )}
             </div>
@@ -158,4 +149,4 @@ const ButtonImportTitulos = () => {
   );
 };
 
-export default ButtonImportTitulos;
+export default ButtonImportTitulosReceber;

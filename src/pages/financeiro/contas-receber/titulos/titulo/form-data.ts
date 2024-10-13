@@ -42,6 +42,7 @@ export const schemaTituloCR = z
       .min(1, { message: "Selecione a Filial!" }),
 
     id_user: z.string().optional(),
+    criador: z.string().optional(),
     filial: z.string().optional(),
 
     // Fornecedor
@@ -102,7 +103,7 @@ export const schemaTituloCR = z
       ).toFixed(2) == parseFloat(data.valor).toFixed(2),
     {
       path: ["vencimentos"],
-      message: "O valor dos vencimentos precisa bater com o valor total da solicitação.",
+      message: "O valor dos vencimentos precisa bater com o valor total do título.",
     }
   )
   //^ Validar se rateio == valor total
@@ -115,11 +116,12 @@ export const schemaTituloCR = z
       ).toFixed(2) == parseFloat(data.valor).toFixed(2),
     {
       path: ["itens_rateio"],
-      message: "O valor total do rateio precisa bater com o valor total da solicitação.",
+      message: "O valor total do rateio precisa bater com o valor total do título.",
     }
   );
 
 export type TituloCRSchemaProps = z.infer<typeof schemaTituloCR>;
+export type VencimentoCRSchemaProps = z.infer<typeof vencimentoSchema>;
 
 export const useFormTituloCRData = (data: TituloCRSchemaProps) => {
   const form = useForm<TituloCRSchemaProps>({

@@ -10,15 +10,25 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UseFormReturn, useFieldArray, useForm, useWatch } from "react-hook-form";
 
+import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
-import { normalizeCurrency } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate, normalizeFirstAndLastName } from "@/helpers/mask";
+import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
 import { subDays } from "date-fns";
-import { Plus, Save } from "lucide-react";
-import { useEffect } from "react";
+import { Plus, Save, Trash } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import z from "zod";
 import { TituloCRSchemaProps, vencimentoSchema } from "../../../form-data";
@@ -29,12 +39,21 @@ export function ModalVencimento({
 }: {
   form: UseFormReturn<TituloCRSchemaProps>;
 }) {
+  const emitido = parseInt(formTitulo.watch("id_status") || "0") === 30;
   const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
+  // console.log("VENCIMENTO", vencimento);
 
-  const modalOpen = useStoreVencimento().modalOpen;
-  const toggleModal = useStoreVencimento().toggleModal;
+  const { mutate: deleteRecebimento } = useTituloReceber().deleteRecebimento();
+
+  const [modalOpen, toggleModal] = useStoreVencimento((state) => [
+    state.modalOpen,
+    state.toggleModal,
+  ]);
+
+  const id_vencimento = useMemo(() => vencimento.id, [vencimento.id, modalOpen]) || "";
+  const { data: recebimentos } = useTituloReceber().getAllRecebimentosVencimento(id_vencimento);
 
   const form = useForm({
     resolver: zodResolver(vencimentoSchema),
@@ -131,7 +150,7 @@ export function ModalVencimento({
 
   return (
     <Dialog open={modalOpen} onOpenChange={toggleModal}>
-      <DialogContent className="md:max-w-[50vw]">
+      <DialogContent className={`${recebimentos ? "md:max-w-[70vw]" : "md:max-w-[50vw]"}`}>
         <Form {...form}>
           <form
             onSubmit={(e) => {
@@ -147,13 +166,14 @@ export function ModalVencimento({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="flex flex-col gap-3 p-3 max-w-full mb-3">
+            <div className="grid gap-3 py-3 max-w-full mb-3">
               <div className="flex gap-3 flex-wrap">
                 <FormDateInput
                   name="data_vencimento"
                   label="Vencimento"
                   min={!isMaster ? subDays(new Date(), 1) : undefined}
                   control={form.control}
+                  disabled={emitido}
                   onChange={(val) => handleChangeVencimento(val)}
                 />
 
@@ -166,25 +186,74 @@ export function ModalVencimento({
                   label="Valor"
                   inputClass="flex-1 w-[20ch]"
                   placeholder="0,00"
+                  min={0}
                   control={form.control}
+                  disabled={emitido}
                 />
               </div>
+              {emitido && (
+                <div className="flex flex-col gap-2">
+                  {/* <p className="font-medium w-full text-center">Recebimentos</p> */}
+                  <Table
+                    className="rounded-md border-border w-full h-10 overflow-clip relative"
+                    divClassname="overflow-auto scroll-thin max-h-[40vh] border rounded-md text-nowrap"
+                  >
+                    <TableHeader className="sticky w-full top-0 h-10 border-b-2 border-border rounded-t-md bg-secondary">
+                      <TableRow>
+                        <TableHead>Ação</TableHead>
+                        <TableHead>Data</TableHead>
+                        <TableHead>Conta Bancária</TableHead>
+                        <TableHead>Valor</TableHead>
+                        <TableHead>Criador</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {recebimentos &&
+                        recebimentos.map((row: any, index: number) => (
+                          <TableRow
+                            key={`recebimentos: ${index} - ${row.id}`}
+                            className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
+                          >
+                            <TableCell className="flex gap-2">
+                              <AlertPopUp
+                                title="Deseja realmente remover este recebimento?"
+                                description=""
+                                action={() => deleteRecebimento(row.id)}
+                                children={
+                                  <Button type="button" variant="destructive" size={"xs"}>
+                                    <Trash size={16} />
+                                  </Button>
+                                }
+                              />
+                            </TableCell>
+                            <TableCell>{normalizeDate(row.data)}</TableCell>
+                            <TableCell>{row.conta_bancaria}</TableCell>
+                            <TableCell>{normalizeCurrency(row.valor)}</TableCell>
+                            <TableCell>{normalizeFirstAndLastName(row.usuario)}</TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </div>
 
             <DialogFooter>
-              <Button variant={isUpdate ? "success" : "default"} type="submit">
-                {isUpdate ? (
-                  <span className="flex gap-2">
-                    <Save size={18} />
-                    Salvar
-                  </span>
-                ) : (
-                  <span className="flex gap-2">
-                    <Plus size={18} />
-                    Adicionar
-                  </span>
-                )}
-              </Button>
+              {!emitido && (
+                <Button variant={isUpdate ? "success" : "default"} type="submit">
+                  {isUpdate ? (
+                    <span className="flex gap-2">
+                      <Save size={18} />
+                      Salvar
+                    </span>
+                  ) : (
+                    <span className="flex gap-2">
+                      <Plus size={18} />
+                      Adicionar
+                    </span>
+                  )}
+                </Button>
+              )}
             </DialogFooter>
           </form>
         </Form>
