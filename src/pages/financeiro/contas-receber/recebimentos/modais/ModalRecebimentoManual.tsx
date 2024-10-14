@@ -46,7 +46,7 @@ export function ModalRecebimentoManual() {
     isPending: insertIsPending,
     isSuccess: insertIsSuccess,
     isError: insertIsError,
-  } = useTituloReceber().insertOneRecebimento();
+  } = useTituloReceber().insertOneRecebimentoManual();
 
   const [formData, setFormData] = useState<RecebimentoProps>(initialValuesRecebimento);
   const [modalContasBancariasOpen, setModalContasBancariasOpen] = useState(false);

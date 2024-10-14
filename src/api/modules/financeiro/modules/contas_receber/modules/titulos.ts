@@ -31,6 +31,13 @@ export namespace titulos {
     return response.data;
   };
 
+  export const getAllTransacoesAndVencimentos = async (params: unknown) => {
+    const response = await api.get(`${uriRecebimentos}/conta-bancaria`, {
+      params,
+    });
+    return response.data;
+  };
+
   export const getOneRecebimento = async (id: string | null) => {
     const response = await api.get(`${uri}/vencimentos/recebimentos/${id}`);
     return response.data;

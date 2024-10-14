@@ -1,6 +1,7 @@
 import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
+import { VencimentoCRProps } from "@/pages/financeiro/components/ModalVencimentosCR";
 import { TituloCRSchemaProps } from "@/pages/financeiro/contas-receber/titulos/titulo/form-data";
 
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -29,7 +30,14 @@ export type RecebimentoProps = {
   criador?: string;
 };
 
+type RecebimentoContaBancariaProps = {
+  id_extrato?: string;
+  id_conta_bancaria?: string;
+  vencimentos?: VencimentoCRProps[];
+};
+
 const uri = "/financeiro/contas-a-receber/titulo";
+const uriRecebimentos = "/financeiro/contas-a-receber/recebimentos";
 
 export const useTituloReceber = () => {
   const queryClient = useQueryClient();
@@ -145,11 +153,55 @@ export const useTituloReceber = () => {
         fetchApi.financeiro.contas_receber.titulos.getAllRecebimentosVencimento(id_vencimento),
     });
 
-  const insertOneRecebimento = () =>
+  const getAllTransacoesAndVencimentos = ({ filters }: GetTitulosReceberProps) =>
+    useQuery({
+      enabled: !!filters.id_conta_bancaria,
+      retry: false,
+      staleTime: 5 * 1000 * 60,
+      queryKey: [
+        "financeiro",
+        "contas_receber",
+        "titulo",
+        "vencimentos",
+        "recebimentos",
+        "conta_bancaria",
+        "lista",
+        [filters],
+      ],
+      queryFn: () =>
+        fetchApi.financeiro.contas_receber.titulos.getAllTransacoesAndVencimentos({ filters }),
+    });
+
+  const insertOneRecebimentoManual = () =>
     useMutation({
       mutationFn: async (data: RecebimentoProps) => {
+        return await api.post(`${uriRecebimentos}/manual`, data).then((response) => response.data);
+      },
+      onSuccess() {
+        toast({
+          variant: "success",
+          title: "Sucesso!",
+          description: "Solicitação criada com sucesso!",
+        });
+        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+      },
+      onError(error) {
+        // @ts-expect-error "Vai funcionar"
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const insertOneRecebimentoContaBancaria = () =>
+    useMutation({
+      mutationFn: async (data: RecebimentoContaBancariaProps) => {
         return await api
-          .post(`${uri}/vencimentos/recebimentos`, data)
+          .post(`${uriRecebimentos}/conta-bancaria`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -206,7 +258,9 @@ export const useTituloReceber = () => {
 
     getAllRecebimentos,
     getAllRecebimentosVencimento,
-    insertOneRecebimento,
+    getAllTransacoesAndVencimentos,
+    insertOneRecebimentoManual,
+    insertOneRecebimentoContaBancaria,
     deleteRecebimento,
   };
 };

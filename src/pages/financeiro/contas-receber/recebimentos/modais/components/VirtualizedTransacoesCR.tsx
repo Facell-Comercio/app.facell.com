@@ -1,16 +1,23 @@
 import * as React from "react";
 
 import { Input } from "@/components/custom/FormInput";
+import { Checkbox } from "@/components/ui/checkbox";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { TransacoesConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/tables/TransacoesConciliar";
-import { Checkbox } from "@radix-ui/react-checkbox";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { FilterRecebimentosBancariosProps } from "../ModalRecebimentoBancario";
 
 interface VirtualizerTransacoesProps {
   data: TransacoesConciliarProps[];
+  setFilters: React.Dispatch<React.SetStateAction<FilterRecebimentosBancariosProps>>;
+  filters: FilterRecebimentosBancariosProps;
 }
 
-const VirtualizedTransacoesCR: React.FC<VirtualizerTransacoesProps> = ({ data }) => {
+const VirtualizedTransacoesCR: React.FC<VirtualizerTransacoesProps> = ({
+  data,
+  setFilters,
+  filters,
+}) => {
   const parentElement = React.useRef(null);
 
   const count = data.length;
@@ -22,17 +29,19 @@ const VirtualizedTransacoesCR: React.FC<VirtualizerTransacoesProps> = ({ data })
     overscan: 10,
   });
 
+  const filtered = filters.id_extrato !== undefined;
+
   return (
     <section
       ref={parentElement}
-      className="h-[45vh] w-full overflow-auto scroll-thin z-50 border rounded-md"
+      className="h-[45vh] w-full overflow-auto scroll-thin z-50 border bg-background rounded-md"
     >
       <div className="flex gap-1 font-medium text-xs px-1 w-full sticky top-0 z-[100] bg-secondary">
+        <p className="min-w-4 text-center bg-secondary"></p>
         <p className="min-w-16 text-center bg-secondary">ID</p>
         <p className="min-w-28 text-center bg-secondary">Transação</p>
         <p className="min-w-28 pl-2 bg-secondary">Valor</p>
-        <p className="flex-1 min-w-64 pl-2 bg-secondary">Descrição</p>
-        {/* <p className="min-w-32 pl-2 bg-secondary">Conta Bancária</p> */}
+        <p className="w-full min-w-64 pl-2 bg-secondary">Descrição</p>
         <p className="min-w-24 text-center bg-secondary">Doc</p>
       </div>
       <div
@@ -43,12 +52,13 @@ const VirtualizedTransacoesCR: React.FC<VirtualizerTransacoesProps> = ({ data })
         }}
       >
         {virtualizer.getVirtualItems().map((item, index) => {
+          console.log(data[item.index]);
           return (
             <div
               // ref={virtualizer.measureElement}
               key={`${item.index}-${index}`}
               data-index={index}
-              className={`flex w-full gap-1 py-1 px-1 items-center odd:bg-secondary/60 even:bg-secondary/40 text-xs ${
+              className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
                 virtualizer.getVirtualItems().length == 0 && "hidden"
               }`}
               style={{
@@ -61,11 +71,22 @@ const VirtualizedTransacoesCR: React.FC<VirtualizerTransacoesProps> = ({ data })
               }}
             >
               <Checkbox
-              // checked={
-              //   table.getIsAllPageRowsSelected() ||
-              //   (table.getIsSomePageRowsSelected() && "indeterminate")
-              // }
-              // onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                checked={data[item.index].id == filters.id_extrato}
+                onCheckedChange={(value) => {
+                  if (value) {
+                    setFilters({
+                      id_extrato: data[item.index].id,
+                      data_transacao: data[item.index].data_transacao,
+                    });
+                  } else {
+                    setFilters({
+                      id_extrato: undefined,
+                      data_transacao: undefined,
+                    });
+                  }
+                }}
+                // className="min-w-4 h-4"
+                disabled={data[item.index].id != filters.id_extrato && filtered}
               />
               <Input
                 className="text-xs w-16 h-8 p-2 text-center"

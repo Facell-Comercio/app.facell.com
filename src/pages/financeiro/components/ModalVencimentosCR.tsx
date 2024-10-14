@@ -34,6 +34,7 @@ export interface VencimentoCRProps extends VencimentoCRSchemaProps {
   descricao?: string;
   num_doc?: string;
   filial?: string;
+  valor_pagar?: string;
 }
 
 interface IModalVencimentosCR {
