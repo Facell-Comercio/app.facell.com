@@ -26,6 +26,10 @@ export interface Filters {
   descricao?: string;
   fidelizacao_aparelho?: string;
   fidelizacao_plano?: string;
+
+  //* OUTROS
+  status_plano?: string[];
+  produtos_cliente?: string[];
 }
 
 const initialFilters: Filters = {
@@ -44,6 +48,10 @@ const initialFilters: Filters = {
   descricao: "",
   fidelizacao_aparelho: "all",
   fidelizacao_plano: "all",
+
+  //* OUTROS
+  produtos_cliente: ["com_aparelho"],
+  status_plano: ["Ativo", "Desativado", "Analise pendente"],
 };
 
 export interface SortingItem {

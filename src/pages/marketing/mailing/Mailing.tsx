@@ -1,5 +1,6 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Campanhas from "./campanhas/Campanhas";
 import Clientes from "./clientes/Clientes";
 
 const MailingPage = () => {
@@ -17,7 +18,9 @@ const MailingPage = () => {
         <TabsContent value="clientes">
           <Clientes />
         </TabsContent>
-        <TabsContent value="campanhas"></TabsContent>
+        <TabsContent value="campanhas">
+          <Campanhas />
+        </TabsContent>
       </Tabs>
     </div>
   );

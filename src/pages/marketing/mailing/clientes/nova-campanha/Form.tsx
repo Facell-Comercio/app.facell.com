@@ -1,43 +1,10 @@
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { useEffect } from "react";
 import { useStoreTableClientes } from "../table/store-table";
 import { NovaCampanhaSchema, useFormNovaCampanhaData } from "./form-data";
 import { useStoreNovaCampanha } from "./store";
-
-type LoteProps = {
-  nome: string;
-  quantidade_itens: string;
-};
-
-function dividirClientesEmLotes(clientes: number, lotes: number) {
-  const clientesPorLote = Math.floor(clientes / lotes);
-  const lotesDistribuidos = [];
-  for (let i = 0; i < lotes; i++) {
-    if (i === lotes - 1) {
-      // O último lote recebe o restante
-      lotesDistribuidos.push({
-        nome: `LOTE ${i + 1}`,
-        quantidade_itens: String(clientesPorLote + (clientes % lotes)),
-      });
-    } else {
-      lotesDistribuidos.push({
-        nome: `LOTE ${i + 1}`,
-        quantidade_itens: String(clientesPorLote),
-      });
-    }
-  }
-  return lotesDistribuidos || [];
-}
 
 const FormNovaCampanha = ({
   formRef,
@@ -60,16 +27,8 @@ const FormNovaCampanha = ({
 
   const { form } = useFormNovaCampanhaData({
     nome: "",
-    quantidade_lotes: "4",
     quantidade_total_clientes: String(qtde_total || "0"),
-    lotes: dividirClientesEmLotes(qtde_total || 0, 0),
   });
-  const quantidade_lotes = parseFloat(form.watch("quantidade_lotes"));
-  const quantidade_total_clientes = parseFloat(form.watch("quantidade_total_clientes"));
-
-  useEffect(() => {
-    form.setValue("lotes", dividirClientesEmLotes(quantidade_total_clientes, quantidade_lotes));
-  }, [quantidade_total_clientes, quantidade_lotes]);
 
   const onSubmitData = (data: NovaCampanhaSchema) => {
     insertOneCampanha({ ...data, filters });
@@ -87,8 +46,6 @@ const FormNovaCampanha = ({
       setIsPending(false);
     }
   }, [insertOneCampanhaIsPending]);
-
-  const formLotes = form.watch("lotes");
 
   // console.log(form.formState.errors);
 
@@ -109,15 +66,6 @@ const FormNovaCampanha = ({
                     control={form.control}
                   />
                   <FormInput
-                    className="min-w-[30ch] flex-1"
-                    name="quantidade_lotes"
-                    label="Quantidade de Lotes:"
-                    control={form.control}
-                    step="1"
-                    type="number"
-                    min={1}
-                  />
-                  <FormInput
                     type="number"
                     className="min-w-[30ch] flex-1"
                     name="quantidade_total_clientes"
@@ -128,44 +76,6 @@ const FormNovaCampanha = ({
                   />
                 </div>
               </section>
-
-              <Table
-                className="rounded-md border-border w-full h-10 overflow-clip relative"
-                divClassname="overflow-auto scroll-thin max-h-[40vh] border rounded-md mt-2"
-              >
-                <TableHeader className="bg-secondary">
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Quantidade de Itens</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {formLotes.map((_, index) => (
-                    <TableRow
-                      key={`lote-${index}-campanha`}
-                      className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
-                    >
-                      <TableCell>
-                        <FormInput
-                          className="min-w-[30ch] flex-1"
-                          name={`lotes.${index}.nome`}
-                          control={form.control}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <FormInput
-                          className="min-w-[30ch] flex-1"
-                          name={`lotes.${index}.quantidade_itens`}
-                          control={form.control}
-                          type="number"
-                          step="1"
-                          min={1}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
             </div>
           </div>
         </form>

@@ -27,7 +27,7 @@ export const useMailing = () => {
 
   const getClientes = ({ pagination, filters }: GetAllParams) =>
     useQuery({
-      queryKey: ["marketing", "mailing", "lista", { pagination }],
+      queryKey: ["marketing", "mailing", "clientes", "lista", { pagination }],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () => await fetchApi.marketing.mailing.getClientes({ pagination, filters }),
@@ -83,6 +83,15 @@ export const useMailing = () => {
           variant: "destructive",
         });
       },
+    });
+
+  const getCampanhas = ({ filters }: GetAllParams) =>
+    useQuery({
+      queryKey: ["marketing", "mailing", "campanhas", "lista", { filters }],
+      staleTime: 5 * 1000 * 60,
+      retry: false,
+      queryFn: async () => await fetchApi.marketing.mailing.getCampanhas({ filters }),
+      placeholderData: keepPreviousData,
     });
 
   // const importMailing = () =>
@@ -190,6 +199,7 @@ export const useMailing = () => {
 
   return {
     getClientes,
+    getCampanhas,
     insertOneCampanha,
   };
 };

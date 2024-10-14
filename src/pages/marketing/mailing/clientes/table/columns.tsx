@@ -10,9 +10,9 @@ export type RowClientes = {
   gsm: string;
   gsm_portado: string | null;
   cpf: string;
-  data_ultima_compra: string;
+  data_compra: string;
   plano_habilitado: string;
-  produto_ultima_compra: string;
+  produto_compra: string;
   desconto_plano: string;
   valor_caixa: string;
   filial: string;
@@ -27,14 +27,22 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
   {
     header: "GSM DO CLIENTE",
     accessorKey: "gsm",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <span className="uppercase">{label || "-"}</span>;
+    },
   },
   {
     header: "GSM PORTADO",
     accessorKey: "gsm_portado",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <span className="uppercase">{label || "-"}</span>;
+    },
   },
   {
     header: "CPF DO CLIENTE",
-    accessorKey: "cpf",
+    accessorKey: "cpf_cliente",
     cell: (info) => {
       const label = info.getValue<string>();
       return <span title={label}>{label}</span>;
@@ -42,7 +50,7 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
   },
   {
     header: "DATA DA COMPRA",
-    accessorKey: "data_ultima_compra",
+    accessorKey: "data_compra",
     cell: (info) => {
       const label = normalizeDate(info.getValue<string>());
       return <span title={label}>{label}</span>;
@@ -58,10 +66,26 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
   },
   {
     header: "DESCRICÃO PRODUTO",
-    accessorKey: "produto_ultima_compra",
+    accessorKey: "produto_compra",
     cell: (info) => {
       const label = info.getValue<string>();
       return <span className="uppercase">{label}</span>;
+    },
+  },
+  {
+    header: "FORNECEDOR",
+    accessorKey: "fornecedor",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <span className="uppercase">{label || "-"}</span>;
+    },
+  },
+  {
+    header: "FABRICANTE",
+    accessorKey: "fabricante",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <span className="uppercase">{label || "-"}</span>;
     },
   },
   {
@@ -85,11 +109,47 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     accessorKey: "filial",
     cell: (info) => {
       const label = info.getValue<string>();
-      return <span className="uppercase">{label}</span>;
+      return <span className="uppercase text-nowrap">{label}</span>;
     },
   },
   {
     header: "ESTADO",
-    accessorKey: "area",
+    accessorKey: "uf",
+  },
+  {
+    header: "FIDELIZAÇÃO APARELHO",
+    accessorKey: "fid_aparelho",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <span className={`uppercase ${label === "SIM" ? "text-green-500" : "text-red-500"}`}>
+          {label}
+        </span>
+      );
+    },
+  },
+  {
+    header: "FIDELIZAÇÃO PLANO",
+    accessorKey: "fid_plano",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return (
+        <span
+          className={`uppercase ${label === "SIM" && "text-green-500"} ${
+            label === "NÃO" && "text-red-500"
+          }`}
+        >
+          {label || "-"}
+        </span>
+      );
+    },
+  },
+  {
+    header: "STATUS PLANO",
+    accessorKey: "status_plano",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <span className={"uppercase"}>{label}</span>;
+    },
   },
 ];
