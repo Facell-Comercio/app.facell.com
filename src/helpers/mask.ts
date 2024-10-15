@@ -132,3 +132,13 @@ export const sliceString = (texto: string, maxWidth: number) => {
     return texto;
   }
 };
+
+export function normalizeNumberFixed(number: string | number | null, fractionDigits: number) {
+  if (typeof number === "string" && parseFloat(number)) {
+    return parseFloat(parseFloat(number || "0").toFixed(fractionDigits));
+  }
+  if (typeof number === "number" && !isNaN(number)) {
+    return parseFloat(number.toFixed(fractionDigits) || "0");
+  }
+  return 0;
+}

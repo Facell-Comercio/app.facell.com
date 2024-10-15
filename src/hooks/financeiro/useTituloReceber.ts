@@ -153,9 +153,10 @@ export const useTituloReceber = () => {
         fetchApi.financeiro.contas_receber.titulos.getAllRecebimentosVencimento(id_vencimento),
     });
 
-  const getAllTransacoesAndVencimentos = ({ filters }: GetTitulosReceberProps) =>
+  const getAllTransacoesAndVencimentos = (params: unknown) =>
     useQuery({
-      enabled: !!filters.id_conta_bancaria,
+      //@ts-ignore
+      enabled: !!params.id_conta_bancaria,
       retry: false,
       staleTime: 5 * 1000 * 60,
       queryKey: [
@@ -166,10 +167,11 @@ export const useTituloReceber = () => {
         "recebimentos",
         "conta_bancaria",
         "lista",
-        [filters],
+        //@ts-ignore
+        [params.id_conta_bancaria],
       ],
       queryFn: () =>
-        fetchApi.financeiro.contas_receber.titulos.getAllTransacoesAndVencimentos({ filters }),
+        fetchApi.financeiro.contas_receber.titulos.getAllTransacoesAndVencimentos(params),
     });
 
   const insertOneRecebimentoManual = () =>

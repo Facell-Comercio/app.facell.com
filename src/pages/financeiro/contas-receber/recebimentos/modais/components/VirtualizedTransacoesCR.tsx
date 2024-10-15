@@ -7,8 +7,12 @@ import { TransacoesConciliarProps } from "@/pages/financeiro/extratos-bancarios/
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FilterRecebimentosBancariosProps } from "../ModalRecebimentoBancario";
 
+export interface TransacoesRecebimentoBancario extends TransacoesConciliarProps {
+  valor_em_aberto?: string;
+}
+
 interface VirtualizerTransacoesProps {
-  data: TransacoesConciliarProps[];
+  data: TransacoesRecebimentoBancario[];
   setFilters: React.Dispatch<React.SetStateAction<FilterRecebimentosBancariosProps>>;
   filters: FilterRecebimentosBancariosProps;
 }
@@ -34,13 +38,14 @@ const VirtualizedTransacoesCR: React.FC<VirtualizerTransacoesProps> = ({
   return (
     <section
       ref={parentElement}
-      className="h-[45vh] w-full overflow-auto scroll-thin z-50 border bg-background rounded-md"
+      className="h-[45vh] w-full overflow-auto scroll-thin border bg-background rounded-md"
     >
-      <div className="flex gap-1 font-medium text-xs px-1 w-full sticky top-0 z-[100] bg-secondary">
+      <div className="flex gap-1 font-medium text-xs px-1 w-full sticky top-0 z-20 bg-secondary">
         <p className="min-w-4 text-center bg-secondary"></p>
         <p className="min-w-16 text-center bg-secondary">ID</p>
-        <p className="min-w-28 text-center bg-secondary">Transação</p>
+        <p className="min-w-28 text-center bg-secondary">Data</p>
         <p className="min-w-28 pl-2 bg-secondary">Valor</p>
+        <p className="min-w-28 pl-2 bg-secondary">Em Aberto</p>
         <p className="w-full min-w-64 pl-2 bg-secondary">Descrição</p>
         <p className="min-w-24 text-center bg-secondary">Doc</p>
       </div>
@@ -52,7 +57,6 @@ const VirtualizedTransacoesCR: React.FC<VirtualizerTransacoesProps> = ({
         }}
       >
         {virtualizer.getVirtualItems().map((item, index) => {
-          console.log(data[item.index]);
           return (
             <div
               // ref={virtualizer.measureElement}
@@ -104,6 +108,13 @@ const VirtualizedTransacoesCR: React.FC<VirtualizerTransacoesProps> = ({
               <Input
                 className="text-xs w-28 h-8 p-2"
                 value={data[item.index].valor && normalizeCurrency(data[item.index].valor)}
+                readOnly={true}
+              />
+              <Input
+                className="text-xs w-28 h-8 p-2"
+                value={
+                  data[item.index].valor && normalizeCurrency(data[item.index].valor_em_aberto)
+                }
                 readOnly={true}
               />
               <Input

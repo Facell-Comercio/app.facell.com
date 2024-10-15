@@ -110,6 +110,8 @@ const FormTituloReceber = ({
   const isMaster = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
 
   const canEdit = !id || status === "Criado" || (isMaster && id_status > 0 && id_status < 30);
+  const canEditRecebimento =
+    !id || status === "Criado" || (isMaster && id_status > 0 && id_status < 50);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
@@ -194,8 +196,6 @@ const FormTituloReceber = ({
   }, [isPendingInsert, isPendingUpdate]);
 
   const onSubmit: SubmitHandler<TituloCRSchemaProps> = async (data) => {
-    console.log(data);
-
     if (!id) insertOne(data);
     if (id) update(data);
   };
@@ -556,7 +556,6 @@ const FormTituloReceber = ({
                           id={id}
                           form={form}
                           canEdit={canEdit}
-                          emitido={emitido}
                           modalEditing={modalEditing}
                           disabled={disabled}
                           readOnly={readOnly}

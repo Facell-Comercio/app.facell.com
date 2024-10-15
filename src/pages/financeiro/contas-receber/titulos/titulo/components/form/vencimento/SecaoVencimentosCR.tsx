@@ -21,17 +21,21 @@ type SecaoVencimentosCRProps = {
   id?: string | null;
   form: UseFormReturn<TituloCRSchemaProps>;
   canEdit: boolean;
-  emitido: boolean;
   disabled: boolean;
   modalEditing: boolean;
   readOnly: boolean;
 };
 
-const SecaoVencimentosCR = ({ form, canEdit, modalEditing, emitido }: SecaoVencimentosCRProps) => {
+const SecaoVencimentosCR = ({ form, canEdit, modalEditing }: SecaoVencimentosCRProps) => {
   const { remove: removeVencimento } = useFieldArray({
     control: form.control,
     name: "vencimentos",
   });
+
+  const id_status = parseInt(form.watch("id_status") || "0");
+  const emitido = id_status === 30;
+  const pagoParcial = id_status === 40;
+  const canEditRecebimento = pagoParcial || emitido;
 
   const wvencimentos = form.watch("vencimentos");
 
@@ -50,12 +54,12 @@ const SecaoVencimentosCR = ({ form, canEdit, modalEditing, emitido }: SecaoVenci
     () => [
       {
         accessorKey: "id",
-        header: canEditVencimentos ? "AÇÃO" : "",
+        header: canEditVencimentos || canEditRecebimento ? "AÇÃO" : "",
         cell: (info) => {
           const index = info.row.index;
           return (
             <div className="w-full flex items-center justify-center gap-2">
-              {canEditVencimentos && (
+              {(canEditVencimentos || canEditRecebimento) && (
                 <>
                   <Button
                     onClick={() => {
@@ -72,7 +76,7 @@ const SecaoVencimentosCR = ({ form, canEdit, modalEditing, emitido }: SecaoVenci
                     <Pen size={18} />
                   </Button>
 
-                  {!emitido && (
+                  {canEdit && (
                     <AlertPopUp
                       title="Deseja realmente remover o vencimento?"
                       description=""
@@ -89,7 +93,7 @@ const SecaoVencimentosCR = ({ form, canEdit, modalEditing, emitido }: SecaoVenci
             </div>
           );
         },
-        size: canEditVencimentos ? 100 : 0,
+        size: canEditVencimentos || canEditRecebimento ? 100 : 0,
       },
       {
         accessorKey: "data_vencimento",

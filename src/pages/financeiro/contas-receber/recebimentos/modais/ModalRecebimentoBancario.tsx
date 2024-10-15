@@ -11,19 +11,23 @@ import {
 import { Input } from "@/components/custom/FormInput";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
-import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate, normalizeNumberFixed } from "@/helpers/mask";
 import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
 import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
 import { VencimentoCRProps } from "@/pages/financeiro/components/ModalVencimentosCR";
-import { TransacoesConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/tables/TransacoesConciliar";
-import { Ban, Save } from "lucide-react";
+import { Ban, FastForward, Save } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useStoreRecebimentos } from "../store";
-import VirtualizedTransacoesCR from "./components/VirtualizedTransacoesCR";
+import FiltersTransacoes from "./components/FiltersTransacoes";
+import FiltersVencimentos from "./components/FiltersVencimentos";
+import VirtualizedTransacoesCR, {
+  TransacoesRecebimentoBancario,
+} from "./components/VirtualizedTransacoesCR";
 import VirtualizedVencimentosCR from "./components/VirtualizedVencimentosCR";
+import { useStoreTableModalRecebimentos } from "./store-table";
 
 export type FilterRecebimentosBancariosProps = {
   data_transacao?: string;
@@ -47,23 +51,29 @@ export function ModalRecebimentoBancario() {
   } = useTituloReceber().insertOneRecebimentoContaBancaria();
 
   const [modalContasBancariasOpen, setModalContasBancariasOpen] = useState(false);
-  const [contaBancaria, setContaBancaria] = useState<ItemContaBancariaProps | null>(null);
   const [filters, setFilters] = useState<FilterRecebimentosBancariosProps>({
     data_transacao: undefined,
     id_extrato: undefined,
   });
+  const [filters_extratos_bancarios, filters_vencimentos, contaBancaria, setContaBancaria] =
+    useStoreTableModalRecebimentos((state) => [
+      state.filters_extratos_bancarios,
+      state.filters_vencimentos,
+      state.conta_bancaria,
+      state.setContaBancaria,
+    ]);
 
-  const { data } = useTituloReceber().getAllTransacoesAndVencimentos({
-    filters: {
-      id_conta_bancaria: contaBancaria?.id,
-      id_matriz: contaBancaria?.id_matriz,
-    },
+  const { data, refetch } = useTituloReceber().getAllTransacoesAndVencimentos({
+    id_conta_bancaria: contaBancaria?.id,
+    id_matriz: contaBancaria?.id_matriz,
+    filters_extratos_bancarios,
+    filters_vencimentos,
   });
 
   const transacoes = data?.transacoes || [];
-  const filteredTransacoes = useMemo<TransacoesConciliarProps[]>(
+  const filteredTransacoes = useMemo<TransacoesRecebimentoBancario[]>(
     () =>
-      transacoes.filter((transacao: TransacoesConciliarProps) => {
+      transacoes.filter((transacao: TransacoesRecebimentoBancario) => {
         if (filters.data_transacao === undefined) {
           return transacao;
         }
@@ -72,11 +82,12 @@ export function ModalRecebimentoBancario() {
     [data, filters]
   );
   const totalTransacoes = filteredTransacoes.reduce(
-    (acc, transacao) => acc + parseFloat(transacao.valor),
+    (acc, transacao) => acc + parseFloat(transacao.valor_em_aberto || "0"),
     0
   );
   const totalPagoTransacoes = parseFloat(
-    filteredTransacoes.filter((transacao) => transacao.id === filters.id_extrato)[0]?.valor || "0"
+    filteredTransacoes.filter((transacao) => transacao.id === filters.id_extrato)[0]
+      ?.valor_em_aberto || "0"
   );
 
   const vencimentos = data?.vencimentos || [];
@@ -102,6 +113,7 @@ export function ModalRecebimentoBancario() {
     (acc, vencimento) => acc + parseFloat(vencimento?.valor_pagar || "0"),
     0
   );
+  const valorRestante = totalPagoTransacoes - totalReceberVencimentos;
 
   function handleClickCancel() {
     closeModal();
@@ -166,9 +178,34 @@ export function ModalRecebimentoBancario() {
     });
   }
 
+  function preencherAutomaticamente() {
+    let valorPagar = totalPagoTransacoes;
+
+    setRowVenciementos(
+      rowVencimentos.map((vencimento) => {
+        const valorVencimento = normalizeNumberFixed(vencimento.valor || 0, 2);
+        if (valorPagar === 0) {
+          return vencimento;
+        }
+        if (valorPagar > valorVencimento) {
+          valorPagar -= valorVencimento;
+
+          return { ...vencimento, valor_pagar: String(valorVencimento) };
+        }
+        if (valorPagar <= valorVencimento) {
+          const obj = { ...vencimento, valor_pagar: String(valorPagar) };
+          valorPagar = 0;
+          return obj;
+        }
+
+        return vencimento;
+      })
+    );
+  }
+
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
-      <DialogContent className={`md:max-w-4xl`}>
+      <DialogContent className={`md:max-w-7xl`}>
         <DialogHeader>
           <DialogTitle>Adicionar Recebimento</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
@@ -185,31 +222,54 @@ export function ModalRecebimentoBancario() {
             />
           </div>
           {contaBancaria && (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="flex justify-end col-span-1 md:col-span-2">
+                <Button
+                  variant={"tertiary"}
+                  disabled={!filters.id_extrato}
+                  title={!filters.id_extrato ? "Selecione uma transação" : ""}
+                  onClick={preencherAutomaticamente}
+                >
+                  <FastForward size={18} className="me-2" />
+                  Preencher Automaticamente
+                </Button>
+              </div>
               <div className="flex flex-col gap-2">
+                <FiltersTransacoes refetch={refetch} />
                 <p className="text-sm font-medium">Transações Bancárias</p>
                 <VirtualizedTransacoesCR
                   data={filteredTransacoes}
                   setFilters={setFilters}
                   filters={filters}
                 />
-                <span className="flex justify-between">
+                <span className="flex gap-2 justify-between">
                   <Badge variant={"info"}>Total: {normalizeCurrency(totalTransacoes)}</Badge>
                   <Badge variant={"info"}>Pagando: {normalizeCurrency(totalPagoTransacoes)}</Badge>
                 </span>
               </div>
               <div className="flex flex-col gap-2">
+                <FiltersVencimentos refetch={refetch} />
+
                 <p className="text-sm font-medium">Vencimentos</p>
                 <VirtualizedVencimentosCR
                   data={rowVencimentos}
                   setData={setRowVenciementos}
                   filters={filters}
                 />
-                <span className="flex justify-between">
+                <span className="flex gap-2 justify-between">
                   <Badge variant={"info"}>Total: {normalizeCurrency(totalVencimentos)}</Badge>
-                  <Badge variant={"info"}>
-                    Recebendo: {normalizeCurrency(totalReceberVencimentos)}
-                  </Badge>
+                  <span className="flex gap-2">
+                    <Badge
+                      variant={valorRestante < 0 ? "destructive" : "info"}
+                      title={valorRestante < 0 ? "Atenção! Valor acima do permitido" : ""}
+                    >
+                      Restam:
+                      {normalizeCurrency(valorRestante)}
+                    </Badge>
+                    <Badge variant={"info"}>
+                      Recebendo: {normalizeCurrency(totalReceberVencimentos)}
+                    </Badge>
+                  </span>
                 </span>
               </div>
             </div>

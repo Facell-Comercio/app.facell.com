@@ -1,9 +1,11 @@
 import * as React from "react";
 
 import { Input } from "@/components/custom/FormInput";
+import { Button } from "@/components/ui/button";
 import { normalizeDate } from "@/helpers/mask";
 import { VencimentoCRProps } from "@/pages/financeiro/components/ModalVencimentosCR";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { Equal } from "lucide-react";
 import { FilterRecebimentosBancariosProps } from "../ModalRecebimentoBancario";
 
 interface VirtualizerVencimentosProps {
@@ -31,14 +33,14 @@ const VirtualizedVencimentosCR: React.FC<VirtualizerVencimentosProps> = ({
   return (
     <section
       ref={parentElement}
-      className="h-[45vh] w-full overflow-auto scroll-thin z-[100] border rounded bg-background"
+      className="h-[45vh] w-full overflow-auto scroll-thin border rounded bg-background"
     >
-      <div className="flex gap-1 font-medium text-xs w-full sticky top-0 z-[100] bg-secondary">
+      <div className="flex gap-1 font-medium text-xs w-full sticky top-0 z-20 bg-secondary">
         <p className="min-w-28 text-center bg-secondary">Data</p>
         <p className="min-w-24 text-center bg-secondary">ID Vencimento</p>
         <p className="min-w-36 pl-2 bg-secondary">Descrição</p>
-        <p className="min-w-28 pl-2 bg-secondary">Valor</p>
-        <p className="min-w-28 pl-2 bg-secondary">Valor Pago</p>
+        <p className="min-w-28 pl-2 bg-secondary">Em Aberto</p>
+        <p className="min-w-[140px] pl-2 bg-secondary">Valor Pago</p>
       </div>
       <div
         style={{
@@ -76,11 +78,7 @@ const VirtualizedVencimentosCR: React.FC<VirtualizerVencimentosProps> = ({
                 value={data[item.index].id_vencimento || ""}
                 readOnly
               />
-              <Input
-                className="text-xs min-w-36 h-8 p-2"
-                value={data[item.index].descricao}
-                readOnly
-              />
+              <Input className="text-xs w-36 h-8 p-2" value={data[item.index].descricao} readOnly />
               <Input
                 className="text-xs w-28 h-8 p-2"
                 value={data[item.index].valor || ""}
@@ -106,6 +104,23 @@ const VirtualizedVencimentosCR: React.FC<VirtualizerVencimentosProps> = ({
                 disabled={!filters.id_extrato}
                 title={!filters.id_extrato ? "Selecione a transação bancária" : ""}
               />
+              <Button
+                className="w-10 h-8 p-2"
+                disabled={!filters.id_extrato}
+                onClick={() =>
+                  setData(
+                    data.map((vencimento) => {
+                      if (vencimento.id === data[item.index].id) {
+                        return { ...vencimento, valor_pagar: data[item.index].valor };
+                      }
+                      return vencimento;
+                    })
+                  )
+                }
+                title={"Igualar valor pago ao valor em aberto"}
+              >
+                <Equal size={16} />
+              </Button>
             </div>
           );
         })}

@@ -39,7 +39,11 @@ export function ModalVencimento({
 }: {
   form: UseFormReturn<TituloCRSchemaProps>;
 }) {
-  const emitido = parseInt(formTitulo.watch("id_status") || "0") === 30;
+  const id_status = parseInt(formTitulo.watch("id_status") || "0");
+  const emitido = id_status === 30;
+  const pagoParcial = id_status === 40;
+  const canEdit = id_status < 30 && id_status !== 20;
+  const canEditRecebimento = pagoParcial || emitido;
   const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
@@ -173,7 +177,7 @@ export function ModalVencimento({
                   label="Vencimento"
                   min={!isMaster ? subDays(new Date(), 1) : undefined}
                   control={form.control}
-                  disabled={emitido}
+                  disabled={emitido || !canEdit}
                   onChange={(val) => handleChangeVencimento(val)}
                 />
 
@@ -188,10 +192,10 @@ export function ModalVencimento({
                   placeholder="0,00"
                   min={0}
                   control={form.control}
-                  disabled={emitido}
+                  disabled={emitido || !canEdit}
                 />
               </div>
-              {emitido && (
+              {canEditRecebimento && (
                 <div className="flex flex-col gap-2">
                   {/* <p className="font-medium w-full text-center">Recebimentos</p> */}
                   <Table
@@ -239,7 +243,7 @@ export function ModalVencimento({
             </div>
 
             <DialogFooter>
-              {!emitido && (
+              {canEdit && (
                 <Button variant={isUpdate ? "success" : "default"} type="submit">
                   {isUpdate ? (
                     <span className="flex gap-2">
