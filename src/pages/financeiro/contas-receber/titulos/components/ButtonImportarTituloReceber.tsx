@@ -11,29 +11,20 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 import { importFromExcel } from "@/helpers/importExportXLS";
-import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
+import { parseCurrency } from "@/helpers/mask";
+import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
+import { formatDate } from "date-fns";
 import { useEffect, useRef } from "react";
 import { FaSpinner } from "react-icons/fa6";
 
-export type LancamentoLoteProps = {
-  id_tipo_solicitacao?: string;
-  id_forma_pagamento?: string;
-
-  CNPJ_FORNECEDOR?: string;
-  CNPJ_FILIAL?: string;
-  CNPJ_FILIAL_RATEIO?: string;
-
-  DATA_EMISSAO?: string;
-  DATA_VENCIMENTO?: string;
-
-  DOCUMENTO?: string;
-  DESCRICAO?: string;
-  VALOR?: string;
-
-  CENTRO_CUSTO?: string;
-  PLANO_CONTAS?: string;
-  CODIGO_BARRAS?: string;
-  PIX_COPIA_COLA?: string;
+export type LancamentoReebolsoTimProps = {
+  pedido?: string;
+  pedido_sap?: string;
+  cnpj?: string;
+  mes?: string;
+  ano?: string;
+  tipo_de_remuneracao?: string;
+  valor_total?: number;
 };
 
 export type ExportAnexosProps = {
@@ -43,11 +34,11 @@ export type ExportAnexosProps = {
 
 const ButtonImportTitulosReceber = () => {
   const {
-    mutate: lancamentoLote,
+    mutate: lancamentoReebolsoTim,
     isPending,
     isSuccess,
-    data: resultadoLancamentoLote,
-  } = useTituloPagar().lancamentoLote();
+    data: resultadoLancamentoReebolsoTim,
+  } = useTituloReceber().lancamentoReebolsoTim();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangeImportButton = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,39 +49,48 @@ const ButtonImportTitulosReceber = () => {
       reader.readAsArrayBuffer(file);
       reader.onload = async (e) => {
         const importedData = e.target?.result;
-        const result = importFromExcel(importedData).filter(
-          (value: any) =>
-            value.id_tipo_solicitacao !== "" &&
-            value.CNPJ_FORNECEDOR !== "" &&
-            value.CNPJ_FILIAL !== "" &&
-            value.CNPJ_FILIAL_RATEIO !== ""
-        ) as LancamentoLoteProps[];
-        // console.log(result);
+        const result = importFromExcel(importedData)
+          .filter((value: any) => parseCurrency(value["Valor Total"]) > 0)
+          .map((value: any) => ({
+            pedido: value["Pedido"],
+            cnpj: value["Pedido"],
+            pedido_sap: value["Pedido SAP"],
+            mes: value["Mês"],
+            ano: value["Ano"],
+            tipo_de_remuneracao: value["Tipo de Remuneração"],
+            valor_total: parseCurrency(value["Valor Total"]),
+          })) as LancamentoReebolsoTimProps[];
 
         const responseError: any[] = [];
         if (responseError.length > 0) {
           toast({ title: "Erro na importação", variant: "destructive" });
           return;
         }
-        lancamentoLote(result);
 
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
+        lancamentoReebolsoTim(result);
       };
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
   useEffect(() => {
-    if (isSuccess && resultadoLancamentoLote) {
+    if (isSuccess && resultadoLancamentoReebolsoTim) {
       toast({
         title: "Sucesso",
-        description: "Lançamento de solicitações realizado",
+        description: "Lançamento de solicitações a receber realizado",
         action: (
           <ToastAction
             altText="Ver Resultados"
             onClick={() =>
-              exportToExcel(resultadoLancamentoLote, `RESULTADO LANÇAMENTO SOLICITAÇÕES`)
+              exportToExcel(
+                resultadoLancamentoReebolsoTim,
+                `RESULTADO LANÇAMENTO SOLICITAÇÕES A RECEBER ${formatDate(
+                  new Date(),
+                  "dd-MM-yyyy"
+                )}`
+              )
             }
           >
             Ver Resultados
@@ -111,24 +111,16 @@ const ButtonImportTitulosReceber = () => {
         <Upload className="me-2" size={18} /> Importar
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem className="flex gap-2">
-          <a
-            target="_blank"
-            href="https://docs.google.com/spreadsheets/d/1xQXNc7i27msUu3W72tBmdniDZMa_82Hr/export?format=xlsx"
-          >
-            Baixar Planilha Padrão
-          </a>
-        </DropdownMenuItem>
         <DropdownMenuItem className="flex gap-2" onClick={(e) => e.preventDefault()}>
           <AlertPopUp
             className="w-full hover:bg-accent hover:text-accent-foreground"
             title="Deseja realmente importar?"
-            description="Esta ação não pode ser desfeita. Todos as solicitações importadas serão adicionadas"
+            description="Esta ação não pode ser desfeita. Todos as solicitações a receber importadas serão adicionadas"
             action={() => fileInputRef.current && fileInputRef.current.click()}
           >
             <div>
               {!isPending ? (
-                <>Importar Planilha</>
+                <>Reembolsos TIM - Sintético</>
               ) : (
                 <>
                   <FaSpinner size={18} className="me-2 animate-spin" /> Importando...

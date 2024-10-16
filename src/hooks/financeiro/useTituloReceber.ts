@@ -2,6 +2,7 @@ import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { VencimentoCRProps } from "@/pages/financeiro/components/ModalVencimentosCR";
+import { LancamentoReebolsoTimProps } from "@/pages/financeiro/contas-receber/titulos/components/ButtonImportarTituloReceber";
 import { TituloCRSchemaProps } from "@/pages/financeiro/contas-receber/titulos/titulo/form-data";
 
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -252,6 +253,27 @@ export const useTituloReceber = () => {
         });
       },
     });
+
+  const lancamentoReebolsoTim = () =>
+    useMutation({
+      mutationFn: async (data: LancamentoReebolsoTimProps[]) => {
+        return api.post(`${uri}/reembolso-tim-lote`, data).then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+      },
+      onError(error) {
+        // @ts-expect-error "Vai funcionar"
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
   return {
     getAll,
     getOne,
@@ -264,5 +286,7 @@ export const useTituloReceber = () => {
     insertOneRecebimentoManual,
     insertOneRecebimentoContaBancaria,
     deleteRecebimento,
+
+    lancamentoReebolsoTim,
   };
 };
