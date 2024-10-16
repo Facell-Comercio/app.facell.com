@@ -16,7 +16,7 @@ const Clientes = () => {
     state.filters,
   ]);
   const openModalCampanha = useStoreNovaCampanha().openModal;
-  const { data, refetch, isLoading, isSuccess } = useMailing().getClientes({
+  const { data, refetch, isLoading, isFetching, isSuccess } = useMailing().getClientes({
     pagination,
     filters,
   });
@@ -24,6 +24,7 @@ const Clientes = () => {
   const rows = data?.rows || [];
   const rowCount = data?.rowCount || 0;
   const defaultFilters = data?.filters || {};
+  console.log(isLoading, isFetching);
 
   return (
     <div className="flex flex-col gap-3 ">
@@ -53,6 +54,7 @@ const Clientes = () => {
                 pagination={pagination}
                 setPagination={setPagination}
                 data={rows}
+                showRowCount
                 rowCount={rowCount}
                 columns={columnsTable}
                 isLoading={isLoading}

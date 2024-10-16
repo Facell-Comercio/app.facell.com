@@ -48,37 +48,17 @@ const FilterClientes = ({
   const defaultFilters = useMemo(() => defaultFiltersFetched, [defaultFiltersFetched]);
 
   //* Outros Filtros
-  const produtos_cliente = filters.produtos_cliente || [];
-  const comAparelho = useMemo(
-    () => produtos_cliente?.includes("com_aparelho"),
-    [produtos_cliente?.includes("com_aparelho")]
-  );
-  const comAcessorio = useMemo(
-    () => produtos_cliente?.includes("com_acessorio"),
-    [produtos_cliente?.includes("com_acessorio")]
-  );
-  const comPlano = useMemo(
-    () => produtos_cliente?.includes("com_plano"),
-    [produtos_cliente?.includes("com_plano")]
-  );
+  const produtos_cliente = useMemo(() => filters.produtos_cliente || [], [filters]);
+  const options_produtos_clientes = [
+    "com_aparelho",
+    "sem_aparelho",
+    "com_acessorio",
+    "sem_acessorio",
+    "com_plano",
+    "sem_plano",
+  ];
 
-  const status_plano = filters.status_plano || [];
-  const statusAtivo = useMemo(
-    () => status_plano?.includes("Ativo"),
-    [status_plano?.includes("Ativo")]
-  );
-  const statusDesativado = useMemo(
-    () => status_plano?.includes("Desativado"),
-    [status_plano?.includes("Desativado")]
-  );
-  const statusSuspenso = useMemo(
-    () => status_plano?.includes("Suspenso"),
-    [status_plano?.includes("Suspenso")]
-  );
-  const statusAnalisePendente = useMemo(
-    () => status_plano?.includes("Analise pendente"),
-    [status_plano?.includes("Analise pendente")]
-  );
+  const status_plano = useMemo(() => filters.status_plano || [], [filters]);
 
   function toggleList(list: string[], key: string) {
     if (list.includes(key)) list = list.filter((item) => item !== key);
@@ -342,74 +322,39 @@ const FilterClientes = ({
           <div className="flex flex-col w-full gap-2">
             <label className="text-sm font-medium">Tipos de Clientes:</label>
             <div className="flex flex-col gap-2 border rounded-md p-2 bg-background">
-              <span className="flex gap-2 items-center">
-                <Checkbox
-                  checked={comAparelho}
-                  onCheckedChange={() =>
-                    setFilters({ produtos_cliente: toggleList(produtos_cliente, "com_aparelho") })
-                  }
-                />
-                <p className="text-sm font-medium">Com Aparelho</p>
-              </span>
-              <span className="flex gap-2 items-center">
-                <Checkbox
-                  checked={comAcessorio}
-                  onCheckedChange={() =>
-                    setFilters({ produtos_cliente: toggleList(produtos_cliente, "com_acessorio") })
-                  }
-                />
-                <p className="text-sm font-medium">Com Acessório</p>
-              </span>
-              <span className="flex gap-2 items-center">
-                <Checkbox
-                  checked={comPlano}
-                  onCheckedChange={() =>
-                    setFilters({ produtos_cliente: toggleList(produtos_cliente, "com_plano") })
-                  }
-                />
-                <p className="text-sm font-medium">Com Plano</p>
-              </span>
+              {options_produtos_clientes.map((option, index) => (
+                <span
+                  className="flex gap-2 items-center"
+                  key={`option_produtos_clientes-${option}-${index}`}
+                >
+                  <Checkbox
+                    checked={produtos_cliente.includes(option)}
+                    onCheckedChange={() =>
+                      setFilters({ produtos_cliente: toggleList(produtos_cliente, option) })
+                    }
+                  />
+                  <p className="text-sm font-medium capitalize">{option.replaceAll("_", " ")}</p>
+                </span>
+              ))}
             </div>
           </div>
           <div className="flex flex-col w-full gap-2">
             <label className="text-sm font-medium">Status Plano:</label>
             <div className="flex flex-col gap-2 border rounded-md p-2 bg-background">
-              <span className="flex gap-2 items-center">
-                <Checkbox
-                  checked={statusAtivo}
-                  onCheckedChange={() =>
-                    setFilters({ status_plano: toggleList(status_plano, "Ativo") })
-                  }
-                />
-                <p className="text-sm font-medium">Ativo</p>
-              </span>
-              <span className="flex gap-2 items-center">
-                <Checkbox
-                  checked={statusDesativado}
-                  onCheckedChange={() =>
-                    setFilters({ status_plano: toggleList(status_plano, "Desativado") })
-                  }
-                />
-                <p className="text-sm font-medium">Desativado</p>
-              </span>
-              <span className="flex gap-2 items-center">
-                <Checkbox
-                  checked={statusSuspenso}
-                  onCheckedChange={() =>
-                    setFilters({ status_plano: toggleList(status_plano, "Suspenso") })
-                  }
-                />
-                <p className="text-sm font-medium">Suspenso</p>
-              </span>
-              <span className="flex gap-2 items-center">
-                <Checkbox
-                  checked={statusAnalisePendente}
-                  onCheckedChange={() =>
-                    setFilters({ status_plano: toggleList(status_plano, "Analise pendente") })
-                  }
-                />
-                <p className="text-sm font-medium">Análise Pendente</p>
-              </span>
+              {defaultFiltersFetched?.status_list?.map((status: any, index: number) => (
+                <span
+                  className="flex gap-2 items-center"
+                  key={`status_plano-${status.value}-${index}`}
+                >
+                  <Checkbox
+                    checked={status_plano.includes(status.value || "")}
+                    onCheckedChange={() =>
+                      setFilters({ status_plano: toggleList(status_plano, status.value || "") })
+                    }
+                  />
+                  <p className="text-sm font-medium">{status.value || ""}</p>
+                </span>
+              ))}
             </div>
           </div>
         </div>

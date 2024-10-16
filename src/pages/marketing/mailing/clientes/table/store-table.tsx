@@ -50,7 +50,7 @@ const initialFilters: Filters = {
   fidelizacao_plano: "all",
 
   //* OUTROS
-  produtos_cliente: ["com_aparelho"],
+  produtos_cliente: [],
   status_plano: ["Ativo", "Desativado", "Analise pendente"],
 };
 

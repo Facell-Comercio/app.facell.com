@@ -41,6 +41,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowCount: number;
+  showRowCount?: boolean;
   pagination?: PaginationState;
   setPagination?: (pagination: PaginationState) => void;
   rowSelection?: RowSelectionState;
@@ -55,6 +56,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   rowCount,
+  showRowCount,
   rowSelection,
   handleRowSelection,
   isLoading,
@@ -206,6 +208,7 @@ export function DataTable<TData, TValue>({
             ? normalizeCurrency(valorTotal)
             : null}
         </div>
+
         <div
           className={`flex flex-row gap-3 items-center ${
             !handleRowSelection && "w-full justify-between"
@@ -232,6 +235,13 @@ export function DataTable<TData, TValue>({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div
+            className={`flex-1 text-xs sm:text-sm text-muted-foreground ${
+              !showRowCount && "hidden"
+            }`}
+          >
+            Total: {rowCount}
           </div>
           <div className="flex items-center justify-center text-xs sm:text-sm font-medium">
             Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}

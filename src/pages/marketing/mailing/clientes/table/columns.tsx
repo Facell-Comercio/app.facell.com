@@ -65,11 +65,19 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     },
   },
   {
+    header: "GRUPO ESTOQUE",
+    accessorKey: "grupo_estoque",
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <span className="uppercase text-nowrap">{label}</span>;
+    },
+  },
+  {
     header: "DESCRICÃO PRODUTO",
     accessorKey: "produto_compra",
     cell: (info) => {
       const label = info.getValue<string>();
-      return <span className="uppercase">{label}</span>;
+      return <span className="uppercase min-w-[100ch]">{label}</span>;
     },
   },
   {
