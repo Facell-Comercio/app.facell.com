@@ -39,7 +39,6 @@ const ModalLogsMovimentoArquivos = ({
   const [relatoriosList, setRelatoriosList] = useState<string[] | []>([]);
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["root", "log_import_relatorio", "lista", { pagination, relatoriosList }],
-    refetchOnMount: true,
     staleTime: 0,
     queryFn: async () => {
       const result = await api.get("/financeiro/controle-de-caixa/importacoes/", {

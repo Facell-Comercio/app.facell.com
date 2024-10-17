@@ -81,7 +81,6 @@ const ModalContasBancarias = ({
 
   const { data, isLoading, isError, refetch } = useQuery({
     staleTime: 0,
-    refetchOnMount: true,
     queryKey: [
       "financeiro",
       "conta_bancaria",
