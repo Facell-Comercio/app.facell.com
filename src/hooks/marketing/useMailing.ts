@@ -34,28 +34,28 @@ export const useMailing = () => {
       placeholderData: keepPreviousData,
     });
 
-  // const getOne = (id?: string | null) =>
-  //   useQuery({
-  //     enabled: !!id,
-  //     retry: false,
-  //     staleTime: 5 * 1000 * 60,
-  //     queryKey: ["marketing", "mailing", "detalhe", id],
-  //     queryFn: async () => {
-  //       try {
-  //         const result = fetchApi.marketing.mailing.getOne(id);
-  //         return result;
-  //       } catch (error) {
-  //         // @ts-expect-error "Vai funcionar"
-  //         const errorMessage = error.response?.data.message || error.message;
-  //         toast({
-  //           title: "Erro",
-  //           description: errorMessage,
-  //           duration: 3500,
-  //           variant: "destructive",
-  //         });
-  //       }
-  //     },
-  //   });
+  const getOneCampanha = (id?: string | null) =>
+    useQuery({
+      enabled: !!id,
+      retry: false,
+      staleTime: 5 * 1000 * 60,
+      queryKey: ["marketing", "mailing", "detalhe", id],
+      queryFn: async () => {
+        try {
+          const result = fetchApi.marketing.mailing.getOneCampanha(id);
+          return result;
+        } catch (error) {
+          // @ts-expect-error "Vai funcionar"
+          const errorMessage = error.response?.data.message || error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        }
+      },
+    });
 
   const insertOneCampanha = () =>
     useMutation({
@@ -85,12 +85,12 @@ export const useMailing = () => {
       },
     });
 
-  const getCampanhas = ({ filters }: GetAllParams) =>
+  const getCampanhas = (params: GetAllParams) =>
     useQuery({
-      queryKey: ["marketing", "mailing", "campanhas", "lista", { filters }],
+      queryKey: ["marketing", "mailing", "campanhas", "lista", params],
       staleTime: 5 * 1000 * 60,
       retry: false,
-      queryFn: async () => await fetchApi.marketing.mailing.getCampanhas({ filters }),
+      queryFn: async () => await fetchApi.marketing.mailing.getCampanhas(params),
       placeholderData: keepPreviousData,
     });
 
@@ -200,6 +200,7 @@ export const useMailing = () => {
   return {
     getClientes,
     getCampanhas,
+    getOneCampanha,
     insertOneCampanha,
   };
 };

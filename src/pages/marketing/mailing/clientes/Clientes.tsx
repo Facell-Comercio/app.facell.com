@@ -24,7 +24,6 @@ const Clientes = () => {
   const rows = data?.rows || [];
   const rowCount = data?.rowCount || 0;
   const defaultFilters = data?.filters || {};
-  console.log(isLoading, isFetching);
 
   return (
     <div className="flex flex-col gap-3 ">
@@ -45,11 +44,20 @@ const Clientes = () => {
               Criar Campanha
             </Button>
           </div>
-          <section className="grid grid-cols-[240px_1fr] max-w-full gap-2 max-h-full">
+          <section className="grid grid-cols-[240px_1fr] max-w-full gap-2 max-h-full transition-all">
             {isSuccess && (
               <FilterClientes refetch={refetch} defaultFiltersFetched={defaultFilters} />
             )}
-            <div className=" overflow-y-auto max-h-full scroll-thin">
+            <div className="flex flex-col gap-2 overflow-y-auto max-h-full scroll-thin">
+              {isFetching && (
+                <div
+                  className={
+                    "flex items-center justify-center text-xs font-medium text-foreground animate-pulse bg-secondary w-full min-h-4 p-0.5 rounded-full border"
+                  }
+                >
+                  Carregando...
+                </div>
+              )}
               <DataTable
                 pagination={pagination}
                 setPagination={setPagination}

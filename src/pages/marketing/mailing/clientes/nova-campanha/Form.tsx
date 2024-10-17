@@ -1,3 +1,4 @@
+import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { useMailing } from "@/hooks/marketing/useMailing";
@@ -28,6 +29,7 @@ const FormNovaCampanha = ({
   const { form } = useFormNovaCampanhaData({
     nome: "",
     quantidade_total_clientes: String(qtde_total || "0"),
+    data_inicio: undefined,
   });
 
   const onSubmitData = (data: NovaCampanhaSchema) => {
@@ -57,12 +59,18 @@ const FormNovaCampanha = ({
             <div className="flex flex-1 flex-col gap-1 shrink-0">
               {/* Primeira coluna */}
               <section className="flex flex-col gap-3 p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                <div className="flex flex-wrap gap-3 ">
+                <div className="flex flex-wrap gap-3 items-end">
                   <FormInput
                     className="min-w-[30ch] flex-1"
                     name="nome"
                     label="Nome:"
                     placeholder="NOME DA NOVA CAMPANHA"
+                    control={form.control}
+                  />
+                  <FormDateInput
+                    name="data_inicio"
+                    label="Data de Início:"
+                    className="min-w-[30ch] flex-1"
                     control={form.control}
                   />
                   <FormInput
