@@ -145,11 +145,11 @@ export function normalizeNumberFixed(number: string | number | null, fractionDig
 
 export function parseCurrency(value: string) {
   // Remove o símbolo "R$" e espaços em branco
-  let numericValue = value.replace(/[R$,\s]/g, "");
+  let numericValue = value.replace(/[R$\s]/g, "");
 
-  // Substitui o separador de decimal "," por "."
-  numericValue = numericValue.replace(",", ".");
+  // Remove o separador de milhar (pontos) e substitui a vírgula por ponto
+  numericValue = numericValue.replace(/\./g, "").replace(",", ".");
 
-  // Converte para número, preservando sinal negativo, se existir
+  // Converte para número
   return parseFloat(numericValue);
 }

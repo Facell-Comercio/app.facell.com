@@ -47,8 +47,8 @@ const TitulosReceber = () => {
         sumField="valor"
         pagination={pagination}
         setPagination={setPagination}
-        rowSelection={rowSelection}
-        handleRowSelection={handleRowSelection}
+        // rowSelection={rowSelection}
+        // handleRowSelection={handleRowSelection}
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}

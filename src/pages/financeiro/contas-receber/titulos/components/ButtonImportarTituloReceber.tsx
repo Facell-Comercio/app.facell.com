@@ -14,10 +14,10 @@ import { importFromExcel } from "@/helpers/importExportXLS";
 import { parseCurrency } from "@/helpers/mask";
 import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
 import { formatDate } from "date-fns";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 
-export type LancamentoReebolsoTimProps = {
+export type LancamentoTimProps = {
   pedido?: string;
   pedido_sap?: string;
   cnpj?: string;
@@ -34,12 +34,19 @@ export type ExportAnexosProps = {
 
 const ButtonImportTitulosReceber = () => {
   const {
-    mutate: lancamentoReebolsoTim,
-    isPending,
-    isSuccess,
-    data: resultadoLancamentoReebolsoTim,
-  } = useTituloReceber().lancamentoReebolsoTim();
+    mutate: lancamentoReembolsoTim,
+    isPending: isPendingReembolsoTim,
+    isSuccess: isSuccessReembolsoTim,
+    data: resultadoLancamentoReembolsoTim,
+  } = useTituloReceber().lancamentoReembolsoTim();
+  const {
+    mutate: lancamentoComissoesTim,
+    isPending: isPendingComissoesTim,
+    isSuccess: isSuccessComissoesTim,
+    data: resultadoLancamentoComissoesTim,
+  } = useTituloReceber().lancamentoComissoesTim();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [option, setOption] = useState<string | undefined>();
 
   const handleChangeImportButton = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -48,26 +55,13 @@ const ButtonImportTitulosReceber = () => {
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);
       reader.onload = async (e) => {
-        const importedData = e.target?.result;
-        const result = importFromExcel(importedData)
-          .filter((value: any) => parseCurrency(value["Valor Total"]) > 0)
-          .map((value: any) => ({
-            pedido: value["Pedido"],
-            cnpj: value["Pedido"],
-            pedido_sap: value["Pedido SAP"],
-            mes: value["Mês"],
-            ano: value["Ano"],
-            tipo_de_remuneracao: value["Tipo de Remuneração"],
-            valor_total: parseCurrency(value["Valor Total"]),
-          })) as LancamentoReebolsoTimProps[];
-
-        const responseError: any[] = [];
-        if (responseError.length > 0) {
-          toast({ title: "Erro na importação", variant: "destructive" });
-          return;
+        const importedData = importFromExcel(e.target?.result);
+        if (option === "reembolsos_tim_sintetico") {
+          reembolsoTim(importedData);
         }
-
-        lancamentoReebolsoTim(result);
+        if (option === "comissoes_tim_sintetico") {
+          comissoesTim(importedData);
+        }
       };
     }
     if (fileInputRef.current) {
@@ -75,8 +69,41 @@ const ButtonImportTitulosReceber = () => {
     }
   };
 
+  //* FUNÇÃO DE IMPORTAÇÃO EM LOTE DOS REEMBOLSOS TIM
+  function reembolsoTim(importedData: any[]) {
+    const result = importedData
+      .filter((value: any) => parseCurrency(value["Valor Total"]) > 0)
+      .map((value: any) => ({
+        pedido: value["Pedido"],
+        cnpj: value["CNPJ"],
+        pedido_sap: value["Pedido SAP"],
+        mes: value["Mês"].trim(),
+        ano: value["Ano"],
+        tipo_de_remuneracao: value["Tipo de Remuneração"].trim(),
+        valor_total: parseCurrency(value["Valor Total"]),
+      })) as LancamentoTimProps[];
+    lancamentoReembolsoTim({ items_list: result });
+  }
+
+  //* FUNÇÃO DE IMPORTAÇÃO EM LOTE DAS COMISSÕES TIM
+  function comissoesTim(importedData: any[]) {
+    const result = importedData
+      .filter((value: any) => parseCurrency(value["Valor Total"]) > 0)
+      .map((value: any) => ({
+        pedido: value["Pedido"],
+        cnpj: value["CNPJ"],
+        pedido_sap: value["Pedido SAP"],
+        mes: value["Mês"].trim(),
+        ano: value["Ano"],
+        tipo_de_remuneracao: value["Tipo de Remuneração"].trim(),
+        valor_total: parseCurrency(value["Valor Total"]),
+      })) as LancamentoTimProps[];
+    lancamentoComissoesTim({ items_list: result });
+  }
+
+  //* Mensagem Reembolso TIM
   useEffect(() => {
-    if (isSuccess && resultadoLancamentoReebolsoTim) {
+    if (isSuccessReembolsoTim && resultadoLancamentoReembolsoTim) {
       toast({
         title: "Sucesso",
         description: "Lançamento de solicitações a receber realizado",
@@ -85,8 +112,8 @@ const ButtonImportTitulosReceber = () => {
             altText="Ver Resultados"
             onClick={() =>
               exportToExcel(
-                resultadoLancamentoReebolsoTim,
-                `RESULTADO LANÇAMENTO SOLICITAÇÕES A RECEBER ${formatDate(
+                resultadoLancamentoReembolsoTim,
+                `RESULTADO LANÇAMENTO SOLICITAÇÕES REEMBOLSO TIM ${formatDate(
                   new Date(),
                   "dd-MM-yyyy"
                 )}`
@@ -100,7 +127,37 @@ const ButtonImportTitulosReceber = () => {
         variant: "success",
       });
     }
-  }, [isSuccess]);
+  }, [isSuccessReembolsoTim]);
+
+  //* Mensagem Comissões TIM
+  useEffect(() => {
+    if (isSuccessComissoesTim && resultadoLancamentoComissoesTim) {
+      toast({
+        title: "Sucesso",
+        description: "Lançamento de solicitações a receber realizado",
+        action: (
+          <ToastAction
+            altText="Ver Resultados"
+            onClick={() =>
+              exportToExcel(
+                resultadoLancamentoComissoesTim,
+                `RESULTADO LANÇAMENTO SOLICITAÇÕES COMISSÕES TIM ${formatDate(
+                  new Date(),
+                  "dd-MM-yyyy"
+                )}`
+              )
+            }
+          >
+            Ver Resultados
+          </ToastAction>
+        ),
+        duration: 3500,
+        variant: "success",
+      });
+    }
+  }, [isSuccessComissoesTim]);
+
+  const btnDisabled = isPendingReembolsoTim || isPendingComissoesTim;
 
   return (
     <DropdownMenu>
@@ -111,20 +168,52 @@ const ButtonImportTitulosReceber = () => {
         <Upload className="me-2" size={18} /> Importar
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem className="flex gap-2" onClick={(e) => e.preventDefault()}>
+        <DropdownMenuItem
+          className="flex gap-2"
+          onClick={(e) => e.preventDefault()}
+          disabled={btnDisabled}
+        >
           <AlertPopUp
             className="w-full hover:bg-accent hover:text-accent-foreground"
             title="Deseja realmente importar?"
             description="Esta ação não pode ser desfeita. Todos as solicitações a receber importadas serão adicionadas"
-            action={() => fileInputRef.current && fileInputRef.current.click()}
+            action={() => {
+              setOption("reembolsos_tim_sintetico");
+              fileInputRef.current && fileInputRef.current.click();
+            }}
           >
             <div>
-              {!isPending ? (
+              {!isPendingReembolsoTim ? (
                 <>Reembolsos TIM - Sintético</>
               ) : (
-                <>
+                <div className="flex gap-2">
                   <FaSpinner size={18} className="me-2 animate-spin" /> Importando...
-                </>
+                </div>
+              )}
+            </div>
+          </AlertPopUp>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="flex gap-2"
+          onClick={(e) => e.preventDefault()}
+          disabled={btnDisabled}
+        >
+          <AlertPopUp
+            className="w-full hover:bg-accent hover:text-accent-foreground"
+            title="Deseja realmente importar?"
+            description="Esta ação não pode ser desfeita. Todos as solicitações a receber importadas serão adicionadas"
+            action={() => {
+              setOption("comissoes_tim_sintetico");
+              fileInputRef.current && fileInputRef.current.click();
+            }}
+          >
+            <div>
+              {!isPendingComissoesTim ? (
+                <>Comissões TIM - Sintético</>
+              ) : (
+                <div className="flex gap-2">
+                  <FaSpinner size={18} className="me-2 animate-spin" /> Importando...
+                </div>
               )}
             </div>
           </AlertPopUp>
