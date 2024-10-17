@@ -25,7 +25,7 @@ interface IModalContaBancaria {
   id_matriz?: string | null;
   id_grupo_economico?: string;
   onlyDatasys?: boolean;
-  isCaixa?: boolean;
+  isCaixa?: boolean | "all";
 }
 
 export type ItemContaBancariaProps = {
@@ -49,7 +49,7 @@ interface Filters {
   descricao?: string;
   banco?: string;
   onlyDatasys?: number;
-  isCaixa?: number;
+  isCaixa?: number | "all";
 }
 
 const ModalContasBancarias = ({
@@ -60,7 +60,7 @@ const ModalContasBancarias = ({
   id_matriz,
   id_grupo_economico,
   onlyDatasys,
-  isCaixa,
+  isCaixa = "all",
 }: IModalContaBancaria) => {
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -73,7 +73,7 @@ const ModalContasBancarias = ({
     descricao: "",
     banco: "",
     onlyDatasys: onlyDatasys ? 1 : 0,
-    isCaixa: isCaixa ? 1 : 0,
+    isCaixa: isCaixa === "all" ? "all" : isCaixa ? 1 : 0,
   };
 
   const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
