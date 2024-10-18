@@ -3,7 +3,11 @@ import ModalLogsMovimentoArquivos from "@/pages/financeiro/components/ModalLogsM
 import { History } from "lucide-react";
 import { useState } from "react";
 
-const RELATORIOS = ["IMPORT_REEMBOLSOS_TIM_ZIP"];
+const RELATORIOS = [
+  "IMPORT_REEMBOLSOS_TIM_ZIP",
+  "IMPORT_LANCAMENTOS_COMISSOES_TIM",
+  "IMPORT_LANCAMENTOS_REEMBOLSOS_TIM",
+];
 
 const HistoricoLogs = () => {
   const [modalHistoricoOpen, setModalHistoricoOpen] = useState<boolean>(false);
