@@ -122,6 +122,17 @@ export const columnsTableAPagar: ColumnDef<RowTitulo>[] =
       enableSorting: false,
     },
     {
+      id: "id_vencimento",
+      header: "ID VENC.",
+      accessorKey: "id_vencimento",
+      cell: (info) => (
+        <span className="flex font-semibold truncate max-w-96">
+          {info.getValue<string>()}
+        </span>
+      ),
+      enableSorting: false,
+    },
+    {
       id: "id_titulo",
       header: "ID TÍTULO",
       accessorKey: "id_titulo",

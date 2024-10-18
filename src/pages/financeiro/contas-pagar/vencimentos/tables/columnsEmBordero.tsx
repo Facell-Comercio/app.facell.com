@@ -117,6 +117,23 @@ export const columnsTableEmBordero: ColumnDef<RowVencimento>[] =
       enableSorting: false,
     },
     {
+      id: "id_vencimento",
+      header: "ID VENC.",
+      accessorKey: "id_vencimento",
+      cell: (info) => {
+        const label = info.getValue<string>()
+        return (
+          <span
+            title={label}
+            className="flex font-semibold truncate max-w-96"
+          >
+            {label}
+          </span>
+        );
+      },
+      enableSorting: false,
+    },
+    {
       id: "id_titulo",
       header: "ID TÍTULO",
       accessorKey: "id_titulo",
