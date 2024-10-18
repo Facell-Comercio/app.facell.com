@@ -464,7 +464,7 @@ const FormTituloReceber = ({
                       />
                       <FormInput
                         readOnly={!podeEditarPedido}
-                        name="pedido_tim"
+                        name="tim_pedido  "
                         label="Pedido TIM"
                         className={"flex-1 min-w-[15ch]"}
                         control={form.control}
@@ -472,7 +472,7 @@ const FormTituloReceber = ({
                       />
                       <FormInput
                         readOnly={!podeEditarPedido}
-                        name="pedido_tim_sap"
+                        name="tim_pedido_sap"
                         label="Pedido TIM SAP"
                         className={"flex-1 min-w-[15ch]"}
                         control={form.control}

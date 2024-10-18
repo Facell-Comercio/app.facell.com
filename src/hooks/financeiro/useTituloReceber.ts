@@ -2,7 +2,6 @@ import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { VencimentoCRProps } from "@/pages/financeiro/components/ModalVencimentosCR";
-import { LancamentoTimProps } from "@/pages/financeiro/contas-receber/titulos/components/ButtonImportarTituloReceber";
 import { TituloCRSchemaProps } from "@/pages/financeiro/contas-receber/titulos/titulo/form-data";
 
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -35,10 +34,6 @@ type RecebimentoContaBancariaProps = {
   id_extrato?: string;
   id_conta_bancaria?: string;
   vencimentos?: VencimentoCRProps[];
-};
-
-type LancamentoTimSchemma = {
-  items_list?: LancamentoTimProps[];
 };
 
 const uri = "/financeiro/contas-a-receber/titulo";
@@ -258,10 +253,12 @@ export const useTituloReceber = () => {
       },
     });
 
+  //* IMPORTAÇÕES
+
   const lancamentoReembolsoTim = () =>
     useMutation({
-      mutationFn: async (data: LancamentoTimSchemma) => {
-        return api.post(`${uri}/reembolso-tim-lote`, data).then((response) => response.data);
+      mutationFn: async (form: FormData) => {
+        return api.postForm(`${uri}/reembolso-tim-lote`, form).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({ queryKey: ["financeiro"] });
@@ -280,8 +277,28 @@ export const useTituloReceber = () => {
 
   const lancamentoComissoesTim = () =>
     useMutation({
-      mutationFn: async (data: LancamentoTimSchemma) => {
-        return api.post(`${uri}/comissoes-tim-lote`, data).then((response) => response.data);
+      mutationFn: async (form: FormData) => {
+        return api.postForm(`${uri}/comissoes-tim-lote`, form).then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({ queryKey: ["financeiro"] });
+      },
+      onError(error) {
+        // @ts-expect-error "Vai funcionar"
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const lancamentoReembolsoTimZip = () =>
+    useMutation({
+      mutationFn: async (form: FormData) => {
+        return api.postForm(`${uri}/reembolsos-tim-zip`, form).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({ queryKey: ["financeiro"] });
@@ -313,5 +330,6 @@ export const useTituloReceber = () => {
 
     lancamentoReembolsoTim,
     lancamentoComissoesTim,
+    lancamentoReembolsoTimZip,
   };
 };
