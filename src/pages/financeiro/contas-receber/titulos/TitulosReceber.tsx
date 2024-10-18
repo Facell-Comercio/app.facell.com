@@ -6,6 +6,7 @@ import { useStoreTableReceber } from "./table/store-table";
 import ButtonExportTitulosReceber from "./components/ButtonExportarTitulosReceber";
 import ButtonImportTitulosReceber from "./components/ButtonImportarTituloReceber";
 import ButtonNovoTituloReceber from "./components/ButtonNovoTituloReceber";
+import HistoricoLogs from "./components/HistoricoLogs";
 import { columnsTable } from "./table/columns";
 import ModalTituloReceber from "./titulo/ModalTituloReceber";
 
@@ -37,6 +38,7 @@ const TitulosReceber = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap justify-end gap-3 ">
+        <HistoricoLogs />
         <ButtonExportTitulosReceber />
         <ButtonImportTitulosReceber />
         <ButtonNovoTituloReceber />

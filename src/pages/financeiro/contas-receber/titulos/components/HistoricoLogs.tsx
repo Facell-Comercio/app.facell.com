@@ -3,7 +3,7 @@ import ModalLogsMovimentoArquivos from "@/pages/financeiro/components/ModalLogsM
 import { History } from "lucide-react";
 import { useState } from "react";
 
-const RELATORIOS = ["EXPORT_REMESSA_BOLETO_CAIXA", "IMPORT_RETORNO_BOLETO_CAIXA"];
+const RELATORIOS = ["IMPORT_REEMBOLSOS_TIM_ZIP"];
 
 const HistoricoLogs = () => {
   const [modalHistoricoOpen, setModalHistoricoOpen] = useState<boolean>(false);
@@ -23,7 +23,7 @@ const HistoricoLogs = () => {
         onClick={() => setModalHistoricoOpen(true)}
       >
         <History size={18} className="me-2" />
-        Histórico
+        Histórico de Importações
       </Button>
     </>
   );
