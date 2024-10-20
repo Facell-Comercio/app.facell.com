@@ -3,11 +3,17 @@ import { create } from "zustand";
 type Filters = {
   ano?: string | number;
   mes?: string | number;
+  a_lancar?: string;
+  termo?: string;
+  ownerOnly?: boolean;
 };
 
 const initialFilters: Filters = {
   ano: new Date().getFullYear(),
   mes: new Date().getMonth() + 1,
+  a_lancar: "1",
+  termo: '',
+  ownerOnly: false
 };
 
 interface UseStoreRecorrencias {
@@ -34,40 +40,50 @@ interface UseStoreRecorrencias {
   resetFilters: () => void;
 }
 
-export const useStoreRecorrencias = create<UseStoreRecorrencias>((set) => ({
-  id: null,
-  modalOpen: false,
-  filters: initialFilters,
+export const useStoreRecorrencias =
+  create<UseStoreRecorrencias>((set) => ({
+    id: null,
+    modalOpen: false,
+    filters: initialFilters,
 
-  modalEditRecorrenciaOpen: false,
-  data_vencimento: undefined,
-  valor: undefined,
+    modalEditRecorrenciaOpen: false,
+    data_vencimento: undefined,
+    valor: undefined,
 
-  openModal: () => set({ modalOpen: true }),
-  closeModal: () => set({ modalOpen: false }),
-  toggleModal: () =>
-    set((state) => ({
-      modalOpen: !state.modalOpen,
-      modalEditing: false,
-    })),
-  setFilters: (novoFiltro) =>
-    set((state) => ({
-      ...state,
-      filters: { ...state.filters, ...novoFiltro },
-    })),
-  resetFilters: () => {
-    set({ filters: initialFilters });
-  },
+    openModal: () => set({ modalOpen: true }),
+    closeModal: () => set({ modalOpen: false }),
+    toggleModal: () =>
+      set((state) => ({
+        modalOpen: !state.modalOpen,
+        modalEditing: false,
+      })),
+    setFilters: (novoFiltro) =>
+      set((state) => ({
+        ...state,
+        filters: {
+          ...state.filters,
+          ...novoFiltro,
+        },
+      })),
+    resetFilters: () => {
+      set({ filters: initialFilters });
+    },
 
-  openModalEditRecorrencia: (
-    id: string,
-    data_vencimento: Date,
-    valor: number
-  ) => set({ modalEditRecorrenciaOpen: true, id, data_vencimento, valor }),
-  closeModalEditRecorrencia: () =>
-    set({
-      modalEditRecorrenciaOpen: false,
-      data_vencimento: undefined,
-      valor: undefined,
-    }),
-}));
+    openModalEditRecorrencia: (
+      id: string,
+      data_vencimento: Date,
+      valor: number
+    ) =>
+      set({
+        modalEditRecorrenciaOpen: true,
+        id,
+        data_vencimento,
+        valor,
+      }),
+    closeModalEditRecorrencia: () =>
+      set({
+        modalEditRecorrenciaOpen: false,
+        data_vencimento: undefined,
+        valor: undefined,
+      }),
+  }));

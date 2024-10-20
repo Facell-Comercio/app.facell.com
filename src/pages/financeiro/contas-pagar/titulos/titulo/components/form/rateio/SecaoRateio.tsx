@@ -27,13 +27,7 @@ type SecaoRateioProps = {
   modalEditing: boolean;
 };
 
-const SecaoRateio = ({
-  id,
-  form,
-  disabled,
-  canEdit,
-  modalEditing,
-}: SecaoRateioProps) => {
+const SecaoRateio = ({ id, form, disabled, canEdit, modalEditing }: SecaoRateioProps) => {
   //^ WATCHES
   const valorTotalTitulo = form.watch("valor");
   // const nome_filial = form.watch("filial");
@@ -127,7 +121,7 @@ const SecaoRateio = ({
         size: 120,
         cell: (info) => {
           let valor = parseFloat(info.getValue<string>());
-          
+
           let currency = normalizeCurrency(valor);
 
           return <div className={`w-full  px-2 text-end`}>{currency}</div>;
@@ -231,9 +225,7 @@ const SecaoRateio = ({
   async function handleChangeImportarRateio() {
     try {
       if (fileImportRateioRef?.current) {
-        const file =
-          fileImportRateioRef.current.files &&
-          fileImportRateioRef.current.files[0];
+        const file = fileImportRateioRef.current.files && fileImportRateioRef.current.files[0];
         if (file) {
           const dataFiliais = await api.get("/filial", { params: {} });
 
@@ -250,16 +242,13 @@ const SecaoRateio = ({
               const importedData = e.target?.result;
 
               // @ts-ignore
-              const rows: ItemRateioTitulo[] =
-                importFromExcel(importedData) || [];
+              const rows: ItemRateioTitulo[] = importFromExcel(importedData) || [];
 
               setValue("update_rateio", true);
 
               for (const row of rows) {
                 if (!row.id_filial && !row.filial) {
-                  throw new Error(
-                    "Você precisa identificar o campo filial ou id_filial!"
-                  );
+                  throw new Error("Você precisa identificar o campo filial ou id_filial!");
                 }
 
                 let novoItem_id_filial = "";
@@ -278,8 +267,7 @@ const SecaoRateio = ({
                 }
                 if (row.valor) {
                   const valor = parseFloat(row.valor);
-                  novoItem_percentual =
-                    (valor / parseFloat(valorTotalTitulo)) * 100;
+                  novoItem_percentual = (valor / parseFloat(valorTotalTitulo)) * 100;
                   novoItem_valor = valor;
                 } else {
                   const percent = parseFloat(row.percentual);
@@ -288,22 +276,16 @@ const SecaoRateio = ({
                 }
 
                 if (parseFloat(row.id_filial) > 0 && row.filial) {
-                  let filterFilial = filiais.find(
-                    (f: Filial) => f.id == row.id_filial
-                  );
+                  let filterFilial = filiais.find((f: Filial) => f.id == row.id_filial);
                   novoItem_filial = filterFilial.nome || "NÃO IDENTIFICADA";
                   novoItem_id_filial = filterFilial.id;
                 } else if (parseFloat(row.id_filial) > 0) {
-                  let filterFilial = filiais.find(
-                    (f: Filial) => f.id == row.id_filial
-                  );
+                  let filterFilial = filiais.find((f: Filial) => f.id == row.id_filial);
                   const filial = filterFilial;
                   novoItem_filial = filial.nome || "NÃO IDENTIFICADA";
                   novoItem_id_filial = row.id_filial;
                 } else {
-                  let filterFilial = filiais.find(
-                    (f: Filial) => f.nome == row.filial
-                  );
+                  let filterFilial = filiais.find((f: Filial) => f.nome == row.filial);
                   const filial = filterFilial;
                   novoItem_filial = filial.nome || "NÃO IDENTIFICADA";
                   novoItem_id_filial = filial.id;
@@ -339,7 +321,7 @@ const SecaoRateio = ({
         variant: "destructive",
         title: "Erro ao tentar importar",
         description:
-        // @ts-ignore
+          // @ts-ignore
           error?.response?.data?.message || error?.message || "Erro desconhecido",
       });
     }
@@ -355,14 +337,8 @@ const SecaoRateio = ({
         </span>
         <div className="md:ms-auto flex flex-wrap gap-3 md:items-center">
           <BtnPadronizarAlocacao form={form} canEdit={canEditRateio} />
-          <RemoverItensRateio
-            form={form}
-            canEditItensRateio={canEditItensRateio}
-          />
-          <BtnNovoItemRateio
-            control={form.control}
-            canEditRateio={canEditItensRateio}
-          />
+          <RemoverItensRateio form={form} canEditItensRateio={canEditItensRateio} />
+          <BtnNovoItemRateio control={form.control} canEditRateio={canEditItensRateio} />
         </div>
       </div>
 
@@ -378,11 +354,7 @@ const SecaoRateio = ({
         />
 
         <div className="flex items-center gap-3">
-          <Button
-            onClick={handleClickExportarRateio}
-            type="button"
-            variant={"success"}
-          >
+          <Button onClick={handleClickExportarRateio} type="button" variant={"success"}>
             <Download size={18} className="me-2" /> Exportar
           </Button>
 

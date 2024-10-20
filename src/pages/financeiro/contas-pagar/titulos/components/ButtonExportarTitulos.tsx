@@ -1,15 +1,13 @@
 import { api } from "@/lib/axios";
 
+import { Spinner } from "@/components/custom/Spinner";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeDate } from "@/helpers/mask";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
@@ -18,7 +16,6 @@ import { useEffect, useState } from "react";
 import { useStoreExportDatasys } from "../export-datasys/store";
 import { useStoreTablePagar } from "../table/store-table";
 import { TituloSchemaProps } from "../titulo/form-data";
-import { Spinner } from "@/components/custom/Spinner";
 
 export type ExportAnexosProps = {
   type: string;
@@ -29,7 +26,6 @@ interface TituloProps extends TituloSchemaProps {
   solicitante?: string;
   forma_pagamento?: string;
   fornecedor?: string;
-  cnpj_fornecedor?: string;
 }
 
 const ButtonExportTitulos = () => {
@@ -39,7 +35,7 @@ const ButtonExportTitulos = () => {
   const { mutate: exportLayoutDespesas, isPending: isPedingLayoutDespesas } =
     useTituloPagar().exportLayoutDespesas();
 
-    const { mutate: exportLayoutVencimentos, isPending: isPedingLayoutVencimentos } =
+  const { mutate: exportLayoutVencimentos, isPending: isPedingLayoutVencimentos } =
     useTituloPagar().exportLayoutVencimentos();
 
   const { mutate: exportLayoutDRE, isPending: isPendingLayoutDRE } =
@@ -47,27 +43,27 @@ const ButtonExportTitulos = () => {
 
   const [isPending, setIsPending] = useState(false);
   useEffect(() => {
-    if (isPendingPrevisaoPagamento ||
+    if (
+      isPendingPrevisaoPagamento ||
       isPendingLayoutDRE ||
-      isPedingLayoutDespesas || 
-      isPedingLayoutVencimentos) {
-      setIsPending(true)
+      isPedingLayoutDespesas ||
+      isPedingLayoutVencimentos
+    ) {
+      setIsPending(true);
     } else {
-      setIsPending(false)
+      setIsPending(false);
     }
   }, [
     isPendingPrevisaoPagamento,
     isPendingLayoutDRE,
     isPedingLayoutDespesas,
     isPedingLayoutVencimentos,
-  ])
+  ]);
 
   const openModalExportDatasys = useStoreExportDatasys().openModal;
 
-  const isMaster =
-    checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
-  const canExportDespesas = isMaster || checkUserPermission('FINANCEIRO_EXPORTAR_DESPESAS');
-
+  const isMaster = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+  const canExportDespesas = isMaster || checkUserPermission("FINANCEIRO_EXPORTAR_DESPESAS");
 
   const [filters] = useStoreTablePagar((state) => [state.filters]);
 
@@ -87,7 +83,7 @@ const ButtonExportTitulos = () => {
         DESCRIÇÃO: row.descricao,
         VALOR: parseFloat(row.valor),
         FILIAL: row.filial,
-        FORNECEDOR: row.fornecedor,
+        FORNECEDOR: row.nome_fornecedor,
         "CNPJ FORNECEDOR": row.cnpj_fornecedor,
         SOLICITANTE: row.solicitante,
         "FORMA DE PAGAMENTO": row.forma_pagamento,
@@ -101,13 +97,13 @@ const ButtonExportTitulos = () => {
     exportPrevisaoPagamento({ filters });
   }
   function handleExportLayoutDespesas() {
-    exportLayoutDespesas({ filters })
+    exportLayoutDespesas({ filters });
   }
-  function handleExportLayoutVencimentos(){
-    exportLayoutVencimentos({ filters })
+  function handleExportLayoutVencimentos() {
+    exportLayoutVencimentos({ filters });
   }
   function handleExportLayoutDRE() {
-    exportLayoutDRE({ filters })
+    exportLayoutDRE({ filters });
   }
 
   return (
@@ -117,13 +113,18 @@ const ButtonExportTitulos = () => {
         className="py-2 px-4 border border-emerald-200 dark:border-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm flex font-medium gap-2 items-center rounded-md"
         disabled={isPending}
       >
-        {isPending ? <><Spinner /> Exportando...</>
-          : <><Download className="me-2" size={18} /> Exportar</>}
+        {isPending ? (
+          <>
+            <Spinner /> Exportando...
+          </>
+        ) : (
+          <>
+            <Download className="me-2" size={18} /> Exportar
+          </>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={exportSolicitacao}>
-          Layout Padrão
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={exportSolicitacao}>Layout Padrão</DropdownMenuItem>
         <DropdownMenuItem onClick={handleExportLayoutVencimentos}>
           Layout Vencimentos
         </DropdownMenuItem>
@@ -132,16 +133,12 @@ const ButtonExportTitulos = () => {
             <DropdownMenuItem onClick={exportLayoutPrevisaoPagamento}>
               Layout Previsão Pagamento
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleExportLayoutDRE}>
-              Layout DRE
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportLayoutDRE}>Layout DRE</DropdownMenuItem>
           </>
         )}
 
         {canExportDespesas && (
-          <DropdownMenuItem onClick={handleExportLayoutDespesas}>
-            Layout Despesas
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleExportLayoutDespesas}>Layout Despesas</DropdownMenuItem>
         )}
 
         <DropdownMenuItem onClick={() => openModalExportDatasys("")}>

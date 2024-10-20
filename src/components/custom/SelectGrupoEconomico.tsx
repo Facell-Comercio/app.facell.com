@@ -1,11 +1,5 @@
 import { useGrupoEconomico } from "@/hooks/useGrupoEconomico";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select"; // Assuming these are custom components
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"; // Assuming these are custom components
 
 type TSelectGrupoEconomico = {
   value: string | undefined;
@@ -43,11 +37,7 @@ export const SelectGrupoEconomico = ({
           <SelectItem value="all">TODOS</SelectItem>
         )}
         {gruposEconomicos?.map((item: GrupoEconomico) => (
-          <SelectItem
-            className="text-left"
-            key={item.id}
-            value={item.id.toString()}
-          >
+          <SelectItem className="text-left" key={item.id} value={item.id.toString()}>
             {item.nome}
           </SelectItem>
         ))}
@@ -70,12 +60,12 @@ type TSelectMultiGrupoEconomico = {
   disabled?: boolean;
   className?: string;
   value: string[];
+  maxCount?: number;
+  nowrap?: boolean;
   onChange: (value: string[]) => any;
 };
 
-export const SelectMultiGrupoEconomico = (
-  props: TSelectMultiGrupoEconomico
-) => {
+export const SelectMultiGrupoEconomico = (props: TSelectMultiGrupoEconomico) => {
   const { data } = useGrupoEconomico().getAll();
   const gruposEconomicos = data?.data?.rows || [];
 
@@ -90,9 +80,9 @@ export const SelectMultiGrupoEconomico = (
       onValueChange={props.onChange}
       defaultValue={props.value}
       placeholder="Grupo Econômico"
-      variant="inverted"
+      variant="secondary"
       animation={4}
-      maxCount={1}
+      maxCount={props?.maxCount || 1}
     />
   );
 };

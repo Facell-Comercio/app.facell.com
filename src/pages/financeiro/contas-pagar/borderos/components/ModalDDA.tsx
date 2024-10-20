@@ -1,9 +1,6 @@
 import AlertPopUp from "@/components/custom/AlertPopUp";
-import {
-  ModalComponent,
-  ModalComponentRow,
-} from "@/components/custom/ModalComponent";
-import { SelectFilial } from "@/components/custom/SelectFilial";
+import { ModalComponent, ModalComponentRow } from "@/components/custom/ModalComponent";
+import { SelectMultiFilial } from "@/components/custom/SelectFilial";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,12 +29,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
 import { normalizeCurrency } from "@/helpers/mask";
 import { useDDA } from "@/hooks/financeiro/useDDA";
-import ModalVencimentos from "@/pages/financeiro/components/ModalVencimentos";
+import ModalFindItemsBordero from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { DDA } from "@/types/financeiro/dda-type";
-import { useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import { Eraser, Filter } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -55,14 +50,23 @@ type PaginationProps = {
 };
 
 export const ModalDDA = () => {
-  const queryClient = useQueryClient();
-  const id_vencimento = useStoreDDA().id_vencimento;
-  const modalOpen = useStoreDDA().modalOpen;
-  const filters = useStoreDDA().filters;
-
-  const toggleModal = useStoreDDA().toggleModal;
-  const setFilters = useStoreDDA().setFilters;
-  const clearFilters = useStoreDDA().clearFilters;
+  const [
+    id_vencimento,
+    id_forma_pagamento,
+    modalOpen,
+    filters,
+    toggleModal,
+    setFilters,
+    clearFilters,
+  ] = useStoreDDA((state) => [
+    state.id_vencimento,
+    state.id_forma_pagamento,
+    state.modalOpen,
+    state.filters,
+    state.toggleModal,
+    state.setFilters,
+    state.clearFilters,
+  ]);
 
   const resetFilters = () => {
     clearFilters();
@@ -83,92 +87,85 @@ export const ModalDDA = () => {
     filters,
   });
 
+  const { mutate: mutateVincularDDA } = useDDA().vincularDDA();
+  const { mutate: mutateDesvincularDDA } = useDDA().desvincularDDA();
+
   const vincularDDA = async ({
     id_dda,
     id_vencimento: idVencimento,
+    id_forma_pagamento: idFormaPagamento,
   }: VinculoDDA) => {
-    try {
-      if (!id_dda) {
-        throw new Error("ID DDA não informado!");
-      }
-      if (!idVencimento) {
-        throw new Error("ID Vencimento não informado!");
-      }
-      await useDDA().vincularDDA({ id_dda, id_vencimento: idVencimento });
-      toast({
-        variant: "success",
-        title: "Vínculo do DDA com o Vencimento realizado!",
-      });
-      if (id_vencimento) {
-        toggleModal(false);
-        queryClient.invalidateQueries({
-          queryKey: ["financeiro", "contas_pagar"],
-        });
-      }
-      return true;
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao tentar vincular",
-        // @ts-ignore
-        description: error?.response?.data?.message || error.message,
-      });
-      return false;
+    if (!id_dda) {
+      throw new Error("ID DDA não informado!");
+    }
+    if (!idVencimento) {
+      throw new Error("ID Vencimento não informado!");
+    }
+    if (!idFormaPagamento) {
+      throw new Error("ID Forma Pagamento não informado!");
+    }
+
+    mutateVincularDDA({
+      id_dda,
+      id_vencimento: idVencimento,
+      id_forma_pagamento: idFormaPagamento || "",
+    });
+    // toast({
+    //   variant: "success",
+    //   title: `Vínculo do DDA com ${
+    //     idFormaPagamento === 6
+    //       ? "a fatura"
+    //       : "o vencimento"
+    //   } realizado!`,
+    // });
+    if (id_dda && idVencimento && idFormaPagamento) {
+      toggleModal(false);
     }
   };
 
-  const handleClickVincular = async ({ id_dda, id_vencimento }: VinculoDDA) => {
-    await vincularDDA({ id_dda, id_vencimento });
+  const handleClickVincular = async ({ id_dda, id_vencimento, id_forma_pagamento }: VinculoDDA) => {
+    await vincularDDA({
+      id_dda,
+      id_vencimento,
+      id_forma_pagamento,
+    });
   };
 
   const handleClickDesvincular = async ({ id_dda }: { id_dda: number }) => {
-    try {
-      if (!id_dda) {
-        throw new Error("ID DDA não informado!");
-      }
-      await useDDA().desvincularDDA({ id_dda });
-      toast({
-        variant: "success",
-        title: "Boleto desvinculado do Vencimento!",
-      });
-      if (id_vencimento) {
-        toggleModal(false);
-      }
-      queryClient.invalidateQueries({
-        queryKey: ["financeiro", "contas_pagar"],
-      });
+    if (!id_dda) {
+      throw new Error("ID DDA não informado!");
+    }
+    mutateDesvincularDDA({ id_dda });
 
-      return true;
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao tentar vincular",
-        // @ts-ignore
-        description: error?.response?.data?.message || error.message,
-      });
-      return false;
+    if (id_vencimento) {
+      toggleModal(false);
     }
   };
 
-  const [modalVencimentosOpen, setModalVencimentosOpen] =
-    useState<boolean>(false);
+  const [modalVencimentosOpen, setModalVencimentosOpen] = useState<boolean>(false);
   const [dialogDDAopen, setDialogDDAopen] = useState<boolean>(false);
   type VinculoDDA = {
     id_vencimento: number | null;
     id_dda: number | null;
+    id_forma_pagamento: number | null;
   };
   const [preVinculoDDA, setPreVinculoDDA] = useState<VinculoDDA>({
     id_vencimento: null,
     id_dda: null,
+    id_forma_pagamento: null,
   });
 
   const handleClickBuscarVencimento = ({ id_dda }: { id_dda: number }) => {
-    setPreVinculoDDA((prev) => ({ ...prev, id_dda: id_dda }));
+    setPreVinculoDDA((prev) => ({
+      ...prev,
+      id_dda: id_dda,
+    }));
     setModalVencimentosOpen(true);
   };
   const handleSelectVencimento = (vencimento: any) => {
     setPreVinculoDDA((prev) => ({
       ...prev,
+      id_forma_pagamento: vencimento.id_forma_pagamento,
       id_vencimento: vencimento.id_vencimento,
     }));
     setDialogDDAopen(true);
@@ -249,13 +246,9 @@ export const ModalDDA = () => {
   ];
 
   const header = (
-    <div className="flex items-center text-xs pt-4">
+    <div className="flex items-center text-xs py-2 rounded-md bg-secondary">
       {columns.map((col, index) => (
-        <span
-          key={`${col.id} ${index}`}
-          className="text-center"
-          style={{ width: col.size + "px" }}
-        >
+        <span key={`${col.id} ${index}`} className="text-center" style={{ width: col.size + "px" }}>
           {col.header}
         </span>
       ))}
@@ -276,9 +269,7 @@ export const ModalDDA = () => {
   const totalizador = (
     <div className="flex gap-3">
       <Badge variant={"secondary"}>Qtde: {rows.length}</Badge>
-      <Badge variant={"secondary"}>
-        Total: {normalizeCurrency(valorTotal)}
-      </Badge>
+      <Badge variant={"secondary"}>Total: {normalizeCurrency(valorTotal)}</Badge>
     </div>
   );
 
@@ -300,14 +291,21 @@ export const ModalDDA = () => {
 
   return (
     <Dialog open={modalOpen} onOpenChange={toggleModal}>
-      <DialogContent>
-        <ModalVencimentos
+      <DialogContent className="flex flex-col max-w-fit overflow-auto scroll-thin">
+        {/* <ModalVencimentos
           multiSelection={false}
           initialFilters={{ dda: false }}
           handleSelection={handleSelectVencimento}
           open={modalVencimentosOpen}
           // @ts-ignore
           onOpenChange={setModalVencimentosOpen}
+        /> */}
+        <ModalFindItemsBordero
+          open={modalVencimentosOpen}
+          handleSelection={handleSelectVencimento}
+          closeOnSelection
+          onOpenChange={setModalVencimentosOpen}
+          initialFilters={{ dda: false }}
         />
 
         <AlertDialog open={dialogDDAopen} onOpenChange={setDialogDDAopen}>
@@ -315,8 +313,8 @@ export const ModalDDA = () => {
             <AlertDialogHeader>
               <AlertDialogTitle>Deseja realmente vincular?</AlertDialogTitle>
               <AlertDialogDescription>
-                Você está prestes a vincular o DDA ID: {preVinculoDDA.id_dda}{" "}
-                com o Vencimento ID: {preVinculoDDA.id_vencimento}
+                Você está prestes a vincular o DDA ID: {preVinculoDDA.id_dda} com o Vencimento ID:
+                {preVinculoDDA.id_vencimento}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -340,33 +338,41 @@ export const ModalDDA = () => {
               : "Clique em vincular para conectar um boleto a um vencimento a pagar."}
           </DialogDescription>
 
-          <div className="flex gap-3">
-            <div className="flex gap-2">
+          <div className="grid grid-cols-[200px_1fr] gap-3 border rounded-md dark:border-slate-800 p-2">
+            <div className="flex gap-2 items-center">
               <Button
                 size={"sm"}
                 onClick={() => {
                   refetch();
                 }}
               >
-                <Filter size={18} className="me-2" /> Filtrar
+                <Filter size={18} className="me-2" />
+                Filtrar
               </Button>
               <Button size={"sm"} variant={"secondary"} onClick={resetFilters}>
-                <Eraser size={18} className="me-2" /> Resetar
+                <Eraser size={18} className="me-2" />
+                Resetar
               </Button>
             </div>
-            <div className="flex gap-3 max-w-[960px] overflow-auto scroll-thin">
-              <SelectFilial
-                className="min-w-[240px]"
-                value={filters?.id_filial || ""}
-                onChange={(val) => {
-                  setFilters({ id_filial: val });
+            <div className="flex gap-3 overflow-auto scroll-thin">
+              <SelectMultiFilial
+                className="min-w-fit"
+                value={filters?.filiais_list || []}
+                onChange={(filiais) => {
+                  // console.log(filiais);
+
+                  setFilters({
+                    filiais_list: [...filiais],
+                  });
                 }}
               />
 
               <Select
                 value={filters?.tipo_data || "data_vencimento"}
                 onValueChange={(val) => {
-                  setFilters({ tipo_data: val });
+                  setFilters({
+                    tipo_data: val,
+                  });
                 }}
               >
                 <SelectTrigger>
@@ -381,14 +387,18 @@ export const ModalDDA = () => {
               <DatePickerWithRange
                 date={filters.range_data}
                 setDate={(range_data) => {
-                  setFilters({ range_data: range_data });
+                  setFilters({
+                    range_data: range_data,
+                  });
                 }}
               />
 
               <Input
                 value={filters.nome_fornecedor || ""}
                 onChange={(e) =>
-                  setFilters({ nome_fornecedor: e.target.value })
+                  setFilters({
+                    nome_fornecedor: e.target.value,
+                  })
                 }
                 placeholder="NOME FORNECEDOR"
                 className="min-w-[23ch]"
@@ -396,99 +406,106 @@ export const ModalDDA = () => {
 
               <Input
                 value={filters.cod_barras || ""}
-                onChange={(e) => setFilters({ cod_barras: e.target.value })}
+                onChange={(e) =>
+                  setFilters({
+                    cod_barras: e.target.value,
+                  })
+                }
                 placeholder="CÓD. BARRAS"
                 className="min-w-[44ch]"
               />
             </div>
           </div>
           {totalizador}
-          {header}
         </DialogHeader>
-        <ModalComponent
-          isLoading={isLoading}
-          pageCount={pageCount}
-          refetch={refetch}
-          pagination={pagination}
-          setPagination={setPagination}
-        >
-          <>
-            {dataRows &&
-              dataRows.map((row: DataProps, index: number) => (
-                <ModalComponentRow
-                  key={"modal_dda_item_row:" + index + row.item}
-                >
-                  <div className="flex gap-2 w-full">
-                    <div
-                      className="flex items-center text-sm flex-1"
-                      title={
-                        row.item.id_vencimento &&
-                        "Vinculado com vencimento: " +
-                          String(row.item.id_vencimento)
-                      }
-                    >
-                      {row.description}
-                    </div>
-                    <div className="items-center flex">
-                      {row.item.id_vencimento ? (
-                        row.item.status_vencimento == "pago" ? (
-                          <Button
-                            variant={"success"}
-                            size={"xs"}
-                            disabled
-                            title={String(row.item.id_vencimento)}
-                          >
-                            Vinculado
-                          </Button>
-                        ) : (
+        <div className="flex flex-col gap-2">
+          {header}
+          <ModalComponent
+            isLoading={isLoading}
+            pageCount={pageCount}
+            refetch={refetch}
+            pagination={pagination}
+            setPagination={setPagination}
+            className="max-h-[45vh]"
+          >
+            <table className="w-full p-1">
+              {dataRows &&
+                dataRows.map((row: DataProps, index: number) => (
+                  <ModalComponentRow key={"modal_dda_item_row:" + index + row.item}>
+                    <div className="flex gap-2 w-full">
+                      <div
+                        className="flex items-center text-sm flex-1"
+                        title={
+                          row.item.id_vencimento &&
+                          "Vinculado com vencimento: " + String(row.item.id_vencimento)
+                        }
+                      >
+                        {row.description}
+                      </div>
+                      <div className="items-center flex">
+                        {row.item.id_vencimento || row.item.id_fatura ? (
+                          row.item.status_vencimento == "pago" ? (
+                            <Button
+                              variant={"success"}
+                              size={"xs"}
+                              disabled
+                              title={String(row.item.id_vencimento)}
+                            >
+                              Vinculado
+                            </Button>
+                          ) : (
+                            <AlertPopUp
+                              title="Deseja realmente desvincular o boleto do vencimento?"
+                              description="Você poderá vincular novamente..."
+                              action={() =>
+                                handleClickDesvincular({
+                                  id_dda: row.item.id,
+                                })
+                              }
+                            >
+                              <Button size={"xs"} variant={"destructive"}>
+                                Desvincular
+                              </Button>
+                            </AlertPopUp>
+                          )
+                        ) : id_vencimento ? (
+                          // Esse botão vinculará o DDA escolhido com o id_vencimento recebido no parâmetro:
                           <AlertPopUp
-                            title="Deseja realmente desvincular o boleto do vencimento?"
-                            description="Você poderá vincular novamente..."
-                            action={() =>
-                              handleClickDesvincular({ id_dda: row.item.id })
-                            }
+                            title="Deseja realmente vincular o boleto com o vencimento?"
+                            description="A ação não poderá ser desfeita!"
+                            action={() => {
+                              handleClickVincular({
+                                id_dda: row.item.id,
+                                id_vencimento: parseInt(id_vencimento),
+                                id_forma_pagamento: parseInt(id_forma_pagamento || "0"),
+                              });
+                            }}
                           >
-                            <Button size={"xs"} variant={"destructive"}>
-                              Desvincular
+                            <Button size={"xs"} variant={"warning"}>
+                              Vincular
                             </Button>
                           </AlertPopUp>
-                        )
-                      ) : id_vencimento ? (
-                        // Esse botão vinculará o DDA escolhido com o id_vencimento recebido no parâmetro:
-                        <AlertPopUp
-                          title="Deseja realmente vincular o boleto com o vencimento?"
-                          description="A ação não poderá ser desfeita!"
-                          action={() => {
-                            handleClickVincular({
-                              id_dda: row.item.id,
-                              id_vencimento: parseInt(id_vencimento),
-                            });
-                          }}
-                        >
-                          <Button size={"xs"} variant={"warning"}>
+                        ) : (
+                          // Esse botão abrirá um modal de vencimentos para seleção e vinculação:
+                          <Button
+                            variant={"warning"}
+                            size={"xs"}
+                            onClick={() => {
+                              handleClickBuscarVencimento({
+                                id_dda: row.item.id,
+                              });
+                            }}
+                          >
                             Vincular
                           </Button>
-                        </AlertPopUp>
-                      ) : (
-                        // Esse botão abrirá um modal de vencimentos para seleção e vinculação:
-                        <Button
-                          variant={"warning"}
-                          size={"xs"}
-                          onClick={() => {
-                            handleClickBuscarVencimento({
-                              id_dda: row.item.id,
-                            });
-                          }}
-                        >
-                          Vincular
-                        </Button>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </ModalComponentRow>
-              ))}
-          </>
-        </ModalComponent>
+                  </ModalComponentRow>
+                ))}
+            </table>
+          </ModalComponent>
+        </div>
       </DialogContent>
     </Dialog>
   );

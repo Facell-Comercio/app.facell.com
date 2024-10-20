@@ -41,9 +41,7 @@ const ModalMeuOrcamento = () => {
     id_centro_custo_entrada: data?.data?.id_centro_custo?.toString(),
   };
 
-  function handleClickTransfer(
-    ref: React.MutableRefObject<HTMLFormElement | null>
-  ) {
+  function handleClickTransfer(ref: React.MutableRefObject<HTMLFormElement | null>) {
     ref.current && ref.current.requestSubmit();
   }
 

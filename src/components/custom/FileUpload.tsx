@@ -72,7 +72,7 @@ export const FileUpload = ({
   if (value && mediaType === "img") {
     return (
       <div className="relative">
-        <img src={value} alt="Upload" className="w-full h-auto rounded-lg" />
+        <img src={value} alt="Upload" className="w-full h-full object-cover rounded-lg" />
 
         {canShowDeleteButton && (
           <ButtonFileDelete
