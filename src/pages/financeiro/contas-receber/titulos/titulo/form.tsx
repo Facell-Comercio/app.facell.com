@@ -110,8 +110,7 @@ const FormTituloReceber = ({
   const isMaster = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
 
   const canEdit = !id || status === "Criado" || (isMaster && id_status > 0 && id_status < 30);
-  const canEditRecebimento =
-    !id || status === "Criado" || (isMaster && id_status > 0 && id_status < 50);
+  // const canEditRecebimento = !id || status === "Criado" || (isMaster && id_status > 0 && id_status < 50);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
@@ -126,7 +125,7 @@ const FormTituloReceber = ({
   const podeAprovar = isMaster && id && status !== "Emitido" && id_status > 0 && id_status < 40;
   const podeEditarPedido = !id || !form.watch("id_user");
   const podeExcluirNotaFiscal = id_status < 30 || isMaster;
-  const emitido = id_status === 30;
+  // const emitido = id_status === 30;
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {

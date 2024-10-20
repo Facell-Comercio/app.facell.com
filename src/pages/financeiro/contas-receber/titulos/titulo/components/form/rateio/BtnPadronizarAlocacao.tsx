@@ -260,29 +260,6 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
                 />
               </span>
 
-              {/* {isFetching ? (
-                <div className="w-full flex justify-center">
-                  <DotsLoading size={3} />
-                </div>
-              ) : (
-                validarOrcamento && (
-                  <>
-                    <div className="flex gap-3 text-muted-foreground">
-                      <span>Saldo Orçamento</span>
-                      <span>{normalizeCurrency(saldoOrcamento)}</span>
-                    </div>
-                    <div className="flex gap-3 text-muted-foreground">
-                      <span>Saldo Orçamento Futuro</span>
-                      <span>{normalizeCurrency(saldoFuturoOrcamento)}</span>
-                    </div>
-                    <div className="flex gap-3 text-muted-foreground">
-                      <span>Será consumido</span>
-                      <span>{normalizeCurrency(valorTotalItens)}</span>
-                    </div>
-                  </>
-                )
-              )} */}
-
               <div className="flex gap-3">
                 {feedback && (
                   <Alert variant={feedback.variant}>

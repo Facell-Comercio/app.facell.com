@@ -45,8 +45,6 @@ export const useTituloReceber = () => {
   const getAll = ({ pagination, filters }: GetTitulosReceberProps) =>
     useQuery({
       queryKey: ["financeiro", "contas_receber", "titulo", "lista", { pagination, filters }],
-      staleTime: 5 * 1000 * 60,
-      retry: false,
       queryFn: () =>
         fetchApi.financeiro.contas_receber.titulos.getAll({
           pagination,
@@ -58,8 +56,6 @@ export const useTituloReceber = () => {
   const getOne = (id: string | null) =>
     useQuery({
       enabled: !!id,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
       queryKey: ["financeiro", "contas_receber", "titulo", "detalhe", id],
       queryFn: () => fetchApi.financeiro.contas_receber.titulos.getOne(id),
     });
@@ -126,8 +122,6 @@ export const useTituloReceber = () => {
         "lista",
         { pagination, filters },
       ],
-      staleTime: 5 * 1000 * 60,
-      retry: false,
       queryFn: () =>
         fetchApi.financeiro.contas_receber.titulos.getAllRecebimentos({
           pagination,
@@ -138,8 +132,6 @@ export const useTituloReceber = () => {
   const getAllRecebimentosVencimento = (id_vencimento: string | null) =>
     useQuery({
       enabled: !!id_vencimento,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
       queryKey: [
         "financeiro",
         "contas_receber",
@@ -157,8 +149,6 @@ export const useTituloReceber = () => {
     useQuery({
       //@ts-ignore
       enabled: !!params.id_conta_bancaria,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
       queryKey: [
         "financeiro",
         "contas_receber",

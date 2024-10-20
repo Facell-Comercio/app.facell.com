@@ -16,10 +16,8 @@ const TitulosReceber = () => {
     state.setPagination,
     state.filters,
   ]);
-  const [rowSelection, handleRowSelection] = useStoreTableReceber((state) => [
-    state.rowSelection,
+  const [handleRowSelection] = useStoreTableReceber((state) => [
     state.handleRowSelection,
-    state.idSelection,
   ]);
 
   const { data, refetch, isLoading } = useTituloReceber().getAll({

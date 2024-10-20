@@ -75,7 +75,7 @@ const FormContaBancaria = ({
   // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
 
-  const isCaixa = form.watch("caixa");
+  // const isCaixa = form.watch("caixa");
 
   return (
     <div className="max-w-full max-h-[90vh] overflow-hidden">
