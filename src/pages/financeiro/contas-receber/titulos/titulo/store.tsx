@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { TituloSchemaProps } from "./form-data";
+import { TituloCRSchemaProps } from "./form-data";
 
-export interface ItemRateioTitulo {
+export interface ItemRateioTituloCR {
   id?: string;
   id_rateio?: string;
   id_filial: string;
@@ -14,18 +14,11 @@ export interface ItemRateioTitulo {
   valor: string;
 }
 
-export interface VencimentoTitulo {
+export interface VencimentoTituloCR {
   id?: string;
   data_vencimento: string;
-  data_prevista: string;
   valor: string;
   valor_pago?: string;
-  data_pagamento?: string;
-  tipo_baixa?:
-    | "PADRÃO"
-    | "PARCIAL"
-    | "COM DESCONTO"
-    | "COM ACRÉSCIMO";
 }
 
 export interface Historico {
@@ -35,141 +28,97 @@ export interface Historico {
   descricao: string;
 }
 
-export const initialPropsTitulo: TituloSchemaProps =
-  {
-    id_tipo_solicitacao: "1",
-    id_status: "1",
-    id_forma_pagamento: "1",
-    id_departamento: "",
+export const initialPropsTituloCR: TituloCRSchemaProps = {
+  id_status: "1",
 
-    num_doc: "",
+  num_doc: "",
 
-    // Pagamento
-    // forma_pagamento: "",
+  // Pagamento
+  // forma_pagamento: "",
 
-    data_emissao: new Date().toDateString(),
+  data_emissao: "",
 
-    valor: "0",
-    descricao: "",
+  valor: "0",
+  descricao: "",
 
-    // Filial
-    id_filial: "",
-    filial: "",
-    id_matriz: "",
-    id_grupo_economico: "",
+  // Filial
+  id_filial: "",
+  filial: "",
+  id_matriz: "",
+  id_grupo_economico: "",
 
-    // Solicitante
-    id_solicitante: "",
+  // Solicitante
+  id_user: "",
 
-    // Fornecedor
-    id_fornecedor: "",
-    nome_fornecedor: "",
-    cnpj_fornecedor: "",
-    favorecido: "",
-    cnpj_favorecido: "",
-    id_banco: "",
-    banco: "",
-    codigo_banco: "",
-    id_tipo_conta: "",
-    conta: "",
-    dv_conta: "",
-    agencia: "",
-    dv_agencia: "",
-    id_tipo_chave_pix: "",
-    chave_pix: "",
+  // Fornecedor
+  id_fornecedor: "",
+  nome_fornecedor: "",
+  cnpj_fornecedor: "",
 
-    // Itens
-    vencimentos: [],
-    update_vencimentos: true,
+  // Itens
+  vencimentos: [],
+  update_vencimentos: true,
 
-    // rateio
-    update_rateio: true,
-    rateio_manual: true,
-    id_rateio: "",
-    itens_rateio: [],
+  // rateio
+  update_rateio: true,
+  rateio_manual: true,
+  id_rateio: "",
+  itens_rateio: [],
 
-    // anexos
-    url_xml: "",
-    url_nota_fiscal: "",
-    url_boleto: "",
-    url_contrato: "",
-    url_planilha: "",
-    url_txt: "",
-  };
-
-type RecorrenciaProps = {
-  id: string;
-  data_vencimento: string | Date;
-  valor: string;
+  // anexos
+  url_xml_nota: "",
+  url_nota_fiscal: "",
+  url_nota_debito: "",
+  url_recibo: "",
+  url_planilha: "",
+  url_outros: "",
 };
 
 interface useStoreTituloReceber {
   id: string | null;
-  recorrencia?: RecorrenciaProps;
-  copyData?: Partial<TituloSchemaProps>;
+  copyData?: Partial<TituloCRSchemaProps>;
   tituloCopiado: boolean;
-  titulo: TituloSchemaProps;
+  titulo: TituloCRSchemaProps;
   modalEditing: boolean;
   modalOpen: boolean;
   modalAlteracaoLoteOpen: boolean;
 
-  openModal: ({
-    id,
-    recorrencia,
-    copyData,
-  }: {
-    id: string;
-    recorrencia?: RecorrenciaProps;
-    copyData?: Partial<TituloSchemaProps>;
-  }) => void;
+  openModal: ({ id, copyData }: { id: string; copyData?: Partial<TituloCRSchemaProps> }) => void;
   closeModal: () => void;
   editModal: (bool: boolean) => void;
-  setTituloCopiado: (
-    tituloCopiado: boolean
-  ) => void;
+  setTituloCopiado: (tituloCopiado: boolean) => void;
 
   openAlteracaoLoteModal: () => void;
   closeAlteracaoLoteModal: () => void;
 }
 
-export const useStoreTituloReceber =
-  create<useStoreTituloReceber>((set) => ({
-    id: null,
-    recorrencia: undefined,
-    copyData: undefined,
-    tituloCopiado: false,
-    titulo: initialPropsTitulo,
-    modalEditing: false,
-    modalOpen: false,
-    modalAlteracaoLoteOpen: false,
+export const useStoreTituloReceber = create<useStoreTituloReceber>((set) => ({
+  id: null,
+  copyData: undefined,
+  tituloCopiado: false,
+  titulo: initialPropsTituloCR,
+  modalEditing: false,
+  modalOpen: false,
+  modalAlteracaoLoteOpen: false,
 
-    openModal: ({ id, recorrencia, copyData }) =>
-      set({
-        modalOpen: true,
-        id: id,
-        modalEditing:
-          !id || recorrencia ? true : false,
-        recorrencia: recorrencia
-          ? recorrencia
-          : undefined,
-        copyData: copyData ? copyData : undefined,
-      }),
-    closeModal: () =>
-      set({
-        id: null,
-        modalOpen: false,
-        recorrencia: undefined,
-        copyData: undefined,
-      }),
-    editModal: (bool) =>
-      set({ modalEditing: bool }),
-    setTituloCopiado: (novoEstado) =>
-      set({ tituloCopiado: novoEstado }),
-    openAlteracaoLoteModal: () =>
-      set({ modalAlteracaoLoteOpen: true }),
-    closeAlteracaoLoteModal: () =>
-      set({ modalAlteracaoLoteOpen: false }),
-  }));
+  openModal: ({ id, copyData }) =>
+    set({
+      modalOpen: true,
+      id: id,
+      modalEditing: !id ? true : false,
+      copyData: copyData ? copyData : undefined,
+    }),
+  closeModal: () =>
+    set({
+      id: null,
+      modalOpen: false,
+      copyData: undefined,
+    }),
+  editModal: (bool) => set({ modalEditing: bool }),
+  setTituloCopiado: (novoEstado) => set({ tituloCopiado: novoEstado }),
+  openAlteracaoLoteModal: () => set({ modalAlteracaoLoteOpen: true }),
+  closeAlteracaoLoteModal: () => set({ modalAlteracaoLoteOpen: false }),
+}));
 
 export interface TipoRateio {
   id?: number;

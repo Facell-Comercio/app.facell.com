@@ -1,6 +1,5 @@
-import { SelectMultiFormaPagamento } from "@/components/custom/SelectFormaPagamento";
 import { SelectMultiGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
-import { SelectMultiStatus } from "@/components/custom/SelectMultiStatus";
+import { SelectMultiStatusCR } from "@/components/custom/SelectMultiStatus";
 import {
   Accordion,
   AccordionContent,
@@ -10,10 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DatePickerWithRange } from "@/components/ui/date-range";
 import { Input } from "@/components/ui/input";
-import {
-  ScrollArea,
-  ScrollBar,
-} from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -21,49 +17,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  EraserIcon,
-  FilterIcon,
-} from "lucide-react";
+import { EraserIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
 import { useStoreTableReceber } from "./store-table";
 
-const FiltersTitulosReceber = ({
-  refetch,
-}: {
-  refetch: () => void;
-}) => {
-  const filters = useStoreTableReceber(
-    (state) => state.filters
-  );
-  const setFilters = useStoreTableReceber(
-    (state) => state.setFilters
-  );
-  const resetFilters = useStoreTableReceber(
-    (state) => state.resetFilters
-  );
+const FiltersTitulosReceber = ({ refetch }: { refetch: () => void }) => {
+  const filters = useStoreTableReceber((state) => state.filters);
+  const setFilters = useStoreTableReceber((state) => state.setFilters);
+  const resetFilters = useStoreTableReceber((state) => state.resetFilters);
 
-  const handleClickFilter = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     // console.log(filters);
 
     refetch();
   };
-  const handleResetFilter = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    await new Promise((resolve) =>
-      resolve(resetFilters())
-    );
+    await new Promise((resolve) => resolve(resetFilters()));
 
     refetch();
   };
 
-  const [itemOpen, setItemOpen] =
-    useState<string>("item-1");
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
 
   return (
     <Accordion
@@ -73,37 +49,17 @@ const FiltersTitulosReceber = ({
       onValueChange={(e) => setItemOpen(e)}
       className="p-2 border dark:border-slate-800 rounded-lg "
     >
-      <AccordionItem
-        value="item-1"
-        className="relative border-0"
-      >
+      <AccordionItem value="item-1" className="relative border-0">
         <div className="flex gap-3 items-center absolute start-16 top-1">
-          <Button
-            size={"xs"}
-            onClick={handleClickFilter}
-          >
-            Aplicar{" "}
-            <FilterIcon
-              size={12}
-              className="ms-2"
-            />
+          <Button size={"xs"} onClick={handleClickFilter}>
+            Aplicar <FilterIcon size={12} className="ms-2" />
           </Button>
-          <Button
-            size={"xs"}
-            variant="secondary"
-            onClick={handleResetFilter}
-          >
-            Limpar{" "}
-            <EraserIcon
-              size={12}
-              className="ms-2"
-            />
+          <Button size={"xs"} variant="secondary" onClick={handleResetFilter}>
+            Limpar <EraserIcon size={12} className="ms-2" />
           </Button>
         </div>
 
-        <AccordionTrigger
-          className={`py-1 hover:no-underline`}
-        >
+        <AccordionTrigger className={`py-1 hover:no-underline`}>
           <span className="">Filtros</span>
         </AccordionTrigger>
 
@@ -135,17 +91,14 @@ const FiltersTitulosReceber = ({
 
               <SelectMultiGrupoEconomico
                 className="w-fit"
-                value={
-                  filters.grupo_economico_list ||
-                  []
-                }
+                value={filters.grupo_economico_list || []}
                 onChange={(value) => {
                   setFilters({
                     grupo_economico_list: value,
                   });
                 }}
               />
-              <SelectMultiFormaPagamento
+              {/* <SelectMultiFormaPagamento
                 className="min-w-fit"
                 value={
                   filters.forma_pagamento_list ||
@@ -156,9 +109,9 @@ const FiltersTitulosReceber = ({
                     forma_pagamento_list: value,
                   })
                 }
-              />
+              /> */}
 
-              <SelectMultiStatus
+              <SelectMultiStatusCR
                 className="w-fit"
                 value={filters.status_list || []}
                 onChange={(value) =>
@@ -180,21 +133,9 @@ const FiltersTitulosReceber = ({
                   <SelectValue placeholder="Tipo de data" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="created_at">
-                    Criação
-                  </SelectItem>
-                  <SelectItem value="data_emissao">
-                    Emissão
-                  </SelectItem>
-                  <SelectItem value="data_vencimento">
-                    Vencimento
-                  </SelectItem>
-                  <SelectItem value="data_prevista">
-                    Previsão
-                  </SelectItem>
-                  <SelectItem value="data_pagamento">
-                    Pagamento
-                  </SelectItem>
+                  <SelectItem value="created_at">Criação</SelectItem>
+                  <SelectItem value="data_emissao">Emissão</SelectItem>
+                  <SelectItem value="data_vencimento">Vencimento</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -222,8 +163,7 @@ const FiltersTitulosReceber = ({
                 value={filters?.nome_fornecedor}
                 onChange={(e) =>
                   setFilters({
-                    nome_fornecedor:
-                      e.target.value,
+                    nome_fornecedor: e.target.value,
                   })
                 }
                 placeholder="Nome Fornecedor..."

@@ -4,9 +4,7 @@ import FormSwitch from "@/components/custom/FormSwitch";
 import { SelectFilial } from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
 import { useContasBancarias } from "@/hooks/financeiro/useContasBancarias";
-import ModalBancos, {
-  ItemBancos,
-} from "@/pages/financeiro/components/ModalBancos";
+import ModalBancos, { ItemBancos } from "@/pages/financeiro/components/ModalBancos";
 import { Fingerprint, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ContaBancariaSchema } from "./Modal";
@@ -36,14 +34,15 @@ const FormContaBancaria = ({
     isError: updateIsError,
   } = useContasBancarias().update();
 
-  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
-    useStoreContaBancaria((state) => [
+  const [modalEditing, editModal, closeModal, editIsPending, isPending] = useStoreContaBancaria(
+    (state) => [
       state.modalEditing,
       state.editModal,
       state.closeModal,
       state.editIsPending,
       state.isPending,
-    ]);
+    ]
+  );
 
   const onSubmitData = (data: ContaBancariaSchema) => {
     // console.log(data);
@@ -76,6 +75,8 @@ const FormContaBancaria = ({
   // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
 
+  // const isCaixa = form.watch("caixa");
+
   return (
     <div className="max-w-full max-h-[90vh] overflow-hidden">
       <Form {...form}>
@@ -87,19 +88,26 @@ const FormContaBancaria = ({
                 <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
                     <Fingerprint />{" "}
-                    <span className="text-lg font-bold ">
-                      Identificação da Conta
-                    </span>
+                    <span className="text-lg font-bold ">Identificação da Conta</span>
                   </div>
-                  <FormSwitch
-                    name="active"
-                    disabled={!modalEditing || isPending}
-                    label="Ativo"
-                    control={form.control}
-                  />
+                  <span className="flex gap-2">
+                    <FormSwitch
+                      name="caixa"
+                      disabled={!modalEditing || isPending}
+                      label="Tesouraria"
+                      control={form.control}
+                      title="Permite movimentação de saldo"
+                    />
+                    <FormSwitch
+                      name="active"
+                      disabled={!modalEditing || isPending}
+                      label="Ativo"
+                      control={form.control}
+                    />
+                  </span>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3 items-end">
                   <FormInput name="id" type="hidden" control={form.control} />
                   <FormInput
                     className="flex-1 min-w-[40ch]"
@@ -115,29 +123,20 @@ const FormContaBancaria = ({
                     label="Filial"
                     control={form.control}
                   />
+                  <FormInput name="id_banco flex-1" type="hidden" control={form.control} />
+
                   <FormInput
-                    name="id_banco flex-1"
-                    type="hidden"
+                    className="flex-1 min-w-[40ch]"
+                    name="banco"
+                    readOnly={!modalEditing || isPending}
+                    label="Banco"
+                    placeholder="Selecione o banco"
                     control={form.control}
-                  />
-                  <span
                     onClick={() => setModalBancosOpen(true)}
-                    className="flex-1"
-                  >
-                    <FormInput
-                      className="flex-1 min-w-[40ch]"
-                      name="banco"
-                      readOnly={!modalEditing || isPending}
-                      label="Banco"
-                      placeholder="Selecione o banco"
-                      control={form.control}
-                    />
-                  </span>
+                  />
                   <ModalBancos
                     open={modalEditing && modalBancosOpen}
-                    onOpenChange={() =>
-                      setModalBancosOpen((prev: boolean) => !prev)
-                    }
+                    onOpenChange={() => setModalBancosOpen((prev: boolean) => !prev)}
                     handleSelection={handleSelectionBancos}
                   />
                 </div>
@@ -145,8 +144,7 @@ const FormContaBancaria = ({
 
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex items-center gap-2 mb-3">
-                  <Info />{" "}
-                  <span className="text-lg font-bold ">Informações Conta</span>
+                  <Info /> <span className="text-lg font-bold ">Informações Conta</span>
                 </div>
                 <div className="flex gap-3 flex-wrap">
                   <FormInput

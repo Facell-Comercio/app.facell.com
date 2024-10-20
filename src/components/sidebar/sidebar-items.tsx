@@ -221,7 +221,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CR",
         uri: "/financeiro/contas-a-receber",
-        visible: true,
+        visible: checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
       },
       {
         name: "Controle de Caixa",

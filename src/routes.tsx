@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
 import App from "./App.tsx";
 import { useAuthStore } from "./context/auth-store.tsx";
-import { checkUserPermission } from "./helpers/checkAuthorization.ts";
+import { checkUserDepartments, checkUserPermission } from "./helpers/checkAuthorization.ts";
 
 import NotAuthorizedPage from "./pages/NotAuthorized.tsx";
 import NotFoundPage from "./pages/NotFound.tsx";
@@ -68,15 +68,51 @@ const AppRoutes = () => {
           {/* Financeiro */}
           <Route path="/financeiro/">
             <Route element={<ContasPagarPage />} path="contas-a-pagar" />
-            <Route element={<ContasReceberPage />} path="contas-a-receber" />
+            <Route
+              element={
+                checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                  <ContasReceberPage />
+                ) : (
+                  <NotAuthorizedPage />
+                )
+              }
+              path="contas-a-receber"
+            />
             <Route element={<ControleCaixaPage />} path="controle-de-caixa">
               <Route path="conferencia-de-caixa">
-                <Route element={<Caixas />} path="filiais" />
+                <Route
+                  element={
+                    checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                      <Caixas />
+                    ) : (
+                      <NotAuthorizedPage />
+                    )
+                  }
+                  path="filiais"
+                />
               </Route>
             </Route>
             <Route element={<OrcamentoPage />} path="orcamento" />
-            <Route element={<ConciliacaoBancariaPage />} path="conciliacao-bancaria" />
-            <Route element={<TesourariaPage />} path="tesouraria" />
+            <Route
+              element={
+                checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                  <ConciliacaoBancariaPage />
+                ) : (
+                  <NotAuthorizedPage />
+                )
+              }
+              path="conciliacao-bancaria"
+            />
+            <Route
+              element={
+                checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                  <TesourariaPage />
+                ) : (
+                  <NotAuthorizedPage />
+                )
+              }
+              path="tesouraria"
+            />
             <Route element={<CadastrosPage />} path="cadastros" />
           </Route>
 

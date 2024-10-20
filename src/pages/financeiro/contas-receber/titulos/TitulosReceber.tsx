@@ -1,25 +1,23 @@
 import { DataTable } from "@/components/custom/DataTable";
-import { useStoreTableReceber } from "./table/store-table";
 import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
 import Filters from "./table/Filters";
+import { useStoreTableReceber } from "./table/store-table";
 
-import ButtonExportTitulos from "./components/ButtonExportarTitulos";
-import ButtonImportTitulos from "./components/ButtonImportarTitulo";
-import ButtonNovoTitulo from "./components/ButtonNovoTitulo";
+import ButtonExportTitulosReceber from "./components/ButtonExportarTitulosReceber";
+import ButtonImportTitulosReceber from "./components/ButtonImportarTituloReceber";
+import ButtonNovoTituloReceber from "./components/ButtonNovoTituloReceber";
+import HistoricoLogs from "./components/HistoricoLogs";
 import { columnsTable } from "./table/columns";
 import ModalTituloReceber from "./titulo/ModalTituloReceber";
 
 const TitulosReceber = () => {
-
   const [pagination, setPagination, filters] = useStoreTableReceber((state) => [
     state.pagination,
     state.setPagination,
     state.filters,
   ]);
-  const [rowSelection, handleRowSelection] = useStoreTableReceber((state) => [
-    state.rowSelection,
+  const [handleRowSelection] = useStoreTableReceber((state) => [
     state.handleRowSelection,
-    state.idSelection,
   ]);
 
   const { data, refetch, isLoading } = useTituloReceber().getAll({
@@ -38,9 +36,10 @@ const TitulosReceber = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap justify-end gap-3 ">
-        <ButtonExportTitulos />
-        <ButtonImportTitulos />
-        <ButtonNovoTitulo />
+        <HistoricoLogs />
+        <ButtonExportTitulosReceber />
+        <ButtonImportTitulosReceber />
+        <ButtonNovoTituloReceber />
       </div>
       <Filters refetch={refetchTitulos} />
 
@@ -48,8 +47,8 @@ const TitulosReceber = () => {
         sumField="valor"
         pagination={pagination}
         setPagination={setPagination}
-        rowSelection={rowSelection}
-        handleRowSelection={handleRowSelection}
+        // rowSelection={rowSelection}
+        // handleRowSelection={handleRowSelection}
         data={rows}
         rowCount={rowCount}
         columns={columnsTable}
