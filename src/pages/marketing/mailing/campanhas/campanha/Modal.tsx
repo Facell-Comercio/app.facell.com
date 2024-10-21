@@ -86,6 +86,7 @@ const ModalCampanha = () => {
               </Button>
             </span>
             <div className="grid bg-background rounded-lg ">
+              {/* Permitir minimizar a tabela */}
               <DataVirtualTableHeaderFixed
                 // @ts-ignore
                 columns={columnsTableClientes}
@@ -146,6 +147,7 @@ const ModalCampanha = () => {
                       </span>
                     </span>
                     <div className="grid bg-background rounded-lg ">
+                      {/* MOSTRAR A QUANTIDADE DE CLIENTES FILTRADOS */}
                       <DataVirtualTableHeaderFixed
                         // @ts-ignore
                         columns={columnsTableClientesSubcampanha}

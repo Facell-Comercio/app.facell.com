@@ -164,19 +164,19 @@ const ModalVerCliente = () => {
               </div>
               <div className="flex gap-2 flex-1">
                 <InputWithLabel
-                  label="Valor Última Compra:"
+                  label="Preço Produto:"
                   value={normalizeCurrency(data?.valor_pre) || ""}
                   readOnly
                   className="flex-1"
                 />
                 <InputWithLabel
-                  label="Valor Última Compra:"
+                  label="Valor Oferta:"
                   value={normalizeCurrency(data?.valor_plano) || ""}
                   readOnly
                   className="flex-1"
                 />
                 <InputWithLabel
-                  label="Valor Última Compra:"
+                  label="Desconto:"
                   value={normalizeCurrency(data?.desconto) || ""}
                   readOnly
                   className="flex-1"
