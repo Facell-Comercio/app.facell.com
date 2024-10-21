@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 
 import { Link, useLocation } from "react-router-dom";
-import MovimentoContabilReceber from "./movimento-contabil/MovimentoContabil";
+import MovimentoContabil from "./movimento-contabil/MovimentoContabil";
 import { PainelContasReceber } from "./painel/PainelContasReceber";
 import { Recebimentos } from "./recebimentos/Recebimentos";
 import TitulosReceber from "./titulos/TitulosReceber";
@@ -48,7 +48,7 @@ const ContasReceberPage = () => {
           <Recebimentos />
         </TabsContent>
         <TabsContent value="movimento-contabil">
-          <MovimentoContabilReceber />
+          <MovimentoContabil />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,14 +1,14 @@
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
-import { ConciliacaoCPSchemaProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/components/ModalConciliar";
-import { VencimentosConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/tables/TitulosConciliar";
 import { TransacoesConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/tables/TransacoesConciliar";
+import { ConciliacaoCRSchemaProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cr/components/ModalConciliar";
+import { RecebimentosConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cr/tables/RecebimentosConciliar";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 interface ConciliacaoAutomaticaProps {
-  vencimentos: VencimentosConciliarProps[];
+  recebimentos: RecebimentosConciliarProps[];
   transacoes: TransacoesConciliarProps[];
   id_conta_bancaria?: string;
 }
@@ -31,14 +31,14 @@ interface ConciliacaoTarifasProps {
   data_transacao?: string;
 }
 
-export const useConciliacaoCP = () => {
+export const useConciliacaoCR = () => {
   const queryClient = useQueryClient();
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
         enabled: !!filters?.id_conta_bancaria,
         refetchOnMount: false,
-        queryKey: ["financeiro", "conciliacao", "cp", "lista", filters],
+        queryKey: ["financeiro", "conciliacao", "cr", "lista", filters],
         queryFn: async () => {
           const result = await api.get(`/financeiro/conciliacao-cp/`, {
             params: { pagination, filters },
@@ -52,7 +52,14 @@ export const useConciliacaoCP = () => {
       useQuery({
         enabled: !!filters?.id_conta_bancaria,
         refetchOnMount: false,
-        queryKey: ["financeiro", "conciliacao", "realizado", "lista", { pagination, filters }],
+        queryKey: [
+          "financeiro",
+          "conciliacao",
+          "cr",
+          "realizado",
+          "lista",
+          { pagination, filters },
+        ],
         queryFn: async () => {
           const result = await api.get(`/financeiro/conciliacao-cp/conciliacoes`, {
             params: { pagination, filters },
@@ -65,7 +72,7 @@ export const useConciliacaoCP = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "conciliacao", "cp", "detalhe", id],
+        queryKey: ["financeiro", "conciliacao", "cr", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/conciliacao-cp/${id}`);
         },
@@ -73,7 +80,7 @@ export const useConciliacaoCP = () => {
 
     conciliacaoManual: () =>
       useMutation({
-        mutationFn: async (data: ConciliacaoCPSchemaProps) => {
+        mutationFn: async (data: ConciliacaoCRSchemaProps) => {
           return api.post("/financeiro/conciliacao-cp", data).then((response) => response.data);
         },
         onSuccess() {
@@ -164,7 +171,7 @@ export const useConciliacaoCP = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conciliacao", "cp", "lista"],
+            queryKey: ["financeiro", "conciliacao", "cr", "lista"],
           });
 
           toast({

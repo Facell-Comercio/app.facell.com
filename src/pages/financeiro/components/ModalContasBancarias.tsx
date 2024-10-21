@@ -166,7 +166,7 @@ const ModalContasBancarias = ({
                     {!id_matriz && (
                       <SelectMatriz
                         showAll
-                        value={filters.id_matriz}
+                        value={filters?.id_matriz}
                         onChange={(id_matriz) => {
                           setFilters({
                             id_matriz: id_matriz,
@@ -177,13 +177,13 @@ const ModalContasBancarias = ({
                     <Input
                       placeholder="Descrição"
                       className="w-[20ch]"
-                      value={filters.descricao}
+                      value={filters?.descricao || ""}
                       onChange={(e) => setFilters({ descricao: e.target.value })}
                     />
                     <Input
                       placeholder="Banco"
                       className="max-w-[200px]"
-                      value={filters.banco}
+                      value={filters?.banco || ""}
                       onChange={(e) => setFilters({ banco: e.target.value })}
                     />
                   </div>
