@@ -299,7 +299,7 @@ const FormBordero = ({
   }
 
   async function removeItemVencimentos({ index, id, id_status, tipo }: RemoveItemVencimentosProps) {
-    if (id_status != "4" && id_status != "5") {
+    if (id_status != "5") {
       deleteVencimento({ id, tipo });
       removeItemBordero(index);
     } else {
