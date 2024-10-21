@@ -16,14 +16,15 @@ type TableProps = {
   data: any;
   columns: ColumnDef<unknown, any>[];
   className?: string;
+  isLoading?: boolean;
 };
 export const DataVirtualTableHeaderFixed = ({
   data,
   columns,
   className,
+  isLoading,
 }: TableProps) => {
-  const [sorting, setSorting] =
-    useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data: data,
@@ -47,12 +48,8 @@ export const DataVirtualTableHeaderFixed = ({
     estimateSize: () => 33,
     overscan: 10,
     measureElement:
-      typeof window !== "undefined" &&
-      navigator.userAgent.indexOf("Firefox") ===
-        -1
-        ? (element) =>
-            element?.getBoundingClientRect()
-              .height
+      typeof window !== "undefined" && navigator.userAgent.indexOf("Firefox") === -1
+        ? (element) => element?.getBoundingClientRect().height
         : undefined,
   });
 
@@ -61,10 +58,7 @@ export const DataVirtualTableHeaderFixed = ({
       <div className="rounded-lg overflow-auto z-40 scroll-thin w-full">
         <div
           ref={parentRef}
-          className={cn(
-            `h-[200px] overflow-auto scroll-thin z-50 relative min-w-full`,
-            className
-          )}
+          className={cn(`h-[200px] overflow-auto scroll-thin z-50 relative min-w-full`, className)}
         >
           <div
             style={{
@@ -73,58 +67,39 @@ export const DataVirtualTableHeaderFixed = ({
           >
             <table className="grid text-nowrap text-xs w-full">
               <thead className="grid sticky top-0 z-30 border bg-slate-300 dark:bg-gray-900">
-                {table
-                  .getHeaderGroups()
-                  .map((headerGroup) => (
-                    <tr
-                      className="flex w-full"
-                      key={headerGroup.id}
-                    >
-                      {headerGroup.headers.map(
-                        (header) => {
-                          return (
-                            <th
-                              className="py-2 flex w-full"
-                              key={header.id}
-                              colSpan={
-                                header.colSpan
-                              }
-                              style={{
-                                width:
-                                  header.getSize(),
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr className="flex w-full" key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <th
+                          className="py-2 flex w-full"
+                          key={header.id}
+                          colSpan={header.colSpan}
+                          style={{
+                            width: header.getSize(),
+                          }}
+                        >
+                          {header.isPlaceholder ? null : (
+                            <div
+                              {...{
+                                className: header.column.getCanSort()
+                                  ? "cursor-pointer select-none w-full"
+                                  : "w-full",
+                                onClick: header.column.getToggleSortingHandler(),
                               }}
                             >
-                              {header.isPlaceholder ? null : (
-                                <div
-                                  {...{
-                                    className:
-                                      header.column.getCanSort()
-                                        ? "cursor-pointer select-none w-full"
-                                        : "w-full",
-                                    onClick:
-                                      header.column.getToggleSortingHandler(),
-                                  }}
-                                >
-                                  {flexRender(
-                                    header.column
-                                      .columnDef
-                                      .header,
-                                    header.getContext()
-                                  )}
-                                  {{
-                                    asc: " 🔼",
-                                    desc: " 🔽",
-                                  }[
-                                    header.column.getIsSorted() as string
-                                  ] ?? null}
-                                </div>
-                              )}
-                            </th>
-                          );
-                        }
-                      )}
-                    </tr>
-                  ))}
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              {{
+                                asc: " 🔼",
+                                desc: " 🔽",
+                              }[header.column.getIsSorted() as string] ?? null}
+                            </div>
+                          )}
+                        </th>
+                      );
+                    })}
+                  </tr>
+                ))}
               </thead>
               <tbody
                 style={{
@@ -134,50 +109,40 @@ export const DataVirtualTableHeaderFixed = ({
                 }}
               >
                 {data?.length > 0 ? (
-                  virtualizer
-                    .getVirtualItems()
-                    .map((virtualRow) => {
-                      const row = rows[
-                        virtualRow.index
-                      ] as Row<any>;
-                      return (
-                        <tr
-                          key={row.id}
-                          className="flex absolute items-center border-b border-gray-900 transition-all"
-                          style={{
-                            transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
-                            width: "100%",
-                          }}
-                        >
-                          {row
-                            .getVisibleCells()
-                            .map((cell) => {
-                              return (
-                                <td
-                                  className="px-2 py-1 flex transition-all"
-                                  key={cell.id}
-                                  style={{
-                                    width:
-                                      cell.column.getSize(),
-                                  }}
-                                >
-                                  {flexRender(
-                                    cell.column
-                                      .columnDef
-                                      .cell,
-                                    cell.getContext()
-                                  )}
-                                </td>
-                              );
-                            })}
-                        </tr>
-                      );
-                    })
+                  virtualizer.getVirtualItems().map((virtualRow) => {
+                    const row = rows[virtualRow.index] as Row<any>;
+                    return (
+                      <tr
+                        key={row.id}
+                        className="flex absolute items-center border-b border-gray-900 transition-all"
+                        style={{
+                          transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
+                          width: "100%",
+                        }}
+                      >
+                        {row.getVisibleCells().map((cell) => {
+                          return (
+                            <td
+                              className="px-2 py-1 flex transition-all"
+                              key={cell.id}
+                              style={{
+                                width: cell.column.getSize(),
+                              }}
+                            >
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr className="flex w-full items-center p-6">
-                    <td>
-                      Nenhuma linha a exibir...
-                    </td>
+                    {isLoading !== undefined && !isLoading ? (
+                      <td>Nenhuma linha a exibir...</td>
+                    ) : (
+                      <td>Carregando...</td>
+                    )}
                   </tr>
                 )}
               </tbody>

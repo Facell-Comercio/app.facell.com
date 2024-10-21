@@ -1,4 +1,4 @@
-import { normalizeDate, normalizeFirstAndLastName } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate, normalizeFirstAndLastName } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 // import { useStoreCliente } from "../cliente/store";
 // import { useStoreClientes } from "../orcamento/store";
@@ -35,13 +35,18 @@ export type ClienteProps = {
 
 export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
   {
+    accessorKey: "status_plano",
+    header: "STATUS",
+    size: 100,
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <div className="uppercase">{label || "-"}</div>;
+    },
+  },
+
+  {
     accessorKey: "gsm",
     header: "GSM",
-    size: 100,
-  },
-  {
-    accessorKey: "gsm_portado",
-    header: "GSM PORTADO",
     size: 100,
     cell: (info) => {
       const label = info.getValue<string>();
@@ -53,6 +58,7 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
     header: "CPF",
     size: 100,
   },
+
   {
     accessorKey: "cliente",
     header: "NOME",
@@ -64,7 +70,7 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
   },
   {
     accessorKey: "plano_habilitado",
-    header: "DATA ÚLTIMA COMPRA",
+    header: "PLANO HABILITADO",
     size: 200,
     cell: (info) => {
       const label = info.getValue<string>();
@@ -78,6 +84,24 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return <div className="uppercase">{normalizeDate(label)}</div>;
+    },
+  },
+  {
+    accessorKey: "produto_ultima_compra",
+    header: "PRODUTO ÚLTIMA COMPRA",
+    size: 200,
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <div className="uppercase truncate">{label}</div>;
+    },
+  },
+  {
+    accessorKey: "valor_caixa",
+    header: "VALOR CAIXA",
+    size: 120,
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <div className="uppercase truncate">{normalizeCurrency(label)}</div>;
     },
   },
 ];
