@@ -3,8 +3,8 @@ import { Input } from "@/components/ui/input";
 import { useRef } from "react";
 
 type FiltersProps = {
-  tituloConciliar: string;
-  tituloConciliado: string;
+  recebimentosConciliar: string;
+  recebimentosConciliado: string;
   transacaoConciliar: string;
   transacaoConciliada: string;
   conciliacao: string;
@@ -21,15 +21,15 @@ export const SearchComponent = ({
 }) => {
   const searchRef = useRef<HTMLInputElement | null>(null);
   function onSearch() {
-    if (name === "tituloConciliar") {
+    if (name === "recebimentosConciliar") {
       setSearchFilters({
         ...searchFilters,
-        tituloConciliar: searchRef.current?.value.toUpperCase() || "",
+        recebimentosConciliar: searchRef.current?.value.toUpperCase() || "",
       });
-    } else if (name === "tituloConciliado") {
+    } else if (name === "recebimentosConciliado") {
       setSearchFilters({
         ...searchFilters,
-        tituloConciliado: searchRef.current?.value.toUpperCase() || "",
+        recebimentosConciliado: searchRef.current?.value.toUpperCase() || "",
       });
     } else if (name === "transacaoConciliar") {
       setSearchFilters({

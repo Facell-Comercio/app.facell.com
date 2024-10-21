@@ -34,8 +34,7 @@ const SecaoVencimentosCR = ({ form, canEdit, modalEditing }: SecaoVencimentosCRP
 
   const id_status = parseInt(form.watch("id_status") || "0");
   const emitido = id_status === 30;
-  const pagoParcial = id_status === 40;
-  const canEditRecebimento = pagoParcial || emitido;
+  const canEditRecebimento = id_status > 30;
 
   const wvencimentos = form.watch("vencimentos");
 

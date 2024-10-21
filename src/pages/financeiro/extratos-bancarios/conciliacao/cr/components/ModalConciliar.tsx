@@ -40,7 +40,7 @@ const ModalConciliarCP = () => {
   const isPending = useStoreConciliacaoCR().isPending;
   const recebimentosSelection = useStoreTableConciliacaoCR().recebimentosSelection;
   const transacoesSelection = useStoreTableConciliacaoCR().transacoesSelection;
-  const formRef = useRef(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
   const isMaster = checkUserPermission("MASTER");
 
   const { data, isLoading } = useConciliacaoCR().getOne(id_conciliacao);
@@ -137,10 +137,7 @@ const ModalConciliarCP = () => {
               size="lg"
               className="dark:text-white"
               disabled={isPending}
-              onClick={() => {
-                // @ts-ignore "Funciona"
-                formRef.current && formRef.current.requestSubmit();
-              }}
+              onClick={() => formRef.current && formRef.current.requestSubmit()}
             >
               <HandCoins className="me-2" />
               {isPending ? "Conciliando..." : "Conciliar"}

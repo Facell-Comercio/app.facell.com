@@ -78,7 +78,7 @@ const VirtualizedRecebimentos: React.FC<VirtualizerRecebimentosProps> = ({ data 
               />
               <Input
                 className="text-xs w-28 h-8 p-2"
-                value={data[item.index].valor_recebido || ""}
+                value={data[item.index].valor || ""}
                 readOnly
               />
 
@@ -89,7 +89,7 @@ const VirtualizedRecebimentos: React.FC<VirtualizerRecebimentosProps> = ({ data 
               />
               <Input
                 className="text-xs min-w-36 h-8 p-2"
-                value={data[item.index].nome_fornecedor}
+                value={data[item.index].fornecedor}
                 readOnly
               />
 

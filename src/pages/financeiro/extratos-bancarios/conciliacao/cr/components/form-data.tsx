@@ -7,21 +7,13 @@ const schemaConciliacaoCR = z.object({
   // Identificador do plano de contas
   id: z.string().trim().optional(),
   recebimentos: z.array(
-    z
-      .object({
-        id_recebimento: z.coerce.string().trim().optional(),
-        id_vencimento: z.coerce.string().trim().optional(),
-        id_titulo: z.coerce.string().trim().optional(),
-        valor: z.coerce.string().trim().optional(),
-        tipo_baixa: z.string().trim(),
-        valor_pago: z.coerce.string().optional(),
-        data_prevista: z.date().optional(),
-        tipo: z.string().trim().optional(),
-      })
-      .refine((data) => (data.tipo_baixa === "PARCIAL" ? !!data.data_prevista : true), {
-        path: ["data_prevista"],
-        message: "Data prevista é obrigatória",
-      })
+    z.object({
+      id_recebimento: z.coerce.string().trim().optional(),
+      id_vencimento: z.coerce.string().trim().optional(),
+      id_titulo: z.coerce.string().trim().optional(),
+      valor: z.coerce.string().trim().optional(),
+      data: z.coerce.date().optional(),
+    })
   ),
   transacoes: z.array(
     z.object({

@@ -60,7 +60,7 @@ const ChartConciliacaoRecebimentos = ({ data, isLoading }: ChartConciliacaoReceb
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Conciliação de pagamentos</CardTitle>
+        <CardTitle>Conciliação de recebimentos</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex h-40 w-full">

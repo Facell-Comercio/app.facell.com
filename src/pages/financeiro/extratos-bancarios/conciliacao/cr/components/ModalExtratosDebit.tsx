@@ -19,15 +19,15 @@ type FiltersProps = {
   valor?: number;
 };
 
-interface IModalExtratosCredit {
+interface IModalExtratosDebit {
   open: boolean;
-  handleSelection: (item: ItemExtratosCredit) => void;
+  handleSelection: (item: ItemExtratosDebit) => void;
   onOpenChange: () => void;
   id?: string | null;
   filters?: FiltersProps;
 }
 
-export type ItemExtratosCredit = {
+export type ItemExtratosDebit = {
   id: string;
   documento: string;
   descricao: string;
@@ -41,12 +41,12 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalExtratosCredit = ({
+const ModalExtratosDebit = ({
   open,
   handleSelection,
   onOpenChange,
   filters,
-}: IModalExtratosCredit) => {
+}: IModalExtratosDebit) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -56,7 +56,7 @@ const ModalExtratosCredit = ({
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["financeiro", "conciliacao", "transacao", "lista", filters],
     queryFn: async () =>
-      await api.get("financeiro/conciliacao-cp/extratos-credit", {
+      await api.get("financeiro/conciliacao-cr/extratos-debit", {
         params: {
           filters: { termo: search, ...filters },
           pagination,
@@ -74,7 +74,7 @@ const ModalExtratosCredit = ({
     refetch();
   }
 
-  function pushSelection(item: ItemExtratosCredit) {
+  function pushSelection(item: ItemExtratosDebit) {
     handleSelection(item);
     onOpenChange();
   }
@@ -88,9 +88,7 @@ const ModalExtratosCredit = ({
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>Transferências</DialogTitle>
-          <DialogDescription>
-            Selecione um ao clicar no botão à direita.
-          </DialogDescription>
+          <DialogDescription>Selecione um ao clicar no botão à direita.</DialogDescription>
 
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
@@ -114,46 +112,33 @@ const ModalExtratosCredit = ({
               </tr>
             </thead>
             <tbody>
-              {data?.data?.rows.map(
-                (item: ItemExtratosCredit, index: number) => (
-                  <tr
-                    key={"transferenciaRow:" + item.id + index}
-                    className="bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2"
-                  >
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {normalizeDate(item.data_transacao)}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {item.conta_bancaria}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {item.documento}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {item.descricao}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {normalizeCurrency(item.valor)}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      <AlertPopUp
-                        title={"Deseja realmente realizar a conciliação?"}
-                        description="As transferências selecionadas serão adicionadas a uma conciliação"
-                        action={() => pushSelection(item)}
-                      >
-                        <Button
-                          size={"xs"}
-                          className="p-1"
-                          variant={"outline"}
-                          onClick={() => {}}
-                        >
-                          Selecionar
-                        </Button>
-                      </AlertPopUp>
-                    </td>
-                  </tr>
-                )
-              )}
+              {data?.data?.rows.map((item: ItemExtratosDebit, index: number) => (
+                <tr
+                  key={"transferenciaRow:" + item.id + index}
+                  className="bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2"
+                >
+                  <td className="text-xs text-nowrap p-1 text-center">
+                    {normalizeDate(item.data_transacao)}
+                  </td>
+                  <td className="text-xs text-nowrap p-1 text-center">{item.conta_bancaria}</td>
+                  <td className="text-xs text-nowrap p-1 text-center">{item.documento}</td>
+                  <td className="text-xs text-nowrap p-1 text-center">{item.descricao}</td>
+                  <td className="text-xs text-nowrap p-1 text-center">
+                    {normalizeCurrency(item.valor)}
+                  </td>
+                  <td className="text-xs text-nowrap p-1 text-center">
+                    <AlertPopUp
+                      title={"Deseja realmente realizar a conciliação?"}
+                      description="As transferências selecionadas serão adicionadas a uma conciliação"
+                      action={() => pushSelection(item)}
+                    >
+                      <Button size={"xs"} className="p-1" variant={"outline"} onClick={() => {}}>
+                        Selecionar
+                      </Button>
+                    </AlertPopUp>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </ModalComponent>
@@ -162,4 +147,4 @@ const ModalExtratosCredit = ({
   );
 };
 
-export default ModalExtratosCredit;
+export default ModalExtratosDebit;

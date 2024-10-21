@@ -59,7 +59,7 @@ const ModalExtratosDuplicated = ({
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["financeiro", "conciliacao", "transacao", "lista", filters],
     queryFn: async () =>
-      await api.get("financeiro/conciliacao-cp/extratos-duplicated", {
+      await api.get("financeiro/conciliacao-cr/extratos-duplicated", {
         params: {
           filters: { termo: search, ...filters },
           pagination,
@@ -91,9 +91,7 @@ const ModalExtratosDuplicated = ({
       <DialogContent className="sm:max-w-[1000px] sm:h-fit">
         <DialogHeader>
           <DialogTitle>Extratos</DialogTitle>
-          <DialogDescription>
-            Selecione um ao clicar no botão à direita.
-          </DialogDescription>
+          <DialogDescription>Selecione um ao clicar no botão à direita.</DialogDescription>
 
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
@@ -117,46 +115,33 @@ const ModalExtratosDuplicated = ({
               </tr>
             </thead>
             <tbody>
-              {data?.data?.map(
-                (item: ItemExtratosDuplicated, index: number) => (
-                  <tr
-                    key={"transferenciaRow:" + item.id + index}
-                    className="bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2"
-                  >
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {normalizeDate(item.data_transacao)}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {item.conta_bancaria}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {item.documento}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {item.descricao}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {normalizeCurrency(item.valor)}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      <AlertPopUp
-                        title={"Deseja tratar como duplicidade?"}
-                        description="O extrato selecionado será tratado como duplicado e não aparecerá mais na seção de extratos"
-                        action={() => pushSelection(item)}
-                      >
-                        <Button
-                          size={"xs"}
-                          className="p-1"
-                          variant={"outline"}
-                          onClick={() => {}}
-                        >
-                          Selecionar
-                        </Button>
-                      </AlertPopUp>
-                    </td>
-                  </tr>
-                )
-              )}
+              {data?.data?.map((item: ItemExtratosDuplicated, index: number) => (
+                <tr
+                  key={"transferenciaRow:" + item.id + index}
+                  className="bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2"
+                >
+                  <td className="text-xs text-nowrap p-1 text-center">
+                    {normalizeDate(item.data_transacao)}
+                  </td>
+                  <td className="text-xs text-nowrap p-1 text-center">{item.conta_bancaria}</td>
+                  <td className="text-xs text-nowrap p-1 text-center">{item.documento}</td>
+                  <td className="text-xs text-nowrap p-1 text-center">{item.descricao}</td>
+                  <td className="text-xs text-nowrap p-1 text-center">
+                    {normalizeCurrency(item.valor)}
+                  </td>
+                  <td className="text-xs text-nowrap p-1 text-center">
+                    <AlertPopUp
+                      title={"Deseja tratar como duplicidade?"}
+                      description="O extrato selecionado será tratado como duplicado e não aparecerá mais na seção de extratos"
+                      action={() => pushSelection(item)}
+                    >
+                      <Button size={"xs"} className="p-1" variant={"outline"} onClick={() => {}}>
+                        Selecionar
+                      </Button>
+                    </AlertPopUp>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </ModalComponent>

@@ -23,11 +23,10 @@ export type RecebimentosConciliarProps = {
   id_recebimento: string;
   num_doc: string;
   valor: string;
-  nome_fornecedor: string;
+  fornecedor: string;
   descricao: string;
   filial: string;
   data_recebimento: string;
-  valor_recebido?: string;
 };
 
 interface RowVirtualizerRecebimentosConciliarProps {
@@ -76,7 +75,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerRecebimentosConciliarProps> 
                 onCheckedChange={() => {
                   handlerecebimentosSelection({
                     ...row.original,
-                    valor_recebido: row.original.valor_recebido,
+                    valor: row.original.valor,
                   });
 
                   row.getToggleSelectedHandler();
@@ -115,7 +114,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerRecebimentosConciliarProps> 
         size: 80,
       },
       {
-        accessorKey: "valor_recebido",
+        accessorKey: "valor",
         header: "VALOR",
         size: 80,
 
@@ -145,7 +144,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerRecebimentosConciliarProps> 
         },
       },
       {
-        accessorKey: "nome_fornecedor",
+        accessorKey: "fornecedor",
         header: "FORNECEDOR",
         size: 280,
         cell: (info) => {
@@ -182,10 +181,9 @@ const ReactTableVirtualized: React.FC<RowVirtualizerRecebimentosConciliarProps> 
           id_titulo: data[+c].id_titulo,
           id_recebimento: data[+c].id_recebimento,
           descricao: data[+c].descricao,
-          nome_fornecedor: data[+c].nome_fornecedor,
-          valor: data[+c].valor,
+          fornecedor: data[+c].fornecedor,
           filial: data[+c].filial,
-          valor_recebido: data[+c].valor_recebido,
+          valor: data[+c].valor,
           data_recebimento: data[+c].data_recebimento,
         }));
 

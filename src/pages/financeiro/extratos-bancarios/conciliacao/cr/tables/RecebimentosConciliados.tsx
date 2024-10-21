@@ -115,7 +115,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerRecebimentosConciliadosProps
         },
       },
       {
-        accessorKey: "nome_fornecedor",
+        accessorKey: "fornecedor",
         header: "FORNECEDOR",
         size: 280,
         cell: (info) => {

@@ -15,7 +15,6 @@ import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeCurrency } from "@/helpers/mask";
 import { FaSpinner } from "react-icons/fa6";
 import ModalConciliarCP from "./components/ModalConciliar";
-import ModalExtratosCredit, { ItemExtratosCredit } from "./components/ModalExtratosCredit";
 import ModalExtratosDuplicated, {
   ItemExtratosDuplicated,
 } from "./components/ModalExtratosDuplicados";
@@ -36,9 +35,10 @@ import { useConciliacaoCR } from "@/hooks/financeiro/useConciliacaoCR";
 import { RefreshCcw } from "lucide-react";
 import { useExtratosStore } from "../../context";
 import ChartConciliacaoRecebimentos from "./components/ChartConciliacaoRecebimentos";
+import ModalExtratosDebit, { ItemExtratosDebit } from "./components/ModalExtratosDebit";
 
 const ConciliacaoCR = () => {
-  const [modalExtratosCreditOpen, setModalExtratosCreditOpen] = useState(false);
+  const [modalExtratosDebitOpen, setModalExtratosDebitOpen] = useState(false);
   const [modalExtratosDuplicatedOpen, setModalExtratosDuplicatedOpen] = useState(false);
 
   const { contaBancaria, ano, mes } = useExtratosStore((state) => ({
@@ -87,6 +87,7 @@ const ConciliacaoCR = () => {
     filters: { id_conta_bancaria: contaBancaria?.id, ano, mes, range_data: filters.range_data },
   });
   const dataChartConciliacaoRecebimentos = data?.dataChartConciliacaoRecebimentos;
+  console.log(data);
 
   // * Dados das conciliações realizadas:
   const {
@@ -114,14 +115,6 @@ const ConciliacaoCR = () => {
     data: resultadoConciliacaoAutomatica,
   } = useConciliacaoCR().conciliacaoAutomatica();
 
-  // * Conciliação de Tarifas + Criação título
-  const {
-    mutate: conciliacaoTarifas,
-    isPending: isPendingTarifas,
-    isSuccess: isSuccessTarifas,
-    data: resultadoConciliacaoTarifas,
-  } = useConciliacaoCR().conciliacaoTarifas();
-
   // * Conciliação Transferência entre contas
   const {
     mutate: conciliacaoTransferenciaContas,
@@ -146,11 +139,10 @@ const ConciliacaoCR = () => {
   const transacoesConciliar = data?.transacoesConciliar || [];
   const recebimentosConciliados = data?.recebimentosConciliados || [];
   const transacoesConciliadas = data?.transacoesConciliadas || [];
-  const bancoComFornecedor = data?.bancoComFornecedor || false;
 
   const [searchFilters, setSearchFilters] = useState({
-    tituloConciliar: "",
-    tituloConciliado: "",
+    recebimentosConciliar: "",
+    recebimentosConciliado: "",
     transacaoConciliar: "",
     transacaoConciliada: "",
     conciliacao: "",
@@ -168,22 +160,22 @@ const ConciliacaoCR = () => {
 
   const filteredRecebimentosConciliar = recebimentosConciliar
     .filter(
-      (titulo: RecebimentosConciliarProps) =>
-        String(titulo.id_titulo).includes(searchFilters.tituloConciliar) ||
-        String(titulo.descricao).includes(searchFilters.tituloConciliar) ||
-        String(titulo.filial).includes(searchFilters.tituloConciliar) ||
-        String(titulo.nome_fornecedor).includes(searchFilters.tituloConciliar)
+      (recebimentos: RecebimentosConciliarProps) =>
+        String(recebimentos.id_recebimento).includes(searchFilters.recebimentosConciliar) ||
+        String(recebimentos.descricao).includes(searchFilters.recebimentosConciliar) ||
+        String(recebimentos.filial).includes(searchFilters.recebimentosConciliar) ||
+        String(recebimentos.fornecedor).includes(searchFilters.recebimentosConciliar)
     )
-    .filter((titulo: RecebimentosConciliarProps) =>
-      dataRecebimento ? String(titulo.data_recebimento) === dataRecebimento : titulo
+    .filter((recebimentos: RecebimentosConciliarProps) =>
+      dataRecebimento ? String(recebimentos.data_recebimento) === dataRecebimento : recebimentos
     );
 
   const filteredRecebimentosConciliados = recebimentosConciliados.filter(
-    (titulo: RecebimentosConciliadosProps) =>
-      String(titulo.id_titulo).includes(searchFilters.tituloConciliado) ||
-      String(titulo.descricao).includes(searchFilters.tituloConciliado) ||
-      String(titulo.filial).includes(searchFilters.tituloConciliado) ||
-      String(titulo.nome_fornecedor).includes(searchFilters.tituloConciliado)
+    (recebimentos: RecebimentosConciliadosProps) =>
+      String(recebimentos.id_recebimento).includes(searchFilters.recebimentosConciliado) ||
+      String(recebimentos.descricao).includes(searchFilters.recebimentosConciliado) ||
+      String(recebimentos.filial).includes(searchFilters.recebimentosConciliado) ||
+      String(recebimentos.nome_fornecedor).includes(searchFilters.recebimentosConciliado)
   );
 
   const filteredTransacoesConciliar = transacoesConciliar
@@ -204,7 +196,7 @@ const ConciliacaoCR = () => {
   );
 
   const totalRecebimentos = recebimentosConciliar.reduce(
-    (acc: number, val: RecebimentosConciliarProps) => acc + parseFloat(val.valor_recebido || "0"),
+    (acc: number, val: RecebimentosConciliarProps) => acc + parseFloat(val.valor || "0"),
     0
   );
   const totalTransacoes = transacoesConciliar.reduce(
@@ -212,7 +204,7 @@ const ConciliacaoCR = () => {
     0
   );
   const totalSelectedRecebimentos = recebimentosSelection
-    .reduce((acc, val) => acc + parseFloat(val.valor_recebido || "0"), 0)
+    .reduce((acc, val) => acc + parseFloat(val.valor || "0"), 0)
     .toFixed(2);
   const totalSelectedTransacoes = transacoesSelection
     .reduce((acc, val) => acc + parseFloat(val.valor), 0)
@@ -239,50 +231,7 @@ const ConciliacaoCR = () => {
     }
   }, [isSuccess]);
 
-  //^ Verificar a necessidade da devolução dessa planilha
-  useEffect(() => {
-    if (isSuccessTarifas && resultadoConciliacaoTarifas) {
-      const retorno = resultadoConciliacaoTarifas.map((result: any) => ({
-        "ID TÍTULO": result.id_titulo,
-        FORNECEDOR: result.fornecedor,
-        FILIAL: result.filial,
-        "DATA RECEBIMENTO": result.data_recebimento,
-        "VALOR RECEBIDO": result.valor_recebido,
-        "ID TRANSAÇÃO": result.id_transacao,
-        DESCRIÇÃO: result.descricao,
-        DOC: result.doc,
-        CONCILIADO: result.conciliado ? "SIM" : "NÃO",
-        ERROR: result.error,
-      }));
-
-      const tarifasNaoConciliadas = resultadoConciliacaoTarifas
-        .filter((tConciliada: any) => !tConciliada.conciliado)
-        .map((tConciliada: any) => tConciliada.id_transacao);
-
-      const filteredTarifas = transacoesSelection.filter((transacao) => {
-        return tarifasNaoConciliadas.includes(transacao.id_transacao);
-      });
-
-      toast({
-        title: "Sucesso",
-        description: "Lançamento de tarifas realizado",
-        action: (
-          <ToastAction
-            altText="Ver Resultados"
-            onClick={() => exportToExcel(retorno, `RESULTADO LANÇAMENTO DAS TARIFAS`)}
-          >
-            Ver Resultados
-          </ToastAction>
-        ),
-        duration: 3500,
-        variant: "success",
-      });
-
-      resetSelectionTransacoes(filteredTarifas);
-    }
-  }, [isSuccessTarifas]);
-
-  function handleSelectionExtratosCredit(extrato: ItemExtratosCredit) {
+  function handleSelectionExtratosDebit(extrato: ItemExtratosDebit) {
     conciliacaoTransferenciaContas({
       id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ""),
       id_saida: transacoesSelection[0].id,
@@ -367,7 +316,7 @@ const ConciliacaoCR = () => {
                     variant={"outline"}
                     disabled={isPendingTransferenciaContas}
                     onClick={() => {
-                      setModalExtratosCreditOpen(true);
+                      setModalExtratosDebitOpen(true);
                     }}
                   >
                     Transferência entre Contas
@@ -420,44 +369,6 @@ const ConciliacaoCR = () => {
                     </Button>
                   )}
                 </AlertPopUp>
-                <span
-                  title={
-                    !bancoComFornecedor
-                      ? "Defina o fornecedor deste banco em cadastro de bancos para poder lançar as tarifas"
-                      : transacoesSelection.length > 0
-                      ? ""
-                      : "Selecione no mínimo 1 tarifa"
-                  }
-                >
-                  <AlertPopUp
-                    title={"Deseja realmente realizar essa operação?"}
-                    description="As tarifas serão lançadas e a concilição realizada automaticamente"
-                    action={() => {
-                      // Talvez verificar a existência de um "TAR" na descrição
-                      conciliacaoTarifas({
-                        tarifas: transacoesSelection,
-                        id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ""),
-                        data_transacao: transacoesSelection[0].data_transacao,
-                      });
-                    }}
-                  >
-                    {isPendingTarifas ? (
-                      <Button disabled variant={"outline"}>
-                        <span className="flex gap-2 w-full items-center justify-center">
-                          <FaSpinner size={18} className="me-2 animate-spin" /> Lançando...
-                        </span>
-                      </Button>
-                    ) : (
-                      <Button
-                        disabled={!bancoComFornecedor || transacoesSelection.length === 0}
-                        type={"button"}
-                        variant={"outline"}
-                      >
-                        Lançar Tarifas
-                      </Button>
-                    )}
-                  </AlertPopUp>
-                </span>
               </div>
 
               <ScrollBar orientation="horizontal" />
@@ -469,7 +380,7 @@ const ConciliacaoCR = () => {
                   <SearchComponent
                     searchFilters={searchFilters}
                     setSearchFilters={setSearchFilters}
-                    name="tituloConciliar"
+                    name="recebimentosConciliar"
                   />
                 </CardHeader>
                 <CardContent className="px-0 py-0">
@@ -480,7 +391,7 @@ const ConciliacaoCR = () => {
                     rowSelection={rowRecebimentosSelection}
                     handleRowSelection={handlerowRecebimentosSelection}
                     recebimentosSelection={recebimentosSelection.map(
-                      (titulo) => titulo.id_recebimento
+                      (recebimentos) => recebimentos.id_recebimento
                     )}
                   />
                 </CardContent>
@@ -544,7 +455,7 @@ const ConciliacaoCR = () => {
                   <SearchComponent
                     searchFilters={searchFilters}
                     setSearchFilters={setSearchFilters}
-                    name="tituloConciliado"
+                    name="recebimentosConciliado"
                   />
                 </CardHeader>
                 <CardContent className="px-0 py-0">
@@ -603,10 +514,10 @@ const ConciliacaoCR = () => {
           </ItemCP>
         </Accordion>
       )}
-      <ModalExtratosCredit
-        open={modalExtratosCreditOpen}
-        onOpenChange={() => setModalExtratosCreditOpen(false)}
-        handleSelection={handleSelectionExtratosCredit}
+      <ModalExtratosDebit
+        open={modalExtratosDebitOpen}
+        onOpenChange={() => setModalExtratosDebitOpen(false)}
+        handleSelection={handleSelectionExtratosDebit}
         filters={{
           data_transacao:
             transacoesSelection.length === 1 ? transacoesSelection[0].data_transacao : undefined,

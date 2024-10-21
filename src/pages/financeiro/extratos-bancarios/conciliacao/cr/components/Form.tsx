@@ -11,11 +11,11 @@ import { normalizeCurrency, normalizeDate, normalizeFirstAndLastName } from "@/h
 import { useConciliacaoCR } from "@/hooks/financeiro/useConciliacaoCR";
 import { useExtratosStore } from "../../../context";
 import { useStoreTableConciliacaoCR } from "../tables/store-tables";
-import { ConciliacaoCRSchemaProps } from "./ModalConciliar";
-import { default as VirtualizedTitulos } from "./VirtualizedRecebimentos";
-import VirtualizedTransacoes from "./VirtualizedTransacoes";
 import { useFormConciliacaoCRData } from "./form-data";
+import { ConciliacaoCRSchemaProps } from "./ModalConciliar";
 import { useStoreConciliacaoCR } from "./store";
+import VirtualizedRecebimentos from "./VirtualizedRecebimentos";
+import VirtualizedTransacoes from "./VirtualizedTransacoes";
 const FormConciliacaoCR = ({
   id,
   data,
@@ -56,12 +56,13 @@ const FormConciliacaoCR = ({
 
   const totalRecebimentos = form
     .watch("recebimentos")
-    .reduce((acc, val) => acc + parseFloat(val.valor_recebido || "0"), 0);
+    .reduce((acc, val) => acc + parseFloat(val.valor || "0"), 0);
   const totalTransacoes = parseFloat(
     transacoes.reduce((acc, val) => acc + parseFloat(val.valor), 0).toFixed(2)
   );
 
   // console.log(totalRecebimentos.toFixed(2), totalTransacoes.toFixed(2));
+  // console.log(form.formState.errors);
 
   function onSubmitData(newData: ConciliacaoCRSchemaProps) {
     if (totalRecebimentos.toFixed(2) !== totalTransacoes.toFixed(2)) {
@@ -125,7 +126,7 @@ const FormConciliacaoCR = ({
             <span className="flex gap-2 items-center">
               <List />{" "}
               <span className="text-lg font-bold ">
-                {recebimentos.length > 0 ? "Pagamentos e Transações" : "Transações"}
+                {recebimentos.length > 0 ? "Recebimentos e Transações" : "Transações"}
               </span>
             </span>
           </div>
@@ -133,10 +134,10 @@ const FormConciliacaoCR = ({
             {recebimentos.length > 0 && (
               <Card className="flex flex-col overflow-hidden">
                 <CardHeader className="p-2">
-                  <CardTitle className="text-md text-center font-medium">Pagamentos</CardTitle>
+                  <CardTitle className="text-md text-center font-medium">Recebimentos</CardTitle>
                 </CardHeader>
                 <CardContent className="p-1 overflow-hidden">
-                  <VirtualizedTitulos data={recebimentos} />
+                  <VirtualizedRecebimentos data={recebimentos} />
                 </CardContent>
                 <CardFooter className="flex justify-end p-2 align-botton">
                   <Badge variant={"secondary"}>

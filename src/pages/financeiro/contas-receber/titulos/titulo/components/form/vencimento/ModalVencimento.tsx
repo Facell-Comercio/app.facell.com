@@ -41,9 +41,8 @@ export function ModalVencimento({
 }) {
   const id_status = parseInt(formTitulo.watch("id_status") || "0");
   const emitido = id_status === 30;
-  const pagoParcial = id_status === 40;
   const canEdit = id_status < 30 && id_status !== 20;
-  const canEditRecebimento = pagoParcial || emitido;
+  const canEditRecebimento = id_status >= 30;
   const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
