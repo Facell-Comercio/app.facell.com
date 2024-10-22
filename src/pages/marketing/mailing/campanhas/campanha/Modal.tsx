@@ -7,6 +7,13 @@ import {
 } from "@/components/ui/dialog";
 
 import { DataVirtualTableHeaderFixed } from "@/components/custom/DataVirtualTableHeaderFixed";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,6 +41,9 @@ const ModalCampanha = () => {
     openModalDefinirVendedores,
 
     setFiltersLote,
+
+    filters,
+    filters_lote,
   ] = useStoreCampanha((state) => [
     state.id,
     state.modalOpen,
@@ -44,15 +54,20 @@ const ModalCampanha = () => {
     state.openModalDefinirVendedores,
 
     state.setFiltersLote,
+
+    state.filters,
+    state.filters_lote,
   ]);
   const [idSubcampanha, setIdSubcampanha] = useState<string | undefined>();
 
   function handleClickCancel() {
     closeModal();
   }
-  const { data, isFetched, isSuccess, isLoading } = useMailing().getOneCampanha(id);
-  const { data: data_subcampanha, isLoading: isLoadingSubcampanha } =
-    useMailing().getOneCampanha(idSubcampanha);
+  const { data, isFetched, isSuccess, isLoading } = useMailing().getOneCampanha({ id, filters });
+  const { data: data_subcampanha, isLoading: isLoadingSubcampanha } = useMailing().getOneCampanha({
+    id: idSubcampanha,
+    filters: filters_lote,
+  });
   const subcampanhas = data?.subcampanhas || [];
   const defaultIdSubcampanha = subcampanhas && subcampanhas[0] && subcampanhas[0].id;
 
@@ -60,6 +75,7 @@ const ModalCampanha = () => {
     setIdSubcampanha(defaultIdSubcampanha);
     setFiltersLote({ id_campanha: defaultIdSubcampanha || "" });
   }, [isFetched, isSuccess]);
+  const [itemOpen, setItemOpen] = useState<string>("clientes");
 
   if (!data) {
     return null;
@@ -76,25 +92,44 @@ const ModalCampanha = () => {
         </DialogHeader>
         <ScrollArea className="flex flex-col gap-3 max-h-[70vh]">
           <div className="grid gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950">
-            <span className="flex items-center w-full justify-between">
-              <Button variant={"secondary"}>
-                <SlidersHorizontal className="me-2" size={18} />
-                Filtro
-              </Button>
-              <Button onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}>
-                <Plus className="me-2" size={18} /> Nova Subcampanha
-              </Button>
-            </span>
-            <div className="grid bg-background rounded-lg ">
-              {/* Permitir minimizar a tabela */}
-              <DataVirtualTableHeaderFixed
-                // @ts-ignore
-                columns={columnsTableClientes}
-                data={clientes}
-                className={`h-[300px] border`}
-                isLoading={isLoading}
-              />
-            </div>
+            <Accordion
+              type="single"
+              collapsible
+              value={itemOpen}
+              onValueChange={(e) => setItemOpen(e)}
+              className="border rounded-md bg-background"
+            >
+              <AccordionItem value="clientes" className="border-0">
+                <AccordionTrigger className="p-3 border-0 rounded-md py-1 hover:no-underline">
+                  Clientes
+                </AccordionTrigger>
+                <AccordionContent className="flex gap-2 flex-col p-2">
+                  <span className="flex items-center w-full justify-between">
+                    <Button variant={"secondary"}>
+                      <SlidersHorizontal className="me-2" size={18} />
+                      Filtro
+                    </Button>
+                    <Button onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}>
+                      <Plus className="me-2" size={18} /> Nova Subcampanha
+                    </Button>
+                  </span>
+                  <div className="grid bg-background rounded-lg ">
+                    <DataVirtualTableHeaderFixed
+                      // @ts-ignore
+                      columns={columnsTableClientes}
+                      data={clientes}
+                      className={`h-[300px] border`}
+                      isLoading={isLoading}
+                    />
+                  </div>
+                  <span className="flex justify-end">
+                    <Badge variant={"secondary"}>
+                      Quantidade de Clientes: {data?.qtde_clientes}
+                    </Badge>
+                  </span>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
             <Tabs defaultValue={defaultIdSubcampanha} className="w-full">
               <TabsList
                 className={`w-full justify-start flex h-auto bg-background ${
@@ -108,7 +143,7 @@ const ModalCampanha = () => {
                       value={subcampanha?.id}
                       onClick={() => {
                         setIdSubcampanha(subcampanha.id);
-                        setFiltersLote({ id_campanha: id || "" });
+                        setFiltersLote({ id_campanha: subcampanha?.id || "" });
                       }}
                       key={`${subcampanha.id} - ${subcampanha.nome}`}
                     >
@@ -147,7 +182,6 @@ const ModalCampanha = () => {
                       </span>
                     </span>
                     <div className="grid bg-background rounded-lg ">
-                      {/* MOSTRAR A QUANTIDADE DE CLIENTES FILTRADOS */}
                       <DataVirtualTableHeaderFixed
                         // @ts-ignore
                         columns={columnsTableClientesSubcampanha}
@@ -156,6 +190,11 @@ const ModalCampanha = () => {
                         isLoading={isLoadingSubcampanha}
                       />
                     </div>
+                    <span className="flex justify-end">
+                      <Badge variant={"secondary"}>
+                        Quantidade de Clientes: {data_subcampanha?.qtde_clientes}
+                      </Badge>
+                    </span>
                   </div>
                 </TabsContent>
               ))}

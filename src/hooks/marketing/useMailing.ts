@@ -36,7 +36,7 @@ export const useMailing = () => {
       placeholderData: keepPreviousData,
     });
 
-  const getOneCampanha = (id?: string | null) =>
+  const getOneCampanha = ({ id, filters }: { id?: string | null; filters: any }) =>
     useQuery({
       enabled: !!id,
       retry: false,
@@ -44,7 +44,7 @@ export const useMailing = () => {
       queryKey: ["marketing", "mailing", "campanhas", "detalhe", id],
       queryFn: async () => {
         try {
-          const result = fetchApi.marketing.mailing.getOneCampanha(id);
+          const result = fetchApi.marketing.mailing.getOneCampanha({ id, filters });
           return result;
         } catch (error) {
           // @ts-expect-error "Vai funcionar"

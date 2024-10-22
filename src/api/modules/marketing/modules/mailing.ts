@@ -13,8 +13,8 @@ export namespace mailing {
     const response = await api.get("/marketing/mailing/aparelhos", { params });
     return response.data;
   };
-  export const getOneCampanha = async (id?: string | null) => {
-    const response = await api.get(`/marketing/mailing/campanhas/${id}`);
+  export const getOneCampanha = async ({ id, filters }: { id?: string | null; filters: any }) => {
+    const response = await api.get(`/marketing/mailing/campanhas/${id}`, { params: filters });
     return response.data;
   };
   export const getOneClienteCampanha = async (id?: string | null) => {
