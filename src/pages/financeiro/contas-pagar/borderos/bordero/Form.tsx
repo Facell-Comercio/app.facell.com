@@ -179,6 +179,10 @@ const FormBordero = ({
     ) || 0;
 
   const itensChecked: VencimentosProps[] = form.watch("itens").filter((v) => v.checked);
+  const totalChecked: number = itensChecked.reduce(
+    (acc, val) => acc + parseFloat(val.valor_total),
+    0
+  );
 
   const handlePadronizarTipoBaixa = () => {
     itensChecked.forEach((itemChecked: VencimentosProps) => {
@@ -504,6 +508,8 @@ const FormBordero = ({
                 className="flex-col"
                 qtde={wVencimentosPendentes.length}
                 valorTotal={wVencimentosPendentesValorTotal}
+                qtde_selecionados={itensChecked.length}
+                valor_selecionados={totalChecked}
               >
                 <div className="flex gap-2 flex-wrap justify-end">
                   {id_conta_bancaria && modalEditing && itensChecked.length > 0 && (
