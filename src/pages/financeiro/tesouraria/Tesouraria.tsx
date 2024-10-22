@@ -27,7 +27,8 @@ const TesourariaPage = () => {
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        <h2 className="text-xl font-bold">Controle de Tesouraria</h2>
         <Button onClick={() => openTransferModal()}>
           <ArrowLeftRight className="me-2" size={20} /> Transferência
         </Button>

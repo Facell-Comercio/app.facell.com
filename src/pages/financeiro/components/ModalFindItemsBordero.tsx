@@ -177,6 +177,9 @@ const ModalFindItemsBordero = ({
       enabled: open == true,
     });
 
+    console.log(data);
+    
+
   useEffect(() => {
     setFilters((prev) => ({
       ...prev,
@@ -306,9 +309,9 @@ const ModalFindItemsBordero = ({
           prevTitulos.filter(
             (titulo) =>
               titulo.id_vencimento !==
-                item.id_vencimento &&
+              item.id_vencimento &&
               titulo.id_forma_pagamento !==
-                item.id_forma_pagamento
+              item.id_forma_pagamento
           )
         );
 
@@ -428,7 +431,7 @@ const ModalFindItemsBordero = ({
       open={open}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="flex flex-col sm:max-w-[1000px]">
+      <DialogContent className="flex flex-col sm:max-w-[90dvw]">
         <DialogHeader>
           <DialogTitle>
             Vencimentos a pagar
@@ -597,10 +600,9 @@ const ModalFindItemsBordero = ({
                         item.id_titulo +
                         index
                       }
-                      className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2 ${
-                        isSelected &&
+                      className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2 ${isSelected &&
                         "bg-secondary/50 text-secondary-foreground/40"
-                      }`}
+                        }`}
                     >
                       <td className="text-xs text-nowrap p-1 text-center">
                         {item.id_vencimento}
@@ -611,7 +613,7 @@ const ModalFindItemsBordero = ({
                           : item.id_titulo}
                       </td>
                       <td className="text-xs text-nowrap p-1">
-                        {item.nome_fornecedor.slice(
+                        {item.nome_fornecedor?.slice(
                           0,
                           20
                         ) +
@@ -626,7 +628,7 @@ const ModalFindItemsBordero = ({
                           30
                         ) +
                           (item.descricao.length >
-                          30
+                            30
                             ? "..."
                             : "")}
                       </td>
@@ -649,10 +651,9 @@ const ModalFindItemsBordero = ({
                       <td className="text-center p-1">
                         <Button
                           size={"xs"}
-                          className={`p-1 ${
-                            isSelected &&
+                          className={`p-1 ${isSelected &&
                             "bg-secondary hover:bg-secondary hover:opacity-90"
-                          }`}
+                            }`}
                           variant={"outline"}
                           onClick={() =>
                             pushSelection(item)

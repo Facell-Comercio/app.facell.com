@@ -41,7 +41,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "link",
     icon: <BsFillBarChartFill />,
     uri: "/dashboard",
-    visible: ()=>false,
+    visible: ()=>true,
   },
   {
     name: "departamentos",
