@@ -26,7 +26,7 @@ const RowVirtualizerFixedProgramado: React.FC<RowVirtualizerFixedProgramadoProps
   modalEditing,
 }) => {
   const { mutate: reversePending } = useBordero().reversePending();
-  const authorized = checkUserDepartments("FINANCEIRO", true) || checkUserPermission("MASTER");
+  const authorized = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
 
   const parentElement = React.useRef(null);
 
@@ -153,6 +153,7 @@ const RowVirtualizerFixedProgramado: React.FC<RowVirtualizerFixedProgramadoProps
               />
               <Input
                 className="w-24 h-8 text-xs p-2 text-center"
+                // @ts-ignore
                 value={data[indexData].previsao && normalizeDate(data[indexData].previsao || "")}
                 readOnly
               />

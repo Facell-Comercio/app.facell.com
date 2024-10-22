@@ -14,7 +14,7 @@ import { BtnCriarRecorrencia } from "./components/BtnCriarRecorrencia";
 import FormTituloPagar from "./Form";
 import { TituloSchemaProps, useFormTituloData } from "./form-data";
 import { calcularDataPrevisaoPagamento } from "./helpers/helper";
-import { Historico, ItemRateioTitulo, initialPropsTitulo, useStoreTitulo } from "./store";
+import { Historico, ItemRateioTitulo, initialPropsTitulo, useStoreTituloPagar } from "./store";
 
 export type DataSchemaProps = {
   titulo: TituloSchemaProps;
@@ -27,11 +27,11 @@ const ModalTituloPagar = ({
 }: {
   handleInsertTitulo?: (id_titulo: number) => void;
 }) => {
-  const modalOpen = useStoreTitulo().modalOpen;
-  const closeModal = useStoreTitulo().closeModal;
-  const id = useStoreTitulo().id;
-  const recorrencia = useStoreTitulo().recorrencia;
-  const copyData = useStoreTitulo().copyData;
+  const modalOpen = useStoreTituloPagar().modalOpen;
+  const closeModal = useStoreTituloPagar().closeModal;
+  const id = useStoreTituloPagar().id;
+  const recorrencia = useStoreTituloPagar().recorrencia;
+  const copyData = useStoreTituloPagar().copyData;
   // const formRef = useRef(null);
   useEffect(() => {}, [id]);
 

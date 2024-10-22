@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDate } from 'date-fns';
-import { useStoreTitulo } from '../../titulos/titulo/store';
+import { useStoreTituloPagar } from '../../titulos/titulo/store';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -22,7 +22,7 @@ export type RowRecorrencia = {
   descricao: string;
 };
 
-const openModal = useStoreTitulo.getState().openModal;
+const openModal = useStoreTituloPagar.getState().openModal;
 
 export const columnsTableSemNota: ColumnDef<RowTitulo>[] = [
   {

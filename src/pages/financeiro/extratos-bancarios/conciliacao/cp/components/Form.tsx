@@ -129,6 +129,7 @@ const FormConciliacaoCP = ({
                   Data da Conciliação
                 </label>
                 <Input
+                  // @ts-ignore
                   value={normalizeDate(data.data_conciliacao || '')}
                   className="flex-1"
                   readOnly
@@ -169,9 +170,8 @@ const FormConciliacaoCP = ({
             )}
 
             <Card
-              className={`flex flex-col ${
-                vencimentos.length === 0 && 'col-span-2'
-              }`}
+              className={`flex flex-col ${vencimentos.length === 0 && 'col-span-2'
+                }`}
             >
               <CardHeader className="p-2">
                 <CardTitle className="text-md text-center font-medium">

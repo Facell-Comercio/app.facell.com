@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { TituloSchemaProps } from "../form-data";
 import { Copy, CopyCheck } from "lucide-react";
-import { useStoreTitulo } from "../store";
+import { useStoreTituloPagar } from "../store";
 
 export const BtnCopiarTitulo = ({ copyData }: { copyData: Partial<TituloSchemaProps> }) => {
     
-    const openModal = useStoreTitulo((state)=>state.openModal)
-    const [tituloCopiado, setTituloCopiado] = useStoreTitulo((state)=>[state.tituloCopiado, state.setTituloCopiado])
+    const openModal = useStoreTituloPagar((state)=>state.openModal)
+    const [tituloCopiado, setTituloCopiado] = useStoreTituloPagar((state)=>[state.tituloCopiado, state.setTituloCopiado])
     
     const handleClickCopiar = () => {
         openModal({

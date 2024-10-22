@@ -20,7 +20,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { useEffect, useState } from "react";
 import { useStoreTablePagar } from "../table/store-table";
-import { useStoreTitulo } from "../titulo/store";
+import { useStoreTituloPagar } from "../titulo/store";
 
 type AlteracaoLoteProps = {
   type?: string;
@@ -40,8 +40,8 @@ const ModalAlteracoesLote = () => {
     // data_prevista: undefined,
     status: "",
   });
-  const modalOpen = useStoreTitulo().modalAlteracaoLoteOpen;
-  const closeModal = useStoreTitulo().closeAlteracaoLoteModal;
+  const modalOpen = useStoreTituloPagar().modalAlteracaoLoteOpen;
+  const closeModal = useStoreTituloPagar().closeAlteracaoLoteModal;
   const idSelection = useStoreTablePagar().idSelection;
 
   const { mutate: changeTitulos } = useTituloPagar().changeTitulos();

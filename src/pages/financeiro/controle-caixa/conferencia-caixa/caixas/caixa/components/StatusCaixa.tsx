@@ -35,7 +35,7 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
         valor: checked,
       });
       queryClient.setQueryData(
-        ["financeiro", "conferencia_de_caixa", "caixas", "detalhe", parseInt(`${data?.id}`)],
+        ["financeiro", "controle_de_caixa", "conferencia_de_caixa", "caixas", "detalhe", parseInt(`${data?.id}`)],
         { ...data, manual: checked ? 1 : 0 }
       );
     } catch (error) {
@@ -115,7 +115,7 @@ const StatusCaixa = ({ data }: { data: ConferenciasCaixaSchema }) => {
         <Button
           variant={"destructive"}
           className="flex gap-1.5 w-full"
-          onClick={() => openModalAjustes(data.id || "")}
+          onClick={() => openModalAjustes({ id: data.id || "" })}
           disabled={isPending}
           title={ajustes > 0 ? `Há ${ajustes} ${ajustes > 1 ? "ajustes" : "ajuste"}` : ""}
         >

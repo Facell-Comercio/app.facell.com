@@ -27,6 +27,7 @@ interface useStoreCaixa {
 
   modalAjustesOpen: boolean;
   modalAjusteOpen: boolean;
+  ajusteAprovado: number | undefined;
 
   modalOcorrenciaEditing: boolean;
   modalDepositoEditing: boolean;
@@ -66,7 +67,7 @@ interface useStoreCaixa {
   closeModalOcorrencia: () => void;
   editModalOcorrencia: (bool: boolean) => void;
 
-  openModalAjustes: (id: string) => void;
+  openModalAjustes: ({ id, aprovado }: { id: string; aprovado?: number }) => void;
   closeModalAjustes: () => void;
 
   openModalAjuste: (id: string) => void;
@@ -102,6 +103,7 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
 
   modalAjustesOpen: false,
   modalAjusteOpen: false,
+  ajusteAprovado: undefined,
 
   modalOcorrenciaEditing: false,
   modalDepositoEditing: false,
@@ -180,16 +182,18 @@ export const useStoreCaixa = create<useStoreCaixa>((set) => ({
     }),
   editModalOcorrencia: (bool) => set({ modalOcorrenciaEditing: bool }),
 
-  openModalAjustes: (id: string) =>
+  openModalAjustes: ({ id, aprovado }) =>
     set({
       modalAjustesOpen: true,
       id_caixa: id,
+      ajusteAprovado: aprovado,
     }),
 
   closeModalAjustes: () =>
     set({
       modalAjustesOpen: false,
       id_caixa: null,
+      ajusteAprovado: undefined,
     }),
 
   openModalAjuste: (id: string) =>

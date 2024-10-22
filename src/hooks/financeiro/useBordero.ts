@@ -21,6 +21,7 @@ type DownloadRemessaProps = {
 type reversePaymentProps = {
   id?: string | null;
   tipo?: string;
+  forma_pagamento?: string;
 };
 
 type ImportRetornoRemessaProps = {

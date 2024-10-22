@@ -20,3 +20,16 @@ export const urlB64ToUint8Array = (base64String: string) => {
   }
   return outputArray;
 };
+
+export function objectToStringLine(object: any) {
+  return Object.values(object).reduce((acc, value) => {
+    if (value instanceof Date) {
+      const dia = String(value.getDate()).padStart(2, "0");
+      const mes = String(value.getMonth() + 1).padStart(2, "0");
+      const ano = value.getFullYear();
+
+      value = `${dia}${mes}${ano}`;
+    }
+    return acc + (value !== null && value !== undefined ? String(value) : "");
+  }, "");
+}

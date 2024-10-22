@@ -55,11 +55,7 @@ export const SelectFilial = ({
       control={control}
       disabled={disabled}
       className={className}
-      placeholder={
-        placeholder
-          ? placeholder
-          : "Selecione a filial"
-      }
+      placeholder={placeholder ? placeholder : "Selecione a filial"}
       value={value}
       onChange={onChange}
       options={
@@ -94,12 +90,14 @@ type TSelectMultiFilial = {
   onChange: (value: string[]) => any;
   isLojaTim?: boolean;
   nowrap?: boolean;
+  id_matriz?: string;
 };
 
 export const SelectMultiFilial = (props: TSelectMultiFilial) => {
   const { data } = useFilial().getAll({
     filters: {
       isLojaTim: props?.isLojaTim ? 1 : 0,
+      id_matriz: props?.id_matriz,
     },
   });
   const filiais = data?.data?.rows || [];

@@ -25,6 +25,7 @@ interface IModalContaBancaria {
   id_matriz?: string | null;
   id_grupo_economico?: string;
   onlyDatasys?: boolean;
+  isCaixa?: boolean | "all";
 }
 
 export type ItemContaBancariaProps = {
@@ -34,6 +35,7 @@ export type ItemContaBancariaProps = {
   banco: string;
   id_matriz: string;
   id_grupo_economico?: string;
+  saldo?: string;
 };
 
 type PaginationProps = {
@@ -46,7 +48,8 @@ interface Filters {
   id_matriz?: string;
   descricao?: string;
   banco?: string;
-  onlyDatasys?: boolean;
+  onlyDatasys?: number;
+  isCaixa?: number | "all";
 }
 
 const ModalContasBancarias = ({
@@ -57,6 +60,7 @@ const ModalContasBancarias = ({
   id_matriz,
   id_grupo_economico,
   onlyDatasys,
+  isCaixa = "all",
 }: IModalContaBancaria) => {
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -68,7 +72,8 @@ const ModalContasBancarias = ({
     id_matriz: id_matriz || "all",
     descricao: "",
     banco: "",
-    onlyDatasys: onlyDatasys,
+    onlyDatasys: onlyDatasys ? 1 : 0,
+    isCaixa: isCaixa === "all" ? "all" : isCaixa ? 1 : 0,
   };
 
   const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
@@ -76,7 +81,6 @@ const ModalContasBancarias = ({
 
   const { data, isLoading, isError, refetch } = useQuery({
     staleTime: 0,
-    refetchOnMount: true,
     queryKey: [
       "financeiro",
       "conta_bancaria",
@@ -161,7 +165,7 @@ const ModalContasBancarias = ({
                     {!id_matriz && (
                       <SelectMatriz
                         showAll
-                        value={filters.id_matriz}
+                        value={filters?.id_matriz}
                         onChange={(id_matriz) => {
                           setFilters({
                             id_matriz: id_matriz,
@@ -172,13 +176,13 @@ const ModalContasBancarias = ({
                     <Input
                       placeholder="Descrição"
                       className="w-[20ch]"
-                      value={filters.descricao}
+                      value={filters?.descricao || ""}
                       onChange={(e) => setFilters({ descricao: e.target.value })}
                     />
                     <Input
                       placeholder="Banco"
                       className="max-w-[200px]"
-                      value={filters.banco}
+                      value={filters?.banco || ""}
                       onChange={(e) => setFilters({ banco: e.target.value })}
                     />
                   </div>

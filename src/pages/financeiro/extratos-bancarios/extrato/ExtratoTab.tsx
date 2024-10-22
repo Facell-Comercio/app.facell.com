@@ -23,7 +23,6 @@ const ExtratoTab = () => {
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
     enabled: !!mes && !!ano && !!contaBancaria,
     staleTime: 1000 * 60 * 5,
-    refetchOnMount: false,
     queryKey: [
       "financeiro",
       "extrato_bancario",
