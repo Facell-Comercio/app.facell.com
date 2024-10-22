@@ -13,6 +13,7 @@ import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useExtratosStore } from "../../../context";
 
 type FiltersProps = {
   data_transacao?: string;
@@ -52,13 +53,14 @@ const ModalExtratosDebit = ({
     pageSize: 15,
     pageIndex: 0,
   });
+  const id_matriz = useExtratosStore((state) => state.contaBancaria?.id_matriz);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["financeiro", "conciliacao", "transacao", "lista", filters],
     queryFn: async () =>
       await api.get("financeiro/conciliacao-cr/extratos-debit", {
         params: {
-          filters: { termo: search, ...filters },
+          filters: { termo: search, ...filters, id_matriz },
           pagination,
         },
       }),

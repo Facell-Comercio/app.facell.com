@@ -87,7 +87,6 @@ const ConciliacaoCR = () => {
     filters: { id_conta_bancaria: contaBancaria?.id, ano, mes, range_data: filters.range_data },
   });
   const dataChartConciliacaoRecebimentos = data?.dataChartConciliacaoRecebimentos;
-  console.log(data);
 
   // * Dados das conciliações realizadas:
   const {
