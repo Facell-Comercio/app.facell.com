@@ -20,15 +20,15 @@ type FiltersProps = {
   valor?: number;
 };
 
-interface IModalExtratosCredit {
+interface IModalExtratosDebit {
   open: boolean;
-  handleSelection: (item: ItemExtratosCredit) => void;
+  handleSelection: (item: ItemExtratosDebit) => void;
   onOpenChange: () => void;
   id?: string | null;
   filters?: FiltersProps;
 }
 
-export type ItemExtratosCredit = {
+export type ItemExtratosDebit = {
   id: string;
   documento: string;
   descricao: string;
@@ -42,12 +42,12 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalExtratosCredit = ({
+const ModalExtratosDebit = ({
   open,
   handleSelection,
   onOpenChange,
   filters,
-}: IModalExtratosCredit) => {
+}: IModalExtratosDebit) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -58,7 +58,7 @@ const ModalExtratosCredit = ({
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["financeiro", "conciliacao", "transacao", "lista", filters],
     queryFn: async () =>
-      await api.get("financeiro/conciliacao-cp/extratos-credit", {
+      await api.get("financeiro/conciliacao-cr/extratos-debit", {
         params: {
           filters: { termo: search, ...filters, id_matriz },
           pagination,
@@ -76,7 +76,7 @@ const ModalExtratosCredit = ({
     refetch();
   }
 
-  function pushSelection(item: ItemExtratosCredit) {
+  function pushSelection(item: ItemExtratosDebit) {
     handleSelection(item);
     onOpenChange();
   }
@@ -114,7 +114,7 @@ const ModalExtratosCredit = ({
               </tr>
             </thead>
             <tbody>
-              {data?.data?.rows.map((item: ItemExtratosCredit, index: number) => (
+              {data?.data?.rows.map((item: ItemExtratosDebit, index: number) => (
                 <tr
                   key={"transferenciaRow:" + item.id + index}
                   className="bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2"
@@ -149,4 +149,4 @@ const ModalExtratosCredit = ({
   );
 };
 
-export default ModalExtratosCredit;
+export default ModalExtratosDebit;

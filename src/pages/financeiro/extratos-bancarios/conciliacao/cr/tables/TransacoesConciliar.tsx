@@ -15,71 +15,64 @@ import { sliceString } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { formatDate } from "date-fns";
 import { useMemo, useRef, useState } from "react";
-import { useStoreTableConciliacaoCP } from "./store-tables";
+import { useStoreTableConciliacaoCR } from "./store-tables";
 
-export type VencimentosConciliarProps = {
+export type TransacoesConciliarProps = {
   id_conciliacao?: string;
-  id_titulo: string;
-  id_vencimento: string;
-  num_doc: string;
+  id?: string;
+  id_transacao: string;
+  doc: string;
   valor: string;
-  nome_fornecedor: string;
+  valor_recebido?: string;
   descricao: string;
-  filial: string;
-  data_pagamento: string;
-  valor_pago?: string;
-  tipo_baixa?: string;
-  tipo: string;
+  data_transacao: string;
+  conta_bancaria?: string;
 };
 
-interface RowVirtualizerVencimentosConciliarProps {
-  data: VencimentosConciliarProps[];
+interface RowVirtualizerTransacoesConciliarProps {
+  data: TransacoesConciliarProps[];
   rowSelection: RowSelectionState;
-  vencimentosSelection: String[];
   handleRowSelection: (data: any) => void;
+  transacoesSelection: String[];
 }
 
-const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> = ({
+const ReactTableVirtualized: React.FC<RowVirtualizerTransacoesConciliarProps> = ({
   data,
   rowSelection,
   handleRowSelection,
-  vencimentosSelection,
+  transacoesSelection,
 }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const handlevencimentosSelection =
-    useStoreTableConciliacaoCP.getState().handlevencimentosSelection;
+  const handleTransacoesSelection = useStoreTableConciliacaoCR.getState().handleTransacoesSelection;
 
-  const columns = useMemo<ColumnDef<VencimentosConciliarProps>[]>(
+  const columns = useMemo<ColumnDef<TransacoesConciliarProps>[]>(
     () => [
       {
         id: "select",
-        header: ({ table }) => {
-          return (
-            <div className="flex items-center justify-center">
-              <Checkbox
-                checked={
-                  data.length == vencimentosSelection.length ||
-                  (vencimentosSelection.length > 0 && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-              />
-            </div>
-          );
-        },
+        header: ({ table }) => (
+          <div className="flex items-center justify-center">
+            <Checkbox
+              checked={
+                data.length == transacoesSelection.length ||
+                (transacoesSelection.length > 0 && "indeterminate")
+              }
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            />
+          </div>
+        ),
         cell: ({ row }) => {
           return (
             <div className="flex items-center justify-center">
               <Checkbox
                 {...{
-                  checked: vencimentosSelection.includes(row.original.id_vencimento),
+                  checked: transacoesSelection.includes(row.original.id_transacao),
                   disabled: !row.getCanSelect(),
                   indeterminate: row.getIsSomeSelected().toString(),
                 }}
                 onCheckedChange={() => {
-                  handlevencimentosSelection({
+                  handleTransacoesSelection({
                     ...row.original,
                   });
-
                   row.getToggleSelectedHandler();
                 }}
               />
@@ -89,26 +82,17 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
         size: 30,
       },
       {
-        accessorKey: "id_vencimento",
-        header: "ID VENCIMENTO",
+        accessorKey: "doc",
+        header: "DOC",
         size: 100,
         cell: (info) => {
           let value = info.getValue<number>();
-          return <div className="w-full text-center uppercase">{value}</div>;
+          return <div className="w-full text-center truncate">{value}</div>;
         },
       },
       {
-        accessorKey: "id_titulo",
-        header: "ID TÍTULO",
-        size: 80,
-        cell: (info) => {
-          let value = info.getValue<number>();
-          return <div className="w-full text-center">{value}</div>;
-        },
-      },
-      {
-        accessorKey: "data_pagamento",
-        header: "PAGAMENTO",
+        accessorKey: "data_transacao",
+        header: "TRANSAÇÃO",
         cell: (info) => {
           let value = formatDate(new Date(info.getValue<Date | string>()), "dd/MM/yyyy");
           return <div className="w-full text-center">{value}</div>;
@@ -116,10 +100,9 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
         size: 80,
       },
       {
-        accessorKey: "valor_pago",
+        accessorKey: "valor",
         header: "VALOR",
-        size: 80,
-
+        size: 100,
         cell: (info) => {
           let valor = parseFloat(info.getValue<string>()).toLocaleString("pt-BR", {
             style: "decimal",
@@ -146,21 +129,16 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
         },
       },
       {
-        accessorKey: "nome_fornecedor",
-        header: "FORNECEDOR",
-        size: 280,
+        accessorKey: "id_transacao",
+        header: "ID",
+        size: 100,
         cell: (info) => {
-          let valor = sliceString(info.getValue<string>(), 40);
-          return <div>{valor}</div>;
+          let value = info.getValue<number>();
+          return <div className="w-full text-center">{value}</div>;
         },
       },
-      {
-        accessorKey: "filial",
-        header: "FILIAL",
-        size: 220,
-      },
     ],
-    [vencimentosSelection]
+    [transacoesSelection]
   );
 
   const table = useReactTable({
@@ -178,23 +156,20 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
     onRowSelectionChange: (callback) => {
       // @ts-expect-error ignorado
       const result = callback(rowSelection);
-      if (handleRowSelection) {
-        const titulos = Object.keys(result).map((c: string) => ({
-          id_titulo: data[+c].id_titulo,
-          id_vencimento: data[+c].id_vencimento,
-          descricao: data[+c].descricao,
-          nome_fornecedor: data[+c].nome_fornecedor,
-          valor: data[+c].valor,
-          filial: data[+c].filial,
-          tipo_baixa: data[+c].tipo_baixa,
-          valor_pago: data[+c].valor_pago,
-          data_pagamento: data[+c].data_pagamento,
-          tipo: data[+c].tipo,
-        }));
 
+      if (handleRowSelection) {
+        const transacoes = Object.keys(result).map((c: string) => ({
+          id: data[+c].id,
+          id_transacao: data[+c].id_transacao,
+          descricao: data[+c].descricao,
+          doc: data[+c].doc,
+          valor: data[+c].valor,
+          valor_recebido: data[+c].valor,
+          data_transacao: data[+c].data_transacao,
+        }));
         handleRowSelection({
           rowSelection: result,
-          vencimentosSelection: titulos,
+          transacoesSelection: transacoes,
         });
       }
     },
@@ -221,18 +196,18 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
         <div ref={parentRef} className="h-[500px] overflow-auto scroll-thin relative bg-background">
           {data.length > 0 ? (
             <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-              <table className="grid text-nowrap text-xs ">
+              <table className="grid text-nowrap text-xs hover:">
                 <thead className="grid sticky top-0 z-10 border-y bg-background">
                   {table.getHeaderGroups().map((headerGroup, index) => (
                     <tr
                       className="flex w-full"
-                      key={"tituloConciliar thead" + headerGroup.id + index}
+                      key={"transacaoConciliar thead" + headerGroup.id + index}
                     >
                       {headerGroup.headers.map((header, index) => {
                         return (
                           <th
                             className="py-2"
-                            key={"tituloConciliar th" + header.id + index}
+                            key={"transacaoConciliar th" + header.id + index}
                             colSpan={header.colSpan}
                             style={{ width: header.getSize() }}
                           >
@@ -266,11 +241,10 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
                   }}
                 >
                   {virtualizer.getVirtualItems().map((virtualRow, index) => {
-                    const row = rows[virtualRow.index] as Row<VencimentosConciliarProps>;
+                    const row = rows[virtualRow.index] as Row<TransacoesConciliarProps>;
                     return (
                       <tr
-                        key={"tituloConciliar tr" + virtualRow.index + index}
-                        data-index={index}
+                        key={"transacaoConciliar tr" + virtualRow.index + index}
                         style={{
                           display: "flex",
                           position: "absolute",
@@ -282,8 +256,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
                         {row.getVisibleCells().map((cell, index) => {
                           return (
                             <td
-                              className="flex items-center p-2"
-                              key={"tituloConciliar td" + cell.id + index}
+                              className="flex items-center p-2 "
+                              key={"transacaoConciliar td" + cell.id + index}
                               style={{
                                 display: "flex",
                                 width: cell.column.getSize(),
@@ -300,8 +274,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
               </table>
             </div>
           ) : (
-            <div className="h-full w-full flex items-center justify-center">
-              Nenhum vencimento encontrado
+            <div className="h-full w-full flex items-center justify-center bg-background">
+              Nenhuma transação encontrada
             </div>
           )}
         </div>
@@ -310,19 +284,19 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
   );
 };
 
-const TitulosConciliar = ({
+const TransacoesConciliar = ({
   data,
   isLoading,
   isError,
   rowSelection,
-  vencimentosSelection,
+  transacoesSelection,
   handleRowSelection,
 }: {
-  data: VencimentosConciliarProps[];
+  data: TransacoesConciliarProps[];
   isLoading: boolean;
   isError: boolean;
   rowSelection: RowSelectionState;
-  vencimentosSelection: String[];
+  transacoesSelection: String[];
   handleRowSelection: (data: any) => void;
 }) => {
   // @ts-ignore
@@ -331,8 +305,6 @@ const TitulosConciliar = ({
   if (isLoading) {
     return (
       <div className="flex flex-col gap-2">
-        <Skeleton className="w-100 h-8" />
-        <Skeleton className="h-16" />
         <div className="flex flex-col w-full gap-2">
           <Skeleton className="h-6 w-full" />
           <Skeleton className="h-6 w-full" />
@@ -360,10 +332,10 @@ const TitulosConciliar = ({
         data={rows}
         rowSelection={rowSelection}
         handleRowSelection={handleRowSelection}
-        vencimentosSelection={vencimentosSelection}
+        transacoesSelection={transacoesSelection}
       />
     </div>
   );
 };
 
-export default TitulosConciliar;
+export default TransacoesConciliar;

@@ -15,41 +15,38 @@ import { sliceString } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { formatDate } from "date-fns";
 import { useMemo, useRef, useState } from "react";
-import { useStoreTableConciliacaoCP } from "./store-tables";
+import { useStoreTableConciliacaoCR } from "./store-tables";
 
-export type VencimentosConciliarProps = {
+export type RecebimentosConciliarProps = {
   id_conciliacao?: string;
   id_titulo: string;
-  id_vencimento: string;
+  id_recebimento: string;
   num_doc: string;
   valor: string;
-  nome_fornecedor: string;
+  fornecedor: string;
   descricao: string;
   filial: string;
-  data_pagamento: string;
-  valor_pago?: string;
-  tipo_baixa?: string;
-  tipo: string;
+  data_recebimento: string;
 };
 
-interface RowVirtualizerVencimentosConciliarProps {
-  data: VencimentosConciliarProps[];
+interface RowVirtualizerRecebimentosConciliarProps {
+  data: RecebimentosConciliarProps[];
   rowSelection: RowSelectionState;
-  vencimentosSelection: String[];
+  recebimentosSelection: String[];
   handleRowSelection: (data: any) => void;
 }
 
-const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> = ({
+const ReactTableVirtualized: React.FC<RowVirtualizerRecebimentosConciliarProps> = ({
   data,
   rowSelection,
   handleRowSelection,
-  vencimentosSelection,
+  recebimentosSelection,
 }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const handlevencimentosSelection =
-    useStoreTableConciliacaoCP.getState().handlevencimentosSelection;
+  const handlerecebimentosSelection =
+    useStoreTableConciliacaoCR.getState().handlerecebimentosSelection;
 
-  const columns = useMemo<ColumnDef<VencimentosConciliarProps>[]>(
+  const columns = useMemo<ColumnDef<RecebimentosConciliarProps>[]>(
     () => [
       {
         id: "select",
@@ -58,8 +55,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
             <div className="flex items-center justify-center">
               <Checkbox
                 checked={
-                  data.length == vencimentosSelection.length ||
-                  (vencimentosSelection.length > 0 && "indeterminate")
+                  data.length == recebimentosSelection.length ||
+                  (recebimentosSelection.length > 0 && "indeterminate")
                 }
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
               />
@@ -71,13 +68,14 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
             <div className="flex items-center justify-center">
               <Checkbox
                 {...{
-                  checked: vencimentosSelection.includes(row.original.id_vencimento),
+                  checked: recebimentosSelection.includes(row.original.id_recebimento),
                   disabled: !row.getCanSelect(),
                   indeterminate: row.getIsSomeSelected().toString(),
                 }}
                 onCheckedChange={() => {
-                  handlevencimentosSelection({
+                  handlerecebimentosSelection({
                     ...row.original,
+                    valor: row.original.valor,
                   });
 
                   row.getToggleSelectedHandler();
@@ -89,8 +87,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
         size: 30,
       },
       {
-        accessorKey: "id_vencimento",
-        header: "ID VENCIMENTO",
+        accessorKey: "id_recebimento",
+        header: "ID RECEBIMENTO",
         size: 100,
         cell: (info) => {
           let value = info.getValue<number>();
@@ -107,8 +105,8 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
         },
       },
       {
-        accessorKey: "data_pagamento",
-        header: "PAGAMENTO",
+        accessorKey: "data_recebimento",
+        header: "RECEBIMENTO",
         cell: (info) => {
           let value = formatDate(new Date(info.getValue<Date | string>()), "dd/MM/yyyy");
           return <div className="w-full text-center">{value}</div>;
@@ -116,7 +114,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
         size: 80,
       },
       {
-        accessorKey: "valor_pago",
+        accessorKey: "valor",
         header: "VALOR",
         size: 80,
 
@@ -146,7 +144,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
         },
       },
       {
-        accessorKey: "nome_fornecedor",
+        accessorKey: "fornecedor",
         header: "FORNECEDOR",
         size: 280,
         cell: (info) => {
@@ -160,7 +158,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
         size: 220,
       },
     ],
-    [vencimentosSelection]
+    [recebimentosSelection]
   );
 
   const table = useReactTable({
@@ -179,22 +177,19 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
       // @ts-expect-error ignorado
       const result = callback(rowSelection);
       if (handleRowSelection) {
-        const titulos = Object.keys(result).map((c: string) => ({
+        const recebimentos = Object.keys(result).map((c: string) => ({
           id_titulo: data[+c].id_titulo,
-          id_vencimento: data[+c].id_vencimento,
+          id_recebimento: data[+c].id_recebimento,
           descricao: data[+c].descricao,
-          nome_fornecedor: data[+c].nome_fornecedor,
-          valor: data[+c].valor,
+          fornecedor: data[+c].fornecedor,
           filial: data[+c].filial,
-          tipo_baixa: data[+c].tipo_baixa,
-          valor_pago: data[+c].valor_pago,
-          data_pagamento: data[+c].data_pagamento,
-          tipo: data[+c].tipo,
+          valor: data[+c].valor,
+          data_recebimento: data[+c].data_recebimento,
         }));
 
         handleRowSelection({
           rowSelection: result,
-          vencimentosSelection: titulos,
+          recebimentosSelection: recebimentos,
         });
       }
     },
@@ -266,7 +261,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
                   }}
                 >
                   {virtualizer.getVirtualItems().map((virtualRow, index) => {
-                    const row = rows[virtualRow.index] as Row<VencimentosConciliarProps>;
+                    const row = rows[virtualRow.index] as Row<RecebimentosConciliarProps>;
                     return (
                       <tr
                         key={"tituloConciliar tr" + virtualRow.index + index}
@@ -301,7 +296,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
             </div>
           ) : (
             <div className="h-full w-full flex items-center justify-center">
-              Nenhum vencimento encontrado
+              Nenhum recebimento encontrado
             </div>
           )}
         </div>
@@ -310,19 +305,19 @@ const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> =
   );
 };
 
-const TitulosConciliar = ({
+const RecebimentosConciliar = ({
   data,
   isLoading,
   isError,
   rowSelection,
-  vencimentosSelection,
+  recebimentosSelection,
   handleRowSelection,
 }: {
-  data: VencimentosConciliarProps[];
+  data: RecebimentosConciliarProps[];
   isLoading: boolean;
   isError: boolean;
   rowSelection: RowSelectionState;
-  vencimentosSelection: String[];
+  recebimentosSelection: String[];
   handleRowSelection: (data: any) => void;
 }) => {
   // @ts-ignore
@@ -360,10 +355,10 @@ const TitulosConciliar = ({
         data={rows}
         rowSelection={rowSelection}
         handleRowSelection={handleRowSelection}
-        vencimentosSelection={vencimentosSelection}
+        recebimentosSelection={recebimentosSelection}
       />
     </div>
   );
 };
 
-export default TitulosConciliar;
+export default RecebimentosConciliar;

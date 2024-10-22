@@ -13,22 +13,24 @@ import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useExtratosStore } from "../../../context";
 
 type FiltersProps = {
+  id_conta_bancaria?: string;
+  descricao?: string;
   data_transacao?: string;
   valor?: number;
+  id_extrato?: string;
 };
 
-interface IModalExtratosCredit {
+interface IModalExtratosDuplicated {
   open: boolean;
-  handleSelection: (item: ItemExtratosCredit) => void;
+  handleSelection: (item: ItemExtratosDuplicated) => void;
   onOpenChange: () => void;
   id?: string | null;
   filters?: FiltersProps;
 }
 
-export type ItemExtratosCredit = {
+export type ItemExtratosDuplicated = {
   id: string;
   documento: string;
   descricao: string;
@@ -42,25 +44,24 @@ type PaginationProps = {
   pageIndex: number;
 };
 
-const ModalExtratosCredit = ({
+const ModalExtratosDuplicated = ({
   open,
   handleSelection,
   onOpenChange,
   filters,
-}: IModalExtratosCredit) => {
+}: IModalExtratosDuplicated) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
     pageIndex: 0,
   });
-  const id_matriz = useExtratosStore((state) => state.contaBancaria?.id_matriz);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["financeiro", "conciliacao", "transacao", "lista", filters],
     queryFn: async () =>
-      await api.get("financeiro/conciliacao-cp/extratos-credit", {
+      await api.get("financeiro/conciliacao-cr/extratos-duplicated", {
         params: {
-          filters: { termo: search, ...filters, id_matriz },
+          filters: { termo: search, ...filters },
           pagination,
         },
       }),
@@ -76,7 +77,7 @@ const ModalExtratosCredit = ({
     refetch();
   }
 
-  function pushSelection(item: ItemExtratosCredit) {
+  function pushSelection(item: ItemExtratosDuplicated) {
     handleSelection(item);
     onOpenChange();
   }
@@ -87,9 +88,9 @@ const ModalExtratosCredit = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[1000px]">
+      <DialogContent className="sm:max-w-[1000px] sm:h-fit">
         <DialogHeader>
-          <DialogTitle>Transferências</DialogTitle>
+          <DialogTitle>Extratos</DialogTitle>
           <DialogDescription>Selecione um ao clicar no botão à direita.</DialogDescription>
 
           <SearchComponent handleSearch={handleSearch} />
@@ -114,7 +115,7 @@ const ModalExtratosCredit = ({
               </tr>
             </thead>
             <tbody>
-              {data?.data?.rows.map((item: ItemExtratosCredit, index: number) => (
+              {data?.data?.map((item: ItemExtratosDuplicated, index: number) => (
                 <tr
                   key={"transferenciaRow:" + item.id + index}
                   className="bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2"
@@ -130,8 +131,8 @@ const ModalExtratosCredit = ({
                   </td>
                   <td className="text-xs text-nowrap p-1 text-center">
                     <AlertPopUp
-                      title={"Deseja realmente realizar a conciliação?"}
-                      description="As transferências selecionadas serão adicionadas a uma conciliação"
+                      title={"Deseja tratar como duplicidade?"}
+                      description="O extrato selecionado será tratado como duplicado e não aparecerá mais na seção de extratos"
                       action={() => pushSelection(item)}
                     >
                       <Button size={"xs"} className="p-1" variant={"outline"} onClick={() => {}}>
@@ -149,4 +150,4 @@ const ModalExtratosCredit = ({
   );
 };
 
-export default ModalExtratosCredit;
+export default ModalExtratosDuplicated;

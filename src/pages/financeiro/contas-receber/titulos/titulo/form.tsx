@@ -349,7 +349,7 @@ const FormTituloReceber = ({
                 <div className="flex flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex gap-2 mb-3">
                     <Contact />
-                    <span className="text-lg font-bold">Fornecedor</span>
+                    <span className="text-lg font-bold">Cliente</span>
                     <div>
                       {errors.id_fornecedor?.message && (
                         <Badge variant={"destructive"}>{errors.id_fornecedor?.message || ""}</Badge>
@@ -364,7 +364,7 @@ const FormTituloReceber = ({
                       readOnly={true}
                       label="CPF/CNPJ"
                       fnMask={normalizeCnpjNumber}
-                      placeholder="SELECIONE O FORNECEDOR"
+                      placeholder="SELECIONE O CLIENTE"
                       control={form.control}
                       disabled={disabled}
                       onClick={showModalFornecedor}
@@ -372,9 +372,9 @@ const FormTituloReceber = ({
                     <FormInput
                       className="flex-1 min-w-[30ch] sm:min-w-[40ch] shrink-0"
                       name="nome_fornecedor"
-                      placeholder="SELECIONE O FORNECEDOR"
+                      placeholder="SELECIONE O CLIENTE"
                       readOnly={true}
-                      label="Nome do fornecedor"
+                      label="Nome"
                       control={form.control}
                       disabled={disabled}
                       onClick={showModalFornecedor}
