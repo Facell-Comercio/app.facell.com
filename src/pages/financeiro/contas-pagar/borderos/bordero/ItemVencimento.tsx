@@ -38,7 +38,7 @@ export const ItemVencimento = ({
           </Badge>
           {qtde_selecionados && qtde_selecionados > 1 ? (
             <Badge variant={"info"} className="text-xs">
-              {qtde_selecionados} Itens Selecionados: {normalizeCurrency(valor_selecionados)}
+              {qtde_selecionados} Itens Selecionados. Total: {normalizeCurrency(valor_selecionados)}
             </Badge>
           ) : null}
         </span>
