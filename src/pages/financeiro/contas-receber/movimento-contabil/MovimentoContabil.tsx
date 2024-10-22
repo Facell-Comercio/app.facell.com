@@ -14,7 +14,7 @@ const MovimentoContabil = () => {
     pagination,
     filters,
   });
-  console.log(filters);
+  // console.log(filters);
 
   const rows = data?.data?.rows || [];
   const rowCount = data?.data?.rowCount || 0;

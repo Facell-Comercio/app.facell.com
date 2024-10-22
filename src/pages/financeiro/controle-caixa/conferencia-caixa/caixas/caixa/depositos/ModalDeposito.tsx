@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -14,10 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  DepositosCaixaProps,
-  useConferenciasCaixa,
-} from "@/hooks/financeiro/useConferenciasCaixa";
+import { DepositosCaixaProps, useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
@@ -37,17 +35,15 @@ const initialPropsDepositos: DepositosCaixaProps = {
 };
 
 const ModalDeposito = ({ id_matriz }: { id_matriz?: string }) => {
-  const [modalContaBancariaOpen, setModalContaBancariaOpen] =
-    useState<boolean>(false);
-  const [modalOpen, closeModal, modalEditing, editModal, id, id_caixa] =
-    useStoreCaixa((state) => [
-      state.modalDepositoOpen,
-      state.closeModalDeposito,
-      state.modalDepositoEditing,
-      state.editModalDeposito,
-      state.id_deposito,
-      state.id,
-    ]);
+  const [modalContaBancariaOpen, setModalContaBancariaOpen] = useState<boolean>(false);
+  const [modalOpen, closeModal, modalEditing, editModal, id, id_caixa] = useStoreCaixa((state) => [
+    state.modalDepositoOpen,
+    state.closeModalDeposito,
+    state.modalDepositoEditing,
+    state.editModalDeposito,
+    state.id_deposito,
+    state.id,
+  ]);
 
   const formRef = useRef(null);
 
@@ -64,8 +60,8 @@ const ModalDeposito = ({ id_matriz }: { id_matriz?: string }) => {
     isPending: updateIsPending,
   } = useConferenciasCaixa().updateDeposito();
 
-  const newDataCaixa: DepositosCaixaProps & Record<string, any> =
-    {} as DepositosCaixaProps & Record<string, any>;
+  const newDataCaixa: DepositosCaixaProps & Record<string, any> = {} as DepositosCaixaProps &
+    Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
@@ -97,9 +93,7 @@ const ModalDeposito = ({ id_matriz }: { id_matriz?: string }) => {
     closeModal();
   }
 
-  function handleSelectionContaBancaria(
-    conta_bancaria: ItemContaBancariaProps
-  ) {
+  function handleSelectionContaBancaria(conta_bancaria: ItemContaBancariaProps) {
     form.setValue("conta_bancaria", conta_bancaria.descricao);
     form.setValue("id_conta_bancaria", conta_bancaria.id);
     setModalContaBancariaOpen(false);
@@ -128,6 +122,7 @@ const ModalDeposito = ({ id_matriz }: { id_matriz?: string }) => {
           <DialogTitle className="flex gap-4">
             {id ? `Depósito: ${id}` : "Novo Depósito"}
           </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
@@ -147,9 +142,7 @@ const ModalDeposito = ({ id_matriz }: { id_matriz?: string }) => {
                   disabled={!modalEditing}
                   label="Conta Bancária"
                   control={form.control}
-                  onClick={() =>
-                    modalEditing && setModalContaBancariaOpen(true)
-                  }
+                  onClick={() => modalEditing && setModalContaBancariaOpen(true)}
                 />
                 <FormInput
                   className="flex-1 min-w-[30ch] shrink-0"
@@ -215,9 +208,7 @@ const ModalDeposito = ({ id_matriz }: { id_matriz?: string }) => {
                   type={"button"}
                   size="lg"
                   variant={"destructive"}
-                  className={`text-white justify-self-start ${
-                    !modalEditing && "hidden"
-                  }`}
+                  className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
                 >
                   <Trash className="me-2" />
                   Excluir Depósito

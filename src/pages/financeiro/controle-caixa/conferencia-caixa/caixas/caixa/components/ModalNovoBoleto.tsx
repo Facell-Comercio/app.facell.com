@@ -8,6 +8,7 @@ import {
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/custom/FormInput";
+import { AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
@@ -153,6 +154,7 @@ const ModalNewBoleto = () => {
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Novo Boleto</DialogTitle>
+          <AlertDialogDescription className="hidden"></AlertDialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && (

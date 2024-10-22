@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -38,9 +39,8 @@ const ModalActionOcorrencia = ({
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent className="max-w-fit">
         <DialogHeader>
-          <DialogTitle className="flex gap-4">
-            {`${action} de ocorrência`}
-          </DialogTitle>
+          <DialogTitle className="flex gap-4">{`${action} de ocorrência`}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <InputDate value={date} onChange={(e: Date) => setDate(e)} />
         <DialogFooter className="flex sm:justify-between w-full">
@@ -49,10 +49,7 @@ const ModalActionOcorrencia = ({
           </Button>
           <Button
             onClick={() => {
-              if (
-                String(startOfDay(dataOcorrencia)) ===
-                String(startOfDay(date || ""))
-              ) {
+              if (String(startOfDay(dataOcorrencia)) === String(startOfDay(date || ""))) {
                 toast({
                   title: `Não é possível realizar a ${action?.toLowerCase()} para o mesmo dia do caixa`,
                   variant: "warning",

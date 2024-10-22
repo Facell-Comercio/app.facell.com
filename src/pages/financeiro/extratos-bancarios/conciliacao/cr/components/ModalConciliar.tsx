@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -101,6 +102,7 @@ const ModalConciliarCP = () => {
           <DialogTitle>
             {id_conciliacao ? `Conciliação: ${id_conciliacao}` : "Nova Conciliação"}
           </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <section className="max-h-[75vh] max-w-full overflow-auto scroll-thin z-50">
           {modalOpen && !isLoading ? (

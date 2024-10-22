@@ -47,6 +47,7 @@ export const tiposCaixa = [
     label: "Crediário",
     value: "valor_crediario",
   },
+  { label: "Outros", value: "valor_outros" },
 ];
 
 export const tiposAjuste = [

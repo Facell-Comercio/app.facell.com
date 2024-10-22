@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -18,22 +19,11 @@ import { Spinner } from "@/components/custom/Spinner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
-import {
-  normalizeCurrency,
-  normalizeDate,
-  normalizeNumberOnly,
-} from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate, normalizeNumberOnly } from "@/helpers/mask";
 import { FaturaSchema, useCartoes } from "@/hooks/financeiro/useCartoes";
 import { api } from "@/lib/axios";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowUpDown,
-  Hourglass,
-  Info,
-  Receipt,
-  ShoppingCart,
-  Trash,
-} from "lucide-react";
+import { ArrowUpDown, Hourglass, Info, Receipt, ShoppingCart, Trash } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import ModalTituloPagar from "../../titulos/titulo/Modal";
@@ -77,21 +67,17 @@ const ModalFatura = () => {
 
   //~ Compras Aprovadas
   const comprasAprovadas = data?.data?.comprasAprovadas || [];
-  const qntdAprovadas =
-    (data?.data?.comprasAprovadas && data?.data?.comprasAprovadas.length) || 0;
+  const qntdAprovadas = (data?.data?.comprasAprovadas && data?.data?.comprasAprovadas.length) || 0;
   const totalAprovadas = data?.data?.totalAprovadas || 0;
 
   //~ Compras Pendentes
   const comprasPendentes = data?.data?.comprasPendentes || [];
-  const qntdPendentes =
-    (data?.data?.comprasPendentes && data?.data?.comprasPendentes.length) || 0;
+  const qntdPendentes = (data?.data?.comprasPendentes && data?.data?.comprasPendentes.length) || 0;
   const totalPendentes = data?.data.totalPendentes;
 
   const faturaFechada = !!dados?.closed;
-  const disabled =
-    faturaFechada || dados?.status === "pago" || dados?.status === "programado";
-  const canDeleteFatura =
-    comprasAprovadas.length + comprasPendentes.length == 0;
+  const disabled = faturaFechada || dados?.status === "pago" || dados?.status === "programado";
+  const canDeleteFatura = comprasAprovadas.length + comprasPendentes.length == 0;
   const canReabrirFatura =
     !canDeleteFatura &&
     faturaFechada &&
@@ -134,8 +120,7 @@ const ModalFatura = () => {
   function handleSubmit() {
     const valor = parseFloat(form.watch("valor") || "0");
 
-    const cod_barras =
-      normalizeNumberOnly(form.watch("cod_barras")) || undefined;
+    const cod_barras = normalizeNumberOnly(form.watch("cod_barras")) || undefined;
     if (cod_barras && cod_barras.length < 44) {
       toast({ title: "Código de barras inválido", variant: "warning" });
       return;
@@ -161,24 +146,19 @@ const ModalFatura = () => {
     if (valor !== parseFloat(totalAprovadas)) {
       if (parseFloat(totalAprovadas) < valor) {
         toast({
-          title: `Valor da fatura ultrapassa o esperado em ${normalizeCurrency(
-            diferenca
-          )}`,
+          title: `Valor da fatura ultrapassa o esperado em ${normalizeCurrency(diferenca)}`,
           variant: "warning",
         });
       }
       if (parseFloat(totalAprovadas) > valor) {
         toast({
-          title: `Valor da fatura é inferior ao valor esperado em ${normalizeCurrency(
-            diferenca
-          )}`,
+          title: `Valor da fatura é inferior ao valor esperado em ${normalizeCurrency(diferenca)}`,
           variant: "warning",
         });
       }
       return;
     }
-    const cod_barras =
-      normalizeNumberOnly(form.watch("cod_barras")) || undefined;
+    const cod_barras = normalizeNumberOnly(form.watch("cod_barras")) || undefined;
     if (cod_barras && cod_barras.length < 44) {
       toast({ title: "Código de barras inválido", variant: "warning" });
       return;
@@ -274,6 +254,7 @@ const ModalFatura = () => {
               <span className="text-green-500">Aberta</span>
             )}
           </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
@@ -283,17 +264,14 @@ const ModalFatura = () => {
                   <div
                     className={`py-1 text-white text-center border text-md font-bold rounded-sm ${color} capitalize`}
                   >
-                    {dados.status == "pago"
-                      ? "Pago"
-                      : `Pagamento ${dados.status}`}
+                    {dados.status == "pago" ? "Pago" : `Pagamento ${dados.status}`}
                   </div>
                 </div>
               )}
               <div className="max-w-full p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <Info />{" "}
-                    <span className="text-lg font-bold ">Dados da Fatura</span>
+                    <Info /> <span className="text-lg font-bold ">Dados da Fatura</span>
                   </div>
                 </div>
                 <Form {...form}>
@@ -307,9 +285,7 @@ const ModalFatura = () => {
                     }}
                   >
                     <span className="flex flex-1 flex-col gap-2 min-w-[15ch]">
-                      <label className="text-sm font-medium">
-                        Data Vencimento
-                      </label>
+                      <label className="text-sm font-medium">Data Vencimento</label>
                       <Input
                         disabled={disabled}
                         // @ts-ignore
@@ -318,15 +294,11 @@ const ModalFatura = () => {
                       />
                     </span>
                     <span className="flex flex-col gap-2">
-                      <label className="text-sm font-medium">
-                        Data Previsão
-                      </label>
+                      <label className="text-sm font-medium">Data Previsão</label>
                       <InputDate
                         disabled={disabled || !modalEditing || isPending}
                         value={form.watch(`data_prevista`)}
-                        onChange={(e: Date) =>
-                          form.setValue(`data_prevista`, e)
-                        }
+                        onChange={(e: Date) => form.setValue(`data_prevista`, e)}
                       />
                     </span>
                     <span className="flex flex-1 flex-col gap-2 min-w-[20ch]">
@@ -370,23 +342,14 @@ const ModalFatura = () => {
                   >
                     <div className="flex justify-end mb-3 flex-wrap">
                       {!dados?.closed && (
-                        <span
-                          title={
-                            ids.length === 0
-                              ? "Selecione no mínimo um vencimento"
-                              : ""
-                          }
-                        >
+                        <span title={ids.length === 0 ? "Selecione no mínimo um vencimento" : ""}>
                           <Button
                             type={"button"}
                             variant={"tertiary"}
                             size={"sm"}
                             className="text-white justify-self-start"
                             disabled={
-                              !modalEditing ||
-                              isPending ||
-                              ids.length === 0 ||
-                              !!dados.closed
+                              !modalEditing || isPending || ids.length === 0 || !!dados.closed
                             }
                             onClick={() => openModalTransfer()}
                           >
@@ -399,9 +362,7 @@ const ModalFatura = () => {
                     <section className="grid grid-cols-1 max-w-full gap-2 flex-nowrap">
                       <RowVirtualizerFixed
                         data={comprasAprovadas}
-                        modalEditing={
-                          modalEditing && !isPending && !dados?.closed
-                        }
+                        modalEditing={modalEditing && !isPending && !dados?.closed}
                         ids={ids}
                         handleChangeIds={handleChangeIds}
                       />
@@ -427,23 +388,14 @@ const ModalFatura = () => {
                   >
                     <div className="flex justify-end mb-3 flex-wrap">
                       {!dados?.closed && (
-                        <span
-                          title={
-                            ids.length === 0
-                              ? "Selecione no mínimo um vencimento"
-                              : ""
-                          }
-                        >
+                        <span title={ids.length === 0 ? "Selecione no mínimo um vencimento" : ""}>
                           <Button
                             type={"button"}
                             variant={"tertiary"}
                             size={"sm"}
                             className="text-white justify-self-start"
                             disabled={
-                              !modalEditing ||
-                              isPending ||
-                              ids.length === 0 ||
-                              !!dados.closed
+                              !modalEditing || isPending || ids.length === 0 || !!dados.closed
                             }
                             onClick={() => openModalTransfer()}
                           >
@@ -456,9 +408,7 @@ const ModalFatura = () => {
                     <section className="grid grid-cols-1 max-w-full gap-2 flex-nowrap">
                       <RowVirtualizerFixed
                         data={comprasPendentes}
-                        modalEditing={
-                          modalEditing && !isPending && !dados?.closed
-                        }
+                        modalEditing={modalEditing && !isPending && !dados?.closed}
                         ids={ids}
                         handleChangeIds={handleChangeIds}
                       />
@@ -490,16 +440,8 @@ const ModalFatura = () => {
                     title={`Deseja realmente fechar a fatura?`}
                     action={handleDeleteFatura}
                   >
-                    <Button
-                      disabled={isOpenCloseLoading}
-                      variant={"destructive"}
-                      size={"lg"}
-                    >
-                      {isOpenCloseLoading ? (
-                        <Spinner />
-                      ) : (
-                        <Trash className="me-2" />
-                      )}
+                    <Button disabled={isOpenCloseLoading} variant={"destructive"} size={"lg"}>
+                      {isOpenCloseLoading ? <Spinner /> : <Trash className="me-2" />}
                       {"Excluir Fatura"}
                     </Button>
                   </AlertPopUp>
@@ -521,11 +463,7 @@ const ModalFatura = () => {
                     action={handleReabrirFatura}
                   >
                     <Button variant={"warning"} size={"lg"}>
-                      {isOpenCloseLoading ? (
-                        <Spinner />
-                      ) : (
-                        <Receipt className="me-2" />
-                      )}
+                      {isOpenCloseLoading ? <Spinner /> : <Receipt className="me-2" />}
                       {"Reabrir Fatura"}
                     </Button>
                   </AlertPopUp>

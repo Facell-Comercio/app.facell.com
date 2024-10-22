@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { formatDate } from "date-fns";
 import { Log } from "./RowVirtualizedFixed";
 import { useStoreLogs } from "./store";
@@ -42,36 +43,22 @@ const ModalLog = ({ data }: ModalProps) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>PID: {id}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh] w-full">
           <section className="grid grid-cols-2 md:grid-cols-3 gap-2 flex-wrapflex-wrap">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 col-span-2 md:col-span-3">
               <span className="flex-1">
                 <label className="text-sm font-medium">Módulo</label>
-                <Input
-                  className="mt-2"
-                  type="text"
-                  value={data.module}
-                  readOnly
-                />
+                <Input className="mt-2" type="text" value={data.module} readOnly />
               </span>
               <span className="flex-1">
                 <label className="text-sm font-medium">Origem</label>
-                <Input
-                  className="mt-2"
-                  type="text"
-                  value={data.origin}
-                  readOnly
-                />
+                <Input className="mt-2" type="text" value={data.origin} readOnly />
               </span>
               <span className="col-span-2 md:col-span-1">
                 <label className="text-sm font-medium">Método</label>
-                <Input
-                  className="mt-2"
-                  type="text"
-                  value={data.method}
-                  readOnly
-                />
+                <Input className="mt-2" type="text" value={data.method} readOnly />
               </span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 col-span-2 md:col-span-3">
@@ -93,12 +80,7 @@ const ModalLog = ({ data }: ModalProps) => {
                 <Input
                   className={`mt-2`}
                   type="text"
-                  value={
-                    (data.data &&
-                      data.data.name &&
-                      data.data.name.toUpperCase()) ||
-                    "-"
-                  }
+                  value={(data.data && data.data.name && data.data.name.toUpperCase()) || "-"}
                   readOnly
                 />
               </span>
@@ -107,11 +89,7 @@ const ModalLog = ({ data }: ModalProps) => {
               <span className="grid grid-cols-1 flex-1">
                 <label className="text-sm font-medium">Mensagem</label>
                 <code className="flex flex-col flex-1 gap-2 border p-2 rounded-md overflow-auto scroll-thin text-gray-500 dark:text-gray-400">
-                  <p>
-                    {data.data &&
-                      data.data.message &&
-                      data.data.message.toUpperCase()}
-                  </p>
+                  <p>{data.data && data.data.message && data.data.message.toUpperCase()}</p>
                   {(data.data && data.data.stack) || "-"}
                 </code>
               </span>

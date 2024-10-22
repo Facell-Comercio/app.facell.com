@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -124,6 +125,7 @@ const ModalTransferenciaTesouraria = () => {
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Transferência Entre Contas Caixa</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           <Form {...form}>

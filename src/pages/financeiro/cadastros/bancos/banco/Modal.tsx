@@ -1,12 +1,12 @@
+import ModalButtons from "@/components/custom/ModalButtons";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBancos } from "@/hooks/financeiro/useBancos";
@@ -30,21 +30,19 @@ const initialPropsBanco: BancoSchema = {
 };
 
 const ModalBanco = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreBanco((state) => [
-      state.modalOpen,
-      state.closeModal,
-      state.modalEditing,
-      state.editModal,
-      state.isPending,
-      state.id,
-    ]);
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreBanco((state) => [
+    state.modalOpen,
+    state.closeModal,
+    state.modalEditing,
+    state.editModal,
+    state.isPending,
+    state.id,
+  ]);
 
   const formRef = useRef(null);
 
   const { data, isLoading } = useBancos().getOne(id);
-  const newData: BancoSchema & Record<string, any> = {} as BancoSchema &
-    Record<string, any>;
+  const newData: BancoSchema & Record<string, any> = {} as BancoSchema & Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -66,6 +64,7 @@ const ModalBanco = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Banco: ${id}` : "Novo Banco"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

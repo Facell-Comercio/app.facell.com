@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -8,10 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  OcorrenciasProps,
-  useConferenciasCaixa,
-} from "@/hooks/financeiro/useConferenciasCaixa";
+import { OcorrenciasProps, useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import { Plus } from "lucide-react";
 import { TbAlertTriangle } from "react-icons/tb";
 import { useStoreCaixa } from "../store";
@@ -43,8 +41,8 @@ const ModalOcorrencias = ({ id_filial }: { id_filial?: string }) => {
     },
   });
 
-  const newDataCaixa: OcorrenciasProps & Record<string, any> =
-    {} as OcorrenciasProps & Record<string, any>;
+  const newDataCaixa: OcorrenciasProps & Record<string, any> = {} as OcorrenciasProps &
+    Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
@@ -81,6 +79,7 @@ const ModalOcorrencias = ({ id_filial }: { id_filial?: string }) => {
               </Button>
             )}
           </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

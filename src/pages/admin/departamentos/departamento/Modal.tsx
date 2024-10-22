@@ -9,24 +9,25 @@ import {
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDepartamentos } from "@/hooks/useDepartamentos";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { useRef } from "react";
 import Form from "./Form";
-import { useStoreDepartamento } from "./store";
 import { DepartamentoFormData } from "./form-data";
-import { useDepartamentos } from "@/hooks/useDepartamentos";
+import { useStoreDepartamento } from "./store";
 
 const initialProps: DepartamentoFormData = {
   id: "",
   active: true,
-  nome: ""
+  nome: "",
 };
 
 const ModalDepartamento = () => {
-  const modalOpen = useStoreDepartamento(state=>state.modalOpen);
-  const closeModal = useStoreDepartamento(state=>state.closeModal);
-  const modalEditing = useStoreDepartamento(state=>state.modalEditing);
-  const editModal = useStoreDepartamento(state=>state.editModal);
-  const id = useStoreDepartamento(state=>state.id);
+  const modalOpen = useStoreDepartamento((state) => state.modalOpen);
+  const closeModal = useStoreDepartamento((state) => state.closeModal);
+  const modalEditing = useStoreDepartamento((state) => state.modalEditing);
+  const editModal = useStoreDepartamento((state) => state.editModal);
+  const id = useStoreDepartamento((state) => state.id);
   const formRef = useRef(null);
 
   const { data, isLoading } = useDepartamentos().getOne(id);
@@ -51,14 +52,11 @@ const ModalDepartamento = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `` : "Novo Departamento"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <Form
-              id={id}
-              data={newData?.id ? newData : initialProps}
-              formRef={formRef}
-            />
+            <Form id={id} data={newData?.id ? newData : initialProps} formRef={formRef} />
           ) : (
             <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
               <Skeleton className="w-full row-span-1" />

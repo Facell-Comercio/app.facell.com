@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -11,11 +12,11 @@ import { SelectGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
+import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useStoreExportDatasys } from "./store";
-import { downloadResponse } from "@/helpers/download";
 
 type ExportDatasysProps = {
   id_grupo_economico?: string;
@@ -42,14 +43,11 @@ const ModalExportDatasys = () => {
     }
     try {
       setIsLoading(true);
-      const response = await api.get(
-        `/financeiro/contas-a-pagar/titulo/export-datasys`,
-        {
-          params: { filters },
-          responseType: "blob",
-        }
-      );
-      downloadResponse(response)
+      const response = await api.get(`/financeiro/contas-a-pagar/titulo/export-datasys`, {
+        params: { filters },
+        responseType: "blob",
+      });
+      downloadResponse(response);
       closeModal();
     } catch (err) {
       toast({
@@ -77,6 +75,7 @@ const ModalExportDatasys = () => {
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="mb-2">Exportar para o Datasys</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && (
@@ -99,9 +98,7 @@ const ModalExportDatasys = () => {
                 <InputDate
                   className="mt-2 w-full"
                   value={filters.data_pagamento}
-                  onChange={(e: Date) =>
-                    setFilters({ ...filters, data_pagamento: e })
-                  }
+                  onChange={(e: Date) => setFilters({ ...filters, data_pagamento: e })}
                 />
               </span>
             </div>
@@ -112,8 +109,7 @@ const ModalExportDatasys = () => {
           <Button disabled={isLoading} onClick={() => exportDatasys()}>
             {isLoading ? (
               <span className="flex gap-2 w-full items-center justify-center">
-                <FaSpinner size={18} className="me-2 animate-spin" />{" "}
-                Carregando...
+                <FaSpinner size={18} className="me-2 animate-spin" /> Carregando...
               </span>
             ) : (
               "Exportar"

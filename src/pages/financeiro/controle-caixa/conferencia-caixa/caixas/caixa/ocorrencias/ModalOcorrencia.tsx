@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -133,6 +134,7 @@ const ModalOcorrencia = () => {
             <TbAlertTriangle size={22} className="text-red-500" />
             {id ? `Ocorrência: ${id}` : "Ocorrência"}
           </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

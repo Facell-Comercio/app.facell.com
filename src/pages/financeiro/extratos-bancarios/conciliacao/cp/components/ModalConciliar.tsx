@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -38,8 +39,7 @@ const ModalConciliarCP = () => {
 
   const id_conciliacao = useStoreConciliacaoCP().id_conciliacao;
   const isPending = useStoreConciliacaoCP().isPending;
-  const vencimentosSelection =
-    useStoreTableConciliacaoCP().vencimentosSelection;
+  const vencimentosSelection = useStoreTableConciliacaoCP().vencimentosSelection;
   const transacoesSelection = useStoreTableConciliacaoCP().transacoesSelection;
   const formRef = useRef(null);
   const isMaster = checkUserPermission("MASTER");
@@ -48,8 +48,8 @@ const ModalConciliarCP = () => {
 
   const { mutate: deleteConciliacao, isSuccess: isDeletedConciliacao } =
     useConciliacaoCP().deleteConciliacao();
-  const newData: ConciliacaoCPSchemaProps & Record<string, any> =
-    {} as ConciliacaoCPSchemaProps & Record<string, any>;
+  const newData: ConciliacaoCPSchemaProps & Record<string, any> = {} as ConciliacaoCPSchemaProps &
+    Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -100,18 +100,13 @@ const ModalConciliarCP = () => {
       <DialogContent className="max-w-[92vw]">
         <DialogHeader>
           <DialogTitle>
-            {id_conciliacao
-              ? `Conciliação: ${id_conciliacao}`
-              : "Nova Conciliação"}
+            {id_conciliacao ? `Conciliação: ${id_conciliacao}` : "Nova Conciliação"}
           </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <section className="max-h-[75vh] max-w-full overflow-auto scroll-thin z-50">
           {modalOpen && !isLoading ? (
-            <FormConciliacaoCP
-              id={id_conciliacao}
-              data={newData}
-              formRef={formRef}
-            />
+            <FormConciliacaoCP id={id_conciliacao} data={newData} formRef={formRef} />
           ) : (
             <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
               <Skeleton className="w-full row-span-1" />

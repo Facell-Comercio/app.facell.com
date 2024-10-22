@@ -41,8 +41,6 @@ const ModalAjustes = () => {
     },
   });
 
-  console.log(data);
-
   const ajusteEmFiliais = aprovado !== undefined;
 
   const newDataAjustes: GetAllAjustesProps & Record<string, any> = {} as GetAllAjustesProps &
@@ -101,8 +99,11 @@ const ModalAjustes = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {newDataAjustes?.ajustes?.map((ajuste) => (
-                <TableRow className="bg-secondary/40 odd:bg-secondary/60 uppercase text-nowrap">
+              {newDataAjustes?.ajustes?.map((ajuste, index) => (
+                <TableRow
+                  className="bg-secondary/40 odd:bg-secondary/60 uppercase text-nowrap"
+                  key={`ajuste: ${ajuste.id} - ${index}`}
+                >
                   {!disabled && (
                     <TableCell>
                       <Button

@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -49,23 +50,21 @@ const initialPropsMeta: MetasProps = {
 };
 
 const ModalMeta = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreMeta((state) => [
-      state.modalOpen,
-      state.closeModal,
-      state.modalEditing,
-      state.editModal,
-      state.isPending,
-      state.id,
-    ]);
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreMeta((state) => [
+    state.modalOpen,
+    state.closeModal,
+    state.modalEditing,
+    state.editModal,
+    state.isPending,
+    state.id,
+  ]);
 
   const formRef = useRef(null);
 
   const { data, isLoading } = useMetas().getOne(id);
 
   const { mutate: deleteMeta, isSuccess } = useMetas().deleteMeta();
-  const newDataMeta: MetasProps & Record<string, any> = {} as MetasProps &
-    Record<string, any>;
+  const newDataMeta: MetasProps & Record<string, any> = {} as MetasProps & Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
@@ -95,14 +94,11 @@ const ModalMeta = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Meta: ${id}` : "Nova Meta"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <FormMeta
-              id={id}
-              data={id ? newDataMeta : initialPropsMeta}
-              formRef={formRef}
-            />
+            <FormMeta id={id} data={id ? newDataMeta : initialPropsMeta} formRef={formRef} />
           ) : (
             <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
               <Skeleton className="w-full row-span-1" />
@@ -131,9 +127,7 @@ const ModalMeta = () => {
                 type={"button"}
                 size="lg"
                 variant={"destructive"}
-                className={`text-white justify-self-start ${
-                  !modalEditing && "hidden"
-                }`}
+                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
               >
                 <Trash className="me-2" />
                 Excluir Meta

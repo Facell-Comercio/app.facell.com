@@ -15,6 +15,7 @@ import { api } from "@/lib/axios";
 import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -84,6 +85,7 @@ const ModalExportBoleto = ({ modalOpen, handleClickCancel }: ModalExportBoletoPr
       <DialogContent className="max-w-fit">
         <DialogHeader>
           <DialogTitle className="flex gap-4">Exportar Remessa de Boletos</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <div className="flex gap-2">
           <span className="flex gap-2 flex-col">

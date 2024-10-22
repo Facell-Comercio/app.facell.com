@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MediaType } from "@/types/media-type";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { FileUpload } from "./FileUpload";
@@ -14,7 +15,7 @@ import { GoogleFolderName } from "./UploadDropzone";
 interface TUploadDialog {
   title: string;
   mediatype: MediaType;
-  folderName: GoogleFolderName,
+  folderName: GoogleFolderName;
   action: (newUrl?: string | null) => void;
   closeAction: () => void;
   className?: string;
@@ -37,6 +38,7 @@ const UploadDialog = ({
       <DialogContent className="w-full max-w-96">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <section className="max-w-80   max-h-80  mx-auto">
           <FileUpload
