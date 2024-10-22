@@ -52,7 +52,6 @@ const AppRoutes = () => {
           <Route path="/pessoal/">
             <Route
               element={checkUserPermission("MASTER") ? <Colaboradores /> : <NotAuthorizedPage />}
-              element={checkUserPermission("MASTER") ? <Colaboradores /> : <NotAuthorizedPage />}
               path="colaboradores"
             />
           </Route>
@@ -126,7 +125,6 @@ const AppRoutes = () => {
 
           {/* Administração */}
           <Route
-            element={checkUserPermission("MASTER") ? <AdminPage /> : <NotAuthorizedPage />}
             element={checkUserPermission("MASTER") ? <AdminPage /> : <NotAuthorizedPage />}
             path="administracao"
           />
