@@ -35,8 +35,7 @@ interface IFormInput {
   title?: string;
 }
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
@@ -55,7 +54,67 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-export { Input };
+interface InputWithLabelProps {
+  type?: string;
+  label: string;
+  value: string;
+  placeholder?: string;
+  description?: string;
+  readOnly?: boolean;
+  disabled?: boolean;
+  className?: string;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
+  min?: number;
+  max?: number;
+  icon?: React.ElementType;
+  iconLeft?: boolean;
+  step?: string;
+  inputClass?: string;
+  iconClass?: string;
+  labelClass?: string;
+  title?: string;
+}
+
+const InputWithLabel = ({
+  label,
+  className,
+  icon: Icon,
+  iconLeft,
+  inputClass,
+  iconClass,
+  labelClass,
+  ...props
+}: InputWithLabelProps) => {
+  return (
+    <div className={`flex gap-2 flex-col ${className}`}>
+      <label className={`text-sm font-medium ${labelClass}`}>{label}</label>
+      <span className={`flex ${iconLeft && "flex-row-reverse"}`}>
+        <Input
+          {...props}
+          className={`${inputClass} ${
+            Icon && ` rounded-none ${iconLeft ? "rounded-r-md" : "rounded-l-md"}`
+          }`}
+        />
+        {Icon && (
+          <Button
+            type={"button"}
+            variant={"outline"}
+            disabled={true}
+            className={`flex items-center justify-center rounded-none p-2 ${
+              iconLeft ? "rounded-l-md" : `rounded-r-md `
+            } ${iconClass}`}
+          >
+            <Icon size={18} />
+          </Button>
+        )}
+      </span>
+    </div>
+  );
+};
+
+export { Input, InputWithLabel };
 
 const FormInput = ({
   name,
@@ -86,9 +145,7 @@ const FormInput = ({
       name={name}
       render={({ field }) => {
         return (
-          <FormItem
-            className={`${type === "hidden" && "hidden"} ${className} flex-1`}
-          >
+          <FormItem className={`${type === "hidden" && "hidden"} ${className} flex-1`}>
             {label && <FormLabel className="text-nowrap">{label}</FormLabel>}
             <FormControl className={`flex ${iconLeft && "flex-row-reverse"}`}>
               <div>
@@ -96,17 +153,11 @@ const FormInput = ({
                   ref={field.ref}
                   type={type || "text"}
                   name={field.name}
-                  value={
-                    typeof fnMask === "function"
-                      ? fnMask(field.value)
-                      : field.value || ""
-                  }
+                  value={typeof fnMask === "function" ? fnMask(field.value) : field.value || ""}
                   title={title}
                   placeholder={placeholder}
                   readOnly={readOnly}
-                  disabled={
-                    typeof disabled === "undefined" ? field.disabled : disabled
-                  }
+                  disabled={typeof disabled === "undefined" ? field.disabled : disabled}
                   onBlur={typeof onBlur == "undefined" ? field.onBlur : onBlur}
                   onChange={(event) => {
                     field.onChange(event);
@@ -119,10 +170,7 @@ const FormInput = ({
                   max={max}
                   step={step ? step : type === "number" ? "0.01" : undefined}
                   className={`oi ${inputClass} oi ${
-                    Icon &&
-                    ` rounded-none ${
-                      iconLeft ? "rounded-r-md" : "rounded-l-md"
-                    }`
+                    Icon && ` rounded-none ${iconLeft ? "rounded-r-md" : "rounded-l-md"}`
                   }`}
                 />
                 {Icon && (

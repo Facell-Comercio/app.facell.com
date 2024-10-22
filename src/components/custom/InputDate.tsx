@@ -3,27 +3,18 @@ import { Calendar as CalendarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
 
 type InputDateProps = {
   disabled?: boolean;
-  value?: Date;
+  value?: Date | string;
   onChange: (date: Date) => void;
   className?: string;
 };
-export function InputDate({
-  disabled,
-  value,
-  onChange,
-  className,
-}: InputDateProps) {
+export function InputDate({ disabled, value, onChange, className }: InputDateProps) {
   const [date, setDate] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
 

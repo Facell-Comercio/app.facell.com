@@ -1,7 +1,4 @@
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { Play, Settings } from "lucide-react";
 import { ReactNode } from "react";
 import {
@@ -11,13 +8,7 @@ import {
   BsFillSendFill,
   BsPersonVideo3,
 } from "react-icons/bs";
-import {
-  FaBullhorn,
-  FaRankingStar,
-  FaSackDollar,
-  FaTruckRampBox,
-  FaUsers,
-} from "react-icons/fa6";
+import { FaBullhorn, FaRankingStar, FaSackDollar, FaTruckRampBox, FaUsers } from "react-icons/fa6";
 
 export type SidebarItem = {
   name: string;
@@ -70,11 +61,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "V",
         uri: "comercial/vales",
-        visible: checkUserPermission([
-          "GERENCIAR_VALES",
-          "VISUALIZAR_VALES",
-          "MASTER",
-        ]),
+        visible: checkUserPermission(["GERENCIAR_VALES", "VISUALIZAR_VALES", "MASTER"]),
       },
       {
         name: "Metas",
@@ -241,8 +228,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CC",
         uri: "/financeiro/controle-de-caixa",
-        visible:
-          checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
+        visible: checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
       },
       {
         name: "Orçamento",
@@ -256,8 +242,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CBK",
         uri: "/financeiro/conciliacao-bancaria",
-        visible:
-          checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
+        visible: checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
       },
       {
         name: "Cadastros",
@@ -280,7 +265,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaBullhorn />,
     uri: "marketing",
-    visible: false,
+    visible: checkUserDepartments("MARKETING") || checkUserPermission("MASTER"),
     children: [
       {
         name: "Patrocinado",
@@ -302,6 +287,13 @@ export const sidebarItems: SidebarItem[] = [
         shortName: "LEA",
         uri: "marketing/leads",
         visible: false,
+      },
+      {
+        name: "Mailing",
+        type: "link",
+        shortName: "M",
+        uri: "marketing/mailing",
+        visible: true,
       },
     ],
   },
