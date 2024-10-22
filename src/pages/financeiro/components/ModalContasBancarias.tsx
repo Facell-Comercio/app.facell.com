@@ -15,7 +15,7 @@ import { api } from "@/lib/axios";
 import { Accordion, AccordionContent, AccordionTrigger } from "@radix-ui/react-accordion";
 import { useQuery } from "@tanstack/react-query";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface IModalContaBancaria {
   open: boolean;
@@ -36,6 +36,7 @@ export type ItemContaBancariaProps = {
   id_matriz: string;
   id_grupo_economico?: string;
   saldo?: string;
+  caixa: number;
 };
 
 type PaginationProps = {
@@ -85,7 +86,7 @@ const ModalContasBancarias = ({
       "financeiro",
       "conta_bancaria",
       "lista",
-      [{ filters, pagination, id_matriz, id_grupo_economico }],
+      [filters, pagination, id_matriz, id_grupo_economico, isCaixa],
     ],
     queryFn: async () =>
       await api.get("financeiro/contas-bancarias/", {
@@ -128,6 +129,15 @@ const ModalContasBancarias = ({
 
   const pageCount = (data && data.data.pageCount) || 0;
   const [itemOpen, setItemOpen] = useState<string>("item-1");
+
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      id_matriz: id_matriz || "all",
+      id_grupo_economico: id_grupo_economico || "all",
+      isCaixa: isCaixa === "all" ? "all" : isCaixa ? 1 : 0,
+    }));
+  }, [id_matriz, id_grupo_economico, isCaixa]);
 
   if (isError) return null;
   if (!open) return null;

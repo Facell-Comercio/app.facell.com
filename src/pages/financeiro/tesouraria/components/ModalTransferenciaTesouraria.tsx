@@ -53,6 +53,11 @@ const ModalTransferenciaTesouraria = () => {
     isSuccess: transferSaldoIsSuccess,
     isError: transferSaldoIsError,
   } = useTesouraria().transferSaldo();
+  const [modalData, setModalData] = useState({
+    id_matriz: "",
+    entrada_is_caixa: 0,
+    saida_is_caixa: 0,
+  });
 
   const onSubmitData = (data: TransferenciaTesourariaSchema) => {
     transferSaldo(data);
@@ -64,18 +69,42 @@ const ModalTransferenciaTesouraria = () => {
   function handleSelectionContaBancariaSaida(item: ItemContaBancariaProps) {
     form.setValue("id_caixa_saida", item.id);
     form.setValue("caixa_saida", item.descricao);
-    form.setValue("saldo_caixa_saida", item.saldo);
+
+    if (!item.caixa) {
+      form.setValue("saldo_caixa_saida", "-");
+    } else {
+      form.setValue("saldo_caixa_saida", item.saldo);
+    }
+
+    setModalData((prev) => ({ ...prev, id_matriz: item.id_matriz, saida_is_caixa: item.caixa }));
+    form.setValue("id_caixa_entrada", "");
+    form.setValue("caixa_entrada", "");
+    form.setValue("saldo_caixa_entrada", "");
     setModalContaBancariaSaidaOpen(false);
   }
   function handleSelectionContaBancariaEntrada(item: ItemContaBancariaProps) {
     form.setValue("id_caixa_entrada", item.id);
     form.setValue("caixa_entrada", item.descricao);
-    form.setValue("saldo_caixa_entrada", item.saldo);
+
+    if (!item.caixa) {
+      form.setValue("saldo_caixa_entrada", "-");
+    } else {
+      form.setValue("saldo_caixa_entrada", item.saldo);
+    }
+
+    setModalData((prev) => ({ ...prev, id_matriz: item.id_matriz, entrada_is_caixa: item.caixa }));
     setModalContaBancariaEntradaOpen(false);
   }
 
   useEffect(() => {
-    if (!modalOpen) form.reset();
+    if (!modalOpen) {
+      form.reset();
+      setModalData({
+        id_matriz: "",
+        entrada_is_caixa: 0,
+        saida_is_caixa: 0,
+      });
+    }
   }, [modalOpen]);
 
   useEffect(() => {
@@ -119,7 +148,6 @@ const ModalTransferenciaTesouraria = () => {
                   label="Saldo:"
                   control={form.control}
                   readOnly
-                  type="number"
                   iconLeft
                   icon={TbCurrencyReal}
                   iconClass="bg-secondary"
@@ -133,8 +161,9 @@ const ModalTransferenciaTesouraria = () => {
                   label="Conta Caixa de Entrada:"
                   control={form.control}
                   readOnly
+                  disabled={!saldo_conta_saida}
                   placeholder="SELECIONE A CONTA BANCÁRIA"
-                  onClick={() => setModalContaBancariaEntradaOpen(true)}
+                  onClick={() => saldo_conta_saida && setModalContaBancariaEntradaOpen(true)}
                 />
                 <FormInput
                   className="flex-1 min-w-[30ch] shrink-0"
@@ -142,11 +171,11 @@ const ModalTransferenciaTesouraria = () => {
                   label="Saldo:"
                   control={form.control}
                   readOnly
-                  type="number"
+                  disabled={!saldo_conta_saida}
                   iconLeft
                   icon={TbCurrencyReal}
                   iconClass="bg-secondary"
-                  onClick={() => setModalContaBancariaEntradaOpen(true)}
+                  onClick={() => saldo_conta_saida && setModalContaBancariaEntradaOpen(true)}
                 />
               </div>
               <FormInput
@@ -159,7 +188,7 @@ const ModalTransferenciaTesouraria = () => {
                 disabled={!saldo_conta_saida}
                 icon={TbCurrencyReal}
                 iconClass="bg-secondary"
-                max={parseFloat(saldo_conta_saida || "0")}
+                max={modalData.saida_is_caixa ? parseFloat(saldo_conta_saida || "0") : undefined}
                 min={0}
               />
             </form>
@@ -167,13 +196,13 @@ const ModalTransferenciaTesouraria = () => {
               open={modalContaBancariaSaidaOpen}
               handleSelection={handleSelectionContaBancariaSaida}
               onOpenChange={() => setModalContaBancariaSaidaOpen(false)}
-              isCaixa
             />
             <ModalContasBancarias
               open={modalContaBancariaEntradaOpen}
               handleSelection={handleSelectionContaBancariaEntrada}
               onOpenChange={() => setModalContaBancariaEntradaOpen(false)}
-              isCaixa
+              isCaixa={!modalData.saida_is_caixa}
+              id_matriz={modalData.id_matriz}
             />
           </Form>
         </ScrollArea>
