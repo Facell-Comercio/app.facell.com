@@ -265,6 +265,13 @@ export const sidebarItems: SidebarItem[] = [
         uri: "/financeiro/remuneracao-tim",
         visible: () => false,
       },
+      {
+        name: "Relatórios",
+        type: "link",
+        shortName: "R",
+        uri: "/financeiro/relatorios",
+        visible: () => true,
+      },
     ],
   },
   {
