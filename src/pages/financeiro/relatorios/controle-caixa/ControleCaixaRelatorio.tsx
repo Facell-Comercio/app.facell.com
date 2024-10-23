@@ -4,10 +4,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useState } from "react";
 
 const ControleCaixaRelatorios = () => {
-  const [itemOpen, setItemOpen] = useState("");
+  // const [itemOpen, setItemOpen] = useState("");
   return (
     <Accordion type="single" collapsible className="p-2 border dark:border-slate-800 rounded-lg ">
       <AccordionItem value="item-1" className="relative border-0">
