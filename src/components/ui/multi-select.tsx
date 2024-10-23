@@ -120,7 +120,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
         handleClear();
       } else {
         const allValues = options
-          .filter((option) => option.value.toUpperCase().includes(search.toUpperCase()))
+          .filter((option) => String(option.value).toUpperCase().includes(search.toUpperCase()))
           .map((option) => option.value);
         setSelectedValues(allValues);
         onValueChange(allValues);
@@ -151,7 +151,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                           key={value}
                           className={cn(multiSelectVariants({ variant }))}
                         >
-                          <span className="text-white truncate max-w-[10ch] sm:max-w-full">
+                          <span className="dark:text-white truncate max-w-[10ch] sm:max-w-full">
                             {option?.label}
                           </span>
                           <XCircle
