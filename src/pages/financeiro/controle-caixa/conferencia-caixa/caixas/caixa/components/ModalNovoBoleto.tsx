@@ -8,7 +8,6 @@ import {
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/custom/FormInput";
-import { AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
@@ -22,6 +21,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { Ban, Save } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
@@ -154,7 +154,7 @@ const ModalNewBoleto = () => {
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Novo Boleto</DialogTitle>
-          <AlertDialogDescription className="hidden"></AlertDialogDescription>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && (
