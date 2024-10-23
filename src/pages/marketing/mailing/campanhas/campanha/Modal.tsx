@@ -19,10 +19,11 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { Plus, SlidersHorizontal, Smartphone, UserPen, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Plus, Smartphone, UserPen, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { ClienteProps, columnsTableClientes } from "./components/columns-clientes";
 import { columnsTableClientesSubcampanha } from "./components/columns-clientes-campanha";
+import { FiltersClientesCampanha } from "./components/FiltersClientesCampanha";
 import ModalDefinirAparelho from "./components/ModalDefinirAparelho";
 import ModalDefinirVendedores from "./components/ModalDefinirVendedores";
 import ModalEditarCliente from "./components/ModalEditarCliente";
@@ -40,10 +41,12 @@ const ModalCampanha = () => {
     openModalDefinirAparelho,
     openModalDefinirVendedores,
 
-    setFiltersLote,
-
     filters,
+    setFilters,
+    resetFilters,
     filters_lote,
+    setFiltersLote,
+    resetFiltersLote,
   ] = useStoreCampanha((state) => [
     state.id,
     state.modalOpen,
@@ -53,33 +56,61 @@ const ModalCampanha = () => {
     state.openModalDefinirAparelho,
     state.openModalDefinirVendedores,
 
-    state.setFiltersLote,
-
     state.filters,
+    state.setFilters,
+    state.resetFilters,
     state.filters_lote,
+    state.setFiltersLote,
+    state.resetFiltersLote,
   ]);
+
   const [idSubcampanha, setIdSubcampanha] = useState<string | undefined>();
 
   function handleClickCancel() {
     closeModal();
   }
-  const { data, isFetched, isSuccess, isLoading } = useMailing().getOneCampanha({ id, filters });
-  const { data: data_subcampanha, isLoading: isLoadingSubcampanha } = useMailing().getOneCampanha({
+  const { data, isFetched, isFetching, isSuccess, isLoading, refetch } =
+    useMailing().getOneCampanha({
+      id: id || "",
+      filters,
+    });
+  const defaultFilters = data?.filters;
+  const {
+    data: data_subcampanha,
+    isLoading: isLoadingSubcampanha,
+    isFetching: isFetchingSubcampanha,
+    refetch: refetchSubcampanha,
+  } = useMailing().getOneCampanha({
     id: idSubcampanha,
     filters: filters_lote,
   });
-  const subcampanhas = data?.subcampanhas || [];
-  const defaultIdSubcampanha = subcampanhas && subcampanhas[0] && subcampanhas[0].id;
+  const subcampanhas = useMemo(
+    () => data?.subcampanhas || [],
+    [isLoading, isFetching, data_subcampanha, data]
+  );
+  // console.log(data?.subcampanhas);
+
+  const defaultFiltersSubcampanha = data_subcampanha?.filters;
+  const defaultIdSubcampanha = useMemo(
+    () => subcampanhas && subcampanhas[0] && subcampanhas[0].id,
+    [subcampanhas]
+  );
 
   useEffect(() => {
     setIdSubcampanha(defaultIdSubcampanha);
     setFiltersLote({ id_campanha: defaultIdSubcampanha || "" });
   }, [isFetched, isSuccess]);
-  const [itemOpen, setItemOpen] = useState<string>("clientes");
 
-  if (!data) {
-    return null;
-  }
+  const handleResetFilterSubcampanha = async () => {
+    await new Promise((resolve) => resolve(resetFiltersLote()));
+    refetchSubcampanha();
+  };
+  useEffect(() => {
+    if (idSubcampanha) {
+      handleResetFilterSubcampanha();
+    }
+  }, [idSubcampanha]);
+  const [itemOpen, setItemOpen] = useState<string>("clientes");
 
   const clientes: ClienteProps[] = data?.clientes || [];
   const clientesSubcampanha: ClienteProps[] = data_subcampanha?.clientes || [];
@@ -91,7 +122,7 @@ const ModalCampanha = () => {
           <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="flex flex-col gap-3 max-h-[70vh]">
-          <div className="grid gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950">
+          <div className="grid gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950 rounded-md">
             <Accordion
               type="single"
               collapsible
@@ -105,10 +136,15 @@ const ModalCampanha = () => {
                 </AccordionTrigger>
                 <AccordionContent className="flex gap-2 flex-col p-2">
                   <span className="flex items-center w-full justify-between">
-                    <Button variant={"secondary"}>
-                      <SlidersHorizontal className="me-2" size={18} />
-                      Filtro
-                    </Button>
+                    <FiltersClientesCampanha
+                      filters={filters}
+                      defaultFilters={defaultFilters}
+                      refetch={refetch}
+                      setFilters={setFilters}
+                      resetFilters={resetFilters}
+                      qtde_clientes={data?.qtde_clientes}
+                      isPending={isLoading || isFetching}
+                    />
                     <Button onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}>
                       <Plus className="me-2" size={18} /> Nova Subcampanha
                     </Button>
@@ -119,7 +155,7 @@ const ModalCampanha = () => {
                       columns={columnsTableClientes}
                       data={clientes}
                       className={`h-[300px] border`}
-                      isLoading={isLoading}
+                      isLoading={isLoading || isFetching}
                     />
                   </div>
                   <span className="flex justify-end">
@@ -130,75 +166,84 @@ const ModalCampanha = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-            <Tabs defaultValue={defaultIdSubcampanha} className="w-full">
-              <TabsList
-                className={`w-full justify-start flex h-auto bg-background ${
-                  !idSubcampanha && "hidden"
-                }`}
-              >
-                <ScrollArea className="w-fill whitespace-nowrap rounded-md h-auto">
-                  {subcampanhas?.map((subcampanha: any) => (
-                    <TabsTrigger
-                      className={"data-[state=active]:bg-secondary"}
-                      value={subcampanha?.id}
-                      onClick={() => {
-                        setIdSubcampanha(subcampanha.id);
-                        setFiltersLote({ id_campanha: subcampanha?.id || "" });
-                      }}
-                      key={`${subcampanha.id} - ${subcampanha.nome}`}
-                    >
-                      {subcampanha?.nome}
-                    </TabsTrigger>
-                  ))}
-                  <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-              </TabsList>
-              {subcampanhas?.map((subcampanha: any) => (
-                <TabsContent
-                  value={subcampanha?.id}
-                  key={`${subcampanha.id} - ${subcampanha.nome}`}
+            {defaultIdSubcampanha && (
+              <Tabs defaultValue={defaultIdSubcampanha} className="w-full">
+                <TabsList
+                  className={`w-full justify-start flex h-auto bg-background ${
+                    !idSubcampanha && "hidden"
+                  }`}
                 >
-                  <div className="flex flex-col gap-2 bg-background rounded-md w-full p-2">
-                    <span className="flex items-center w-full justify-between">
-                      <Button variant={"secondary"}>
-                        <SlidersHorizontal className="me-2" size={18} />
-                        Filtro
-                      </Button>
-                      <span className="flex  gap-2">
-                        <Button
-                          variant={"warning"}
-                          onClick={() => openModalDefinirAparelho(data_subcampanha?.qtde_clientes)}
-                        >
-                          <Smartphone className="me-2" size={18} /> Definir Aparelhos
-                        </Button>
-                        <Button
-                          variant={"tertiary"}
-                          onClick={() =>
-                            openModalDefinirVendedores(data_subcampanha?.qtde_clientes)
-                          }
-                        >
-                          <UserPen className="me-2" size={18} /> Definir Vendedores
-                        </Button>
+                  <ScrollArea className="w-fill whitespace-nowrap rounded-md h-auto">
+                    {subcampanhas?.map((subcampanha: any) => (
+                      <TabsTrigger
+                        className={"data-[state=active]:bg-secondary"}
+                        value={subcampanha?.id}
+                        onClick={() => {
+                          setIdSubcampanha(subcampanha.id);
+                          setFiltersLote({ id_campanha: subcampanha?.id || "" });
+                        }}
+                        key={`${subcampanha.id} - ${subcampanha.nome}`}
+                      >
+                        {subcampanha?.nome}
+                      </TabsTrigger>
+                    ))}
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+                </TabsList>
+                {subcampanhas?.map((subcampanha: any) => (
+                  <TabsContent
+                    value={subcampanha?.id}
+                    key={`${subcampanha.id} - ${subcampanha.nome}`}
+                  >
+                    <div className="flex flex-col gap-2 bg-background rounded-md w-full p-2">
+                      <span className="flex items-center w-full justify-between">
+                        <FiltersClientesCampanha
+                          filters={filters_lote}
+                          defaultFilters={defaultFiltersSubcampanha}
+                          refetch={refetchSubcampanha}
+                          setFilters={setFiltersLote}
+                          resetFilters={resetFiltersLote}
+                          qtde_clientes={data_subcampanha?.qtde_clientes}
+                          isPending={isLoadingSubcampanha || isFetchingSubcampanha}
+                        />
+                        <span className="flex  gap-2">
+                          <Button
+                            variant={"warning"}
+                            onClick={() =>
+                              openModalDefinirAparelho(data_subcampanha?.qtde_clientes)
+                            }
+                          >
+                            <Smartphone className="me-2" size={18} /> Definir Aparelhos
+                          </Button>
+                          <Button
+                            variant={"tertiary"}
+                            onClick={() =>
+                              openModalDefinirVendedores(data_subcampanha?.qtde_clientes)
+                            }
+                          >
+                            <UserPen className="me-2" size={18} /> Definir Vendedores
+                          </Button>
+                        </span>
                       </span>
-                    </span>
-                    <div className="grid bg-background rounded-lg ">
-                      <DataVirtualTableHeaderFixed
-                        // @ts-ignore
-                        columns={columnsTableClientesSubcampanha}
-                        data={clientesSubcampanha}
-                        className={`h-[300px] border`}
-                        isLoading={isLoadingSubcampanha}
-                      />
+                      <div className="grid bg-background rounded-lg ">
+                        <DataVirtualTableHeaderFixed
+                          // @ts-ignore
+                          columns={columnsTableClientesSubcampanha}
+                          data={clientesSubcampanha}
+                          className={`h-[300px] border`}
+                          isLoading={isLoadingSubcampanha || isFetchingSubcampanha}
+                        />
+                      </div>
+                      <span className="flex justify-end">
+                        <Badge variant={"secondary"}>
+                          Quantidade de Clientes: {data_subcampanha?.qtde_clientes}
+                        </Badge>
+                      </span>
                     </div>
-                    <span className="flex justify-end">
-                      <Badge variant={"secondary"}>
-                        Quantidade de Clientes: {data_subcampanha?.qtde_clientes}
-                      </Badge>
-                    </span>
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            )}
           </div>
         </ScrollArea>
 

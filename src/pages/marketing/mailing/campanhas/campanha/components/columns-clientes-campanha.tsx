@@ -51,8 +51,6 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
             size={"xs"}
             variant={"warning"}
             onClick={() => {
-              console.log(id);
-
               openModalEditarCliente(id);
             }}
           >

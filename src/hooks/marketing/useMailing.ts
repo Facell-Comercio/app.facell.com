@@ -24,23 +24,23 @@ interface InsertClientesProps extends NovaCampanhaSchema {
   filters: any;
 }
 
+interface InsertClientesSubcampanhaProps extends NovaCampanhaSchema {
+  filters: any;
+  id_parent: string;
+}
+
 export const useMailing = () => {
   const queryClient = useQueryClient();
 
   const getClientes = ({ pagination, filters }: GetAllParams) =>
     useQuery({
       queryKey: ["marketing", "mailing", "clientes", "lista", { pagination }],
-      staleTime: 5 * 1000 * 60,
-      retry: false,
       queryFn: async () => await fetchApi.marketing.mailing.getClientes({ pagination, filters }),
-      placeholderData: keepPreviousData,
     });
 
   const getOneCampanha = ({ id, filters }: { id?: string | null; filters: any }) =>
     useQuery({
       enabled: !!id,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
       queryKey: ["marketing", "mailing", "campanhas", "detalhe", id],
       queryFn: async () => {
         try {
@@ -62,8 +62,6 @@ export const useMailing = () => {
   const getOneClienteCampanha = (id?: string | null) =>
     useQuery({
       enabled: !!id,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
       queryKey: ["marketing", "mailing", "campanhas", "clientes", "detalhe", id],
       queryFn: async () => {
         try {
@@ -89,7 +87,37 @@ export const useMailing = () => {
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: ["marketing", "mailing"],
+          queryKey: ["marketing"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const insertOneSubcampanha = () =>
+    useMutation({
+      mutationFn: async (data: InsertClientesSubcampanhaProps) => {
+        return await api
+          .post(`marketing/mailing/campanhas/subcampanhas`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["marketing"],
         });
         toast({
           variant: "success",
@@ -183,7 +211,9 @@ export const useMailing = () => {
     getCampanhas,
     getOneCampanha,
     getOneClienteCampanha,
+
     insertOneCampanha,
+    insertOneSubcampanha,
 
     updateOneCliente,
     updateClienteLote,

@@ -52,6 +52,7 @@ export interface MultiSelectProps
   asChild?: boolean;
   className?: string;
   nowrap?: boolean;
+  maxCharacters?: number;
 }
 
 export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
@@ -69,6 +70,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       className,
       disabled,
       nowrap,
+      maxCharacters,
       ...props
     },
     ref
@@ -151,7 +153,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                           key={value}
                           className={cn(multiSelectVariants({ variant }))}
                         >
-                          <span className="text-white truncate max-w-[10ch] sm:max-w-full">
+                          <span className={`text-white truncate w-full max-w-[${maxCharacters}ch]`}>
                             {option?.label}
                           </span>
                           <XCircle

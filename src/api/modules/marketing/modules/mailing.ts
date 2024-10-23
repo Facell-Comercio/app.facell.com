@@ -14,7 +14,7 @@ export namespace mailing {
     return response.data;
   };
   export const getOneCampanha = async ({ id, filters }: { id?: string | null; filters: any }) => {
-    const response = await api.get(`/marketing/mailing/campanhas/${id}`, { params: filters });
+    const response = await api.get(`/marketing/mailing/campanhas/${id}`, { params: { filters } });
     return response.data;
   };
   export const getOneClienteCampanha = async (id?: string | null) => {
