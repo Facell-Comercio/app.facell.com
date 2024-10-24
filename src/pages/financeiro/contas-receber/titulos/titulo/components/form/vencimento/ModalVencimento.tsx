@@ -42,8 +42,8 @@ export function ModalVencimento({
   const id_status = parseInt(formTitulo.watch("id_status") || "0");
   const emitido = id_status === 30;
   const canEdit = id_status < 30 && id_status !== 20;
-  const canEditRecebimento = id_status >= 30;
   const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+  const canEditRecebimento = id_status >= 30 && isMaster;
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
   // console.log("VENCIMENTO", vencimento);
@@ -203,7 +203,7 @@ export function ModalVencimento({
                   >
                     <TableHeader className="sticky w-full top-0 h-10 border-b-2 border-border rounded-t-md bg-secondary">
                       <TableRow>
-                        <TableHead>Ação</TableHead>
+                        {canEditRecebimento && <TableHead>Ação</TableHead>}
                         <TableHead>Data</TableHead>
                         <TableHead>Conta Bancária</TableHead>
                         <TableHead>Valor</TableHead>
@@ -218,7 +218,7 @@ export function ModalVencimento({
                             className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
                           >
                             <TableCell className="flex gap-2">
-                              <AlertPopUp
+                              {canEditRecebimento && <AlertPopUp
                                 title="Deseja realmente remover este recebimento?"
                                 description=""
                                 action={() => deleteRecebimento(row.id)}
@@ -227,7 +227,7 @@ export function ModalVencimento({
                                     <Trash size={16} />
                                   </Button>
                                 }
-                              />
+                              />}
                             </TableCell>
                             <TableCell>{normalizeDate(row.data)}</TableCell>
                             <TableCell>{row.conta_bancaria}</TableCell>

@@ -70,16 +70,7 @@ const AppRoutes = () => {
           {/* Financeiro */}
           <Route path="/financeiro/">
             <Route element={<ContasPagarPage />} path="contas-a-pagar" />
-            <Route
-              element={
-                checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
-                  <ContasReceberPage />
-                ) : (
-                  <NotAuthorizedPage />
-                )
-              }
-              path="contas-a-receber"
-            />
+            <Route element={<ContasReceberPage />} path="contas-a-receber" />
             <Route element={<ControleCaixaPage />} path="controle-de-caixa">
               <Route path="conferencia-de-caixa">
                 <Route
