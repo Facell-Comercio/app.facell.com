@@ -13,7 +13,9 @@ const ContasReceberPage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("tab") || "";
-  const canAccess = checkUserPermission("FINANCEIRO_LANÇAR_RECEITA") || checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+  const isMaster = checkUserPermission("MASTER")
+  const isFinanceiro = checkUserDepartments("FINANCEIRO")
+  const canAccess = checkUserPermission("FINANCEIRO_LANÇAR_RECEITA") || isFinanceiro || isMaster;
   if(!canAccess){
     return <Navigate to={'/not-authorized'} />
   }
@@ -30,7 +32,7 @@ const ContasReceberPage = () => {
                 <TabsTrigger value="titulo">Títulos</TabsTrigger>
               </Link>
 
-              {checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") && (
+              {(isFinanceiro || isMaster) && (
                 <>
                   <Link to={`${uri}?tab=recebimentos`}>
                     <TabsTrigger value="recebimentos">Recebimentos</TabsTrigger>
