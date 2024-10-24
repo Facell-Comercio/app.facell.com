@@ -82,6 +82,57 @@ export const useRelatorios = () => {
       },
     });
 
+  const exportLayoutDatasysCR = () =>
+    useMutation({
+      mutationFn: async (filters: any) => {
+        return await api
+          .get(`${uri}/contas-a-pagar/export-datasys`, {
+            params: { filters },
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Ops",
+          description: errorJSON.message,
+        });
+      },
+    });
+
+  //* CONTROLE DE CAIXA
+  const exportLayoutRV = () =>
+    useMutation({
+      mutationFn: async (filters: any) => {
+        return await api
+          .get(`${uri}/controle-de-caixa/export-layout-recarga-rv`, {
+            params: { filters },
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Ops",
+          description: errorJSON.message,
+        });
+      },
+    });
+
   //* DRE
   const exportLayoutDREGerencial = () =>
     useMutation({
@@ -108,36 +159,17 @@ export const useRelatorios = () => {
       },
     });
 
-  const exportLayoutDatasysCR = () =>
-    useMutation({
-      mutationFn: async (filters: any) => {
-        return await api
-          .get(`${uri}/contas-a-pagar/export-datasys`, {
-            params: { filters },
-            responseType: "blob",
-          })
-          .then((response) => {
-            downloadResponse(response);
-          });
-      },
-      onError: async (error) => {
-        // @ts-expect-error "Funciona"
-        const errorText = await error.response.data.text();
-        const errorJSON = JSON.parse(errorText);
-
-        toast({
-          variant: "destructive",
-          title: "Ops",
-          description: errorJSON.message,
-        });
-      },
-    });
-
   return {
+    //* CONTAS A PAGAR
     exportPrevisaoPagamentoCR,
     exportLayoutDespesasCR,
     exportLayoutVencimentosCR,
-    exportLayoutDREGerencial,
     exportLayoutDatasysCR,
+
+    //* CONTROLE DE CAIXA
+    exportLayoutRV,
+
+    //* DRE
+    exportLayoutDREGerencial,
   };
 };
