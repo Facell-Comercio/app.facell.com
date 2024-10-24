@@ -21,7 +21,7 @@ export interface Actions {
   resetFilters: () => void;
 }
 
-export const useStoreRVRelatorio = create<State & Actions>((set) => ({
+export const useStoreRelatorioControleCaixa = create<State & Actions>((set) => ({
   filters: initialFilters,
   setFilters: (novoFiltro) =>
     set((state) => ({

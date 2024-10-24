@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 const uri = "/financeiro/relatorios";
 
 export const useRelatorios = () => {
-  //* Contas a Pagar
+  //* CONTAS A PAGAR
   const exportPrevisaoPagamentoCR = () =>
     useMutation({
       mutationFn: async (filters: any) => {
@@ -26,7 +26,7 @@ export const useRelatorios = () => {
 
         toast({
           variant: "destructive",
-          title: "Ops",
+          title: "Erro",
           description: errorJSON.message,
         });
       },
@@ -51,7 +51,7 @@ export const useRelatorios = () => {
 
         toast({
           variant: "destructive",
-          title: "Ops",
+          title: "Erro",
           description: errorJSON.message,
         });
       },
@@ -76,7 +76,7 @@ export const useRelatorios = () => {
 
         toast({
           variant: "destructive",
-          title: "Ops",
+          title: "Erro",
           description: errorJSON.message,
         });
       },
@@ -101,7 +101,7 @@ export const useRelatorios = () => {
 
         toast({
           variant: "destructive",
-          title: "Ops",
+          title: "Erro",
           description: errorJSON.message,
         });
       },
@@ -127,7 +127,127 @@ export const useRelatorios = () => {
 
         toast({
           variant: "destructive",
-          title: "Ops",
+          title: "Erro",
+          description: errorJSON.message,
+        });
+      },
+    });
+  const exportLayoutPIX = () =>
+    useMutation({
+      mutationFn: async (filters: any) => {
+        return await api
+          .get(`${uri}/controle-de-caixa/export-layout-pix`, {
+            params: { filters },
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: errorJSON.message,
+        });
+      },
+    });
+  const exportLayoutPitzi = () =>
+    useMutation({
+      mutationFn: async (filters: any) => {
+        return await api
+          .get(`${uri}/controle-de-caixa/export-layout-pitzi`, {
+            params: { filters },
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: errorJSON.message,
+        });
+      },
+    });
+  const exportLayoutCrediario = () =>
+    useMutation({
+      mutationFn: async (filters: any) => {
+        return await api
+          .get(`${uri}/controle-de-caixa/export-layout-crediario`, {
+            params: { filters },
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: errorJSON.message,
+        });
+      },
+    });
+  const exportLayoutTradein = () =>
+    useMutation({
+      mutationFn: async (filters: any) => {
+        return await api
+          .get(`${uri}/controle-de-caixa/export-layout-tradein`, {
+            params: { filters },
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: errorJSON.message,
+        });
+      },
+    });
+  const exportLayoutCartoes = () =>
+    useMutation({
+      mutationFn: async (filters: any) => {
+        return await api
+          .get(`${uri}/controle-de-caixa/export-layout-cartoes`, {
+            params: { filters },
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Erro",
           description: errorJSON.message,
         });
       },
@@ -153,7 +273,7 @@ export const useRelatorios = () => {
 
         toast({
           variant: "destructive",
-          title: "Ops",
+          title: "Erro",
           description: errorJSON.message,
         });
       },
@@ -168,6 +288,11 @@ export const useRelatorios = () => {
 
     //* CONTROLE DE CAIXA
     exportLayoutRV,
+    exportLayoutPIX,
+    exportLayoutPitzi,
+    exportLayoutCrediario,
+    exportLayoutTradein,
+    exportLayoutCartoes,
 
     //* DRE
     exportLayoutDREGerencial,
