@@ -12,10 +12,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { checkUserPermission } from "@/helpers/checkAuthorization";
-import {
-  AgregadoresProps,
-  useAgregadores,
-} from "@/hooks/comercial/useAgregadores";
+import { AgregadoresProps, useAgregadores } from "@/hooks/comercial/useAgregadores";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { Trash } from "lucide-react";
 import { useEffect, useRef } from "react";
 import FormAgregador from "./Form";
@@ -43,24 +41,24 @@ const initialPropsAgregador: AgregadoresProps = {
 };
 
 const ModalAgregador = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreAgregador((state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreAgregador(
+    (state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]);
+    ]
+  );
 
   const formRef = useRef(null);
 
   const { data, isLoading } = useAgregadores().getOne(id);
 
-  const { mutate: deleteAgregador, isSuccess } =
-    useAgregadores().deleteAgregador();
-  const newDataAgregador: AgregadoresProps & Record<string, any> =
-    {} as AgregadoresProps & Record<string, any>;
+  const { mutate: deleteAgregador, isSuccess } = useAgregadores().deleteAgregador();
+  const newDataAgregador: AgregadoresProps & Record<string, any> = {} as AgregadoresProps &
+    Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
@@ -88,9 +86,8 @@ const ModalAgregador = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {id ? `Agregador: ${id}` : "Nova Agregador"}
-          </DialogTitle>
+          <DialogTitle>{id ? `Agregador: ${id}` : "Nova Agregador"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
@@ -114,9 +111,7 @@ const ModalAgregador = () => {
             cancel={handleClickCancel}
             formRef={formRef}
             isLoading={isPending}
-            blockEdit={
-              !checkUserPermission(["GERENCIAR_AGREGADORES", "MASTER"])
-            }
+            blockEdit={!checkUserPermission(["GERENCIAR_AGREGADORES", "MASTER"])}
           >
             <AlertPopUp
               title={"Deseja realmente excluir"}
@@ -129,9 +124,7 @@ const ModalAgregador = () => {
                 type={"button"}
                 size="lg"
                 variant={"destructive"}
-                className={`text-white justify-self-start ${
-                  !modalEditing && "hidden"
-                }`}
+                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
               >
                 <Trash className="me-2" />
                 Excluir Agregador

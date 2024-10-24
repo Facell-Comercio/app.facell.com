@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -9,10 +10,7 @@ import {
 import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  ColaboradorSchema,
-  useColaboradores,
-} from "@/hooks/pessoal/useColaboradores";
+import { ColaboradorSchema, useColaboradores } from "@/hooks/pessoal/useColaboradores";
 import { useRef } from "react";
 import FormColaborador from "./Form";
 import { useStoreColaborador } from "./store";
@@ -25,21 +23,22 @@ const initialPropsColaborador: ColaboradorSchema = {
 };
 
 const ModalColaborador = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreColaborador((state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreColaborador(
+    (state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]);
+    ]
+  );
 
   const formRef = useRef(null);
 
   const { data, isLoading } = useColaboradores().getOne(id);
-  const newData: ColaboradorSchema & Record<string, any> =
-    {} as ColaboradorSchema & Record<string, any>;
+  const newData: ColaboradorSchema & Record<string, any> = {} as ColaboradorSchema &
+    Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
@@ -60,9 +59,8 @@ const ModalColaborador = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {id ? `Colaborador: ${id}` : "Novo Colaborador"}
-          </DialogTitle>
+          <DialogTitle>{id ? `Colaborador: ${id}` : "Novo Colaborador"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

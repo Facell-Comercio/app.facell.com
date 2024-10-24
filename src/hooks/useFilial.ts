@@ -18,7 +18,6 @@ export const useFilial = () => {
         queryFn: async () => await api.get('/filial', { params: params }),
         placeholderData: keepPreviousData,
         staleTime: Infinity,
-        refetchOnMount: false,
       }),
 
     getOne: (id?: string) =>
@@ -27,7 +26,6 @@ export const useFilial = () => {
         queryKey: ['filial', 'detalhe', id],
         queryFn: async () => await api.get(`/filial/${id}`),
         staleTime: Infinity,
-        refetchOnMount: false,
       }),
 
     insertOne: () =>

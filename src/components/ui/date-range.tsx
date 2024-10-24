@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, formatDate } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import * as React from "react";
@@ -6,15 +6,10 @@ import { DateRange } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-interface DatePickerWithRangeProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   date?: DateRange;
   setDate?: (date: DateRange) => void;
@@ -25,6 +20,9 @@ interface DatePickerWithRangeProps
   fromMonth?: Date;
   toYear?: number;
   fromYear?: number;
+  min?: Date;
+  max?: Date;
+  uniqueDayMonth?: string | number;
 }
 
 export function DatePickerWithRange({
@@ -38,6 +36,9 @@ export function DatePickerWithRange({
   fromMonth,
   toYear,
   fromYear,
+  min,
+  max,
+  uniqueDayMonth,
 }: DatePickerWithRangeProps) {
   // Não é necessário definir date e setDate no estado interno.
   // O código já recebe date e setDate das propriedades.
@@ -60,8 +61,7 @@ export function DatePickerWithRange({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "dd/MM/yyyy")} -{" "}
-                  {format(date.to, "dd/MM/yyyy")}
+                  {format(date.from, "dd/MM/yyyy")} - {format(date.to, "dd/MM/yyyy")}
                 </>
               ) : (
                 format(date.from, "dd/MM/yyyy")
@@ -85,6 +85,21 @@ export function DatePickerWithRange({
             fromMonth={fromMonth}
             toYear={toYear}
             fromYear={fromYear}
+            disabled={(date) => {
+              if (min && date < min) {
+                return true;
+              }
+              if (max && date > max) {
+                return true;
+              }
+              if (
+                uniqueDayMonth !== undefined &&
+                parseInt(formatDate(date, "dd")) !== uniqueDayMonth
+              ) {
+                return true;
+              }
+              return date < new Date("1900-01-01");
+            }}
           />
         </PopoverContent>
       </Popover>

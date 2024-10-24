@@ -1,7 +1,7 @@
 import { SelectMultiFormaPagamento } from "@/components/custom/SelectFormaPagamento";
 // import SelectMultiFormaPagamento from "@/components/custom/SelectMultiFormaPagamento";
 import { SelectMultiGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
-import { SelectMultiStatus } from "@/components/custom/SelectMultiStatus";
+import { SelectMultiStatusCP } from "@/components/custom/SelectMultiStatus";
 import {
   Accordion,
   AccordionContent,
@@ -74,7 +74,9 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 className="w-[80px]"
                 value={filters?.id}
                 onChange={(e) => {
-                  setFilters({ id: e.target.value });
+                  setFilters({
+                    id: e.target.value,
+                  });
                 }}
                 min={0}
               />
@@ -83,7 +85,9 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 className="w-[80px]"
                 value={filters?.num_doc}
                 onChange={(e) => {
-                  setFilters({ num_doc: e.target.value });
+                  setFilters({
+                    num_doc: e.target.value,
+                  });
                 }}
               />
 
@@ -91,27 +95,37 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 className="w-fit"
                 value={filters.grupo_economico_list || []}
                 onChange={(value) => {
-                  setFilters({ grupo_economico_list: value });
+                  setFilters({
+                    grupo_economico_list: value,
+                  });
                 }}
               />
               <SelectMultiFormaPagamento
-                className="w-fit"
+                className="min-w-fit"
                 value={filters.forma_pagamento_list || []}
                 onChange={(value) =>
-                  setFilters({ forma_pagamento_list: value })
+                  setFilters({
+                    forma_pagamento_list: value,
+                  })
                 }
               />
 
-              <SelectMultiStatus
+              <SelectMultiStatusCP
                 className="w-fit"
                 value={filters.status_list || []}
-                onChange={(value) => setFilters({ status_list: value })}
+                onChange={(value) =>
+                  setFilters({
+                    status_list: value,
+                  })
+                }
               />
 
               <Select
                 value={filters.tipo_data}
                 onValueChange={(tipo_data) => {
-                  setFilters({ tipo_data: tipo_data });
+                  setFilters({
+                    tipo_data: tipo_data,
+                  });
                 }}
               >
                 <SelectTrigger className="w-[180px]">
@@ -129,7 +143,9 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
               <DatePickerWithRange
                 date={filters.range_data}
                 setDate={(date) => {
-                  setFilters({ range_data: date });
+                  setFilters({
+                    range_data: date,
+                  });
                 }}
               />
 
@@ -137,7 +153,9 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 className="max-w-[200px]"
                 value={filters?.filial}
                 onChange={(e) => {
-                  setFilters({ filial: e.target.value });
+                  setFilters({
+                    filial: e.target.value,
+                  });
                 }}
                 placeholder="Nome Filial..."
               />
@@ -145,21 +163,31 @@ const FiltersTitulosPagar = ({ refetch }: { refetch: () => void }) => {
                 className="max-w-[200px]"
                 value={filters?.nome_fornecedor}
                 onChange={(e) =>
-                  setFilters({ nome_fornecedor: e.target.value })
+                  setFilters({
+                    nome_fornecedor: e.target.value,
+                  })
                 }
                 placeholder="Nome Fornecedor..."
               />
               <Input
                 className="max-w-[200px]"
                 value={filters.descricao}
-                onChange={(e) => setFilters({ descricao: e.target.value })}
+                onChange={(e) =>
+                  setFilters({
+                    descricao: e.target.value,
+                  })
+                }
                 placeholder="Descrição..."
               />
 
               <Input
                 className="max-w-[200px]"
                 value={filters?.nome_user}
-                onChange={(e) => setFilters({ nome_user: e.target.value })}
+                onChange={(e) =>
+                  setFilters({
+                    nome_user: e.target.value,
+                  })
+                }
                 placeholder="Nome Usuário..."
               />
             </div>

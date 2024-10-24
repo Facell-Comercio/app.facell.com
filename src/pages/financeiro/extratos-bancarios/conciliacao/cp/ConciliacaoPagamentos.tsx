@@ -1,12 +1,6 @@
 import { Accordion } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
 import { useEffect, useState } from "react";
 import { ItemCP } from "./tables/ItemCP";
@@ -22,45 +16,34 @@ import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeCurrency } from "@/helpers/mask";
 import { FaSpinner } from "react-icons/fa6";
 import ModalConciliarCP from "./components/ModalConciliar";
-import ModalExtratosCredit, {
-  ItemExtratosCredit,
-} from "./components/ModalExtratosCredit";
+import ModalExtratosCredit, { ItemExtratosCredit } from "./components/ModalExtratosCredit";
 import ModalExtratosDuplicated, {
   ItemExtratosDuplicated,
 } from "./components/ModalExtratosDuplicados";
 import { useStoreConciliacaoCP } from "./components/store";
 import { FiltersRealizados } from "./tables/Filters";
 import { SearchComponent } from "./tables/SearchComponent";
-import TitulosConciliados, {
-  TitulosConciliadosProps,
-} from "./tables/TitulosConciliados";
-import TitulosConciliar, {
-  VencimentosConciliarProps,
-} from "./tables/TitulosConciliar";
-import TransacoesConciliadas, {
-  TransacoesConciliadasProps,
-} from "./tables/TransacoesConciliadas";
-import TransacoesConciliar, {
-  TransacoesConciliarProps,
-} from "./tables/TransacoesConciliar";
+import TitulosConciliados, { TitulosConciliadosProps } from "./tables/TitulosConciliados";
+import TitulosConciliar, { VencimentosConciliarProps } from "./tables/TitulosConciliar";
+import TransacoesConciliadas, { TransacoesConciliadasProps } from "./tables/TransacoesConciliadas";
+import TransacoesConciliar, { TransacoesConciliarProps } from "./tables/TransacoesConciliar";
 import { columnsTable } from "./tables/columns";
 import { useStoreTableConciliacaoCP } from "./tables/store-tables";
 
-import { useExtratosStore } from "../../context";
-import { RefreshCcw } from "lucide-react";
-import ChartConciliacaoPagamentos from "./components/ChartConciliacaoPagamentos";
 import { DatePickerWithRange } from "@/components/ui/date-range";
+import { RefreshCcw } from "lucide-react";
+import { useExtratosStore } from "../../context";
+import ChartConciliacaoPagamentos from "./components/ChartConciliacaoPagamentos";
 
 const ConciliacaoCP = () => {
   const [modalExtratosCreditOpen, setModalExtratosCreditOpen] = useState(false);
-  const [modalExtratosDuplicatedOpen, setModalExtratosDuplicatedOpen] =
-    useState(false);
+  const [modalExtratosDuplicatedOpen, setModalExtratosDuplicatedOpen] = useState(false);
 
-  const { contaBancaria, ano, mes } = useExtratosStore(state => ({
+  const { contaBancaria, ano, mes } = useExtratosStore((state) => ({
     ano: state.ano,
     mes: state.mes,
-    contaBancaria: state?.contaBancaria
-  }))
+    contaBancaria: state?.contaBancaria,
+  }));
 
   const [
     filtersConciliacoes,
@@ -76,7 +59,8 @@ const ConciliacaoCP = () => {
     pagination,
     setPagination,
     filters,
-    setFilters
+    setFilters,
+    resetSelections,
   ] = useStoreTableConciliacaoCP((state) => [
     state.filtersConciliacoes,
     state.rowVencimentosSelection,
@@ -91,7 +75,8 @@ const ConciliacaoCP = () => {
     state.pagination,
     state.setPagination,
     state.filters,
-    state.setFilters
+    state.setFilters,
+    state.resetSelections,
   ]);
 
   const openModal = useStoreConciliacaoCP.getState().openModal;
@@ -100,14 +85,18 @@ const ConciliacaoCP = () => {
     filters: { id_conta_bancaria: contaBancaria?.id, ano, mes, range_data: filters.range_data },
   });
   const dataChartConciliacaoPagamentos = data?.dataChartConciliacaoPagamentos;
-  
+
   // * Dados das conciliações realizadas:
   const {
     data: dataConciliacoes,
     refetch: refetchConciliacoes,
     isLoading: isLoadingConciliacoes,
   } = useConciliacaoCP().getConciliacoes({
-    filters: {...filtersConciliacoes, id_conta_bancaria: contaBancaria?.id, id_filial: contaBancaria?.id_filial},
+    filters: {
+      ...filtersConciliacoes,
+      id_conta_bancaria: contaBancaria?.id,
+      id_filial: contaBancaria?.id_filial,
+    },
     pagination,
   });
 
@@ -170,10 +159,7 @@ const ConciliacaoCP = () => {
       setDataPagamento(vencimentosSelection[0].data_pagamento);
     } else if (transacoesSelection.length === 1) {
       setDataPagamento(transacoesSelection[0].data_transacao);
-    } else if (
-      vencimentosSelection.length === 0 &&
-      transacoesSelection.length === 0
-    ) {
+    } else if (vencimentosSelection.length === 0 && transacoesSelection.length === 0) {
       setDataPagamento();
     }
   }, [vencimentosSelection, transacoesSelection]);
@@ -201,31 +187,22 @@ const ConciliacaoCP = () => {
   const filteredTransacoesConciliar = transacoesConciliar
     .filter(
       (transacao: TransacoesConciliarProps) =>
-        String(transacao.id_transacao).includes(
-          searchFilters.transacaoConciliar
-        ) ||
-        String(transacao.descricao).includes(
-          searchFilters.transacaoConciliar
-        ) ||
+        String(transacao.id_transacao).includes(searchFilters.transacaoConciliar) ||
+        String(transacao.descricao).includes(searchFilters.transacaoConciliar) ||
         String(transacao.doc).includes(searchFilters.transacaoConciliar)
     )
     .filter((transacao: TransacoesConciliarProps) =>
-      dataPagamento
-        ? String(transacao.data_transacao) === dataPagamento
-        : transacao
+      dataPagamento ? String(transacao.data_transacao) === dataPagamento : transacao
     );
   const filteredTransacoesConciliadas = transacoesConciliadas.filter(
     (transacao: TransacoesConciliadasProps) =>
-      String(transacao.id_transacao).includes(
-        searchFilters.transacaoConciliada
-      ) ||
+      String(transacao.id_transacao).includes(searchFilters.transacaoConciliada) ||
       String(transacao.descricao).includes(searchFilters.transacaoConciliada) ||
       String(transacao.doc).includes(searchFilters.transacaoConciliada)
   );
 
   const totalTitulos = titulosConciliar.reduce(
-    (acc: number, val: VencimentosConciliarProps) =>
-      acc + parseFloat(val.valor_pago || "0"),
+    (acc: number, val: VencimentosConciliarProps) => acc + parseFloat(val.valor_pago || "0"),
     0
   );
   const totalTransacoes = transacoesConciliar.reduce(
@@ -248,10 +225,7 @@ const ConciliacaoCP = () => {
           <ToastAction
             altText="Ver Resultados"
             onClick={() =>
-              exportToExcel(
-                resultadoConciliacaoAutomatica,
-                `RESULTADO CONCILIAÇÃO AUTOMÁTICA`
-              )
+              exportToExcel(resultadoConciliacaoAutomatica, `RESULTADO CONCILIAÇÃO AUTOMÁTICA`)
             }
           >
             Ver Resultados
@@ -293,9 +267,7 @@ const ConciliacaoCP = () => {
         action: (
           <ToastAction
             altText="Ver Resultados"
-            onClick={() =>
-              exportToExcel(retorno, `RESULTADO LANÇAMENTO DAS TARIFAS`)
-            }
+            onClick={() => exportToExcel(retorno, `RESULTADO LANÇAMENTO DAS TARIFAS`)}
           >
             Ver Resultados
           </ToastAction>
@@ -310,7 +282,7 @@ const ConciliacaoCP = () => {
 
   function handleSelectionExtratosCredit(extrato: ItemExtratosCredit) {
     conciliacaoTransferenciaContas({
-      id_conta_bancaria: contaBancaria && String(contaBancaria?.id || '') ,
+      id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ""),
       id_saida: transacoesSelection[0].id,
       id_entrada: extrato.id,
       valor: extrato.valor,
@@ -325,13 +297,17 @@ const ConciliacaoCP = () => {
   }
 
   // * Quando o ano ou mês forem alterados, vamos resetar o range_datas:
-  const firstDay = new Date(parseInt(ano), parseInt(mes)-1, 1)
-  const endDay = new Date(parseInt(ano), parseInt(mes), 0)
+  const firstDay = new Date(parseInt(ano), parseInt(mes) - 1, 1);
+  const endDay = new Date(parseInt(ano), parseInt(mes), 0);
 
-  useEffect(()=>{
-    setFilters({range_data: {from: firstDay, to: endDay}})
-  }, 
-  [ano, mes])
+  useEffect(() => {
+    setFilters({ range_data: { from: firstDay, to: endDay } });
+  }, [ano, mes]);
+
+  //* Reseta as seleções ao receber um novo data ou ao alterar o período do filtro
+  useEffect(() => {
+    resetSelections();
+  }, [data, filters.range_data?.from, filters.range_data?.to]);
 
   const [itemOpen, setItemOpen] = useState<string>("nao-conciliado");
   const [realizadosOpen, setRealizadosOpen] = useState<string>("");
@@ -348,286 +324,253 @@ const ConciliacaoCP = () => {
           toMonth={endDay}
           toYear={parseInt(ano)}
           numberOfMonths={1}
-          setDate={(val) => { setFilters(({ range_data: val })); }}
+          setDate={(val) => {
+            setFilters({ range_data: val });
+          }}
         />
-        <Button
-          disabled={isFetching || !contaBancaria}
-          onClick={() => refetch()}
-        >
-          <RefreshCcw
-            size={20}
-            className={`${isFetching ? "animate-spin" : ""} me-2`}
-          /> Atualizar
+        <Button disabled={isFetching || !contaBancaria} onClick={() => refetch()}>
+          <RefreshCcw size={20} className={`${isFetching ? "animate-spin" : ""} me-2`} /> Atualizar
         </Button>
       </div>
 
-
-      {contaBancaria &&
-        ano &&
-        mes && (
-          <Accordion
-            type="single"
-            collapsible
-            value={itemOpen}
-            onValueChange={(e) => setItemOpen(e)}
-            className="px-2 py-1 border dark:border-slate-800 rounded-lg "
-          >
-            <ItemCP
-              title="Não conciliado"
-              value="nao-conciliado"
-              className="flex-col"
-            >
-              <ScrollArea className="w-fill whitespace-nowrap rounded-md md:pb-2.5 lg:pb-1">
-                <div className="flex justify-end gap-2 transition-all">
-                  {transacoesSelection.length === 1 && (
-                    <Button
-                      type={"button"}
-                      variant={"outline"}
-                      disabled={isPendingTratarDuplicidade}
-                      onClick={() => {
-                        setModalExtratosDuplicatedOpen(true);
-                      }}
-                    >
-                      Tratar como Duplicidade
-                    </Button>
-                  )}
-                  {transacoesSelection.length === 1 && (
-                    <Button
-                      type={"button"}
-                      variant={"outline"}
-                      disabled={isPendingTransferenciaContas}
-                      onClick={() => {
-                        setModalExtratosCreditOpen(true);
-                      }}
-                    >
-                      Transferência entre Contas
-                    </Button>
-                  )}
+      {contaBancaria && ano && mes && (
+        <Accordion
+          type="single"
+          collapsible
+          value={itemOpen}
+          onValueChange={(e) => setItemOpen(e)}
+          className="px-2 py-1 border dark:border-slate-800 rounded-lg "
+        >
+          <ItemCP title="Não conciliado" value="nao-conciliado" className="flex-col">
+            <ScrollArea className="w-fill whitespace-nowrap rounded-md md:pb-2.5 lg:pb-1">
+              <div className="flex justify-end gap-2 transition-all">
+                {transacoesSelection.length === 1 && (
                   <Button
                     type={"button"}
                     variant={"outline"}
+                    disabled={isPendingTratarDuplicidade}
                     onClick={() => {
-                      if (
-                        !vencimentosSelection.length ||
-                        !transacoesSelection.length
-                      ) {
-                        toast({
-                          title: "Selecione os títulos e as transações!",
-                          description:
-                            "É necessário que sejam selecionados no mínimo um título e uma transação bancária",
-                          variant: "warning",
-                        });
-                      } else if (
-                        totalSelectedTitulos !== totalSelectedTransacoes
-                      ) {
-                        toast({
-                          title: "Valores incorretos!",
-                          description:
-                            "O total dos títulos e das transações não são iguais",
-                          variant: "warning",
-                        });
-                      } else {
-                        openModal("");
-                      }
+                      setModalExtratosDuplicatedOpen(true);
                     }}
                   >
-                    Conciliação Manual
+                    Tratar como Duplicidade
                   </Button>
+                )}
+                {transacoesSelection.length === 1 && (
+                  <Button
+                    type={"button"}
+                    variant={"outline"}
+                    disabled={isPendingTransferenciaContas}
+                    onClick={() => {
+                      setModalExtratosCreditOpen(true);
+                    }}
+                  >
+                    Transferência entre Contas
+                  </Button>
+                )}
+                <Button
+                  type={"button"}
+                  variant={"outline"}
+                  onClick={() => {
+                    if (!vencimentosSelection.length || !transacoesSelection.length) {
+                      toast({
+                        title: "Selecione os títulos e as transações!",
+                        description:
+                          "É necessário que sejam selecionados no mínimo um título e uma transação bancária",
+                        variant: "warning",
+                      });
+                    } else if (totalSelectedTitulos !== totalSelectedTransacoes) {
+                      toast({
+                        title: "Valores incorretos!",
+                        description: "O total dos títulos e das transações não são iguais",
+                        variant: "warning",
+                      });
+                    } else {
+                      openModal("");
+                    }
+                  }}
+                >
+                  Conciliação Manual
+                </Button>
+                <AlertPopUp
+                  title={"Deseja realmente realizar a conciliação?"}
+                  description="A conciliação de alguns títulos e de algumas transações será feita automaticamente"
+                  action={() => {
+                    conciliacaoAutomatica({
+                      vencimentos: filteredTitulosConciliar,
+                      transacoes: filteredTransacoesConciliar,
+                      id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ""),
+                    });
+                  }}
+                >
+                  {isPending ? (
+                    <Button disabled variant={"outline"}>
+                      <span className="flex gap-2 w-full items-center justify-center">
+                        <FaSpinner size={18} className="me-2 animate-spin" /> Conciliando...
+                      </span>
+                    </Button>
+                  ) : (
+                    <Button type={"button"} variant={"outline"}>
+                      Conciliação Automática
+                    </Button>
+                  )}
+                </AlertPopUp>
+                <span
+                  title={
+                    !bancoComFornecedor
+                      ? "Defina o fornecedor deste banco em cadastro de bancos para poder lançar as tarifas"
+                      : transacoesSelection.length > 0
+                      ? ""
+                      : "Selecione no mínimo 1 tarifa"
+                  }
+                >
                   <AlertPopUp
-                    title={"Deseja realmente realizar a conciliação?"}
-                    description="A conciliação de alguns títulos e de algumas transações será feita automaticamente"
+                    title={"Deseja realmente realizar essa operação?"}
+                    description="As tarifas serão lançadas e a concilição realizada automaticamente"
                     action={() => {
-                      conciliacaoAutomatica({
-                        vencimentos: filteredTitulosConciliar,
-                        transacoes: filteredTransacoesConciliar,
-                        id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ''),
+                      // Talvez verificar a existência de um "TAR" na descrição
+                      conciliacaoTarifas({
+                        tarifas: transacoesSelection,
+                        id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ""),
+                        data_transacao: transacoesSelection[0].data_transacao,
                       });
                     }}
                   >
-                    {isPending ? (
+                    {isPendingTarifas ? (
                       <Button disabled variant={"outline"}>
                         <span className="flex gap-2 w-full items-center justify-center">
-                          <FaSpinner size={18} className="me-2 animate-spin" />{" "}
-                          Conciliando...
+                          <FaSpinner size={18} className="me-2 animate-spin" /> Lançando...
                         </span>
                       </Button>
                     ) : (
-                      <Button type={"button"} variant={"outline"}>
-                        Conciliação Automática
+                      <Button
+                        disabled={!bancoComFornecedor || transacoesSelection.length === 0}
+                        type={"button"}
+                        variant={"outline"}
+                      >
+                        Lançar Tarifas
                       </Button>
                     )}
                   </AlertPopUp>
-                  <span
-                    title={
-                      !bancoComFornecedor
-                        ? "Defina o fornecedor deste banco em cadastro de bancos para poder lançar as tarifas"
-                        : transacoesSelection.length > 0
-                          ? ""
-                          : "Selecione no mínimo 1 tarifa"
-                    }
-                  >
-                    <AlertPopUp
-                      title={"Deseja realmente realizar essa operação?"}
-                      description="As tarifas serão lançadas e a concilição realizada automaticamente"
-                      action={() => {
-                        // Talvez verificar a existência de um "TAR" na descrição
-                        conciliacaoTarifas({
-                          tarifas: transacoesSelection,
-                          id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ''),
-                          data_transacao: transacoesSelection[0].data_transacao,
-                        });
-                      }}
-                    >
-                      {isPendingTarifas ? (
-                        <Button disabled variant={"outline"}>
-                          <span className="flex gap-2 w-full items-center justify-center">
-                            <FaSpinner
-                              size={18}
-                              className="me-2 animate-spin"
-                            />{" "}
-                            Lançando...
-                          </span>
-                        </Button>
-                      ) : (
-                        <Button
-                          disabled={
-                            !bancoComFornecedor ||
-                            transacoesSelection.length === 0
-                          }
-                          type={"button"}
-                          variant={"outline"}
-                        >
-                          Lançar Tarifas
-                        </Button>
-                      )}
-                    </AlertPopUp>
-                  </span>
-                </div>
+                </span>
+              </div>
 
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
-              <section className="grid grid-cols-1 md:grid-cols-2 max-w-full gap-2 grid-nowrap">
-                <Card className="grid-nowrap overflow-y border-0 bg-secondary">
-                  <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md text-nowrap">
-                      Vencimentos
-                    </CardTitle>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+            <section className="grid grid-cols-1 md:grid-cols-2 max-w-full gap-2 grid-nowrap">
+              <Card className="grid-nowrap overflow-y border-0 bg-secondary">
+                <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
+                  <CardTitle className="text-md text-nowrap">Vencimentos</CardTitle>
+                  <SearchComponent
+                    searchFilters={searchFilters}
+                    setSearchFilters={setSearchFilters}
+                    name="tituloConciliar"
+                  />
+                </CardHeader>
+                <CardContent className="px-0 py-0">
+                  <TitulosConciliar
+                    data={filteredTitulosConciliar}
+                    isLoading={isLoading}
+                    isError={isError}
+                    rowSelection={rowVencimentosSelection}
+                    handleRowSelection={handlerowVencimentosSelection}
+                    vencimentosSelection={vencimentosSelection.map(
+                      (titulo) => titulo.id_vencimento
+                    )}
+                  />
+                </CardContent>
+                <CardFooter className="flex justify-between p-2 mt-auto">
+                  <Badge variant={"info"}>
+                    <p className="me-1">Total: </p>
+                    {normalizeCurrency(totalTitulos)}
+                  </Badge>
+                  <Badge variant={"info"}>
+                    <p className="me-1">Total Selecionado: </p>
+                    {normalizeCurrency(totalSelectedTitulos)}
+                  </Badge>
+                </CardFooter>
+              </Card>
+
+              <Card className="h-full grid-nowrap border-0 bg-secondary">
+                <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
+                  <CardTitle className="text-md text-nowrap">Transações Bancárias</CardTitle>
+                  <span className="flex gap-2">
                     <SearchComponent
                       searchFilters={searchFilters}
                       setSearchFilters={setSearchFilters}
-                      name="tituloConciliar"
+                      name="transacaoConciliar"
                     />
-                  </CardHeader>
-                  <CardContent className="px-0 py-0">
-                    <TitulosConciliar
-                      data={filteredTitulosConciliar}
-                      isLoading={isLoading}
-                      isError={isError}
-                      rowSelection={rowVencimentosSelection}
-                      handleRowSelection={handlerowVencimentosSelection}
-                      vencimentosSelection={vencimentosSelection.map(
-                        (titulo) => titulo.id_vencimento
-                      )}
-                    />
-                  </CardContent>
-                  <CardFooter className="flex justify-between p-2 mt-auto">
-                    <Badge variant={"info"}>
-                      <p className="me-1">Total: </p>
-                      {normalizeCurrency(totalTitulos)}
-                    </Badge>
-                    <Badge variant={"info"}>
-                      <p className="me-1">Total Selecionado: </p>
-                      {normalizeCurrency(totalSelectedTitulos)}
-                    </Badge>
-                  </CardFooter>
-                </Card>
-
-                <Card className="h-full grid-nowrap border-0 bg-secondary">
-                  <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md text-nowrap">
-                      Transações Bancárias
-                    </CardTitle>
-                    <span className="flex gap-2">
-                      <SearchComponent
-                        searchFilters={searchFilters}
-                        setSearchFilters={setSearchFilters}
-                        name="transacaoConciliar"
-                      />
-                      {/* <Button variant={"tertiary"} size={"xs"}>
+                    {/* <Button variant={"tertiary"} size={"xs"}>
                         Tratar Duplicidade
                       </Button> */}
-                    </span>
-                  </CardHeader>
-                  <CardContent className="px-0 py-0 overflow-auto">
-                    <TransacoesConciliar
-                      data={filteredTransacoesConciliar}
-                      isLoading={isLoading}
-                      isError={isError}
-                      rowSelection={rowTransacoesSelection}
-                      handleRowSelection={handleRowTransacoesSelection}
-                      transacoesSelection={transacoesSelection.map(
-                        (transacao) => transacao.id_transacao
-                      )}
-                    />
-                  </CardContent>
-                  <CardFooter className="flex justify-between p-2 mt-auto">
-                    <Badge variant={"info"}>
-                      <p className="me-1">Total Selecionado: </p>
-                      {normalizeCurrency(totalSelectedTransacoes)}
-                    </Badge>
-                    <Badge variant={"info"}>
-                      <p className="me-1">Total: </p>
-                      {normalizeCurrency(totalTransacoes)}
-                    </Badge>
-                  </CardFooter>
-                </Card>
-              </section>
-            </ItemCP>
+                  </span>
+                </CardHeader>
+                <CardContent className="px-0 py-0 overflow-auto">
+                  <TransacoesConciliar
+                    data={filteredTransacoesConciliar}
+                    isLoading={isLoading}
+                    isError={isError}
+                    rowSelection={rowTransacoesSelection}
+                    handleRowSelection={handleRowTransacoesSelection}
+                    transacoesSelection={transacoesSelection.map(
+                      (transacao) => transacao.id_transacao
+                    )}
+                  />
+                </CardContent>
+                <CardFooter className="flex justify-between p-2 mt-auto">
+                  <Badge variant={"info"}>
+                    <p className="me-1">Total Selecionado: </p>
+                    {normalizeCurrency(totalSelectedTransacoes)}
+                  </Badge>
+                  <Badge variant={"info"}>
+                    <p className="me-1">Total: </p>
+                    {normalizeCurrency(totalTransacoes)}
+                  </Badge>
+                </CardFooter>
+              </Card>
+            </section>
+          </ItemCP>
 
-            <ItemCP title="Conciliado" value="conciliado">
-              <section className="grid grid-cols-1 md:grid-cols-2 w-full gap-2 grid-nowrap">
-                <Card className="h-full grid-nowrap overflow-y border-0 bg-secondary">
-                  <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md text-nowrap">
-                      Vencimentos
-                    </CardTitle>
-                    <SearchComponent
-                      searchFilters={searchFilters}
-                      setSearchFilters={setSearchFilters}
-                      name="tituloConciliado"
-                    />
-                  </CardHeader>
-                  <CardContent className="px-0 py-0">
-                    <TitulosConciliados
-                      data={filteredTitulosConciliados}
-                      isLoading={isLoading}
-                      isError={isError}
-                    />
-                  </CardContent>
-                </Card>
-                <Card className="h-full grid-nowrap overflow-y border-0 bg-secondary">
-                  <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
-                    <CardTitle className="text-md text-nowrap">
-                      Transações Bancárias
-                    </CardTitle>
-                    <SearchComponent
-                      searchFilters={searchFilters}
-                      setSearchFilters={setSearchFilters}
-                      name="transacaoConciliada"
-                    />
-                  </CardHeader>
-                  <CardContent className="px-0 py-0">
-                    <TransacoesConciliadas
-                      data={filteredTransacoesConciliadas}
-                      isLoading={isLoading}
-                      isError={isError}
-                    />
-                  </CardContent>
-                </Card>
-              </section>
-            </ItemCP>
-          </Accordion>
-        )}
+          <ItemCP title="Conciliado" value="conciliado">
+            <section className="grid grid-cols-1 md:grid-cols-2 w-full gap-2 grid-nowrap">
+              <Card className="h-full grid-nowrap overflow-y border-0 bg-secondary">
+                <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
+                  <CardTitle className="text-md text-nowrap">Vencimentos</CardTitle>
+                  <SearchComponent
+                    searchFilters={searchFilters}
+                    setSearchFilters={setSearchFilters}
+                    name="tituloConciliado"
+                  />
+                </CardHeader>
+                <CardContent className="px-0 py-0">
+                  <TitulosConciliados
+                    data={filteredTitulosConciliados}
+                    isLoading={isLoading}
+                    isError={isError}
+                  />
+                </CardContent>
+              </Card>
+              <Card className="h-full grid-nowrap overflow-y border-0 bg-secondary">
+                <CardHeader className="flex flex-row items-end justify-between gap-2 w-full p-0 pb-2 px-2">
+                  <CardTitle className="text-md text-nowrap">Transações Bancárias</CardTitle>
+                  <SearchComponent
+                    searchFilters={searchFilters}
+                    setSearchFilters={setSearchFilters}
+                    name="transacaoConciliada"
+                  />
+                </CardHeader>
+                <CardContent className="px-0 py-0">
+                  <TransacoesConciliadas
+                    data={filteredTransacoesConciliadas}
+                    isLoading={isLoading}
+                    isError={isError}
+                  />
+                </CardContent>
+              </Card>
+            </section>
+          </ItemCP>
+        </Accordion>
+      )}
       <ModalConciliarCP />
 
       {contaBancaria && (
@@ -661,13 +604,9 @@ const ConciliacaoCP = () => {
         handleSelection={handleSelectionExtratosCredit}
         filters={{
           data_transacao:
-            transacoesSelection.length === 1
-              ? transacoesSelection[0].data_transacao
-              : undefined,
+            transacoesSelection.length === 1 ? transacoesSelection[0].data_transacao : undefined,
           valor:
-            transacoesSelection.length === 1
-              ? parseFloat(transacoesSelection[0].valor)
-              : undefined,
+            transacoesSelection.length === 1 ? parseFloat(transacoesSelection[0].valor) : undefined,
         }}
       />
       <ModalExtratosDuplicated
@@ -675,23 +614,14 @@ const ConciliacaoCP = () => {
         onOpenChange={() => setModalExtratosDuplicatedOpen(false)}
         handleSelection={handleSelectionExtratosDuplicated}
         filters={{
-          id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ''),
-          id_extrato:
-            transacoesSelection.length === 1
-              ? transacoesSelection[0].id
-              : undefined,
+          id_conta_bancaria: contaBancaria && String(contaBancaria?.id || ""),
+          id_extrato: transacoesSelection.length === 1 ? transacoesSelection[0].id : undefined,
           descricao:
-            transacoesSelection.length === 1
-              ? transacoesSelection[0].descricao
-              : undefined,
+            transacoesSelection.length === 1 ? transacoesSelection[0].descricao : undefined,
           data_transacao:
-            transacoesSelection.length === 1
-              ? transacoesSelection[0].data_transacao
-              : undefined,
+            transacoesSelection.length === 1 ? transacoesSelection[0].data_transacao : undefined,
           valor:
-            transacoesSelection.length === 1
-              ? parseFloat(transacoesSelection[0].valor)
-              : undefined,
+            transacoesSelection.length === 1 ? parseFloat(transacoesSelection[0].valor) : undefined,
         }}
       />
     </div>

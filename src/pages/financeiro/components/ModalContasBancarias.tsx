@@ -1,7 +1,4 @@
-import {
-  ModalComponent,
-  ModalComponentRow,
-} from "@/components/custom/ModalComponent";
+import { ModalComponent, ModalComponentRow } from "@/components/custom/ModalComponent";
 import SelectMatriz from "@/components/custom/SelectMatriz";
 import { AccordionItem } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -15,14 +12,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { api } from "@/lib/axios";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionTrigger,
-} from "@radix-ui/react-accordion";
+import { Accordion, AccordionContent, AccordionTrigger } from "@radix-ui/react-accordion";
 import { useQuery } from "@tanstack/react-query";
 import { EraserIcon, FilterIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface IModalContaBancaria {
   open: boolean;
@@ -32,6 +25,7 @@ interface IModalContaBancaria {
   id_matriz?: string | null;
   id_grupo_economico?: string;
   onlyDatasys?: boolean;
+  isCaixa?: boolean | "all";
 }
 
 export type ItemContaBancariaProps = {
@@ -41,6 +35,8 @@ export type ItemContaBancariaProps = {
   banco: string;
   id_matriz: string;
   id_grupo_economico?: string;
+  saldo?: string;
+  caixa: number;
 };
 
 type PaginationProps = {
@@ -53,7 +49,8 @@ interface Filters {
   id_matriz?: string;
   descricao?: string;
   banco?: string;
-  onlyDatasys?: boolean;
+  onlyDatasys?: number;
+  isCaixa?: number | "all";
 }
 
 const ModalContasBancarias = ({
@@ -64,6 +61,7 @@ const ModalContasBancarias = ({
   id_matriz,
   id_grupo_economico,
   onlyDatasys,
+  isCaixa = "all",
 }: IModalContaBancaria) => {
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -75,7 +73,8 @@ const ModalContasBancarias = ({
     id_matriz: id_matriz || "all",
     descricao: "",
     banco: "",
-    onlyDatasys: onlyDatasys,
+    onlyDatasys: onlyDatasys ? 1 : 0,
+    isCaixa: isCaixa === "all" ? "all" : isCaixa ? 1 : 0,
   };
 
   const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
@@ -83,17 +82,16 @@ const ModalContasBancarias = ({
 
   const { data, isLoading, isError, refetch } = useQuery({
     staleTime: 0,
-    refetchOnMount: true,
     queryKey: [
       "financeiro",
       "conta_bancaria",
       "lista",
-      { filters, pagination, id_matriz, id_grupo_economico },
+      [filters, pagination, id_matriz, id_grupo_economico, isCaixa],
     ],
     queryFn: async () =>
       await api.get("financeiro/contas-bancarias/", {
         params: {
-          filters: { ...filters },
+          filters: { ...filters, id_grupo_economico },
           pagination,
         },
       }),
@@ -132,6 +130,15 @@ const ModalContasBancarias = ({
   const pageCount = (data && data.data.pageCount) || 0;
   const [itemOpen, setItemOpen] = useState<string>("item-1");
 
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      id_matriz: id_matriz || "all",
+      id_grupo_economico: id_grupo_economico || "all",
+      isCaixa: isCaixa === "all" ? "all" : isCaixa ? 1 : 0,
+    }));
+  }, [id_matriz, id_grupo_economico, isCaixa]);
+
   if (isError) return null;
   if (!open) return null;
 
@@ -140,9 +147,7 @@ const ModalContasBancarias = ({
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>Contas bancárias</DialogTitle>
-          <DialogDescription>
-            Selecione uma ao clicar no botão à direita.
-          </DialogDescription>
+          <DialogDescription>Selecione uma ao clicar no botão à direita.</DialogDescription>
 
           <Accordion
             type="single"
@@ -156,11 +161,7 @@ const ModalContasBancarias = ({
                 <Button size={"xs"} onClick={() => handleClickFilter()}>
                   Aplicar <FilterIcon size={12} className="ms-2" />
                 </Button>
-                <Button
-                  size={"xs"}
-                  variant="secondary"
-                  onClick={() => handleClickResetFilters()}
-                >
+                <Button size={"xs"} variant="secondary" onClick={() => handleClickResetFilters()}>
                   Limpar <EraserIcon size={12} className="ms-2" />
                 </Button>
               </div>
@@ -174,7 +175,7 @@ const ModalContasBancarias = ({
                     {!id_matriz && (
                       <SelectMatriz
                         showAll
-                        value={filters.id_matriz}
+                        value={filters?.id_matriz}
                         onChange={(id_matriz) => {
                           setFilters({
                             id_matriz: id_matriz,
@@ -185,15 +186,13 @@ const ModalContasBancarias = ({
                     <Input
                       placeholder="Descrição"
                       className="w-[20ch]"
-                      value={filters.descricao}
-                      onChange={(e) =>
-                        setFilters({ descricao: e.target.value })
-                      }
+                      value={filters?.descricao || ""}
+                      onChange={(e) => setFilters({ descricao: e.target.value })}
                     />
                     <Input
                       placeholder="Banco"
                       className="max-w-[200px]"
-                      value={filters.banco}
+                      value={filters?.banco || ""}
                       onChange={(e) => setFilters({ banco: e.target.value })}
                     />
                   </div>
@@ -210,31 +209,27 @@ const ModalContasBancarias = ({
           pagination={pagination}
           setPagination={setPagination}
         >
-          {data?.data?.rows.map(
-            (item: ItemContaBancariaProps, index: number) => (
-              <ModalComponentRow
-                key={`contasBancariasRow: ${item.id} ${index}`}
-              >
-                <>
-                  <span>
-                    {item.grupo_economico && item.grupo_economico.toUpperCase()}{" "}
-                    - {item.descricao && item.descricao.toUpperCase()} -{" "}
-                    {item.banco && item.banco.toUpperCase()}
-                  </span>
-                  <Button
-                    size={"xs"}
-                    className="p-1"
-                    variant={"outline"}
-                    onClick={() => {
-                      pushSelection(item);
-                    }}
-                  >
-                    Selecionar
-                  </Button>
-                </>
-              </ModalComponentRow>
-            )
-          )}
+          {data?.data?.rows.map((item: ItemContaBancariaProps, index: number) => (
+            <ModalComponentRow key={`contasBancariasRow: ${item.id} ${index}`}>
+              <>
+                <span>
+                  {item.grupo_economico && item.grupo_economico.toUpperCase()} -{" "}
+                  {item.descricao && item.descricao.toUpperCase()} -{" "}
+                  {item.banco && item.banco.toUpperCase()}
+                </span>
+                <Button
+                  size={"xs"}
+                  className="p-1"
+                  variant={"outline"}
+                  onClick={() => {
+                    pushSelection(item);
+                  }}
+                >
+                  Selecionar
+                </Button>
+              </>
+            </ModalComponentRow>
+          ))}
         </ModalComponent>
       </DialogContent>
     </Dialog>

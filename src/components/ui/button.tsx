@@ -1,5 +1,8 @@
 import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import {
+  cva,
+  type VariantProps,
+} from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "@/lib/utils.ts";
@@ -9,19 +12,25 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        success: "bg-success text-primary-foreground hover:opacity-90",
-        warning: "bg-warning text-primary-foreground hover:opacity-90",
+        default:
+          "bg-primary text-primary-foreground hover:opacity-90",
+        success:
+          "bg-success text-primary-foreground hover:opacity-90",
+        warning:
+          "bg-warning text-primary-foreground hover:opacity-90",
         destructive:
-          "bg-destructive text-destructive-foreground dark:text-white hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground dark:text-white hover:opacity-90",
         outline:
           "border border-input bg-background dark:text-white hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground dark:text-white hover:bg-secondary/80",
-        tertiary: "bg-violet-600 text-foreground text-white hover:opacity-90",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+          "bg-secondary text-secondary-foreground dark:text-white hover:opacity-80",
+        tertiary:
+          "bg-violet-500 dark:bg-violet-600 text-foreground text-white hover:opacity-90",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        violet: "bg-violet-600 text-foreground text-white hover:opacity-90",
+        violet:
+          "bg-violet-500 dark:bg-violet-600 text-foreground text-white hover:opacity-90",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -45,13 +54,31 @@ export interface ButtonProps
   asChild?: boolean;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+const Button = React.forwardRef<
+  HTMLButtonElement,
+  ButtonProps
+>(
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button";
     const type = props.type || "button";
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          buttonVariants({
+            variant,
+            size,
+            className,
+          })
+        )}
         ref={ref}
         {...{ type: type, ...props }}
       />

@@ -1,7 +1,4 @@
-import {
-  ModalComponent,
-  ModalComponentRow,
-} from "@/components/custom/ModalComponent";
+import { ModalComponent, ModalComponentRow } from "@/components/custom/ModalComponent";
 import SearchComponent from "@/components/custom/SearchComponent";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +18,7 @@ interface IModalFornecedores {
   open: boolean;
   handleSelection: (item: ItemFornecedor) => void;
   onOpenChange: () => void;
+  closeOnSelection?: boolean;
 }
 
 export type ItemFornecedor = {
@@ -51,6 +49,7 @@ const ModalFornecedores = ({
   open,
   handleSelection,
   onOpenChange,
+  closeOnSelection,
 }: IModalFornecedores) => {
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -64,12 +63,7 @@ const ModalFornecedores = ({
     isError,
     refetch: refetch,
   } = useQuery({
-    queryKey: [
-      "financeiro",
-      "fornecedor",
-      "lista",
-      { termo: search, pagination },
-    ],
+    queryKey: ["financeiro", "fornecedor", "lista", { termo: search, pagination }],
     queryFn: async () =>
       await api.get("financeiro/fornecedores/", {
         params: { filters: { termo: search }, pagination },
@@ -87,6 +81,7 @@ const ModalFornecedores = ({
   }
   function pushSelection(item: ItemFornecedor) {
     handleSelection(item);
+    if (closeOnSelection) onOpenChange();
   }
 
   const pageCount = (data && data.data.pageCount) || 0;
@@ -98,9 +93,7 @@ const ModalFornecedores = ({
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>Lista de Fornecedores/Clientes</DialogTitle>
-          <DialogDescription>
-            Selecione um ao clicar no botão à direita.
-          </DialogDescription>
+          <DialogDescription>Selecione um ao clicar no botão à direita.</DialogDescription>
 
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
@@ -116,8 +109,7 @@ const ModalFornecedores = ({
             <ModalComponentRow key={"fornKey:" + item.id}>
               <>
                 <span>
-                  {normalizeCnpjNumber(item.cnpj)} - {item.nome}{" "}
-                  {item.razao && " - " + item.razao}
+                  {normalizeCnpjNumber(item.cnpj)} - {item.nome} {item.razao && " - " + item.razao}
                 </span>
                 <Button
                   size={"xs"}

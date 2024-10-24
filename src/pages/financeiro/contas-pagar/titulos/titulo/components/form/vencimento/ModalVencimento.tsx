@@ -8,21 +8,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  UseFormReturn,
-  useFieldArray,
-  useForm,
-  useWatch,
-} from "react-hook-form";
+import { UseFormReturn, useFieldArray, useForm, useWatch } from "react-hook-form";
 
 import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
 import { addMonths, isBefore, setDate, subDays } from "date-fns";
 import { Plus, Save } from "lucide-react";
@@ -32,13 +24,8 @@ import { TituloSchemaProps, vencimentoSchema } from "../../../form-data";
 import { calcularDataPrevisaoPagamento } from "../../../helpers/helper";
 import { initialStateVencimento, useStoreVencimento } from "./context";
 
-export function ModalVencimento({
-  form: formTitulo,
-}: {
-  form: UseFormReturn<TituloSchemaProps>;
-}) {
-  const isMaster: boolean =
-    checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<TituloSchemaProps> }) {
+  const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
 
@@ -47,7 +34,7 @@ export function ModalVencimento({
 
   const form = useForm({
     resolver: zodResolver(vencimentoSchema),
-    values: { ...vencimento } || { ...initialStateVencimento.vencimento },
+    values: vencimento ? { ...vencimento } : { ...initialStateVencimento.vencimento },
     defaultValues: { ...initialStateVencimento.vencimento },
   });
 
@@ -86,10 +73,7 @@ export function ModalVencimento({
     if (isCartao) {
       const dataAtual = new Date();
       const corteCartaoDate = setDate(dataAtual, Number(dia_corte_cartao));
-      const vencimentoCartaoDate = setDate(
-        dataAtual,
-        Number(dia_vencimento_cartao)
-      );
+      const vencimentoCartaoDate = setDate(dataAtual, Number(dia_vencimento_cartao));
 
       let proximaDataVencimento;
 
@@ -139,7 +123,7 @@ export function ModalVencimento({
               return acc + parseFloat(curr.valor);
             }, 0) || 0) + parseFloat(data.valor);
         const dif = totalPrevisto - valorTotalTitulo;
-        if (dif > 0) {
+        if (dif > 0 && totalPrevisto.toFixed(2) != valorTotalTitulo.toFixed(2)) {
           const difFormatada = normalizeCurrency(dif);
           toast({
             variant: "destructive",
@@ -155,7 +139,7 @@ export function ModalVencimento({
           return acc + parseFloat(curr.valor);
         }, 0) || 0) + parseFloat(data.valor);
       const dif = totalPrevisto - valorTotalTitulo;
-      if (dif > 0) {
+      if (dif > 0 && totalPrevisto.toFixed(2) != valorTotalTitulo.toFixed(2)) {
         const difFormatada = normalizeCurrency(dif);
         toast({
           variant: "destructive",
@@ -189,9 +173,7 @@ export function ModalVencimento({
             }}
           >
             <DialogHeader>
-              <DialogTitle>
-                {isUpdate ? "Editar Vencimento" : "Adicionar Vencimento"}
-              </DialogTitle>
+              <DialogTitle>{isUpdate ? "Editar Vencimento" : "Adicionar Vencimento"}</DialogTitle>
               <DialogDescription>
                 Você precisa informar uma data de vencimento e um valor
               </DialogDescription>
@@ -224,17 +206,9 @@ export function ModalVencimento({
                 />
               </div>
 
-              <FormInput
-                name="cod_barras"
-                label="Código de Barras"
-                control={form.control}
-              />
+              <FormInput name="cod_barras" label="Código de Barras" control={form.control} />
 
-              <FormInput
-                name="qr_code"
-                label="PIX Copia e Cola"
-                control={form.control}
-              />
+              <FormInput name="qr_code" label="PIX Copia e Cola" control={form.control} />
             </div>
 
             <DialogFooter>

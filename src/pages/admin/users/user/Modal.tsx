@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUsers } from "@/hooks/useUsers";
 import { Filial } from "@/types/filial-type";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { useRef } from "react";
 import Form from "./Form";
 import { UserFormData } from "./form-data";
@@ -54,15 +55,9 @@ const ModalUser = () => {
     }
   }
   userData?.filiais?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
-  userData?.departamentos?.forEach(
-    (e: Filial) => (e.id = e?.id?.toString() || "")
-  );
-  userData?.centros_custo?.forEach(
-    (e: Filial) => (e.id = e?.id?.toString() || "")
-  );
-  userData?.permissoes?.forEach(
-    (e: Filial) => (e.id = e?.id?.toString() || "")
-  );
+  userData?.departamentos?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
+  userData?.centros_custo?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
+  userData?.permissoes?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
 
   function handleClickCancel() {
     editModal(false);
@@ -73,14 +68,11 @@ const ModalUser = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `` : "Novo Usuário"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <Form
-              id={id}
-              data={userData?.id ? userData : initialProps}
-              formRef={formRef}
-            />
+            <Form id={id} data={userData?.id ? userData : initialProps} formRef={formRef} />
           ) : (
             <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
               <Skeleton className="w-full row-span-1" />

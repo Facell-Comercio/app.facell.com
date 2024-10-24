@@ -7,6 +7,7 @@ const schemaContaBancaria = z.object({
   // Identificador do plano de contas
   id: z.coerce.string().trim().optional(),
   active: z.coerce.boolean(),
+  caixa: z.coerce.boolean(),
   id_filial: z.coerce.string().trim().min(1, "Selecione a filial"),
   id_tipo_conta: z.coerce.string().trim().min(1, "Selecione o tipo"),
   id_banco: z.coerce.string().trim().min(1, "Selecione o banco"),

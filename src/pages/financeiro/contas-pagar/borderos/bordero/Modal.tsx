@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -51,8 +52,8 @@ const ModalBordero = () => {
   const { data, isLoading } = useBordero().getOne(id);
 
   const { mutate: deleteBordero, isSuccess } = useBordero().deleteBordero();
-  const newData: BorderoSchemaProps & Record<string, any> =
-    {} as BorderoSchemaProps & Record<string, any>;
+  const newData: BorderoSchemaProps & Record<string, any> = {} as BorderoSchemaProps &
+    Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -107,6 +108,7 @@ const ModalBordero = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Borderô: ${id}` : "Novo Borderô"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[75vh]">
           {modalOpen && !isLoading ? (
@@ -141,9 +143,7 @@ const ModalBordero = () => {
                 type={"button"}
                 size="lg"
                 variant={"destructive"}
-                className={`text-white justify-self-start ${
-                  !modalEditing && "hidden"
-                }`}
+                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
               >
                 <Trash className="me-2" />
                 Excluir Borderô

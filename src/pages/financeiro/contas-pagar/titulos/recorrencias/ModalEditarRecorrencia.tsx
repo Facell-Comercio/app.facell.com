@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -79,6 +80,7 @@ const ModalEditarRecorrencia = () => {
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="mb-2">Editar Recorência: {id}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           <section className="flex gap-2 w-full">

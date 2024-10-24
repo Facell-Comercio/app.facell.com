@@ -6,16 +6,26 @@ type DotsLoadingProps = {
     qtde?: number,
     variant?: BadgeProps['variant'],
 }
-const Dot = ({ size = 3, variant = 'default', index }: DotsLoadingProps) => {
-    const delay = (index || 0) * 100;
-    return (<Badge variant={variant} className={`px-0 py-0 h-${size} w-${size} animate-bounce delay-${delay} opacity-75`} />)
+const Dot = ({ size = 10, variant = 'default', index }: DotsLoadingProps) => {
+
+    const delay = (index ?? 0) * 200;
+
+    return (<Badge
+        variant={variant}
+        className={`me-1 aspect-square px-0 py-0 animate-bounce opacity-75`}
+        style={{
+            animationDelay: `${delay}ms`,
+            height: `${size}px`,
+            width: `${size}px`,
+        }}
+    />)
 };
 
 export const DotsLoading = (props: DotsLoadingProps) => {
     return (
-        <div className="flex gap-2">
+        <div className="inline-block flex-nowrap flex-1 flex-shrink-0">
             {Array.from({ length: props.qtde || 3 }, (_, index) => (
-                <Dot key={index} index={index} {...props}/>
+                <Dot key={index} index={index} {...props} />
             ))}
         </div>
     );
