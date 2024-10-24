@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -39,23 +40,21 @@ const initialPropsVale: ValeProps = {
 };
 
 const ModalVale = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreVale((state) => [
-      state.modalOpen,
-      state.closeModal,
-      state.modalEditing,
-      state.editModal,
-      state.isPending,
-      state.id,
-    ]);
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreVale((state) => [
+    state.modalOpen,
+    state.closeModal,
+    state.modalEditing,
+    state.editModal,
+    state.isPending,
+    state.id,
+  ]);
 
   const formRef = useRef(null);
 
   const { data, isLoading } = useVales().getOne(id);
 
   const { mutate: deleteVale, isSuccess } = useVales().deleteVale();
-  const newDataVale: ValeProps & Record<string, any> = {} as ValeProps &
-    Record<string, any>;
+  const newDataVale: ValeProps & Record<string, any> = {} as ValeProps & Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
@@ -84,14 +83,11 @@ const ModalVale = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Vale: ${id}` : "Novo Vale"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <FormVale
-              id={id}
-              data={id ? newDataVale : initialPropsVale}
-              formRef={formRef}
-            />
+            <FormVale id={id} data={id ? newDataVale : initialPropsVale} formRef={formRef} />
           ) : (
             <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
               <Skeleton className="w-full row-span-1" />
@@ -120,9 +116,7 @@ const ModalVale = () => {
                 type={"button"}
                 size="lg"
                 variant={"destructive"}
-                className={`text-white justify-self-start ${
-                  !modalEditing && "hidden"
-                }`}
+                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
               >
                 <Trash className="me-2" />
                 Excluir Vale

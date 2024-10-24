@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -33,7 +34,7 @@ export type FornecedorSchema = {
   id_tipo_chave_pix: string;
   id_banco: string;
   banco?: string;
-  codigo_banco?:string;
+  codigo_banco?: string;
   id_tipo_conta: string;
   chave_pix: string;
   agencia: string;
@@ -76,20 +77,21 @@ const initialPropsFornecedor: FornecedorSchema = {
 };
 
 const ModalFornecedor = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreFornecedor((state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreFornecedor(
+    (state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]);
+    ]
+  );
   const formRef = useRef(null);
 
   const { data, isLoading } = useFornecedores().getOne(id);
-  const newData: FornecedorSchema & Record<string, any> =
-    {} as FornecedorSchema & Record<string, any>;
+  const newData: FornecedorSchema & Record<string, any> = {} as FornecedorSchema &
+    Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -110,9 +112,8 @@ const ModalFornecedor = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {id ? `Fornecedor: ${id}` : "Novo fornecedor"}
-          </DialogTitle>
+          <DialogTitle>{id ? `Fornecedor: ${id}` : "Novo fornecedor"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

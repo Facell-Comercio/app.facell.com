@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -41,9 +42,7 @@ const ModalMeuOrcamento = () => {
     id_centro_custo_entrada: data?.data?.id_centro_custo?.toString(),
   };
 
-  function handleClickTransfer(
-    ref: React.MutableRefObject<HTMLFormElement | null>
-  ) {
+  function handleClickTransfer(ref: React.MutableRefObject<HTMLFormElement | null>) {
     ref.current && ref.current.requestSubmit();
   }
 
@@ -52,6 +51,7 @@ const ModalMeuOrcamento = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Transferência de Saldo Entre Contas</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

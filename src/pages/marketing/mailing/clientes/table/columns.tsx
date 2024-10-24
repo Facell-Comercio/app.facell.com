@@ -53,7 +53,7 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     accessorKey: "data_compra",
     cell: (info) => {
       const label = normalizeDate(info.getValue<string>());
-      return <span title={label}>{label}</span>;
+      return <span title={String(label)}>{label}</span>;
     },
   },
   {

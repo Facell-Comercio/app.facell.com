@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useStoreBordero } from "../../borderos/bordero/store";
 import { useStoreCartao } from "../../cartoes/cartao/store";
-import { useStoreTitulo } from "../../titulos/titulo/store";
+import { useStoreTituloPagar } from "../../titulos/titulo/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -30,7 +30,7 @@ export type RowVencimento = {
 const openModal =
   useStoreBordero.getState().openModal;
 const openModalTitulo =
-  useStoreTitulo.getState().openModal;
+  useStoreTituloPagar.getState().openModal;
 const openModalFatura =
   useStoreCartao.getState().openModalFatura;
 
@@ -110,6 +110,23 @@ export const columnsTablePagos: ColumnDef<RowVencimento>[] =
                 )
               }
             />
+          </span>
+        );
+      },
+      enableSorting: false,
+    },
+    {
+      id: "id_vencimento",
+      header: "ID VENC.",
+      accessorKey: "id_vencimento",
+      cell: (info) => {
+        const label = info.getValue<string>();
+        return (
+          <span
+            title={label}
+            className="flex font-semibold truncate max-w-96"
+          >
+            {label}
           </span>
         );
       },

@@ -6,7 +6,16 @@ import {
   ConferenciasCaixaSchema,
   MovimentoCaixaProps,
 } from "@/hooks/financeiro/useConferenciasCaixa";
-import { ArrowUpDown, Banknote, CreditCard, HandCoins, Landmark, List, Shield } from "lucide-react";
+import {
+  ArrowUpDown,
+  Banknote,
+  CreditCard,
+  Ellipsis,
+  HandCoins,
+  Landmark,
+  List,
+  Shield,
+} from "lucide-react";
 import { useStoreCaixa } from "../store";
 import ModalDetalheCard from "./ModalDetalheCard";
 
@@ -138,6 +147,17 @@ const CaixaCards = ({ data }: { data: ConferenciasCaixaSchema }) => {
       icon: Landmark,
     },
     {
+      title: "Outros",
+      valuesList: [
+        {
+          value: normalizeCurrency(data.valor_outros),
+          label: "Venda",
+        },
+      ],
+      type: "outros",
+      icon: Ellipsis,
+    },
+    {
       title: "Tradein",
       valuesList: [
         {
@@ -254,7 +274,7 @@ const CaixaCardComponent = ({
       <CardContent className={`flex justify-between flex-col p-0`}>
         {groupedData.map((group: any, groupIndex) => {
           return (
-            <div className="flex flex-col gap-1 p-3">
+            <div className="flex flex-col gap-1 p-3" key={"card-content: " + groupIndex}>
               {group[0].groupName === "saida" && (
                 <span>
                   <p className="text-sm font-medium">Saídas:</p>

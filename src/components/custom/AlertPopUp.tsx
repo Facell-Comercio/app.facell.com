@@ -45,6 +45,7 @@ const AlertPopUp = ({
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             onClick={action}
+            disabled={disabled}
             className="bg-red-600 hover:bg-red-500 text-white"
           >
             Continuar

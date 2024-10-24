@@ -4,7 +4,7 @@ import { Input } from "@/components/custom/FormInput";
 import { Checkbox } from "@/components/ui/checkbox";
 import { normalizeCurrency } from "@/helpers/mask";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useStoreTitulo } from "../../titulos/titulo/store";
+import { useStoreTituloPagar } from "../../titulos/titulo/store";
 
 type ItemFaturaProps = {
   id: string;
@@ -38,7 +38,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
     estimateSize: () => 36,
     overscan: 10,
   });
-  const openModal = useStoreTitulo.getState().openModal;
+  const openModal = useStoreTituloPagar.getState().openModal;
 
   return (
     <section

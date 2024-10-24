@@ -39,9 +39,12 @@ interface RowVirtualizerVencimentosConciliarProps {
   handleRowSelection: (data: any) => void;
 }
 
-const ReactTableVirtualized: React.FC<
-  RowVirtualizerVencimentosConciliarProps
-> = ({ data, rowSelection, handleRowSelection, vencimentosSelection }) => {
+const ReactTableVirtualized: React.FC<RowVirtualizerVencimentosConciliarProps> = ({
+  data,
+  rowSelection,
+  handleRowSelection,
+  vencimentosSelection,
+}) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const handlevencimentosSelection =
     useStoreTableConciliacaoCP.getState().handlevencimentosSelection;
@@ -58,9 +61,7 @@ const ReactTableVirtualized: React.FC<
                   data.length == vencimentosSelection.length ||
                   (vencimentosSelection.length > 0 && "indeterminate")
                 }
-                onCheckedChange={(value) =>
-                  table.toggleAllPageRowsSelected(!!value)
-                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
               />
             </div>
           );
@@ -70,17 +71,13 @@ const ReactTableVirtualized: React.FC<
             <div className="flex items-center justify-center">
               <Checkbox
                 {...{
-                  checked: vencimentosSelection.includes(
-                    row.original.id_vencimento
-                  ),
+                  checked: vencimentosSelection.includes(row.original.id_vencimento),
                   disabled: !row.getCanSelect(),
                   indeterminate: row.getIsSomeSelected().toString(),
                 }}
                 onCheckedChange={() => {
                   handlevencimentosSelection({
                     ...row.original,
-                    valor_pago: row.original.valor_pago,
-                    tipo_baixa: "PADRÃO",
                   });
 
                   row.getToggleSelectedHandler();
@@ -113,10 +110,7 @@ const ReactTableVirtualized: React.FC<
         accessorKey: "data_pagamento",
         header: "PAGAMENTO",
         cell: (info) => {
-          let value = formatDate(
-            new Date(info.getValue<Date | string>()),
-            "dd/MM/yyyy"
-          );
+          let value = formatDate(new Date(info.getValue<Date | string>()), "dd/MM/yyyy");
           return <div className="w-full text-center">{value}</div>;
         },
         size: 80,
@@ -127,14 +121,11 @@ const ReactTableVirtualized: React.FC<
         size: 80,
 
         cell: (info) => {
-          let valor = parseFloat(info.getValue<string>()).toLocaleString(
-            "pt-BR",
-            {
-              style: "decimal",
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }
-          );
+          let valor = parseFloat(info.getValue<string>()).toLocaleString("pt-BR", {
+            style: "decimal",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
 
           return (
             <div className="flex w-full justify-between">
@@ -219,8 +210,7 @@ const ReactTableVirtualized: React.FC<
     estimateSize: () => 30,
     overscan: 10,
     measureElement:
-      typeof window !== "undefined" &&
-      navigator.userAgent.indexOf("Firefox") === -1
+      typeof window !== "undefined" && navigator.userAgent.indexOf("Firefox") === -1
         ? (element) => element?.getBoundingClientRect().height
         : undefined,
   });
@@ -228,10 +218,7 @@ const ReactTableVirtualized: React.FC<
   return (
     <div className="flex flex-col gap-3">
       <div className="overflow-hidden border">
-        <div
-          ref={parentRef}
-          className="h-[500px] overflow-auto scroll-thin relative bg-background"
-        >
+        <div ref={parentRef} className="h-[500px] overflow-auto scroll-thin relative bg-background">
           {data.length > 0 ? (
             <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
               <table className="grid text-nowrap text-xs ">
@@ -255,19 +242,14 @@ const ReactTableVirtualized: React.FC<
                                   className: header.column.getCanSort()
                                     ? "cursor-pointer select-none"
                                     : "",
-                                  onClick:
-                                    header.column.getToggleSortingHandler(),
+                                  onClick: header.column.getToggleSortingHandler(),
                                 }}
                               >
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
+                                {flexRender(header.column.columnDef.header, header.getContext())}
                                 {{
                                   asc: " 🔼",
                                   desc: " 🔽",
-                                }[header.column.getIsSorted() as string] ??
-                                  null}
+                                }[header.column.getIsSorted() as string] ?? null}
                               </div>
                             )}
                           </th>
@@ -284,9 +266,7 @@ const ReactTableVirtualized: React.FC<
                   }}
                 >
                   {virtualizer.getVirtualItems().map((virtualRow, index) => {
-                    const row = rows[
-                      virtualRow.index
-                    ] as Row<VencimentosConciliarProps>;
+                    const row = rows[virtualRow.index] as Row<VencimentosConciliarProps>;
                     return (
                       <tr
                         key={"tituloConciliar tr" + virtualRow.index + index}
@@ -309,10 +289,7 @@ const ReactTableVirtualized: React.FC<
                                 width: cell.column.getSize(),
                               }}
                             >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </td>
                           );
                         })}
@@ -373,9 +350,7 @@ const TitulosConciliar = ({
 
   if (isError) {
     return (
-      <div className="text-red-500 text-center p-1">
-        Ocorreu um erro ao tentar buscar os dados!
-      </div>
+      <div className="text-red-500 text-center p-1">Ocorreu um erro ao tentar buscar os dados!</div>
     );
   }
 

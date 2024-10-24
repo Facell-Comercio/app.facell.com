@@ -75,19 +75,19 @@ const ModalBoleto = () => {
   const [modalContaBancariaOpen, setModalContaBancariaOpen] = useState<boolean>(false);
   const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] = useState<boolean>(false);
   const [linkCopiado, setLinkCopiado] = useState<boolean>(false);
-  
-  const handleCopyLink = async ()=>{
+
+  const handleCopyLink = async () => {
     try {
       await copyToClipboard(`${baseURL}/visualizar.boleto.caixa?id=${data?.id}`);
       setLinkCopiado(true)
     } catch (error) {
-      
-    }finally{
-      setTimeout(()=>{
+
+    } finally {
+      setTimeout(() => {
         setLinkCopiado(false)
       }, 3000)
     }
-      
+
   }
 
   async function handleSelectionContaBancaria(conta_bancaria: ItemContaBancariaProps) {
@@ -208,7 +208,11 @@ const ModalBoleto = () => {
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="font-medium text-sm">Data de Criação</label>
-                  <Input readOnly value={normalizeDate(data?.data)} />
+                  <Input
+                    readOnly
+                    // @ts-ignore
+                    value={normalizeDate(data?.data)}
+                  />
                 </div>
               </section>
               <section className="flex gap-2 w-full">

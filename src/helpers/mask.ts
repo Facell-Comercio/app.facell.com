@@ -64,8 +64,7 @@ export const normalizeDataDayOne = (dataString?: string) => {
   }
 };
 
-export const normalizeDate = (data: string | Date | null) =>
-  !data ? "" : data && format(data, "dd/MM/yyyy");
+export const normalizeDate = (data?: string | Date) => (data ? format(data, "dd/MM/yyyy") : null);
 export const normalizeCurrency = (data?: string | number) => {
   if (!data) {
     return "R$ 0,00";
@@ -133,3 +132,24 @@ export const sliceString = (texto: string, maxWidth: number) => {
     return texto;
   }
 };
+
+export function normalizeNumberFixed(number: string | number | null, fractionDigits: number) {
+  if (typeof number === "string" && parseFloat(number)) {
+    return parseFloat(parseFloat(normalizeNumberOnly(number) || "0").toFixed(fractionDigits));
+  }
+  if (typeof number === "number" && !isNaN(number)) {
+    return parseFloat(number.toFixed(fractionDigits) || "0");
+  }
+  return 0;
+}
+
+export function parseCurrency(value: string) {
+  // Remove o símbolo "R$" e espaços em branco
+  let numericValue = value.replace(/[R$\s]/g, "");
+
+  // Remove o separador de milhar (pontos) e substitui a vírgula por ponto
+  numericValue = numericValue.replace(/\./g, "").replace(",", ".");
+
+  // Converte para número
+  return parseFloat(numericValue);
+}

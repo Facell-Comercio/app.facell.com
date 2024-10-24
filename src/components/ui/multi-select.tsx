@@ -122,7 +122,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
         handleClear();
       } else {
         const allValues = options
-          .filter((option) => option.value.toUpperCase().includes(search.toUpperCase()))
+          .filter((option) => String(option.value).toUpperCase().includes(search.toUpperCase()))
           .map((option) => option.value);
         setSelectedValues(allValues);
         onValueChange(allValues);

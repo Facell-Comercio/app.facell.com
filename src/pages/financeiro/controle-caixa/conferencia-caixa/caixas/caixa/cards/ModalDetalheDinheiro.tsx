@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import {
   Table,
@@ -37,6 +43,7 @@ const ModalDetalheDinheiro = () => {
           <DialogTitle>
             {type === "entrada" ? "Entradas em Dinheiro" : "Despesas de Caixa"}
           </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <Table
           className="rounded-md border-border w-full h-10 overflow-clip relative"

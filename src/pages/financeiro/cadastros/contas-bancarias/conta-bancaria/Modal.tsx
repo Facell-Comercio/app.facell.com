@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -17,6 +18,7 @@ import { useStoreContaBancaria } from "./store";
 export type ContaBancariaSchema = {
   id: string;
   active: boolean;
+  caixa: boolean;
   id_filial: string;
   id_tipo_conta: string;
   id_banco: string;
@@ -31,6 +33,7 @@ export type ContaBancariaSchema = {
 const initialPropsContaBancaria: ContaBancariaSchema = {
   id: "",
   active: true,
+  caixa: false,
   id_filial: "",
   id_tipo_conta: "",
   id_banco: "",
@@ -43,20 +46,21 @@ const initialPropsContaBancaria: ContaBancariaSchema = {
 };
 
 const ModalContaBancaria = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreContaBancaria((state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreContaBancaria(
+    (state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]);
+    ]
+  );
   const formRef = useRef(null);
 
   const { data, isLoading } = useContasBancarias().getOne(id);
-  const newData: ContaBancariaSchema & Record<string, any> =
-    {} as ContaBancariaSchema & Record<string, any>;
+  const newData: ContaBancariaSchema & Record<string, any> = {} as ContaBancariaSchema &
+    Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -77,9 +81,8 @@ const ModalContaBancaria = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {id ? `Conta Bancária: ${id}` : "Nova Conta Bancária"}
-          </DialogTitle>
+          <DialogTitle>{id ? `Conta Bancária: ${id}` : "Nova Conta Bancária"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

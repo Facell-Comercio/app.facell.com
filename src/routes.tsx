@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
 import App from "./App.tsx";
 import { useAuthStore } from "./context/auth-store.tsx";
-import { checkUserPermission } from "./helpers/checkAuthorization.ts";
+import { checkUserDepartments, checkUserPermission } from "./helpers/checkAuthorization.ts";
 
 import NotAuthorizedPage from "./pages/NotAuthorized.tsx";
 import NotFoundPage from "./pages/NotFound.tsx";
@@ -23,6 +23,8 @@ import ControleCaixaPage from "./pages/financeiro/controle-caixa/ControleCaixaPa
 import Caixas from "./pages/financeiro/controle-caixa/conferencia-caixa/caixas/Caixas.tsx";
 import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.tsx";
 import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
+import RelatoriosPage from "./pages/financeiro/relatorios/Relatorios.tsx";
+import TesourariaPage from "./pages/financeiro/tesouraria/Tesouraria.tsx";
 import MailingPage from "./pages/marketing/mailing/Mailing.tsx";
 import Perfil from "./pages/perfil/index.tsx";
 import Colaboradores from "./pages/pessoal/colaboradores/Colaboradores.tsx";
@@ -71,12 +73,42 @@ const AppRoutes = () => {
             <Route element={<ContasReceberPage />} path="contas-a-receber" />
             <Route element={<ControleCaixaPage />} path="controle-de-caixa">
               <Route path="conferencia-de-caixa">
-                <Route element={<Caixas />} path="filiais" />
+                <Route
+                  element={
+                    checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                      <Caixas />
+                    ) : (
+                      <NotAuthorizedPage />
+                    )
+                  }
+                  path="filiais"
+                />
               </Route>
             </Route>
             <Route element={<OrcamentoPage />} path="orcamento" />
+            <Route
+              element={
+                checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                  <ConciliacaoBancariaPage />
+                ) : (
+                  <NotAuthorizedPage />
+                )
+              }
+              path="conciliacao-bancaria"
+            />
+            <Route
+              element={
+                checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                  <TesourariaPage />
+                ) : (
+                  <NotAuthorizedPage />
+                )
+              }
+              path="tesouraria"
+            />
             <Route element={<ConciliacaoBancariaPage />} path="conciliacao-bancaria" />
             <Route element={<CadastrosPage />} path="cadastros" />
+            <Route element={<RelatoriosPage />} path="relatorios" />
           </Route>
 
           {/* Marketing */}

@@ -130,7 +130,7 @@ const UploadDropzone = ({
                 ${disabled || isLoading ? ' text-slate-700 border-slate-700 bg-slate-300 dark:bg-slate-800' : 'cursor-pointer text-blue-400 hover:border-blue-400'}  
                 `}
             >   {
-                    isLoading ? <div className='w-full'><DotsLoading size={3} qtde={5} /></div> : <>
+                    isLoading ? <div className='w-full'><DotsLoading qtde={5} /></div> : <>
                         <input {...getInputProps()} />
                         <File className='shrink-0' /> <span className='truncate'>Selecione um arquivo ou solte-o na área marcada.</span>
                     </>

@@ -1,13 +1,20 @@
 import logoFacell from "@/assets/images/facell-192x192.png";
 import { useSidebar } from "@/context/sidebar-store";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BsChevronDown } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { sidebarItems } from "./sidebar-items";
 
 
 export function Sidebar() {
+  const [items, setItems] = useState(sidebarItems)
+
+  useEffect(()=>{
+    const updatedItems = sidebarItems.filter(item=>item.visible())
+    setItems(updatedItems)
+  }, [])
+
   const { sidebarOpen, toggleSidebar, closeSidebar, itemActive, mobile, setMobile, setItemActive } = useSidebar()
 
   useEffect(() => {
@@ -16,7 +23,7 @@ export function Sidebar() {
     const findMatchingItem = (items: typeof sidebarItems) => {
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
-        if (item.visible) {
+        if (item.visible()) {
           if (item.type === 'link' && currentURI === item.uri) {
             return { index: i };
           } else if (item.children) {
@@ -32,7 +39,7 @@ export function Sidebar() {
       return null;
     };
 
-    const matchingItemIndexes = findMatchingItem(sidebarItems.filter(item => item.visible));
+    const matchingItemIndexes = findMatchingItem(items.filter(item => item.visible));
 
     if (matchingItemIndexes) {
       setItemActive({
@@ -84,7 +91,7 @@ export function Sidebar() {
           <button
             onClick={handleToggleSidebar}
             className={`z-30 flex items-center p-1.5 absolute ${sidebarOpen ? "right-2" : "right-30"
-              } sm:-right-4 bottom-8 sm:bottom-auto sm:top-12 rounded-full shadow-lg bg-primary text-primary-foreground `}
+              } sm:-right-4 bottom-8 sm:bottom-auto sm:top-12 rounded-full shadow-lg bg-muted hover:bg-primary hover:text-white  hover:ring-4  text-primary dark:text-white `}
           >
             {sidebarOpen ? <ChevronLeft /> : <ChevronRight />}
             <span className="sm:hidden text-sm">Menu</span>
@@ -98,7 +105,7 @@ export function Sidebar() {
         )} */}
 
         <ul className={`${sidebarOpen ? "flex" : "hidden"} sm:flex flex-col flex-1 mt-3 px-5 overflow-visible z-20`}>
-          {sidebarItems
+          {items
             .filter((item) => item.visible)
             .map((item, itemIndex) => (
               <li key={itemIndex}>
@@ -109,9 +116,9 @@ export function Sidebar() {
                     }
                   }}
                   to={(item.type === "link" && item.uri) || "#"}
-                  className={`${!sidebarOpen && "justify-center"}  ${item.type === "title" ? "text-primary" : " light:text-slate-300"
+                  className={`${!sidebarOpen && "justify-center"}  ${item.type === "title" ? "text-primary cursor-default" : " hover:ring-4  light:text-slate-300"
                     } text-sm flex items-center gap-x-4  rounded-md ${item.spacing ? "mt-6" : "mt-1"} ${item.type !== "title" && "hover:bg-primary hover:text-primary-foreground  cursor-pointer"}
-              ${(itemActive?.parentIndex === itemIndex || (itemActive?.index === itemIndex && itemActive.sub === false)) && "bg-primary text-primary-foreground duration-300"}
+              ${(itemActive?.parentIndex === itemIndex || (itemActive?.index === itemIndex && itemActive.sub === false)) && "bg-primary text-white dark:text-white duration-300"}
               `}
                 >
                   <div
@@ -127,12 +134,12 @@ export function Sidebar() {
                       {item?.shortName && <div className="flex items-center justify-center">{item.shortName}</div>}
                       {!sidebarOpen && (
                         <div
-                          className={`absolute left-full rounded-md px-2 py-1 ml-6 text-nowrap bg-primary text-primary-foreground text-sm opacity-20 invisible -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
+                          className={`absolute left-full rounded-md px-2 py-1 ml-6 text-nowrap bg-primary font-semibold text-white text-sm opacity-20 invisible -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 `}
                         >
                           {item.name}
                         </div>
                       )}
-                      <span className={`${!sidebarOpen && "hidden"} ${item.type === "title" && "uppercase"} text-sm font-normal`}>{item.name}</span>
+                      <span className={`${!sidebarOpen && "hidden"} ${item.type === "title" && "uppercase"} text-sm font-semibold`}>{item.name}</span>
                     </div>
                     {item.children && sidebarOpen && <BsChevronDown className={`${itemActive?.index == itemIndex && "rotate-90 duration-300"}`} onClick={() => { }} />}
                   </div>
@@ -141,7 +148,7 @@ export function Sidebar() {
                 {item.children && (
                   <ul className={`${itemActive?.parentIndex === itemIndex ? "flex flex-col" : "hidden"}`}>
                     {item.children
-                      .filter((subitem) => subitem.visible !== false)
+                      .filter((subitem) => subitem.visible() !== false)
                       .map((subitem, subitemIndex) => (
                         <Link onClick={() => {
                           if (mobile && sidebarOpen && subitem.type === "link") {
@@ -150,19 +157,19 @@ export function Sidebar() {
                         }} key={subitemIndex} to={(subitem.type === "link" && subitem.uri) || "#"}>
                           <li
                             className={`
-                        group flex ml-3 mt-1 px-2 py-2 rounded cursor-pointer
+                         hover:ring-4  group flex ml-3 mt-1 px-2 py-2 rounded cursor-pointer hover:bg-primary font-semibold hover:text-white
                         ${sidebarOpen ? "" : "justify-center"}
-                        ${itemActive?.parentIndex === itemIndex && itemActive?.sub === true && itemActive?.index === subitemIndex && " bg-primary text-primary-foreground"}
+                        ${itemActive?.parentIndex === itemIndex && itemActive?.sub === true && itemActive?.index === subitemIndex && " bg-primary  text-white"}
                         `}
                             onClick={() => {
                               setItemActive({ sub: true, index: subitemIndex, parentIndex: itemIndex });
                             }}
                           >
-                            <span className="text-sm font-normal ">{sidebarOpen ? subitem.name : subitem.shortName}</span>
+                            <span className="text-sm">{sidebarOpen ? subitem.name : subitem.shortName}</span>
 
                             {!sidebarOpen && (
                               <div
-                                className={`absolute left-full rounded-md px-2 py-1 ml-6 text-nowrap bg-blue-100 text-blue-800 text-sm opacity-20 invisible -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
+                                className={`absolute left-full rounded-md px-2 py-1 ml-2 text-nowrap bg-primary text-sm opacity-20 invisible -translate-x-2 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
                               >
                                 {subitem.name}
                               </div>

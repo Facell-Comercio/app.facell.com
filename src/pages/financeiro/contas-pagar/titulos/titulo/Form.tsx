@@ -65,7 +65,7 @@ import {
   checkIsTransferenciaBancaria,
   formatarHistorico,
 } from "./helpers/helper";
-import { useStoreTitulo } from "./store";
+import { useStoreTituloPagar } from "./store";
 
 const FormTituloPagar = ({
   id,
@@ -80,9 +80,9 @@ const FormTituloPagar = ({
   const queryClient = useQueryClient();
 
   const modalEditing =
-    useStoreTitulo().modalEditing;
-  const editModal = useStoreTitulo().editModal;
-  const closeModal = useStoreTitulo().closeModal;
+    useStoreTituloPagar().modalEditing;
+  const editModal = useStoreTituloPagar().editModal;
+  const closeModal = useStoreTituloPagar().closeModal;
   const [modalFornecedorOpen, setModalFornecedorOpen] = useState<boolean>(false);
 
   const data = form?.getValues() || {};

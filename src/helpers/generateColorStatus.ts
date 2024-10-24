@@ -24,13 +24,17 @@ export const generateStatusColor = ({
       bgColor = `bg-green-500`;
       textColor = `text-green-500`;
       break;
+    case "Emitido":
+      bgColor = `bg-green-500`;
+      textColor = `text-green-500`;
+      break;
     case "Negado":
       bgColor = `bg-red-500`;
       textColor = `text-red-500`;
       break;
     case "Cancelado":
-      bgColor = ` `;
-      textColor = ` `;
+      bgColor = `bg-red-500`;
+      textColor = `text-red-500`;
       break;
     default:
       break;

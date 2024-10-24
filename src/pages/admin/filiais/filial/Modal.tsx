@@ -10,6 +10,7 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFilial } from "@/hooks/useFilial";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { useRef } from "react";
 import Form from "./Form";
 import { FilialFormData } from "./form-data";
@@ -49,8 +50,7 @@ const ModalDepartamento = () => {
   const formRef = useRef(null);
 
   const { data, isLoading } = useFilial().getOne(id);
-  const newData: FilialFormData & Record<string, any> = {} as FilialFormData &
-    Record<string, any>;
+  const newData: FilialFormData & Record<string, any> = {} as FilialFormData & Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -71,14 +71,11 @@ const ModalDepartamento = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Filial: ${id}` : "Nova filial"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
-            <Form
-              id={id}
-              data={newData?.id ? newData : initialProps}
-              formRef={formRef}
-            />
+            <Form id={id} data={newData?.id ? newData : initialProps} formRef={formRef} />
           ) : (
             <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
               <Skeleton className="w-full row-span-1" />

@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -30,20 +31,21 @@ const initialPropsCentroCustos: CentroCustosSchema = {
 };
 
 const ModalCentroCustos = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreCentroCustos((state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreCentroCustos(
+    (state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]);
+    ]
+  );
   const formRef = useRef(null);
 
   const { data, isLoading } = useCentroCustos().getOne(id);
-  const newData: CentroCustosSchema & Record<string, any> =
-    {} as CentroCustosSchema & Record<string, any>;
+  const newData: CentroCustosSchema & Record<string, any> = {} as CentroCustosSchema &
+    Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -64,9 +66,8 @@ const ModalCentroCustos = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {id ? `Centro de Custos: ${id}` : "Novo Centro de Custos"}
-          </DialogTitle>
+          <DialogTitle>{id ? `Centro de Custos: ${id}` : "Novo Centro de Custos"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

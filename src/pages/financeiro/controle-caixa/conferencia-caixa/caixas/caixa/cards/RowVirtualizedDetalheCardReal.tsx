@@ -33,6 +33,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
           cell: (info) => {
             let value = info.getValue<string>();
             if (column.type === "date") {
+              // @ts-ignore
               value = normalizeDate(value);
             }
             if (column.type === "number" && column.format === "currency") {
@@ -72,7 +73,7 @@ const ReactTableVirtualized: React.FC<RowVirtualizerMovimentoCaixaProps> = ({
     overscan: 10,
     measureElement:
       typeof window !== "undefined" &&
-      navigator.userAgent.indexOf("Firefox") === -1
+        navigator.userAgent.indexOf("Firefox") === -1
         ? (element) => element?.getBoundingClientRect().height
         : undefined,
   });

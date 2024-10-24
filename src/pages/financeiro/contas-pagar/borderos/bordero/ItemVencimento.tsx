@@ -1,8 +1,4 @@
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { normalizeCurrency } from "@/helpers/mask";
 import { ReactNode } from "react";
@@ -14,6 +10,8 @@ export const ItemVencimento = ({
   className,
   qtde,
   valorTotal,
+  qtde_selecionados,
+  valor_selecionados,
 }: {
   value: string;
   title: string;
@@ -21,6 +19,8 @@ export const ItemVencimento = ({
   className?: string;
   qtde: number;
   valorTotal: number;
+  qtde_selecionados?: number;
+  valor_selecionados?: number;
 }) => {
   return (
     <AccordionItem
@@ -36,11 +36,14 @@ export const ItemVencimento = ({
           <Badge variant={"info"} className="text-xs">
             Valor Total: {normalizeCurrency(valorTotal)}
           </Badge>
+          {qtde_selecionados && qtde_selecionados > 1 ? (
+            <Badge variant={"info"} className="text-xs">
+              {qtde_selecionados} Itens Selecionados. Total: {normalizeCurrency(valor_selecionados)}
+            </Badge>
+          ) : null}
         </span>
       </AccordionTrigger>
-      <AccordionContent
-        className={`flex max-w-full gap-2 flex-nowrap ${className}`}
-      >
+      <AccordionContent className={`flex max-w-full gap-2 flex-nowrap ${className}`}>
         {children}
       </AccordionContent>
     </AccordionItem>
