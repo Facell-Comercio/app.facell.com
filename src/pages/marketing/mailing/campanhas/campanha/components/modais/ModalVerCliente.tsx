@@ -20,8 +20,20 @@ import {
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { BadgePercent, Ban, Handshake, Info } from "lucide-react";
-import { useStoreCampanha } from "../store";
+import { formatDate } from "date-fns";
+import { BadgePercent, Ban, ChartNoAxesCombined, Handshake, Info } from "lucide-react";
+import { useStoreCampanha } from "../../store";
+
+export type ResultadoContato = {
+  id: number;
+  id_cliente: number;
+  datetime_contato: string;
+  data_contato: string;
+  hora_contato: string;
+  status_contato: string;
+  operador_contato: string;
+  observacao: string;
+};
 
 const ModalVerCliente = () => {
   const [id, modalOpen, closeModal] = useStoreCampanha((state) => [
@@ -31,6 +43,7 @@ const ModalVerCliente = () => {
   ]);
 
   const { data } = useMailing().getOneClienteCampanha(id);
+  const resultados: ResultadoContato[] = data?.resultados || [];
 
   function handleClickCancel() {
     closeModal();
@@ -183,6 +196,37 @@ const ModalVerCliente = () => {
                 />
               </div>
             </section>
+
+            {resultados.length > 0 && (
+              <section className="flex flex-col gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950 rounded-md">
+                <div className="flex gap-2 items-center w-full">
+                  <ChartNoAxesCombined />
+                  <h3 className="text-md font-medium">Resultados</h3>
+                </div>
+                <Table className="bg-background rounded-md">
+                  <TableHeader className="bg-secondary text-white">
+                    <TableRow>
+                      <TableHead className="text-foreground">Status Contato</TableHead>
+                      <TableHead className="text-foreground">Momento Contato</TableHead>
+                      <TableHead className="text-foreground">Operador Contato</TableHead>
+                      <TableHead className="text-foreground">Observação</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {resultados.map((resultado: ResultadoContato) => (
+                      <TableRow className="uppercase">
+                        <TableCell>{resultado.status_contato}</TableCell>
+                        <TableCell>
+                          {formatDate(resultado.datetime_contato, "dd/MM/yyyy HH:mm")}
+                        </TableCell>
+                        <TableCell>{resultado.operador_contato}</TableCell>
+                        <TableCell>{resultado.observacao || "-"}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </section>
+            )}
           </div>
         </ScrollArea>
         <DialogFooter className="flex gap-2 items-end flex-wrap">

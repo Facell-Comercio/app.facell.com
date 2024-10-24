@@ -15,7 +15,7 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 import { Ban, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
-import { useStoreCampanha } from "../store";
+import { useStoreCampanha } from "../../store";
 
 const ModalNovaSubcampanha = () => {
   const [id, qtde_clientes, modalOpen, closeModal, filters, isPending, setIsPending, resetFilters] =

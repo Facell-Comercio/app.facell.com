@@ -19,11 +19,11 @@ export interface Filters {
   modalidade_venda_list?: string[];
   fabricante_list?: string[];
   tipo_pedido_list?: string[];
+  produto_compra_list?: string[];
 
   range_data_pedido?: DateRange;
   valor_minimo?: string;
   valor_maximo?: string;
-  descricao?: string;
   fidelizacao_aparelho?: string;
   fidelizacao_plano?: string;
 
@@ -41,11 +41,11 @@ const initialFilters: Filters = {
   modalidade_venda_list: [],
   fabricante_list: [],
   tipo_pedido_list: [],
+  produto_compra_list: [],
 
   range_data_pedido: { from: undefined, to: undefined },
   valor_minimo: "0.00",
   valor_maximo: "",
-  descricao: "",
   fidelizacao_aparelho: "all",
   fidelizacao_plano: "all",
 

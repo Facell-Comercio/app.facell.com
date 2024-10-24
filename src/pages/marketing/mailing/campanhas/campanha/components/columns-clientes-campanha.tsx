@@ -134,7 +134,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
   },
   {
     accessorKey: "plano_atual",
-    header: "PLANO HABILITADO",
+    header: "PLANO ATUAL",
     size: 200,
     cell: (info) => {
       const label = info.getValue<string>();
@@ -183,7 +183,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     size: 200,
     cell: (info) => {
       const label = info.getValue<string>();
-      return <div className="uppercase truncate">{label || "-"}</div>;
+      return <div className="uppercase truncate">{label ? "SIM" : "NÃO"}</div>;
     },
   },
   {
@@ -204,33 +204,33 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
       return <div className="uppercase truncate">{label || "-"}</div>;
     },
   },
-  // {
-  //   accessorKey: "valor_pre",
-  //   header: "VALOR PRE",
-  //   size: 120,
-  //   cell: (info) => {
-  //     const label = info.getValue<string>();
-  //     return <div className="uppercase truncate">{normalizeCurrency(label)}</div>;
-  //   },
-  // },
-  // {
-  //   accessorKey: "valor_plano",
-  //   header: "VALOR PLANO",
-  //   size: 120,
-  //   cell: (info) => {
-  //     const label = info.getValue<string>();
-  //     return <div className="uppercase truncate">{normalizeCurrency(label)}</div>;
-  //   },
-  // },
-  // {
-  //   accessorKey: "desconto",
-  //   header: "DESCONTO",
-  //   size: 120,
-  //   cell: (info) => {
-  //     const label = info.getValue<string>();
-  //     return <div className="uppercase truncate">{normalizeCurrency(label)}</div>;
-  //   },
-  // },
+  {
+    accessorKey: "valor_pre",
+    header: "VALOR PRE",
+    size: 120,
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <div className="uppercase truncate">{normalizeCurrency(label)}</div>;
+    },
+  },
+  {
+    accessorKey: "valor_plano",
+    header: "VALOR PLANO",
+    size: 120,
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <div className="uppercase truncate">{normalizeCurrency(label)}</div>;
+    },
+  },
+  {
+    accessorKey: "desconto",
+    header: "DESCONTO",
+    size: 120,
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <div className="uppercase truncate">{normalizeCurrency(label)}</div>;
+    },
+  },
   {
     accessorKey: "vendedor",
     header: "ATENDENTE/VENDEDOR",

@@ -114,7 +114,7 @@ export const DataVirtualTableHeaderFixed = ({
                     return (
                       <tr
                         key={row.id}
-                        className="flex absolute items-center border-b border-gray-900 transition-all"
+                        className="flex absolute items-center border-b border-gray-900 transition-all hover:bg-secondary/60 h-[33px]"
                         style={{
                           transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
                           width: "100%",
@@ -123,7 +123,7 @@ export const DataVirtualTableHeaderFixed = ({
                         {row.getVisibleCells().map((cell) => {
                           return (
                             <td
-                              className="px-2 py-1 flex transition-all"
+                              className="px-2 py-1 flex transition-all "
                               key={cell.id}
                               style={{
                                 width: cell.column.getSize(),

@@ -29,6 +29,8 @@ type FiltersClientesCampanha = {
   resetFilters: () => void;
   qtde_clientes: number;
   isPending: boolean;
+  isSubcampanha?: boolean;
+  disabled?: boolean;
 };
 
 export const FiltersClientesCampanha = ({
@@ -39,6 +41,8 @@ export const FiltersClientesCampanha = ({
   resetFilters,
   qtde_clientes,
   isPending,
+  isSubcampanha,
+  disabled,
 }: FiltersClientesCampanha) => {
   const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -52,7 +56,7 @@ export const FiltersClientesCampanha = ({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="secondary">
+        <Button variant="secondary" disabled={disabled}>
           <SlidersHorizontal className="me-2" size={18} />
           Filtros
         </Button>
@@ -126,6 +130,26 @@ export const FiltersClientesCampanha = ({
               disabled={isPending}
             />
           )}
+          {defaultFilters?.vendedores_list && isSubcampanha && (
+            <MultiSelectWithLabel
+              label="Vendedores"
+              options={defaultFilters.vendedores_list.map((plano_atual: any) => ({
+                value: plano_atual.value,
+                label: plano_atual.value || "SEM VENDEDOR",
+              }))}
+              onValueChange={(vendedores_list) => {
+                setFilters({ vendedores_list: vendedores_list });
+              }}
+              defaultValue={filters.vendedores_list || []}
+              placeholder="Vendedores"
+              variant="secondary"
+              animation={4}
+              maxCount={2}
+              maxCharacters={25}
+              className={`bg-background hover:bg-background`}
+              disabled={isPending}
+            />
+          )}
           <div className="flex flex-col w-full gap-2">
             <label className="text-sm font-medium">Produto Fidelizado</label>
             <Select
@@ -143,23 +167,25 @@ export const FiltersClientesCampanha = ({
               </SelectContent>
             </Select>
           </div>
-          <div className="flex flex-col w-full gap-2">
-            <label className="text-sm font-medium">Sem Contato</label>
-            <Select
-              value={filters.sem_contato || ""}
-              onValueChange={(e) => setFilters({ sem_contato: e })}
-              disabled={isPending}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="SIM/NÃO" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">SIM/NÃO</SelectItem>
-                <SelectItem value="SIM">SIM</SelectItem>
-                <SelectItem value="NÃO">NÃO</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {isSubcampanha && (
+            <div className="flex flex-col w-full gap-2">
+              <label className="text-sm font-medium">Sem Contato</label>
+              <Select
+                value={filters.sem_contato || ""}
+                onValueChange={(e) => setFilters({ sem_contato: e })}
+                disabled={isPending}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="SIM/NÃO" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">SIM/NÃO</SelectItem>
+                  <SelectItem value="SIM">SIM</SelectItem>
+                  <SelectItem value="NÃO">NÃO</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
         <SheetFooter>
           <Button onClick={handleClickFilter} disabled={isPending}>

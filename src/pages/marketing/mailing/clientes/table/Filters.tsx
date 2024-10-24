@@ -282,11 +282,24 @@ const FilterClientes = ({
               className={`bg-background hover:bg-background`}
             />
           )}
-          <InputWithLabel
-            label="Descrição Produto"
-            value={filters.descricao || ""}
-            onChange={(e) => setFilters({ descricao: e.target.value })}
-          />
+          {defaultFilters?.produto_compra_list && (
+            <MultiSelectWithLabel
+              label="Produtos"
+              options={defaultFilters.produto_compra_list.map((tipo_pedido: any) => ({
+                value: tipo_pedido.value,
+                label: tipo_pedido.value || "NULL",
+              }))}
+              onValueChange={(ufs) => {
+                setFilters({ produto_compra_list: ufs });
+              }}
+              defaultValue={filters.produto_compra_list || []}
+              placeholder="Produto"
+              variant="secondary"
+              animation={4}
+              maxCount={1}
+              className={`bg-background hover:bg-background`}
+            />
+          )}
           <div className="flex flex-col w-full gap-2">
             <label className="text-sm font-medium">Fidelização Aparelho</label>
             <Select

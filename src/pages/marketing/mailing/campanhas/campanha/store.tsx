@@ -4,6 +4,7 @@ export interface FiltersCampanha {
   plano_atual_list?: string[];
   produto_list?: string[];
   status_plano_list?: string[];
+  vendedores_list?: string[];
   produto_fidelizado?: string;
   sem_contato?: string;
   id_campanha?: string;
@@ -13,6 +14,7 @@ const initialFilters: FiltersCampanha = {
   plano_atual_list: [],
   produto_list: [],
   status_plano_list: [],
+  vendedores_list: [],
   produto_fidelizado: "all",
   sem_contato: "all",
   id_campanha: "",

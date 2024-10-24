@@ -10,12 +10,12 @@ import { InputWithLabel } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMailing } from "@/hooks/marketing/useMailing";
+import ModalAparelhos, { ItemAparelhos } from "@/pages/marketing/mailing/components/ModalAparelhos";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Ban, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
-import ModalAparelhos, { ItemAparelhos } from "../../../components/ModalAparelhos";
-import { useStoreCampanha } from "../store";
+import { useStoreCampanha } from "../../store";
 
 export type EditarClienteProps = {
   id?: string;

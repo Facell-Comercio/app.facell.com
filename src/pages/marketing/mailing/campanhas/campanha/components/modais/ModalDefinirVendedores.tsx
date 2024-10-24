@@ -17,10 +17,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
+import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Ban, Save } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useStoreCampanha } from "../store";
+import { FaSpinner } from "react-icons/fa6";
+import { FiltersCampanha, useStoreCampanha } from "../../store";
 
 type Vendedor = {
   index: string;
@@ -28,12 +31,24 @@ type Vendedor = {
   qtde_clientes: string;
 };
 
+export type DefinirVendedoresProps = {
+  id_campanha?: string;
+  vendedores?: Vendedor[];
+  filters: FiltersCampanha;
+};
+
 const ModalDefinirVendedores = () => {
-  const [qtde_clientes, modalOpen, closeModal] = useStoreCampanha((state) => [
-    state.qtde_clientes,
-    state.modalDefinirVendedoresOpen,
-    state.closeModalDefinirVendedores,
-  ]);
+  const [qtde_clientes, modalOpen, closeModal, isPending, setIsPending, filters] = useStoreCampanha(
+    (state) => [
+      state.qtde_clientes,
+      state.modalDefinirVendedoresOpen,
+      state.closeModalDefinirVendedores,
+
+      state.isPending,
+      state.setIsPending,
+      state.filters_lote,
+    ]
+  );
 
   const [vendedores, setVendedores] = useState<Vendedor[]>([]);
 
@@ -46,7 +61,7 @@ const ModalDefinirVendedores = () => {
 
     return Array.from({ length: numVendedores }, (_, index) => ({
       index: String(index),
-      nome: `Vendedor ${index + 1}`,
+      nome: "",
       qtde_clientes: String(baseClientesPorVendedor + (index === numVendedores - 1 ? sobra : 0)),
     }));
   };
@@ -75,6 +90,57 @@ const ModalDefinirVendedores = () => {
     );
   };
 
+  const {
+    mutate: definirVendedores,
+    isPending: definirVendedoresIsPending,
+    isError: definirVendedoresIsError,
+    isSuccess: definirVendedoresIsSuccess,
+  } = useMailing().definirVendedores();
+
+  useEffect(() => {
+    if (definirVendedoresIsPending) {
+      setIsPending(true);
+    }
+    if (definirVendedoresIsSuccess) {
+      closeModal();
+      setIsPending(false);
+    }
+    if (definirVendedoresIsError) {
+      setIsPending(false);
+    }
+  }, [definirVendedoresIsPending]);
+
+  function handleSubmit() {
+    const totalClientesComVendedores = vendedores.reduce(
+      (acc, vendedor) => acc + parseInt(vendedor.qtde_clientes),
+      0
+    );
+    const vendedoresInvalidos = vendedores.filter((vendedor) => !vendedor.nome);
+    if (vendedoresInvalidos.length > 0) {
+      toast({
+        title: "Atenção!",
+        description: "Há vendedores sem nome",
+        variant: "warning",
+      });
+      return;
+    }
+
+    if (totalClientesComVendedores !== parseInt(qtde_clientes || "0")) {
+      const divergencia = totalClientesComVendedores - parseInt(qtde_clientes || "0");
+      const description =
+        divergencia > 0
+          ? `Há ${Math.abs(divergencia)} cliente(s) a mais distribuidos entre os vendedores`
+          : `Ainda resta distribuir ${Math.abs(divergencia)} cliente(s) entre os vendedores`;
+      toast({
+        title: "Atenção!",
+        description,
+        variant: "warning",
+      });
+      return;
+    }
+
+    definirVendedores({ vendedores, id_campanha: filters.id_campanha, filters });
+  }
   function handleClickCancel() {
     closeModal();
   }
@@ -141,13 +207,21 @@ const ModalDefinirVendedores = () => {
           </section>
         </ScrollArea>
         <DialogFooter className="flex gap-1 items-end flex-wrap">
-          <Button variant={"secondary"} onClick={handleClickCancel}>
+          <Button variant={"secondary"} onClick={handleClickCancel} disabled={isPending}>
             <Ban size={18} className="me-2" />
             Fechar
           </Button>
-          <Button onClick={() => console.log("SALVANDO")}>
-            <Save size={18} className="me-2" />
-            Salvar
+          <Button onClick={handleSubmit} disabled={isPending}>
+            {isPending ? (
+              <>
+                <FaSpinner size={16} className="animate-spin me-2" /> Salvando...
+              </>
+            ) : (
+              <>
+                <Save size={18} className="me-2" />
+                Salvar
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

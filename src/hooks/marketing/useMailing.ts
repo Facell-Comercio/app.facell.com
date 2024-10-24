@@ -1,7 +1,10 @@
 import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
+import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
-import { EditarClienteProps } from "@/pages/marketing/mailing/campanhas/campanha/components/ModalEditarCliente";
+import { ExportSubcampanhaProps } from "@/pages/marketing/mailing/campanhas/campanha/components/ButtonExportarEvolux";
+import { DefinirVendedoresProps } from "@/pages/marketing/mailing/campanhas/campanha/components/modais/ModalDefinirVendedores";
+import { EditarClienteProps } from "@/pages/marketing/mailing/campanhas/campanha/components/modais/ModalEditarCliente";
 import { FiltersCampanha } from "@/pages/marketing/mailing/campanhas/campanha/store";
 import { NovaCampanhaSchema } from "@/pages/marketing/mailing/clientes/nova-campanha/form-data";
 import { GetAllParams } from "@/types/query-params-type";
@@ -28,7 +31,7 @@ interface InsertClientesSubcampanhaProps extends NovaCampanhaSchema {
   filters: any;
   id_parent: string;
 }
-
+const uri = "marketing/mailing/";
 export const useMailing = () => {
   const queryClient = useQueryClient();
 
@@ -83,7 +86,7 @@ export const useMailing = () => {
   const insertOneCampanha = () =>
     useMutation({
       mutationFn: async (data: InsertClientesProps) => {
-        return await api.post(`marketing/mailing/clientes`, data).then((response) => response.data);
+        return await api.post(`${uri}/clientes`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -112,7 +115,7 @@ export const useMailing = () => {
     useMutation({
       mutationFn: async (data: InsertClientesSubcampanhaProps) => {
         return await api
-          .post(`marketing/mailing/campanhas/subcampanhas`, data)
+          .post(`${uri}/campanhas/subcampanhas`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -150,9 +153,7 @@ export const useMailing = () => {
   const updateOneCliente = () =>
     useMutation({
       mutationFn: async (data: EditarClienteProps | null) => {
-        return await api
-          .put(`marketing/mailing/campanhas/clientes`, data)
-          .then((response) => response.data);
+        return await api.put(`${uri}/campanhas/clientes`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -180,7 +181,7 @@ export const useMailing = () => {
     useMutation({
       mutationFn: async (data: { data: EditarClienteProps | null; filters: FiltersCampanha }) => {
         return await api
-          .put(`marketing/mailing/campanhas/clientes/lote`, data)
+          .put(`${uri}/campanhas/clientes/lote`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -205,6 +206,58 @@ export const useMailing = () => {
         });
       },
     });
+  const definirVendedores = () =>
+    useMutation({
+      mutationFn: async (data: DefinirVendedoresProps) => {
+        return await api.put(`${uri}/campanhas/vendedores`, data).then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["marketing", "mailing"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const exportSubcampanha = () =>
+    useMutation({
+      mutationFn: async (data: ExportSubcampanhaProps) => {
+        return await api
+          .get(`${uri}/export-previsao-pagamento`, {
+            params: data,
+            responseType: "blob",
+          })
+          .then((response) => {
+            downloadResponse(response);
+          });
+      },
+      onError: async (error) => {
+        // @ts-expect-error "Funciona"
+        const errorText = await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Ops",
+          description: errorJSON.message,
+        });
+      },
+    });
 
   return {
     getClientes,
@@ -217,5 +270,8 @@ export const useMailing = () => {
 
     updateOneCliente,
     updateClienteLote,
+    definirVendedores,
+
+    exportSubcampanha,
   };
 };

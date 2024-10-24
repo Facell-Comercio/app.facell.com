@@ -21,14 +21,16 @@ import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Plus, Smartphone, UserPen, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import ButtonExportSubcampanhas from "./components/ButtonExportarEvolux";
+import ButtonImportarSubcampanhas from "./components/ButtonImportarEvolux";
 import { ClienteProps, columnsTableClientes } from "./components/columns-clientes";
 import { columnsTableClientesSubcampanha } from "./components/columns-clientes-campanha";
 import { FiltersClientesCampanha } from "./components/FiltersClientesCampanha";
-import ModalDefinirAparelho from "./components/ModalDefinirAparelho";
-import ModalDefinirVendedores from "./components/ModalDefinirVendedores";
-import ModalEditarCliente from "./components/ModalEditarCliente";
-import ModalNovaSubcampanha from "./components/ModalNovaSubcampanha";
-import ModalVerCliente from "./components/ModalVerCliente";
+import ModalDefinirAparelho from "./components/modais/ModalDefinirAparelho";
+import ModalDefinirVendedores from "./components/modais/ModalDefinirVendedores";
+import ModalEditarCliente from "./components/modais/ModalEditarCliente";
+import ModalNovaSubcampanha from "./components/modais/ModalNovaSubcampanha";
+import ModalVerCliente from "./components/modais/ModalVerCliente";
 import { useStoreCampanha } from "./store";
 
 const ModalCampanha = () => {
@@ -69,11 +71,10 @@ const ModalCampanha = () => {
   function handleClickCancel() {
     closeModal();
   }
-  const { data, isFetched, isFetching, isSuccess, isLoading, refetch } =
-    useMailing().getOneCampanha({
-      id: id || "",
-      filters,
-    });
+  const { data, isFetching, isSuccess, isLoading, refetch } = useMailing().getOneCampanha({
+    id: id || "",
+    filters,
+  });
   const defaultFilters = data?.filters;
   const {
     data: data_subcampanha,
@@ -88,7 +89,6 @@ const ModalCampanha = () => {
     () => data?.subcampanhas || [],
     [isLoading, isFetching, data_subcampanha, data]
   );
-  // console.log(data?.subcampanhas);
 
   const defaultFiltersSubcampanha = data_subcampanha?.filters;
   const defaultIdSubcampanha = useMemo(
@@ -98,8 +98,8 @@ const ModalCampanha = () => {
 
   useEffect(() => {
     setIdSubcampanha(defaultIdSubcampanha);
-    setFiltersLote({ id_campanha: defaultIdSubcampanha || "" });
-  }, [isFetched, isSuccess]);
+    setFiltersLote({ id_campanha: defaultIdSubcampanha });
+  }, [isSuccess]);
 
   const handleResetFilterSubcampanha = async () => {
     await new Promise((resolve) => resolve(resetFiltersLote()));
@@ -108,10 +108,12 @@ const ModalCampanha = () => {
   useEffect(() => {
     if (idSubcampanha) {
       handleResetFilterSubcampanha();
+      setFiltersLote({ id_campanha: idSubcampanha });
     }
   }, [idSubcampanha]);
   const [itemOpen, setItemOpen] = useState<string>("clientes");
-
+  const disabledCampanha = isLoading;
+  const disabledSubcampanha = isLoadingSubcampanha;
   const clientes: ClienteProps[] = data?.clientes || [];
   const clientesSubcampanha: ClienteProps[] = data_subcampanha?.clientes || [];
   return (
@@ -144,8 +146,12 @@ const ModalCampanha = () => {
                       resetFilters={resetFilters}
                       qtde_clientes={data?.qtde_clientes}
                       isPending={isLoading || isFetching}
+                      disabled={disabledCampanha}
                     />
-                    <Button onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}>
+                    <Button
+                      onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}
+                      disabled={disabledCampanha}
+                    >
                       <Plus className="me-2" size={18} /> Nova Subcampanha
                     </Button>
                   </span>
@@ -180,7 +186,7 @@ const ModalCampanha = () => {
                         value={subcampanha?.id}
                         onClick={() => {
                           setIdSubcampanha(subcampanha.id);
-                          setFiltersLote({ id_campanha: subcampanha?.id || "" });
+                          setFiltersLote({ id_campanha: subcampanha?.id });
                         }}
                         key={`${subcampanha.id} - ${subcampanha.nome}`}
                       >
@@ -205,13 +211,18 @@ const ModalCampanha = () => {
                           resetFilters={resetFiltersLote}
                           qtde_clientes={data_subcampanha?.qtde_clientes}
                           isPending={isLoadingSubcampanha || isFetchingSubcampanha}
+                          isSubcampanha
+                          disabled={disabledSubcampanha}
                         />
                         <span className="flex  gap-2">
+                          <ButtonImportarSubcampanhas />
+                          <ButtonExportSubcampanhas />
                           <Button
                             variant={"warning"}
                             onClick={() =>
                               openModalDefinirAparelho(data_subcampanha?.qtde_clientes)
                             }
+                            disabled={disabledSubcampanha}
                           >
                             <Smartphone className="me-2" size={18} /> Definir Aparelhos
                           </Button>
@@ -220,6 +231,7 @@ const ModalCampanha = () => {
                             onClick={() =>
                               openModalDefinirVendedores(data_subcampanha?.qtde_clientes)
                             }
+                            disabled={disabledSubcampanha}
                           >
                             <UserPen className="me-2" size={18} /> Definir Vendedores
                           </Button>
