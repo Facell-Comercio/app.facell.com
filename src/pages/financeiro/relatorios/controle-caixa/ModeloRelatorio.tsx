@@ -12,22 +12,32 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useRelatorios } from "@/hooks/financeiro/useRelatorios";
 import { Download, EraserIcon } from "lucide-react";
 import { FaSpinner } from "react-icons/fa6";
-import { useStoreRVRelatorio } from "./store";
+import { useStoreRelatorioControleCaixa } from "./store";
 
 type RelatorioAccordionProps = {
   itemOpen: string;
   setItemOpen: (itemOpen: string) => void;
+  title: string;
+  nomeLayout: RelatorioLayoutName;
 };
 
-const RVRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProps) => {
-  const [filters, setFilters, resetFilters] = useStoreRVRelatorio((state) => [
+type RelatorioLayoutName =
+  | "exportLayoutRV"
+  | "exportLayoutPIX"
+  | "exportLayoutPitzi"
+  | "exportLayoutCrediario"
+  | "exportLayoutTradein"
+  | "exportLayoutCartoes";
+
+const ModeloRelatorio = ({ itemOpen, setItemOpen, title, nomeLayout }: RelatorioAccordionProps) => {
+  const [filters, setFilters, resetFilters] = useStoreRelatorioControleCaixa((state) => [
     state.filters,
     state.setFilters,
     state.resetFilters,
   ]);
-  const { mutate: exportLayoutRV, isPending } = useRelatorios().exportLayoutRV();
-  function handleExportLayoutRV() {
-    exportLayoutRV(filters);
+  const { mutate: exportLayoutModelo, isPending } = useRelatorios()[nomeLayout]();
+  function handleExportLayoutModelo() {
+    exportLayoutModelo(filters);
   }
   return (
     <Accordion
@@ -37,10 +47,8 @@ const RVRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProps) => {
       collapsible
       className="p-2 border dark:border-slate-800 rounded-lg "
     >
-      <AccordionItem value="vencimentos-relatorio" className="relative border-0">
-        <AccordionTrigger className={`py-1 hover:no-underline`}>
-          Relatório Recarga (Datasys x RV Cellcard)
-        </AccordionTrigger>
+      <AccordionItem value={nomeLayout} className="relative border-0">
+        <AccordionTrigger className={`py-1 hover:no-underline`}>{title}</AccordionTrigger>
         <AccordionContent className="flex flex-col w-max gap-0.5 p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
             <div className="flex w-max space-x-3">
@@ -73,7 +81,7 @@ const RVRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProps) => {
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
           <span className="flex w-full gap-2 justify-end ">
-            <Button variant={"success"} onClick={handleExportLayoutRV} disabled={isPending}>
+            <Button variant={"success"} onClick={handleExportLayoutModelo} disabled={isPending}>
               {isPending ? (
                 <>
                   <FaSpinner size={18} className="me-2 animate-spin" /> Exportando...
@@ -95,4 +103,4 @@ const RVRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProps) => {
   );
 };
 
-export default RVRelatorio;
+export default ModeloRelatorio;
