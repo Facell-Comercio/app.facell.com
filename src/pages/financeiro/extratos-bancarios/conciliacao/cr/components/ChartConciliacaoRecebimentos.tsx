@@ -15,7 +15,7 @@ import { getDaysArray, mergeDataWithDays } from "../../../helper";
 const chartConfig = {
   pendente: {
     label: "Pendente",
-    color: "hsl(var(--destructive))",
+    color: "hsl(var(--success))",
   },
   conciliado: {
     label: "Conciliado",
