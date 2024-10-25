@@ -9,6 +9,7 @@ import ButtonNovoTituloReceber from "./components/ButtonNovoTituloReceber";
 import HistoricoLogs from "./components/HistoricoLogs";
 import { columnsTable } from "./table/columns";
 import ModalTituloReceber from "./titulo/ModalTituloReceber";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 
 const TitulosReceber = () => {
   const [pagination, setPagination, filters] = useStoreTableReceber((state) => [
@@ -16,6 +17,9 @@ const TitulosReceber = () => {
     state.setPagination,
     state.filters,
   ]);
+  const isMaster = checkUserPermission('MASTER');
+  const isFinanceiro = checkUserDepartments('FINANCEIRO')
+
   const [handleRowSelection] = useStoreTableReceber((state) => [
     state.handleRowSelection,
   ]);
@@ -33,12 +37,14 @@ const TitulosReceber = () => {
     handleRowSelection({ idSelection: [], rowSelection: {} });
   }
 
+  const canImport = isMaster || isFinanceiro;
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap justify-end gap-3 ">
-        <HistoricoLogs />
+        {canImport && <HistoricoLogs />}
         <ButtonExportTitulosReceber />
-        <ButtonImportTitulosReceber />
+        {canImport && <ButtonImportTitulosReceber />}
         <ButtonNovoTituloReceber />
       </div>
       <Filters refetch={refetchTitulos} />

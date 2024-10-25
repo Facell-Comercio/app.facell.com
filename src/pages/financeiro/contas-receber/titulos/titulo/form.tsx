@@ -121,8 +121,8 @@ const FormTituloReceber = ({
     status !== "Criado" &&
     (id_status < 30 || (isMaster === true && status === "Emitido" ? true : false));
 
-  const podeNegar = isMaster && id && status !== "Cancelado" && id_status > 0 && id_status < 40;
-  const podeAprovar = isMaster && id && status !== "Emitido" && id_status > 0 && id_status < 40;
+  const podeCancelar = id && status !== "Cancelado" && id_status > 0 && id_status < 40;
+  const podeEmitir = id && status !== "Emitido" && id_status > 0 && id_status < 40;
   const podeEditarPedido = !id || !form.watch("id_user");
   const podeExcluirNotaFiscal = id_status < 30 || isMaster;
   // const emitido = id_status === 30;
@@ -726,7 +726,7 @@ const FormTituloReceber = ({
                     Status Inicial
                   </ButtonMotivation>
                 )}
-                {podeNegar && (
+                {podeCancelar && (
                   <ButtonMotivation
                     variant={"destructive"}
                     size={"lg"}
@@ -736,7 +736,7 @@ const FormTituloReceber = ({
                     Cancelar
                   </ButtonMotivation>
                 )}
-                {podeAprovar && (
+                {podeEmitir && (
                   <Button
                     type="button"
                     variant={"success"}
