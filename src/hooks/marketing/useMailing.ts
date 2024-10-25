@@ -2,7 +2,6 @@ import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
-import { ExportSubcampanhaProps } from "@/pages/marketing/mailing/campanhas/campanha/components/ButtonExportarEvolux";
 import { DefinirVendedoresProps } from "@/pages/marketing/mailing/campanhas/campanha/components/modais/ModalDefinirVendedores";
 import { EditarClienteProps } from "@/pages/marketing/mailing/campanhas/campanha/components/modais/ModalEditarCliente";
 import { FiltersCampanha } from "@/pages/marketing/mailing/campanhas/campanha/store";
@@ -30,6 +29,11 @@ interface InsertClientesProps extends NovaCampanhaSchema {
 interface InsertClientesSubcampanhaProps extends NovaCampanhaSchema {
   filters: any;
   id_parent: string;
+}
+
+interface DuplicateCampanhaProps extends NovaCampanhaSchema {
+  filters: any;
+  id_campanha: string;
 }
 const uri = "marketing/mailing/";
 export const useMailing = () => {
@@ -117,6 +121,33 @@ export const useMailing = () => {
         return await api
           .post(`${uri}/campanhas/subcampanhas`, data)
           .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["marketing"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+  const duplicateCampanha = () =>
+    useMutation({
+      mutationFn: async (data: DuplicateCampanhaProps) => {
+        return await api.post(`${uri}/campanhas/duplicar`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -236,10 +267,10 @@ export const useMailing = () => {
 
   const exportSubcampanha = () =>
     useMutation({
-      mutationFn: async (data: ExportSubcampanhaProps) => {
+      mutationFn: async (params: { filters: any; type: "csv" | "xlsx"; id_campanha: string }) => {
         return await api
-          .get(`${uri}/export-previsao-pagamento`, {
-            params: data,
+          .get(`${uri}/campanhas/export-evolux`, {
+            params,
             responseType: "blob",
           })
           .then((response) => {
@@ -253,7 +284,7 @@ export const useMailing = () => {
 
         toast({
           variant: "destructive",
-          title: "Ops",
+          title: "Erro",
           description: errorJSON.message,
         });
       },
@@ -267,6 +298,7 @@ export const useMailing = () => {
 
     insertOneCampanha,
     insertOneSubcampanha,
+    duplicateCampanha,
 
     updateOneCliente,
     updateClienteLote,

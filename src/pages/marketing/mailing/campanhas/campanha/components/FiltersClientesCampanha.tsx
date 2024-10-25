@@ -130,6 +130,26 @@ export const FiltersClientesCampanha = ({
               disabled={isPending}
             />
           )}
+          {defaultFilters?.status_contato_list && isSubcampanha && (
+            <MultiSelectWithLabel
+              label="Status Contato"
+              options={defaultFilters.status_contato_list.map((contato_atual: any) => ({
+                value: contato_atual.value,
+                label: contato_atual.value || "NULL",
+              }))}
+              onValueChange={(status_contato_list) => {
+                setFilters({ status_contato_list: status_contato_list });
+              }}
+              defaultValue={filters.status_contato_list || []}
+              placeholder="Status"
+              variant="secondary"
+              animation={4}
+              maxCount={2}
+              maxCharacters={25}
+              className={`bg-background hover:bg-background`}
+              disabled={isPending}
+            />
+          )}
           {defaultFilters?.vendedores_list && isSubcampanha && (
             <MultiSelectWithLabel
               label="Vendedores"
@@ -167,25 +187,6 @@ export const FiltersClientesCampanha = ({
               </SelectContent>
             </Select>
           </div>
-          {isSubcampanha && (
-            <div className="flex flex-col w-full gap-2">
-              <label className="text-sm font-medium">Sem Contato</label>
-              <Select
-                value={filters.sem_contato || ""}
-                onValueChange={(e) => setFilters({ sem_contato: e })}
-                disabled={isPending}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="SIM/NÃO" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">SIM/NÃO</SelectItem>
-                  <SelectItem value="SIM">SIM</SelectItem>
-                  <SelectItem value="NÃO">NÃO</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
         </div>
         <SheetFooter>
           <Button onClick={handleClickFilter} disabled={isPending}>

@@ -4,6 +4,7 @@ export interface FiltersCampanha {
   plano_atual_list?: string[];
   produto_list?: string[];
   status_plano_list?: string[];
+  status_contato_list?: string[];
   vendedores_list?: string[];
   produto_fidelizado?: string;
   sem_contato?: string;
@@ -14,6 +15,7 @@ const initialFilters: FiltersCampanha = {
   plano_atual_list: [],
   produto_list: [],
   status_plano_list: [],
+  status_contato_list: [],
   vendedores_list: [],
   produto_fidelizado: "all",
   sem_contato: "all",
@@ -45,6 +47,11 @@ interface useStoreCampanha {
   modalNovaSubcampanhaOpen: boolean;
   openModalNovaSubcampanha: (qtde_clientes: string) => void;
   closeModalNovaSubcampanha: () => void;
+
+  //DUPLICAR CAMPANHA
+  modalDuplicarCampanhaOpen: boolean;
+  openModalDuplicarCampanha: (qtde_clientes: string) => void;
+  closeModalDuplicarCampanha: () => void;
 
   id_cliente: string | null;
 
@@ -108,6 +115,12 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
   openModalNovaSubcampanha: (qtde_clientes) =>
     set({ modalNovaSubcampanhaOpen: true, qtde_clientes }),
   closeModalNovaSubcampanha: () => set({ modalNovaSubcampanhaOpen: false, qtde_clientes: null }),
+
+  // DUPLICAR CAMPANHA
+  modalDuplicarCampanhaOpen: false,
+  openModalDuplicarCampanha: (qtde_clientes) =>
+    set({ modalDuplicarCampanhaOpen: true, qtde_clientes }),
+  closeModalDuplicarCampanha: () => set({ modalDuplicarCampanhaOpen: false, qtde_clientes: null }),
 
   id_cliente: null,
 

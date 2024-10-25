@@ -19,7 +19,7 @@ const ButtonExportarEvolux = () => {
   const { mutate: exportSubcampanha, isPending } = useMailing().exportSubcampanha();
 
   function handleExportSubcampanha(type: "xlsx" | "csv") {
-    exportSubcampanha({ id_subcampanha: filters.id_campanha || "", type });
+    exportSubcampanha({ id_campanha: filters.id_campanha || "", filters, type });
   }
 
   return (

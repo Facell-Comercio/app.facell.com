@@ -279,7 +279,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaBullhorn />,
     uri: "marketing",
-    visible: () => false,
+    visible: () => true,
     children: [
       {
         name: "Patrocinado",
@@ -301,6 +301,13 @@ export const sidebarItems: SidebarItem[] = [
         shortName: "LEA",
         uri: "marketing/leads",
         visible: () => false,
+      },
+      {
+        name: "Mailing",
+        type: "link",
+        shortName: "M",
+        uri: "marketing/mailing",
+        visible: () => true,
       },
     ],
   },

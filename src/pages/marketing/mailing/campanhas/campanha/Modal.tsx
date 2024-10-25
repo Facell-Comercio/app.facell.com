@@ -19,15 +19,15 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { Plus, Smartphone, UserPen, X } from "lucide-react";
+import { CopyPlus, Plus, Smartphone, UserPen, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import ButtonExportSubcampanhas from "./components/ButtonExportarEvolux";
-import ButtonImportarSubcampanhas from "./components/ButtonImportarEvolux";
 import { ClienteProps, columnsTableClientes } from "./components/columns-clientes";
 import { columnsTableClientesSubcampanha } from "./components/columns-clientes-campanha";
 import { FiltersClientesCampanha } from "./components/FiltersClientesCampanha";
 import ModalDefinirAparelho from "./components/modais/ModalDefinirAparelho";
 import ModalDefinirVendedores from "./components/modais/ModalDefinirVendedores";
+import ModalDuplicarCampanha from "./components/modais/ModalDuplicarCampanha";
 import ModalEditarCliente from "./components/modais/ModalEditarCliente";
 import ModalNovaSubcampanha from "./components/modais/ModalNovaSubcampanha";
 import ModalVerCliente from "./components/modais/ModalVerCliente";
@@ -40,6 +40,7 @@ const ModalCampanha = () => {
     closeModal,
 
     openModalNovaSubcampanha,
+    openModalDuplicarCampanha,
     openModalDefinirAparelho,
     openModalDefinirVendedores,
 
@@ -55,6 +56,7 @@ const ModalCampanha = () => {
     state.closeModal,
 
     state.openModalNovaSubcampanha,
+    state.openModalDuplicarCampanha,
     state.openModalDefinirAparelho,
     state.openModalDefinirVendedores,
 
@@ -85,6 +87,7 @@ const ModalCampanha = () => {
     id: idSubcampanha,
     filters: filters_lote,
   });
+
   const subcampanhas = useMemo(
     () => data?.subcampanhas || [],
     [isLoading, isFetching, data_subcampanha, data]
@@ -148,12 +151,21 @@ const ModalCampanha = () => {
                       isPending={isLoading || isFetching}
                       disabled={disabledCampanha}
                     />
-                    <Button
-                      onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}
-                      disabled={disabledCampanha}
-                    >
-                      <Plus className="me-2" size={18} /> Nova Subcampanha
-                    </Button>
+                    <span className="flex gap-2">
+                      <Button
+                        onClick={() => openModalDuplicarCampanha(data?.qtde_clientes)}
+                        disabled={disabledCampanha}
+                        variant={"tertiary"}
+                      >
+                        <CopyPlus className="me-2" size={18} /> Duplicar Campanha
+                      </Button>
+                      <Button
+                        onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}
+                        disabled={disabledCampanha}
+                      >
+                        <Plus className="me-2" size={18} /> Nova Subcampanha
+                      </Button>
+                    </span>
                   </span>
                   <div className="grid bg-background rounded-lg ">
                     <DataVirtualTableHeaderFixed
@@ -215,7 +227,7 @@ const ModalCampanha = () => {
                           disabled={disabledSubcampanha}
                         />
                         <span className="flex  gap-2">
-                          <ButtonImportarSubcampanhas />
+                          {/* <ButtonImportarSubcampanhas /> */}
                           <ButtonExportSubcampanhas />
                           <Button
                             variant={"warning"}
@@ -265,6 +277,7 @@ const ModalCampanha = () => {
         <ModalVerCliente />
         <ModalDefinirAparelho />
         <ModalDefinirVendedores />
+        <ModalDuplicarCampanha />
 
         <DialogFooter className="flex gap-2 items-end flex-wrap">
           <Button variant={"secondary"} onClick={handleClickCancel}>

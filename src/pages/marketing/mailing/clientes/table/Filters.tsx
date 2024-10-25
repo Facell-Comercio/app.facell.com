@@ -1,6 +1,7 @@
 // import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { InputWithLabel } from "@/components/custom/FormInput";
 import MultiSelectWithLabel from "@/components/custom/MultiSelectWithLabel";
+import { SelectMultiUF } from "@/components/custom/SelectUF";
 import {
   Accordion,
   AccordionContent,
@@ -121,24 +122,20 @@ const FilterClientes = ({
             />
           )}
 
-          {defaultFilters?.uf_list && (
-            <MultiSelectWithLabel
-              label="Área/Estado"
-              options={defaultFilters.uf_list.map((uf: any) => ({
-                value: uf.value,
-                label: uf.value,
-              }))}
-              onValueChange={(ufs) => {
-                setFilters({ uf_list: ufs });
-              }}
-              defaultValue={filters.uf_list || []}
-              placeholder="UF"
-              variant="secondary"
-              animation={4}
-              maxCount={1}
-              className={`bg-background hover:bg-background`}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">UF</label>
+            <SelectMultiUF
+              className="w-full bg-background hover:bg-background"
+              value={filters.uf_list || []}
+              onChange={(value) =>
+                setFilters({
+                  uf_list: value,
+                })
+              }
+              nowrap
+              maxCount={2}
             />
-          )}
+          </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium">Data da Compra</label>
@@ -246,6 +243,7 @@ const FilterClientes = ({
               className={`bg-background hover:bg-background`}
             />
           )}
+
           {defaultFilters?.fabricante_list && (
             <MultiSelectWithLabel
               label="Fabricantes"
