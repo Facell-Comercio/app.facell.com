@@ -290,6 +290,36 @@ export const useMailing = () => {
       },
     });
 
+  const deleteClientesLote = () =>
+    useMutation({
+      mutationFn: async (data: { id_campanha: string; filters: FiltersCampanha }) => {
+        return await api
+          .delete(`${uri}/campanhas/clientes/lote`, { data })
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["marketing", "mailing"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
   return {
     getClientes,
     getCampanhas,
@@ -303,6 +333,8 @@ export const useMailing = () => {
     updateOneCliente,
     updateClienteLote,
     definirVendedores,
+
+    deleteClientesLote,
 
     exportSubcampanha,
   };

@@ -14,7 +14,7 @@ export type ExportSubcampanhaProps = {
   id_subcampanha: string;
 };
 
-const ButtonExportarEvolux = () => {
+const ButtonExportarEvolux = ({ disabled }: { disabled: boolean }) => {
   const filters = useStoreCampanha().filters_lote;
   const { mutate: exportSubcampanha, isPending } = useMailing().exportSubcampanha();
 
@@ -27,7 +27,7 @@ const ButtonExportarEvolux = () => {
       <DropdownMenuTrigger
         type="button"
         className="py-2 px-4 bg-success text-sm flex font-medium gap-2 items-center rounded-md "
-        disabled={isPending}
+        disabled={isPending || disabled}
       >
         {isPending ? (
           <>

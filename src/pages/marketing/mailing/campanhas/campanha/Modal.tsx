@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import ButtonMotivation from "@/components/custom/ButtonMotivation";
 import { DataVirtualTableHeaderFixed } from "@/components/custom/DataVirtualTableHeaderFixed";
 import {
   Accordion,
@@ -87,6 +88,8 @@ const ModalCampanha = () => {
     id: idSubcampanha,
     filters: filters_lote,
   });
+  const { mutate: deleteClientesLote, isPending: deleteClientesLoteIsPending } =
+    useMailing().deleteClientesLote();
 
   const subcampanhas = useMemo(
     () => data?.subcampanhas || [],
@@ -115,7 +118,7 @@ const ModalCampanha = () => {
     }
   }, [idSubcampanha]);
   const [itemOpen, setItemOpen] = useState<string>("clientes");
-  const disabledCampanha = isLoading;
+  const disabledCampanha = isLoading || deleteClientesLoteIsPending;
   const disabledSubcampanha = isLoadingSubcampanha;
   const clientes: ClienteProps[] = data?.clientes || [];
   const clientesSubcampanha: ClienteProps[] = data_subcampanha?.clientes || [];
@@ -152,6 +155,21 @@ const ModalCampanha = () => {
                       disabled={disabledCampanha}
                     />
                     <span className="flex gap-2">
+                      <ButtonMotivation
+                        title="Exclui os clientes que foram filtrados..."
+                        variant={"destructive"}
+                        action={() => deleteClientesLote({ id_campanha: id || "", filters })}
+                        headerTitle="Excluir clientes filtrados"
+                        description={`Digite "${String(
+                          data?.nome
+                        ).toUpperCase()}" para poder remover os clientes`}
+                        placeholder={data?.nome}
+                        disabled={disabledCampanha}
+                        equalText
+                      >
+                        <X className="me-2" size={18} /> Excluir Clientes
+                      </ButtonMotivation>
+
                       <Button
                         onClick={() => openModalDuplicarCampanha(data?.qtde_clientes)}
                         disabled={disabledCampanha}
@@ -228,7 +246,7 @@ const ModalCampanha = () => {
                         />
                         <span className="flex  gap-2">
                           {/* <ButtonImportarSubcampanhas /> */}
-                          <ButtonExportSubcampanhas />
+                          <ButtonExportSubcampanhas disabled={disabledSubcampanha} />
                           <Button
                             variant={"warning"}
                             onClick={() =>

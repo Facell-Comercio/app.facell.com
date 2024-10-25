@@ -61,7 +61,7 @@ export const FiltersClientesCampanha = ({
           Filtros
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent side={"left"}>
         <SheetHeader>
           <SheetTitle className="flex items-center justify-between">
             Filtros Cliente
