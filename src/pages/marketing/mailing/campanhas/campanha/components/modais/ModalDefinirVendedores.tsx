@@ -19,6 +19,9 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 import { useMailing } from "@/hooks/marketing/useMailing";
+import ModalVendedores, {
+  ItemVendedor,
+} from "@/pages/marketing/mailing/components/ModalVendedores";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Ban, Save } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -51,8 +54,9 @@ const ModalDefinirVendedores = () => {
   );
 
   const [vendedores, setVendedores] = useState<Vendedor[]>([]);
-
   const [qntdVendedores, setQntdVendedores] = useState<string>("1");
+  const [modalVendedoresOpen, setModalVendedoresOpen] = useState(false);
+  const [index, setIndex] = useState("");
 
   // Função para distribuir clientes igualmente entre os vendedores
   const distribuirClientes = (totalClientes: number, numVendedores: number) => {
@@ -141,6 +145,10 @@ const ModalDefinirVendedores = () => {
 
     definirVendedores({ vendedores, id_campanha: filters.id_campanha, filters });
   }
+  function handleSelection(vendedor: ItemVendedor) {
+    atualizarVendedor(index, "nome", String(vendedor.nome).toUpperCase());
+    setIndex("");
+  }
   function handleClickCancel() {
     closeModal();
   }
@@ -186,7 +194,11 @@ const ModalDefinirVendedores = () => {
                     <TableCell>
                       <Input
                         value={vendedor.nome}
-                        onChange={(e) => atualizarVendedor(vendedor.index, "nome", e.target.value)}
+                        readOnly
+                        onClick={() => {
+                          setModalVendedoresOpen(true);
+                          setIndex(vendedor.index);
+                        }}
                       />
                     </TableCell>
                     <TableCell>
@@ -206,6 +218,13 @@ const ModalDefinirVendedores = () => {
             </Table>
           </section>
         </ScrollArea>
+        <ModalVendedores
+          open={modalVendedoresOpen}
+          onOpenChange={() => setModalVendedoresOpen(false)}
+          handleSelection={handleSelection}
+          closeOnSelection
+        />
+
         <DialogFooter className="flex gap-1 items-end flex-wrap">
           <Button variant={"secondary"} onClick={handleClickCancel} disabled={isPending}>
             <Ban size={18} className="me-2" />

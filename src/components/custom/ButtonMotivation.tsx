@@ -31,15 +31,16 @@ const ButtonMotivation = ({
   placeholder,
   description,
   equalText,
+  disabled,
 }: ButtonMotivationProps) => {
   const [motivo, setMotivo] = useState<string>("");
-  const disabled = equalText
+  const actionDisabled = equalText
     ? motivo !== String(placeholder).toUpperCase()
     : !motivo || motivo.length < 10;
   return (
     <AlertDialog>
       <AlertDialogTrigger type="button" asChild>
-        <Button title={title} type="button" variant={variant} size={size}>
+        <Button title={title} type="button" variant={variant} size={size} disabled={disabled}>
           {children}
         </Button>
       </AlertDialogTrigger>
@@ -60,7 +61,7 @@ const ButtonMotivation = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            disabled={disabled}
+            disabled={actionDisabled}
             onClick={() => {
               action(motivo);
             }}

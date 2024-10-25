@@ -26,7 +26,7 @@ const ButtonExportarEvolux = ({ disabled }: { disabled: boolean }) => {
     <DropdownMenu>
       <DropdownMenuTrigger
         type="button"
-        className="py-2 px-4 bg-success text-sm flex font-medium gap-2 items-center rounded-md "
+        className="py-2 px-4 bg-success text-sm flex font-medium gap-2 items-center rounded-md disabled:opacity-50"
         disabled={isPending || disabled}
       >
         {isPending ? (

@@ -213,8 +213,8 @@ const ModalVerCliente = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {resultados.map((resultado: ResultadoContato) => (
-                      <TableRow className="uppercase">
+                    {resultados.map((resultado: ResultadoContato, index) => (
+                      <TableRow className="uppercase" key={`${resultado.id} - ${index}`}>
                         <TableCell>{resultado.status_contato}</TableCell>
                         <TableCell>
                           {formatDate(resultado.datetime_contato, "dd/MM/yyyy HH:mm")}

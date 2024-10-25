@@ -10,30 +10,30 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-interface IModalAparelhos {
+interface IModalVendedores {
   open: boolean;
-  handleSelection: (item: ItemAparelho) => void;
+  handleSelection: (item: ItemVendedor) => void;
   onOpenChange: () => void;
   closeOnSelection?: boolean;
 }
 
-export type ItemAparelho = {
-  descricao_comercial: string;
-  descricao: string;
+export type ItemVendedor = {
+  nome: string;
+  id: string;
 };
 
-const ModalAparelhos = ({
+const ModalVendedores = ({
   open,
   handleSelection,
   onOpenChange,
   closeOnSelection,
-}: IModalAparelhos) => {
+}: IModalVendedores) => {
   const [search, setSearch] = useState<string>("");
 
   const { data, isError, refetch } = useQuery({
-    queryKey: ["marketing", "aparelhos", "lista", { termo: search }],
+    queryKey: ["marketing", "vendedores", "lista", { termo: search }],
     queryFn: async () =>
-      await fetchApi.marketing.mailing.getAparelhos({ filters: { termo: search } }),
+      await fetchApi.marketing.mailing.getVendedores({ filters: { termo: search } }),
     enabled: open,
   });
 
@@ -45,7 +45,7 @@ const ModalAparelhos = ({
     refetch();
   }
 
-  function pushSelection(item: ItemAparelho) {
+  function pushSelection(item: ItemVendedor) {
     handleSelection(item);
     if (closeOnSelection) {
       onOpenChange();
@@ -59,7 +59,7 @@ const ModalAparelhos = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Aparelhos</DialogTitle>
+          <DialogTitle>Vendedores</DialogTitle>
           <DialogDescription>Selecione um ao clicar no botão à direita.</DialogDescription>
 
           <SearchComponent handleSearch={handleSearch} />
@@ -71,7 +71,7 @@ const ModalAparelhos = ({
   );
 };
 
-export default ModalAparelhos;
+export default ModalVendedores;
 
 import * as React from "react";
 
@@ -79,8 +79,8 @@ import fetchApi from "@/api/fetchApi";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
 interface RowVirtualizerFixedProps {
-  data: ItemAparelho[];
-  pushSelection: (item: ItemAparelho) => void;
+  data: ItemVendedor[];
+  pushSelection: (item: ItemVendedor) => void;
 }
 
 const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({ data, pushSelection }) => {
@@ -131,7 +131,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({ data, pushSel
               }}
             >
               <div className="flex justify-between items-center p-1 w-full">
-                <div className="uppercase">{data[index].descricao_comercial}</div>
+                <div className="uppercase">{data[index].nome}</div>
                 <Button size={"xs"} onClick={() => pushSelection(data[index])}>
                   Selecionar
                 </Button>

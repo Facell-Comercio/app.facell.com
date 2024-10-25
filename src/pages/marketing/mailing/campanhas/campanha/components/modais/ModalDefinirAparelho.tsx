@@ -10,7 +10,7 @@ import { InputWithLabel } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMailing } from "@/hooks/marketing/useMailing";
-import ModalAparelhos, { ItemAparelhos } from "@/pages/marketing/mailing/components/ModalAparelhos";
+import ModalAparelhos, { ItemAparelho } from "@/pages/marketing/mailing/components/ModalAparelhos";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Ban, Save } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -32,7 +32,7 @@ const ModalDefinirAparelho = () => {
   const [aparelho, setAparelho] = useState<string>("");
   const [modalAparelhoOpen, setModalAparelhoOpen] = useState(false);
 
-  function handleSelectionAparelho(aparelho: ItemAparelhos) {
+  function handleSelectionAparelho(aparelho: ItemAparelho) {
     setAparelho(aparelho.descricao_comercial);
   }
 

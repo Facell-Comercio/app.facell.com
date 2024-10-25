@@ -10,7 +10,10 @@ import { InputWithLabel } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMailing } from "@/hooks/marketing/useMailing";
-import ModalAparelhos, { ItemAparelhos } from "@/pages/marketing/mailing/components/ModalAparelhos";
+import ModalAparelhos, { ItemAparelho } from "@/pages/marketing/mailing/components/ModalAparelhos";
+import ModalVendedores, {
+  ItemVendedor,
+} from "@/pages/marketing/mailing/components/ModalVendedores";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Ban, Save } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -43,9 +46,13 @@ const ModalEditarCliente = () => {
     isSuccess: updateClienteIsSuccess,
   } = useMailing().updateOneCliente();
   const [modalAparelhoOpen, setModalAparelhoOpen] = useState(false);
+  const [modalVendedoresOpen, setModalVendedoresOpen] = useState(false);
 
-  function handleSelectionAparelho(aparelho: ItemAparelhos) {
+  function handleSelectionAparelho(aparelho: ItemAparelho) {
     setFormData((prev) => ({ ...prev, produto_ofertado: aparelho.descricao_comercial }));
+  }
+  function handleSelectionVendedor(vendedor: ItemVendedor) {
+    setFormData((prev) => ({ ...prev, vendedor: vendedor.nome }));
   }
 
   useEffect(() => {
@@ -83,7 +90,8 @@ const ModalEditarCliente = () => {
             <InputWithLabel
               label="Nome Vendedor:"
               value={formData?.vendedor || ""}
-              onChange={(e) => setFormData((prev) => ({ ...prev, vendedor: e.target.value }))}
+              readOnly
+              onClick={() => setModalVendedoresOpen(true)}
               className="flex-1"
             />
             <InputWithLabel
@@ -99,6 +107,12 @@ const ModalEditarCliente = () => {
             onOpenChange={() => setModalAparelhoOpen(false)}
             closeOnSelection
             handleSelection={handleSelectionAparelho}
+          />
+          <ModalVendedores
+            open={modalVendedoresOpen}
+            onOpenChange={() => setModalVendedoresOpen(false)}
+            handleSelection={handleSelectionVendedor}
+            closeOnSelection
           />
         </ScrollArea>
         <DialogFooter className="flex gap-1 items-end flex-wrap">

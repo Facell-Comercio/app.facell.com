@@ -136,69 +136,71 @@ const ModalCampanha = () => {
               collapsible
               value={itemOpen}
               onValueChange={(e) => setItemOpen(e)}
-              className="border rounded-md bg-background"
+              className="grid border rounded-md bg-background"
             >
               <AccordionItem value="clientes" className="border-0">
                 <AccordionTrigger className="p-3 border-0 rounded-md py-1 hover:no-underline">
                   Clientes
                 </AccordionTrigger>
                 <AccordionContent className="flex gap-2 flex-col p-2">
-                  <span className="flex items-center w-full justify-between">
-                    <FiltersClientesCampanha
-                      filters={filters}
-                      defaultFilters={defaultFilters}
-                      refetch={refetch}
-                      setFilters={setFilters}
-                      resetFilters={resetFilters}
-                      qtde_clientes={data?.qtde_clientes}
-                      isPending={isLoading || isFetching}
-                      disabled={disabledCampanha}
-                    />
-                    <span className="flex gap-2">
-                      <ButtonMotivation
-                        title="Exclui os clientes que foram filtrados..."
-                        variant={"destructive"}
-                        action={() => deleteClientesLote({ id_campanha: id || "", filters })}
-                        headerTitle="Excluir clientes filtrados"
-                        description={`Digite "${String(
-                          data?.nome
-                        ).toUpperCase()}" para poder remover os clientes`}
-                        placeholder={data?.nome}
+                  <div className="grid gap-2 max-w-full">
+                    <span className="flex items-center w-full justify-between">
+                      <FiltersClientesCampanha
+                        filters={filters}
+                        defaultFilters={defaultFilters}
+                        refetch={refetch}
+                        setFilters={setFilters}
+                        resetFilters={resetFilters}
+                        qtde_clientes={data?.qtde_clientes}
+                        isPending={isLoading || isFetching}
                         disabled={disabledCampanha}
-                        equalText
-                      >
-                        <X className="me-2" size={18} /> Excluir Clientes
-                      </ButtonMotivation>
+                      />
+                      <span className="flex gap-2">
+                        <ButtonMotivation
+                          title="Exclui os clientes que foram filtrados..."
+                          variant={"destructive"}
+                          action={() => deleteClientesLote({ id_campanha: id || "", filters })}
+                          headerTitle="Excluir clientes filtrados"
+                          description={`Digite "${String(
+                            data?.nome
+                          ).toUpperCase()}" para poder remover os clientes`}
+                          placeholder={data?.nome}
+                          disabled={disabledCampanha}
+                          equalText
+                        >
+                          <X className="me-2" size={18} /> Excluir Clientes
+                        </ButtonMotivation>
 
-                      <Button
-                        onClick={() => openModalDuplicarCampanha(data?.qtde_clientes)}
-                        disabled={disabledCampanha}
-                        variant={"tertiary"}
-                      >
-                        <CopyPlus className="me-2" size={18} /> Duplicar Campanha
-                      </Button>
-                      <Button
-                        onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}
-                        disabled={disabledCampanha}
-                      >
-                        <Plus className="me-2" size={18} /> Nova Subcampanha
-                      </Button>
+                        <Button
+                          onClick={() => openModalDuplicarCampanha(data?.qtde_clientes)}
+                          disabled={disabledCampanha}
+                          variant={"tertiary"}
+                        >
+                          <CopyPlus className="me-2" size={18} /> Duplicar Campanha
+                        </Button>
+                        <Button
+                          onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}
+                          disabled={disabledCampanha}
+                        >
+                          <Plus className="me-2" size={18} /> Nova Subcampanha
+                        </Button>
+                      </span>
                     </span>
-                  </span>
-                  <div className="grid bg-background rounded-lg ">
-                    <DataVirtualTableHeaderFixed
-                      // @ts-ignore
-                      columns={columnsTableClientes}
-                      data={clientes}
-                      className={`h-[300px] border`}
-                      isLoading={isLoading || isFetching}
-                    />
+                    <div className="grid bg-background rounded-lg ">
+                      <DataVirtualTableHeaderFixed
+                        // @ts-ignore
+                        columns={columnsTableClientes}
+                        data={clientes}
+                        className={`h-[300px] border`}
+                        isLoading={isLoading || isFetching}
+                      />
+                    </div>
+                    <span className="flex justify-end">
+                      <Badge variant={"secondary"}>
+                        Quantidade de Clientes: {data?.qtde_clientes}
+                      </Badge>
+                    </span>
                   </div>
-                  <span className="flex justify-end">
-                    <Badge variant={"secondary"}>
-                      Quantidade de Clientes: {data?.qtde_clientes}
-                    </Badge>
-                  </span>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -210,19 +212,22 @@ const ModalCampanha = () => {
                   }`}
                 >
                   <ScrollArea className="w-fill whitespace-nowrap rounded-md h-auto">
-                    {subcampanhas?.map((subcampanha: any) => (
-                      <TabsTrigger
-                        className={"data-[state=active]:bg-secondary"}
-                        value={subcampanha?.id}
-                        onClick={() => {
-                          setIdSubcampanha(subcampanha.id);
-                          setFiltersLote({ id_campanha: subcampanha?.id });
-                        }}
-                        key={`${subcampanha.id} - ${subcampanha.nome}`}
-                      >
-                        {subcampanha?.nome}
-                      </TabsTrigger>
-                    ))}
+                    <div className="hidden">
+                      {subcampanhas?.map((subcampanha: any) => (
+                        <TabsTrigger
+                          className={"data-[state=active]:bg-secondary"}
+                          value={subcampanha?.id}
+                          onClick={() => {
+                            setIdSubcampanha(subcampanha.id);
+                            setFiltersLote({ id_campanha: subcampanha?.id });
+                          }}
+                          key={`${subcampanha.id} - ${subcampanha.nome}`}
+                        >
+                          {subcampanha?.nome}
+                        </TabsTrigger>
+                      ))}
+                    </div>
+
                     <ScrollBar orientation="horizontal" />
                   </ScrollArea>
                 </TabsList>
@@ -231,7 +236,7 @@ const ModalCampanha = () => {
                     value={subcampanha?.id}
                     key={`${subcampanha.id} - ${subcampanha.nome}`}
                   >
-                    <div className="flex flex-col gap-2 bg-background rounded-md w-full p-2">
+                    <div className="grid gap-2 bg-background rounded-md w-full p-2">
                       <span className="flex items-center w-full justify-between">
                         <FiltersClientesCampanha
                           filters={filters_lote}
