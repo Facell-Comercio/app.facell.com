@@ -55,6 +55,7 @@ const RowVirtualizerFixedProgramado: React.FC<RowVirtualizerFixedProgramadoProps
         <p className="min-w-[34px] text-center bg-slate-200 dark:bg-blue-950"></p>
         <p className="min-w-16 text-center bg-slate-200 dark:bg-blue-950">ID</p>
         <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">ID Título</p>
+        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Vencimento</p>
         <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Previsto</p>
         <p className="flex-1 min-w-36 bg-slate-200 dark:bg-blue-950 text-center">Forma Pagamento</p>
         <p className="flex-1 min-w-44 bg-slate-200 dark:bg-blue-950">Fornecedor</p>
@@ -149,6 +150,15 @@ const RowVirtualizerFixedProgramado: React.FC<RowVirtualizerFixedProgramadoProps
               <Input
                 className="w-[72px] h-8 text-xs p-2 text-center"
                 value={data[indexData].id_titulo || ""}
+                readOnly
+              />
+              <Input
+                className="w-24 h-8 text-xs p-2 text-center"
+                // @ts-ignore
+                value={
+                  data[indexData].data_vencimento &&
+                  normalizeDate(data[indexData].data_vencimento || "")
+                }
                 readOnly
               />
               <Input
