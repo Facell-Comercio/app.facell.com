@@ -46,8 +46,8 @@ const ButtonExportTitulos = () => {
         DESCRIÇÃO: row.descricao,
         VALOR: parseFloat(row.valor),
         FILIAL: row.filial,
-        FORNECEDOR: row.nome_fornecedor,
-        "CNPJ FORNECEDOR": row.fornecedor,
+        FORNECEDOR: row.fornecedor,
+        "CNPJ FORNECEDOR": row.cnpj_fornecedor,
         SOLICITANTE: row.solicitante,
         "FORMA DE PAGAMENTO": row.forma_pagamento,
       };
