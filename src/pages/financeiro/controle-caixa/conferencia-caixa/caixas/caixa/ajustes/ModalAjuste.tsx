@@ -319,7 +319,7 @@ const ModalAjuste = () => {
                 description="Essa ação não pode ser desfeita. A ajuste será definitivamente removido do servidor e todas as mudanças realizaadas por ele desfeitas."
                 action={() => deleteAjuste(id)}
               >
-                <Button variant={"destructive"} size={"lg"}>
+                <Button variant={"destructive"} size={"lg"} disabled={isPending}>
                   <Trash2 size={18} className="me-2" />
                   Excluir
                 </Button>
@@ -330,7 +330,7 @@ const ModalAjuste = () => {
                   description="Essa ação não pode ser desfeita. A ajuste será definitivamente aprovado, não podendo voltar ao status anterior."
                   action={() => aprovarAjuste(id)}
                 >
-                  <Button variant={"success"} size={"lg"}>
+                  <Button variant={"success"} size={"lg"} disabled={isPending}>
                     <Check size={18} className="me-2" />
                     Aprovar
                   </Button>
