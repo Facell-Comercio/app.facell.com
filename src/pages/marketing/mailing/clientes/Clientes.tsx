@@ -44,7 +44,7 @@ const Clientes = () => {
               Criar Campanha
             </Button>
           </div>
-          <section className="grid grid-cols-[240px_1fr] max-w-full gap-2 max-h-full transition-all">
+          <section className="grid sm:grid-cols-[240px_1fr] max-w-full gap-2 max-h-full transition-all">
             {isSuccess && (
               <FilterClientes refetch={refetch} defaultFiltersFetched={defaultFilters} />
             )}

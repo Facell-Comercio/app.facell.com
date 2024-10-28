@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { subDays } from "date-fns";
+import { subYears } from "date-fns";
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
@@ -144,8 +144,10 @@ const FilterClientes = ({
               setDate={(date) => {
                 setFilters({ range_data_pedido: date });
               }}
-              max={subDays(new Date(), 1)}
+              max={subYears(new Date(), 1)}
               className="w-full"
+              toYear={subYears(new Date(), 1).getFullYear()}
+              toMonth={subYears(new Date(), 1)}
             />
           </div>
 

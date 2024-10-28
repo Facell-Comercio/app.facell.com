@@ -44,6 +44,7 @@ const initialFilters: Filters = {
   produto_compra_list: [],
 
   range_data_pedido: { from: undefined, to: undefined },
+  // range_data_pedido: { from: undefined, to: subYears(new Date(), 1) },
   valor_minimo: "0.00",
   valor_maximo: "",
   fidelizacao_aparelho: "all",

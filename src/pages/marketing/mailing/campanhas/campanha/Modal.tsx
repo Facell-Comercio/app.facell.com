@@ -71,9 +71,6 @@ const ModalCampanha = () => {
 
   const [idSubcampanha, setIdSubcampanha] = useState<string | undefined>();
 
-  function handleClickCancel() {
-    closeModal();
-  }
   const { data, isFetching, isSuccess, isLoading, refetch } = useMailing().getOneCampanha({
     id: id || "",
     filters,
@@ -88,8 +85,19 @@ const ModalCampanha = () => {
     id: idSubcampanha,
     filters: filters_lote,
   });
-  const { mutate: deleteClientesLote, isPending: deleteClientesLoteIsPending } =
-    useMailing().deleteClientesLote();
+  const {
+    mutate: deleteClientesLote,
+    isPending: deleteClientesLoteIsPending,
+    isSuccess: deleteClientesLoteIsSuccess,
+  } = useMailing().deleteClientesLote();
+
+  const handleResetFilterCampanha = async () => {
+    await new Promise((resolve) => resolve(resetFilters()));
+    refetch();
+  };
+  useEffect(() => {
+    handleResetFilterCampanha();
+  }, [deleteClientesLoteIsSuccess]);
 
   const subcampanhas = useMemo(
     () => data?.subcampanhas || [],
@@ -122,6 +130,14 @@ const ModalCampanha = () => {
   const disabledSubcampanha = isLoadingSubcampanha;
   const clientes: ClienteProps[] = data?.clientes || [];
   const clientesSubcampanha: ClienteProps[] = data_subcampanha?.clientes || [];
+
+  useEffect(() => {
+    setItemOpen(subcampanhas.length > 0 ? "" : "clientes");
+  }, [subcampanhas]);
+
+  function handleClickCancel() {
+    closeModal();
+  }
   return (
     <Dialog open={modalOpen} onOpenChange={() => handleClickCancel()}>
       <DialogContent className="max-w-7xl">
@@ -129,7 +145,7 @@ const ModalCampanha = () => {
           <DialogTitle>Campanha: {data?.nome}</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
-        <ScrollArea className="flex flex-col gap-3 max-h-[70vh]">
+        <ScrollArea className="flex flex-col gap-3 max-h-[80vh] sm:max-h-[70vh]">
           <div className="grid gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950 rounded-md">
             <Accordion
               type="single"
@@ -144,7 +160,7 @@ const ModalCampanha = () => {
                 </AccordionTrigger>
                 <AccordionContent className="flex gap-2 flex-col p-2">
                   <div className="grid gap-2 max-w-full">
-                    <span className="flex items-center w-full justify-between">
+                    <span className="flex gap-2 w-full justify-between">
                       <FiltersClientesCampanha
                         filters={filters}
                         defaultFilters={defaultFilters}
@@ -155,38 +171,40 @@ const ModalCampanha = () => {
                         isPending={isLoading || isFetching}
                         disabled={disabledCampanha}
                       />
-                      <span className="flex gap-2">
-                        <ButtonMotivation
-                          title="Exclui os clientes que foram filtrados..."
-                          variant={"destructive"}
-                          action={() => deleteClientesLote({ id_campanha: id || "", filters })}
-                          headerTitle="Excluir clientes filtrados"
-                          description={`Digite "${String(
-                            data?.nome
-                          ).toUpperCase()}" para poder remover os clientes`}
-                          placeholder={data?.nome}
-                          disabled={disabledCampanha}
-                          equalText
-                        >
-                          <X className="me-2" size={18} /> Excluir Clientes
-                        </ButtonMotivation>
+                      {data?.qtde_clientes > 0 && (
+                        <span className="flex flex-wrap justify-end gap-2 w-full">
+                          <ButtonMotivation
+                            title="Exclui os clientes que foram filtrados..."
+                            variant={"destructive"}
+                            action={() => deleteClientesLote({ id_campanha: id || "", filters })}
+                            headerTitle="Excluir clientes filtrados"
+                            description={`Digite "${String(
+                              data?.nome
+                            ).toUpperCase()}" para poder remover os clientes`}
+                            placeholder={data?.nome}
+                            disabled={disabledCampanha}
+                            equalText
+                          >
+                            <X className="me-2" size={18} /> Excluir Clientes
+                          </ButtonMotivation>
 
-                        <Button
-                          onClick={() => openModalDuplicarCampanha(data?.qtde_clientes)}
-                          disabled={disabledCampanha}
-                          variant={"tertiary"}
-                        >
-                          <CopyPlus className="me-2" size={18} /> Duplicar Campanha
-                        </Button>
-                        <Button
-                          onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}
-                          disabled={disabledCampanha}
-                        >
-                          <Plus className="me-2" size={18} /> Nova Subcampanha
-                        </Button>
-                      </span>
+                          <Button
+                            onClick={() => openModalDuplicarCampanha(data?.qtde_clientes)}
+                            disabled={disabledCampanha}
+                            variant={"tertiary"}
+                          >
+                            <CopyPlus className="me-2" size={18} /> Duplicar Campanha
+                          </Button>
+                          <Button
+                            onClick={() => openModalNovaSubcampanha(data?.qtde_clientes)}
+                            disabled={disabledCampanha}
+                          >
+                            <Plus className="me-2" size={18} /> Nova Subcampanha
+                          </Button>
+                        </span>
+                      )}
                     </span>
-                    <div className="grid bg-background rounded-lg ">
+                    <div className="grid overflow-auto bg-background rounded-lg ">
                       <DataVirtualTableHeaderFixed
                         // @ts-ignore
                         columns={columnsTableClientes}
@@ -211,8 +229,8 @@ const ModalCampanha = () => {
                     !idSubcampanha && "hidden"
                   }`}
                 >
-                  <ScrollArea className="w-fill whitespace-nowrap rounded-md h-auto">
-                    <div className="hidden">
+                  <div className="grid">
+                    <ScrollArea className="w-fill whitespace-nowrap rounded-md h-auto">
                       {subcampanhas?.map((subcampanha: any) => (
                         <TabsTrigger
                           className={"data-[state=active]:bg-secondary"}
@@ -226,10 +244,10 @@ const ModalCampanha = () => {
                           {subcampanha?.nome}
                         </TabsTrigger>
                       ))}
-                    </div>
 
-                    <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
+                      <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                  </div>
                 </TabsList>
                 {subcampanhas?.map((subcampanha: any) => (
                   <TabsContent
@@ -237,7 +255,7 @@ const ModalCampanha = () => {
                     key={`${subcampanha.id} - ${subcampanha.nome}`}
                   >
                     <div className="grid gap-2 bg-background rounded-md w-full p-2">
-                      <span className="flex items-center w-full justify-between">
+                      <span className="flex w-full justify-between">
                         <FiltersClientesCampanha
                           filters={filters_lote}
                           defaultFilters={defaultFiltersSubcampanha}
@@ -249,7 +267,7 @@ const ModalCampanha = () => {
                           isSubcampanha
                           disabled={disabledSubcampanha}
                         />
-                        <span className="flex  gap-2">
+                        <span className="flex flex-wrap justify-end gap-2">
                           {/* <ButtonImportarSubcampanhas /> */}
                           <ButtonExportSubcampanhas disabled={disabledSubcampanha} />
                           <Button

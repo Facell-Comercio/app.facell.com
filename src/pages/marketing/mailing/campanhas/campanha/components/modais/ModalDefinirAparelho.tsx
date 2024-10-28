@@ -75,7 +75,7 @@ const ModalDefinirAparelho = () => {
           <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="flex p-1 gap-2 max-h-[70vh]">
-          <div className="flex gap-3 p-1 w-full">
+          <div className="flex gap-3 items-end p-1 w-full">
             <InputWithLabel
               label="Nome Aparelho:"
               value={aparelho}
@@ -97,7 +97,7 @@ const ModalDefinirAparelho = () => {
             handleSelection={handleSelectionAparelho}
           />
         </ScrollArea>
-        <DialogFooter className="flex gap-1 items-end flex-wrap">
+        <DialogFooter className="flex gap-1 items-end justify-end flex-row flex-wrap">
           <Button variant={"secondary"} onClick={handleClickCancel} disabled={isPending}>
             <Ban size={18} className="me-2" />
             Fechar

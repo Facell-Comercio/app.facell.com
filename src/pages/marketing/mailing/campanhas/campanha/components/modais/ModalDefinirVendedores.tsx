@@ -225,7 +225,7 @@ const ModalDefinirVendedores = () => {
           closeOnSelection
         />
 
-        <DialogFooter className="flex gap-1 items-end flex-wrap">
+        <DialogFooter className="flex gap-1 items-end justify-end flex-wrap w-full flex-row">
           <Button variant={"secondary"} onClick={handleClickCancel} disabled={isPending}>
             <Ban size={18} className="me-2" />
             Fechar

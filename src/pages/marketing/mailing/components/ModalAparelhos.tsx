@@ -118,7 +118,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({ data, pushSel
               // ref={virtualizer.measureElement}
               key={item.index}
               data-index={index}
-              className={`flex w-full gap-1 py-1 px-1 items-center bg-secondary/40 odd:bg-secondary/60 text-xs  ${
+              className={`grid w-full gap-1 py-1 px-1 items-center bg-secondary/40 odd:bg-secondary/60 text-xs  ${
                 virtualizer.getVirtualItems().length == 0 && "hidden"
               }`}
               style={{
