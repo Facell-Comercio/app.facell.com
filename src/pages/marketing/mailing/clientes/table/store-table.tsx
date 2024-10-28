@@ -24,12 +24,15 @@ export interface Filters {
   range_data_pedido?: DateRange;
   valor_minimo?: string;
   valor_maximo?: string;
+  valor_desconto_minimo?: string;
+  valor_desconto_maximo?: string;
   fidelizacao_aparelho?: string;
   fidelizacao_plano?: string;
 
   //* OUTROS
   status_plano?: string[];
   produtos_cliente?: string[];
+  nao_desativado?: number;
 }
 
 const initialFilters: Filters = {
@@ -47,12 +50,15 @@ const initialFilters: Filters = {
   // range_data_pedido: { from: undefined, to: subYears(new Date(), 1) },
   valor_minimo: "0.00",
   valor_maximo: "",
+  valor_desconto_minimo: "0.00",
+  valor_desconto_maximo: "",
   fidelizacao_aparelho: "all",
   fidelizacao_plano: "all",
 
   //* OUTROS
   produtos_cliente: [],
-  status_plano: ["Ativo", "Desativado", "Analise pendente"],
+  status_plano: ["Ativo", "Analise pendente"],
+  nao_desativado: undefined,
 };
 
 export interface SortingItem {
