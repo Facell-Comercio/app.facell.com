@@ -317,7 +317,6 @@ export const ModalDDA = () => {
     </div>
   );
 
-  const pageCount = (data && data.data.pageCount) || 0;
   const rowCount = (data && data.data.rowCount) || 0;
   // if (isError) return null;
   if (!modalOpen) return null;
