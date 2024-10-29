@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
@@ -15,7 +17,7 @@ import { getDaysArray, mergeDataWithDays } from "../../../helper";
 const chartConfig = {
   pendente: {
     label: "Pendente",
-    color: "hsl(var(--success))",
+    color: "hsl(var(--destructive))",
   },
   conciliado: {
     label: "Conciliado",
@@ -105,6 +107,7 @@ const ChartConciliacaoRecebimentos = ({ data, isLoading }: ChartConciliacaoReceb
                 }
                 cursor={false}
               />
+              <ChartLegend content={<ChartLegendContent />} />
             </BarChart>
           </ChartContainer>
         </div>
