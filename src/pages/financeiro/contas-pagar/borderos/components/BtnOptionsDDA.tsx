@@ -33,6 +33,7 @@ const BtnOptionsDDA = () => {
   // * Acessar DDA
   const handleAcessarClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    e.preventDefault();
     openModal({
       id_vencimento: null,
       filters: {
@@ -67,12 +68,15 @@ const BtnOptionsDDA = () => {
   // * Export
   const handleExportClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    e.preventDefault();
     exportDDA();
   };
 
   // * Limpeza de DDA
   const handleLimpezaClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    e.preventDefault();
+
     setAlertLimpezaOpen(true);
   };
   const handleLimpezaAction = async () => {
@@ -82,6 +86,7 @@ const BtnOptionsDDA = () => {
   // * Autovincular DDA
   const handleAutoVincularClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    e.preventDefault();
     autoVincularDDA();
   };
 
@@ -114,7 +119,7 @@ const BtnOptionsDDA = () => {
             DDA
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent onPointerDownOutside={(e) => e.preventDefault()}>
           <DropdownMenuItem>
             <Button className="w-full" size={"sm"} onClick={handleAcessarClick}>
               <FileStack size={18} className="me-2" /> Acessar

@@ -318,6 +318,7 @@ export const ModalDDA = () => {
   );
 
   const pageCount = (data && data.data.pageCount) || 0;
+  const rowCount = (data && data.data.rowCount) || 0;
   // if (isError) return null;
   if (!modalOpen) return null;
 
@@ -454,7 +455,7 @@ export const ModalDDA = () => {
           pagination={pagination}
           setPagination={setPagination}
           data={rows}
-          rowCount={pageCount}
+          rowCount={rowCount}
           columns={columnsTable}
           variant="secondary"
         />
