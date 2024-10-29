@@ -13,6 +13,10 @@ export namespace mailing {
     const response = await api.get("/marketing/mailing/aparelhos", { params });
     return response.data;
   };
+  export const getEstoquesAparelho = async (params: unknown) => {
+    const response = await api.get("/marketing/mailing/aparelhos/estoque", { params });
+    return response.data;
+  };
   export const getVendedores = async (params: unknown) => {
     const response = await api.get("/marketing/mailing/vendedores", { params });
     return response.data;

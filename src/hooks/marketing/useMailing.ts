@@ -320,6 +320,36 @@ export const useMailing = () => {
       },
     });
 
+  const reimportarEvolux = () =>
+    useMutation({
+      mutationFn: async (id_campanha: string) => {
+        return await api
+          .put(`${uri}/campanhas/import-evolux`, { id_campanha })
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["marketing", "mailing"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
   return {
     getClientes,
     getCampanhas,
@@ -335,7 +365,7 @@ export const useMailing = () => {
     definirVendedores,
 
     deleteClientesLote,
-
+    reimportarEvolux,
     exportSubcampanha,
   };
 };

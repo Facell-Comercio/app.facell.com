@@ -17,9 +17,15 @@ interface IModalAparelhos {
   closeOnSelection?: boolean;
 }
 
+type EstoqueProps = {
+  uf: string;
+  qtde: string;
+};
+
 export type ItemAparelho = {
   descricao_comercial: string;
   descricao: string;
+  estoques: EstoqueProps[];
 };
 
 const ModalAparelhos = ({
@@ -30,7 +36,7 @@ const ModalAparelhos = ({
 }: IModalAparelhos) => {
   const [search, setSearch] = useState<string>("");
 
-  const { data, isError, refetch } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["marketing", "aparelhos", "lista", { termo: search }],
     queryFn: async () =>
       await fetchApi.marketing.mailing.getAparelhos({ filters: { termo: search } }),
@@ -64,8 +70,11 @@ const ModalAparelhos = ({
 
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
-
-        <RowVirtualizerFixed data={data?.rows || []} pushSelection={pushSelection} />
+        {isLoading ? (
+          <Skeleton className="h-[400px] w-full" />
+        ) : (
+          <RowVirtualizerFixed data={data?.rows || []} pushSelection={pushSelection} />
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -73,9 +82,71 @@ const ModalAparelhos = ({
 
 export default ModalAparelhos;
 
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+export function PopoverEstoque({ title }: { title: string }) {
+  const [open, setOpen] = useState(false);
+  const { data } = useQuery({
+    queryKey: ["marketing", "aparelhos", "estoques", "lista", { descricao_comercial: title }],
+    queryFn: async () =>
+      await fetchApi.marketing.mailing.getEstoquesAparelho({
+        filters: { descricao_comercial: title },
+      }),
+    enabled: open,
+  });
+
+  return (
+    <Popover onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <div className="cursor-pointer">{title}</div>
+      </PopoverTrigger>
+      <PopoverContent>
+        <div className="flex gap-2 flex-col bg-background">
+          <h3 className="font-medium">{title}</h3>
+          <Table divClassname="rounded-md border">
+            <TableHeader className="bg-secondary">
+              <TableRow>
+                <TableHead>UF</TableHead>
+                <TableHead>Estoque</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data && data.length > 0 ? (
+                data.map((data: any, index: number) => (
+                  <TableRow key={`${index} - ${title}`}>
+                    <TableCell>{data.uf}</TableCell>
+                    <TableCell>{data.qtde}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={2} className="text-center">
+                    <span className="flex w-full items-center justify-center text-sm">
+                      Sem dados de estoque
+                    </span>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 import * as React from "react";
 
 import fetchApi from "@/api/fetchApi";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
 interface RowVirtualizerFixedProps {
@@ -130,8 +201,11 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({ data, pushSel
                 transform: `translateY(${item.start}px)`,
               }}
             >
-              <div className="flex justify-between items-center p-1 w-full">
-                <div className="uppercase">{data[index].descricao_comercial}</div>
+              <div className="grid grid-cols-[1fr_100px] justify-between items-center p-1 w-full">
+                <div className="uppercase">
+                  <PopoverEstoque title={data[item.index].descricao_comercial} />
+                  {/*{data[item.index].descricao_comercial}*/}
+                </div>
                 <Button size={"xs"} onClick={() => pushSelection(data[index])}>
                   Selecionar
                 </Button>

@@ -20,7 +20,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { CopyPlus, Plus, Smartphone, UserPen, X } from "lucide-react";
+import { CopyPlus, Plus, RefreshCcw, Smartphone, UserPen, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import ButtonExportSubcampanhas from "./components/ButtonExportarEvolux";
 import { ClienteProps, columnsTableClientes } from "./components/columns-clientes";
@@ -90,6 +90,8 @@ const ModalCampanha = () => {
     isPending: deleteClientesLoteIsPending,
     isSuccess: deleteClientesLoteIsSuccess,
   } = useMailing().deleteClientesLote();
+  const { mutate: reimportarEvolux, isPending: reimportarEvoluxIsPending } =
+    useMailing().reimportarEvolux();
 
   const handleResetFilterCampanha = async () => {
     await new Promise((resolve) => resolve(resetFilters()));
@@ -126,7 +128,7 @@ const ModalCampanha = () => {
     }
   }, [idSubcampanha]);
   const [itemOpen, setItemOpen] = useState<string>("clientes");
-  const disabledCampanha = isLoading || deleteClientesLoteIsPending;
+  const disabledCampanha = isLoading || deleteClientesLoteIsPending || reimportarEvoluxIsPending;
   const disabledSubcampanha = isLoadingSubcampanha;
   const clientes: ClienteProps[] = data?.clientes || [];
   const clientesSubcampanha: ClienteProps[] = data_subcampanha?.clientes || [];
@@ -268,7 +270,12 @@ const ModalCampanha = () => {
                           disabled={disabledSubcampanha}
                         />
                         <span className="flex flex-wrap justify-end gap-2">
-                          {/* <ButtonImportarSubcampanhas /> */}
+                          <Button
+                            onClick={() => reimportarEvolux(data_subcampanha.id)}
+                            disabled={disabledSubcampanha}
+                          >
+                            <RefreshCcw className="me-2" size={18} /> Reimportar Evolux
+                          </Button>
                           <ButtonExportSubcampanhas disabled={disabledSubcampanha} />
                           <Button
                             variant={"warning"}
