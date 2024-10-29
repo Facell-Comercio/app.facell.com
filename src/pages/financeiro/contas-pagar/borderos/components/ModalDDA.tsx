@@ -76,7 +76,7 @@ export const ModalDDA = () => {
     pageIndex: 0,
   });
 
-  const { data, isLoading, refetch } = useDDA().getAllDDA({
+  const { data, refetch } = useDDA().getAllDDA({
     pagination,
     filters,
   });
@@ -165,20 +165,13 @@ export const ModalDDA = () => {
     setDialogDDAopen(true);
   };
 
-  const [qrCode, setQrCode] = useState<string | null>(null);
   const handleCopyQrCode = async (qr_code: string) => {
-    const result = await copyToClipboard(qr_code);
-    if (result) {
-      setQrCode(qr_code);
-      setTimeout(() => {
-        setQrCode(null);
-      }, 3000);
-    }
+    await copyToClipboard(qr_code);
   };
 
   const columnsTable: ColumnDef<any>[] = [
     {
-      accessorKey: "id_ex",
+      accessorKey: "id_exemplo", // NÃO EXISTE (APENAS PARA EXIBIÇÃO)
       header: "AÇÃO",
       sortDescFirst: true,
       cell: (info) => {
