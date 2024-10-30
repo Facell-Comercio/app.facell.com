@@ -8,6 +8,7 @@ import { FiltersCampanha } from "@/pages/marketing/mailing/campanhas/campanha/st
 import { NovaCampanhaSchema } from "@/pages/marketing/mailing/clientes/nova-campanha/form-data";
 import { GetAllParams } from "@/types/query-params-type";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { DateRange } from "react-day-picker";
 
 export type ClientesProps = {
   gsm?: string;
@@ -330,9 +331,9 @@ export const useMailing = () => {
 
   const reimportarEvolux = () =>
     useMutation({
-      mutationFn: async (id_campanha: string) => {
+      mutationFn: async (date_range: DateRange) => {
         return await api
-          .put(`${uri}/campanhas/import-evolux`, { id_campanha })
+          .post(`${uri}/campanhas/import-evolux`, { range_datas: date_range })
           .then((response) => response.data);
       },
       onSuccess() {

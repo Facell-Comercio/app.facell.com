@@ -21,7 +21,7 @@ import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { formatDate } from "date-fns";
-import { BadgePercent, Ban, ChartNoAxesCombined, Handshake, Info } from "lucide-react";
+import { BadgePercent, Ban, Handshake, Info, Phone } from "lucide-react";
 import { useStoreCampanha } from "../../store";
 
 export type ResultadoContato = {
@@ -52,7 +52,7 @@ const ModalVerCliente = () => {
     <Dialog open={modalOpen} onOpenChange={() => handleClickCancel()}>
       <DialogContent className="max-w-7xl">
         <DialogHeader>
-          <DialogTitle>Ver Cliente: {id}</DialogTitle>
+          <DialogTitle>Cliente: {id}</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="flex p-1 gap-2 max-h-[70vh]">
@@ -60,11 +60,11 @@ const ModalVerCliente = () => {
             <section className="flex flex-col gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950 rounded-md">
               <div className="flex gap-2 items-center w-full">
                 <Info />
-                <h3 className="text-md font-medium">Dados Cliente</h3>
+                <h3 className="text-md font-medium">Informações do Cliente</h3>
               </div>
               <div className="flex gap-2 flex-1">
                 <InputWithLabel
-                  label="Nome Cliente:"
+                  label="Nome:"
                   value={data?.cliente || ""}
                   readOnly
                   className="flex-1"
@@ -131,7 +131,7 @@ const ModalVerCliente = () => {
             <section className="flex flex-col gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950 rounded-md">
               <div className="flex gap-2 items-center w-full">
                 <Handshake />
-                <h3 className="text-md font-medium">Dados Fidelização</h3>
+                <h3 className="text-md font-medium">Fidelizações</h3>
               </div>
               <Table className="bg-background rounded-md">
                 <TableHeader className="bg-secondary text-white">
@@ -159,7 +159,7 @@ const ModalVerCliente = () => {
             <section className="flex flex-col gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950 rounded-md">
               <div className="flex gap-2 items-center w-full">
                 <BadgePercent />
-                <h3 className="text-md font-medium">Dados da Nova Oferta</h3>
+                <h3 className="text-md font-medium">Nova Oferta</h3>
               </div>
               <div className="flex gap-2 flex-1">
                 <InputWithLabel
@@ -177,7 +177,7 @@ const ModalVerCliente = () => {
               </div>
               <div className="flex gap-2 flex-1">
                 <InputWithLabel
-                  label="Preço Produto:"
+                  label="Valor Pré-pago:"
                   value={normalizeCurrency(data?.valor_pre) || ""}
                   readOnly
                   className="flex-1"
@@ -200,8 +200,8 @@ const ModalVerCliente = () => {
             {resultados.length > 0 && (
               <section className="flex flex-col gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950 rounded-md">
                 <div className="flex gap-2 items-center w-full">
-                  <ChartNoAxesCombined />
-                  <h3 className="text-md font-medium">Resultados</h3>
+                  <Phone />
+                  <h3 className="text-md font-medium">Contatos</h3>
                 </div>
                 <Table className="bg-background rounded-md">
                   <TableHeader className="bg-secondary text-white">

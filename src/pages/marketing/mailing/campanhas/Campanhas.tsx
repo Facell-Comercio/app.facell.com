@@ -2,7 +2,10 @@ import { DataTable } from "@/components/custom/DataTable";
 import { Input } from "@/components/custom/FormInput";
 import SearchComponent from "@/components/custom/SearchComponent";
 import SelectMes from "@/components/custom/SelectMes";
+import { Button } from "@/components/ui/button";
 import { useMailing } from "@/hooks/marketing/useMailing";
+import { RefreshCcw } from "lucide-react";
+import { FaSpinner } from "react-icons/fa6";
 import ModalCampanha from "./campanha/Modal";
 import { columnsTable } from "./table/columns";
 import { useStoreTableCampanhas } from "./table/store-table";
@@ -17,6 +20,8 @@ const Campanhas = () => {
   const { data, isLoading, isSuccess } = useMailing().getCampanhas({
     filters,
   });
+  const { mutate: reimportarEvolux, isPending: reimportarEvoluxIsPending } =
+    useMailing().reimportarEvolux();
 
   const rows = data?.rows || [];
   const rowCount = data?.rowCount || 0;
@@ -32,6 +37,24 @@ const Campanhas = () => {
           value={filters.ano}
           onChange={(e) => setFilters({ ano: e.target.value })}
         />
+        <Button
+          onClick={() => {
+            reimportarEvolux({ from: new Date(), to: new Date() });
+          }}
+          disabled={reimportarEvoluxIsPending}
+          title="Importa as ligações realizadas no dia atual"
+        >
+          {false ? (
+            <>
+              <FaSpinner size={18} className="me-2 animate-spin" />
+              Atualizando...
+            </>
+          ) : (
+            <>
+              <RefreshCcw className="me-2" size={18} /> Importar Evolux
+            </>
+          )}
+        </Button>
       </span>
       <SearchComponent handleSearch={(search) => setFilters({ nome: search })} />
       {isSuccess && (
