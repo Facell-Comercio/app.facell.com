@@ -85,6 +85,7 @@ const ModalCampanha = () => {
     id: idSubcampanha,
     filters: filters_lote,
   });
+
   const {
     mutate: deleteClientesLote,
     isPending: deleteClientesLoteIsPending,
@@ -129,9 +130,12 @@ const ModalCampanha = () => {
   }, [idSubcampanha]);
   const [itemOpen, setItemOpen] = useState<string>("clientes");
   const disabledCampanha = isLoading || deleteClientesLoteIsPending || reimportarEvoluxIsPending;
-  const disabledSubcampanha = isLoadingSubcampanha;
+  const disabledSubcampanha = isLoadingSubcampanha || isFetchingSubcampanha;
   const clientes: ClienteProps[] = data?.clientes || [];
-  const clientesSubcampanha: ClienteProps[] = data_subcampanha?.clientes || [];
+  const clientesSubcampanha: ClienteProps[] = useMemo(
+    () => data_subcampanha?.clientes || [],
+    [isFetchingSubcampanha]
+  );
 
   useEffect(() => {
     setItemOpen(subcampanhas.length > 0 ? "" : "clientes");
@@ -265,13 +269,17 @@ const ModalCampanha = () => {
                           setFilters={setFiltersLote}
                           resetFilters={resetFiltersLote}
                           qtde_clientes={data_subcampanha?.qtde_clientes}
-                          isPending={isLoadingSubcampanha || isFetchingSubcampanha}
+                          isPending={isLoadingSubcampanha || isFetchingSubcampanha || isFetching}
                           isSubcampanha
                           disabled={disabledSubcampanha}
                         />
                         <span className="flex flex-wrap justify-end gap-2">
                           <Button
-                            onClick={() => reimportarEvolux(data_subcampanha.id)}
+                            onClick={() => {
+                              refetchSubcampanha();
+                              refetch();
+                              reimportarEvolux(data_subcampanha.id);
+                            }}
                             disabled={disabledSubcampanha}
                           >
                             <RefreshCcw className="me-2" size={18} /> Reimportar Evolux

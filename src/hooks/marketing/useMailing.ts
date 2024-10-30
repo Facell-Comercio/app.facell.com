@@ -43,6 +43,7 @@ export const useMailing = () => {
     useQuery({
       queryKey: ["marketing", "mailing", "clientes", "lista", { pagination }],
       queryFn: async () => await fetchApi.marketing.mailing.getClientes({ pagination, filters }),
+      placeholderData: keepPreviousData,
     });
 
   const getOneCampanha = ({ id, filters }: { id?: string | null; filters: any }) =>
@@ -51,7 +52,7 @@ export const useMailing = () => {
       queryKey: ["marketing", "mailing", "campanhas", "detalhe", id],
       queryFn: async () => {
         try {
-          const result = fetchApi.marketing.mailing.getOneCampanha({ id, filters });
+          const result = await fetchApi.marketing.mailing.getOneCampanha({ id, filters });
           return result;
         } catch (error) {
           // @ts-expect-error "Vai funcionar"
@@ -64,6 +65,7 @@ export const useMailing = () => {
           });
         }
       },
+      placeholderData: keepPreviousData,
     });
 
   const getOneClienteCampanha = (id?: string | null) =>
@@ -72,7 +74,7 @@ export const useMailing = () => {
       queryKey: ["marketing", "mailing", "campanhas", "clientes", "detalhe", id],
       queryFn: async () => {
         try {
-          const result = fetchApi.marketing.mailing.getOneClienteCampanha(id);
+          const result = await fetchApi.marketing.mailing.getOneClienteCampanha(id);
           return result;
         } catch (error) {
           // @ts-expect-error "Vai funcionar"

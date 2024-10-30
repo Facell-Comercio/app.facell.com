@@ -65,7 +65,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       placeholder = "Select options",
       animation = 0,
       maxCount = 3,
-      modalPopover = false,
+      modalPopover = true,
       asChild = false,
       className,
       disabled,
@@ -230,7 +230,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
             <CommandInput placeholder="Pesquisar..." onKeyDown={handleInputKeyDown} />
             <CommandList className="overflow-y scroll-thin w-full">
               <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
-              <CommandGroup role="group">
+              <CommandGroup role={"group"}>
                 <CommandItem
                   key="all"
                   onSelect={toggleAll}

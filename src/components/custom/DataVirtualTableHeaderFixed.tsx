@@ -10,7 +10,7 @@ import {
 } from "@tanstack/react-table";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type TableProps = {
   data: any;
@@ -53,6 +53,8 @@ export const DataVirtualTableHeaderFixed = ({
         : undefined,
   });
 
+  useEffect(() => {}, [isLoading]);
+
   return (
     <div className="flex flex-col gap-3 overflow-hidden">
       <div className="rounded-lg overflow-auto z-40 scroll-thin w-full">
@@ -62,7 +64,7 @@ export const DataVirtualTableHeaderFixed = ({
         >
           <div
             style={{
-              height: `${virtualizer.getTotalSize()}px`,
+              height: `${isLoading ? 200 : virtualizer.getTotalSize()}px`,
             }}
           >
             <table className="grid text-nowrap text-xs w-full">
@@ -104,11 +106,11 @@ export const DataVirtualTableHeaderFixed = ({
               <tbody
                 style={{
                   display: "grid",
-                  height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
+                  height: `${isLoading ? 200 : virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
                   position: "relative", //needed for absolute positioning of rows
                 }}
               >
-                {data?.length > 0 ? (
+                {data?.length > 0 && !isLoading ? (
                   virtualizer.getVirtualItems().map((virtualRow) => {
                     const row = rows[virtualRow.index] as Row<any>;
                     return (
@@ -138,11 +140,7 @@ export const DataVirtualTableHeaderFixed = ({
                   })
                 ) : (
                   <tr className="flex w-full items-center p-6">
-                    {isLoading !== undefined && !isLoading ? (
-                      <td>Nenhuma linha a exibir...</td>
-                    ) : (
-                      <td>Carregando...</td>
-                    )}
+                    {isLoading ? <td>Carregando...</td> : <td>Nenhuma linha a exibir...</td>}
                   </tr>
                 )}
               </tbody>
