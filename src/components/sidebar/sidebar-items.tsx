@@ -279,7 +279,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaBullhorn />,
     uri: "marketing",
-    visible: () => true,
+    visible: () => checkUserDepartments("MARKETING") || checkUserPermission("MASTER"),
     children: [
       {
         name: "Patrocinado",
@@ -307,7 +307,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "M",
         uri: "marketing/mailing",
-        visible: () => true,
+        visible: () => checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER"),
       },
     ],
   },

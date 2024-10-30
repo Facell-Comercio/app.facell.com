@@ -113,7 +113,16 @@ const AppRoutes = () => {
 
           {/* Marketing */}
           <Route path="/marketing/">
-            <Route element={<MailingPage />} path="mailing" />
+            <Route
+              element={
+                checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER") ? (
+                  <MailingPage />
+                ) : (
+                  <NotAuthorizedPage />
+                )
+              }
+              path="mailing"
+            />
           </Route>
 
           {/* Administração */}
