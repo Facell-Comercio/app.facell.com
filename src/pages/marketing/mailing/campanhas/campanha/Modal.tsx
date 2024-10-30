@@ -69,7 +69,7 @@ const ModalCampanha = () => {
     state.resetFiltersLote,
   ]);
 
-  const [idSubcampanha, setIdSubcampanha] = useState<string | undefined>();
+  const [idSubcampanha, setIdSubcampanha] = useState<string>("");
 
   const { data, isFetching, isSuccess, isLoading, refetch } = useMailing().getOneCampanha({
     id: id || "",
@@ -95,8 +95,10 @@ const ModalCampanha = () => {
     useMailing().reimportarEvolux();
 
   const handleResetFilterCampanha = async () => {
-    await new Promise((resolve) => resolve(resetFilters()));
-    refetch();
+    if (id) {
+      await new Promise((resolve) => resolve(resetFilters()));
+      refetch();
+    }
   };
   useEffect(() => {
     handleResetFilterCampanha();
@@ -109,18 +111,20 @@ const ModalCampanha = () => {
 
   const defaultFiltersSubcampanha = data_subcampanha?.filters;
   const defaultIdSubcampanha = useMemo(
-    () => subcampanhas && subcampanhas[0] && subcampanhas[0].id,
-    [subcampanhas]
+    () => (subcampanhas && subcampanhas[0] && String(subcampanhas[0].id)) || "",
+    [subcampanhas, data]
   );
 
   useEffect(() => {
     setIdSubcampanha(defaultIdSubcampanha);
     setFiltersLote({ id_campanha: defaultIdSubcampanha });
-  }, [isSuccess]);
+  }, [isSuccess, defaultIdSubcampanha]);
 
   const handleResetFilterSubcampanha = async () => {
-    await new Promise((resolve) => resolve(resetFiltersLote()));
-    refetchSubcampanha();
+    if (idSubcampanha) {
+      await new Promise((resolve) => resolve(resetFiltersLote()));
+      refetchSubcampanha();
+    }
   };
   useEffect(() => {
     if (idSubcampanha) {
@@ -240,12 +244,16 @@ const ModalCampanha = () => {
                       {subcampanhas?.map((subcampanha: any) => (
                         <TabsTrigger
                           className={"data-[state=active]:bg-secondary"}
-                          value={subcampanha?.id}
+                          value={String(subcampanha?.id)}
                           onClick={() => {
-                            setIdSubcampanha(subcampanha.id);
-                            setFiltersLote({ id_campanha: subcampanha?.id });
+                            setIdSubcampanha(String(subcampanha.id));
+                            setFiltersLote({ id_campanha: String(subcampanha?.id) });
                           }}
                           key={`${subcampanha.id} - ${subcampanha.nome}`}
+                          aria-selected={String(subcampanha?.id) === idSubcampanha}
+                          data-state={
+                            String(subcampanha?.id) === idSubcampanha ? "active" : "inactive"
+                          }
                         >
                           {subcampanha?.nome}
                         </TabsTrigger>
@@ -257,7 +265,7 @@ const ModalCampanha = () => {
                 </TabsList>
                 {subcampanhas?.map((subcampanha: any) => (
                   <TabsContent
-                    value={subcampanha?.id}
+                    value={String(subcampanha?.id)}
                     key={`${subcampanha.id} - ${subcampanha.nome}`}
                   >
                     <div className="grid gap-2 bg-background rounded-md w-full p-2">

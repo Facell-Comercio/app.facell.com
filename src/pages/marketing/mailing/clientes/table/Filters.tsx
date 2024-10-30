@@ -105,6 +105,7 @@ const FilterClientes = ({
               variant="secondary"
               animation={4}
               maxCount={1}
+              maxCharacters={12}
               disabled={isLoading}
               className={`bg-background hover:bg-background`}
             />
@@ -125,6 +126,7 @@ const FilterClientes = ({
               variant="secondary"
               animation={4}
               maxCount={1}
+              maxCharacters={12}
               disabled={isLoading}
               className={`bg-background hover:bg-background`}
             />
@@ -259,6 +261,7 @@ const FilterClientes = ({
               variant="secondary"
               animation={4}
               maxCount={1}
+              maxCharacters={12}
               className={`bg-background hover:bg-background`}
               disabled={isLoading}
             />
@@ -278,6 +281,7 @@ const FilterClientes = ({
               variant="secondary"
               animation={4}
               maxCount={1}
+              maxCharacters={12}
               className={`bg-background hover:bg-background`}
               disabled={isLoading}
             />
@@ -297,6 +301,7 @@ const FilterClientes = ({
               variant="secondary"
               animation={4}
               maxCount={1}
+              maxCharacters={12}
               className={`bg-background hover:bg-background`}
               disabled={isLoading}
             />
@@ -317,6 +322,7 @@ const FilterClientes = ({
               variant="secondary"
               animation={4}
               maxCount={1}
+              maxCharacters={12}
               className={`bg-background hover:bg-background`}
               disabled={isLoading}
             />
@@ -336,6 +342,7 @@ const FilterClientes = ({
               variant="secondary"
               animation={4}
               maxCount={1}
+              maxCharacters={12}
               className={`bg-background hover:bg-background`}
               disabled={isLoading}
             />
@@ -355,6 +362,7 @@ const FilterClientes = ({
               variant="secondary"
               animation={4}
               maxCount={1}
+              maxCharacters={12}
               className={`bg-background hover:bg-background`}
               disabled={isLoading}
             />

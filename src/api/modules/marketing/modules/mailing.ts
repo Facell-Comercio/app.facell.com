@@ -1,10 +1,11 @@
 import { api } from "@/lib/axios";
 
 export namespace mailing {
-  export const getClientes = async (params: unknown) => {
-    const response = await api.get("/marketing/mailing/clientes", { params });
-    return response.data;
-  };
+  // FILTROS MUITO COMPLEXOS (NECESSÁRIO TROCAR POR UM POST)
+  export const getClientes = async (data: unknown) =>
+    await api.post("/marketing/mailing/clientes", data).then((res) => res.data);
+  // -
+
   export const getCampanhas = async (params: unknown) => {
     const response = await api.get("/marketing/mailing/campanhas", { params });
     return response.data;
@@ -21,10 +22,12 @@ export namespace mailing {
     const response = await api.get("/marketing/mailing/vendedores", { params });
     return response.data;
   };
-  export const getOneCampanha = async ({ id, filters }: { id?: string | null; filters: any }) => {
-    const response = await api.get(`/marketing/mailing/campanhas/${id}`, { params: { filters } });
-    return response.data;
-  };
+
+  // FILTROS MUITO COMPLEXOS (NECESSÁRIO TROCAR POR UM POST)
+  export const getOneCampanha = async ({ id, ...data }: { id?: string | null; filters: any }) =>
+    await api.post(`/marketing/mailing/campanhas/${id}`, data).then((res) => res.data);
+  // -
+
   export const getOneClienteCampanha = async (id?: string | null) => {
     const response = await api.get(`/marketing/mailing/campanhas/clientes/${id}`);
     return response.data;

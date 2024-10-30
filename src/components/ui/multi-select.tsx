@@ -102,11 +102,6 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       onValueChange(newSelectedValues);
     };
 
-    const handleClear = () => {
-      setSelectedValues([]);
-      onValueChange([]);
-    };
-
     const handleTogglePopover = () => {
       setIsPopoverOpen((prev) => !prev);
     };
@@ -117,17 +112,38 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       onValueChange(newSelectedValues);
     };
 
+    const filteredValues = search
+      ? options
+          .filter((option) => String(option.value).toUpperCase().includes(search.toUpperCase()))
+          .map((option) => option.value)
+      : options.map((option) => option.value);
+
+    const handleClear = () => {
+      // Remover apenas os valores que estão em `filteredValues`
+      const remainingValues = selectedValues.filter((value) => !filteredValues.includes(value));
+      setSelectedValues(remainingValues);
+      onValueChange(remainingValues);
+    };
+
+    const selectedValuesWithoutAll = selectedValues.filter(
+      (value) =>
+        String(value).toUpperCase().includes(search.toUpperCase()) && value !== "(Selecione todos)"
+    );
     const toggleAll = () => {
-      if (selectedValues.length === options.length) {
+      if (selectedValuesWithoutAll.length === filteredValues.length) {
         handleClear();
       } else {
-        const allValues = options
-          .filter((option) => String(option.value).toUpperCase().includes(search.toUpperCase()))
-          .map((option) => option.value);
+        // Adicione os valores filtrados aos selecionados, evitando duplicatas
+        const allValues = Array.from(new Set([...selectedValues, ...filteredValues]));
         setSelectedValues(allValues);
         onValueChange(allValues);
       }
     };
+
+    const allSelected = React.useMemo(
+      () => selectedValuesWithoutAll.length === filteredValues.length,
+      [filteredValues, search]
+    );
 
     return (
       <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen} modal={modalPopover}>
@@ -153,7 +169,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                           key={value}
                           className={cn(multiSelectVariants({ variant }))}
                         >
-                          <span className={`text-white truncate w-full max-w-[${maxCharacters}ch]`}>
+                          <span className={` truncate w-full max-w-[${maxCharacters}ch] `}>
                             {option?.label}
                           </span>
                           <XCircle
@@ -218,7 +234,6 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
         >
           <Command
             filter={(value: string, search) => {
-              setSearch(search);
               if (
                 value.toUpperCase().includes(search.toUpperCase()) ||
                 value.includes("(Selecione todos)")
@@ -227,7 +242,11 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
               return 0;
             }}
           >
-            <CommandInput placeholder="Pesquisar..." onKeyDown={handleInputKeyDown} />
+            <CommandInput
+              placeholder="Pesquisar..."
+              onKeyDown={handleInputKeyDown}
+              onValueChange={(search) => setSearch(search)}
+            />
             <CommandList className="overflow-y scroll-thin w-full">
               <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
               <CommandGroup role={"group"}>
@@ -242,7 +261,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                   <div
                     className={cn(
                       "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                      selectedValues.length === options.length
+                      allSelected
                         ? "bg-primary text-primary-foreground"
                         : "opacity-50 [&_svg]:invisible"
                     )}

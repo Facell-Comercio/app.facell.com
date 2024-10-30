@@ -42,7 +42,11 @@ export const useMailing = () => {
   const getClientes = ({ pagination, filters }: GetAllParams) =>
     useQuery({
       queryKey: ["marketing", "mailing", "clientes", "lista", { pagination }],
-      queryFn: async () => await fetchApi.marketing.mailing.getClientes({ pagination, filters }),
+      queryFn: async () =>
+        await fetchApi.marketing.mailing.getClientes({
+          pagination,
+          filters,
+        }),
       placeholderData: keepPreviousData,
     });
 
@@ -55,6 +59,8 @@ export const useMailing = () => {
           const result = await fetchApi.marketing.mailing.getOneCampanha({ id, filters });
           return result;
         } catch (error) {
+          console.log(error);
+
           // @ts-expect-error "Vai funcionar"
           const errorMessage = error.response?.data.message || error.message;
           toast({
