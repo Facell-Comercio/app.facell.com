@@ -9,10 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DatePickerWithRange } from "@/components/ui/date-range";
 import { Input } from "@/components/ui/input";
-import {
-  ScrollArea,
-  ScrollBar,
-} from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -20,46 +17,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  EraserIcon,
-  FilterIcon,
-} from "lucide-react";
+import { EraserIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
 import { useStoreTableVencimentos } from "./store";
 
-const FiltersVencimentos = ({
-  refetch,
-}: {
-  refetch: () => void;
-}) => {
-  const filters = useStoreTableVencimentos(
-    (state) => state.filters
-  );
-  const setFilters = useStoreTableVencimentos(
-    (state) => state.setFilters
-  );
-  const resetFilters = useStoreTableVencimentos(
-    (state) => state.resetFilters
-  );
+const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
+  const filters = useStoreTableVencimentos((state) => state.filters);
+  const setFilters = useStoreTableVencimentos((state) => state.setFilters);
+  const resetFilters = useStoreTableVencimentos((state) => state.resetFilters);
 
-  const handleClickFilter = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     refetch();
   };
-  const handleResetFilter = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    await new Promise((resolve) =>
-      resolve(resetFilters())
-    );
+    await new Promise((resolve) => resolve(resetFilters()));
     refetch();
   };
 
-  const [itemOpen, setItemOpen] =
-    useState<string>("item-1");
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
 
   return (
     <Accordion
@@ -69,37 +46,17 @@ const FiltersVencimentos = ({
       onValueChange={(e) => setItemOpen(e)}
       className="p-2 border dark:border-slate-800 rounded-lg "
     >
-      <AccordionItem
-        value="item-1"
-        className="relative border-0"
-      >
+      <AccordionItem value="item-1" className="relative border-0">
         <div className="flex gap-3 items-center absolute start-16 top-1">
-          <Button
-            size={"xs"}
-            onClick={handleClickFilter}
-          >
-            Aplicar{" "}
-            <FilterIcon
-              size={12}
-              className="ms-2"
-            />
+          <Button size={"xs"} onClick={handleClickFilter}>
+            Aplicar <FilterIcon size={12} className="ms-2" />
           </Button>
-          <Button
-            size={"xs"}
-            variant="secondary"
-            onClick={handleResetFilter}
-          >
-            Limpar{" "}
-            <EraserIcon
-              size={12}
-              className="ms-2"
-            />
+          <Button size={"xs"} variant="secondary" onClick={handleResetFilter}>
+            Limpar <EraserIcon size={12} className="ms-2" />
           </Button>
         </div>
 
-        <AccordionTrigger
-          className={`py-1 hover:no-underline`}
-        >
+        <AccordionTrigger className={`py-1 hover:no-underline`}>
           <span className="">Filtros</span>
         </AccordionTrigger>
 
@@ -143,10 +100,7 @@ const FiltersVencimentos = ({
               />
               <SelectMultiFormaPagamento
                 className="min-w-fit"
-                value={
-                  filters.forma_pagamento_list ||
-                  []
-                }
+                value={filters.forma_pagamento_list || []}
                 onChange={(value) =>
                   setFilters({
                     forma_pagamento_list: value,
@@ -165,21 +119,11 @@ const FiltersVencimentos = ({
                   <SelectValue placeholder="Tipo de data" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="created_at">
-                    Criação
-                  </SelectItem>
-                  <SelectItem value="data_emissao">
-                    Emissão
-                  </SelectItem>
-                  <SelectItem value="data_vencimento">
-                    Vencimento
-                  </SelectItem>
-                  <SelectItem value="data_prevista">
-                    Previsão
-                  </SelectItem>
-                  <SelectItem value="data_pagamento">
-                    Pagamento
-                  </SelectItem>
+                  <SelectItem value="created_at">Criação</SelectItem>
+                  <SelectItem value="data_emissao">Emissão</SelectItem>
+                  <SelectItem value="data_vencimento">Vencimento</SelectItem>
+                  <SelectItem value="data_prevista">Previsão</SelectItem>
+                  <SelectItem value="data_pagamento">Pagamento</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -201,6 +145,16 @@ const FiltersVencimentos = ({
                   })
                 }
                 placeholder="Descrição..."
+              />
+              <Input
+                className="max-w-[200px]"
+                value={filters.fornecedor}
+                onChange={(e) =>
+                  setFilters({
+                    fornecedor: e.target.value,
+                  })
+                }
+                placeholder="Fornecedor..."
               />
             </div>
             <ScrollBar orientation="horizontal" />

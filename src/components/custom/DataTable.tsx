@@ -47,6 +47,7 @@ interface DataTableProps<TData, TValue> {
   rowSelection?: RowSelectionState;
   handleRowSelection?: (data: any) => void;
   isLoading?: boolean;
+  variant?: "default" | "secondary";
 }
 
 export function DataTable<TData, TValue>({
@@ -60,6 +61,7 @@ export function DataTable<TData, TValue>({
   rowSelection,
   handleRowSelection,
   isLoading,
+  variant = "default",
 }: DataTableProps<TData, TValue>) {
   const [valorTotal, setValorTotal] = useState<number>(0);
 
@@ -138,10 +140,11 @@ export function DataTable<TData, TValue>({
   }, [table.getPageCount()]);
 
   //^ Foi adicionada a class scroll-thin no componente de Table
+
   return (
     <div className="rounded-md border">
       <Table>
-        <TableHeader>
+        <TableHeader className={variant === "secondary" ? "bg-secondary" : ""}>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -172,7 +175,13 @@ export function DataTable<TData, TValue>({
         <TableBody className="scroll-thin">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+                className={
+                  variant === "secondary" ? "odd:bg-secondary/60 even:bg-secondary/40" : ""
+                }
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="text-xs">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

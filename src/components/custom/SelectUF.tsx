@@ -30,8 +30,8 @@ export const SelectUF = (props: TSelectUF) => {
 
   const { data } = useQuery({
     queryKey: ["filiais", "uf", "lista"],
-    queryFn: () =>
-      api
+    queryFn: async () =>
+      await api
         .get("/filial/ufs", {
           params: {
             filters: {
@@ -78,7 +78,7 @@ export const SelectMultiUF = (props: TSelectMultiUF) => {
   // Use a single state variable for fetching and storing data
   const { data } = useQuery({
     queryKey: ["filiais", "uf", "lista"],
-    queryFn: () => api.get("/filial/ufs").then((res) => res.data),
+    queryFn: async () => await api.get("/filial/ufs").then((res) => res.data),
     staleTime: Infinity,
   });
 

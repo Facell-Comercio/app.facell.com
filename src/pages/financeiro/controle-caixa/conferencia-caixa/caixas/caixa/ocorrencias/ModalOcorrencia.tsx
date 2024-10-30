@@ -120,6 +120,7 @@ const ModalOcorrencia = () => {
       insertOne({
         ...newDataCaixa,
         data_caixa: date,
+        resolvida: "0",
         id: "",
       });
     }
@@ -200,19 +201,21 @@ const ModalOcorrencia = () => {
                 </Button>
               </div>
             )}
-            {!!id && !resolvida && (
+            {!!id && (
               <div className="flex gap-2 justify-between w-full">
                 <span className="flex gap-2">
-                  <Button
-                    variant={"tertiary"}
-                    onClick={() => {
-                      setModalActionOcorrenciaOpen(true);
-                      setAction("Transferência");
-                    }}
-                  >
-                    <ArrowLeftRight className="me-2" />
-                    Transferir
-                  </Button>
+                  {!resolvida && (
+                    <Button
+                      variant={"tertiary"}
+                      onClick={() => {
+                        setModalActionOcorrenciaOpen(true);
+                        setAction("Transferência");
+                      }}
+                    >
+                      <ArrowLeftRight className="me-2" />
+                      Transferir
+                    </Button>
+                  )}
                   <Button
                     title="Copiar para outro caixa"
                     onClick={() => {
@@ -224,20 +227,22 @@ const ModalOcorrencia = () => {
                     Copiar
                   </Button>
                 </span>
-                <AlertPopUp
-                  title={"Deseja realmente resolver essa ocorrência?"}
-                  description="Essa ação não pode ser desfeita. A ocorrência será definitivamente resolvida, não podendo voltar ao status anterior."
-                  action={() => {
-                    form.setValue("resolvida", 1);
-                    form.setValue("id_user_resolvedor", user?.id);
-                    formRef.current && formRef.current.requestSubmit();
-                  }}
-                >
-                  <Button variant={"success"}>
-                    <Check className="me-2" />
-                    Resolver
-                  </Button>
-                </AlertPopUp>
+                {!resolvida && (
+                  <AlertPopUp
+                    title={"Deseja realmente resolver essa ocorrência?"}
+                    description="Essa ação não pode ser desfeita. A ocorrência será definitivamente resolvida, não podendo voltar ao status anterior."
+                    action={() => {
+                      form.setValue("resolvida", 1);
+                      form.setValue("id_user_resolvedor", user?.id);
+                      formRef.current && formRef.current.requestSubmit();
+                    }}
+                  >
+                    <Button variant={"success"}>
+                      <Check className="me-2" />
+                      Resolver
+                    </Button>
+                  </AlertPopUp>
+                )}
               </div>
             )}
           </DialogFooter>

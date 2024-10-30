@@ -32,6 +32,8 @@ import { useEffect, useMemo } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import z from "zod";
 import { TituloCRSchemaProps, vencimentoSchema } from "../../../form-data";
+import ButtonNovoRecebimentoBancario from "./components/ButtonNovoRecebimentoBancaria";
+import ButtonNovoRecebimentoManual from "./components/ButtonNovoRecebimentoManual";
 import { initialStateVencimento, useStoreVencimento } from "./context";
 
 export function ModalVencimento({
@@ -196,7 +198,21 @@ export function ModalVencimento({
               </div>
               {canEditRecebimento && (
                 <div className="flex flex-col gap-2">
-                  <p className="font-medium w-full">Baixas realizadas:</p>
+                  <div className="flex gap-2 justify-between">
+                    <p className="font-medium w-full">Baixas realizadas:</p>
+                    {isMaster && (
+                      <span className="flex gap-2">
+                        <ButtonNovoRecebimentoBancario
+                          id_vencimento={vencimento.id || ""}
+                          id_matriz={formTitulo.watch("id_matriz")}
+                        />
+                        <ButtonNovoRecebimentoManual
+                          id_vencimento={vencimento.id || ""}
+                          id_matriz={formTitulo.watch("id_matriz")}
+                        />
+                      </span>
+                    )}
+                  </div>
                   <Table
                     className="rounded-md border-border w-full h-10 overflow-clip relative"
                     divClassname="overflow-auto scroll-thin max-h-[40vh] border rounded-md text-nowrap"
@@ -218,16 +234,18 @@ export function ModalVencimento({
                             className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
                           >
                             <TableCell className="flex gap-2">
-                              {canEditRecebimento && <AlertPopUp
-                                title="Deseja realmente remover este recebimento?"
-                                description=""
-                                action={() => deleteRecebimento(row.id)}
-                                children={
-                                  <Button type="button" variant="destructive" size={"xs"}>
-                                    <Trash size={16} />
-                                  </Button>
-                                }
-                              />}
+                              {canEditRecebimento && (
+                                <AlertPopUp
+                                  title="Deseja realmente remover este recebimento?"
+                                  description=""
+                                  action={() => deleteRecebimento(row.id)}
+                                  children={
+                                    <Button type="button" variant="destructive" size={"xs"}>
+                                      <Trash size={16} />
+                                    </Button>
+                                  }
+                                />
+                              )}
                             </TableCell>
                             <TableCell>{normalizeDate(row.data)}</TableCell>
                             <TableCell>{row.conta_bancaria}</TableCell>

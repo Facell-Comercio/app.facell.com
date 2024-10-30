@@ -110,9 +110,12 @@ export const useBordero = () => {
 
     reverseManualPayment: () =>
       useMutation({
-        mutationFn: async ({ id, tipo }: reversePaymentProps) => {
+        mutationFn: async ({ id, tipo, forma_pagamento }: reversePaymentProps) => {
           return await api
-            .put(`/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`, { tipo })
+            .put(`/financeiro/contas-a-pagar/bordero/reverse-manual-payment/${id}`, {
+              tipo,
+              forma_pagamento,
+            })
             .then((response) => response.data);
         },
         onSuccess() {

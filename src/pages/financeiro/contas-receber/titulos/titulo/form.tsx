@@ -762,7 +762,7 @@ const FormTituloReceber = ({
                     </Button>
                     <Button type="submit" size="lg" variant={"default"}>
                       <Save className="me-2" size={18} />
-                      {id ? "Salvar" : "Solicitar"}
+                      Salvar
                     </Button>
                   </>
                 )}

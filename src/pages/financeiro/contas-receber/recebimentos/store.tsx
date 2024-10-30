@@ -1,5 +1,10 @@
 import { create } from "zustand";
 
+type RecebimentoDataProps = {
+  id_matriz: string;
+  id_vencimento: string;
+};
+
 export interface State {
   id_vencimento: string | null;
   id_matriz: string | null;
@@ -14,16 +19,10 @@ export interface Actions {
   openModaVencimento: () => void;
   closeModaVencimento: () => void;
 
-  openModalRecebimentoManual: ({
-    id_matriz,
-    id_vencimento,
-  }: {
-    id_matriz: string;
-    id_vencimento: string;
-  }) => void;
+  openModalRecebimentoManual: (recebimento: RecebimentoDataProps) => void;
   closeModalRecebimentoManual: () => void;
 
-  openModalRecebimentoBancario: () => void;
+  openModalRecebimentoBancario: (recebimento?: RecebimentoDataProps) => void;
   closeModalRecebimentoBancario: () => void;
 
   editIsPending: (bool: boolean) => void;
@@ -60,13 +59,17 @@ export const useStoreRecebimentos = create<State & Actions>((set) => ({
     }),
 
   //* RECEBIMENTO BANCÁRIO
-  openModalRecebimentoBancario: () =>
+  openModalRecebimentoBancario: (recebimento) =>
     set({
       modalRecebimentoBancarioOpen: true,
+      id_vencimento: recebimento?.id_vencimento || null,
+      id_matriz: recebimento?.id_matriz || null,
     }),
   closeModalRecebimentoBancario: () =>
     set({
       modalRecebimentoBancarioOpen: false,
+      id_vencimento: null,
+      id_matriz: null,
     }),
 
   openModalVencimento: () => set({ modalVencimentosOpen: true }),

@@ -45,19 +45,18 @@ export const useTituloReceber = () => {
   const getAll = ({ pagination, filters }: GetTitulosReceberProps) =>
     useQuery({
       queryKey: ["financeiro", "contas_receber", "titulo", "lista", { pagination, filters }],
-      queryFn: () =>
-        fetchApi.financeiro.contas_receber.titulos.getAll({
+      queryFn: async () =>
+        await fetchApi.financeiro.contas_receber.titulos.getAll({
           pagination,
           filters,
         }),
-      placeholderData: keepPreviousData,
     });
 
   const getOne = (id: string | null) =>
     useQuery({
       enabled: !!id,
       queryKey: ["financeiro", "contas_receber", "titulo", "detalhe", id],
-      queryFn: () => fetchApi.financeiro.contas_receber.titulos.getOne(id),
+      queryFn: async () => await fetchApi.financeiro.contas_receber.titulos.getOne(id),
     });
 
   const insertOne = () =>
@@ -69,7 +68,7 @@ export const useTituloReceber = () => {
         toast({
           variant: "success",
           title: "Sucesso!",
-          description: "Solicitação criada com sucesso!",
+          description: "Título criado com sucesso!",
         });
         queryClient.invalidateQueries({ queryKey: ["financeiro"] });
       },
@@ -94,7 +93,7 @@ export const useTituloReceber = () => {
         toast({
           variant: "success",
           title: "Sucesso!",
-          description: "Solicitação atualizada com sucesso!",
+          description: "Título atualizado com sucesso!",
         });
         queryClient.invalidateQueries({ queryKey: ["financeiro"] });
       },
@@ -122,8 +121,8 @@ export const useTituloReceber = () => {
         "lista",
         { pagination, filters },
       ],
-      queryFn: () =>
-        fetchApi.financeiro.contas_receber.titulos.getAllRecebimentos({
+      queryFn: async () =>
+        await fetchApi.financeiro.contas_receber.titulos.getAllRecebimentos({
           pagination,
           filters,
         }),
@@ -141,8 +140,10 @@ export const useTituloReceber = () => {
         "lista",
         [id_vencimento],
       ],
-      queryFn: () =>
-        fetchApi.financeiro.contas_receber.titulos.getAllRecebimentosVencimento(id_vencimento),
+      queryFn: async () =>
+        await fetchApi.financeiro.contas_receber.titulos.getAllRecebimentosVencimento(
+          id_vencimento
+        ),
     });
 
   const getAllTransacoesAndVencimentos = (params: unknown) =>
@@ -160,8 +161,8 @@ export const useTituloReceber = () => {
         //@ts-ignore
         [params.id_conta_bancaria],
       ],
-      queryFn: () =>
-        fetchApi.financeiro.contas_receber.titulos.getAllTransacoesAndVencimentos(params),
+      queryFn: async () =>
+        await fetchApi.financeiro.contas_receber.titulos.getAllTransacoesAndVencimentos(params),
     });
 
   const insertOneRecebimentoManual = () =>
@@ -173,7 +174,7 @@ export const useTituloReceber = () => {
         toast({
           variant: "success",
           title: "Sucesso!",
-          description: "Solicitação criada com sucesso!",
+          description: "Recebimento criado com sucesso!",
         });
         queryClient.invalidateQueries({ queryKey: ["financeiro"] });
       },
@@ -200,7 +201,7 @@ export const useTituloReceber = () => {
         toast({
           variant: "success",
           title: "Sucesso!",
-          description: "Solicitação criada com sucesso!",
+          description: "Recebimento criado com sucesso!",
         });
         queryClient.invalidateQueries({ queryKey: ["financeiro"] });
       },
@@ -227,7 +228,7 @@ export const useTituloReceber = () => {
         toast({
           variant: "success",
           title: "Sucesso!",
-          description: "Solicitação atualizada com sucesso!",
+          description: "Título atualizado com sucesso!",
         });
         queryClient.invalidateQueries({ queryKey: ["financeiro"] });
       },

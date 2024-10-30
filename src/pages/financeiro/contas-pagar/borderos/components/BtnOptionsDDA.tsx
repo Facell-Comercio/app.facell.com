@@ -8,24 +8,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from "@/components/ui/use-toast";
-import { exportToExcel } from "@/helpers/importExportXLS";
 import { useDDA } from "@/hooks/financeiro/useDDA";
-import { api } from "@/lib/axios";
-import { useQueryClient } from "@tanstack/react-query";
-import { formatDate } from "date-fns";
-import {
-  Download,
-  FileStack,
-  Trash,
-  Unplug,
-  Upload,
-} from "lucide-react";
-import {
-  ChangeEvent,
-  useRef,
-  useState,
-} from "react";
+import { Download, FileStack, Trash, Unplug, Upload } from "lucide-react";
+import { ChangeEvent, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useStoreDDA } from "./storeDDA";
 
@@ -35,24 +20,20 @@ export type ExportAnexosProps = {
 };
 
 const BtnOptionsDDA = () => {
-  const queryClient = useQueryClient();
-  const filters = useStoreDDA().filters;
   const openModal = useStoreDDA().openModal;
 
-  const [processing, setProcessing] = useState({
-    import: false,
-    autovincular: false,
-    export: false,
-    limpeza: false,
-  });
-  const [alertLimpezaOpen, setAlertLimpezaOpen] =
-    useState<boolean>(false);
+  const { mutate: importDDA, isPending: importDDAisPending } = useDDA().importDDA();
+  const { mutate: exportDDA, isPending: exportDDAisPending } = useDDA().exportDDA();
+  const { mutate: limparDDA, isPending: limparDDAisPending } = useDDA().limparDDA();
+  const { mutate: autoVincularDDA, isPending: autoVincularDDAisPending } =
+    useDDA().autoVincularDDA();
+
+  const [alertLimpezaOpen, setAlertLimpezaOpen] = useState<boolean>(false);
 
   // * Acessar DDA
-  const handleAcessarClick = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleAcessarClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    e.preventDefault();
     openModal({
       id_vencimento: null,
       filters: {
@@ -63,183 +44,50 @@ const BtnOptionsDDA = () => {
   };
 
   // * Importação
-  const fileRef = useRef<HTMLInputElement | null>(
-    null
-  );
-  const handleFileImportClick = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const handleFileImportClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (fileRef.current) {
       fileRef.current.click();
     }
   };
-  const handleFileImportChange = async (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    setProcessing((prev) => ({
-      ...prev,
-      import: true,
-    }));
+  const handleFileImportChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
-    try {
-      if (!target.files) {
-        return;
-      }
-      const result = await useDDA().importDDA(
-        target.files
-      );
-      exportToExcel(
-        result,
-        "RESULTADO IMPORTAÇÃO DDA"
-      );
-
-      queryClient.invalidateQueries({
-        queryKey: [
-          "financeiro",
-          "contas_pagar",
-          "dda",
-        ],
+    if (!target.files) return;
+    const files = target.files;
+    const form = new FormData();
+    if (files) {
+      Array.from(files).forEach((file) => {
+        form.append(`files`, file);
       });
-      toast({
-        variant: "success",
-        title: "Importação concluída!",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao tentar importar o DDA",
-        description:
-          // @ts-ignore
-          error?.response?.data?.message ||
-          // @ts-ignore
-          error?.message,
-      });
-    } finally {
-      setProcessing((prev) => ({
-        ...prev,
-        import: false,
-      }));
-      target.value = "";
     }
+    importDDA(form);
+    target.value = "";
   };
 
   // * Export
-  const handleExportClick = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleExportClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setProcessing((prev) => ({
-      ...prev,
-      export: true,
-    }));
-    try {
-      const result = await useDDA().exportDDA(
-        filters
-      );
-      exportToExcel(
-        result || [],
-        "EXPORTAÇÃO DDA"
-      );
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao tentar exportar o DDA",
-        description:
-          // @ts-ignore
-          error?.response?.data?.message ||
-          // @ts-ignore
-          error?.message,
-      });
-    } finally {
-      setProcessing((prev) => ({
-        ...prev,
-        export: false,
-      }));
-    }
+    e.preventDefault();
+    exportDDA();
   };
 
   // * Limpeza de DDA
-  const handleLimpezaClick = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleLimpezaClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    e.preventDefault();
+
     setAlertLimpezaOpen(true);
   };
   const handleLimpezaAction = async () => {
-    setProcessing((prev) => ({
-      ...prev,
-      limpeza: true,
-    }));
-    try {
-      await useDDA().limparDDA();
-      toast({
-        variant: "success",
-        title: "Limpeza concluída!",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao tentar limpar o DDA",
-        description:
-          // @ts-ignore
-          error?.response?.data?.message ||
-          // @ts-ignore
-          error?.message,
-      });
-    } finally {
-      setProcessing((prev) => ({
-        ...prev,
-        limpeza: false,
-      }));
-    }
+    limparDDA();
   };
 
   // * Autovincular DDA
-  const handleAutoVincularClick = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleAutoVincularClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setProcessing((prev) => ({
-      ...prev,
-      autovincular: true,
-    }));
-    try {
-      const result = await api
-        .post(
-          "/financeiro/contas-a-pagar/dda/auto-vincular"
-        )
-        .then((response) => response.data);
-      exportToExcel(
-        result || [],
-        `RESULTADO AUTOVINCULAÇÃO DDA - ${formatDate(
-          new Date(),
-          "dd/MM/yyyy HH:mm"
-        )}`
-      );
-      toast({
-        variant: "success",
-        title: "Autovinculação concluída!",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["financeiro", "contas_pagar"],
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao tentar limpar o DDA",
-        description:
-          // @ts-ignore
-          error?.response?.data?.message ||
-          // @ts-ignore
-          error?.message,
-      });
-    } finally {
-      setProcessing((prev) => ({
-        ...prev,
-        autovincular: false,
-      }));
-    }
+    e.preventDefault();
+    autoVincularDDA();
   };
 
   return (
@@ -266,52 +114,32 @@ const BtnOptionsDDA = () => {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            variant={"outline"}
-          >
-            <FileStack
-              size={18}
-              className="me-2"
-            />
+          <Button type="button" variant={"outline"}>
+            <FileStack size={18} className="me-2" />
             DDA
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent onPointerDownOutside={(e) => e.preventDefault()}>
           <DropdownMenuItem>
-            <Button
-              className="w-full"
-              size={"sm"}
-              onClick={handleAcessarClick}
-            >
-              <FileStack
-                size={18}
-                className="me-2"
-              />{" "}
-              Acessar
+            <Button className="w-full" size={"sm"} onClick={handleAcessarClick}>
+              <FileStack size={18} className="me-2" /> Acessar
             </Button>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
               <Button
-                disabled={processing.import}
+                disabled={importDDAisPending}
                 title="Após importar arquivo de varredura DDA .RET, a autovinculação será realizada automaticamente..."
                 className="w-full"
                 size={"sm"}
                 variant={"tertiary"}
                 onClick={handleFileImportClick}
               >
-                {processing.import ? (
-                  <FaSpinner
-                    size={18}
-                    className="animate-spin me-2"
-                  />
+                {importDDAisPending ? (
+                  <FaSpinner size={18} className="animate-spin me-2" />
                 ) : (
-                  <Upload
-                    size={18}
-                    className="me-2"
-                  />
+                  <Upload size={18} className="me-2" />
                 )}{" "}
                 Importar
               </Button>
@@ -319,44 +147,32 @@ const BtnOptionsDDA = () => {
             <DropdownMenuItem>
               <Button
                 title="Vincular os boletos aos vencimentos, isso já é feito automaticamente após a importação. Mas você pode utilizar a função para atualizar."
-                disabled={processing.autovincular}
+                disabled={autoVincularDDAisPending}
                 className="w-full"
                 size={"sm"}
                 variant={"warning"}
                 onClick={handleAutoVincularClick}
               >
-                {processing.autovincular ? (
-                  <FaSpinner
-                    size={18}
-                    className="animate-spin me-2"
-                  />
+                {autoVincularDDAisPending ? (
+                  <FaSpinner size={18} className="animate-spin me-2" />
                 ) : (
-                  <Unplug
-                    size={18}
-                    className="me-2"
-                  />
+                  <Unplug size={18} className="me-2" />
                 )}{" "}
                 Autovincular
               </Button>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Button
-                disabled={processing.export}
+                disabled={exportDDAisPending}
                 className="w-full"
                 size={"sm"}
                 variant={"success"}
                 onClick={handleExportClick}
               >
-                {processing.export ? (
-                  <FaSpinner
-                    size={18}
-                    className="animate-spin me-2"
-                  />
+                {exportDDAisPending ? (
+                  <FaSpinner size={18} className="animate-spin me-2" />
                 ) : (
-                  <Download
-                    size={18}
-                    className="me-2"
-                  />
+                  <Download size={18} className="me-2" />
                 )}{" "}
                 Exportar
               </Button>
@@ -366,20 +182,14 @@ const BtnOptionsDDA = () => {
                 type="button"
                 size={"sm"}
                 variant={"destructive"}
-                disabled={processing.limpeza}
+                disabled={limparDDAisPending}
                 title="Apaga todos os boletos do DDA que não estejam vinculados a Vencimentos e que sejam +30 dias inferior à data atual"
                 onClick={handleLimpezaClick}
               >
-                {processing.limpeza ? (
-                  <FaSpinner
-                    size={18}
-                    className="animate-spin me-2"
-                  />
+                {limparDDAisPending ? (
+                  <FaSpinner size={18} className="animate-spin me-2" />
                 ) : (
-                  <Trash
-                    size={18}
-                    className="me-2"
-                  />
+                  <Trash size={18} className="me-2" />
                 )}{" "}
                 Excluir não vinculados
               </Button>

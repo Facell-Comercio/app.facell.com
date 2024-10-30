@@ -1,8 +1,5 @@
 import fetchApi from "@/api/fetchApi";
-import {
-  Register,
-  useQuery,
-} from "@tanstack/react-query";
+import { Register, useQuery } from "@tanstack/react-query";
 import { Control } from "react-hook-form";
 import { MultiSelect } from "../ui/multi-select";
 import FormSelect from "./FormSelect";
@@ -24,19 +21,12 @@ type TSelectFormaPagamento = {
   onChange?: (data: any) => any;
 };
 
-export const SelectFormaPagamento = (
-  props: TSelectFormaPagamento
-) => {
+export const SelectFormaPagamento = (props: TSelectFormaPagamento) => {
   // Use a single state variable for fetching and storing data
 
   const { data } = useQuery({
-    queryKey: [
-      "financeiro",
-      "forma_pagamento",
-      "lista",
-    ],
-    queryFn: () =>
-      fetchApi.financeiro.forma_pagamento.getAll(),
+    queryKey: ["financeiro", "forma_pagamento", "lista"],
+    queryFn: async () => await fetchApi.financeiro.forma_pagamento.getAll(),
     staleTime: Infinity,
   });
 
@@ -45,12 +35,10 @@ export const SelectFormaPagamento = (
     <FormSelect
       {...props}
       options={
-        data?.map(
-          (formaPagamento: FormaPagamento) => ({
-            value: formaPagamento.id.toString(),
-            label: formaPagamento.forma_pagamento,
-          })
-        ) || []
+        data?.map((formaPagamento: FormaPagamento) => ({
+          value: formaPagamento.id.toString(),
+          label: formaPagamento.forma_pagamento,
+        })) || []
       }
     />
   );
@@ -70,18 +58,11 @@ type TSelectMultiFormaPagamento = {
   onChange: (data: any) => any;
 };
 
-export const SelectMultiFormaPagamento = (
-  props: TSelectMultiFormaPagamento
-) => {
+export const SelectMultiFormaPagamento = (props: TSelectMultiFormaPagamento) => {
   // Use a single state variable for fetching and storing data
   const { data } = useQuery({
-    queryKey: [
-      "financeiro",
-      "forma_pagamento",
-      "lista",
-    ],
-    queryFn: () =>
-      fetchApi.financeiro.forma_pagamento.getAll(),
+    queryKey: ["financeiro", "forma_pagamento", "lista"],
+    queryFn: async () => await fetchApi.financeiro.forma_pagamento.getAll(),
     staleTime: Infinity,
   });
 
@@ -91,12 +72,10 @@ export const SelectMultiFormaPagamento = (
     // @ts-ignore
     <MultiSelect
       {...props}
-      options={formaPagamento.map(
-        (forma: FormaPagamento) => ({
-          value: forma.id,
-          label: forma.forma_pagamento,
-        })
-      )}
+      options={formaPagamento.map((forma: FormaPagamento) => ({
+        value: forma.id,
+        label: forma.forma_pagamento,
+      }))}
       onValueChange={props.onChange}
       defaultValue={props.value || []}
       placeholder="Formas de Pagamento"

@@ -95,6 +95,7 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
         <p className="min-w-[34px] text-center bg-slate-200 dark:bg-blue-950"></p>
         <p className="min-w-16 text-center bg-slate-200 dark:bg-blue-950">ID</p>
         <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">ID Título</p>
+        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Vencimento</p>
         <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Previsto</p>
         <p className="flex-1 min-w-36 max-w-36 bg-slate-200 dark:bg-blue-950 text-center">
           Forma Pagamento
@@ -214,9 +215,19 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
               <Input
                 className="w-24 h-8 text-xs p-2 text-center"
                 // @ts-ignore
+                value={
+                  data[indexData].data_vencimento &&
+                  normalizeDate(data[indexData].data_vencimento || "")
+                }
+                readOnly
+              />
+              <Input
+                className="w-24 h-8 text-xs p-2 text-center"
+                // @ts-ignore
                 value={data[indexData].previsao && normalizeDate(data[indexData].previsao || "")}
                 readOnly
               />
+
               <Input
                 className="flex-1 min-w-36 max-w-36 h-8 text-xs p-2 text-center"
                 value={data[indexData].forma_pagamento || ""}

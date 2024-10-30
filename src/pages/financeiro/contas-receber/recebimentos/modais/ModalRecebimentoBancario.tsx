@@ -63,11 +63,19 @@ export function ModalRecebimentoBancario() {
       state.setContaBancaria,
     ]);
 
+  const [id_vencimento, id_matriz] = useStoreRecebimentos((state) => [
+    state.id_vencimento,
+    state.id_matriz,
+  ]);
+
   const { data, refetch } = useTituloReceber().getAllTransacoesAndVencimentos({
     id_conta_bancaria: contaBancaria?.id,
     id_matriz: contaBancaria?.id_matriz,
     filters_extratos_bancarios,
-    filters_vencimentos,
+    filters_vencimentos: {
+      ...filters_vencimentos,
+      id_vencimento,
+    },
   });
 
   const transacoes = data?.transacoes || [];
@@ -148,16 +156,7 @@ export function ModalRecebimentoBancario() {
       return;
     }
     const valorDiferenca = Math.abs(totalPagoTransacoes - totalReceberVencimentos);
-    if (totalPagoTransacoes > totalReceberVencimentos) {
-      toast({
-        title: "Valor abaixo do necssário!",
-        description: `Ainda faltam ${normalizeCurrency(
-          valorDiferenca
-        )} no valor pago dos vencimentos para alcançar o valor das transações bancárias`,
-        variant: "warning",
-      });
-      return;
-    }
+
     if (totalPagoTransacoes < totalReceberVencimentos) {
       toast({
         title: "Valor acima do necessário!",
@@ -280,6 +279,7 @@ export function ModalRecebimentoBancario() {
           handleSelection={handleSelectionContaBancaria}
           onOpenChange={() => setModalContasBancariasOpen(false)}
           isCaixa={false}
+          id_matriz={id_matriz}
         />
         <DialogFooter>
           <Button
