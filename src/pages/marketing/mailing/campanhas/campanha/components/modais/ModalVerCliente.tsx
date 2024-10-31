@@ -21,11 +21,12 @@ import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { formatDate } from "date-fns";
-import { BadgePercent, Ban, Handshake, Info, Phone } from "lucide-react";
+import { BadgePercent, Ban, Handshake, Info, MessageCircle } from "lucide-react";
 import { useStoreCampanha } from "../../store";
 
 export type ResultadoContato = {
   id: number;
+  plataforma: string;
   id_cliente: number;
   datetime_contato_resposta: string;
   data_contato: string;
@@ -44,7 +45,7 @@ const ModalVerCliente = () => {
   ]);
 
   const { data } = useMailing().getOneClienteCampanha(id);
-  const resultados: ResultadoContato[] = data?.resultados || [];
+  const interacoes: ResultadoContato[] = data?.interacoes || [];
 
   function handleClickCancel() {
     closeModal();
@@ -198,30 +199,32 @@ const ModalVerCliente = () => {
               </div>
             </section>
 
-            {resultados.length > 0 && (
+            {interacoes.length > 0 && (
               <section className="flex flex-col gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950 rounded-md">
                 <div className="flex gap-2 items-center w-full">
-                  <Phone />
-                  <h3 className="text-md font-medium">Contatos</h3>
+                  <MessageCircle />
+                  <h3 className="text-md font-medium">Interações</h3>
                 </div>
                 <Table className="bg-background rounded-md">
                   <TableHeader className="bg-secondary text-white">
                     <TableRow>
-                      <TableHead className="text-foreground">Status Contato</TableHead>
-                      <TableHead className="text-foreground">Momento Contato</TableHead>
-                      <TableHead className="text-foreground">Duração Chamada</TableHead>
-                      <TableHead className="text-foreground">Operador Contato</TableHead>
+                      <TableHead className="text-foreground">Plataforma</TableHead>
+                      <TableHead className="text-foreground">Status</TableHead>
+                      <TableHead className="text-foreground">Data</TableHead>
+                      <TableHead className="text-foreground">Duração</TableHead>
+                      <TableHead className="text-foreground">Operador</TableHead>
                       <TableHead className="text-foreground">Observação</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {resultados.map((resultado: ResultadoContato, index) => (
+                    {interacoes.map((resultado: ResultadoContato, index) => (
                       <TableRow className="uppercase" key={`${resultado.id} - ${index}`}>
+                        <TableCell>{resultado.plataforma}</TableCell>
                         <TableCell>{resultado.status_contato}</TableCell>
                         <TableCell>
                           {formatDate(resultado.datetime_contato_resposta, "dd/MM/yyyy HH:mm")}
                         </TableCell>
-                        <TableCell>{resultado.duracao_chamada} segundos</TableCell>
+                        <TableCell>{resultado.duracao_chamada} seg.</TableCell>
                         <TableCell>{resultado.operador_contato}</TableCell>
                         <TableCell>{resultado.observacao || "-"}</TableCell>
                       </TableRow>
