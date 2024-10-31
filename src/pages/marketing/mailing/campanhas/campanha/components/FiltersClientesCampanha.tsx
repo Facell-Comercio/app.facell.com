@@ -175,6 +175,26 @@ export const FiltersClientesCampanha = ({
               disabled={isPending}
             />
           )}
+          {defaultFilters?.uf_list && !isSubcampanha && (
+            <MultiSelectWithLabel
+              label="UF"
+              options={defaultFilters.uf_list.map((uf: any) => ({
+                value: uf.value,
+                label: uf.value,
+              }))}
+              onValueChange={(uf_list) => {
+                setFilters({ uf_list: uf_list });
+              }}
+              defaultValue={filters.uf_list || []}
+              placeholder="UF"
+              variant="secondary"
+              animation={4}
+              maxCount={2}
+              maxCharacters={25}
+              className={`bg-background hover:bg-background`}
+              disabled={isPending}
+            />
+          )}
           <div className="flex flex-col w-full gap-2">
             <label className="text-sm font-medium">Produto Fidelizado</label>
             <Select
