@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useDDA } from "@/hooks/financeiro/useDDA";
 import { Download, FileStack, Trash, Unplug, Upload } from "lucide-react";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useStoreDDA } from "./storeDDA";
 
@@ -21,6 +21,7 @@ export type ExportAnexosProps = {
 
 const BtnOptionsDDA = () => {
   const openModal = useStoreDDA().openModal;
+  const [toggleModal, setToggleModal] = useState(false);
 
   const { mutate: importDDA, isPending: importDDAisPending } = useDDA().importDDA();
   const { mutate: exportDDA, isPending: exportDDAisPending } = useDDA().exportDDA();
@@ -90,8 +91,100 @@ const BtnOptionsDDA = () => {
     autoVincularDDA();
   };
 
+  useEffect(() => {
+    const resetPointerEvents = () => {
+      document.body.style.pointerEvents = "";
+    };
+    // Remover o pointer-events quando o modal é fechado
+    return resetPointerEvents;
+  }, [toggleModal]);
+
   return (
-    <>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button type="button" variant={"outline"}>
+          <FileStack size={18} className="me-2" />
+          DDA
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent onCloseAutoFocus={() => setToggleModal((prev) => !prev)}>
+        <DropdownMenuItem>
+          <Button className="w-full" size={"sm"} onClick={handleAcessarClick}>
+            <FileStack size={18} className="me-2" /> Acessar
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <Button
+              disabled={importDDAisPending}
+              title="Após importar arquivo de varredura DDA .RET, a autovinculação será realizada automaticamente..."
+              className="w-full"
+              size={"sm"}
+              variant={"tertiary"}
+              onClick={handleFileImportClick}
+            >
+              {importDDAisPending ? (
+                <FaSpinner size={18} className="animate-spin me-2" />
+              ) : (
+                <Upload size={18} className="me-2" />
+              )}{" "}
+              Importar
+            </Button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Button
+              title="Vincular os boletos aos vencimentos, isso já é feito automaticamente após a importação. Mas você pode utilizar a função para atualizar."
+              disabled={autoVincularDDAisPending}
+              className="w-full"
+              size={"sm"}
+              variant={"warning"}
+              onClick={handleAutoVincularClick}
+            >
+              {autoVincularDDAisPending ? (
+                <FaSpinner size={18} className="animate-spin me-2" />
+              ) : (
+                <Unplug size={18} className="me-2" />
+              )}{" "}
+              Autovincular
+            </Button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Button
+              disabled={exportDDAisPending}
+              className="w-full"
+              size={"sm"}
+              variant={"success"}
+              onClick={handleExportClick}
+            >
+              {exportDDAisPending ? (
+                <FaSpinner size={18} className="animate-spin me-2" />
+              ) : (
+                <Download size={18} className="me-2" />
+              )}{" "}
+              Exportar
+            </Button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Button
+              type="button"
+              size={"sm"}
+              variant={"destructive"}
+              disabled={limparDDAisPending}
+              title="Apaga todos os boletos do DDA que não estejam vinculados a Vencimentos e que sejam +30 dias inferior à data atual"
+              onClick={handleLimpezaClick}
+            >
+              {limparDDAisPending ? (
+                <FaSpinner size={18} className="animate-spin me-2" />
+              ) : (
+                <Trash size={18} className="me-2" />
+              )}{" "}
+              Excluir não vinculados
+            </Button>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+
       <input
         onChange={handleFileImportChange}
         ref={fileRef}
@@ -111,93 +204,7 @@ const BtnOptionsDDA = () => {
       >
         {<></>}
       </AlertPopUp>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button type="button" variant={"outline"}>
-            <FileStack size={18} className="me-2" />
-            DDA
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent onPointerDownOutside={(e) => e.preventDefault()}>
-          <DropdownMenuItem>
-            <Button className="w-full" size={"sm"} onClick={handleAcessarClick}>
-              <FileStack size={18} className="me-2" /> Acessar
-            </Button>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <Button
-                disabled={importDDAisPending}
-                title="Após importar arquivo de varredura DDA .RET, a autovinculação será realizada automaticamente..."
-                className="w-full"
-                size={"sm"}
-                variant={"tertiary"}
-                onClick={handleFileImportClick}
-              >
-                {importDDAisPending ? (
-                  <FaSpinner size={18} className="animate-spin me-2" />
-                ) : (
-                  <Upload size={18} className="me-2" />
-                )}{" "}
-                Importar
-              </Button>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Button
-                title="Vincular os boletos aos vencimentos, isso já é feito automaticamente após a importação. Mas você pode utilizar a função para atualizar."
-                disabled={autoVincularDDAisPending}
-                className="w-full"
-                size={"sm"}
-                variant={"warning"}
-                onClick={handleAutoVincularClick}
-              >
-                {autoVincularDDAisPending ? (
-                  <FaSpinner size={18} className="animate-spin me-2" />
-                ) : (
-                  <Unplug size={18} className="me-2" />
-                )}{" "}
-                Autovincular
-              </Button>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Button
-                disabled={exportDDAisPending}
-                className="w-full"
-                size={"sm"}
-                variant={"success"}
-                onClick={handleExportClick}
-              >
-                {exportDDAisPending ? (
-                  <FaSpinner size={18} className="animate-spin me-2" />
-                ) : (
-                  <Download size={18} className="me-2" />
-                )}{" "}
-                Exportar
-              </Button>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Button
-                type="button"
-                size={"sm"}
-                variant={"destructive"}
-                disabled={limparDDAisPending}
-                title="Apaga todos os boletos do DDA que não estejam vinculados a Vencimentos e que sejam +30 dias inferior à data atual"
-                onClick={handleLimpezaClick}
-              >
-                {limparDDAisPending ? (
-                  <FaSpinner size={18} className="animate-spin me-2" />
-                ) : (
-                  <Trash size={18} className="me-2" />
-                )}{" "}
-                Excluir não vinculados
-              </Button>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+    </DropdownMenu>
   );
 };
 
