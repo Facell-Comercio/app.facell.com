@@ -17,7 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ArrowDownUp, EraserIcon, FilterIcon, SlidersHorizontal } from "lucide-react";
+import { EraserIcon, FilterIcon, SlidersHorizontal } from "lucide-react";
 import { FaSpinner } from "react-icons/fa6";
 import { FiltersCampanha } from "../store";
 
@@ -53,11 +53,11 @@ export const FiltersClientesCampanha = ({
     await new Promise((resolve) => resolve(resetFilters()));
     refetch();
   };
-  const handleClickFilterPadrao = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    await new Promise((resolve) => resolve(setFilters({ planos_fidelizaveis: true })));
-    refetch();
-  };
+  // const handleClickFilterPadrao = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   e.stopPropagation();
+  //   await new Promise((resolve) => resolve(setFilters({ planos_fidelizaveis: true })));
+  //   refetch();
+  // };
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -192,26 +192,36 @@ export const FiltersClientesCampanha = ({
               </SelectContent>
             </Select>
           </div>
+          {!isSubcampanha && (
+            <div className="flex flex-col w-full gap-2">
+              <label className="text-sm font-medium">Planos Fidelizáveis</label>
+              <Select
+                value={filters.planos_fidelizaveis}
+                onValueChange={(e) => setFilters({ planos_fidelizaveis: e })}
+                disabled={isPending}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="SIM/NÃO" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">SIM/NÃO</SelectItem>
+                  <SelectItem value="1">SIM</SelectItem>
+                  <SelectItem value="0">NÃO</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
         <SheetFooter>
           <section className="flex flex-col gap-3 justify-end w-full">
-            {!isSubcampanha && (
+            {/* {!isSubcampanha && (
               <div className="flex justify-end">
                 <Button onClick={handleClickFilterPadrao} variant={"tertiary"} disabled={isPending}>
-                  {isPending ? (
-                    <>
-                      <FaSpinner size={18} className="me-2 animate-spin" />
-                      Filtrando...
-                    </>
-                  ) : (
-                    <>
-                      <ArrowDownUp size={18} className="me-2" />
-                      Filtro Padrão
-                    </>
-                  )}
+                  <Handshake size={18} className="me-2" />
+                  Planos Fidelizáveis
                 </Button>
               </div>
-            )}
+            )} */}
             <div className="flex gap-2 justify-end">
               <Button onClick={handleClickFilter} disabled={isPending}>
                 {isPending ? (

@@ -9,7 +9,7 @@ export interface FiltersCampanha {
   produto_fidelizado?: string;
   sem_contato?: string;
   id_campanha?: string;
-  planos_fidelizaveis?: boolean;
+  planos_fidelizaveis?: string;
 }
 
 const initialFilters: FiltersCampanha = {
@@ -21,7 +21,7 @@ const initialFilters: FiltersCampanha = {
   produto_fidelizado: "all",
   sem_contato: "all",
   id_campanha: "",
-  planos_fidelizaveis: undefined,
+  planos_fidelizaveis: "all",
 };
 
 interface useStoreCampanha {

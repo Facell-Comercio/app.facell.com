@@ -72,7 +72,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     size: 200,
     cell: (info) => {
       const label = info.getValue<string>();
-      return <div className="uppercase">{normalizeFirstAndLastName(label)}</div>;
+      return <div className="uppercase truncate">{normalizeFirstAndLastName(label)}</div>;
     },
   },
   {
