@@ -1,5 +1,6 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { Link, useLocation } from "react-router-dom";
 import Campanhas from "./campanhas/Campanhas";
 import Clientes from "./clientes/Clientes";
@@ -9,6 +10,8 @@ const MailingPage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("tab") || "";
+  const isGestor = checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER");
+
   return (
     <div className="flex p-4">
       <Tabs defaultValue={activeTab || "clientes"} className="w-full">
@@ -17,9 +20,11 @@ const MailingPage = () => {
             <Link to={`${uri}?tab=clientes`}>
               <TabsTrigger value="clientes">Clientes</TabsTrigger>
             </Link>
-            <Link to={`${uri}?tab=campanhas`}>
-              <TabsTrigger value="campanhas">Campanhas</TabsTrigger>
-            </Link>
+            {isGestor && (
+              <Link to={`${uri}?tab=campanhas`}>
+                <TabsTrigger value="campanhas">Campanhas</TabsTrigger>
+              </Link>
+            )}
 
             <ScrollBar orientation="horizontal" />
           </ScrollArea>

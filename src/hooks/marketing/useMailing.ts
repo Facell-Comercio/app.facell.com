@@ -36,6 +36,13 @@ interface DuplicateCampanhaProps extends NovaCampanhaSchema {
   filters: any;
   id_campanha: string;
 }
+
+interface UpdateCampanhaProps {
+  id: string;
+  active?: boolean;
+  public?: boolean;
+}
+
 const uri = "marketing/mailing/";
 export const useMailing = () => {
   const queryClient = useQueryClient();
@@ -190,6 +197,33 @@ export const useMailing = () => {
       placeholderData: keepPreviousData,
     });
 
+  const updateCampanha = () =>
+    useMutation({
+      mutationFn: async (data: UpdateCampanhaProps) => {
+        return await api.put(`${uri}/campanhas`, data).then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["marketing", "mailing"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
   const updateOneCliente = () =>
     useMutation({
       mutationFn: async (data: EditarClienteProps | null) => {
@@ -369,6 +403,7 @@ export const useMailing = () => {
     insertOneSubcampanha,
     duplicateCampanha,
 
+    updateCampanha,
     updateOneCliente,
     updateClienteLote,
     definirVendedores,

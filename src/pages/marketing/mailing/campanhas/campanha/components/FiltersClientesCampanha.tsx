@@ -17,7 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { EraserIcon, FilterIcon, SlidersHorizontal } from "lucide-react";
+import { ArrowDownUp, EraserIcon, FilterIcon, SlidersHorizontal } from "lucide-react";
 import { FaSpinner } from "react-icons/fa6";
 import { FiltersCampanha } from "../store";
 
@@ -51,6 +51,11 @@ export const FiltersClientesCampanha = ({
   const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     await new Promise((resolve) => resolve(resetFilters()));
+    refetch();
+  };
+  const handleClickFilterPadrao = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    await new Promise((resolve) => resolve(setFilters({ planos_fidelizaveis: true })));
     refetch();
   };
   return (
@@ -189,23 +194,44 @@ export const FiltersClientesCampanha = ({
           </div>
         </div>
         <SheetFooter>
-          <Button onClick={handleClickFilter} disabled={isPending}>
-            {isPending ? (
-              <>
-                <FaSpinner size={18} className="me-2 animate-spin" />
-                Filtrando...
-              </>
-            ) : (
-              <>
-                <FilterIcon size={18} className="me-2" />
-                Filtrar
-              </>
+          <section className="flex flex-col gap-3 justify-end w-full">
+            {!isSubcampanha && (
+              <div className="flex justify-end">
+                <Button onClick={handleClickFilterPadrao} variant={"tertiary"} disabled={isPending}>
+                  {isPending ? (
+                    <>
+                      <FaSpinner size={18} className="me-2 animate-spin" />
+                      Filtrando...
+                    </>
+                  ) : (
+                    <>
+                      <ArrowDownUp size={18} className="me-2" />
+                      Filtro Padrão
+                    </>
+                  )}
+                </Button>
+              </div>
             )}
-          </Button>
-          <Button variant={"secondary"} onClick={handleResetFilter} disabled={isPending}>
-            <EraserIcon size={18} className="me-2" />
-            Limpar
-          </Button>
+            <div className="flex gap-2 justify-end">
+              <Button onClick={handleClickFilter} disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <FaSpinner size={18} className="me-2 animate-spin" />
+                    Filtrando...
+                  </>
+                ) : (
+                  <>
+                    <FilterIcon size={18} className="me-2" />
+                    Filtrar
+                  </>
+                )}
+              </Button>
+              <Button variant={"secondary"} onClick={handleResetFilter} disabled={isPending}>
+                <EraserIcon size={18} className="me-2" />
+                Limpar
+              </Button>
+            </div>
+          </section>
         </SheetFooter>
       </SheetContent>
     </Sheet>

@@ -17,7 +17,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { CopyPlus, Plus, Smartphone, UserPen, X } from "lucide-react";
@@ -68,6 +70,7 @@ const ModalCampanha = () => {
     state.setFiltersLote,
     state.resetFiltersLote,
   ]);
+  const canEdit = checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER");
 
   const [idSubcampanha, setIdSubcampanha] = useState<string>("");
 
@@ -91,6 +94,9 @@ const ModalCampanha = () => {
     isPending: deleteClientesLoteIsPending,
     isSuccess: deleteClientesLoteIsSuccess,
   } = useMailing().deleteClientesLote();
+
+  const { mutate: updateCampanha, isPending: updateCampanhaIsPending } =
+    useMailing().updateCampanha();
 
   const handleResetFilterCampanha = async () => {
     if (id) {
@@ -149,8 +155,32 @@ const ModalCampanha = () => {
   return (
     <Dialog open={modalOpen} onOpenChange={() => handleClickCancel()}>
       <DialogContent className="max-w-7xl">
-        <DialogHeader>
-          <DialogTitle>Campanha: {data?.nome}</DialogTitle>
+        <DialogHeader className="flex flex-row gap-2 items-end">
+          <DialogTitle className="w-full">Campanha: {data?.nome}</DialogTitle>
+          {canEdit && (
+            <span className="flex gap-2">
+              <span className="flex items-center text-nowrap gap-2">
+                <label className="text-xs">Ativo</label>
+                <Switch
+                  checked={data?.active}
+                  onCheckedChange={(value) => updateCampanha({ id: id || "", active: value })}
+                  className="mt-0 h-6"
+                  defaultChecked={false}
+                  disabled={updateCampanhaIsPending || isLoading}
+                />
+              </span>
+              <span className="flex items-center text-nowrap gap-2">
+                <label className="text-xs">Público</label>
+                <Switch
+                  checked={data?.public}
+                  onCheckedChange={(value) => updateCampanha({ id: id || "", public: value })}
+                  className="mt-0 h-6"
+                  defaultChecked={false}
+                  disabled={updateCampanhaIsPending || isLoading}
+                />
+              </span>
+            </span>
+          )}
           <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="flex flex-col gap-3 max-h-[80vh] sm:max-h-[70vh]">
@@ -179,7 +209,7 @@ const ModalCampanha = () => {
                         isPending={isLoading || isFetching}
                         disabled={disabledCampanha}
                       />
-                      {data?.qtde_clientes > 0 && (
+                      {data?.qtde_clientes > 0 && canEdit && (
                         <span className="flex flex-wrap justify-end gap-2 w-full">
                           <ButtonMotivation
                             title="Exclui os clientes que foram filtrados..."
@@ -281,24 +311,28 @@ const ModalCampanha = () => {
                         />
                         <span className="flex flex-wrap justify-end gap-2">
                           <ButtonExportSubcampanhas disabled={disabledSubcampanha} />
-                          <Button
-                            variant={"warning"}
-                            onClick={() =>
-                              openModalDefinirAparelho(data_subcampanha?.qtde_clientes)
-                            }
-                            disabled={disabledSubcampanha}
-                          >
-                            <Smartphone className="me-2" size={18} /> Definir Aparelhos
-                          </Button>
-                          <Button
-                            variant={"tertiary"}
-                            onClick={() =>
-                              openModalDefinirVendedores(data_subcampanha?.qtde_clientes)
-                            }
-                            disabled={disabledSubcampanha}
-                          >
-                            <UserPen className="me-2" size={18} /> Definir Vendedores
-                          </Button>
+                          {canEdit && (
+                            <>
+                              <Button
+                                variant={"warning"}
+                                onClick={() =>
+                                  openModalDefinirAparelho(data_subcampanha?.qtde_clientes)
+                                }
+                                disabled={disabledSubcampanha}
+                              >
+                                <Smartphone className="me-2" size={18} /> Definir Aparelhos
+                              </Button>
+                              <Button
+                                variant={"tertiary"}
+                                onClick={() =>
+                                  openModalDefinirVendedores(data_subcampanha?.qtde_clientes)
+                                }
+                                disabled={disabledSubcampanha}
+                              >
+                                <UserPen className="me-2" size={18} /> Definir Vendedores
+                              </Button>
+                            </>
+                          )}
                         </span>
                       </span>
                       <div className="grid bg-background rounded-lg ">

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate, normalizeFirstAndLastName } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pen } from "lucide-react";
@@ -44,18 +45,20 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     size: 80,
     cell: (info) => {
       const id = info.getValue<string>();
-
+      const canEdit = checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER");
       return (
         <div className="flex gap-2 uppercase">
-          <Button
-            size={"xs"}
-            variant={"warning"}
-            onClick={() => {
-              openModalEditarCliente(id);
-            }}
-          >
-            <Pen size={16} />
-          </Button>
+          {canEdit && (
+            <Button
+              size={"xs"}
+              variant={"warning"}
+              onClick={() => {
+                openModalEditarCliente(id);
+              }}
+            >
+              <Pen size={16} />
+            </Button>
+          )}
           <Button size={"xs"} onClick={() => openModalVerCliente(id)}>
             <Eye size={16} />
           </Button>
@@ -132,15 +135,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
       return <div className="uppercase truncate">{normalizeCurrency(label)}</div>;
     },
   },
-  {
-    accessorKey: "plano_atual",
-    header: "PLANO ATUAL",
-    size: 200,
-    cell: (info) => {
-      const label = info.getValue<string>();
-      return <div className="uppercase truncate">{label || "-"}</div>;
-    },
-  },
+
   {
     accessorKey: "status_plano",
     header: "STATUS PLANO",
@@ -151,7 +146,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     },
   },
   {
-    accessorKey: "fidelizacao_1",
+    accessorKey: "fidelizacao1",
     header: "FIDELIZAÇÃO 1",
     size: 200,
     cell: (info) => {
@@ -160,7 +155,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     },
   },
   {
-    accessorKey: "fidelizacao_2",
+    accessorKey: "fidelizacao2",
     header: "FIDELIZAÇÃO 2",
     size: 200,
     cell: (info) => {
@@ -169,7 +164,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     },
   },
   {
-    accessorKey: "fidelizacao_3",
+    accessorKey: "fidelizacao3",
     header: "FIDELIZAÇÃO 3",
     size: 200,
     cell: (info) => {
@@ -198,6 +193,15 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
   {
     accessorKey: "produto_ofertado",
     header: "PRODUTO OFERTADO",
+    size: 200,
+    cell: (info) => {
+      const label = info.getValue<string>();
+      return <div className="uppercase truncate">{label || "-"}</div>;
+    },
+  },
+  {
+    accessorKey: "plano_atual",
+    header: "PLANO ATUAL",
     size: 200,
     cell: (info) => {
       const label = info.getValue<string>();

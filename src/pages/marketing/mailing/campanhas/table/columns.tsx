@@ -71,4 +71,16 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
       );
     },
   },
+  {
+    header: "PÚBLICO",
+    accessorKey: "public",
+    cell: (info) => {
+      const label = info.getValue<number>();
+      return (
+        <span className={`uppercase ${label ? "text-green-500" : "text-red-500"}`}>
+          {label ? "SIM" : "NÃO"}
+        </span>
+      );
+    },
+  },
 ];

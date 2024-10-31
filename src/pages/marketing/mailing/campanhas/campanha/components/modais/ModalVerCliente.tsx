@@ -27,12 +27,13 @@ import { useStoreCampanha } from "../../store";
 export type ResultadoContato = {
   id: number;
   id_cliente: number;
-  datetime_contato: string;
+  datetime_contato_resposta: string;
   data_contato: string;
   hora_contato: string;
   status_contato: string;
   operador_contato: string;
   observacao: string;
+  duracao_chamada: string;
 };
 
 const ModalVerCliente = () => {
@@ -208,6 +209,7 @@ const ModalVerCliente = () => {
                     <TableRow>
                       <TableHead className="text-foreground">Status Contato</TableHead>
                       <TableHead className="text-foreground">Momento Contato</TableHead>
+                      <TableHead className="text-foreground">Duração Chamada</TableHead>
                       <TableHead className="text-foreground">Operador Contato</TableHead>
                       <TableHead className="text-foreground">Observação</TableHead>
                     </TableRow>
@@ -217,8 +219,9 @@ const ModalVerCliente = () => {
                       <TableRow className="uppercase" key={`${resultado.id} - ${index}`}>
                         <TableCell>{resultado.status_contato}</TableCell>
                         <TableCell>
-                          {formatDate(resultado.datetime_contato, "dd/MM/yyyy HH:mm")}
+                          {formatDate(resultado.datetime_contato_resposta, "dd/MM/yyyy HH:mm")}
                         </TableCell>
+                        <TableCell>{resultado.duracao_chamada} segundos</TableCell>
                         <TableCell>{resultado.operador_contato}</TableCell>
                         <TableCell>{resultado.observacao || "-"}</TableCell>
                       </TableRow>
