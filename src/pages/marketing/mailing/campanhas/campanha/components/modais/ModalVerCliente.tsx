@@ -24,17 +24,17 @@ import { formatDate } from "date-fns";
 import { BadgePercent, Ban, Handshake, Info, MessageCircle } from "lucide-react";
 import { useStoreCampanha } from "../../store";
 
-export type ResultadoContato = {
+export type ResultadoInteracao = {
   id: number;
   plataforma: string;
   id_cliente: number;
   datetime_contato_resposta: string;
   data_contato: string;
   hora_contato: string;
-  status_contato: string;
-  operador_contato: string;
+  status: string;
+  operador: string;
   observacao: string;
-  duracao_chamada: string;
+  duracao: string;
 };
 
 const ModalVerCliente = () => {
@@ -45,7 +45,7 @@ const ModalVerCliente = () => {
   ]);
 
   const { data } = useMailing().getOneClienteCampanha(id);
-  const interacoes: ResultadoContato[] = data?.interacoes || [];
+  const interacoes: ResultadoInteracao[] = data?.interacoes || [];
 
   function handleClickCancel() {
     closeModal();
@@ -217,15 +217,15 @@ const ModalVerCliente = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {interacoes.map((resultado: ResultadoContato, index) => (
+                    {interacoes.map((resultado: ResultadoInteracao, index) => (
                       <TableRow className="uppercase" key={`${resultado.id} - ${index}`}>
                         <TableCell>{resultado.plataforma}</TableCell>
-                        <TableCell>{resultado.status_contato}</TableCell>
+                        <TableCell>{resultado.status}</TableCell>
                         <TableCell>
                           {formatDate(resultado.datetime_contato_resposta, "dd/MM/yyyy HH:mm")}
                         </TableCell>
-                        <TableCell>{resultado.duracao_chamada} seg.</TableCell>
-                        <TableCell>{resultado.operador_contato}</TableCell>
+                        <TableCell>{resultado.duracao} seg.</TableCell>
+                        <TableCell>{resultado.operador}</TableCell>
                         <TableCell>{resultado.observacao || "-"}</TableCell>
                       </TableRow>
                     ))}
