@@ -96,7 +96,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     size: 150,
     cell: (info) => {
       const label = info.getValue<string>();
-      return <div className="uppercase">{label || "- "}</div>;
+      return <div className="uppercase truncate">{label || "- "}</div>;
     },
   },
   {
@@ -105,7 +105,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     size: 150,
     cell: (info) => {
       const label = info.getValue<string>();
-      return <div className="uppercase">{normalizeDate(label || "")}</div>;
+      return <div className="uppercase truncate">{normalizeDate(label || "")}</div>;
     },
   },
   {
@@ -187,7 +187,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     size: 200,
     cell: (info) => {
       const label = info.getValue<string>();
-      return <div className="uppercase">{normalizeDate(label || "") || "-"}</div>;
+      return <div className="uppercase truncate">{normalizeDate(label || "") || "-"}</div>;
     },
   },
   {

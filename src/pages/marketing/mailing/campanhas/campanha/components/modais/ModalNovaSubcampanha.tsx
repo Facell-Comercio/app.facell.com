@@ -29,6 +29,7 @@ const ModalNovaSubcampanha = () => {
       state.setIsPending,
       state.resetFilters,
     ]);
+  const [nomeSubcampanha, setNomeSubcampanha] = useState("");
 
   const {
     mutate: insertOneSubcampanha,
@@ -67,7 +68,6 @@ const ModalNovaSubcampanha = () => {
     );
     await new Promise((resolve) => resolve(resetFilters()));
   }
-  const [nomeSubcampanha, setNomeSubcampanha] = useState("");
   return (
     <Dialog open={modalOpen} onOpenChange={() => handleClickCancel()}>
       <DialogContent className="max-w-3xl">

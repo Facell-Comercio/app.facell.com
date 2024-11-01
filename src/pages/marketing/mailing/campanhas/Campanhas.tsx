@@ -27,15 +27,17 @@ const Campanhas = () => {
 
   return (
     <div className="flex flex-col gap-3 ">
-      <span className="flex gap-3">
-        <SelectMes value={filters.mes} onValueChange={(mes) => setFilters({ mes })} />
-        <Input
-          type="number"
-          min={2023}
-          max={new Date().getFullYear() + 1}
-          value={filters.ano}
-          onChange={(e) => setFilters({ ano: e.target.value })}
-        />
+      <span className="flex justify-between gap-3">
+        <span className="flex gap-2">
+          <SelectMes value={filters.mes} onValueChange={(mes) => setFilters({ mes })} />
+          <Input
+            type="number"
+            min={2023}
+            max={new Date().getFullYear() + 1}
+            value={filters.ano}
+            onChange={(e) => setFilters({ ano: e.target.value })}
+          />
+        </span>
         <Button
           onClick={() => {
             reimportarEvolux({ from: new Date(), to: new Date() });
