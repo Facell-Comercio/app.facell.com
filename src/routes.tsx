@@ -25,6 +25,7 @@ import ConciliacaoBancariaPage from "./pages/financeiro/extratos-bancarios/Page.
 import OrcamentoPage from "./pages/financeiro/orcamento/Orcamento.tsx";
 import RelatoriosPage from "./pages/financeiro/relatorios/Relatorios.tsx";
 import TesourariaPage from "./pages/financeiro/tesouraria/Tesouraria.tsx";
+import CadastrosMarketingPage from "./pages/marketing/cadastros/CadastrosMarketing.tsx";
 import MailingPage from "./pages/marketing/mailing/Mailing.tsx";
 import Perfil from "./pages/perfil/index.tsx";
 import Colaboradores from "./pages/pessoal/colaboradores/Colaboradores.tsx";
@@ -122,6 +123,16 @@ const AppRoutes = () => {
                 )
               }
               path="mailing"
+            />
+            <Route
+              element={
+                checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER") ? (
+                  <CadastrosMarketingPage />
+                ) : (
+                  <NotAuthorizedPage />
+                )
+              }
+              path="cadastros"
             />
           </Route>
 

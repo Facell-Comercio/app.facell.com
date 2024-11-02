@@ -309,6 +309,13 @@ export const sidebarItems: SidebarItem[] = [
         uri: "marketing/mailing",
         visible: () => checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER"),
       },
+      {
+        name: "Cadastros",
+        type: "link",
+        shortName: "C",
+        uri: "marketing/cadastros",
+        visible: () => checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER"),
+      },
     ],
   },
 
