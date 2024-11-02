@@ -30,7 +30,7 @@ const ModalVendedores = ({
   const [search, setSearch] = useState<string>("");
 
   const { data, isError, refetch } = useCadastros().getAllVendedores({
-    filters: { termo: search },
+    filters: { termo: search, active: 1 },
   });
 
   async function handleSearch(searchText: string) {

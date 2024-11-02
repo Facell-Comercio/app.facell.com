@@ -12,7 +12,7 @@ interface useStorePlano {
   editIsPending: (bool: boolean) => void;
 }
 
-export const useStorePlano = create<useStorePlano>((set) => ({
+export const useStorePlanoMarketing = create<useStorePlano>((set) => ({
   id: null,
   modalEditing: false,
   modalOpen: false,
