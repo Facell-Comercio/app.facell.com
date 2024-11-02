@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 interface IModalVendedores {
@@ -30,11 +29,8 @@ const ModalVendedores = ({
 }: IModalVendedores) => {
   const [search, setSearch] = useState<string>("");
 
-  const { data, isError, refetch } = useQuery({
-    queryKey: ["marketing", "vendedores", "lista", { termo: search }],
-    queryFn: async () =>
-      await fetchApi.marketing.mailing.getVendedores({ filters: { termo: search } }),
-    enabled: open,
+  const { data, isError, refetch } = useCadastros().getAllVendedores({
+    filters: { termo: search },
   });
 
   async function handleSearch(searchText: string) {
@@ -75,7 +71,7 @@ export default ModalVendedores;
 
 import * as React from "react";
 
-import fetchApi from "@/api/fetchApi";
+import { useCadastros } from "@/hooks/marketing/useCadastros";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
 interface RowVirtualizerFixedProps {
