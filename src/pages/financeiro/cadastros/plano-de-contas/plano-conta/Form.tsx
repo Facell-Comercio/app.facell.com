@@ -8,7 +8,7 @@ import { Fingerprint, Info } from "lucide-react";
 import { useEffect } from "react";
 import { PlanoContasSchema } from "./Modal";
 import { useFormPlanoContaData } from "./form-data";
-import { useStorePlanoMailingContas } from "./store";
+import { useStorePlanoContas } from "./store";
 
 const FormPlanoContas = ({
   id,
@@ -31,14 +31,15 @@ const FormPlanoContas = ({
     isSuccess: updateIsSuccess,
     isError: updateIsError,
   } = usePlanoContas().update();
-  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
-    useStorePlanoMailingContas((state) => [
+  const [modalEditing, editModal, closeModal, editIsPending, isPending] = useStorePlanoContas(
+    (state) => [
       state.modalEditing,
       state.editModal,
       state.closeModal,
       state.editIsPending,
       state.isPending,
-    ]);
+    ]
+  );
 
   const onSubmitData = (data: PlanoContasSchema) => {
     // console.log(data);

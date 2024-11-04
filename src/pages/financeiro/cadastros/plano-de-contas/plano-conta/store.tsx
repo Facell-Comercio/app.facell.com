@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface useStorePlanoMailingContas {
+interface useStorePlanoContas {
   id?: string | null;
   modalEditing: boolean;
   modalOpen: boolean;
@@ -12,7 +12,7 @@ interface useStorePlanoMailingContas {
   editIsPending: (bool: boolean) => void;
 }
 
-export const useStorePlanoMailingContas = create<useStorePlanoMailingContas>((set) => ({
+export const useStorePlanoContas = create<useStorePlanoContas>((set) => ({
   id: null,
   modalEditing: false,
   modalOpen: false,

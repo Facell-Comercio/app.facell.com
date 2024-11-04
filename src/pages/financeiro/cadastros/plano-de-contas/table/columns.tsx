@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
-import { useStorePlanoMailingContas } from "../plano-conta/store";
+import { useStorePlanoContas } from "../plano-conta/store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -15,7 +15,7 @@ export type RowPlanoConta = {
   ativo: string;
 };
 
-const openModal = useStorePlanoMailingContas.getState().openModal;
+const openModal = useStorePlanoContas.getState().openModal;
 
 export const columnsTable: ColumnDef<RowPlanoConta>[] = [
   {

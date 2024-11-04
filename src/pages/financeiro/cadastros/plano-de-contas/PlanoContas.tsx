@@ -2,7 +2,7 @@ import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { usePlanoContas } from "@/hooks/financeiro/usePlanoConta";
 import ModalPlanoContas from "./plano-conta/Modal";
-import { useStorePlanoMailingContas } from "./plano-conta/store";
+import { useStorePlanoContas } from "./plano-conta/store";
 import FiltersPlanoContas from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTablePlanoContas } from "./table/store-table";
@@ -19,8 +19,8 @@ const PlanoContas = () => {
   });
   const rows = data?.data?.rows || [];
   const rowCount = data?.data?.rowCount || 0;
-  const openModal = useStorePlanoMailingContas().openModal;
-  const editModal = useStorePlanoMailingContas().editModal;
+  const openModal = useStorePlanoContas().openModal;
+  const editModal = useStorePlanoContas().editModal;
   function handleClickNewPlanoContas() {
     openModal("");
     editModal(true);
