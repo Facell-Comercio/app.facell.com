@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useStoreCampanha } from "../../store";
 
-const ModalNovaSubcampanha = () => {
+const ModalNovaSubcampanha = ({ refetch }: { refetch: () => void }) => {
   const [id, qtde_clientes, modalOpen, closeModal, filters, isPending, setIsPending, resetFilters] =
     useStoreCampanha((state) => [
       state.id,
@@ -49,7 +49,7 @@ const ModalNovaSubcampanha = () => {
       setIsPending(false);
     }
   }, [insertOneSubcampanhaIsPending]);
-  useEffect(() => {});
+
   function handleClickCancel() {
     closeModal();
   }
@@ -65,9 +65,14 @@ const ModalNovaSubcampanha = () => {
     insertOneSubcampanha({ nome: nomeSubcampanha, filters, id_parent: id || "" });
   }
 
+  async function resetModal() {
+    await new Promise((resolve) => resolve(resetFilters()));
+    refetch();
+    setNomeSubcampanha("");
+  }
   useEffect(() => {
-    if (insertOneSubcampanhaSuccess) {
-      resetFilters();
+    if (insertOneSubcampanhaSuccess && nomeSubcampanha) {
+      resetModal();
     }
   }, [insertOneSubcampanhaIsPending]);
 

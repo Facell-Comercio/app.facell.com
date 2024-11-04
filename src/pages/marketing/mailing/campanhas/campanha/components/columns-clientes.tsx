@@ -37,7 +37,7 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
   {
     accessorKey: "status_plano",
     header: "STATUS",
-    size: 100,
+    // size: 100,
     cell: (info) => {
       const label = info.getValue<string>();
       return <div className="uppercase truncate">{label || "-"}</div>;
@@ -47,7 +47,7 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
   {
     accessorKey: "gsm",
     header: "GSM",
-    size: 100,
+    // size: 100,
     cell: (info) => {
       const label = info.getValue<string>();
       return <div className="uppercase truncate">{label || "- "}</div>;
@@ -56,13 +56,13 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
   {
     accessorKey: "cpf",
     header: "CPF",
-    size: 100,
+    // size: 100,
   },
 
   {
     accessorKey: "cliente",
     header: "NOME",
-    size: 200,
+    // size: 200,
     cell: (info) => {
       const label = info.getValue<string>();
       return <div className="uppercase truncate">{normalizeFirstAndLastName(label)}</div>;
@@ -71,7 +71,7 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
   {
     accessorKey: "plano_atual",
     header: "PLANO ATUAL",
-    size: 200,
+    // size: 200,
     cell: (info) => {
       const label = info.getValue<string>();
       return <div className="uppercase truncate">{label || "-"}</div>;
@@ -80,7 +80,7 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
   {
     accessorKey: "data_ultima_compra",
     header: "DATA ÚLTIMA COMPRA",
-    size: 150,
+    // size: 150,
     cell: (info) => {
       const label = info.getValue<string>();
       return <div className="uppercase truncate">{normalizeDate(label)}</div>;
@@ -89,7 +89,7 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
   {
     accessorKey: "produto_ultima_compra",
     header: "PRODUTO ÚLTIMA COMPRA",
-    size: 200,
+    // size: 200,
     cell: (info) => {
       const label = info.getValue<string>();
       return <div className="uppercase truncate">{label}</div>;
@@ -98,7 +98,7 @@ export const columnsTableClientes: ColumnDef<ClienteProps>[] = [
   {
     accessorKey: "valor_caixa",
     header: "VALOR CAIXA",
-    size: 120,
+    // size: 120,
     cell: (info) => {
       const label = info.getValue<string>();
       return <div className="uppercase truncate">{normalizeCurrency(label)}</div>;

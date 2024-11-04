@@ -19,7 +19,12 @@ import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useStoreCampanha } from "../../store";
 
-const ModalDuplicarCampanha = () => {
+const defaultFormData = {
+  nome: "",
+  data_inicio: undefined,
+};
+
+const ModalDuplicarCampanha = ({ refetch }: { refetch: () => void }) => {
   const [id, qtde_clientes, modalOpen, closeModal, filters, isPending, setIsPending, resetFilters] =
     useStoreCampanha((state) => [
       state.id,
@@ -54,10 +59,7 @@ const ModalDuplicarCampanha = () => {
   function handleClickCancel() {
     closeModal();
   }
-  const [formData, setFormData] = useState<NovaCampanhaSchema>({
-    nome: "",
-    data_inicio: undefined,
-  });
+  const [formData, setFormData] = useState<NovaCampanhaSchema>(defaultFormData);
   async function handleSubmit() {
     const nome = (formData && formData.nome) || "";
     if (nome.length < 5 || nome.length > 50) {
@@ -80,9 +82,15 @@ const ModalDuplicarCampanha = () => {
     duplicateCampanha({ ...formData, filters, id_campanha: id || "" });
   }
 
+  async function resetModal() {
+    await new Promise((resolve) => resolve(resetFilters()));
+    refetch();
+    setFormData(defaultFormData);
+  }
+
   useEffect(() => {
-    if (duplicateCampanhaSuccess) {
-      resetFilters();
+    if (duplicateCampanhaSuccess && defaultFormData.nome) {
+      resetModal();
     }
   }, [duplicateCampanhaIsPending]);
 
