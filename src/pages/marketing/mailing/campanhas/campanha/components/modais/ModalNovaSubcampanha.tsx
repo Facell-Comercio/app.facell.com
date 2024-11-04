@@ -29,6 +29,7 @@ const ModalNovaSubcampanha = () => {
       state.setIsPending,
       state.resetFilters,
     ]);
+  const [nomeSubcampanha, setNomeSubcampanha] = useState("");
 
   const {
     mutate: insertOneSubcampanha,
@@ -61,13 +62,15 @@ const ModalNovaSubcampanha = () => {
       });
       return;
     }
-
-    await new Promise((resolve) =>
-      resolve(insertOneSubcampanha({ nome: nomeSubcampanha, filters, id_parent: id || "" }))
-    );
-    await new Promise((resolve) => resolve(resetFilters()));
+    insertOneSubcampanha({ nome: nomeSubcampanha, filters, id_parent: id || "" });
   }
-  const [nomeSubcampanha, setNomeSubcampanha] = useState("");
+
+  useEffect(() => {
+    if (insertOneSubcampanhaSuccess) {
+      resetFilters();
+    }
+  }, [insertOneSubcampanhaIsPending]);
+
   return (
     <Dialog open={modalOpen} onOpenChange={() => handleClickCancel()}>
       <DialogContent className="max-w-3xl">
@@ -82,6 +85,7 @@ const ModalNovaSubcampanha = () => {
               value={nomeSubcampanha}
               onChange={(e) => setNomeSubcampanha(e.target.value)}
               className="flex-1"
+              inputClass="uppercase"
               placeholder="NOME DA SUBCAMPANHA"
             />
             <InputWithLabel

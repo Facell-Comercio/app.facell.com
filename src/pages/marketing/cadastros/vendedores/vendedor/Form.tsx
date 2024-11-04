@@ -57,8 +57,7 @@ const FormVendedor = ({
 
   // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
-  const isActive = !!form.watch("active");
-  console.log(form.watch("active"));
+  const isActive = !!+(form.watch("active") || 0);
 
   return (
     <div className="max-w-full overflow-x-hidden">

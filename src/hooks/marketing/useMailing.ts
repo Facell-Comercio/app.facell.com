@@ -43,7 +43,7 @@ interface UpdateCampanhaProps {
   public?: boolean;
 }
 
-const uri = "marketing/mailing/";
+const uri = "marketing/mailing";
 export const useMailing = () => {
   const queryClient = useQueryClient();
 
@@ -79,7 +79,6 @@ export const useMailing = () => {
           });
         }
       },
-      placeholderData: keepPreviousData,
     });
 
   const getOneClienteCampanha = (id?: string | null) =>
@@ -106,7 +105,7 @@ export const useMailing = () => {
   const insertOneCampanha = () =>
     useMutation({
       mutationFn: async (data: InsertClientesProps) => {
-        return await api.post(`${uri}/clientes`, data).then((response) => response.data);
+        return await api.post(`${uri}/nova-campanha`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -363,6 +362,36 @@ export const useMailing = () => {
       },
     });
 
+  const deleteSubcampanha = () =>
+    useMutation({
+      mutationFn: async (id_campanha: string) => {
+        return await api
+          .delete(`${uri}/campanhas/${id_campanha}`)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["marketing", "mailing"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
   const reimportarEvolux = () =>
     useMutation({
       mutationFn: async (date_range: DateRange) => {
@@ -409,6 +438,7 @@ export const useMailing = () => {
     definirVendedores,
 
     deleteClientesLote,
+    deleteSubcampanha,
     reimportarEvolux,
     exportSubcampanha,
   };

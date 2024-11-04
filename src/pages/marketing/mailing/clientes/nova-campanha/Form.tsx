@@ -19,10 +19,11 @@ const FormNovaCampanha = ({
     isError: insertOneCampanhaIsError,
   } = useMailing().insertOneCampanha();
 
-  const [closeModal, qtde_total, setIsPending] = useStoreNovaCampanha((state) => [
+  const [closeModal, qtde_total, setIsPending, isPending] = useStoreNovaCampanha((state) => [
     state.closeModal,
     state.qtde_total,
     state.setIsPending,
+    state.isPending,
   ]);
   const filters = useStoreTableClientes().filters;
 
@@ -62,16 +63,19 @@ const FormNovaCampanha = ({
                 <div className="flex flex-wrap gap-3 items-end">
                   <FormInput
                     className="min-w-[30ch] flex-1"
+                    inputClass="uppercase"
                     name="nome"
                     label="Nome:"
                     placeholder="NOME DA NOVA CAMPANHA"
                     control={form.control}
+                    disabled={isPending}
                   />
                   <FormDateInput
                     name="data_inicio"
                     label="Data de Início:"
                     className="min-w-[30ch] flex-1"
                     control={form.control}
+                    disabled={isPending}
                   />
                   <FormInput
                     type="number"
@@ -80,6 +84,7 @@ const FormNovaCampanha = ({
                     readOnly
                     label="Quantidade Total de Clientes:"
                     control={form.control}
+                    disabled={isPending}
                     min={1}
                   />
                 </div>

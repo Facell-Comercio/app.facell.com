@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCadastros } from "@/hooks/marketing/useCadastros";
 import { useRef } from "react";
 import FormFornecedor from "./Form";
-import { useStorePlanoMailing } from "./store";
+import { useStorePlanoMarketingMailing } from "./store";
 
 export type PlanoSchema = {
   id: string;
@@ -29,16 +29,15 @@ const initialPropsPlano: PlanoSchema = {
 };
 
 const ModalPlano = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStorePlanoMailing(
-    (state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
+    useStorePlanoMarketingMailing((state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]
-  );
+    ]);
 
   const formRef = useRef(null);
 

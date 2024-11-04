@@ -36,6 +36,7 @@ interface useStoreCampanha {
   closeModal: () => void;
 
   setIsPending: (bool: boolean) => void;
+  resetId: () => void;
 
   // FILTROS
   filters: FiltersCampanha;
@@ -89,6 +90,7 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
   openModal: (id: string) => set({ modalOpen: true, id }),
   closeModal: () => set({ modalOpen: false, id: null }),
   setIsPending: (bool: boolean) => set({ isPending: bool }),
+  resetId: () => set({ id: null }),
 
   // FILTERS
   filters: initialFilters,

@@ -12,7 +12,8 @@ interface useStorePlanoMailing {
   editIsPending: (bool: boolean) => void;
 }
 
-export const useStorePlanoMailing = create<useStorePlanoMailing>((set) => ({
+// FOI NECESSÁRIO COLOCAR ESSE NOME GIGANTE POIS ESTAVA DANDO ERRO EM DESENVOLVIMENTO (BUG)
+export const useStorePlanoMarketingMailing = create<useStorePlano>((set) => ({
   id: null,
   modalEditing: false,
   modalOpen: false,

@@ -6,7 +6,7 @@ import FilterPlanos from "../planos/table/Filters";
 import { columnsTable } from "../planos/table/columns";
 import { useStoreTablePlanos } from "../planos/table/store-table";
 import ModalPlano from "./plano/Modal";
-import { useStorePlanoMailing } from "./plano/store";
+import { useStorePlanoMarketingMailing } from "./plano/store";
 
 const Planos = () => {
   const [pagination, setPagination, filters] = useStoreTablePlanos((state) => [
@@ -21,8 +21,8 @@ const Planos = () => {
   const rows = data?.rows || [];
   const rowCount = data?.rowCount || 0;
 
-  const openModal = useStorePlanoMailing().openModal;
-  const editModal = useStorePlanoMailing().editModal;
+  const openModal = useStorePlanoMarketingMailing().openModal;
+  const editModal = useStorePlanoMarketingMailing().editModal;
   function handleClickNewPlano() {
     openModal("");
     editModal(true);
