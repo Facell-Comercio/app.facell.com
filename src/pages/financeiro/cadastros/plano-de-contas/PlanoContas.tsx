@@ -2,23 +2,25 @@ import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
 import { usePlanoContas } from "@/hooks/financeiro/usePlanoConta";
 import ModalPlanoContas from "./plano-conta/Modal";
-import { useStorePlanoContas } from "./plano-conta/store";
+import { useStorePlanoMailingContas } from "./plano-conta/store";
 import FiltersPlanoContas from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTablePlanoContas } from "./table/store-table";
 
 const PlanoContas = () => {
-  const [pagination, setPagination, filters] = useStoreTablePlanoContas(
-    (state) => [state.pagination, state.setPagination, state.filters]
-  );
+  const [pagination, setPagination, filters] = useStoreTablePlanoContas((state) => [
+    state.pagination,
+    state.setPagination,
+    state.filters,
+  ]);
   const { data, refetch, isLoading } = usePlanoContas().getAll({
     pagination,
     filters,
   });
   const rows = data?.data?.rows || [];
   const rowCount = data?.data?.rowCount || 0;
-  const openModal = useStorePlanoContas().openModal;
-  const editModal = useStorePlanoContas().editModal;
+  const openModal = useStorePlanoMailingContas().openModal;
+  const editModal = useStorePlanoMailingContas().editModal;
   function handleClickNewPlanoContas() {
     openModal("");
     editModal(true);

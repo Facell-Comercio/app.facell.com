@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { usePlanoContas } from "@/hooks/financeiro/usePlanoConta";
 import { useRef } from "react";
 import FormPlanoContas from "./Form";
-import { useStorePlanoContas } from "./store";
+import { useStorePlanoMailingContas } from "./store";
 
 export type PlanoContasSchema = {
   id: string;
@@ -47,16 +47,15 @@ const initialPropsPlanoContas: PlanoContasSchema = {
 };
 
 const ModalPlanoContas = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStorePlanoContas(
-    (state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
+    useStorePlanoMailingContas((state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]
-  );
+    ]);
   const formRef = useRef(null);
 
   const { data, isLoading } = usePlanoContas().getOne(id);

@@ -8,7 +8,7 @@ import { Fingerprint, Info } from "lucide-react";
 import { useEffect } from "react";
 import { PlanoContasSchema } from "./Modal";
 import { useFormPlanoContaData } from "./form-data";
-import { useStorePlanoContas } from "./store";
+import { useStorePlanoMailingContas } from "./store";
 
 const FormPlanoContas = ({
   id,
@@ -32,7 +32,7 @@ const FormPlanoContas = ({
     isError: updateIsError,
   } = usePlanoContas().update();
   const [modalEditing, editModal, closeModal, editIsPending, isPending] =
-    useStorePlanoContas((state) => [
+    useStorePlanoMailingContas((state) => [
       state.modalEditing,
       state.editModal,
       state.closeModal,
@@ -73,9 +73,7 @@ const FormPlanoContas = ({
                 <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
                     <Fingerprint />{" "}
-                    <span className="text-lg font-bold ">
-                      Identificação do Plano Contas
-                    </span>
+                    <span className="text-lg font-bold ">Identificação do Plano Contas</span>
                   </div>
                   <FormSwitch
                     name="active"
@@ -86,12 +84,7 @@ const FormPlanoContas = ({
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                  <FormInput
-                    name="id"
-                    type="hidden"
-                    label="ID"
-                    control={form.control}
-                  />
+                  <FormInput name="id" type="hidden" label="ID" control={form.control} />
                   <FormInput
                     className="flex-1 min-w-40"
                     name="codigo"
@@ -125,8 +118,7 @@ const FormPlanoContas = ({
 
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex items-center gap-2 mb-3">
-                  <Info />{" "}
-                  <span className="text-lg font-bold ">Parâmetros</span>
+                  <Info /> <span className="text-lg font-bold ">Parâmetros</span>
                 </div>
                 <div className="flex gap-3 flex-wrap">
                   <FormInput

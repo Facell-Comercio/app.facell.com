@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { TipoPlanosCombobox } from "../../components/TipoPlanosCombobox";
 import { useFormPlanoData } from "./form-data";
 import { PlanoSchema } from "./Modal";
-import { useStorePlano } from "./store";
+import { useStorePlanoMailing } from "./store";
 
 const FormPlano = ({
   id,
@@ -28,7 +28,7 @@ const FormPlano = ({
     isSuccess: updateIsSuccess,
     isError: updateIsError,
   } = useCadastros().updatePlano();
-  const [modalEditing, editModal, closeModal, editIsPending] = useStorePlano((state) => [
+  const [modalEditing, editModal, closeModal, editIsPending] = useStorePlanoMailing((state) => [
     state.modalEditing,
     state.editModal,
     state.closeModal,
