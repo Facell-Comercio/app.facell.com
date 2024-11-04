@@ -97,12 +97,12 @@ const ModalRecorrencias = () => {
   const recorrencias: recorrenciaProps[] = useMemo(() => {
     let array
     if (termo) {
-      let termoLower = termo.toLowerCase();
+      let termoLower = termo?.toLowerCase();
       array = rows.filter(rec=>{
-        let fornecedor = rec.fornecedor.toLowerCase();
-        let descricao = rec.descricao.toLowerCase();
-        let filial = rec.filial.toLowerCase();
-        let grupo_economico = rec.grupo_economico.toLowerCase();
+        let fornecedor = rec.fornecedor?.toLowerCase();
+        let descricao = rec.descricao?.toLowerCase();
+        let filial = rec.filial?.toLowerCase();
+        let grupo_economico = rec.grupo_economico?.toLowerCase();
         let data_vencimento = formatDate(rec.data_vencimento,'dd/MM/yyyy');
         
         if(fornecedor.includes(termoLower) || descricao.includes(termoLower) || filial.includes(termoLower) || grupo_economico.includes(termoLower)|| data_vencimento.includes(termoLower)){
