@@ -24,8 +24,14 @@ export namespace mailing {
   };
 
   // FILTROS MUITO COMPLEXOS (NECESSÁRIO TROCAR POR UM POST)
-  export const getOneCampanha = async ({ id, ...data }: { id?: string | null; filters: any }) =>
-    await api.post(`/marketing/mailing/campanhas/${id}`, data).then((res) => res.data);
+  export const getOneCampanha = async ({
+    id,
+    ...data
+  }: {
+    id?: string | null;
+    filters: any;
+    pagination: any;
+  }) => await api.post(`/marketing/mailing/campanhas/${id}`, data).then((res) => res.data);
   // -
 
   export const getOneClienteCampanha = async (id?: string | null) => {

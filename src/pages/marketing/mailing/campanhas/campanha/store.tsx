@@ -1,5 +1,10 @@
 import { create } from "zustand";
 
+export interface Pagination {
+  pageIndex: number;
+  pageSize: number;
+}
+
 export interface FiltersCampanha {
   plano_atual_list?: string[];
   produto_list?: string[];
@@ -26,17 +31,27 @@ const initialFilters: FiltersCampanha = {
   planos_fidelizaveis: "all",
 };
 
+const initialPagination: Pagination = { pageIndex: 0, pageSize: 10 };
+
 interface useStoreCampanha {
   id: string | null;
   modalOpen: boolean;
   isPending: boolean;
   qtde_clientes: string | null;
+  pagination: Pagination;
+  paginationSubcampanha: Pagination;
 
   openModal: (id: string) => void;
   closeModal: () => void;
 
   setIsPending: (bool: boolean) => void;
   resetId: () => void;
+
+  setPagination: (pagination: Pagination) => void;
+  resetPagination: () => void;
+
+  setPaginationSubcampanha: (pagination: Pagination) => void;
+  resetPaginationSubcampanha: () => void;
 
   // FILTROS
   filters: FiltersCampanha;
@@ -86,11 +101,18 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
   modalOpen: false,
   isPending: false,
   qtde_clientes: null,
+  pagination: initialPagination,
+  paginationSubcampanha: initialPagination,
 
   openModal: (id: string) => set({ modalOpen: true, id }),
   closeModal: () => set({ modalOpen: false, id: null }),
   setIsPending: (bool: boolean) => set({ isPending: bool }),
   resetId: () => set({ id: null }),
+
+  setPagination: (pagination) => set({ pagination }),
+  resetPagination: () => set({ pagination: initialPagination }),
+  setPaginationSubcampanha: (pagination) => set({ paginationSubcampanha: pagination }),
+  resetPaginationSubcampanha: () => set({ paginationSubcampanha: initialPagination }),
 
   // FILTERS
   filters: initialFilters,

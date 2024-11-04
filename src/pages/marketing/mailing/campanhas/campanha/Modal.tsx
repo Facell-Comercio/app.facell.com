@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 
 import ButtonMotivation from "@/components/custom/ButtonMotivation";
-import { DataVirtualTableHeaderFixed } from "@/components/custom/DataVirtualTableHeaderFixed";
+import { DataTable } from "@/components/custom/DataTable";
 import {
   Accordion,
   AccordionContent,
@@ -60,6 +60,13 @@ const ModalCampanha = () => {
     filters_lote,
     setFiltersLote,
     resetFiltersLote,
+
+    pagination,
+    setPagination,
+    resetPagination,
+    paginationSubcampanha,
+    setPaginationSubcampanha,
+    resetPaginationSubcampanha,
   ] = useStoreCampanha((state) => [
     state.id,
     state.modalOpen,
@@ -77,6 +84,13 @@ const ModalCampanha = () => {
     state.filters_lote,
     state.setFiltersLote,
     state.resetFiltersLote,
+
+    state.pagination,
+    state.setPagination,
+    state.resetPagination,
+    state.paginationSubcampanha,
+    state.setPaginationSubcampanha,
+    state.resetPaginationSubcampanha,
   ]);
   const canEdit = checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER");
 
@@ -86,10 +100,13 @@ const ModalCampanha = () => {
   const { data, isFetching, isSuccess, isLoading, refetch } = useMailing().getOneCampanha({
     id: id || "",
     filters,
+    pagination,
   });
   const qtde_clientes = data?.qtde_clientes || 0;
   const qtde_all_clientes = data?.qtde_all_clientes || 0;
   const defaultFilters = data?.filters;
+  const rowCount = data?.qtde_clientes || 0;
+
   const {
     data: data_subcampanha,
     isLoading: isLoadingSubcampanha,
@@ -98,9 +115,11 @@ const ModalCampanha = () => {
   } = useMailing().getOneCampanha({
     id: idSubcampanha,
     filters: filters_lote,
+    pagination: paginationSubcampanha,
   });
   const qtde_clientes_subcampanha = data_subcampanha?.qtde_clientes || 0;
   const qtde_all_clientes_subcampanha = data_subcampanha?.qtde_all_clientes || 0;
+  const rowCountSubcampanha = data_subcampanha?.qtde_clientes || 0;
 
   const {
     mutate: deleteClientesLote,
@@ -191,9 +210,9 @@ const ModalCampanha = () => {
     [isFetchingSubcampanha]
   );
 
-  useEffect(() => {
-    setItemOpen(subcampanhas.length > 0 ? "" : "clientes");
-  }, [subcampanhas]);
+  // useEffect(() => {
+  //   setItemOpen(subcampanhas.length > 0 ? "" : "clientes");
+  // }, [subcampanhas]);
 
   function handleClickCancel() {
     closeModal();
@@ -265,6 +284,7 @@ const ModalCampanha = () => {
                         qtde_clientes={qtde_clientes}
                         isPending={isLoading || isFetching}
                         disabled={disabledCampanha}
+                        resetPagination={resetPagination}
                       />
                       {qtde_clientes > 0 && canEdit && (
                         <span className="flex flex-wrap justify-end gap-2 w-full">
@@ -308,17 +328,21 @@ const ModalCampanha = () => {
                         </span>
                       )}
                     </span>
-                    <div className="grid overflow-auto bg-background rounded-lg ">
-                      <DataVirtualTableHeaderFixed
-                        // @ts-ignore
-                        columns={columnsTableClientes}
+                    <div className="overflow-auto bg-background rounded-lg">
+                      <DataTable
+                        pagination={pagination}
+                        setPagination={setPagination}
                         data={clientes}
-                        className={`h-[300px] border`}
+                        rowCount={rowCount}
+                        columns={columnsTableClientes}
                         isLoading={isLoading || isFetching}
+                        variant="secondary"
                       />
                     </div>
                     <span className="flex justify-end">
-                      <Badge variant={"secondary"}>Quantidade de Clientes: {qtde_clientes}</Badge>
+                      <Badge variant={"secondary"}>
+                        Quantidade Total de Clientes: {qtde_clientes}
+                      </Badge>
                     </span>
                   </div>
                 </AccordionContent>
@@ -370,6 +394,7 @@ const ModalCampanha = () => {
                           isPending={isLoadingSubcampanha || isFetchingSubcampanha || isFetching}
                           isSubcampanha
                           disabled={disabledSubcampanha}
+                          resetPagination={resetPaginationSubcampanha}
                         />
                         <span className="flex flex-wrap justify-end gap-2">
                           {canEdit && (
@@ -460,18 +485,20 @@ const ModalCampanha = () => {
                           )}
                         </span>
                       </span>
-                      <div className="grid bg-background rounded-lg ">
-                        <DataVirtualTableHeaderFixed
-                          // @ts-ignore
-                          columns={columnsTableClientesSubcampanha}
+                      <div className="overflow-auto bg-background rounded-lg">
+                        <DataTable
+                          pagination={paginationSubcampanha}
+                          setPagination={setPaginationSubcampanha}
                           data={clientesSubcampanha}
-                          className={`h-[300px] border`}
-                          isLoading={disabledSubcampanha}
+                          rowCount={rowCountSubcampanha}
+                          columns={columnsTableClientesSubcampanha}
+                          isLoading={isLoadingSubcampanha || isFetchingSubcampanha}
+                          variant="secondary"
                         />
                       </div>
                       <span className="flex justify-end">
                         <Badge variant={"secondary"}>
-                          Quantidade de Clientes: {qtde_clientes_subcampanha}
+                          Quantidade Total de Clientes: {qtde_clientes_subcampanha}
                         </Badge>
                       </span>
                     </div>
@@ -483,12 +510,12 @@ const ModalCampanha = () => {
         </ScrollArea>
 
         {/* Modais */}
-        <ModalNovaSubcampanha />
+        <ModalNovaSubcampanha refetch={refetch} />
         <ModalEditarCliente />
         <ModalVerCliente />
         <ModalDefinirAparelho />
         <ModalDefinirVendedores />
-        <ModalDuplicarCampanha />
+        <ModalDuplicarCampanha refetch={refetch} />
 
         <DialogFooter className="flex gap-2 items-end flex-wrap">
           <Button variant={"secondary"} onClick={handleClickCancel}>

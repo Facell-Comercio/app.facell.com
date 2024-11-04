@@ -232,6 +232,7 @@ export function DataTable<TData, TValue>({
               onValueChange={(value) => {
                 table.setPageSize(Number(value));
               }}
+              disabled={isLoading}
             >
               <SelectTrigger className="h-8 text-xs sm:text-sm w-[70px]">
                 <SelectValue placeholder={table.getState().pagination.pageSize} />
@@ -260,7 +261,7 @@ export function DataTable<TData, TValue>({
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
+              disabled={!table.getCanPreviousPage() || isLoading}
             >
               <span className="sr-only">Vá para a primeira</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
@@ -270,7 +271,7 @@ export function DataTable<TData, TValue>({
               variant="outline"
               className="h-8 w-8 p-0"
               onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              disabled={!table.getCanPreviousPage() || isLoading}
             >
               <span className="sr-only">Anterior</span>
               <ChevronLeftIcon className="h-4 w-4" />
@@ -279,7 +280,7 @@ export function DataTable<TData, TValue>({
               variant="outline"
               className="h-8 w-8 p-0"
               onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              disabled={!table.getCanNextPage() || isLoading}
             >
               <span className="sr-only">Próxima</span>
               <ChevronRightIcon className="h-4 w-4" />
@@ -288,7 +289,7 @@ export function DataTable<TData, TValue>({
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
+              disabled={!table.getCanNextPage() || isLoading}
             >
               <span className="sr-only">Vá para a última página</span>
               <DoubleArrowRightIcon className="h-4 w-4" />

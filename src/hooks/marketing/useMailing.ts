@@ -2,6 +2,7 @@ import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { downloadResponse } from "@/helpers/download";
 import { api } from "@/lib/axios";
+import { Pagination } from "@/pages/financeiro/tesouraria/store";
 import { DefinirVendedoresProps } from "@/pages/marketing/mailing/campanhas/campanha/components/modais/ModalDefinirVendedores";
 import { EditarClienteProps } from "@/pages/marketing/mailing/campanhas/campanha/components/modais/ModalEditarCliente";
 import { FiltersCampanha } from "@/pages/marketing/mailing/campanhas/campanha/store";
@@ -58,13 +59,25 @@ export const useMailing = () => {
       placeholderData: keepPreviousData,
     });
 
-  const getOneCampanha = ({ id, filters }: { id?: string | null; filters: any }) =>
+  const getOneCampanha = ({
+    id,
+    filters,
+    pagination,
+  }: {
+    id?: string | null;
+    filters: any;
+    pagination: Pagination;
+  }) =>
     useQuery({
       enabled: !!id,
-      queryKey: ["marketing", "mailing", "campanhas", "detalhe", id],
+      queryKey: ["marketing", "mailing", "campanhas", "detalhe", [id, pagination]],
       queryFn: async () => {
         try {
-          const result = await fetchApi.marketing.mailing.getOneCampanha({ id, filters });
+          const result = await fetchApi.marketing.mailing.getOneCampanha({
+            id,
+            filters,
+            pagination,
+          });
           return result;
         } catch (error) {
           console.log(error);

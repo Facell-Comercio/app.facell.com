@@ -28,6 +28,7 @@ type FiltersClientesCampanha = {
   refetch: () => void;
   setFilters: (filters: FiltersCampanha) => void;
   resetFilters: () => void;
+  resetPagination: () => void;
   qtde_clientes: number;
   isPending: boolean;
   isSubcampanha?: boolean;
@@ -40,18 +41,21 @@ export const FiltersClientesCampanha = ({
   refetch,
   setFilters,
   resetFilters,
+  resetPagination,
   qtde_clientes,
   isPending,
   isSubcampanha,
   disabled,
 }: FiltersClientesCampanha) => {
-  const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClickFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    await new Promise((resolve) => resolve(resetPagination()));
     refetch();
   };
   const handleResetFilter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     await new Promise((resolve) => resolve(resetFilters()));
+    await new Promise((resolve) => resolve(resetPagination()));
     refetch();
   };
   // const handleClickFilterPadrao = async (e: React.MouseEvent<HTMLButtonElement>) => {
