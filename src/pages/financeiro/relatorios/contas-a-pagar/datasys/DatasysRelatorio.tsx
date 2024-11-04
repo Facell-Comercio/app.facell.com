@@ -47,8 +47,8 @@ const DatasysRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProps) =>
     >
       <AccordionItem value="datasys-relatorio" className="relative border-0">
         <AccordionTrigger className={`py-1 hover:no-underline`}>Layout Datasys</AccordionTrigger>
-        <AccordionContent className="flex flex-col w-max gap-0.5 p-0 pt-3">
-          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
+        <AccordionContent className="space-y-0.5 p-0 pt-3">
+          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-3">
             <div className="flex w-full space-x-3">
               <InputDate
                 value={filters.data_pagamento}

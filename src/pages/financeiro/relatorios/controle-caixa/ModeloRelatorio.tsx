@@ -49,8 +49,8 @@ const ModeloRelatorio = ({ itemOpen, setItemOpen, title, nomeLayout }: Relatorio
     >
       <AccordionItem value={nomeLayout} className="relative border-0">
         <AccordionTrigger className={`py-1 hover:no-underline`}>{title}</AccordionTrigger>
-        <AccordionContent className="flex flex-col w-max gap-0.5 p-0 pt-3">
-          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
+        <AccordionContent className="space-y-0.5 p-0 pt-3">
+          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-3">
             <div className="flex w-max space-x-3">
               <SelectMes value={filters.mes} onValueChange={(mes) => setFilters({ mes })} />
               <Input

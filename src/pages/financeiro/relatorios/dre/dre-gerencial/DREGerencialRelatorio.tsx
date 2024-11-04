@@ -42,8 +42,8 @@ const DREGerencialRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProp
         <AccordionTrigger className={`py-1 hover:no-underline`}>
           Relatório Base DRE Gerencial
         </AccordionTrigger>
-        <AccordionContent className="flex flex-col w-max gap-0.5 p-0 pt-3">
-          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
+        <AccordionContent className="space-y-0.5 p-0 pt-3">
+          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-3">
             <div className="flex w-max space-x-3">
               <SelectMes value={filters.mes} onValueChange={(mes) => setFilters({ mes })} />
               <Input

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface useStorePlano {
+interface useStorePlanoMailing {
   id?: string | null;
   modalEditing: boolean;
   modalOpen: boolean;
@@ -13,7 +13,7 @@ interface useStorePlano {
 }
 
 // FOI NECESSÁRIO COLOCAR ESSE NOME GIGANTE POIS ESTAVA DANDO ERRO EM DESENVOLVIMENTO (BUG)
-export const useStorePlanoMarketingMailing = create<useStorePlano>((set) => ({
+const useStorePlanoMailing = create<useStorePlanoMailing>((set) => ({
   id: null,
   modalEditing: false,
   modalOpen: false,
@@ -27,3 +27,4 @@ export const useStorePlanoMarketingMailing = create<useStorePlano>((set) => ({
       isPending: bool,
     }),
 }));
+export default useStorePlanoMailing;

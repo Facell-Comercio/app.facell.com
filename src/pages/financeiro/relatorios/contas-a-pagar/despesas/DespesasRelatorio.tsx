@@ -56,8 +56,8 @@ const DespesasRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProps) =
         <AccordionTrigger className={`py-1 hover:no-underline`}>
           Relatório de Despesas (Vencimentos x Rateio x Plano de contas)
         </AccordionTrigger>
-        <AccordionContent className="flex flex-col w-max gap-0.5 p-0 pt-3">
-          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-4">
+        <AccordionContent className="space-y-0.5 p-0 pt-3">
+          <ScrollArea className="w-fill whitespace-nowrap rounded-md pb-3">
             <div className="flex w-max space-x-3">
               <Select
                 value={filters.tipo_data}
@@ -100,6 +100,7 @@ const DespesasRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProps) =
                   <SelectValue placeholder="Status Vencimento" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
                   <SelectItem value="1">Em aberto</SelectItem>
                   <SelectItem value="0">Fechados</SelectItem>
                 </SelectContent>

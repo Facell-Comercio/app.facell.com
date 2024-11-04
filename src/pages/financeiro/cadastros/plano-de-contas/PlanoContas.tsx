@@ -8,9 +8,11 @@ import { columnsTable } from "./table/columns";
 import { useStoreTablePlanoContas } from "./table/store-table";
 
 const PlanoContas = () => {
-  const [pagination, setPagination, filters] = useStoreTablePlanoContas(
-    (state) => [state.pagination, state.setPagination, state.filters]
-  );
+  const [pagination, setPagination, filters] = useStoreTablePlanoContas((state) => [
+    state.pagination,
+    state.setPagination,
+    state.filters,
+  ]);
   const { data, refetch, isLoading } = usePlanoContas().getAll({
     pagination,
     filters,
