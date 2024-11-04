@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { TipoPlanosCombobox } from "../../components/TipoPlanosCombobox";
 import { useFormPlanoData } from "./form-data";
 import { PlanoSchema } from "./Modal";
-import { useStorePlanoMarketing } from "./store";
+import { useStorePlanoMarketingMailing } from "./store";
 const FormPlano = ({
   id,
   data,
@@ -27,13 +27,15 @@ const FormPlano = ({
     isSuccess: updateIsSuccess,
     isError: updateIsError,
   } = useCadastros().updatePlano();
-  const [modalEditing, editModal, closeModal, editIsPending] = useStorePlanoMarketing((state) => [
-    state.modalEditing,
-    state.editModal,
-    state.closeModal,
-    state.editIsPending,
-    state.isPending,
-  ]);
+  const [modalEditing, editModal, closeModal, editIsPending] = useStorePlanoMarketingMailing(
+    (state) => [
+      state.modalEditing,
+      state.editModal,
+      state.closeModal,
+      state.editIsPending,
+      state.isPending,
+    ]
+  );
   const { form } = useFormPlanoData(data);
 
   const onSubmitData = (data: PlanoSchema) => {

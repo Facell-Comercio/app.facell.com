@@ -43,7 +43,7 @@ interface UpdateCampanhaProps {
   public?: boolean;
 }
 
-const uri = "marketing/mailing/";
+const uri = "marketing/mailing";
 export const useMailing = () => {
   const queryClient = useQueryClient();
 
@@ -106,7 +106,7 @@ export const useMailing = () => {
   const insertOneCampanha = () =>
     useMutation({
       mutationFn: async (data: InsertClientesProps) => {
-        return await api.post(`${uri}/clientes`, data).then((response) => response.data);
+        return await api.post(`${uri}/nova-campanha`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({

@@ -77,11 +77,14 @@ const ModalDuplicarCampanha = () => {
       return;
     }
 
-    await new Promise((resolve) =>
-      resolve(duplicateCampanha({ ...formData, filters, id_campanha: id || "" }))
-    );
-    await new Promise((resolve) => resolve(resetFilters()));
+    duplicateCampanha({ ...formData, filters, id_campanha: id || "" });
   }
+
+  useEffect(() => {
+    if (duplicateCampanhaSuccess) {
+      resetFilters();
+    }
+  }, [duplicateCampanhaIsPending]);
 
   return (
     <Dialog open={modalOpen} onOpenChange={() => handleClickCancel()}>
@@ -97,6 +100,7 @@ const ModalDuplicarCampanha = () => {
               value={formData.nome || ""}
               onChange={(e) => setFormData((prev) => ({ ...prev, nome: e.target.value }))}
               className="flex-1 min-w-full"
+              inputClass="uppercase"
               placeholder="NOME DA CAMPANHA"
             />
             <span className="flex flex-col gap-2 flex-1">
