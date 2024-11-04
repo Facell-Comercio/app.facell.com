@@ -79,7 +79,6 @@ export const useMailing = () => {
           });
         }
       },
-      placeholderData: keepPreviousData,
     });
 
   const getOneClienteCampanha = (id?: string | null) =>
