@@ -87,6 +87,7 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
     cell: (info) => {
       const label = normalizeDate(info.getValue<string>());
       return (
+        // @ts-ignore
         <div title={label} className="block truncate max-w-96 uppercase">
           {label}
         </div>
@@ -100,7 +101,9 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
     cell: (info) => {
       const label = normalizeDate(info.getValue<string>());
       return (
-        <div title={label} className="block truncate max-w-96 uppercase">
+        <div
+          // @ts-ignore
+          title={label} className="block truncate max-w-96 uppercase">
           {label}
         </div>
       );
@@ -188,7 +191,9 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
     cell: (info) => {
       const label = normalizeDate(info.getValue<string>());
       return (
-        <div title={label} className="block truncate max-w-96 uppercase">
+        <div
+          // @ts-ignore
+          title={label} className="block truncate max-w-96 uppercase">
           {label}
         </div>
       );
@@ -201,7 +206,9 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
     cell: (info) => {
       const label = normalizeDate(info.getValue<string>());
       return (
-        <div title={label} className="block truncate max-w-96 uppercase">
+        <div
+          // @ts-ignore
+          title={label} className="block truncate max-w-96 uppercase">
           {label}
         </div>
       );

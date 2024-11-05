@@ -1,21 +1,16 @@
 import { api } from "@/lib/axios";
 
+import { Spinner } from "@/components/custom/Spinner";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeDate } from "@/helpers/mask";
-import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Download } from "lucide-react";
 import { useState } from "react";
-import { useStoreExportDatasys } from "../export-datasys/store";
 import { useStoreTablePagar } from "../table/store-table";
 import { TituloSchemaProps } from "../titulo/form-data";
 
@@ -28,16 +23,11 @@ interface TituloProps extends TituloSchemaProps {
   solicitante?: string;
   forma_pagamento?: string;
   fornecedor?: string;
-  cnpj_fornecedor?: string;
 }
 
 const ButtonExportTitulos = () => {
-  const { mutate: exportPrevisaoPagamento } =
-    useTituloPagar().exportPrevisaoPagamento();
-  const openModalExportDatasys = useStoreExportDatasys().openModal;
-  const isMaster =
-    checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const [isPending, setIsPending] = useState(false);
+
   const [filters] = useStoreTablePagar((state) => [state.filters]);
 
   async function exportSolicitacao() {
@@ -66,10 +56,6 @@ const ButtonExportTitulos = () => {
     setIsPending(false);
   }
 
-  function exportLayoutPrevisaoPagamento() {
-    exportPrevisaoPagamento({ filters });
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -77,20 +63,19 @@ const ButtonExportTitulos = () => {
         className="py-2 px-4 border border-emerald-200 dark:border-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm flex font-medium gap-2 items-center rounded-md"
         disabled={isPending}
       >
-        <Download className="me-2" size={18} /> Exportar
+        {isPending ? (
+          <>
+            <Spinner /> Exportando...
+          </>
+        ) : (
+          <>
+            <Download className="me-2" size={18} /> Exportar
+          </>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={exportSolicitacao}>
-          Layout Padrão
-        </DropdownMenuItem>
-        {isMaster && (
-          <DropdownMenuItem onClick={exportLayoutPrevisaoPagamento}>
-            Layout Previsão Pagamento
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem onClick={() => openModalExportDatasys("")}>
-          Layout Datasys
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={exportSolicitacao}>Layout Padrão</DropdownMenuItem>
+
         <DropdownMenuItem>
           <a
             target="_blank"

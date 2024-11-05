@@ -18,7 +18,6 @@ export const useDepartamentos = () => {
         queryFn: async () => await api.get("/departamento", { params: params }),
         placeholderData: keepPreviousData,
         staleTime: Infinity,
-        refetchOnMount: false,
       }),
 
     getOne: (id?: string) =>
@@ -27,7 +26,6 @@ export const useDepartamentos = () => {
         queryKey: ['departamento', 'detalhe', id],
         queryFn: async () => await api.get(`/departamento/${id}`),
         staleTime: Infinity,
-        refetchOnMount: false,
       }),
 
     getUserDepartamento: () =>
@@ -35,7 +33,6 @@ export const useDepartamentos = () => {
         queryKey: ['user', 'departamento', 'lista'],
         queryFn: async () => await api.get(`/departamento/user-departamentos`),
         staleTime: Infinity,
-        refetchOnMount: false,
       }),
 
     insertOne: () =>

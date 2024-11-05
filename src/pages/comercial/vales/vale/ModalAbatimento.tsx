@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AbatimentosProps, useVales } from "@/hooks/comercial/useVales";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { useEffect, useRef } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useFormAbatimentoData } from "./form-data";
@@ -24,15 +25,14 @@ interface ModalAbatimentoProps {
 const initialFormAbatimentoData = { valor: "0", obs: "" };
 
 const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
-  const [modalOpen, closeModal, id, idVale, modalEditing, editModal] =
-    useStoreVale((state) => [
-      state.modalOpenAbatimento,
-      state.closeModalAbatimento,
-      state.id_abatimento,
-      state.id,
-      state.modalEditingAbatimento,
-      state.editModalAbatimento,
-    ]);
+  const [modalOpen, closeModal, id, idVale, modalEditing, editModal] = useStoreVale((state) => [
+    state.modalOpenAbatimento,
+    state.closeModalAbatimento,
+    state.id_abatimento,
+    state.id,
+    state.modalEditingAbatimento,
+    state.editModalAbatimento,
+  ]);
   const formRef = useRef(null);
   const { data } = useVales().getOneAbatimento(id);
 
@@ -46,8 +46,8 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
     isPending: updateIsPending,
     isSuccess: updateIsSuccess,
   } = useVales().updateAbatimento();
-  const newDataAbatimento: AbatimentosProps & Record<string, any> =
-    {} as AbatimentosProps & Record<string, any>;
+  const newDataAbatimento: AbatimentosProps & Record<string, any> = {} as AbatimentosProps &
+    Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
@@ -77,7 +77,7 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
   const disabled = !modalEditing || insertIsPending || updateIsPending;
 
   const onSubmitData = (data: AbatimentosProps) => {
-    console.log(data);
+    // console.log(data);
     if (id) updateAbatimento(data);
     if (!id) insertAbatimento(data);
   };
@@ -94,8 +94,7 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
 
   //~ O cálculo será diferente se houver um id
   const saldoVale = id
-    ? parseFloat(newDataAbatimento.saldo_vale || "0") +
-      parseFloat(newDataAbatimento.valor || "0")
+    ? parseFloat(newDataAbatimento.saldo_vale || "0") + parseFloat(newDataAbatimento.valor || "0")
     : parseFloat(saldo || "0");
 
   const saldoFinal = saldoVale - parseFloat(form.watch("valor") || "0");
@@ -104,9 +103,8 @@ const ModalAbatimento = ({ saldo }: ModalAbatimentoProps) => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {id ? `Abatimento: ${id}` : "Novo Abatimento"}
-          </DialogTitle>
+          <DialogTitle>{id ? `Abatimento: ${id}` : "Novo Abatimento"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           <Form {...form}>

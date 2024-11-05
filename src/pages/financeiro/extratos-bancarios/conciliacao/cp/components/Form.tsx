@@ -25,6 +25,7 @@ import { default as VirtualizedTitulos } from './VirtualizedTitulos';
 import VirtualizedTransacoes from './VirtualizedTransacoes';
 import { useFormConciliacaoCPData } from './form-data';
 import { useStoreConciliacaoCP } from './store';
+import { useExtratosStore } from '../../../context';
 const FormConciliacaoCP = ({
   id,
   data,
@@ -43,11 +44,12 @@ const FormConciliacaoCP = ({
   const closeModal = useStoreConciliacaoCP().closeModal;
   const editIsPending = useStoreConciliacaoCP().editIsPending;
 
-  const [resetSelections, data_pagamento, id_conta_bancaria] =
+  const contaBancaria = useExtratosStore().contaBancaria;
+
+  const [resetSelections, data_pagamento] =
     useStoreTableConciliacaoCP((state) => [
       state.resetSelections,
       state.data_pagamento,
-      state.filters.id_conta_bancaria,
     ]);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ const FormConciliacaoCP = ({
     conciliacaoManual({
       ...newData,
       data_pagamento: data_pagamento,
-      id_conta_bancaria,
+      id_conta_bancaria: String(contaBancaria?.id || ''),
     });
   }
 
@@ -127,6 +129,7 @@ const FormConciliacaoCP = ({
                   Data da Conciliação
                 </label>
                 <Input
+                  // @ts-ignore
                   value={normalizeDate(data.data_conciliacao || '')}
                   className="flex-1"
                   readOnly
@@ -167,9 +170,8 @@ const FormConciliacaoCP = ({
             )}
 
             <Card
-              className={`flex flex-col ${
-                vencimentos.length === 0 && 'col-span-2'
-              }`}
+              className={`flex flex-col ${vencimentos.length === 0 && 'col-span-2'
+                }`}
             >
               <CardHeader className="p-2">
                 <CardTitle className="text-md text-center font-medium">

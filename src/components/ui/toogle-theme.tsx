@@ -12,7 +12,7 @@ import { useTheme } from "@/providers/theme-provider"
 
 export function ToggleTheme({ className }: { className: string }) {
   const { theme, setTheme } = useTheme()
-  const handleChangeTheme = (event: React.MouseEvent<HTMLButtonElement>, newTheme: string) => {
+  const handleChangeTheme = (event: React.MouseEvent<HTMLDivElement>, newTheme: string) => {
     event.stopPropagation()
     setTheme(newTheme)
   }
@@ -26,28 +26,35 @@ export function ToggleTheme({ className }: { className: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem className="p-1 ">
+        <DropdownMenuItem 
+          className="p-1 "
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleChangeTheme(e, 'light')}
+          >
           <Button
             variant={theme == 'light' ? 'default' : 'outline'}
             size={'sm'}
             className="w-full"
-            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeTheme(e, 'light')}
+            
           ><Sun size={16} className="me-2" /> Light</Button>
         </DropdownMenuItem>
-        <DropdownMenuItem className="p-1 ">
+        <DropdownMenuItem className="p-1 "
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleChangeTheme(e, 'dark')}
+        >
           <Button
             variant={theme == 'dark' ? 'default' : 'outline'}
             size={'sm'}
             className="w-full"
-            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeTheme(e, 'dark')}
+            
           ><Moon size={16} className="me-2" /> Dark</Button>
         </DropdownMenuItem>
-        <DropdownMenuItem className="p-1 ">
+        <DropdownMenuItem className="p-1 "
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => handleChangeTheme(e, 'system')}
+        >
           <Button
             variant={theme == 'system' ? 'default' : 'outline'}
             size={'sm'}
             className="w-full"
-            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeTheme(e, 'system')}
+            
           ><Laptop size={16} className="me-2" /> System</Button>
         </DropdownMenuItem>
       </DropdownMenuContent>

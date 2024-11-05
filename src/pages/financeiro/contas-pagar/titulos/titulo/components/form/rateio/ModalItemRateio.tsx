@@ -251,8 +251,9 @@ export const ModalItemRateio = ({
 
   const excedeOrcamento = valorExcessoOrcamento > 0;
 
-  const valorExcessoTitulo =
-    valor + valorTotalItens - parseFloat(valorTotalTitulo);
+  const valorPrevisto = parseFloat((valor + valorTotalItens).toFixed(2))
+  const valorExcessoTitulo = valorPrevisto - parseFloat(valorTotalTitulo);
+
   const excedeTotalTitulo = valorExcessoTitulo > 0;
 
   useEffect(() => {
@@ -284,9 +285,9 @@ export const ModalItemRateio = ({
       setFeedback({
         variant: "destructive",
         title: "Valor excedido!",
-        description: `O valor excede o valor total da solicitação em ${normalizeCurrency(
-          valorExcessoTitulo
-        )}`,
+        description: `O valor excede o valor total da solicitação em ${
+           parseFloat(valorExcessoTitulo.toFixed(2))
+        }`,
       });
       return;
     }
@@ -352,10 +353,11 @@ export const ModalItemRateio = ({
               .reduce((acc: number, curr: { valor: string }) => {
                 return acc + parseFloat(curr.valor);
               }, 0) || 0) + parseFloat(data.valor);
+        
           const dif = totalPrevisto - parseFloat(valorTotalTitulo);
               
-          if (dif > 0) {
-            const difFormatada = normalizeCurrency(dif);
+          if (dif > 0.01) {
+            const difFormatada = dif;
             toast({
               variant: "destructive",
               title: `O valor do itemRateio excede o valor total em ${difFormatada}.`,
@@ -499,7 +501,7 @@ export const ModalItemRateio = ({
                 />
               </span>
 
-              {isFetching ? <div className="w-full flex justify-center"><DotsLoading size={3} /></div> :
+              {isFetching ? <div className="w-full flex justify-center"><DotsLoading /></div> :
                 validarOrcamento && (
                   <>
                     <div className="flex gap-3 text-muted-foreground">

@@ -1,7 +1,6 @@
 import { RowSelectionState } from "@tanstack/react-table";
 import { DateRange } from "react-day-picker";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 export interface Pagination {
   pageIndex: number;
@@ -21,6 +20,7 @@ export interface Filters {
   range_data?: DateRange;
   descricao?: string;
   nome_user?: string;
+  fornecedor?: string;
 }
 
 const initialFilters: Filters = {
@@ -33,6 +33,7 @@ const initialFilters: Filters = {
   tipo_data: "data_vencimento",
   range_data: { from: undefined, to: undefined },
   descricao: "",
+  fornecedor: "",
 };
 
 export interface State {
@@ -62,7 +63,7 @@ export interface Actions {
   closeModal: () => void;
 }
 
-export const useStoreTableVencimentos = create(persist<State & Actions>((set) => ({
+export const useStoreTableVencimentos = create<State & Actions>((set) => ({
   // Table
   rowCount: 0,
   // sorting: [],
@@ -86,19 +87,10 @@ export const useStoreTableVencimentos = create(persist<State & Actions>((set) =>
   },
 
   setPaginationAPagar: (pagination) => set({ paginationAPagar: pagination }),
-  setPaginationEmBordero: (pagination) =>
-    set({ paginationEmBordero: pagination }),
+  setPaginationEmBordero: (pagination) => set({ paginationEmBordero: pagination }),
   setPaginationPagos: (pagination) => set({ paginationPagos: pagination }),
-  handleRowSelection: (data: HandleRowSelectionProps) =>
-    set({ rowSelection: data.rowSelection }),
+  handleRowSelection: (data: HandleRowSelectionProps) => set({ rowSelection: data.rowSelection }),
 
   openModal: () => set({ modalOpen: true }),
   closeModal: () => set({ modalOpen: false }),
-}),
-{
-  name: 'store-table-vencimentos',
-  // @ts-ignore
-  partialize: (state)=>({ filters: state.filters} as State)
-}
-)
-);
+}));

@@ -26,7 +26,7 @@ export const SelectFormaPagamento = (props: TSelectFormaPagamento) => {
 
   const { data } = useQuery({
     queryKey: ["financeiro", "forma_pagamento", "lista"],
-    queryFn: () => fetchApi.financeiro.forma_pagamento.getAll(),
+    queryFn: async () => await fetchApi.financeiro.forma_pagamento.getAll(),
     staleTime: Infinity,
   });
 
@@ -54,16 +54,15 @@ type TSelectMultiFormaPagamento = {
   disabled?: boolean;
   className?: string;
   value?: string[];
+  maxCount?: number;
   onChange: (data: any) => any;
 };
 
-export const SelectMultiFormaPagamento = (
-  props: TSelectMultiFormaPagamento
-) => {
+export const SelectMultiFormaPagamento = (props: TSelectMultiFormaPagamento) => {
   // Use a single state variable for fetching and storing data
   const { data } = useQuery({
     queryKey: ["financeiro", "forma_pagamento", "lista"],
-    queryFn: () => fetchApi.financeiro.forma_pagamento.getAll(),
+    queryFn: async () => await fetchApi.financeiro.forma_pagamento.getAll(),
     staleTime: Infinity,
   });
 
@@ -80,9 +79,9 @@ export const SelectMultiFormaPagamento = (
       onValueChange={props.onChange}
       defaultValue={props.value || []}
       placeholder="Formas de Pagamento"
-      variant="inverted"
+      variant="secondary"
       animation={4}
-      maxCount={1}
+      maxCount={props.maxCount || 1}
     />
   );
 };

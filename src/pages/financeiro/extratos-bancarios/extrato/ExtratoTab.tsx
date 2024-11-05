@@ -3,29 +3,35 @@ import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { isEqual } from "date-fns";
 import { useMemo } from "react";
-import Chart from "./components/Chart";
-import Filters from "./components/Filters";
 import Transacoes from "./components/Transacoes";
 import { useExtratoStore } from "./components/context";
 
+import ChartTransacoes from "./components/ChartTransacoes";
+import ChartImportacao from "./components/ChartImportacao";
+import ButtonImport from "./components/ButtonImport";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
+import { useExtratosStore } from "../context";
+
 const ExtratoTab = () => {
-  const mes = useExtratoStore().mes;
-  const ano = useExtratoStore().ano;
+  const mes = useExtratosStore().mes;
+  const ano = useExtratosStore().ano;
+  const contaBancaria = useExtratosStore().contaBancaria;
+  // O único seletor que é pego do contexto da Tab Extratos:
   const periodo = useExtratoStore().periodo;
-  const contaBancaria = useExtratoStore().contaBancaria;
 
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
     enabled: !!mes && !!ano && !!contaBancaria,
-    staleTime: 0,
+    staleTime: 1000 * 60 * 5,
     queryKey: [
       "financeiro",
       "extrato_bancario",
       "transacao",
       "lista",
-      { contaBancaria },
+      { mes, ano, contaBancaria },
     ],
-    queryFn: () =>
-      api.get("financeiro/conciliacao-bancaria/extratos-bancarios/", {
+    queryFn: async () => {
+      const result = await api.get("financeiro/conciliacao-bancaria/extratos-bancarios/", {
         params: {
           filters: {
             id_conta_bancaria: contaBancaria?.id,
@@ -33,10 +39,13 @@ const ExtratoTab = () => {
             ano: ano,
           },
         },
-      }),
+      })
+      return result.data;
+    }
   });
-  const rows = data?.data?.rows;
-  const chartData = data?.data?.chartData;
+
+  const rows = data?.rows;
+  const dataChartTransacoes = data?.dataChartTransacoes;
 
   const filteredRows = useMemo(
     () =>
@@ -52,21 +61,34 @@ const ExtratoTab = () => {
           isEqual(periodo?.from || row.data_transacao, row.data_transacao) ||
           isEqual(periodo?.to || row.data_transacao, row.data_transacao)
       ),
-    [periodo]
+    [rows, periodo]
   );
 
   return (
     <div>
-      <div className="mb-3 overflow-auto pb-3">
-        <Filters refetch={refetch} isFetching={isFetching} />
+      <div className=" overflow-auto pb-3 flex gap-3 justify-end">
+
+        <Button
+          disabled={isFetching || !contaBancaria}
+          onClick={() => refetch()}
+        >
+          <RefreshCcw
+            size={20}
+            className={`${isFetching ? "animate-spin" : ""} me-2`}
+          /> Atualizar
+        </Button>
+
+        <ButtonImport />
       </div>
-      <div className="mb-3">
-        <Chart data={chartData} isLoading={isLoading} />
+      <div className="mb-3 flex flex-col gap-3">
+        <ChartImportacao data={dataChartTransacoes} isLoading={isLoading || isFetching} />
+        <ChartTransacoes data={dataChartTransacoes} isLoading={isLoading || isFetching} />
+
       </div>
       <div className="mb-3">
         <Transacoes
           data={filteredRows}
-          isLoading={isLoading}
+          isLoading={isLoading || isFetching}
           isError={isError}
         />
       </div>

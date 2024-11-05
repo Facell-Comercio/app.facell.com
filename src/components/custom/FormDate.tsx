@@ -12,11 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Control } from "react-hook-form";
 
@@ -52,11 +48,9 @@ const FormDateInput = ({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem
-          className={`flex flex-col flex-1 min-w-[18ch] justify-end ${className}`}
-        >
+        <FormItem className={`flex flex-col flex-1 min-w-[18ch] justify-end ${className}`}>
           {label && <FormLabel>{label}</FormLabel>}
-          <Popover>
+          <Popover modal>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
@@ -67,11 +61,7 @@ const FormDateInput = ({
                     !field.value && "text-muted-foreground"
                   )}
                 >
-                  {field.value ? (
-                    format(field.value, "dd/MM/yyyy")
-                  ) : (
-                    <span>Selecione a data</span>
-                  )}
+                  {field.value ? format(field.value, "dd/MM/yyyy") : <span>Selecione a data</span>}
                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                 </Button>
               </FormControl>

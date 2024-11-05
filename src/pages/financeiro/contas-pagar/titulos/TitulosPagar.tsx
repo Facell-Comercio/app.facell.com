@@ -1,10 +1,7 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { useStoreTablePagar } from "./table/store-table";
 
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
+import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import Filters from "./FiltersTitulosPagar";
 import ModalAlteracoesLote from "./alteracao-lote/Modal";
@@ -13,14 +10,12 @@ import ButtonExportTitulos from "./components/ButtonExportarTitulos";
 import ButtonImportTitulos from "./components/ButtonImportarTitulo";
 import ButtonNovoTitulo from "./components/ButtonNovoTitulo";
 import ButtonRecorrencias from "./components/ButtonRecorrencias";
-import ModalExportDatasys from "./export-datasys/Modal";
 import ModalRecorrencias from "./recorrencias/Modal";
 import { columnsTable } from "./table/columns";
 import ModalTituloPagar from "./titulo/Modal";
 
 const TitulosPagar = () => {
-  const isMaster =
-    checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+  const isMaster = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
 
   const [pagination, setPagination, filters] = useStoreTablePagar((state) => [
     state.pagination,
@@ -71,7 +66,6 @@ const TitulosPagar = () => {
       <ModalTituloPagar />
       <ModalRecorrencias />
       <ModalAlteracoesLote />
-      <ModalExportDatasys />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -20,7 +21,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { useEffect, useState } from "react";
 import { useStoreTablePagar } from "../table/store-table";
-import { useStoreTitulo } from "../titulo/store";
+import { useStoreTituloPagar } from "../titulo/store";
 
 type AlteracaoLoteProps = {
   type?: string;
@@ -40,20 +41,18 @@ const ModalAlteracoesLote = () => {
     // data_prevista: undefined,
     status: "",
   });
-  const modalOpen = useStoreTitulo().modalAlteracaoLoteOpen;
-  const closeModal = useStoreTitulo().closeAlteracaoLoteModal;
+  const modalOpen = useStoreTituloPagar().modalAlteracaoLoteOpen;
+  const closeModal = useStoreTituloPagar().closeAlteracaoLoteModal;
   const idSelection = useStoreTablePagar().idSelection;
 
   const { mutate: changeTitulos } = useTituloPagar().changeTitulos();
 
   const alterarLote = async () => {
-
     if (idSelection.length === 0) {
       toast({
         variant: "destructive",
         title: "Solicitações não selecionadas",
-        description:
-          "Selecione uma ou mais solicitações para realizar as alterações",
+        description: "Selecione uma ou mais solicitações para realizar as alterações",
       });
     } else if (data.type === "status" && data.status) {
       changeTitulos({ type: data.type, value: data.status, ids: idSelection });
@@ -82,14 +81,13 @@ const ModalAlteracoesLote = () => {
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="mb-2">Alteração em Lote</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && (
             <div className="flex gap-3 p-1">
               <div className="flex-1">
-                <label className="text-sm font-medium">
-                  Status da Solicitação
-                </label>
+                <label className="text-sm font-medium">Status da Solicitação</label>
                 <Select
                   value={data.status}
                   onValueChange={(value) => setData({ ...data, status: value })}

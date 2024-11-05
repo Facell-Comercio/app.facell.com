@@ -301,7 +301,7 @@ export function BtnPadronizarAlocacao({
               </span>
 
               {isFetching ?
-                <div className="w-full flex justify-center"><DotsLoading size={3} /></div> :
+                <div className="w-full flex justify-center"><DotsLoading /></div> :
                 validarOrcamento && (
                   <>
                     <div className="flex gap-3 text-muted-foreground">

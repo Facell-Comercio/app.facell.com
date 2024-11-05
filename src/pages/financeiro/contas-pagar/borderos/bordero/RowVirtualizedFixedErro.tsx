@@ -52,8 +52,14 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
     { id: "PADRÃO", label: "Total" },
     { id: "PARCIAL", label: "Parcial" },
     { id: "COM DESCONTO", label: "Com Desconto" },
-    { id: "COM ACRÉSCIMO", label: "Com Acréscimo" },
+    {
+      id: "COM ACRÉSCIMO",
+      label: "Com Acréscimo",
+    },
   ];
+
+  const allChecked = filteredData.length === filteredData.filter((item) => item.checked).length;
+  const someChecked = filteredData.some((item) => item.checked);
 
   return (
     <section
@@ -69,6 +75,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
         {modalEditing && (
           <Checkbox
             className="min-w-4 me-1"
+            checked={allChecked || (someChecked && "indeterminate")}
             onCheckedChange={(e) => {
               filteredData.forEach((filteredVencimento) => {
                 const indexData = data.findIndex(
@@ -84,45 +91,28 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
         )}
         <p className="min-w-[34px] text-center bg-slate-200 dark:bg-blue-950"></p>
         <p className="min-w-16 text-center bg-slate-200 dark:bg-blue-950">ID</p>
-        <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">
-          ID Título
-        </p>
-        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">
-          Previsto
-        </p>
+        <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">ID Título</p>
+        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Vencimento</p>
+        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Previsto</p>
         <p className="flex-1 min-w-36 max-w-36 bg-slate-200 dark:bg-blue-950 text-center">
           Forma Pagamento
         </p>
-        <p className="flex-1 min-w-44 bg-slate-200 dark:bg-blue-950">
-          Fornecedor
-        </p>
+        <p className="flex-1 min-w-44 bg-slate-200 dark:bg-blue-950">Fornecedor</p>
         <p className="flex-1 min-w-32 bg-slate-200 dark:bg-blue-950">Filial</p>
-        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">
-          Nº Doc
-        </p>
+        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Nº Doc</p>
 
-        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
-          Valor
-        </p>
-        <p className="min-w-[132px] text-center bg-slate-200 dark:bg-blue-950">
-          Valor Pago
-        </p>
-        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
-          Tipo Baixa
-        </p>
+        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">Valor</p>
+        <p className="min-w-[132px] text-center bg-slate-200 dark:bg-blue-950">Valor Pago</p>
+        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">Tipo Baixa</p>
         {modalEditing && (
           <p className="min-w-44 text-center bg-slate-200 dark:bg-blue-950">
             Data Prevista Parcial
           </p>
         )}
         <p className="min-w-56 bg-slate-200 dark:bg-blue-950">Observação</p>
-        <p className="flex-1 min-w-[88px] text-center bg-slate-200 dark:bg-blue-950">
-          Em Remessa
-        </p>
+        <p className="flex-1 min-w-[88px] text-center bg-slate-200 dark:bg-blue-950">Em Remessa</p>
         {modalEditing && (
-          <p className="flex-1 min-w-[52px] text-center bg-slate-200 dark:bg-blue-950">
-            Ação
-          </p>
+          <p className="flex-1 min-w-[52px] text-center bg-slate-200 dark:bg-blue-950">Ação</p>
         )}
       </div>
       <div
@@ -135,10 +125,8 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
         {virtualizer.getVirtualItems().map((item, index) => {
           const indexData = data.findIndex(
             (vencimento) =>
-              vencimento.id_vencimento ===
-                filteredData[item.index].id_vencimento &&
-              vencimento.id_forma_pagamento ===
-                filteredData[item.index].id_forma_pagamento
+              vencimento.id_vencimento === filteredData[item.index].id_vencimento &&
+              vencimento.id_forma_pagamento === filteredData[item.index].id_forma_pagamento
           );
 
           const disabled = !data[indexData].can_remove ? true : false;
@@ -150,7 +138,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
             if (data[indexData]?.id_forma_pagamento === 3) {
               return (
                 <Button
-                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-700 hover:bg-green-700 cursor-default"
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-600 hover:bg-green-600/90 dark:bg-green-700 dark:hover:bg-green-700/90 cursor-default"
                   size={"xs"}
                 >
                   <Banknote size={18} />
@@ -159,11 +147,9 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
             } else if (data[indexData]?.id_forma_pagamento === 6) {
               return (
                 <Button
-                  className="py-1.5 max-h-8 text-xs text-center border-none bg-violet-700 hover:bg-violet-600"
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-violet-600 hover:bg-violet-600/90 dark:bg-violet-700 dark:hover:bg-violet-600/90"
                   size={"xs"}
-                  onClick={() =>
-                    openModalFatura(data[indexData].id_vencimento || "")
-                  }
+                  onClick={() => openModalFatura(data[indexData].id_vencimento || "")}
                 >
                   <CreditCard size={18} />
                 </Button>
@@ -171,7 +157,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
             } else {
               return (
                 <Button
-                  className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-700 hover:bg-zinc-700 cursor-default"
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-600 hover:bg-zinc-600/90 dark:bg-zinc-700 dark:hover:bg-zinc-700/90"
                   size={"xs"}
                 >
                   <Landmark size={18} />
@@ -221,10 +207,17 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
               />
               <Input
                 className="w-24 h-8 text-xs p-2 text-center"
+                // @ts-ignore
                 value={
-                  data[indexData].previsao &&
-                  normalizeDate(data[indexData].previsao || "")
+                  data[indexData].data_vencimento &&
+                  normalizeDate(data[indexData].data_vencimento || "")
                 }
+                readOnly
+              />
+              <Input
+                className="w-24 h-8 text-xs p-2 text-center"
+                // @ts-ignore
+                value={data[indexData].previsao && normalizeDate(data[indexData].previsao || "")}
                 readOnly
               />
               <Input
@@ -250,8 +243,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
               <Input
                 className="w-32 h-8 text-xs p-2 text-end"
                 value={
-                  data[indexData].valor_total &&
-                  normalizeCurrency(data[indexData].valor_total)
+                  data[indexData].valor_total && normalizeCurrency(data[indexData].valor_total)
                 }
                 readOnly
               />
@@ -300,13 +292,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                   }
                 />
               ) : (
-                modalEditing && (
-                  <Input
-                    className="h-8 min-w-44 text-center"
-                    value="-"
-                    disabled
-                  />
-                )
+                modalEditing && <Input className="h-8 min-w-44 text-center" value="-" disabled />
               )}
               <Input
                 className="min-w-56 h-8 text-xs p-2 uppercase"
@@ -334,9 +320,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                   disabled={!modalEditing}
                   pressed={!!emRemessa}
                 >
-                  <span className="text-xs min-w-16 uppercase">
-                    {!!emRemessa ? "SIM" : "NÃO"}
-                  </span>
+                  <span className="text-xs min-w-16 uppercase">{!!emRemessa ? "SIM" : "NÃO"}</span>
                 </Toggle>
               </AlertPopUp>
               <AlertPopUp

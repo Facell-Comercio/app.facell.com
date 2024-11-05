@@ -10,6 +10,7 @@ export interface Pagination {
 type RowSelection = Record<number, boolean>;
 
 export interface Filters {
+  id_bordero?: string;
   id_conta_bancaria?: string;
   banco?: string;
   id_matriz?: string;
@@ -22,6 +23,7 @@ export interface Filters {
 }
 
 const initialFilters: Filters = {
+  id_bordero: '',
   id_conta_bancaria: "",
   fornecedor: "",
   id_matriz: "",

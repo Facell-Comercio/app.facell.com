@@ -1,10 +1,12 @@
 import FormInput from "@/components/custom/FormInput";
 import FormSwitch from "@/components/custom/FormSwitch";
 
-import SelectFilial from "@/components/custom/SelectFilial";
 import { Form } from "@/components/ui/form";
 import { Toggle } from "@/components/ui/toggle";
 import { useGrupoEconomico } from "@/hooks/useGrupoEconomico";
+import { Filial } from "@/types/filial-type";
+import { useState } from "react";
+import ModalFiliais from "../../components/ModalFiliais";
 import { GrupoEconomicoFormData, useFormGrupoEconomico } from "./form-data";
 import { useStoreGrupoEconomico } from "./store";
 
@@ -20,6 +22,7 @@ const FormUsers = ({
   const { mutate: insertOne } = useGrupoEconomico().insertOne();
   const { mutate: update } = useGrupoEconomico().update();
 
+  const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
   const modalEditing = useStoreGrupoEconomico().modalEditing;
   const editModal = useStoreGrupoEconomico().editModal;
   const closeModal = useStoreGrupoEconomico().closeModal;
@@ -32,6 +35,14 @@ const FormUsers = ({
 
     editModal(false);
     closeModal();
+  };
+  // console.log(form.formState.errors);
+
+  const handleSelectionFilial = (filial: Filial) => {
+    // console.log(filial);
+
+    form.setValue("id_matriz", String(filial.id) ?? "");
+    form.setValue("filial", filial.nome);
   };
 
   const isActive = !!+form.watch("orcamento");
@@ -56,12 +67,7 @@ const FormUsers = ({
             />
           </div>
           <div className="flex gap-2 items-center">
-            <FormInput
-              control={form.control}
-              label="Nome"
-              name="nome"
-              readOnly={!modalEditing}
-            />
+            <FormInput control={form.control} label="Nome" name="nome" readOnly={!modalEditing} />
 
             <FormInput
               control={form.control}
@@ -70,11 +76,22 @@ const FormUsers = ({
               readOnly={!modalEditing}
             />
 
-            <SelectFilial
-              name="id_matriz"
-              label="Matriz"
+            <FormInput
+              onClick={() => {
+                setModalFilialOpen(true);
+              }}
               control={form.control}
-              disabled={!modalEditing}
+              label="Matriz"
+              name="filial"
+              readOnly={true}
+            />
+
+            <ModalFiliais
+              open={modalFilialOpen}
+              closeOnSelection={true}
+              multiSelection={false}
+              onOpenChange={setModalFilialOpen}
+              handleSelection={handleSelectionFilial}
             />
             <div className="flex flex-col space-y-2">
               <label className="text-sm font-medium">Orçamento</label>

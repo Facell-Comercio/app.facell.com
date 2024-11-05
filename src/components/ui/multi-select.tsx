@@ -11,45 +11,38 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import { CheckIcon, ChevronDown, XCircle, XIcon } from "lucide-react";
 import * as React from "react";
 
-const multiSelectVariants = cva(
-  "m-1 transition ease-in-out delay-150 duration-300",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-foreground/10 text-foreground bg-card hover:bg-card/80",
-        secondary:
-          "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        inverted: "inverted",
-      },
+const multiSelectVariants = cva("m-1 transition ease-in-out delay-150 duration-300", {
+  variants: {
+    variant: {
+      default: "border-foreground/10 text-foreground bg-card hover:bg-card/80",
+      secondary:
+        "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
+      destructive:
+        "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+      inverted: "inverted",
     },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
-interface MultiSelectProps
+export type MultiSelectOptionProps = {
+  label: string;
+  value: string;
+  icon?: React.ComponentType<{ className?: string }>;
+};
+export interface MultiSelectProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof multiSelectVariants> {
-  options: {
-    label: string;
-    value: string;
-    icon?: React.ComponentType<{ className?: string }>;
-  }[];
+  options: MultiSelectOptionProps[];
   onValueChange: (value: string[]) => void;
   defaultValue: string[];
   placeholder?: string;
@@ -58,12 +51,11 @@ interface MultiSelectProps
   modalPopover?: boolean;
   asChild?: boolean;
   className?: string;
+  nowrap?: boolean;
+  maxCharacters?: number;
 }
 
-export const MultiSelect = React.forwardRef<
-  HTMLButtonElement,
-  MultiSelectProps
->(
+export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
   (
     {
       options,
@@ -73,25 +65,25 @@ export const MultiSelect = React.forwardRef<
       placeholder = "Select options",
       animation = 0,
       maxCount = 3,
-      modalPopover = false,
+      modalPopover = true,
       asChild = false,
       className,
       disabled,
+      nowrap,
+      maxCharacters,
       ...props
     },
     ref
   ) => {
-    const [selectedValues, setSelectedValues] =
-      React.useState<string[]>(defaultValue);
+    const [selectedValues, setSelectedValues] = React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+    const [search, setSearch] = React.useState("");
 
     React.useEffect(() => {
       setSelectedValues(defaultValue);
     }, [defaultValue]);
 
-    const handleInputKeyDown = (
-      event: React.KeyboardEvent<HTMLInputElement>
-    ) => {
+    const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
         setIsPopoverOpen(true);
       } else if (event.key === "Backspace" && !event.currentTarget.value) {
@@ -110,11 +102,6 @@ export const MultiSelect = React.forwardRef<
       onValueChange(newSelectedValues);
     };
 
-    const handleClear = () => {
-      setSelectedValues([]);
-      onValueChange([]);
-    };
-
     const handleTogglePopover = () => {
       setIsPopoverOpen((prev) => !prev);
     };
@@ -125,22 +112,41 @@ export const MultiSelect = React.forwardRef<
       onValueChange(newSelectedValues);
     };
 
+    const filteredValues = search
+      ? options
+          .filter((option) => String(option.value).toUpperCase().includes(search.toUpperCase()))
+          .map((option) => option.value)
+      : options.map((option) => option.value);
+
+    const handleClear = () => {
+      // Remover apenas os valores que estão em `filteredValues`
+      const remainingValues = selectedValues.filter((value) => !filteredValues.includes(value));
+      setSelectedValues(remainingValues);
+      onValueChange(remainingValues);
+    };
+
+    const selectedValuesWithoutAll = selectedValues.filter(
+      (value) =>
+        String(value).toUpperCase().includes(search.toUpperCase()) && value !== "(Selecione todos)"
+    );
     const toggleAll = () => {
-      if (selectedValues.length === options.length) {
+      if (selectedValuesWithoutAll.length === filteredValues.length) {
         handleClear();
       } else {
-        const allValues = options.map((option) => option.value);
+        // Adicione os valores filtrados aos selecionados, evitando duplicatas
+        const allValues = Array.from(new Set([...selectedValues, ...filteredValues]));
         setSelectedValues(allValues);
         onValueChange(allValues);
       }
     };
 
+    const allSelected = React.useMemo(
+      () => selectedValuesWithoutAll.length === filteredValues.length,
+      [filteredValues, search]
+    );
+
     return (
-      <Popover
-        open={isPopoverOpen}
-        onOpenChange={setIsPopoverOpen}
-        modal={modalPopover}
-      >
+      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen} modal={modalPopover}>
         <PopoverTrigger asChild disabled={disabled}>
           <Button
             ref={ref}
@@ -153,7 +159,7 @@ export const MultiSelect = React.forwardRef<
           >
             {selectedValues.length > 0 ? (
               <div className="flex justify-between items-center w-full">
-                <div className="flex flex-nowrap items-center">
+                <div className={`flex flex-wrap items-center ${nowrap && "flex-nowrap"}`}>
                   {selectedValues.slice(0, maxCount).map((value) => {
                     const option = options.find((o) => o.value === value);
                     return (
@@ -163,7 +169,7 @@ export const MultiSelect = React.forwardRef<
                           key={value}
                           className={cn(multiSelectVariants({ variant }))}
                         >
-                          <span className="text-white truncate max-w-[10ch] sm:max-w-full">
+                          <span className={` truncate w-full max-w-[${maxCharacters}ch] `}>
                             {option?.label}
                           </span>
                           <XCircle
@@ -185,7 +191,9 @@ export const MultiSelect = React.forwardRef<
                       className={cn(
                         "bg-transparent text-foreground border-foreground/1 hover:bg-transparent",
 
-                        multiSelectVariants({ variant })
+                        multiSelectVariants({
+                          variant,
+                        })
                       )}
                     >
                       {`+ ${selectedValues.length - maxCount} outros`}
@@ -207,36 +215,41 @@ export const MultiSelect = React.forwardRef<
                       handleClear();
                     }}
                   />
-                  <Separator
-                    orientation="vertical"
-                    className="flex min-h-6 h-full"
-                  />
+                  <Separator orientation="vertical" className="flex min-h-6 h-full" />
                   <ChevronDown className="h-4 mx-2 cursor-pointer text-muted-foreground" />
                 </div>
               </div>
             ) : (
               <div className="flex items-center justify-between w-full mx-auto">
-                <span className="text-sm text-muted-foreground mx-3">
-                  {placeholder}
-                </span>
+                <span className="text-sm text-muted-foreground mx-3">{placeholder}</span>
                 <ChevronDown className="h-4 cursor-pointer text-muted-foreground mx-2" />
               </div>
             )}
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0"
+          className="w-auto p-0 z-[60]"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
-          <Command>
+          <Command
+            filter={(value: string, search) => {
+              if (
+                value.toUpperCase().includes(search.toUpperCase()) ||
+                value.includes("(Selecione todos)")
+              )
+                return 1;
+              return 0;
+            }}
+          >
             <CommandInput
               placeholder="Pesquisar..."
               onKeyDown={handleInputKeyDown}
+              onValueChange={(search) => setSearch(search)}
             />
             <CommandList className="overflow-y scroll-thin w-full">
               <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
-              <CommandGroup role="group">
+              <CommandGroup role={"group"}>
                 <CommandItem
                   key="all"
                   onSelect={toggleAll}
@@ -248,7 +261,7 @@ export const MultiSelect = React.forwardRef<
                   <div
                     className={cn(
                       "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                      selectedValues.length === options.length
+                      allSelected
                         ? "bg-primary text-primary-foreground"
                         : "opacity-50 [&_svg]:invisible"
                     )}
@@ -301,10 +314,7 @@ export const MultiSelect = React.forwardRef<
                       >
                         Limpar
                       </CommandItem>
-                      <Separator
-                        orientation="vertical"
-                        className="flex min-h-6 h-full"
-                      />
+                      <Separator orientation="vertical" className="flex min-h-6 h-full" />
                     </>
                   )}
                   <CommandSeparator />

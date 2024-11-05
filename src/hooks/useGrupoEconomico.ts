@@ -19,7 +19,6 @@ export const useGrupoEconomico = () => {
         queryFn: async () => await fetchApi.grupo_economico.getAll(params),
         // placeholderData: keepPreviousData,
         staleTime: Infinity,
-        refetchOnMount: false,
       }),
 
     getAllMatriz: (params?: GetAllParams) =>
@@ -29,7 +28,6 @@ export const useGrupoEconomico = () => {
           await api.get('/grupo-economico/matriz', { params: params }),
         placeholderData: keepPreviousData,
         staleTime: Infinity,
-        refetchOnMount: false,
       }),
 
     getOne: (id?: string) =>
@@ -38,7 +36,6 @@ export const useGrupoEconomico = () => {
         queryKey: ['grupo_economico', 'detalhe', id],
         queryFn: async () => await api.get(`/grupo-economico/${id}`),
         staleTime: Infinity,
-        refetchOnMount: false,
       }),
 
     insertOne: () =>

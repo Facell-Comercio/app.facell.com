@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -32,20 +33,21 @@ const initialPropsEquipamento: EquipamentoSchema = {
 };
 
 const ModalEquipamento = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreEquipamento((state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreEquipamento(
+    (state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]);
+    ]
+  );
   const formRef = useRef(null);
 
   const { data, isLoading } = useEquipamentos().getOne(id);
-  const newData: EquipamentoSchema & Record<string, any> =
-    {} as EquipamentoSchema & Record<string, any>;
+  const newData: EquipamentoSchema & Record<string, any> = {} as EquipamentoSchema &
+    Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -66,9 +68,8 @@ const ModalEquipamento = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {id ? `Equipamento: ${id}` : "Novo equipamento"}
-          </DialogTitle>
+          <DialogTitle>{id ? `Equipamento: ${id}` : "Novo equipamento"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

@@ -51,9 +51,8 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
               // ref={virtualizer.measureElement}
               key={`${item.index}-${index}`}
               data-index={index}
-              className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
-                virtualizer.getVirtualItems().length == 0 && "hidden"
-              }`}
+              className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${virtualizer.getVirtualItems().length == 0 && "hidden"
+                }`}
               style={{
                 position: "absolute",
                 top: 0,
@@ -75,6 +74,7 @@ const VirtualizedTitulos: React.FC<VirtualizerVencimentosProps> = ({
               />
               <Input
                 className="text-xs w-28 h-8 p-2 text-center"
+                // @ts-ignore
                 value={
                   data[item.index].data_pagamento &&
                   normalizeDate(data[item.index].data_pagamento)

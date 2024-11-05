@@ -20,8 +20,12 @@ import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
+import {
+  checkUserDepartments,
+  checkUserPermission,
+} from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
-import { addMonths, startOfDay } from "date-fns";
+import { addMonths, startOfDay, subDays } from "date-fns";
 import { ListPlus, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import z from "zod";
@@ -38,6 +42,8 @@ export function ModalGerarVencimentos({
 }: {
   form: UseFormReturn<TituloSchemaProps>;
 }) {
+  const isMaster: boolean =
+    checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   // WATCH TÍTULO:
   const valorTotalTitulo = useWatch({
     name: "valor",
@@ -124,7 +130,7 @@ export function ModalGerarVencimentos({
     const totalTitulo = parseFloat(valorTotalTitulo);
 
     const excesso = totalVencimentos + valorTotalParcelas - totalTitulo;
-    if (excesso > 0) {
+    if (excesso >= 0.01) {
       toast({
         variant: "destructive",
         title: `Impedimento`,
@@ -147,17 +153,20 @@ export function ModalGerarVencimentos({
       // gerar uma data de vencimento e previsão
       if (parcela == 0) {
         obj.data_vencimento = data.data_vencimento;
-        if(!isCartao){
+        if (!isCartao) {
           obj.data_vencimento = proximoDiaUtil(obj.data_vencimento).toString();
         }
-        obj.data_prevista = calcularDataPrevisaoPagamento(data.data_vencimento).toDateString();
-
+        obj.data_prevista = calcularDataPrevisaoPagamento(
+          data.data_vencimento
+        ).toDateString();
       } else {
         obj.data_vencimento = addMonths(dataVencimento, parcela).toString();
-        if(!isCartao){
+        if (!isCartao) {
           obj.data_vencimento = proximoDiaUtil(obj.data_vencimento).toString();
         }
-        obj.data_prevista = calcularDataPrevisaoPagamento(obj.data_vencimento).toDateString();
+        obj.data_prevista = calcularDataPrevisaoPagamento(
+          obj.data_vencimento
+        ).toDateString();
       }
 
       // incluir um item ao fieldArray
@@ -177,10 +186,12 @@ export function ModalGerarVencimentos({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[50vw]">
         <Form {...form}>
-          <form onSubmit={(e)=>{
-            form.handleSubmit(onSubmit)(e)
-            e.stopPropagation()
-          }}>
+          <form
+            onSubmit={(e) => {
+              form.handleSubmit(onSubmit)(e);
+              e.stopPropagation();
+            }}
+          >
             <DialogHeader>
               <DialogTitle>Gerar Vencimentos</DialogTitle>
               <DialogDescription>
@@ -196,6 +207,7 @@ export function ModalGerarVencimentos({
                 name="data_vencimento"
                 label="Primeiro Vencimento"
                 control={form.control}
+                min={!isMaster ? subDays(new Date(), 1) : undefined}
                 disabled={checkIsCartao(id_forma_pagamento)}
               />
 

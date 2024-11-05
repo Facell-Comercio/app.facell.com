@@ -41,11 +41,13 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowCount: number;
+  showRowCount?: boolean;
   pagination?: PaginationState;
   setPagination?: (pagination: PaginationState) => void;
   rowSelection?: RowSelectionState;
   handleRowSelection?: (data: any) => void;
   isLoading?: boolean;
+  variant?: "default" | "secondary";
 }
 
 export function DataTable<TData, TValue>({
@@ -55,9 +57,11 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   rowCount,
+  showRowCount,
   rowSelection,
   handleRowSelection,
   isLoading,
+  variant = "default",
 }: DataTableProps<TData, TValue>) {
   const [valorTotal, setValorTotal] = useState<number>(0);
 
@@ -79,7 +83,10 @@ export function DataTable<TData, TValue>({
         setPagination(result);
       }
       if (handleRowSelection) {
-        handleRowSelection({ rowSelection: {}, idSelection: [] });
+        handleRowSelection({
+          rowSelection: {},
+          idSelection: [],
+        });
       }
     },
     enableRowSelection: true,
@@ -87,9 +94,14 @@ export function DataTable<TData, TValue>({
       // @ts-expect-error ignorado
       const result = callback(rowSelection);
       if (handleRowSelection) {
-        // @ts-expect-error ignorado
-        const ids = Object.keys(result).map((c) => data[c].id);
-        handleRowSelection({ rowSelection: result, idSelection: ids });
+        const ids = Object.keys(result).map(
+          // @ts-expect-error ignorado
+          (c) => data[c].id
+        );
+        handleRowSelection({
+          rowSelection: result,
+          idSelection: ids,
+        });
       }
     },
     manualPagination: true,
@@ -99,10 +111,18 @@ export function DataTable<TData, TValue>({
     const valorTotalCalculado =
       sumField !== undefined
         ? table.getFilteredSelectedRowModel().rows.reduce((acc, curr) => {
-            // @ts-ignore
-            if (curr.original && curr.original[sumField]) {
+            if (
+              curr.original &&
               // @ts-ignore
-              return acc + parseFloat(curr.original[sumField]);
+              curr.original[sumField]
+            ) {
+              return (
+                acc +
+                parseFloat(
+                  // @ts-ignore
+                  curr.original[sumField]
+                )
+              );
             }
             return acc;
           }, 0)
@@ -110,15 +130,21 @@ export function DataTable<TData, TValue>({
     setValorTotal(valorTotalCalculado);
   }
 
+  //^ Volta para o início ao filtrar
   useEffect(() => {
     calcularTotal();
   }, [data, table.getState().rowSelection]);
 
+  useEffect(() => {
+    table.setPageIndex(0);
+  }, [table.getPageCount()]);
+
   //^ Foi adicionada a class scroll-thin no componente de Table
+
   return (
     <div className="rounded-md border">
       <Table>
-        <TableHeader>
+        <TableHeader className={variant === "secondary" ? "bg-secondary" : ""}>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -130,10 +156,7 @@ export function DataTable<TData, TValue>({
                   >
                     {header.isPlaceholder ? null : (
                       <div>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        {flexRender(header.column.columnDef.header, header.getContext())}
                         {/* Se for do tipo id não reenderiza os ícones */}
                         {header.column.getCanSort() &&
                           header.column.getIsSorted() === "asc" &&
@@ -155,6 +178,9 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
+                className={
+                  variant === "secondary" ? "odd:bg-secondary/60 even:bg-secondary/40" : ""
+                }
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="text-xs">
@@ -166,20 +192,13 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               {isLoading ? (
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   <span className="flex gap-2 w-full items-center justify-center">
-                    <FaSpinner size={18} className="me-2 animate-spin" />{" "}
-                    Carregando...
+                    <FaSpinner size={18} className="me-2 animate-spin" /> Carregando...
                   </span>
                 </TableCell>
               ) : (
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                ></TableCell>
+                <TableCell colSpan={columns.length} className="h-24 text-center"></TableCell>
               )}
             </TableRow>
           )}
@@ -198,6 +217,7 @@ export function DataTable<TData, TValue>({
             ? normalizeCurrency(valorTotal)
             : null}
         </div>
+
         <div
           className={`flex flex-row gap-3 items-center ${
             !handleRowSelection && "w-full justify-between"
@@ -208,17 +228,14 @@ export function DataTable<TData, TValue>({
               Linhas por página
             </p>
             <Select
-              value={`${
-                table.getState().pagination.pageSize?.toString() || ""
-              }`}
+              value={`${table.getState().pagination.pageSize?.toString() || ""}`}
               onValueChange={(value) => {
                 table.setPageSize(Number(value));
               }}
+              disabled={isLoading}
             >
               <SelectTrigger className="h-8 text-xs sm:text-sm w-[70px]">
-                <SelectValue
-                  placeholder={table.getState().pagination.pageSize}
-                />
+                <SelectValue placeholder={table.getState().pagination.pageSize} />
               </SelectTrigger>
               <SelectContent side="top">
                 {[5, 10, 15, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
@@ -229,16 +246,22 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           </div>
+          <div
+            className={`flex-1 text-xs sm:text-sm text-muted-foreground ${
+              !showRowCount && "hidden"
+            }`}
+          >
+            Total: {rowCount}
+          </div>
           <div className="flex items-center justify-center text-xs sm:text-sm font-medium">
-            Página {table.getState().pagination.pageIndex + 1} de{" "}
-            {table.getPageCount()}
+            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
+              disabled={!table.getCanPreviousPage() || isLoading}
             >
               <span className="sr-only">Vá para a primeira</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
@@ -248,7 +271,7 @@ export function DataTable<TData, TValue>({
               variant="outline"
               className="h-8 w-8 p-0"
               onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              disabled={!table.getCanPreviousPage() || isLoading}
             >
               <span className="sr-only">Anterior</span>
               <ChevronLeftIcon className="h-4 w-4" />
@@ -257,7 +280,7 @@ export function DataTable<TData, TValue>({
               variant="outline"
               className="h-8 w-8 p-0"
               onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              disabled={!table.getCanNextPage() || isLoading}
             >
               <span className="sr-only">Próxima</span>
               <ChevronRightIcon className="h-4 w-4" />
@@ -266,7 +289,7 @@ export function DataTable<TData, TValue>({
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
+              disabled={!table.getCanNextPage() || isLoading}
             >
               <span className="sr-only">Vá para a última página</span>
               <DoubleArrowRightIcon className="h-4 w-4" />

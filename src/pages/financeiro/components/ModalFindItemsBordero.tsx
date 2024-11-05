@@ -62,6 +62,7 @@ export type VencimentosProps = {
   filial: string;
   obs?: string;
   data_pagamento?: string;
+  data_vencimento?: string;
   tipo?: "vencimento" | "fatura";
   can_remove?: boolean;
   can_modify?: boolean;
@@ -111,7 +112,9 @@ const ModalFindItemsBordero = ({
     id_filial: "",
   };
 
-  const inputsRef = useRef<{ [key: string]: HTMLInputElement | null }>({});
+  const inputsRef = useRef<{
+    [key: string]: HTMLInputElement | null;
+  }>({});
   const [filters, setFilters] = useState(initialFilters);
 
   const setInputRef = (key: string, element: HTMLInputElement | null) => {
@@ -132,7 +135,11 @@ const ModalFindItemsBordero = ({
     queryFn: async () =>
       await api.get("financeiro/contas-a-pagar/bordero/procurar-novos-itens", {
         params: {
-          filters: { ...filters, id_matriz, id_status },
+          filters: {
+            ...filters,
+            id_matriz,
+            id_status,
+          },
           pagination,
         },
       }),
@@ -140,7 +147,10 @@ const ModalFindItemsBordero = ({
   });
 
   useEffect(() => {
-    setFilters((prev) => ({ ...prev, ...initialFilters }));
+    setFilters((prev) => ({
+      ...prev,
+      ...initialFilters,
+    }));
     // refetch(); Causa o erro de uso dos hooks
   }, [initialFilters]);
 
@@ -156,7 +166,10 @@ const ModalFindItemsBordero = ({
           num_doc: inputsRef.current["num_doc"]?.value || "",
         }));
       }
-      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: 0,
+      }));
       resolve(true);
     });
     refetch();
@@ -164,13 +177,19 @@ const ModalFindItemsBordero = ({
 
   async function handleClickResetFilters() {
     await new Promise((resolve) => {
-      setFilters((prev) => ({ ...prev, ...defaultFilters }));
+      setFilters((prev) => ({
+        ...prev,
+        ...defaultFilters,
+      }));
       Object.keys(inputsRef.current).forEach((key) => {
         if (inputsRef.current[key]) {
           inputsRef.current[key]!.value = "";
         }
       });
-      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: 0,
+      }));
       resolve(true);
     });
     refetch();
@@ -203,10 +222,7 @@ const ModalFindItemsBordero = ({
           },
         ]);
 
-        setIds((prevIds) => [
-          ...prevIds,
-          `${item.id_vencimento}-${item.id_forma_pagamento}`,
-        ]);
+        setIds((prevIds) => [...prevIds, `${item.id_vencimento}-${item.id_forma_pagamento}`]);
       }
     });
   }
@@ -255,9 +271,7 @@ const ModalFindItemsBordero = ({
 
   const ButtonSaveSelection = () => {
     return (
-      <Button
-        onClick={() => handleMultiSelection && handleMultiSelection(titulos)}
-      >
+      <Button onClick={() => handleMultiSelection && handleMultiSelection(titulos)}>
         Salvar seleção
       </Button>
     );
@@ -275,8 +289,7 @@ const ModalFindItemsBordero = ({
             <p className="mr-1">Valor Total: </p>
             {normalizeCurrency(
               data?.data.rows.reduce(
-                (acc: number, titulo: VencimentosProps) =>
-                  acc + parseFloat(titulo.valor_total),
+                (acc: number, titulo: VencimentosProps) => acc + parseFloat(titulo.valor_total),
                 0
               ) || 0
             )}
@@ -293,8 +306,7 @@ const ModalFindItemsBordero = ({
               <p className="mr-1">Valor: </p>
               {normalizeCurrency(
                 titulos?.reduce(
-                  (acc: number, titulo: VencimentosProps) =>
-                    acc + +titulo.valor_total,
+                  (acc: number, titulo: VencimentosProps) => acc + +titulo.valor_total,
                   0
                 ) || 0
               )}
@@ -309,7 +321,10 @@ const ModalFindItemsBordero = ({
   const [filial, setFilial] = useState<string>("");
 
   function handleSelectFilial(filial: Filial) {
-    setFilters({ ...filters, id_filial: filial.id });
+    setFilters({
+      ...filters,
+      id_filial: filial.id,
+    });
     setFilial(filial.nome);
   }
   useEffect(() => {
@@ -330,9 +345,7 @@ const ModalFindItemsBordero = ({
       <DialogContent className="flex flex-col sm:max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>Vencimentos a pagar</DialogTitle>
-          <DialogDescription>
-            Selecione ao clicar no botão à direita.
-          </DialogDescription>
+          <DialogDescription>Selecione ao clicar no botão à direita.</DialogDescription>
           <Accordion
             type="single"
             collapsible
@@ -343,14 +356,12 @@ const ModalFindItemsBordero = ({
             <AccordionItem value="item-1" className="relative border-0">
               <div className="flex gap-3 items-center absolute start-16 top-1">
                 <Button size={"xs"} onClick={() => handleClickFilter()}>
-                  Aplicar <FilterIcon size={12} className="ms-2" />
+                  Aplicar
+                  <FilterIcon size={12} className="ms-2" />
                 </Button>
-                <Button
-                  size={"xs"}
-                  variant="secondary"
-                  onClick={() => handleClickResetFilters()}
-                >
-                  Limpar <EraserIcon size={12} className="ms-2" />
+                <Button size={"xs"} variant="secondary" onClick={() => handleClickResetFilters()}>
+                  Limpar
+                  <EraserIcon size={12} className="ms-2" />
                 </Button>
               </div>
 
@@ -427,25 +438,18 @@ const ModalFindItemsBordero = ({
             </thead>
             <tbody>
               {data?.data?.rows.map((item: VencimentosProps, index: number) => {
-                const isSelected = ids.includes(
-                  `${item.id_vencimento}-${item.id_forma_pagamento}`
-                );
+                const isSelected = ids.includes(`${item.id_vencimento}-${item.id_forma_pagamento}`);
                 const isFatura = (item?.id_forma_pagamento || 0) == 6;
 
                 return (
                   <tr
                     key={"titulos:" + item.id_titulo + index}
                     className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md p-1 px-2 ${
-                      isSelected &&
-                      "bg-secondary/50 text-secondary-foreground/40"
+                      isSelected && "bg-secondary/50 text-secondary-foreground/40"
                     }`}
                   >
+                    <td className="text-xs text-nowrap p-1 text-center">{item.id_vencimento}</td>
                     <td className="text-xs text-nowrap p-1 text-center">
-                      {" "}
-                      {item.id_vencimento}
-                    </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {" "}
                       {isFatura ? "Fatura" : item.id_titulo}
                     </td>
                     <td className="text-xs text-nowrap p-1">
@@ -453,15 +457,12 @@ const ModalFindItemsBordero = ({
                         (item.nome_fornecedor.length > 20 ? "..." : "")}
                     </td>
                     <td className="text-xs text-nowrap p-1">
-                      {item.descricao.slice(0, 30) +
-                        (item.descricao.length > 30 ? "..." : "")}
+                      {item.descricao.slice(0, 30) + (item.descricao.length > 30 ? "..." : "")}
                     </td>
                     <td className="text-xs text-nowrap p-1 text-center">
                       {normalizeDate(item.previsao)}
                     </td>
-                    <td className="text-xs text-nowrap p-1 text-center">
-                      {item.num_doc}
-                    </td>
+                    <td className="text-xs text-nowrap p-1 text-center">{item.num_doc}</td>
                     <td className="text-xs text-nowrap p-1">
                       {normalizeCurrency(item.valor_total)}
                     </td>
@@ -470,8 +471,7 @@ const ModalFindItemsBordero = ({
                       <Button
                         size={"xs"}
                         className={`p-1 ${
-                          isSelected &&
-                          "bg-secondary hover:bg-secondary hover:opacity-90"
+                          isSelected && "bg-secondary hover:bg-secondary hover:opacity-90"
                         }`}
                         variant={"outline"}
                         onClick={() => pushSelection(item)}

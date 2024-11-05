@@ -6,6 +6,7 @@ const schemaUser = z.object({
   // Identificador do plano de contas
   id: z.string().trim().optional(),
   id_matriz: z.string(),
+  filial: z.string(),
   active: z.coerce.boolean(),
   orcamento: z.coerce.boolean(),
   nome: z

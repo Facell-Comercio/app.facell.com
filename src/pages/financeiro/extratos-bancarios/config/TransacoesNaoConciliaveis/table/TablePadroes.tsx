@@ -42,15 +42,16 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
     id_conta_bancaria: 0,
     tipo_transacao: "DEBIT",
   };
-  const [rowEditing, setRowEditing] =
-    useState<TransacaoPadrao>(initialRowEditing);
+  const [rowEditing, setRowEditing] = useState<TransacaoPadrao>(initialRowEditing);
 
   const { data, isLoading } = useQuery({
     enabled: !!conta,
     queryKey: ["financeiro", "conciliacao", "transacao_nao_conciliavel", "lista", conta?.id],
-    queryFn: () =>
-      api.get(`/financeiro/conciliacao-bancaria/transacao-padrao`, {
-        params: { id_conta_bancaria: conta?.id },
+    queryFn: async () =>
+      await api.get(`/financeiro/conciliacao-bancaria/transacao-padrao`, {
+        params: {
+          id_conta_bancaria: conta?.id,
+        },
       }),
   });
 
@@ -73,10 +74,7 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
       if (!rowEditing?.descricao || rowEditing?.descricao?.length < 1) {
         throw new Error("Preencha a descrição! No mínimo 1 caracter");
       }
-      if (
-        !rowEditing?.tipo_transacao ||
-        rowEditing?.tipo_transacao?.length < 1
-      ) {
+      if (!rowEditing?.tipo_transacao || rowEditing?.tipo_transacao?.length < 1) {
         throw new Error("Preencha o Tipo de transação! DEBIT ou CREDIT");
       }
 
@@ -97,7 +95,7 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
         title: "Erro ao tentar salvar o padrão",
         variant: "destructive",
         description:
-        // @ts-ignore
+          // @ts-ignore
           error?.response?.data?.message || "Tente novamente ao atualizar a página.",
       });
     } finally {
@@ -124,9 +122,8 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
         title: "Erro ao tentar excluir o padrão",
         variant: "destructive",
         description:
-        // @ts-ignore
-          error?.response?.data?.message ||
-          "Tente novamente ao atualizar a página.",
+          // @ts-ignore
+          error?.response?.data?.message || "Tente novamente ao atualizar a página.",
       });
     } finally {
       setDeleting(null);
@@ -136,7 +133,7 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
   if (isLoading) {
     return (
       <div>
-        <FaSpinner size={18} className="animate-spin me-2" /> Carregando...
+        <FaSpinner size={16} className="animate-spin me-2" /> Carregando...
       </div>
     );
   }
@@ -144,121 +141,127 @@ const TablePadroes = ({ conta }: { conta: ContaBancaria | null }) => {
   const rows = data?.data?.rows || [];
 
   return (
-    <Table className="w-auto">
-      <TableHeader>
-        <TableRow>
-          <TableHead>ID</TableHead>
-          <TableHead>DESCRICAO</TableHead>
-          <TableHead>TIPO</TableHead>
-          <TableHead>AÇÃO</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {rows.map((row: TransacaoPadrao) => {
-          const isRowEditing = rowEditing?.id === row.id;
+    <div className="rounded-md border">
+      <Table className="w-full">
+        <TableHeader>
+          <TableRow className="text-nowrap cursor-pointer text-xs">
+            <TableHead>AÇÃO</TableHead>
+            <TableHead>ID</TableHead>
+            <TableHead>DESCRICAO</TableHead>
+            <TableHead>TIPO</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.map((row: TransacaoPadrao) => {
+            const isRowEditing = rowEditing?.id === row.id;
 
-          return (
-            <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
-              <TableCell>
-                {isRowEditing ? (
-                  <Input
-                    value={rowEditing?.descricao}
-                    onChange={(e) =>
-                      setRowEditing((prev) => ({
-                        ...prev,
-                        descricao: e.target.value,
-                      }))
-                    }
-                  />
-                ) : (
-                  row.descricao
-                )}
-              </TableCell>
-              <TableCell>
-                {isRowEditing ? (
-                  <Select
-                    defaultValue={rowEditing.tipo_transacao}
-                    value={rowEditing.tipo_transacao}
-                    onValueChange={(tipo_transacao: "CREDIT" | "DEBIT") =>
-                      setRowEditing((prev) => ({
-                        ...prev,
-                        tipo_transacao: tipo_transacao,
-                      }))
-                    }
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue
-                        defaultValue={rowEditing.tipo_transacao}
-                        placeholder="Selecione o Tipo"
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="DEBIT">DEBIT</SelectItem>
-                        <SelectItem value="CREDIT">CREDIT</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  row.tipo_transacao
-                )}
-              </TableCell>
-              <TableCell className="flex gap-2">
-                {isRowEditing ? (
-                  <div className="flex gap-2">
+            return (
+              <TableRow key={row.id} className="text-xs">
+                <TableCell className="flex gap-2">
+                  {isRowEditing ? (
+                    <>
+                      <Button
+                        disabled={saving}
+                        onClick={handleClickSaveEdit}
+                        variant={"success"}
+                        size={"xs"}
+                        className="h-8"
+                      >
+                        Salvar
+                      </Button>
+                      <Button
+                        disabled={saving}
+                        onClick={handleClickCancelEdit}
+                        variant={"secondary"}
+                        size={"xs"}
+                        className="h-8"
+                      >
+                        Cancelar
+                      </Button>
+                    </>
+                  ) : (
                     <Button
-                      disabled={saving}
-                      onClick={handleClickCancelEdit}
-                      variant={"secondary"}
-                      size={"sm"}
+                      onClick={() => handleClickEdit(row)}
+                      size={"xs"}
+                      className="w-10"
+                      variant={"warning"}
                     >
-                      Cancelar
+                      <Edit size={16} />
                     </Button>
-                    <Button
-                      disabled={saving}
-                      onClick={handleClickSaveEdit}
-                      variant={"success"}
-                      size={"sm"}
-                    >
-                      Salvar
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() => handleClickEdit(row)}
-                    size={"sm"}
-                    variant={"warning"}
-                  >
-                    <Edit size={16} />
-                  </Button>
-                )}
+                  )}
 
-                <AlertPopUp
-                  title="Deseja realmente excluir?"
-                  description={`O padrão ${row.descricao} será removido do sistema, podendo ser criado novamente.`}
-                  action={() => handleDeletePadrao(row.id)}
-                >
-                  <Button
-                    disabled={deleting == row.id || saving}
-                    type="button"
-                    size={"sm"}
-                    className="h-9"
-                    variant={"destructive"}
+                  <AlertPopUp
+                    title="Deseja realmente excluir?"
+                    description={`O padrão ${row.descricao} será removido do sistema, podendo ser criado novamente.`}
+                    action={() => handleDeletePadrao(row.id)}
                   >
-                    {deleting == row.id ? (
-                      <FaSpinner size={18} className="animate-spin" />
-                    ) : (
-                      <Trash size={18} />
-                    )}
-                  </Button>
-                </AlertPopUp>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+                    <Button
+                      disabled={deleting == row.id || saving}
+                      type="button"
+                      size={"xs"}
+                      className="w-10"
+                      variant={"destructive"}
+                    >
+                      {deleting == row.id ? (
+                        <FaSpinner size={16} className="animate-spin" />
+                      ) : (
+                        <Trash size={16} />
+                      )}
+                    </Button>
+                  </AlertPopUp>
+                </TableCell>
+                <TableCell className="p-2">{row.id}</TableCell>
+                <TableCell className="p-2">
+                  {isRowEditing ? (
+                    <Input
+                      value={rowEditing?.descricao}
+                      onChange={(e) =>
+                        setRowEditing((prev) => ({
+                          ...prev,
+                          descricao: e.target.value,
+                        }))
+                      }
+                      className="h-8"
+                    />
+                  ) : (
+                    row.descricao
+                  )}
+                </TableCell>
+                <TableCell className="p-2">
+                  {isRowEditing ? (
+                    <Select
+                      defaultValue={rowEditing.tipo_transacao}
+                      value={rowEditing.tipo_transacao}
+                      onValueChange={(tipo_transacao: "CREDIT" | "DEBIT") =>
+                        setRowEditing((prev) => ({
+                          ...prev,
+                          tipo_transacao: tipo_transacao,
+                        }))
+                      }
+                    >
+                      <SelectTrigger className="w-[180px] h-8">
+                        <SelectValue
+                          defaultValue={rowEditing.tipo_transacao}
+                          placeholder="Selecione o Tipo"
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="DEBIT">DEBIT</SelectItem>
+                          <SelectItem value="CREDIT">CREDIT</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    row.tipo_transacao
+                  )}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

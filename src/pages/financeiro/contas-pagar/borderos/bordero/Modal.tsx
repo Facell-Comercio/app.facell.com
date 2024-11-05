@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -12,11 +13,11 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBordero } from "@/hooks/financeiro/useBordero";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { Trash } from "lucide-react";
 import { useEffect, useRef } from "react";
 import FormBordero from "./Form";
 import { useStoreBordero } from "./store";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 
 export type BorderoSchemaProps = {
   id: string;
@@ -49,10 +50,10 @@ const ModalBordero = () => {
   const formRef = useRef(null);
 
   const { data, isLoading } = useBordero().getOne(id);
-  
+
   const { mutate: deleteBordero, isSuccess } = useBordero().deleteBordero();
-  const newData: BorderoSchemaProps & Record<string, any> =
-    {} as BorderoSchemaProps & Record<string, any>;
+  const newData: BorderoSchemaProps & Record<string, any> = {} as BorderoSchemaProps &
+    Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -65,21 +66,19 @@ const ModalBordero = () => {
   }
 
   if (newData.itens && newData.itens.length > 0) {
-    const newVencimento = newData.itens.map(
-      (item: VencimentosProps) => {
-        return {
-          ...item,
-          previsao: item.previsao || "",
-          valor_pago: item.valor_pago || "0",
-          num_doc: item.num_doc || "",
-          id_dda: item.id_dda || "",
-          tipo_baixa: item.tipo_baixa || "",
-          data_pagamento: item.data_pagamento || "",
-          id_status: item.id_status || "",
-          obs: item.obs || "",
-        };
-      }
-    );
+    const newVencimento = newData.itens.map((item: VencimentosProps) => {
+      return {
+        ...item,
+        previsao: item.previsao || "",
+        valor_pago: item.valor_pago || "0",
+        num_doc: item.num_doc || "",
+        id_dda: item.id_dda || "",
+        tipo_baixa: item.tipo_baixa || "",
+        data_pagamento: item.data_pagamento || "",
+        id_status: item.id_status || "",
+        obs: item.obs || "",
+      };
+    });
 
     if (newVencimento[0].id_titulo) {
       // @ts-ignore
@@ -109,6 +108,7 @@ const ModalBordero = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Borderô: ${id}` : "Novo Borderô"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[75vh]">
           {modalOpen && !isLoading ? (
@@ -143,9 +143,7 @@ const ModalBordero = () => {
                 type={"button"}
                 size="lg"
                 variant={"destructive"}
-                className={`text-white justify-self-start ${
-                  !modalEditing && "hidden"
-                }`}
+                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
               >
                 <Trash className="me-2" />
                 Excluir Borderô

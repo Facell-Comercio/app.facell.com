@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -23,9 +24,7 @@ type ModalAlteracoesVencimentosLoteProps = {
   itens: VencimentosProps[] | [];
 };
 
-const ModalAlteracoesVencimentosLote = ({
-  itens,
-}: ModalAlteracoesVencimentosLoteProps) => {
+const ModalAlteracoesVencimentosLote = ({ itens }: ModalAlteracoesVencimentosLoteProps) => {
   const [dataPrevista, setDataPrevista] = useState<Date | undefined>(undefined);
   const modalOpen = useStoreTableVencimentos().modalOpen;
   const closeModal = useStoreTableVencimentos().closeModal;
@@ -39,8 +38,7 @@ const ModalAlteracoesVencimentosLote = ({
       .filter((key: any) => rowSelection[key])
       .map(Number);
 
-    const itensSelecionados =
-      itens.filter((_, index) => selectedIndexes.includes(index)) || [];
+    const itensSelecionados = itens.filter((_, index) => selectedIndexes.includes(index)) || [];
 
     if (!dataPrevista) {
       toast({
@@ -69,6 +67,7 @@ const ModalAlteracoesVencimentosLote = ({
       <DialogContent className="max-w-fit">
         <DialogHeader>
           <DialogTitle className="mb-2">Alteração em Lote</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <div className="flex flex-col">
           <label className="text-sm font-medium">Previsão de Pagamento</label>

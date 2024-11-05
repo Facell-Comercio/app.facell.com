@@ -10,11 +10,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 type DefaultValueProps = {
@@ -29,6 +25,7 @@ interface CustomComboboxProps {
   readOnly?: boolean;
   placeholder: string;
   defaultValues: DefaultValueProps[];
+  className?: string;
 }
 
 export function CustomCombobox({
@@ -38,6 +35,7 @@ export function CustomCombobox({
   readOnly,
   placeholder,
   defaultValues,
+  className,
 }: CustomComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
@@ -60,11 +58,10 @@ export function CustomCombobox({
           role="combobox"
           aria-expanded={open}
           disabled={disabled || readOnly}
-          className="w-[28ch] justify-between"
+          className={`w-[28ch] justify-between ${className}`}
         >
           {value
-            ? defaultValues.find((framework) => framework.value === value)
-                ?.label || value
+            ? defaultValues.find((framework) => framework.value === value)?.label || value
             : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -114,10 +111,7 @@ export function CustomCombobox({
                 }`}
               >
                 <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === inputValue ? "opacity-100" : "opacity-0"
-                  )}
+                  className={cn("mr-2 h-4 w-4", value === inputValue ? "opacity-100" : "opacity-0")}
                 />
                 {String(inputValue).toUpperCase()}
               </CommandItem>

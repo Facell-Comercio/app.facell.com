@@ -54,39 +54,20 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
       <div className="flex gap-1 font-medium text-sm w-full sticky top-0 z-10 bg-slate-200 dark:bg-blue-950 px-1">
         <p className="min-w-[34px] text-center bg-slate-200 dark:bg-blue-950"></p>
         <p className="min-w-16 text-center bg-slate-200 dark:bg-blue-950">ID</p>
-        <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">
-          ID Título
-        </p>
-        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">
-          Previsto
-        </p>
-        <p className="flex-1 min-w-36 bg-slate-200 dark:bg-blue-950 text-center">
-          Forma Pagamento
-        </p>
-        <p className="flex-1 min-w-44 bg-slate-200 dark:bg-blue-950">
-          Fornecedor
-        </p>
+        <p className="min-w-[72px] text-center bg-slate-200 dark:bg-blue-950">ID Título</p>
+        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Vencimento</p>
+        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Previsto</p>
+        <p className="flex-1 min-w-36 bg-slate-200 dark:bg-blue-950 text-center">Forma Pagamento</p>
+        <p className="flex-1 min-w-44 bg-slate-200 dark:bg-blue-950">Fornecedor</p>
         <p className="flex-1 min-w-32 bg-slate-200 dark:bg-blue-950">Filial</p>
-        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">
-          Nº Doc
-        </p>
+        <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Nº Doc</p>
 
-        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
-          Valor
-        </p>
-        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
-          Valor Pago
-        </p>
-        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">
-          Tipo Baixa
-        </p>
-        <p className="min-w-56 text-center bg-slate-200 dark:bg-blue-950">
-          Observação
-        </p>
+        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">Valor</p>
+        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">Valor Pago</p>
+        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">Tipo Baixa</p>
+        <p className="min-w-56 text-center bg-slate-200 dark:bg-blue-950">Observação</p>
         {modalEditing && (
-          <p className="min-w-[80px] text-center bg-slate-200 dark:bg-blue-950">
-            Ação
-          </p>
+          <p className="min-w-[80px] text-center bg-slate-200 dark:bg-blue-950">Ação</p>
         )}
       </div>
       <div
@@ -99,17 +80,15 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
         {virtualizer.getVirtualItems().map((item, index) => {
           const indexData = data.findIndex(
             (vencimento) =>
-              vencimento.id_vencimento ===
-                filteredData[item.index].id_vencimento &&
-              vencimento.id_forma_pagamento ===
-                filteredData[item.index].id_forma_pagamento
+              vencimento.id_vencimento === filteredData[item.index].id_vencimento &&
+              vencimento.id_forma_pagamento === filteredData[item.index].id_forma_pagamento
           );
 
           function IconeFormaPagamento() {
             if (data[indexData]?.id_forma_pagamento === 3) {
               return (
                 <Button
-                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-700 hover:bg-green-700 cursor-default"
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-600 hover:bg-green-600/90 dark:bg-green-700 dark:hover:bg-green-700/90 cursor-default"
                   size={"xs"}
                 >
                   <Banknote size={18} />
@@ -118,11 +97,9 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
             } else if (data[indexData]?.id_forma_pagamento === 6) {
               return (
                 <Button
-                  className="py-1.5 max-h-8 text-xs text-center border-none bg-violet-700 hover:bg-violet-600"
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-violet-600 hover:bg-violet-600/90 dark:bg-violet-700 dark:hover:bg-violet-600/90"
                   size={"xs"}
-                  onClick={() =>
-                    openModalFatura(data[indexData].id_vencimento || "")
-                  }
+                  onClick={() => openModalFatura(data[indexData].id_vencimento || "")}
                 >
                   <CreditCard size={18} />
                 </Button>
@@ -130,7 +107,7 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
             } else {
               return (
                 <Button
-                  className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-700 hover:bg-zinc-700 cursor-default"
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-600 hover:bg-zinc-600/90 dark:bg-zinc-700 dark:hover:bg-zinc-700/90 cursor-default"
                   size={"xs"}
                 >
                   <Landmark size={18} />
@@ -169,10 +146,17 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
               />
               <Input
                 className="w-24 h-8 text-xs p-2 text-center"
+                // @ts-ignore
                 value={
-                  data[indexData].previsao &&
-                  normalizeDate(data[indexData].previsao || "")
+                  data[indexData].data_vencimento &&
+                  normalizeDate(data[indexData].data_vencimento || "")
                 }
+                readOnly
+              />
+              <Input
+                className="w-24 h-8 text-xs p-2 text-center"
+                // @ts-ignore
+                value={data[indexData].previsao && normalizeDate(data[indexData].previsao || "")}
                 readOnly
               />
               <Input
@@ -198,8 +182,7 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
               <Input
                 className="w-32 h-8 text-xs p-2 text-end"
                 value={
-                  data[indexData].valor_total &&
-                  normalizeCurrency(data[indexData].valor_total)
+                  data[indexData].valor_total && normalizeCurrency(data[indexData].valor_total)
                 }
                 readOnly
               />
@@ -226,6 +209,7 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
                     reverseManualPayment({
                       id: data[indexData].id_vencimento,
                       tipo: data[indexData].tipo,
+                      forma_pagamento: data[indexData].forma_pagamento,
                     })
                   }
                 >

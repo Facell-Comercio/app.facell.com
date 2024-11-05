@@ -1,4 +1,4 @@
-import SelectFilial from "@/components/custom/SelectFilial";
+import { SelectFilial } from "@/components/custom/SelectFilial";
 import {
   Accordion,
   AccordionContent,

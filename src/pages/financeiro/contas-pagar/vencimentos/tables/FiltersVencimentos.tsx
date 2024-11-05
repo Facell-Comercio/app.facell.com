@@ -69,7 +69,9 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
                 className="w-[20ch]"
                 value={filters?.id_vencimento}
                 onChange={(e) => {
-                  setFilters({ id_vencimento: e.target.value });
+                  setFilters({
+                    id_vencimento: e.target.value,
+                  });
                 }}
                 min={0}
               />
@@ -80,7 +82,9 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
                 className="w-[20ch]"
                 value={filters?.id_titulo}
                 onChange={(e) => {
-                  setFilters({ id_titulo: e.target.value });
+                  setFilters({
+                    id_titulo: e.target.value,
+                  });
                 }}
                 min={0}
               />
@@ -89,20 +93,26 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
                 showAll={true}
                 value={filters.id_matriz}
                 onChange={(id_matriz) => {
-                  setFilters({ id_matriz: id_matriz });
+                  setFilters({
+                    id_matriz: id_matriz,
+                  });
                 }}
               />
               <SelectMultiFormaPagamento
-                className="w-fit"
+                className="min-w-fit"
                 value={filters.forma_pagamento_list || []}
                 onChange={(value) =>
-                  setFilters({ forma_pagamento_list: value })
+                  setFilters({
+                    forma_pagamento_list: value,
+                  })
                 }
               />
               <Select
                 value={filters.tipo_data}
                 onValueChange={(tipo_data) => {
-                  setFilters({ tipo_data: tipo_data });
+                  setFilters({
+                    tipo_data: tipo_data,
+                  });
                 }}
               >
                 <SelectTrigger className="w-[180px]">
@@ -120,15 +130,31 @@ const FiltersVencimentos = ({ refetch }: { refetch: () => void }) => {
               <DatePickerWithRange
                 date={filters.range_data}
                 setDate={(date) => {
-                  setFilters({ range_data: date });
+                  setFilters({
+                    range_data: date,
+                  });
                 }}
               />
 
               <Input
                 className="max-w-[200px]"
                 value={filters.descricao}
-                onChange={(e) => setFilters({ descricao: e.target.value })}
+                onChange={(e) =>
+                  setFilters({
+                    descricao: e.target.value,
+                  })
+                }
                 placeholder="Descrição..."
+              />
+              <Input
+                className="max-w-[200px]"
+                value={filters.fornecedor}
+                onChange={(e) =>
+                  setFilters({
+                    fornecedor: e.target.value,
+                  })
+                }
+                placeholder="Fornecedor..."
               />
             </div>
             <ScrollBar orientation="horizontal" />

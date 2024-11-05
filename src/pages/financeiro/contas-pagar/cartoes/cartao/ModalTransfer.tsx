@@ -54,7 +54,7 @@ function ModalTransfer({
   function onSubmitData() {
     const data_vencimento = new Date(
       parseInt(dadosTransferecia.ano),
-      parseInt(dadosTransferecia.mes),
+      parseInt(dadosTransferecia.mes) -1,
       parseInt(dia_vencimento || "")
     );
     if (

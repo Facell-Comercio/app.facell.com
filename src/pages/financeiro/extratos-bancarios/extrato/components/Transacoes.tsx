@@ -16,14 +16,25 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { formatDate } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Transacao, useExtratoStore } from "./context";
+import { copyToClipboard } from "@/pages/financeiro/contas-pagar/titulos/titulo/helpers/helper";
+import { useExtratosStore } from "../../context";
 
 function SearchTransactions({ data }: { data: Transacao[] }) {
+  const mes = useExtratosStore().mes;
+  const ano = useExtratosStore().ano;
+  const firstDay = new Date(parseInt(ano), parseInt(mes)-1, 1)
+  const endDay = new Date(parseInt(ano), parseInt(mes), 0)
+
   const [search, setSearch] = useState<string>("");
-  const [periodo, setPeriodo, ano] = useExtratoStore((state) => [
+  const [periodo, setPeriodo] = useExtratoStore((state) => [
     state.periodo,
     state.setPeriodo,
-    state.ano,
   ]);
+
+  useEffect(()=>{
+    setPeriodo({from: firstDay, to: endDay})
+  }, 
+  [ano, mes])
 
   const setTransacoes = useExtratoStore((state) => state.setTransacoes);
 
@@ -31,16 +42,16 @@ function SearchTransactions({ data }: { data: Transacao[] }) {
     // @ts-ignore
     const dataFiltered = search
       ? data.filter((row) => {
-          if (
-            row.id_transacao?.toLowerCase().includes(search.toLowerCase()) ||
-            row.descricao?.toLowerCase().includes(search.toLowerCase()) ||
-            row.documento?.toLowerCase().includes(search.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        })
+        if (
+          row.id_transacao?.toLowerCase().includes(search.toLowerCase()) ||
+          row.descricao?.toLowerCase().includes(search.toLowerCase()) ||
+          row.documento?.toLowerCase().includes(search.toLowerCase())
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      })
       : data;
 
     // @ts-ignore
@@ -56,8 +67,8 @@ function SearchTransactions({ data }: { data: Transacao[] }) {
           setDate={setPeriodo}
           className="w-[250px]"
           numberOfMonths={1}
-          fromMonth={periodo?.from}
-          toMonth={periodo?.to}
+          fromMonth={firstDay}
+          toMonth={endDay}
           fromYear={parseInt(ano)}
           toYear={parseInt(ano)}
         />
@@ -73,7 +84,18 @@ function SearchTransactions({ data }: { data: Transacao[] }) {
   );
 }
 
+
+
 function ReactTableVirtualized() {
+  const [itemCopiadoClipboard, setItemCopiadoClipboard] = useState<{ row: number | null, campo: string | null }>({ row: null, campo: null })
+  const handleCopyValue = (row: number, campo: string, value: string) => {
+    copyToClipboard(value)
+    setItemCopiadoClipboard({ row, campo })
+    setTimeout(() => {
+      setItemCopiadoClipboard({ row: null, campo: null })
+    }, 3000)
+  }
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const transacoes = useExtratoStore().transacoes;
 
@@ -94,7 +116,12 @@ function ReactTableVirtualized() {
         size: 120,
         cell: (info) => {
           let value = info.getValue<number>();
-          return <div className="w-full text-center">{value}</div>;
+          let index = info.row.index;
+          const isCopied = index == itemCopiadoClipboard.row && itemCopiadoClipboard.campo == 'id_transacao'
+          if (isCopied) {
+            return <span className="text-center w-full text-success">Copiado!</span>
+          }
+          return <div onClick={() => handleCopyValue(index, 'id_transacao', String(value))} className="w-32 text-center truncate cursor-pointer">{value}</div>;
         },
       },
       {
@@ -103,7 +130,12 @@ function ReactTableVirtualized() {
         size: 120,
         cell: (info) => {
           let value = info.getValue<string>();
-          return <div className="w-full text-center">{value}</div>;
+          let index = info.row.index;
+          const isCopied = index == itemCopiadoClipboard.row && itemCopiadoClipboard.campo == 'documento'
+          if (isCopied) {
+            return <span className="text-center w-full text-success">Copiado!</span>
+          }
+          return <div onClick={() => handleCopyValue(index, 'documento', value)} className="w-32 text-center truncate cursor-pointer">{value}</div>;
         },
       },
       {
@@ -114,9 +146,8 @@ function ReactTableVirtualized() {
           let valor = info.getValue<string>();
           return (
             <div
-              className={`w-full text-center ${
-                valor == "DEBIT" ? "text-red-500" : "text-green-500"
-              }`}
+              className={`w-full text-center ${valor == "DEBIT" ? "text-red-500" : "text-green-500"
+                }`}
             >
               {valor}
             </div>
@@ -133,9 +164,8 @@ function ReactTableVirtualized() {
           let currency = normalizeCurrency(valor);
           return (
             <div
-              className={`w-full  px-2 text-end ${
-                tipo === "DEBIT" ? "text-red-500" : "text-green-500"
-              }`}
+              className={`w-full  px-2 text-end ${tipo === "DEBIT" ? "text-red-500" : "text-green-500"
+                }`}
             >
               {currency}
             </div>
@@ -162,7 +192,7 @@ function ReactTableVirtualized() {
         },
       },
     ],
-    []
+    [transacoes, itemCopiadoClipboard]
   );
 
   const table = useReactTable({
@@ -188,7 +218,7 @@ function ReactTableVirtualized() {
     overscan: 10,
     measureElement:
       typeof window !== "undefined" &&
-      navigator.userAgent.indexOf("Firefox") === -1
+        navigator.userAgent.indexOf("Firefox") === -1
         ? (element) => element?.getBoundingClientRect().height
         : undefined,
   });

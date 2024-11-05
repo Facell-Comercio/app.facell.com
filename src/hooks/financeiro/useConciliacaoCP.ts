@@ -4,12 +4,7 @@ import { ConciliacaoCPSchemaProps } from "@/pages/financeiro/extratos-bancarios/
 import { VencimentosConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/tables/TitulosConciliar";
 import { TransacoesConciliarProps } from "@/pages/financeiro/extratos-bancarios/conciliacao/cp/tables/TransacoesConciliar";
 import { GetAllParams } from "@/types/query-params-type";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 interface ConciliacaoAutomaticaProps {
@@ -41,28 +36,28 @@ export const useConciliacaoCP = () => {
   return {
     getAll: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["financeiro", "conciliacao", "lista", filters],
+        enabled: !!filters?.id_conta_bancaria,
+        refetchOnMount: false,
+        queryKey: ["financeiro", "conciliacao", "cp", "lista", filters],
         queryFn: async () => {
-          return await api.get(`/financeiro/conciliacao-cp/`, {
+          const result = await api.get(`/financeiro/conciliacao-cp/`, {
             params: { pagination, filters },
           });
+          return result.data;
         },
         placeholderData: keepPreviousData,
       }),
 
     getConciliacoes: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: [
-          "financeiro",
-          "conciliacao",
-          "realizado",
-          "lista",
-          { pagination, filters },
-        ],
+        enabled: !!filters?.id_conta_bancaria,
+        refetchOnMount: false,
+        queryKey: ["financeiro", "conciliacao", "realizado", "lista", { pagination, filters }],
         queryFn: async () => {
-          return await api.get(`/financeiro/conciliacao-cp/conciliacoes`, {
+          const result = await api.get(`/financeiro/conciliacao-cp/conciliacoes`, {
             params: { pagination, filters },
           });
+          return result.data;
         },
         placeholderData: keepPreviousData,
       }),
@@ -70,7 +65,7 @@ export const useConciliacaoCP = () => {
     getOne: (id: string | null | undefined) =>
       useQuery({
         enabled: !!id,
-        queryKey: ["financeiro", "conciliacao", "detalhe", id],
+        queryKey: ["financeiro", "conciliacao", "cp", "detalhe", id],
         queryFn: async () => {
           return await api.get(`/financeiro/conciliacao-cp/${id}`);
         },
@@ -79,9 +74,7 @@ export const useConciliacaoCP = () => {
     conciliacaoManual: () =>
       useMutation({
         mutationFn: async (data: ConciliacaoCPSchemaProps) => {
-          return api
-            .post("/financeiro/conciliacao-cp", data)
-            .then((response) => response.data);
+          return api.post("/financeiro/conciliacao-cp", data).then((response) => response.data);
         },
         onSuccess() {
           toast({
@@ -171,7 +164,7 @@ export const useConciliacaoCP = () => {
         },
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["financeiro", "conciliacao", "lista"],
+            queryKey: ["financeiro", "conciliacao", "cp", "lista"],
           });
 
           toast({
@@ -218,9 +211,7 @@ export const useConciliacaoCP = () => {
     deleteConciliacao: () =>
       useMutation({
         mutationFn: async (id: string | null | undefined | number) => {
-          return api
-            .delete(`/financeiro/conciliacao-cp/${id}`)
-            .then((response) => response.data);
+          return api.delete(`/financeiro/conciliacao-cp/${id}`).then((response) => response.data);
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["financeiro"] });

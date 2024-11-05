@@ -6,16 +6,18 @@ import { api } from "@/lib/axios";
 import { Download } from "lucide-react";
 import ModalBordero from "./bordero/Modal";
 import { useStoreBordero } from "./bordero/store";
+import BtnOptionsDDA from "./components/BtnOptionsDDA";
+import { ModalDDA } from "./components/ModalDDA";
 import FiltersBorderos from "./table/Filters";
 import { columnsTable } from "./table/columns";
 import { useStoreTableBorderos } from "./table/store-table";
-import BtnOptionsDDA from "./components/BtnOptionsDDA";
-import { ModalDDA } from "./components/ModalDDA";
 
 const Borderos = () => {
-  const [pagination, setPagination, filters] = useStoreTableBorderos(
-    (state) => [state.pagination, state.setPagination, state.filters]
-  );
+  const [pagination, setPagination, filters] = useStoreTableBorderos((state) => [
+    state.pagination,
+    state.setPagination,
+    state.filters,
+  ]);
   const { data, refetch, isLoading } = useBordero().getAll({
     pagination,
     filters,
@@ -30,10 +32,7 @@ const Borderos = () => {
   }
 
   async function exportBordero(ids: string[]) {
-    const response = await api.put(
-      `/financeiro/contas-a-pagar/bordero/export`,
-      { data: ids }
-    );
+    const response = await api.put(`/financeiro/contas-a-pagar/bordero/export`, { data: ids });
     exportToExcel(response.data, `borderos`);
   }
 

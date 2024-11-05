@@ -27,6 +27,7 @@ import { useStoreBordero } from "./store";
 // Componentes
 import { Accordion } from "@/components/ui/accordion";
 
+import { SelectMultiFormaPagamento } from "@/components/custom/SelectFormaPagamento";
 import { Spinner } from "@/components/custom/Spinner";
 import { downloadResponse } from "@/helpers/download";
 import ModalFindItemsBordero, {
@@ -49,6 +50,13 @@ export type RemoveItemVencimentosProps = {
   tipo: string;
   id?: string;
   id_status?: string;
+};
+
+type FiltersProps = {
+  forma_pagamento_list: number[];
+};
+const initialFilters = {
+  forma_pagamento_list: [],
 };
 
 const FormBordero = ({
@@ -76,25 +84,19 @@ const FormBordero = ({
   } = useBordero().update();
   const { mutate: deleteVencimento } = useBordero().deleteVencimento();
 
-  const [
-    modalEditing,
-    editModal,
-    closeModal,
-    editIsPending,
-    toggleModalTransfer,
-    isPending,
-  ] = useStoreBordero((state) => [
-    state.modalEditing,
-    state.editModal,
-    state.closeModal,
-    state.editIsPending,
-    state.toggleModalTransfer,
-    state.isPending,
-  ]);
+  const [modalEditing, editModal, closeModal, editIsPending, toggleModalTransfer, isPending] =
+    useStoreBordero((state) => [
+      state.modalEditing,
+      state.editModal,
+      state.closeModal,
+      state.editIsPending,
+      state.toggleModalTransfer,
+      state.isPending,
+    ]);
 
   const [modalFindItemsOpen, setModalFindItemsOpen] = useState<boolean>(false);
-  const [modalContaBancariaOpen, setModalContaBancariaOpen] =
-    useState<boolean>(false);
+  const [filters, setFilters] = useState<FiltersProps>(initialFilters);
+  const [modalContaBancariaOpen, setModalContaBancariaOpen] = useState<boolean>(false);
 
   const [exporting, setExporting] = useState<string>("");
 
@@ -105,6 +107,7 @@ const FormBordero = ({
   });
 
   const id_conta_bancaria = form.watch("id_conta_bancaria");
+
   const id_matriz = form.watch("id_matriz");
   const data_pagamento = form.watch("data_pagamento");
   const wVencimentos = form.watch("itens");
@@ -113,67 +116,79 @@ const FormBordero = ({
   // ITENS - PENDENTES
   const wVencimentosPendentes = form
     .watch("itens")
-    .filter((v) => v.status === "pendente");
+    .filter(
+      (v) =>
+        v.status === "pendente" &&
+        (filters.forma_pagamento_list.length > 0
+          ? filters.forma_pagamento_list.includes(v.id_forma_pagamento || 0)
+          : true)
+    );
   const wVencimentosPendentesValorTotal =
-    form
-      .watch("itens")
-      .filter((v) => v.status === "pendente")
-      .reduce(
-        (acc, item: VencimentosProps) => acc + parseFloat(item?.valor_total),
-        0
-      ) || 0;
+    wVencimentosPendentes.reduce(
+      (acc, item: VencimentosProps) => acc + parseFloat(item?.valor_total),
+      0
+    ) || 0;
 
   // ITENS - PROGRAMADOS
   const wVencimentosProgramados = form
     .watch("itens")
-    .filter((v) => v.status === "programado");
+    .filter(
+      (v) =>
+        v.status === "programado" &&
+        (filters.forma_pagamento_list.length > 0
+          ? filters.forma_pagamento_list.includes(v.id_forma_pagamento || 0)
+          : true)
+    );
   const wVencimentosProgramadosValorTotal =
-    form
-      .watch("itens")
-      .filter((v) => v.status === "programado")
-      .reduce(
-        (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
-        0
-      ) || 0;
+    wVencimentosProgramados.reduce(
+      (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
+      0
+    ) || 0;
 
   // ITENS - ERRO
   const wVencimentosErro = form
     .watch("itens")
-    .filter((v) => v.status === "erro");
+    .filter(
+      (v) =>
+        v.status === "erro" &&
+        (filters.forma_pagamento_list.length > 0
+          ? filters.forma_pagamento_list.includes(v.id_forma_pagamento || 0)
+          : true)
+    );
   const wVencimentosErroValorTotal =
-    form
-      .watch("itens")
-      .filter((v) => v.status === "erro")
-      .reduce(
-        (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
-        0
-      ) || 0;
+    wVencimentosErro.reduce(
+      (acc, item: VencimentosProps) => acc + parseFloat(item.valor_total),
+      0
+    ) || 0;
 
   // ITENS - PAGOS
   const wVencimentosPago = form
     .watch("itens")
-    .filter((v) => v.status === "pago");
+    .filter(
+      (v) =>
+        v.status === "pago" &&
+        (filters.forma_pagamento_list.length > 0
+          ? filters.forma_pagamento_list.includes(v.id_forma_pagamento || 0)
+          : true)
+    );
 
   const wVencimentosPagoValorTotal =
-    form
-      .watch("itens")
-      .filter((v) => v.status === "pago")
-      .reduce(
-        (acc, item: VencimentosProps) =>
-          acc + parseFloat(item.valor_pago || "0"),
-        0
-      ) || 0;
+    wVencimentosPago.reduce(
+      (acc, item: VencimentosProps) => acc + parseFloat(item.valor_pago || "0"),
+      0
+    ) || 0;
 
-  const itensChecked: VencimentosProps[] = form
-    .watch("itens")
-    .filter((v) => v.checked);
+  const itensChecked: VencimentosProps[] = form.watch("itens").filter((v) => v.checked);
+  const totalCheckedValor: number = itensChecked.reduce(
+    (acc, val) => acc + parseFloat(val.valor_total),
+    0
+  );
 
   const handlePadronizarTipoBaixa = () => {
     itensChecked.forEach((itemChecked: VencimentosProps) => {
       const indexItem = wVencimentos.findIndex(
         (v: VencimentosProps) =>
-          v.id_vencimento == itemChecked.id_vencimento &&
-          v.tipo == itemChecked.tipo
+          v.id_vencimento == itemChecked.id_vencimento && v.tipo == itemChecked.tipo
       );
       // console.log({ indexItem });
 
@@ -186,9 +201,7 @@ const FormBordero = ({
   };
   const [loadingPagamento, setLoadingPagamento] = useState<boolean>(false);
   const handlePagamentoEmLote = async () => {
-    const itens = wVencimentos.filter(
-      (v: VencimentosProps) => v.checked === true
-    );
+    const itens = wVencimentos.filter((v: VencimentosProps) => v.checked === true);
 
     try {
       if (!itens || itens.length === 0) {
@@ -257,8 +270,7 @@ const FormBordero = ({
   function handleSelectionVencimento(item: VencimentosProps[]) {
     //^ Verificar se ele realmente está salvando como updated
     const idsVencimentos: string[] = wVencimentos.map(
-      (vencimento) =>
-        `${vencimento.id_vencimento}-${vencimento.id_forma_pagamento}`
+      (vencimento) => `${vencimento.id_vencimento}-${vencimento.id_forma_pagamento}`
     );
 
     item.forEach((subItem: VencimentosProps) => {
@@ -290,39 +302,29 @@ const FormBordero = ({
     setModalContaBancariaOpen(false);
   }
 
-  async function removeItemVencimentos({
-    index,
-    id,
-    id_status,
-    tipo,
-  }: RemoveItemVencimentosProps) {
-    if (id_status != "4" && id_status != "5") {
+  async function removeItemVencimentos({ index, id, id_status, tipo }: RemoveItemVencimentosProps) {
+    if (id_status != "5") {
       deleteVencimento({ id, tipo });
       removeItemBordero(index);
     } else {
       toast({
         title: "Erro",
-        description:
-          "Não é possível remover do borderô vencimentos de títulos com status pago!",
+        description: "Não é possível remover do borderô vencimentos de títulos com status pago!",
         duration: 3500,
         variant: "warning",
       });
     }
   }
 
-  async function removeCheckedVencimentos(
-    checkedVencimentos: VencimentosProps[]
-  ) {
+  async function removeCheckedItens(checkedVencimentos: VencimentosProps[]) {
     const novosVencimentos = wVencimentos.filter(
       (v: VencimentosProps) =>
-        !checkedVencimentos
-          .map((v) => v.id_vencimento)
-          .includes(v.id_vencimento)
+        !checkedVencimentos.map((v) => v.id_vencimento).includes(v.id_vencimento)
     );
 
     checkedVencimentos.forEach((v) => {
       if (v.id_status != "4" && v.id_status != "5") {
-        deleteVencimento(v.id_vencimento);
+        deleteVencimento({ id: v.id_vencimento, tipo: v.tipo });
       }
     });
     form.setValue("itens", novosVencimentos);
@@ -330,16 +332,12 @@ const FormBordero = ({
 
   async function exportBordero(id: string) {
     setExporting("default");
-    const response = await api.put(
-      `/financeiro/contas-a-pagar/bordero/export`,
-      { data: [id] }
-    );
+    const response = await api.put(`/financeiro/contas-a-pagar/bordero/export`, { data: [id] });
     exportToExcel(response.data, `bordero-${id}`);
     setExporting("");
   }
 
-  const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] =
-    useState<boolean>(false);
+  const [isLoadingRemessaSelecao, setIsLoadingRemessaSelecao] = useState<boolean>(false);
   async function handleRemessaSelecao() {
     try {
       if (!itensChecked || !itensChecked.length) {
@@ -422,9 +420,7 @@ const FormBordero = ({
               <div className="flex gap-3 flex-wrap justify-between mb-3">
                 <div className="flex gap-2 items-center ">
                   <Fingerprint />{" "}
-                  <span className="min-w-40 md:text-lg font-bold ">
-                    Dados do Borderô
-                  </span>
+                  <span className="min-w-40 md:text-lg font-bold ">Dados do Borderô</span>
                 </div>
 
                 {/* Exportação */}
@@ -464,9 +460,7 @@ const FormBordero = ({
                 <ModalContasBancarias
                   open={canEditBordero && modalContaBancariaOpen}
                   handleSelection={handleSelectionContaBancaria}
-                  onOpenChange={() =>
-                    setModalContaBancariaOpen((prev) => !prev)
-                  }
+                  onOpenChange={() => setModalContaBancariaOpen((prev) => !prev)}
                   id_matriz={id_matriz || ""}
                 />
                 <div className="flex flex-col justify-end flex-1 min-w-36">
@@ -487,7 +481,19 @@ const FormBordero = ({
                 />
               </div>
             </div>
-
+            <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+              <SelectMultiFormaPagamento
+                maxCount={3}
+                className="w-full bg-background hover:bg-background/90 overflow-auto scroll-thin"
+                //@ts-ignore
+                value={filters.forma_pagamento_list || []}
+                onChange={(value) =>
+                  setFilters({
+                    forma_pagamento_list: value,
+                  })
+                }
+              />
+            </div>
             {/* Titúlos do Borderô */}
             <Accordion
               type="single"
@@ -502,144 +508,140 @@ const FormBordero = ({
                 className="flex-col"
                 qtde={wVencimentosPendentes.length}
                 valorTotal={wVencimentosPendentesValorTotal}
+                qtde_selecionados={itensChecked.length}
+                valor_selecionados={totalCheckedValor}
               >
                 <div className="flex gap-2 flex-wrap justify-end">
-                  {id_conta_bancaria &&
-                    modalEditing &&
-                    itensChecked.length > 0 && (
-                      <>
-                        <AlertPopUp
-                          title="Deseja realmente prosseguir?"
-                          description="Criaremos um arquivo de remessa com base nos itens selecionados. Caso queira criar de todos os itens, utilize o botão acima de Exportação"
-                          action={handleRemessaSelecao}
+                  {id_conta_bancaria && modalEditing && itensChecked.length > 0 && (
+                    <>
+                      <AlertPopUp
+                        title="Deseja realmente prosseguir?"
+                        description="Criaremos um arquivo de remessa com base nos itens selecionados. Caso queira criar de todos os itens, utilize o botão acima de Exportação"
+                        action={handleRemessaSelecao}
+                      >
+                        {}
+                        <Button
+                          type={"button"}
+                          disabled={loadingPagamento}
+                          variant={"outline"}
+                          size={"sm"}
+                          className="justify-self-start group"
+                          title="(Não selecione PIX) Exporta o arquivo de remessa somente com os itens selecionados"
                         >
-                          {}
-                          <Button
-                            type={"button"}
-                            disabled={loadingPagamento}
-                            variant={"outline"}
-                            size={"sm"}
-                            className="justify-self-start group"
-                            title="(Não selecione PIX) Exporta o arquivo de remessa somente com os itens selecionados"
-                          >
-                            {isLoadingRemessaSelecao ? (
-                              <Spinner />
-                            ) : (
-                              <Download
-                                size={18}
-                                className="me-2 group-hover:rotate-180 transition-all"
-                              />
-                            )}
-                            Remessa
-                          </Button>
-                        </AlertPopUp>
-
-                        <AlertPopUp
-                          title="Deseja realmente prosseguir?"
-                          description="Criaremos um arquivo de remessa com base nos itens selecionados. Caso queira criar de todos os itens, utilize o botão acima de Exportação"
-                          action={handleRemessaSelecaoPix}
-                        >
-                          {}
-                          <Button
-                            type={"button"}
-                            disabled={loadingPagamento}
-                            variant={"outline"}
-                            size={"sm"}
-                            className="justify-self-start group"
-                            title="(Somente PIX) Exporta o arquivo de remessa somente com os itens selecionados"
-                          >
-                            {isLoadingRemessaSelecao ? (
-                              <Spinner />
-                            ) : (
-                              <Download
-                                size={18}
-                                className="me-2 group-hover:rotate-180 transition-all"
-                              />
-                            )}
-                            Remessa PIX
-                          </Button>
-                        </AlertPopUp>
-
-                        <AlertPopUp
-                          title="Deseja realmente prosseguir?"
-                          description="Todos os itens selecionados serão preenchidos com valor pago e tipo baixa 'Total'. Nada será salvo até que faça o Pagamento em Lote."
-                          action={handlePadronizarTipoBaixa}
-                        >
-                          <Button
-                            type={"button"}
-                            disabled={loadingPagamento}
-                            variant={"outline"}
-                            size={"sm"}
-                            className="justify-self-start group"
-                            title="Todos os itens selecionados receberão valor pago = total, tipo baixa = 'Total' "
-                          >
-                            <ArrowsUpFromLine
+                          {isLoadingRemessaSelecao ? (
+                            <Spinner />
+                          ) : (
+                            <Download
                               size={18}
                               className="me-2 group-hover:rotate-180 transition-all"
                             />
-                            Padronizar Tipo Baixa
-                          </Button>
-                        </AlertPopUp>
+                          )}
+                          Remessa
+                        </Button>
+                      </AlertPopUp>
 
-                        <AlertPopUp
-                          title="Deseja realmente realizar o pagamento?"
-                          description="Será realizado um pagamento em lote dos vencimentos e faturas selecionados."
-                          action={handlePagamentoEmLote}
-                        >
-                          <Button
-                            type={"button"}
-                            variant={"success"}
-                            size={"sm"}
-                            disabled={loadingPagamento}
-                            className="justify-self-start"
-                            title="Todos os selecionados serão pagos conforme o tipo de baixa, os sem tipo baixa serão ignorados..."
-                          >
-                            {loadingPagamento ? (
-                              <>
-                                <Spinner />
-                                <span>Pagando...</span>
-                              </>
-                            ) : (
-                              <>
-                                <ListChecks className="me-2" size={18} />
-                                <span>Pagar em Lote</span>
-                              </>
-                            )}
-                          </Button>
-                        </AlertPopUp>
+                      <AlertPopUp
+                        title="Deseja realmente prosseguir?"
+                        description="Criaremos um arquivo de remessa com base nos itens selecionados. Caso queira criar de todos os itens, utilize o botão acima de Exportação"
+                        action={handleRemessaSelecaoPix}
+                      >
+                        {}
                         <Button
                           type={"button"}
-                          variant={"tertiary"}
+                          disabled={loadingPagamento}
+                          variant={"outline"}
                           size={"sm"}
-                          className="text-white justify-self-start"
-                          onClick={() => toggleModalTransfer()}
+                          className="justify-self-start group"
+                          title="(Somente PIX) Exporta o arquivo de remessa somente com os itens selecionados"
                         >
-                          <ArrowUpDown className="me-2" size={18} />
-                          Transferir de borderô
+                          {isLoadingRemessaSelecao ? (
+                            <Spinner />
+                          ) : (
+                            <Download
+                              size={18}
+                              className="me-2 group-hover:rotate-180 transition-all"
+                            />
+                          )}
+                          Remessa PIX
                         </Button>
-                        <AlertPopUp
-                          title="Deseja realmente remover esses vencimentos?"
-                          description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
-                          action={() => removeCheckedVencimentos(itensChecked)}
+                      </AlertPopUp>
+
+                      <AlertPopUp
+                        title="Deseja realmente prosseguir?"
+                        description="Todos os itens selecionados serão preenchidos com valor pago e tipo baixa 'Total'. Nada será salvo até que faça o Pagamento em Lote."
+                        action={handlePadronizarTipoBaixa}
+                      >
+                        <Button
+                          type={"button"}
+                          disabled={loadingPagamento}
+                          variant={"outline"}
+                          size={"sm"}
+                          className="justify-self-start group"
+                          title="Todos os itens selecionados receberão valor pago = total, tipo baixa = 'Total' "
                         >
-                          <Button
-                            type={"button"}
-                            variant={"destructive"}
-                            size={"sm"}
-                            className="justify-self-start"
-                          >
-                            <Minus className="me-2" size={18} />
-                            Remover
-                          </Button>
-                        </AlertPopUp>
-                      </>
-                    )}
+                          <ArrowsUpFromLine
+                            size={18}
+                            className="me-2 group-hover:rotate-180 transition-all"
+                          />
+                          Padronizar Tipo Baixa
+                        </Button>
+                      </AlertPopUp>
+
+                      <AlertPopUp
+                        title="Deseja realmente realizar o pagamento?"
+                        description="Será realizado um pagamento em lote dos vencimentos e faturas selecionados."
+                        action={handlePagamentoEmLote}
+                      >
+                        <Button
+                          type={"button"}
+                          variant={"success"}
+                          size={"sm"}
+                          disabled={loadingPagamento}
+                          className="justify-self-start"
+                          title="Todos os selecionados serão pagos conforme o tipo de baixa, os sem tipo baixa serão ignorados..."
+                        >
+                          {loadingPagamento ? (
+                            <>
+                              <Spinner />
+                              <span>Pagando...</span>
+                            </>
+                          ) : (
+                            <>
+                              <ListChecks className="me-2" size={18} />
+                              <span>Pagar em Lote</span>
+                            </>
+                          )}
+                        </Button>
+                      </AlertPopUp>
+                      <Button
+                        type={"button"}
+                        variant={"tertiary"}
+                        size={"sm"}
+                        className="text-white justify-self-start"
+                        onClick={() => toggleModalTransfer()}
+                      >
+                        <ArrowUpDown className="me-2" size={18} />
+                        Transferir de borderô
+                      </Button>
+                      <AlertPopUp
+                        title="Deseja realmente remover esses vencimentos?"
+                        description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
+                        action={() => removeCheckedItens(itensChecked)}
+                      >
+                        <Button
+                          type={"button"}
+                          variant={"destructive"}
+                          size={"sm"}
+                          className="justify-self-start"
+                        >
+                          <Minus className="me-2" size={18} />
+                          Remover
+                        </Button>
+                      </AlertPopUp>
+                    </>
+                  )}
                   {id_conta_bancaria && modalEditing && (
-                    <Button
-                      type="button"
-                      size={"sm"}
-                      onClick={() => setModalFindItemsOpen(true)}
-                    >
+                    <Button type="button" size={"sm"} onClick={() => setModalFindItemsOpen(true)}>
                       <Plus className="me-2" strokeWidth={2} size={18} />
                       Adicionar
                     </Button>
@@ -728,39 +730,35 @@ const FormBordero = ({
                   valorTotal={wVencimentosErroValorTotal}
                 >
                   <div className="flex gap-2 flex-wrap justify-end ">
-                    {id_conta_bancaria &&
-                      modalEditing &&
-                      itensChecked.length > 0 && (
-                        <>
+                    {id_conta_bancaria && modalEditing && itensChecked.length > 0 && (
+                      <>
+                        <Button
+                          type={"button"}
+                          variant={"tertiary"}
+                          size={"sm"}
+                          className="text-white justify-self-start"
+                          onClick={() => toggleModalTransfer()}
+                        >
+                          <ArrowUpDown className="me-2" size={18} />
+                          Transferir de borderô
+                        </Button>
+                        <AlertPopUp
+                          title="Deseja realmente remover esses vencimentos?"
+                          description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
+                          action={() => removeCheckedItens(itensChecked)}
+                        >
                           <Button
                             type={"button"}
-                            variant={"tertiary"}
+                            variant={"destructive"}
                             size={"sm"}
-                            className="text-white justify-self-start"
-                            onClick={() => toggleModalTransfer()}
+                            className="justify-self-start"
                           >
-                            <ArrowUpDown className="me-2" size={18} />
-                            Transferir de borderô
+                            <Minus className="me-2" size={18} />
+                            Remover
                           </Button>
-                          <AlertPopUp
-                            title="Deseja realmente remover esses vencimentos?"
-                            description="Os vencimentos serão removidos definitivamente deste borderô, podendo ser incluidos novamente."
-                            action={() =>
-                              removeCheckedVencimentos(itensChecked)
-                            }
-                          >
-                            <Button
-                              type={"button"}
-                              variant={"destructive"}
-                              size={"sm"}
-                              className="justify-self-start"
-                            >
-                              <Minus className="me-2" size={18} />
-                              Remover
-                            </Button>
-                          </AlertPopUp>
-                        </>
-                      )}
+                        </AlertPopUp>
+                      </>
+                    )}
                   </div>
                   {wVencimentosErro.length > 0 && (
                     <RowVirtualizerFixedErro
