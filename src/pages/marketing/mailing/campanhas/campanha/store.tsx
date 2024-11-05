@@ -105,7 +105,15 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
   paginationSubcampanha: initialPagination,
 
   openModal: (id: string) => set({ modalOpen: true, id }),
-  closeModal: () => set({ modalOpen: false, id: null }),
+  closeModal: () =>
+    set({
+      modalOpen: false,
+      id: null,
+      pagination: initialPagination,
+      filters: initialFilters,
+      paginationSubcampanha: initialPagination,
+      filters_lote: initialFilters,
+    }),
   setIsPending: (bool: boolean) => set({ isPending: bool }),
   resetId: () => set({ id: null }),
 

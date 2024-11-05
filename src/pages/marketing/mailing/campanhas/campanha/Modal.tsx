@@ -172,7 +172,7 @@ const ModalCampanha = () => {
 
   const subcampanhas = useMemo(
     () => data?.subcampanhas || [],
-    [isLoading, isFetching, data_subcampanha]
+    [isLoading, isFetching, data_subcampanha, data]
   );
 
   const defaultFiltersSubcampanha = data_subcampanha?.filters;
@@ -204,7 +204,10 @@ const ModalCampanha = () => {
     isFetchingSubcampanha ||
     deleteSubcampanhaIsPending ||
     deleteClientesSubcampanhaLoteIsPending;
-  const clientes: ClienteProps[] = data?.clientes || [];
+  const clientes: ClienteProps[] = useMemo(
+    () => data?.clientes || [],
+    [isFetching, isLoading, data]
+  );
   const clientesSubcampanha: ClienteProps[] = useMemo(
     () => data_subcampanha?.clientes || [],
     [isFetchingSubcampanha]
@@ -304,8 +307,8 @@ const ModalCampanha = () => {
                             headerTitle="Excluir clientes filtrados"
                             description={`Digite "${String(
                               data?.nome
-                            ).toUpperCase()}" para poder remover os clientes`}
-                            placeholder={data?.nome}
+                            ).trim()}" para poder remover os clientes`}
+                            placeholder={data?.nome.trim()}
                             disabled={disabledCampanha}
                             equalText
                           >
@@ -418,8 +421,8 @@ const ModalCampanha = () => {
                                 headerTitle="Remover Clientes"
                                 description={`Digite "${String(
                                   data_subcampanha?.nome
-                                ).toUpperCase()}" para poder remover os clientes desta subcampanha`}
-                                placeholder={data_subcampanha?.nome}
+                                ).trim()}" para poder remover os clientes desta subcampanha`}
+                                placeholder={data_subcampanha?.nome?.trim()}
                                 disabled={disabledSubcampanha}
                                 equalText
                               >
@@ -444,8 +447,8 @@ const ModalCampanha = () => {
                                 headerTitle="Excluir subcampanha"
                                 description={`Digite "${String(
                                   data_subcampanha?.nome
-                                ).toUpperCase()}" para poder excluir a subcampanha`}
-                                placeholder={data_subcampanha?.nome}
+                                ).trim()}" para poder excluir a subcampanha`}
+                                placeholder={data_subcampanha?.nome?.trim()}
                                 disabled={disabledSubcampanha}
                                 equalText
                               >
