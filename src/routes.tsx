@@ -13,8 +13,8 @@ import HomePage from "./pages/Home.tsx";
 import LoginPage from "./pages/Login.tsx";
 import RecuperarSenha from "./pages/RecuperarSenha.tsx";
 import AdminPage from "./pages/admin/Page.tsx";
+import ComercialComissionamento from "./pages/comercial/comissionamento/ComercialMetas.tsx";
 import ComercialMetas from "./pages/comercial/metas/ComercialMetas.tsx";
-import Vales from "./pages/comercial/vales/Vales.tsx";
 import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
@@ -30,9 +30,12 @@ import MailingPage from "./pages/marketing/mailing/Mailing.tsx";
 import Perfil from "./pages/perfil/index.tsx";
 import Colaboradores from "./pages/pessoal/colaboradores/Colaboradores.tsx";
 import { VideoAulaPage } from "./pages/treinamento/videoaula/Page.tsx";
+import ComercialVales from "./pages/comercial/vales/ComercialVales.tsx";
 
 const AppRoutes = () => {
-  const user = useAuthStore((state) => state.user);
+  const user = useAuthStore(
+    (state) => state.user
+  );
 
   useEffect(() => {}, [user]);
 
@@ -40,14 +43,26 @@ const AppRoutes = () => {
     <Routes>
       <Route element={<PrivateRoutes />}>
         <Route path="/" element={<App />}>
-          <Route element={<NotAuthorizedPage />} path="/not-authorized" />
+          <Route
+            element={<NotAuthorizedPage />}
+            path="/not-authorized"
+          />
           {/* Páginas protegidas isoladas */}
-          <Route element={<HomePage />} path="/" />
-          <Route element={<PageDashboard />} path="/dashboard" />
+          <Route
+            element={<HomePage />}
+            path="/"
+          />
+          <Route
+            element={<PageDashboard />}
+            path="/dashboard"
+          />
 
           {/* T&D */}
           <Route path="/treinamento/">
-            <Route element={<VideoAulaPage />} path="videoaula" />
+            <Route
+              element={<VideoAulaPage />}
+              path="videoaula"
+            />
           </Route>
 
           {/* Pessoal */}
@@ -60,8 +75,20 @@ const AppRoutes = () => {
 
           {/* Comercial */}
           <Route path="/comercial/">
-            <Route element={<Vales />} path="vales" />
-            <Route element={<ComercialMetas />} path="metas" />
+            <Route
+              element={<ComercialVales />}
+              path="vales"
+            />
+            <Route
+              element={<ComercialMetas />}
+              path="metas"
+            />
+            <Route
+              element={
+                <ComercialComissionamento />
+              }
+              path="comissionamento"
+            />
           </Route>
 
           {/* Suprimentos */}
@@ -70,9 +97,18 @@ const AppRoutes = () => {
 
           {/* Financeiro */}
           <Route path="/financeiro/">
-            <Route element={<ContasPagarPage />} path="contas-a-pagar" />
-            <Route element={<ContasReceberPage />} path="contas-a-receber" />
-            <Route element={<ControleCaixaPage />} path="controle-de-caixa">
+            <Route
+              element={<ContasPagarPage />}
+              path="contas-a-pagar"
+            />
+            <Route
+              element={<ContasReceberPage />}
+              path="contas-a-receber"
+            />
+            <Route
+              element={<ControleCaixaPage />}
+              path="controle-de-caixa"
+            >
               <Route path="conferencia-de-caixa">
                 <Route
                   element={
@@ -86,7 +122,10 @@ const AppRoutes = () => {
                 />
               </Route>
             </Route>
-            <Route element={<OrcamentoPage />} path="orcamento" />
+            <Route
+              element={<OrcamentoPage />}
+              path="orcamento"
+            />
             <Route
               element={
                 checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
@@ -142,13 +181,25 @@ const AppRoutes = () => {
             path="administracao"
           />
 
-          <Route element={<Perfil />} path="perfil" />
-          <Route element={<NotFoundPage />} path="*" />
+          <Route
+            element={<Perfil />}
+            path="perfil"
+          />
+          <Route
+            element={<NotFoundPage />}
+            path="*"
+          />
         </Route>
       </Route>
 
-      <Route element={<LoginPage />} path="/login" />
-      <Route element={<RecuperarSenha />} path="/recuperar-senha" />
+      <Route
+        element={<LoginPage />}
+        path="/login"
+      />
+      <Route
+        element={<RecuperarSenha />}
+        path="/recuperar-senha"
+      />
     </Routes>
   );
 };
