@@ -34,7 +34,7 @@ export type ResultadoInteracao = {
   status: string;
   operador: string;
   observacao: string;
-  duracao: string;
+  duracao_chamada: string;
 };
 
 const ModalVerCliente = () => {
@@ -224,7 +224,7 @@ const ModalVerCliente = () => {
                         <TableCell>
                           {formatDate(resultado.datetime_contato_resposta, "dd/MM/yyyy HH:mm")}
                         </TableCell>
-                        <TableCell>{resultado.duracao} seg.</TableCell>
+                        <TableCell>{resultado.duracao_chamada} seg.</TableCell>
                         <TableCell>{resultado.operador}</TableCell>
                         <TableCell>{resultado.observacao || "-"}</TableCell>
                       </TableRow>
