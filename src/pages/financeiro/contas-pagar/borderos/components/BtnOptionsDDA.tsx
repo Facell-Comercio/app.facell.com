@@ -33,7 +33,6 @@ const BtnOptionsDDA = () => {
 
   // * Acessar DDA
   const handleAcessarClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
     e.preventDefault();
     openModal({
       id_vencimento: null,
@@ -42,6 +41,7 @@ const BtnOptionsDDA = () => {
         naoVinculados: true,
       },
     });
+    setToggleModal((prev) => !prev);
   };
 
   // * Importação
@@ -70,7 +70,7 @@ const BtnOptionsDDA = () => {
   const handleExportClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    exportDDA();
+    exportDDA(undefined);
   };
 
   // * Limpeza de DDA

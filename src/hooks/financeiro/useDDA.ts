@@ -1,4 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
+import { downloadResponse } from "@/helpers/download";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { api } from "@/lib/axios";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -72,16 +73,14 @@ export const useDDA = () => {
 
   const exportDDA = () =>
     useMutation({
-      mutationFn: async () => {
+      mutationFn: async (params?: GetDDAProps) => {
         return await api
-          .get("/financeiro/contas-a-pagar/dda/export")
-          .then((response) => response.data);
+          .get("/financeiro/contas-a-pagar/dda/export", { params, responseType: "blob" })
+          .then((response) => {
+            downloadResponse(response);
+          });
       },
-      onSuccess(data) {
-        exportToExcel(data, `EXPORTAÇÃO DDA ${formatDate(new Date(), "dd-MM-yyyy hh.mm")}`);
-        queryClient.invalidateQueries({
-          queryKey: ["financeiro", "contas_pagar"],
-        });
+      onSuccess() {
         toast({
           variant: "success",
           title: "Exportação concluída!",
