@@ -48,16 +48,17 @@ const ButtonMotivation = ({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
+          <AlertDialogTitle className="whitespace-pre">
             {headerTitle || "Digite o motivo para poder prosseguir"}
           </AlertDialogTitle>
-          <AlertDialogDescription className={description ? "mb-2" : "hidden"}>
+          <AlertDialogDescription className={description ? "mb-2 whitespace-pre" : "hidden"}>
             {description}
           </AlertDialogDescription>
           <Input
             value={motivo}
             onChange={(e) => setMotivo(e.target.value)}
             placeholder={placeholder || "Ajuste necessário em..."}
+            className="whitespace-pre"
           />
         </AlertDialogHeader>
         <AlertDialogFooter>

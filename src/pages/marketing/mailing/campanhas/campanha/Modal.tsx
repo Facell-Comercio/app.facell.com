@@ -308,9 +308,8 @@ const ModalCampanha = () => {
                             headerTitle="Excluir clientes filtrados"
                             description={`Digite "${String(data?.nome)
                               .trim()
-                              .toUpperCase()
-                              .replaceAll("  ", " ")}" para poder remover os clientes`}
-                            placeholder={data?.nome.trim().toUpperCase().replaceAll("  ", " ")}
+                              .toUpperCase()}" para poder remover os clientes`}
+                            placeholder={data?.nome.trim().toUpperCase()}
                             disabled={disabledCampanha}
                             equalText
                           >
@@ -428,10 +427,7 @@ const ModalCampanha = () => {
                                     "  ",
                                     " "
                                   )}" para poder remover os clientes desta subcampanha`}
-                                placeholder={data_subcampanha?.nome
-                                  ?.trim()
-                                  .toUpperCase()
-                                  .replaceAll("  ", " ")}
+                                placeholder={data_subcampanha?.nome?.trim().toUpperCase()}
                                 disabled={disabledSubcampanha}
                                 equalText
                               >
@@ -456,12 +452,8 @@ const ModalCampanha = () => {
                                 headerTitle="Excluir subcampanha"
                                 description={`Digite "${String(data_subcampanha?.nome)
                                   .trim()
-                                  .toUpperCase()
-                                  .replaceAll("  ", " ")}" para poder excluir a subcampanha`}
-                                placeholder={data_subcampanha?.nome
-                                  ?.trim()
-                                  .toUpperCase()
-                                  .replaceAll("  ", " ")}
+                                  .toUpperCase()}" para poder excluir a subcampanha`}
+                                placeholder={data_subcampanha?.nome?.trim().toUpperCase()}
                                 disabled={disabledSubcampanha}
                                 equalText
                               >
