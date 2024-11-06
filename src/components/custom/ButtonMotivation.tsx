@@ -37,6 +37,8 @@ const ButtonMotivation = ({
   const actionDisabled = equalText
     ? motivo !== String(placeholder).toUpperCase()
     : !motivo || motivo.length < 10;
+  console.log(motivo, String(placeholder).toUpperCase());
+
   return (
     <AlertDialog>
       <AlertDialogTrigger type="button" asChild>
