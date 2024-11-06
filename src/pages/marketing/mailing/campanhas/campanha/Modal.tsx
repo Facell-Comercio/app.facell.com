@@ -297,6 +297,7 @@ const ModalCampanha = () => {
                             action={() => {
                               if (qtde_all_clientes === qtde_clientes) {
                                 resetId();
+                                closeModal();
                               }
                               deleteClientesLote({ id_campanha: id || "", filters });
                               setCampanhaData({
