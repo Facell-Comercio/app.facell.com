@@ -102,10 +102,18 @@ const ModalCampanha = () => {
     filters,
     pagination,
   });
-  const qtde_clientes = data?.qtde_clientes || 0;
-  const qtde_all_clientes = data?.qtde_all_clientes || 0;
+
+  //* EVITANDO RE-RENDERIZAÇÃO DESNCECESSÁRIA
+  const [qtdeClientes, setQtdeClientes] = useState(data?.qtde_clientes);
+  useEffect(() => {
+    if (data?.qtde_clientes && data?.qtde_clientes !== qtdeClientes) {
+      setQtdeClientes(data?.qtde_clientes);
+    }
+  }, [data?.qtde_clientes]);
+
+  const qtde_all_clientes = data?.qtde_all_clientes;
   const defaultFilters = data?.filters;
-  const rowCount = data?.qtde_clientes || 0;
+  const rowCount = useMemo(() => qtdeClientes, [qtdeClientes]);
 
   const {
     data: data_subcampanha,
@@ -117,9 +125,22 @@ const ModalCampanha = () => {
     filters: filters_lote,
     pagination: paginationSubcampanha,
   });
-  const qtde_clientes_subcampanha = data_subcampanha?.qtde_clientes || 0;
-  const qtde_all_clientes_subcampanha = data_subcampanha?.qtde_all_clientes || 0;
-  const rowCountSubcampanha = data_subcampanha?.qtde_clientes || 0;
+
+  //* EVITANDO RE-RENDERIZAÇÃO DESNCECESSÁRIA
+  const [qtdeClientesSubcampanha, setQtdeClientesSubcampanha] = useState(
+    data_subcampanha?.qtde_clientes
+  );
+  useEffect(() => {
+    if (
+      data_subcampanha?.qtde_clientes &&
+      data_subcampanha?.qtde_clientes !== qtdeClientesSubcampanha
+    ) {
+      setQtdeClientesSubcampanha(data_subcampanha?.qtde_clientes);
+    }
+  }, [data_subcampanha?.qtde_clientes]);
+
+  const qtde_all_clientes_subcampanha = data_subcampanha?.qtde_all_clientes;
+  const rowCountSubcampanha = useMemo(() => qtdeClientesSubcampanha, [qtdeClientesSubcampanha]);
 
   const {
     mutate: deleteClientesLote,
@@ -149,6 +170,7 @@ const ModalCampanha = () => {
       refetchSubcampanha();
     }
   };
+  console.log(pagination);
 
   async function resetFiltersDelete(type: "campanha" | "subcampanha") {
     if (campanhaData.qtde_clientes !== campanhaData.qtde_all_clientes) {
@@ -284,25 +306,25 @@ const ModalCampanha = () => {
                         refetch={refetch}
                         setFilters={setFilters}
                         resetFilters={resetFilters}
-                        qtde_clientes={qtde_clientes}
+                        qtde_clientes={qtdeClientes}
                         isPending={isLoading || isFetching}
                         disabled={disabledCampanha}
                         resetPagination={resetPagination}
                       />
-                      {qtde_clientes > 0 && canEdit && (
+                      {qtdeClientes > 0 && canEdit && (
                         <span className="flex flex-wrap justify-end gap-2 w-full">
                           <ButtonMotivation
                             title="Exclui os clientes que foram filtrados..."
                             variant={"destructive"}
                             action={() => {
-                              if (qtde_all_clientes === qtde_clientes) {
+                              if (qtde_all_clientes === qtdeClientes) {
                                 resetId();
                                 closeModal();
                               }
                               deleteClientesLote({ id_campanha: id || "", filters });
                               setCampanhaData({
                                 qtde_all_clientes: qtde_all_clientes,
-                                qtde_clientes: qtde_clientes,
+                                qtde_clientes: qtdeClientes,
                               });
                             }}
                             headerTitle="Excluir clientes filtrados"
@@ -317,14 +339,14 @@ const ModalCampanha = () => {
                           </ButtonMotivation>
 
                           <Button
-                            onClick={() => openModalDuplicarCampanha(qtde_clientes)}
+                            onClick={() => openModalDuplicarCampanha(qtdeClientes)}
                             disabled={disabledCampanha}
                             variant={"tertiary"}
                           >
                             <CopyPlus className="me-2" size={18} /> Duplicar Campanha
                           </Button>
                           <Button
-                            onClick={() => openModalNovaSubcampanha(qtde_clientes)}
+                            onClick={() => openModalNovaSubcampanha(qtdeClientes)}
                             disabled={disabledCampanha}
                           >
                             <Plus className="me-2" size={18} /> Nova Subcampanha
@@ -341,11 +363,13 @@ const ModalCampanha = () => {
                         columns={columnsTableClientes}
                         isLoading={isLoading || isFetching}
                         variant="secondary"
+                        fixed
+                        maxHeight={50}
                       />
                     </div>
                     <span className="flex justify-end">
                       <Badge variant={"secondary"}>
-                        Quantidade Total de Clientes: {qtde_clientes}
+                        Quantidade Total de Clientes: {qtdeClientes}
                       </Badge>
                     </span>
                   </div>
@@ -394,7 +418,7 @@ const ModalCampanha = () => {
                           refetch={refetchSubcampanha}
                           setFilters={setFiltersLote}
                           resetFilters={resetFiltersLote}
-                          qtde_clientes={qtde_clientes_subcampanha}
+                          qtde_clientes={qtdeClientesSubcampanha}
                           isPending={isLoadingSubcampanha || isFetchingSubcampanha || isFetching}
                           isSubcampanha
                           disabled={disabledSubcampanha}
@@ -407,11 +431,11 @@ const ModalCampanha = () => {
                                 title="Retorna os clintes para fora da subcampanha..."
                                 variant={"destructive"}
                                 action={() => {
-                                  if (qtde_all_clientes_subcampanha === qtde_clientes_subcampanha) {
+                                  if (qtde_all_clientes_subcampanha === qtdeClientesSubcampanha) {
                                     setIdSubcampanha("");
                                   }
                                   setCampanhaData({
-                                    qtde_clientes: qtde_clientes_subcampanha,
+                                    qtde_clientes: qtdeClientesSubcampanha,
                                     qtde_all_clientes: qtde_all_clientes_subcampanha,
                                   });
                                   deleteClientesSubcampanhaLote({
@@ -475,16 +499,14 @@ const ModalCampanha = () => {
                             <>
                               <Button
                                 variant={"warning"}
-                                onClick={() => openModalDefinirAparelho(qtde_clientes_subcampanha)}
+                                onClick={() => openModalDefinirAparelho(qtdeClientesSubcampanha)}
                                 disabled={disabledSubcampanha}
                               >
                                 <Smartphone className="me-2" size={18} /> Definir Aparelhos
                               </Button>
                               <Button
                                 variant={"tertiary"}
-                                onClick={() =>
-                                  openModalDefinirVendedores(qtde_clientes_subcampanha)
-                                }
+                                onClick={() => openModalDefinirVendedores(qtdeClientesSubcampanha)}
                                 disabled={disabledSubcampanha}
                               >
                                 <UserPen className="me-2" size={18} /> Definir Vendedores
@@ -502,11 +524,13 @@ const ModalCampanha = () => {
                           columns={columnsTableClientesSubcampanha}
                           isLoading={isLoadingSubcampanha || isFetchingSubcampanha}
                           variant="secondary"
+                          fixed
+                          maxHeight={50}
                         />
                       </div>
                       <span className="flex justify-end">
                         <Badge variant={"secondary"}>
-                          Quantidade Total de Clientes: {qtde_clientes_subcampanha}
+                          Quantidade Total de Clientes: {qtdeClientesSubcampanha}
                         </Badge>
                       </span>
                     </div>

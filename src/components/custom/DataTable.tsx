@@ -36,7 +36,23 @@ import { normalizeCurrency } from "@/helpers/mask";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 
-interface DataTableProps<TData, TValue> {
+// interface DataTableProps<TData, TValue> {
+//   sumField?: string;
+//   columns: ColumnDef<TData, TValue>[];
+//   data: TData[];
+//   rowCount: number;
+//   showRowCount?: boolean;
+//   pagination?: PaginationState;
+//   setPagination?: (pagination: PaginationState) => void;
+//   rowSelection?: RowSelectionState;
+//   handleRowSelection?: (data: any) => void;
+//   isLoading?: boolean;
+//   variant?: "default" | "secondary";
+//   fixed?: boolean;
+//   maxHeight?: this["fixed"] extends true ? number : never;
+// }
+
+interface DataTableBaseProps<TData, TValue> {
   sumField?: string;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -50,6 +66,20 @@ interface DataTableProps<TData, TValue> {
   variant?: "default" | "secondary";
 }
 
+interface DataTableFixedProps<TData, TValue> extends DataTableBaseProps<TData, TValue> {
+  fixed: true;
+  maxHeight: number; // Obrigatório quando `fixed` é `true`
+}
+
+interface DataTableNonFixedProps<TData, TValue> extends DataTableBaseProps<TData, TValue> {
+  fixed?: false;
+  maxHeight?: number; // Opcional quando `fixed` é `false` ou não está presente
+}
+
+type DataTableProps<TData, TValue> =
+  | DataTableFixedProps<TData, TValue>
+  | DataTableNonFixedProps<TData, TValue>;
+
 export function DataTable<TData, TValue>({
   sumField,
   pagination,
@@ -62,6 +92,8 @@ export function DataTable<TData, TValue>({
   handleRowSelection,
   isLoading,
   variant = "default",
+  fixed,
+  maxHeight,
 }: DataTableProps<TData, TValue>) {
   const [valorTotal, setValorTotal] = useState<number>(0);
 
@@ -143,8 +175,16 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="rounded-md border">
-      <Table>
-        <TableHeader className={variant === "secondary" ? "bg-secondary" : ""}>
+      <Table
+        divClassname={
+          fixed ? `overflow-auto scroll-thin max-h-[${maxHeight}vh] border rounded-md` : ""
+        }
+      >
+        <TableHeader
+          className={`${variant === "secondary" && "bg-secondary"} ${
+            fixed && "sticky w-full top-0 h-10 border-b-2 border-border rounded-t-md"
+          }`}
+        >
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
