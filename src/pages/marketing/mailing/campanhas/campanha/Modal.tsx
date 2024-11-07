@@ -170,7 +170,6 @@ const ModalCampanha = () => {
       refetchSubcampanha();
     }
   };
-  console.log(pagination);
 
   async function resetFiltersDelete(type: "campanha" | "subcampanha") {
     if (campanhaData.qtde_clientes !== campanhaData.qtde_all_clientes) {
