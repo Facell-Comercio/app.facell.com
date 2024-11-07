@@ -37,7 +37,6 @@ const ButtonMotivation = ({
   const actionDisabled = equalText
     ? motivo !== String(placeholder).toUpperCase()
     : !motivo || motivo.length < 10;
-  console.log(motivo, String(placeholder).toUpperCase());
 
   return (
     <AlertDialog>
@@ -46,7 +45,7 @@ const ButtonMotivation = ({
           {children}
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="min-w-fit">
         <AlertDialogHeader>
           <AlertDialogTitle className="whitespace-pre">
             {headerTitle || "Digite o motivo para poder prosseguir"}
