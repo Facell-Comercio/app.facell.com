@@ -2,6 +2,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 import { Link, useLocation } from "react-router-dom";
+import InteracoesManuais from "./interacoes-manuais/InteracoesManuais";
 import Planos from "./planos/Planos";
 import Vendedores from "./vendedores/Vendedores";
 
@@ -21,9 +22,14 @@ const CadastrosMarketingPage = () => {
               <TabsTrigger value="vendedores">Vendedores</TabsTrigger>
             </Link>
             {isGestor && (
-              <Link to={`${uri}?tab=planos`}>
-                <TabsTrigger value="planos">Planos</TabsTrigger>
-              </Link>
+              <>
+                <Link to={`${uri}?tab=planos`}>
+                  <TabsTrigger value="planos">Planos</TabsTrigger>
+                </Link>
+                <Link to={`${uri}?tab=interacoes-manuais`}>
+                  <TabsTrigger value="interacoes-manuais">Interações Manuais</TabsTrigger>
+                </Link>
+              </>
             )}
 
             <ScrollBar orientation="horizontal" />
@@ -34,6 +40,9 @@ const CadastrosMarketingPage = () => {
         </TabsContent>
         <TabsContent value="planos">
           <Planos />
+        </TabsContent>
+        <TabsContent value="interacoes-manuais">
+          <InteracoesManuais />
         </TabsContent>
       </Tabs>
     </div>

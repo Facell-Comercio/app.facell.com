@@ -7,6 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+import { useCadastros } from "@/hooks/marketing/useCadastros";
 import { useState } from "react";
 
 interface IModalVendedores {
@@ -43,6 +45,7 @@ const ModalVendedores = ({
 
   function pushSelection(item: ItemVendedor) {
     handleSelection(item);
+
     if (closeOnSelection) {
       onOpenChange();
     }
@@ -61,81 +64,25 @@ const ModalVendedores = ({
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
 
-        <RowVirtualizerFixed data={data?.rows || []} pushSelection={pushSelection} />
+        <div className="grid gap-1 w-full max-h-[50vh] overflow-auto scroll-thin">
+          {data &&
+            data.rows.map((data: any, index: number) => (
+              <div
+                key={`${index} - ${data.nome}`}
+                className="flex justify-between odd:bg-secondary/60 even:bg-secondary/40 rounded-sm px-2 py-1"
+              >
+                <span className="uppercase">{data.nome}</span>
+                <span>
+                  <Button size={"xs"} onClick={() => pushSelection(data)}>
+                    Selecionar
+                  </Button>
+                </span>
+              </div>
+            ))}
+        </div>
       </DialogContent>
     </Dialog>
   );
 };
 
 export default ModalVendedores;
-
-import * as React from "react";
-
-import { useCadastros } from "@/hooks/marketing/useCadastros";
-import { useVirtualizer } from "@tanstack/react-virtual";
-
-interface RowVirtualizerFixedProps {
-  data: ItemVendedor[];
-  pushSelection: (item: ItemVendedor) => void;
-}
-
-const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({ data, pushSelection }) => {
-  const parentElement = React.useRef(null);
-
-  const count = data.length;
-
-  const virtualizer = useVirtualizer({
-    count,
-    getScrollElement: () => parentElement.current,
-    estimateSize: () => 36,
-    overscan: 10,
-  });
-
-  return (
-    <section
-      ref={parentElement}
-      className="md:pe-2 h-[400px] w-full overflow-auto scroll-thin rounded-md"
-      // style={{
-      //   height: `300px`,
-      //   width: `100%`,
-      //   overflow: 'auto',
-      // }}
-    >
-      <div
-        style={{
-          height: `${virtualizer.getTotalSize()}px`,
-          width: "100%",
-          position: "relative",
-        }}
-      >
-        {virtualizer.getVirtualItems().map((item, index) => {
-          return (
-            <div
-              // ref={virtualizer.measureElement}
-              key={item.index}
-              data-index={index}
-              className={`flex w-full gap-1 py-1 px-1 items-center bg-secondary/40 odd:bg-secondary/60 text-xs  ${
-                virtualizer.getVirtualItems().length == 0 && "hidden"
-              }`}
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: `${item.size}px`,
-                transform: `translateY(${item.start}px)`,
-              }}
-            >
-              <div className="flex justify-between items-center p-1 w-full">
-                <div className="uppercase">{data[index].nome}</div>
-                <Button size={"xs"} onClick={() => pushSelection(data[index])}>
-                  Selecionar
-                </Button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </section>
-  );
-};
