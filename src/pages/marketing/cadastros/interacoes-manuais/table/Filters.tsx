@@ -51,7 +51,7 @@ const FiltersInteracoesManuais = ({ refetch }: { refetch: () => void }) => {
               <Input
                 placeholder="Cliente"
                 className="max-w-[200px]"
-                value={filters.cliente}
+                value={filters.cliente || ""}
                 onChange={(e) => {
                   setFilters({ cliente: e.target.value });
                 }}
@@ -59,7 +59,7 @@ const FiltersInteracoesManuais = ({ refetch }: { refetch: () => void }) => {
               <Input
                 placeholder="Operador"
                 className="max-w-[200px]"
-                value={filters.operador}
+                value={filters.operador || ""}
                 onChange={(e) => {
                   setFilters({ operador: e.target.value });
                 }}
@@ -67,7 +67,7 @@ const FiltersInteracoesManuais = ({ refetch }: { refetch: () => void }) => {
               <Input
                 placeholder="Observação"
                 className="max-w-[200px]"
-                value={filters.observacao}
+                value={filters.observacao || ""}
                 onChange={(e) => {
                   setFilters({ observacao: e.target.value });
                 }}

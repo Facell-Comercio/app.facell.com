@@ -228,7 +228,7 @@ export const useCadastros = () => {
     //* INTERAÇÕES MANUAIS MARKETING
     getAllInteracoesManuais: ({ pagination, filters }: GetAllParams) =>
       useQuery({
-        queryKey: ["marketing", "cadastros", "interacoes", "lista", pagination],
+        queryKey: ["marketing", "cadastros", "interacoes", "lista", { pagination, filters }],
         queryFn: async () => {
           return await api
             .get(`marketing/cadastros/interacoes-manuais`, {
