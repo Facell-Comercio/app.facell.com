@@ -103,7 +103,7 @@ type RecorrenciaProps = {
   valor: string;
 };
 
-interface useStoreTitulo {
+interface useStoreTituloPagar {
   id: string | null;
   recorrencia?: RecorrenciaProps;
   copyData?: Partial<TituloSchemaProps>;
@@ -132,8 +132,8 @@ interface useStoreTitulo {
   closeAlteracaoLoteModal: () => void;
 }
 
-export const useStoreTitulo =
-  create<useStoreTitulo>((set) => ({
+export const useStoreTituloPagar =
+  create<useStoreTituloPagar>((set) => ({
     id: null,
     recorrencia: undefined,
     copyData: undefined,

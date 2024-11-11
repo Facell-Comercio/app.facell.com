@@ -7,12 +7,7 @@ import { ExportAnexosProps } from "@/pages/financeiro/contas-pagar/titulos/compo
 import { LancamentoLoteProps } from "@/pages/financeiro/contas-pagar/titulos/components/ButtonImportarTitulo";
 import { EditRecorrenciaProps } from "@/pages/financeiro/contas-pagar/titulos/recorrencias/ModalEditarRecorrencia";
 import { TituloSchemaProps } from "@/pages/financeiro/contas-pagar/titulos/titulo/form-data";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface GetTitulosPagarProps {
   pagination?: {
@@ -22,24 +17,18 @@ export interface GetTitulosPagarProps {
   filters: any;
 }
 
-const uri = '/financeiro/contas-a-pagar/titulo';
+const uri = "/financeiro/contas-a-pagar/titulo";
 
 export const useTituloPagar = () => {
   const queryClient = useQueryClient();
 
   const getAll = ({ pagination, filters }: GetTitulosPagarProps) =>
     useQuery({
-      queryKey: [
-        "financeiro",
-        "contas_pagar",
-        "titulo",
-        "lista",
-        { pagination, filters },
-      ],
+      queryKey: ["financeiro", "contas_pagar", "titulo", "lista", { pagination, filters }],
       staleTime: 5 * 1000 * 60,
       retry: false,
-      queryFn: () =>
-        fetchApi.financeiro.contas_pagar.titulos.getAll({
+      queryFn: async () =>
+        await fetchApi.financeiro.contas_pagar.titulos.getAll({
           pagination,
           filters,
         }),
@@ -66,9 +55,7 @@ export const useTituloPagar = () => {
       queryKey: ["financeiro", "contas_pagar", "titulo", "detalhe", id],
       queryFn: async () => {
         try {
-          const result = await api.get(
-            `${uri}/${id}`
-          );
+          const result = await api.get(`${uri}/${id}`);
           return result;
         } catch (error) {
           // @ts-expect-error "Vai funcionar"
@@ -89,9 +76,7 @@ export const useTituloPagar = () => {
       queryKey: ["financeiro", "contas_pagar", "pendencia", "lista"],
       queryFn: async () => {
         try {
-          const result = await api.get(
-            `${uri}/pendencias`
-          );
+          const result = await api.get(`${uri}/pendencias`);
           return result;
         } catch (error) {
           // @ts-expect-error "Vai funcionar"
@@ -109,9 +94,7 @@ export const useTituloPagar = () => {
   const insertOne = () =>
     useMutation({
       mutationFn: async (data: TituloSchemaProps) => {
-        return await api
-          .post(`${uri}`, data)
-          .then((response) => response.data);
+        return await api.post(`${uri}`, data).then((response) => response.data);
       },
       onSuccess() {
         toast({
@@ -136,9 +119,7 @@ export const useTituloPagar = () => {
   const update = () =>
     useMutation({
       mutationFn: async ({ id, ...rest }: TituloSchemaProps) => {
-        return await api
-          .put(`${uri}`, { id, ...rest })
-          .then((response) => response.data);
+        return await api.put(`${uri}`, { id, ...rest }).then((response) => response.data);
       },
       onSuccess() {
         toast({
@@ -163,9 +144,7 @@ export const useTituloPagar = () => {
   const deleteRecorrencia = () =>
     useMutation({
       mutationFn: async (id: number | string) => {
-        return await api
-          .delete(`${uri}/recorrencias/${id}`)
-          .then((response) => response.data);
+        return await api.delete(`${uri}/recorrencias/${id}`).then((response) => response.data);
       },
       onSuccess() {
         toast({
@@ -192,9 +171,7 @@ export const useTituloPagar = () => {
   const lancamentoLote = () =>
     useMutation({
       mutationFn: async (data: LancamentoLoteProps[]) => {
-        return api
-          .post(`${uri}/solicitacao-lote`, data)
-          .then((response) => response.data);
+        return api.post(`${uri}/solicitacao-lote`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({ queryKey: ["financeiro"] });
@@ -214,9 +191,7 @@ export const useTituloPagar = () => {
   const changeTitulos = () =>
     useMutation({
       mutationFn: async ({ ...rest }: AlteracaoLoteSchemaProps) => {
-        return await api
-          .put(`${uri}/change-fields`, { ...rest })
-          .then((response) => response.data);
+        return await api.put(`${uri}/change-fields`, { ...rest }).then((response) => response.data);
       },
       onSuccess() {
         toast({
@@ -239,11 +214,7 @@ export const useTituloPagar = () => {
     });
   const changeRecorrencia = () =>
     useMutation({
-      mutationFn: async ({
-        id,
-        data_vencimento,
-        valor,
-      }: EditRecorrenciaProps) => {
+      mutationFn: async ({ id, data_vencimento, valor }: EditRecorrenciaProps) => {
         return await api
           .put(`${uri}/recorrencias/${id}`, {
             data_vencimento,
@@ -307,107 +278,6 @@ export const useTituloPagar = () => {
       },
     });
 
-  const exportPrevisaoPagamento = () => useMutation({
-    mutationFn: async ({ filters }: GetTitulosPagarProps) => {
-      
-      return await api
-        .get(`${uri}/export-previsao-pagamento`, {
-          params: { filters },
-          responseType: "blob",
-        })
-        .then((response) => {
-          downloadResponse(response);
-        });
-    },
-    onError: async (error) => {
-      // @ts-expect-error "Funciona"   
-      const errorText = await error.response.data.text();
-      const errorJSON = JSON.parse(errorText);
-
-      toast({
-        variant: "destructive",
-        title: 'Ops',
-        description: errorJSON.message
-      });
-    },
-  })
-
-  const exportLayoutDespesas = () => useMutation({
-    mutationFn: async ({ filters }: GetTitulosPagarProps) => {
-      
-      return await api
-        .get(`${uri}/export-layout-despesas`, {
-          params: { filters },
-          responseType: "blob",
-        })
-        .then((response) => {
-          downloadResponse(response);
-        });
-    },
-    onError: async (error) => {
-      // @ts-expect-error "Funciona"   
-      const errorText = await error.response.data.text();
-      const errorJSON = JSON.parse(errorText);
-
-      toast({
-        variant: "destructive",
-        title: 'Ops',
-        description: errorJSON.message
-      });
-    },
-  })
-
-  const exportLayoutVencimentos = () => useMutation({
-    mutationFn: async ({ filters }: GetTitulosPagarProps) => {
-      
-      return await api
-        .get(`${uri}/export-layout-vencimentos`, {
-          params: { filters },
-          responseType: "blob",
-        })
-        .then((response) => {
-          downloadResponse(response);
-        });
-    },
-    onError: async (error) => {
-      // @ts-expect-error "Funciona"   
-      const errorText = await error.response.data.text();
-      const errorJSON = JSON.parse(errorText);
-
-      toast({
-        variant: "destructive",
-        title: 'Ops',
-        description: errorJSON.message
-      });
-    },
-  })
-
-  const exportLayoutDRE = () => useMutation({
-    mutationFn: async ({ filters }: GetTitulosPagarProps) => {
-      
-      return await api
-        .get(`${uri}/export-layout-dre`, {
-          params: { filters },
-          responseType: "blob",
-        })
-        .then((response) => {
-          downloadResponse(response);
-        });
-    },
-    onError: async (error) => {
-      // @ts-expect-error "Funciona"   
-      const errorText = await error.response.data.text();
-      const errorJSON = JSON.parse(errorText);
-
-      toast({
-        variant: "destructive",
-        title: 'Ops',
-        description: errorJSON.message
-      });
-    },
-  })
-
-
   return {
     getAll,
     getRecorrencias,
@@ -420,9 +290,5 @@ export const useTituloPagar = () => {
     changeTitulos,
     changeRecorrencia,
     exportAnexo,
-    exportPrevisaoPagamento,
-    exportLayoutDespesas,
-    exportLayoutVencimentos,
-    exportLayoutDRE,
   };
 };

@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 // import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Plus } from "lucide-react";
-import { useStoreTitulo } from "../titulo/store";
+import { useStoreTituloPagar } from "../titulo/store";
 
 const ButtonNovoTitulo = () => {
-  const openModal = useStoreTitulo().openModal;
+  const openModal = useStoreTituloPagar().openModal;
   // const { data } = useTituloPagar().getPendencias();
   // const qtdPendencias = data?.data;
 

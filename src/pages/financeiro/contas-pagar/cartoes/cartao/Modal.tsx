@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -31,23 +32,16 @@ const initialPropsCartao: CartaoSchema = {
 };
 
 const ModalCartao = () => {
-  const [
-    modalOpen,
-    closeModal,
-    modalEditing,
-    editModal,
-    isPending,
-    id,
-    paginationFaturas,
-  ] = useStoreCartao((state) => [
-    state.modalOpen,
-    state.closeModal,
-    state.modalEditing,
-    state.editModal,
-    state.isPending,
-    state.id,
-    state.paginationFaturas,
-  ]);
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id, paginationFaturas] =
+    useStoreCartao((state) => [
+      state.modalOpen,
+      state.closeModal,
+      state.modalEditing,
+      state.editModal,
+      state.isPending,
+      state.id,
+      state.paginationFaturas,
+    ]);
 
   const formRef = useRef(null);
 
@@ -80,6 +74,7 @@ const ModalCartao = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Cartão: ${id}` : "Novo Cartão"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (
@@ -115,9 +110,7 @@ const ModalCartao = () => {
                 type={"button"}
                 size="lg"
                 variant={"destructive"}
-                className={`text-white justify-self-start ${
-                  !modalEditing && "hidden"
-                }`}
+                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
               >
                 <Trash className="me-2" />
                 Excluir Cartão

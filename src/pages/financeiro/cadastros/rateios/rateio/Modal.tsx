@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -41,20 +42,20 @@ const initialPropsRateios: RateiosSchema = {
 };
 
 const ModalRateios = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStoreRateios((state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreRateios(
+    (state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]);
+    ]
+  );
   const formRef = useRef(null);
 
   const { data, isLoading } = useRateios().getOne(id);
-  const newData: RateiosSchema & Record<string, any> = {} as RateiosSchema &
-    Record<string, any>;
+  const newData: RateiosSchema & Record<string, any> = {} as RateiosSchema & Record<string, any>;
   const rateio = data?.data;
 
   for (const key in rateio) {
@@ -67,9 +68,7 @@ const ModalRateios = () => {
     }
   }
 
-  rateio?.itens?.forEach(
-    (value: any) => (value.id_filial = value.id_filial.toString())
-  );
+  rateio?.itens?.forEach((value: any) => (value.id_filial = value.id_filial.toString()));
 
   newData["manual"] = !!+newData["manual"];
 
@@ -83,6 +82,7 @@ const ModalRateios = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{id ? `Rateio: ${id}` : "Novo Rateio"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

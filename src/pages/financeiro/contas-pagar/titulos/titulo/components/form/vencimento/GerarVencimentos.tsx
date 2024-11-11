@@ -130,7 +130,7 @@ export function ModalGerarVencimentos({
     const totalTitulo = parseFloat(valorTotalTitulo);
 
     const excesso = totalVencimentos + valorTotalParcelas - totalTitulo;
-    if (excesso > 0) {
+    if (excesso >= 0.01) {
       toast({
         variant: "destructive",
         title: `Impedimento`,

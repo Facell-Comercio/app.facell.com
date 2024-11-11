@@ -4,12 +4,16 @@ type Filters = {
   ano?: string | number;
   mes?: string | number;
   a_lancar?: string;
+  termo?: string;
+  ownerOnly?: boolean;
 };
 
 const initialFilters: Filters = {
   ano: new Date().getFullYear(),
   mes: new Date().getMonth() + 1,
   a_lancar: "1",
+  termo: '',
+  ownerOnly: false
 };
 
 interface UseStoreRecorrencias {

@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -46,20 +47,21 @@ const initialPropsPlanoContas: PlanoContasSchema = {
 };
 
 const ModalPlanoContas = () => {
-  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] =
-    useStorePlanoContas((state) => [
+  const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStorePlanoContas(
+    (state) => [
       state.modalOpen,
       state.closeModal,
       state.modalEditing,
       state.editModal,
       state.isPending,
       state.id,
-    ]);
+    ]
+  );
   const formRef = useRef(null);
 
   const { data, isLoading } = usePlanoContas().getOne(id);
-  const newData: PlanoContasSchema & Record<string, any> =
-    {} as PlanoContasSchema & Record<string, any>;
+  const newData: PlanoContasSchema & Record<string, any> = {} as PlanoContasSchema &
+    Record<string, any>;
 
   for (const key in data?.data) {
     if (typeof data?.data[key] === "number") {
@@ -80,9 +82,8 @@ const ModalPlanoContas = () => {
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {id ? `Plano de Contas: ${id}` : "Novo Plano de Contas"}
-          </DialogTitle>
+          <DialogTitle>{id ? `Plano de Contas: ${id}` : "Novo Plano de Contas"}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && !isLoading ? (

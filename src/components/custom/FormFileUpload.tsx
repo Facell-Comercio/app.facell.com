@@ -1,23 +1,41 @@
-import { Control } from 'react-hook-form';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { FileUpload } from './FileUpload';
-import { MediaType } from '@/types/media-type';
-import { GoogleFolderName } from './UploadDropzone';
+import { MediaType } from "@/types/media-type";
+import { Control } from "react-hook-form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { FileUpload } from "./FileUpload";
+import { GoogleFolderName } from "./UploadDropzone";
 
 interface FormFileUploadProps {
-  name: string
-  folderName: GoogleFolderName
-  control: Control<any>
-  label?: string
-  description?: string
-  disabled?: boolean
-  className?: string
-  mediaType: MediaType
-  canDelete?: boolean
-  onChange?: (any: any) => void
+  name: string;
+  folderName: GoogleFolderName;
+  control: Control<any>;
+  label?: string;
+  description?: string;
+  disabled?: boolean;
+  className?: string;
+  mediaType: MediaType;
+  canDelete?: boolean;
+  onChange?: (any: any) => void;
 }
 
-const FormFileUpload = ({ canDelete, name, folderName, mediaType, control, label, description, disabled, className, onChange }: FormFileUploadProps) => {
+const FormFileUpload = ({
+  canDelete,
+  name,
+  folderName,
+  mediaType,
+  control,
+  label,
+  description,
+  disabled,
+  className,
+  onChange,
+}: FormFileUploadProps) => {
   return (
     <FormField
       control={control}
@@ -31,14 +49,13 @@ const FormFileUpload = ({ canDelete, name, folderName, mediaType, control, label
               canDelete={canDelete}
               value={field.value}
               onChange={(event) => {
-                if (typeof onChange === 'function') {
-                  onChange(event)
-                  field.onChange(event)
-                  return
+                if (typeof onChange === "function") {
+                  onChange(event);
+                  field.onChange(event);
+                  return;
                 }
-                field.onChange(event)
-              }
-              }
+                field.onChange(event);
+              }}
               mediaType={mediaType}
               disabled={disabled}
             />

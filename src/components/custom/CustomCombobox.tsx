@@ -13,11 +13,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 type DefaultValueProps = {
@@ -34,6 +30,7 @@ interface CustomComboboxProps {
   readOnly?: boolean;
   placeholder: string;
   defaultValues: DefaultValueProps[];
+  className?: string;
 }
 
 export function CustomCombobox({
@@ -44,6 +41,7 @@ export function CustomCombobox({
   readOnly,
   placeholder,
   defaultValues,
+  className,
   hasCustomValue,
 }: CustomComboboxProps) {
   const [open, setOpen] = React.useState(false);
@@ -69,8 +67,10 @@ export function CustomCombobox({
           aria-expanded={open}
           disabled={disabled || readOnly}
           className={`w-[28ch] justify-between ${className}`}
+          className={`w-[28ch] justify-between ${className}`}
         >
           {value
+            ? defaultValues.find((framework) => framework.value === value)?.label || value
             ? defaultValues.find(
                 (framework) =>
                   framework.value === value
@@ -120,6 +120,22 @@ export function CustomCombobox({
                 </CommandItem>
               ))}
             </CommandGroup>
+            {inputValue.length > 0 && (
+              <CommandItem
+                key="custom"
+                value={inputValue}
+                onSelect={handleCustomValue}
+                className={`${
+                  !disabled &&
+                  "data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 cursor-pointer"
+                }`}
+              >
+                <Check
+                  className={cn("mr-2 h-4 w-4", value === inputValue ? "opacity-100" : "opacity-0")}
+                />
+                {String(inputValue).toUpperCase()}
+              </CommandItem>
+            )}
             {hasCustomValue &&
               inputValue.length > 0 && (
                 <CommandItem

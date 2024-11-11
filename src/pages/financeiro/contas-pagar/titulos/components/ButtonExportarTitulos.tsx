@@ -1,24 +1,18 @@
 import { api } from "@/lib/axios";
 
+import { Spinner } from "@/components/custom/Spinner";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { normalizeDate } from "@/helpers/mask";
-import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { Download } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useStoreExportDatasys } from "../export-datasys/store";
+import { useState } from "react";
 import { useStoreTablePagar } from "../table/store-table";
 import { TituloSchemaProps } from "../titulo/form-data";
-import { Spinner } from "@/components/custom/Spinner";
 
 export type ExportAnexosProps = {
   type: string;
@@ -29,45 +23,10 @@ interface TituloProps extends TituloSchemaProps {
   solicitante?: string;
   forma_pagamento?: string;
   fornecedor?: string;
-  cnpj_fornecedor?: string;
 }
 
 const ButtonExportTitulos = () => {
-  const { mutate: exportPrevisaoPagamento, isPending: isPendingPrevisaoPagamento } =
-    useTituloPagar().exportPrevisaoPagamento();
-
-  const { mutate: exportLayoutDespesas, isPending: isPedingLayoutDespesas } =
-    useTituloPagar().exportLayoutDespesas();
-
-    const { mutate: exportLayoutVencimentos, isPending: isPedingLayoutVencimentos } =
-    useTituloPagar().exportLayoutVencimentos();
-
-  const { mutate: exportLayoutDRE, isPending: isPendingLayoutDRE } =
-    useTituloPagar().exportLayoutDRE();
-
   const [isPending, setIsPending] = useState(false);
-  useEffect(() => {
-    if (isPendingPrevisaoPagamento ||
-      isPendingLayoutDRE ||
-      isPedingLayoutDespesas || 
-      isPedingLayoutVencimentos) {
-      setIsPending(true)
-    } else {
-      setIsPending(false)
-    }
-  }, [
-    isPendingPrevisaoPagamento,
-    isPendingLayoutDRE,
-    isPedingLayoutDespesas,
-    isPedingLayoutVencimentos,
-  ])
-
-  const openModalExportDatasys = useStoreExportDatasys().openModal;
-
-  const isMaster =
-    checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
-  const canExportDespesas = isMaster || checkUserPermission('FINANCEIRO_EXPORTAR_DESPESAS');
-
 
   const [filters] = useStoreTablePagar((state) => [state.filters]);
 
@@ -97,19 +56,6 @@ const ButtonExportTitulos = () => {
     setIsPending(false);
   }
 
-  function exportLayoutPrevisaoPagamento() {
-    exportPrevisaoPagamento({ filters });
-  }
-  function handleExportLayoutDespesas() {
-    exportLayoutDespesas({ filters })
-  }
-  function handleExportLayoutVencimentos(){
-    exportLayoutVencimentos({ filters })
-  }
-  function handleExportLayoutDRE() {
-    exportLayoutDRE({ filters })
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -117,36 +63,19 @@ const ButtonExportTitulos = () => {
         className="py-2 px-4 border border-emerald-200 dark:border-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm flex font-medium gap-2 items-center rounded-md"
         disabled={isPending}
       >
-        {isPending ? <><Spinner /> Exportando...</>
-          : <><Download className="me-2" size={18} /> Exportar</>}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem onClick={exportSolicitacao}>
-          Layout Padrão
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleExportLayoutVencimentos}>
-          Layout Vencimentos
-        </DropdownMenuItem>
-        {isMaster && (
+        {isPending ? (
           <>
-            <DropdownMenuItem onClick={exportLayoutPrevisaoPagamento}>
-              Layout Previsão Pagamento
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleExportLayoutDRE}>
-              Layout DRE
-            </DropdownMenuItem>
+            <Spinner /> Exportando...
+          </>
+        ) : (
+          <>
+            <Download className="me-2" size={18} /> Exportar
           </>
         )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem onClick={exportSolicitacao}>Layout Padrão</DropdownMenuItem>
 
-        {canExportDespesas && (
-          <DropdownMenuItem onClick={handleExportLayoutDespesas}>
-            Layout Despesas
-          </DropdownMenuItem>
-        )}
-
-        <DropdownMenuItem onClick={() => openModalExportDatasys("")}>
-          Layout Datasys
-        </DropdownMenuItem>
         <DropdownMenuItem>
           <a
             target="_blank"
