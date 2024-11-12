@@ -5,54 +5,34 @@ export interface Pagination {
   pageSize: number;
 }
 
-interface useStoreVendaInvalida {
+interface useStoreVendaInvalidada {
   id?: string | null;
-  id_abatimento?: string | null;
-  modalEditing: boolean;
-  modalEditingAbatimento: boolean;
+  id_contestacao?: string | null;
   modalOpen: boolean;
-  modalOpenAbatimento: boolean;
+  modalContestacaoOpen: boolean;
   isPending: boolean;
 
   openModal: (id: string) => void;
   closeModal: () => void;
-  openModalAbatimento: (id: string) => void;
-  closeModalAbatimento: () => void;
-  editModal: (bool: boolean) => void;
-  editModalAbatimento: (bool: boolean) => void;
+  openModalContestacao: (id: string) => void;
+  closeModalContestacao: () => void;
   editIsPending: (bool: boolean) => void;
 }
 
-export const useStoreVendaInvalida =
-  create<useStoreVendaInvalida>((set) => ({
-    id: null,
-    id_abatimento: null,
-    modalEditing: false,
-    modalEditingAbatimento: false,
-    modalOpen: false,
-    modalOpenAbatimento: false,
-    isPending: false,
+export const useStoreVendaInvalidada = create<useStoreVendaInvalidada>((set) => ({
+  id: null,
+  id_contestacao: null,
+  modalEditing: false,
+  modalOpen: false,
+  modalContestacaoOpen: false,
+  isPending: false,
 
-    openModal: (id: string) =>
-      set({ modalOpen: true, id: id }),
-    closeModal: () =>
-      set({ modalOpen: false, id: null }),
-    openModalAbatimento: (id: string) =>
-      set({
-        modalOpenAbatimento: true,
-        id_abatimento: id,
-      }),
-    closeModalAbatimento: () =>
-      set({
-        modalOpenAbatimento: false,
-        id_abatimento: null,
-      }),
-    editModal: (bool) =>
-      set({ modalEditing: bool }),
-    editModalAbatimento: (bool) =>
-      set({ modalEditingAbatimento: bool }),
-    editIsPending: (bool: boolean) =>
-      set({
-        isPending: bool,
-      }),
-  }));
+  openModal: (id: string) => set({ modalOpen: true, id: id }),
+  closeModal: () => set({ modalOpen: false, id: null }),
+  openModalContestacao: (id: string) => set({ modalContestacaoOpen: true, id_contestacao: id }),
+  closeModalContestacao: () => set({ modalContestacaoOpen: false, id_contestacao: null }),
+  editIsPending: (bool: boolean) =>
+    set({
+      isPending: bool,
+    }),
+}));

@@ -54,7 +54,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaRankingStar />,
     uri: "comercial",
-    visible: () => false,
+    visible: () => true,
     children: [
       {
         name: "Vales",

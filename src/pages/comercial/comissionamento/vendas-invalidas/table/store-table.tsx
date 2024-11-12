@@ -6,8 +6,6 @@ export interface Pagination {
 }
 
 export interface Filters {
-  mes?: string;
-  ano?: string;
   status?: string;
   tipo?: string;
   segmento?: string;
@@ -16,8 +14,6 @@ export interface Filters {
 }
 
 const initialFilters: Filters = {
-  mes: String(new Date().getMonth() + 1),
-  ano: String(new Date().getFullYear()),
   status: "",
   tipo: "",
   segmento: "",
@@ -30,6 +26,9 @@ export interface State {
   pagination: Pagination;
   isAllSelected: boolean;
   filters: Filters;
+
+  mes?: string;
+  ano?: string;
 }
 
 export interface SortingItem {
@@ -41,28 +40,39 @@ export interface Actions {
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
   setPagination: (pagination: Pagination) => void;
+
+  setMes: (mes: string) => void;
+  setAno: (ano: string) => void;
 }
 
-export const useStoreTableVendasInvalidas =
-  create<State & Actions>((set) => ({
-    // Table
-    rowCount: 0,
-    pagination: { pageIndex: 0, pageSize: 15 },
-    isAllSelected: false,
+export const useStoreTableVendasInvalidadas = create<State & Actions>((set) => ({
+  // Table
+  rowCount: 0,
+  pagination: { pageIndex: 0, pageSize: 15 },
+  isAllSelected: false,
 
-    // Filters
-    filters: initialFilters,
-    setFilters: (novoFiltro) =>
-      set((state) => ({
-        filters: {
-          ...state.filters,
-          ...novoFiltro,
-        },
-      })),
-    resetFilters: () => {
-      set({ filters: initialFilters });
-    },
+  mes: String(new Date().getMonth()),
+  ano: String(new Date().getFullYear()),
 
-    setPagination: (pagination) =>
-      set({ pagination }),
-  }));
+  // Filters
+  filters: initialFilters,
+  setFilters: (novoFiltro) =>
+    set((state) => ({
+      filters: {
+        ...state.filters,
+        ...novoFiltro,
+      },
+    })),
+  resetFilters: () => {
+    set({ filters: initialFilters });
+  },
+
+  setPagination: (pagination) => set({ pagination }),
+
+  setMes: (mes: string) => {
+    set({ mes });
+  },
+  setAno: (ano: string) => {
+    set({ ano });
+  },
+}));
