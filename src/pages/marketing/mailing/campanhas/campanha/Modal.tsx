@@ -132,7 +132,7 @@ const ModalCampanha = () => {
   );
   useEffect(() => {
     if (
-      data_subcampanha?.qtde_clientes &&
+      data_subcampanha?.qtde_clientes !== undefined &&
       data_subcampanha?.qtde_clientes !== qtdeClientesSubcampanha
     ) {
       setQtdeClientesSubcampanha(data_subcampanha?.qtde_clientes);
@@ -544,7 +544,7 @@ const ModalCampanha = () => {
         <ModalNovaSubcampanha refetch={refetch} />
         <ModalEditarCliente />
         <ModalVerCliente />
-        <ModalDefinirAparelho />
+        <ModalDefinirAparelho reset={handleResetFilterSubcampanha} />
         <ModalDefinirVendedores />
         <ModalDuplicarCampanha refetch={refetch} />
 

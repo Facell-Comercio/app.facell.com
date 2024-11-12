@@ -63,6 +63,7 @@ export const FiltersClientesCampanha = ({
   //   await new Promise((resolve) => resolve(setFilters({ planos_fidelizaveis: true })));
   //   refetch();
   // };
+
   return (
     <Sheet modal>
       <SheetTrigger asChild>
@@ -107,7 +108,7 @@ export const FiltersClientesCampanha = ({
                   label="Produtos"
                   options={defaultFilters.produto_list.map((plano_atual: any) => ({
                     value: plano_atual.value,
-                    label: plano_atual.value || "NULL",
+                    label: plano_atual.label || "NULL",
                   }))}
                   onValueChange={(produto_list) => {
                     setFilters({ produto_list: produto_list });
@@ -127,7 +128,7 @@ export const FiltersClientesCampanha = ({
                   label="Status"
                   options={defaultFilters.status_plano_list.map((plano_atual: any) => ({
                     value: plano_atual.value,
-                    label: plano_atual.value || "NULL",
+                    label: plano_atual.label || "NULL",
                   }))}
                   onValueChange={(status_plano_list) => {
                     setFilters({ status_plano_list: status_plano_list });
@@ -224,6 +225,23 @@ export const FiltersClientesCampanha = ({
                 <Select
                   value={filters.planos_fidelizaveis}
                   onValueChange={(e) => setFilters({ planos_fidelizaveis: e })}
+                  disabled={isPending}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="SIM/NÃO" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">SIM/NÃO</SelectItem>
+                    <SelectItem value="1">SIM</SelectItem>
+                    <SelectItem value="0">NÃO</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col w-full gap-2">
+                <label className="text-sm font-medium">Produto não Ofertado</label>
+                <Select
+                  value={filters.produto_nao_ofertado}
+                  onValueChange={(e) => setFilters({ produto_nao_ofertado: e })}
                   disabled={isPending}
                 >
                   <SelectTrigger className="w-full">

@@ -16,6 +16,7 @@ export interface FiltersCampanha {
   sem_contato?: string;
   id_campanha?: string;
   planos_fidelizaveis?: string;
+  produto_nao_ofertado?: string;
 }
 
 const initialFilters: FiltersCampanha = {
@@ -29,6 +30,7 @@ const initialFilters: FiltersCampanha = {
   sem_contato: "all",
   id_campanha: "",
   planos_fidelizaveis: "all",
+  produto_nao_ofertado: "all",
 };
 
 const initialPagination: Pagination = { pageIndex: 0, pageSize: 10 };
