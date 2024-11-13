@@ -237,23 +237,25 @@ export const FiltersClientesCampanha = ({
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex flex-col w-full gap-2">
-                <label className="text-sm font-medium">Produto não Ofertado</label>
-                <Select
-                  value={filters.produto_nao_ofertado}
-                  onValueChange={(e) => setFilters({ produto_nao_ofertado: e })}
-                  disabled={isPending}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="SIM/NÃO" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">SIM/NÃO</SelectItem>
-                    <SelectItem value="1">SIM</SelectItem>
-                    <SelectItem value="0">NÃO</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {isSubcampanha && (
+                <div className="flex flex-col w-full gap-2">
+                  <label className="text-sm font-medium">Produto não Ofertado</label>
+                  <Select
+                    value={filters.produto_nao_ofertado}
+                    onValueChange={(e) => setFilters({ produto_nao_ofertado: e })}
+                    disabled={isPending}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="SIM/NÃO" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">SIM/NÃO</SelectItem>
+                      <SelectItem value="1">SIM</SelectItem>
+                      <SelectItem value="0">NÃO</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
           </ScrollArea>
         </div>
