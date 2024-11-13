@@ -51,7 +51,7 @@ export const useStoreTableVendasInvalidadas = create<State & Actions>((set) => (
   pagination: { pageIndex: 0, pageSize: 15 },
   isAllSelected: false,
 
-  mes: String(new Date().getMonth()),
+  mes: String(new Date().getMonth() + 1),
   ano: String(new Date().getFullYear()),
 
   // Filters

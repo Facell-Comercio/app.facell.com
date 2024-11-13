@@ -31,6 +31,7 @@ export type VendasInvalidadasProps = {
   imei?: string;
   cpf_cliente?: string;
   cpf_vendedor?: string;
+  observacao?: string;
 
   contestacoes?: ContestacaoVendasInvalidadasProps[];
 };

@@ -54,7 +54,7 @@ const FiltersVendasInvalidadas = ({ refetch }: { refetch: () => void }) => {
         <AccordionContent className="p-0 pt-3">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md sm:pb-3">
             <div className="flex w-max space-x-3 p-1">
-              <span className="flex flex-col gap-1">
+              <span className="flex flex-col gap-2">
                 <label className="text-sm font-semibold">Status</label>
                 <Select
                   value={filters.status}
@@ -75,7 +75,7 @@ const FiltersVendasInvalidadas = ({ refetch }: { refetch: () => void }) => {
                   </SelectContent>
                 </Select>
               </span>
-              <span className="flex flex-col gap-1">
+              <span className="flex flex-col gap-2">
                 <label className="text-sm font-semibold">Tipo</label>
                 <Select
                   value={filters.tipo}
@@ -95,7 +95,7 @@ const FiltersVendasInvalidadas = ({ refetch }: { refetch: () => void }) => {
                   </SelectContent>
                 </Select>
               </span>
-              <span className="flex flex-col gap-1">
+              <span className="flex flex-col gap-2">
                 <label className="text-sm font-semibold">Segmento</label>
                 <Select
                   value={filters.segmento}

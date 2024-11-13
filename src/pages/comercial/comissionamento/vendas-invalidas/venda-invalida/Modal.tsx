@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import {
   useVendasInvalidadas,
@@ -91,6 +92,7 @@ const ModalVendaInvalidada = () => {
                   label="Segmento:"
                   readOnly
                   className="flex-1 min-w-[20ch]"
+                  inputClass="uppercase"
                 />
                 <InputWithLabel
                   value={newDataVendaInvalidada.motivo || ""}
@@ -148,6 +150,10 @@ const ModalVendaInvalidada = () => {
                   className="flex-1 min-w-[20ch]"
                 />
               </span>
+              <span className="flex gap-2 flex-col">
+                <label className="text-sm font-medium">Observação:</label>
+                <Textarea value={newDataVendaInvalidada.observacao || "-"} readOnly />
+              </span>
             </div>
             <div className="flex gap-2 flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
               <div className="flex justify-between mb-3">
@@ -193,7 +199,9 @@ const ModalVendaInvalidada = () => {
                               <PencilIcon size={16} />
                             </Button>
                           </TableCell>
-                          <TableCell className={`${color}`}>{contestacao.status}</TableCell>
+                          <TableCell className={`${color}`}>
+                            {contestacao.status?.replaceAll("_", " ")}
+                          </TableCell>
                           <TableCell>{contestacao.contestacao}</TableCell>
                           <TableCell>{contestacao.resposta || "-"}</TableCell>
                         </TableRow>
