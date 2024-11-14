@@ -13,12 +13,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate, normalizePercentual } from "@/helpers/mask";
 import {
   useVendasInvalidadas,
   VendasInvalidadasProps,
 } from "@/hooks/comercial/useVendasInvalidadas";
-import { Info, OctagonAlert, PencilIcon, Plus } from "lucide-react";
+import { Divide, Info, OctagonAlert, PencilIcon, Plus } from "lucide-react";
 import ModalContestacao from "./ModalContestacao";
 import { useStoreVendaInvalidada } from "./store";
 
@@ -110,6 +110,12 @@ const ModalVendaInvalidada = () => {
                   className="flex-1 min-w-[20ch]"
                 />
                 <InputWithLabel
+                  value={normalizeCurrency(newDataVendaInvalidada.estorno) || ""}
+                  label="Total:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+                <InputWithLabel
                   value={normalizeDate(newDataVendaInvalidada.data_venda) || ""}
                   label="Data Venda:"
                   readOnly
@@ -137,6 +143,12 @@ const ModalVendaInvalidada = () => {
                 />
               </span>
               <span className="flex gap-2">
+                <InputWithLabel
+                  value={newDataVendaInvalidada.filial || ""}
+                  label="Filial:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
                 <InputWithLabel
                   value={newDataVendaInvalidada.cpf_cliente || ""}
                   label="CPF Cliente:"
@@ -204,6 +216,58 @@ const ModalVendaInvalidada = () => {
                           </TableCell>
                           <TableCell>{contestacao.contestacao}</TableCell>
                           <TableCell>{contestacao.resposta || "-"}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="flex gap-2 flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+              <div className="flex justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <Divide />
+                  <span className="text-lg font-bold ">Rateios</span>
+                </div>
+                <Button disabled={isPending} onClick={() => openModalContestacao("")}>
+                  <Plus className="me-2" />
+                  Novo Rateio
+                </Button>
+              </div>
+              <Table divClassname="rounded-md">
+                <TableHeader className="bg-secondary">
+                  <TableRow>
+                    <TableHead className="text-white">Ações</TableHead>
+                    <TableHead className="text-white">Nome</TableHead>
+                    <TableHead className="text-white">Cargo</TableHead>
+                    <TableHead className="text-white">Total</TableHead>
+                    <TableHead className="text-white">Percentual</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="bg-background">
+                  {newDataVendaInvalidada.rateios &&
+                    newDataVendaInvalidada.rateios.map((rateio, index) => {
+                      return (
+                        <TableRow key={`${index} - ${rateio.id}`} className="uppercase">
+                          <TableCell className="flex gap-2">
+                            <Button
+                              size={"xs"}
+                              variant={"warning"}
+                              onClick={() => openModalContestacao(rateio.id || "")}
+                              disabled={isPending}
+                            >
+                              <PencilIcon size={16} />
+                            </Button>
+                          </TableCell>
+                          <TableCell>{rateio.nome_colaborador}</TableCell>
+                          <TableCell>{rateio.cargo_colaborador}</TableCell>
+                          <TableCell>
+                            {parseFloat(rateio.valor || "0").toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                              minimumFractionDigits: 4,
+                            })}
+                          </TableCell>
+                          <TableCell>{normalizePercentual(rateio.percentual)}</TableCell>
                         </TableRow>
                       );
                     })}

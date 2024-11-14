@@ -34,16 +34,15 @@ const initialContestacao = {
 };
 
 const ModalContestacao = () => {
-  const [modalOpen, closeModal, isPending, editIsPending, id, id_venda] = useStoreVendaInvalidada(
-    (state) => [
+  const [modalOpen, closeModal, isPending, editIsPending, id, id_venda_invalida] =
+    useStoreVendaInvalidada((state) => [
       state.modalContestacaoOpen,
       state.closeModalContestacao,
       state.isPending,
       state.editIsPending,
       state.id_contestacao,
       state.id,
-    ]
-  );
+    ]);
 
   const user = useAuthStore().user;
 
@@ -62,12 +61,12 @@ const ModalContestacao = () => {
   } = useVendasInvalidadas().updateStatusContestacao();
   const {
     mutate: deleteContestacao,
-    isPending: deleteContestacaoIsPending,
-    isSuccess: deleteContestacaoIsSuccess,
-    isError: deleteContestacaoIsError,
+    // isPending: deleteContestacaoIsPending,
+    // isSuccess: deleteContestacaoIsSuccess,
+    // isError: deleteContestacaoIsError,
   } = useVendasInvalidadas().deleteContestacao();
   const [formData, setFormData] = useState<ContestacaoVendasInvalidadasProps>(
-    id ? data : { ...initialContestacao, user: user?.nome, id_venda }
+    id ? data : { ...initialContestacao, user: user?.nome, id_venda_invalida }
   );
 
   function handleClickCancel() {
@@ -103,7 +102,11 @@ const ModalContestacao = () => {
 
   useEffect(() => {
     if (!modalOpen) {
-      setFormData({ ...initialContestacao, user: user?.nome, id_venda: id_venda || "" });
+      setFormData({
+        ...initialContestacao,
+        user: user?.nome,
+        id_venda_invalida: id_venda_invalida || "",
+      });
     } else if (modalOpen && id) {
       setFormData(data);
     }

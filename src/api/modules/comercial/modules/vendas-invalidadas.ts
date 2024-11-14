@@ -17,4 +17,9 @@ export namespace vendasInvalidadas {
     );
     return response.data;
   };
+
+  export const getOneRateio = async (id?: string | null) => {
+    const response = await api.get(`/comercial/comissionamento/vendas-invalidadas/rateios/${id}`);
+    return response.data;
+  };
 }
