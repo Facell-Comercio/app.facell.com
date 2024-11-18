@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -8,6 +14,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -18,8 +25,11 @@ import {
   useVendasInvalidadas,
   VendasInvalidadasProps,
 } from "@/hooks/comercial/useVendasInvalidadas";
-import { Divide, Info, OctagonAlert, PencilIcon, Plus } from "lucide-react";
+import { Divide, HandCoins, Info, OctagonAlert, PencilIcon, Plus } from "lucide-react";
+import { useEffect } from "react";
+import { FaSpinner } from "react-icons/fa6";
 import ModalContestacao from "./ModalContestacao";
+import ModalRateio from "./ModalRateio";
 import { useStoreVendaInvalidada } from "./store";
 
 function colorStatus(status: string) {
@@ -28,18 +38,31 @@ function colorStatus(status: string) {
   else return "bg-secondary";
 }
 const ModalVendaInvalidada = () => {
-  const [modalOpen, closeModal, isPending, id, openModalContestacao] = useStoreVendaInvalidada(
-    (state) => [
-      state.modalOpen,
-      state.closeModal,
-      state.isPending,
-      state.id,
-      state.openModalContestacao,
-    ]
-  );
+  const [
+    modalOpen,
+    closeModal,
+    isPending,
+    id,
+    openModalContestacao,
+    openModalRateio,
+    editIsPending,
+  ] = useStoreVendaInvalidada((state) => [
+    state.modalOpen,
+    state.closeModal,
+    state.isPending,
+    state.id,
+    state.openModalContestacao,
+    state.openModalRateio,
+    state.editIsPending,
+  ]);
 
   const { data } = useVendasInvalidadas().getOne(id);
-
+  const {
+    mutate: gerarVales,
+    isPending: gerarValesIsPending,
+    isSuccess: gerarValesIsSuccess,
+    isError: gerarValesIsError,
+  } = useVendasInvalidadas().gerarVales();
   const newDataVendaInvalidada: VendasInvalidadasProps & Record<string, any> =
     {} as VendasInvalidadasProps & Record<string, any>;
 
@@ -53,15 +76,36 @@ const ModalVendaInvalidada = () => {
     }
   }
 
+  useEffect(() => {
+    if (gerarValesIsSuccess) {
+      editIsPending(false);
+    } else if (gerarValesIsError) {
+      editIsPending(false);
+    } else if (gerarValesIsPending) {
+      editIsPending(true);
+    }
+  }, [gerarValesIsPending]);
+
   function handleClickCancel() {
     closeModal();
   }
+
+  const totalRateios = newDataVendaInvalidada?.rateios?.reduce(
+    (acc, rateio) => acc + parseFloat(rateio.valor || "0"),
+    0
+  );
+
+  const totalPercentualRateios = newDataVendaInvalidada?.rateios?.reduce(
+    (acc, rateio) => acc + parseFloat(rateio.percentual || "0"),
+    0
+  );
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{`Venda Invalidada: ${id}`}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           <section className="flex gap-3 flex-col">
@@ -226,12 +270,40 @@ const ModalVendaInvalidada = () => {
               <div className="flex justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <Divide />
-                  <span className="text-lg font-bold ">Rateios</span>
+                  <span className="text-lg font-bold ">Rateio</span>
                 </div>
-                <Button disabled={isPending} onClick={() => openModalContestacao("")}>
-                  <Plus className="me-2" />
-                  Novo Rateio
-                </Button>
+                <span className="flex gap-2">
+                  {newDataVendaInvalidada.podeGerarVales && (
+                    <Button
+                      disabled={isPending}
+                      onClick={() =>
+                        gerarVales({ ref: newDataVendaInvalidada.ref || "", id_venda_invalida: id })
+                      }
+                      variant={"destructive"}
+                    >
+                      {isPending ? (
+                        <FaSpinner size={18} className="me-2 animate-spin" />
+                      ) : (
+                        <HandCoins size={18} className="me-2" />
+                      )}
+                      Gerar Vales
+                    </Button>
+                  )}
+                  <Button
+                    disabled={isPending}
+                    onClick={() =>
+                      openModalRateio({
+                        id: "",
+                        valor: newDataVendaInvalidada.estorno || "",
+                        filial: newDataVendaInvalidada.filial || "",
+                        ref: newDataVendaInvalidada.ref || "",
+                      })
+                    }
+                  >
+                    <Plus className="me-2" />
+                    Novo Rateio
+                  </Button>
+                </span>
               </div>
               <Table divClassname="rounded-md">
                 <TableHeader className="bg-secondary">
@@ -252,7 +324,14 @@ const ModalVendaInvalidada = () => {
                             <Button
                               size={"xs"}
                               variant={"warning"}
-                              onClick={() => openModalContestacao(rateio.id || "")}
+                              onClick={() =>
+                                openModalRateio({
+                                  id: rateio.id || "",
+                                  valor: newDataVendaInvalidada.estorno || "",
+                                  filial: newDataVendaInvalidada.filial || "",
+                                  ref: newDataVendaInvalidada.ref || "",
+                                })
+                              }
                               disabled={isPending}
                             >
                               <PencilIcon size={16} />
@@ -264,7 +343,7 @@ const ModalVendaInvalidada = () => {
                             {parseFloat(rateio.valor || "0").toLocaleString("pt-BR", {
                               style: "currency",
                               currency: "BRL",
-                              minimumFractionDigits: 4,
+                              minimumFractionDigits: 2,
                             })}
                           </TableCell>
                           <TableCell>{normalizePercentual(rateio.percentual)}</TableCell>
@@ -272,10 +351,26 @@ const ModalVendaInvalidada = () => {
                       );
                     })}
                 </TableBody>
+                <TableFooter className="bg-secondary">
+                  <TableRow className="uppercase">
+                    <TableCell colSpan={3}>Total :</TableCell>
+                    <TableCell>
+                      {totalRateios?.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                        minimumFractionDigits: 2,
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      {normalizePercentual(totalPercentualRateios?.toFixed(6) || "0")}
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
               </Table>
             </div>
           </section>
           <ModalContestacao />
+          <ModalRateio />
         </ScrollArea>
       </DialogContent>
     </Dialog>

@@ -40,16 +40,16 @@ export const columnsTable: ColumnDef<RowVendasinvalidadas>[] = [
     header: "STATUS",
     accessorKey: "status",
     cell: (info) => {
-      const label = info.getValue<string>().replaceAll("_", " ");
+      const label = info.getValue<string>();
       let color = "";
-      if (label === "PROCEDENTE") {
+      if (label === "procedente") {
         color = "text-green-500";
-      } else if (label === "PROCEDENTE" || label === "CIENTE") {
-        color = "text-orange-500";
+      } else if (label === "improcedente" || label === "ciente") {
+        color = "text-red-500";
       }
       return (
         <div title={label} className={`block truncate max-w-96 uppercase ${color}`}>
-          {label}
+          {label === "em_analise" ? "EM ANÁLISE" : label}
         </div>
       );
     },

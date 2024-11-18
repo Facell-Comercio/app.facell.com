@@ -4,6 +4,7 @@ import { Input } from "@/components/custom/FormInput";
 import SelectMes from "@/components/custom/SelectMes";
 import { useVendasInvalidadas } from "@/hooks/comercial/useVendasInvalidadas";
 import ButtonExcluir from "./components/ButtonExcluir";
+import ButtonGerarVales from "./components/ButtonGerarVales";
 import ButtonProcessar from "./components/ButtonProcessar";
 import { columnsTable } from "./table/columns";
 import FiltersVendasInvalidadas from "./table/Filters";
@@ -52,6 +53,7 @@ const VendasInvalidadas = () => {
         <span className="flex gap-2">
           <ButtonProcessar />
           <ButtonExcluir />
+          <ButtonGerarVales />
         </span>
       </div>
       <FiltersVendasInvalidadas refetch={refetch} />

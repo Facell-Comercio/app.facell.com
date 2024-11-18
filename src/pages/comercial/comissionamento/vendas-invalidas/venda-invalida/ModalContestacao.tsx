@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -117,6 +118,7 @@ const ModalContestacao = () => {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>{`Contestação: ${id}`}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           <section className="flex gap-3 flex-col">

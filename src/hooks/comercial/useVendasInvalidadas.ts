@@ -1,6 +1,5 @@
 import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
-import { downloadResponse } from "@/helpers/download";
 import { exportToExcel } from "@/helpers/importExportXLS";
 import { api } from "@/lib/axios";
 import { GetAllParams } from "@/types/query-params-type";
@@ -51,6 +50,7 @@ export type VendasInvalidadasProps = {
 
   contestacoes?: ContestacaoVendasInvalidadasProps[];
   rateios?: RateioVendasInvalidadasProps[];
+  podeGerarVales?: boolean;
 };
 
 export const useVendasInvalidadas = () => {
@@ -101,65 +101,6 @@ export const useVendasInvalidadas = () => {
       },
     });
 
-  const getOneContestacao = (id?: string | null) =>
-    useQuery({
-      enabled: !!id,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
-      queryKey: [
-        "comercial",
-        "comissionamento",
-        "vendas_invalidadas",
-        "contestacoes",
-        "detalhe",
-        id,
-      ],
-      queryFn: async () => {
-        try {
-          const result = fetchApi.comercial.vendasInvalidadas.getOneContestacao(id);
-          return result;
-        } catch (error) {
-          const errorMessage =
-            // @ts-expect-error "Vai funcionar"
-            error.response?.data.message ||
-            // @ts-expect-error "Vai funcionar"
-            error.message;
-          toast({
-            title: "Erro",
-            description: errorMessage,
-            duration: 3500,
-            variant: "destructive",
-          });
-        }
-      },
-    });
-
-  const getOneRateio = (id?: string | null) =>
-    useQuery({
-      enabled: !!id,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
-      queryKey: ["comercial", "comissionamento", "vendas_invalidadas", "rateios", "detalhe", id],
-      queryFn: async () => {
-        try {
-          const result = fetchApi.comercial.vendasInvalidadas.getOneRateio(id);
-          return result;
-        } catch (error) {
-          const errorMessage =
-            // @ts-expect-error "Vai funcionar"
-            error.response?.data.message ||
-            // @ts-expect-error "Vai funcionar"
-            error.message;
-          toast({
-            title: "Erro",
-            description: errorMessage,
-            duration: 3500,
-            variant: "destructive",
-          });
-        }
-      },
-    });
-
   const insertOne = () =>
     useMutation({
       mutationFn: async (data: VendasInvalidadasProps) => {
@@ -191,11 +132,11 @@ export const useVendasInvalidadas = () => {
       },
     });
 
-  const insertOneContestacao = () =>
+  const update = () =>
     useMutation({
-      mutationFn: async (data: ContestacaoVendasInvalidadasProps) => {
+      mutationFn: async (data: VendasInvalidadasProps) => {
         return await api
-          .post(`comercial/comissionamento/vendas-invalidadas/contestacoes`, data)
+          .put(`comercial/comissionamento/vendas-invalidadas`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -247,11 +188,113 @@ export const useVendasInvalidadas = () => {
       },
     });
 
-  const update = () =>
+  const excluirVendasInvalidadas = () =>
     useMutation({
-      mutationFn: async (data: VendasInvalidadasProps) => {
+      mutationFn: async (params: unknown) => {
+        return await api.delete(`/comercial/comissionamento/vendas-invalidadas`, { params });
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError: async (error) => {
+        const errorText =
+          // @ts-expect-error "Funciona"
+          await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Ops!",
+          description: errorJSON.message,
+        });
+      },
+    });
+
+  const processarVendasInvalidadas = () =>
+    useMutation({
+      mutationFn: async (params: unknown) => {
         return await api
-          .put(`comercial/comissionamento/vendas-invalidadas`, data)
+          .post(`/comercial/comissionamento/vendas-invalidadas`, params)
+          .then((response) => {
+            const filename = `RESULTADO PROCESSAMENTO VENDAS INVÁLIDAS ${formatDate(
+              new Date(),
+              "dd-MM-yyyy hh.mm"
+            )}`;
+            exportToExcel(response?.data, filename);
+          });
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError: async (error) => {
+        const errorText =
+          // @ts-expect-error "Funciona"
+          await error.response.data.text();
+        const errorJSON = JSON.parse(errorText);
+
+        toast({
+          variant: "destructive",
+          title: "Ops!",
+          description: errorJSON.message,
+        });
+      },
+    });
+
+  //* CONTESTAÇÃO
+  const getOneContestacao = (id?: string | null) =>
+    useQuery({
+      enabled: !!id,
+      retry: false,
+      staleTime: 5 * 1000 * 60,
+      queryKey: [
+        "comercial",
+        "comissionamento",
+        "vendas_invalidadas",
+        "contestacoes",
+        "detalhe",
+        id,
+      ],
+      queryFn: async () => {
+        try {
+          const result = fetchApi.comercial.vendasInvalidadas.getOneContestacao(id);
+          return result;
+        } catch (error) {
+          const errorMessage =
+            // @ts-expect-error "Vai funcionar"
+            error.response?.data.message ||
+            // @ts-expect-error "Vai funcionar"
+            error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
+          });
+        }
+      },
+    });
+
+  const insertOneContestacao = () =>
+    useMutation({
+      mutationFn: async (data: ContestacaoVendasInvalidadasProps) => {
+        return await api
+          .post(`comercial/comissionamento/vendas-invalidadas/contestacoes`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -340,36 +383,39 @@ export const useVendasInvalidadas = () => {
       },
     });
 
-  const exportVendasInvalidadas = () =>
-    useMutation({
-      mutationFn: async ({ filters }: GetAllParams) => {
-        return await api
-          .get(`/comercial/comissionamento/vendas-invalidadas/export-vendasInvalidadas`, {
-            params: { filters },
-            responseType: "blob",
-          })
-          .then((response) => {
-            downloadResponse(response);
+  //* RATEIO
+  const getOneRateio = (id?: string | null) =>
+    useQuery({
+      enabled: !!id,
+      retry: false,
+      staleTime: 5 * 1000 * 60,
+      queryKey: ["comercial", "comissionamento", "vendas_invalidadas", "rateios", "detalhe", id],
+      queryFn: async () => {
+        try {
+          const result = fetchApi.comercial.vendasInvalidadas.getOneRateio(id);
+          return result;
+        } catch (error) {
+          const errorMessage =
+            // @ts-expect-error "Vai funcionar"
+            error.response?.data.message ||
+            // @ts-expect-error "Vai funcionar"
+            error.message;
+          toast({
+            title: "Erro",
+            description: errorMessage,
+            duration: 3500,
+            variant: "destructive",
           });
-      },
-      onError: async (error) => {
-        const errorText =
-          // @ts-expect-error "Funciona"
-          await error.response.data.text();
-        const errorJSON = JSON.parse(errorText);
-
-        toast({
-          variant: "destructive",
-          title: "Ops!",
-          description: errorJSON.message,
-        });
+        }
       },
     });
 
-  const excluirVendasInvalidadas = () =>
+  const insertOneRateio = () =>
     useMutation({
-      mutationFn: async (params: unknown) => {
-        return await api.delete(`/comercial/comissionamento/vendas-invalidadas`, { params });
+      mutationFn: async (data: RateioVendasInvalidadasProps) => {
+        return await api
+          .post(`comercial/comissionamento/vendas-invalidadas/rateios`, data)
+          .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -382,27 +428,89 @@ export const useVendasInvalidadas = () => {
           duration: 3500,
         });
       },
-      onError: async (error) => {
-        const errorText =
-          // @ts-expect-error "Funciona"
-          await error.response.data.text();
-        const errorJSON = JSON.parse(errorText);
-
+      onError(error) {
+        const errorMessage =
+          // @ts-expect-error 'Vai funcionar'
+          error.response?.data.message || error.message;
         toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
           variant: "destructive",
-          title: "Ops!",
-          description: errorJSON.message,
         });
       },
     });
 
-  const processarVendasInvalidadas = () =>
+  const updateRateio = () =>
     useMutation({
-      mutationFn: async (params: unknown) => {
+      mutationFn: async (data: RateioVendasInvalidadasProps) => {
         return await api
-          .post(`/comercial/comissionamento/vendas-invalidadas`, params)
+          .put(`comercial/comissionamento/vendas-invalidadas/rateios`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        const errorMessage =
+          // @ts-expect-error 'Vai funcionar'
+          error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const deleteRateio = () =>
+    useMutation({
+      mutationFn: async (id: string | null | undefined) => {
+        return await api
+          .delete(`comercial/comissionamento/vendas-invalidadas/rateios/${id}`)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        const errorMessage =
+          // @ts-expect-error 'Vai funcionar'
+          error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  //* OUTROS
+  const gerarVales = () =>
+    useMutation({
+      mutationFn: async (data: { ref: string; id_venda_invalida?: string | null }) => {
+        return await api
+          .post(`comercial/comissionamento/vendas-invalidadas/vales`, data)
           .then((response) => {
-            const filename = `RESULTADO PROCESSAMENTO VENDAS INVÁLIDAS ${formatDate(
+            const filename = `RESULTADO GERAÇÃO VALES ${formatDate(
               new Date(),
               "dd-MM-yyyy hh.mm"
             )}`;
@@ -420,38 +528,42 @@ export const useVendasInvalidadas = () => {
           duration: 3500,
         });
       },
-      onError: async (error) => {
-        const errorText =
-          // @ts-expect-error "Funciona"
-          await error.response.data.text();
-        const errorJSON = JSON.parse(errorText);
-
+      onError(error) {
+        const errorMessage =
+          // @ts-expect-error 'Vai funcionar'
+          error.response?.data.message || error.message;
         toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
           variant: "destructive",
-          title: "Ops!",
-          description: errorJSON.message,
         });
       },
     });
 
   return {
+    // VENDAS INVÁLIDAS
     getAll,
     getOne,
-    getOneContestacao,
-    getOneRateio,
-
     insertOne,
-    insertOneContestacao,
-    importVendasInvalidadas,
-
     update,
-    updateStatusContestacao,
+    excluirVendasInvalidadas,
+    importVendasInvalidadas,
+    processarVendasInvalidadas,
 
+    // CONTESTAÇÕES
+    getOneContestacao,
+    insertOneContestacao,
+    updateStatusContestacao,
     deleteContestacao,
 
-    exportVendasInvalidadas,
+    // RATEIOS
+    getOneRateio,
+    insertOneRateio,
+    updateRateio,
+    deleteRateio,
 
-    excluirVendasInvalidadas,
-    processarVendasInvalidadas,
+    // OUTROS
+    gerarVales,
   };
 };
