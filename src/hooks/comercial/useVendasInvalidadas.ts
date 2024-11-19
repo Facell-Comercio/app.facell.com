@@ -27,6 +27,7 @@ export type RateioVendasInvalidadasProps = {
   cargo_colaborador?: string;
   valor?: string;
   percentual?: string;
+  canEdit?: number;
 };
 
 export type VendasInvalidadasProps = {

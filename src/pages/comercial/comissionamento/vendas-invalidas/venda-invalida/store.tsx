@@ -11,7 +11,9 @@ interface useStoreVendaInvalidada {
   id_rateio?: string | null;
   modalOpen: boolean;
   modalContestacaoOpen: boolean;
+  modalContestacaoEditing: boolean;
   modalRateioOpen: boolean;
+  modalRateioEditing: boolean;
   isPending: boolean;
 
   valor_total_rateio: string;
@@ -20,20 +22,27 @@ interface useStoreVendaInvalidada {
 
   openModal: (id: string) => void;
   closeModal: () => void;
+
   openModalContestacao: (id: string) => void;
   closeModalContestacao: () => void;
+  editModalContestacao: (bool: boolean) => void;
+
   openModalRateio: ({
     id,
     valor,
     filial,
     ref,
+    edit,
   }: {
     id: string;
     valor: string;
     filial: string;
     ref: string;
+    edit?: boolean;
   }) => void;
   closeModalRateio: () => void;
+  editModalRateio: (bool: boolean) => void;
+
   editIsPending: (bool: boolean) => void;
 }
 
@@ -44,7 +53,9 @@ export const useStoreVendaInvalidada = create<useStoreVendaInvalidada>((set) => 
   modalEditing: false,
   modalOpen: false,
   modalContestacaoOpen: false,
+  modalContestacaoEditing: false,
   modalRateioOpen: false,
+  modalRateioEditing: false,
   isPending: false,
 
   valor_total_rateio: "0",
@@ -53,11 +64,30 @@ export const useStoreVendaInvalidada = create<useStoreVendaInvalidada>((set) => 
 
   openModal: (id: string) => set({ modalOpen: true, id: id }),
   closeModal: () => set({ modalOpen: false, id: null }),
+
   openModalContestacao: (id: string) => set({ modalContestacaoOpen: true, id_contestacao: id }),
-  closeModalContestacao: () => set({ modalContestacaoOpen: false, id_contestacao: null }),
-  openModalRateio: ({ id, valor, filial, ref }) =>
-    set({ modalRateioOpen: true, id_rateio: id, valor_total_rateio: valor, filial, ref }),
-  closeModalRateio: () => set({ modalRateioOpen: false, id_rateio: null, valor_total_rateio: "0" }),
+  closeModalContestacao: () =>
+    set({ modalContestacaoOpen: false, id_contestacao: null, modalContestacaoEditing: false }),
+  editModalContestacao: (bool) => set({ modalContestacaoEditing: bool }),
+
+  openModalRateio: ({ id, valor, filial, ref, edit }) =>
+    set({
+      modalRateioOpen: true,
+      id_rateio: id,
+      valor_total_rateio: valor,
+      filial,
+      ref,
+      modalRateioEditing: edit !== undefined ? edit : false,
+    }),
+  closeModalRateio: () =>
+    set({
+      modalRateioOpen: false,
+      id_rateio: null,
+      valor_total_rateio: "0",
+      modalContestacaoEditing: false,
+    }),
+  editModalRateio: (bool) => set({ modalRateioEditing: bool }),
+
   editIsPending: (bool: boolean) =>
     set({
       isPending: bool,

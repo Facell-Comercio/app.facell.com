@@ -21,7 +21,7 @@ import {
 import ModalMetasAgregadores, {
   MetasAgregadoresProps,
 } from "@/pages/comercial/components/ModalMetasAgregadores";
-import { Percent, Save, Trash2 } from "lucide-react";
+import { Ban, Pencil, Percent, Save, Trash2 } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreVendaInvalidada } from "./store";
@@ -32,6 +32,7 @@ const initialRateio = {
   cargo_colaborador: "",
   valor: "0",
   percentual: "0",
+  canEdit: 1,
 };
 
 const ModalRateio = () => {
@@ -40,6 +41,8 @@ const ModalRateio = () => {
     closeModal,
     isPending,
     editIsPending,
+    modalEditing,
+    editModal,
     id,
     id_venda_invalida,
     valor_total_rateio,
@@ -50,6 +53,8 @@ const ModalRateio = () => {
     state.closeModalRateio,
     state.isPending,
     state.editIsPending,
+    state.modalRateioEditing,
+    state.editModalRateio,
     state.id_rateio,
     state.id,
     state.valor_total_rateio,
@@ -144,6 +149,8 @@ const ModalRateio = () => {
     }));
   }
 
+  const canEdit = !!formData?.canEdit;
+
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent className="max-w-2xl">
@@ -159,21 +166,24 @@ const ModalRateio = () => {
                 value={formData?.nome_colaborador || ""}
                 readOnly
                 className="flex-1"
-                onClick={() => setModalMetasAgregadoresOpen(true)}
+                onClick={() => canEdit && setModalMetasAgregadoresOpen(true)}
+                disabled={!modalEditing}
               />
               <InputWithLabel
                 label="CPF Colaborador:"
                 value={formData?.cpf_colaborador || ""}
                 readOnly
                 className="flex-1"
-                onClick={() => setModalMetasAgregadoresOpen(true)}
+                onClick={() => canEdit && setModalMetasAgregadoresOpen(true)}
+                disabled={!modalEditing}
               />
             </span>
             <InputWithLabel
               label="Cargo Colaborador:"
               readOnly
               value={formData?.cargo_colaborador || ""}
-              onClick={() => setModalMetasAgregadoresOpen(true)}
+              onClick={() => canEdit && setModalMetasAgregadoresOpen(true)}
+              disabled={!modalEditing}
             />
             <span className="flex gap-2 w-full">
               <InputWithLabel
@@ -188,6 +198,8 @@ const ModalRateio = () => {
                 step={"0.0001"}
                 type="number"
                 iconLeft
+                disabled={!modalEditing}
+                readOnly={!canEdit}
               />
               <InputWithLabel
                 label="Percentual:"
@@ -200,31 +212,48 @@ const ModalRateio = () => {
                 max={100}
                 icon={Percent}
                 type="number"
+                disabled={!modalEditing}
+                readOnly={!canEdit}
               />
             </span>
           </section>
         </ScrollArea>
-        <DialogFooter>
-          <div className="flex justify-between gap-2 w-full">
-            <AlertPopUp
-              title={"Deseja realmente excluir"}
-              description="Essa ação não pode ser desfeita. Essa contestação será definitivamente removidas do servidor."
-              action={() => {
-                deleteRateio(id);
-                closeModal();
-              }}
-            >
-              <Button variant={"destructive"} disabled={isPending}>
-                <Trash2 className="me-2" size={18} /> Excluir
-              </Button>
-            </AlertPopUp>
+        {!!formData.canEdit && (
+          <DialogFooter>
+            {modalEditing ? (
+              <div className="flex justify-between gap-2 w-full">
+                <AlertPopUp
+                  title={"Deseja realmente excluir"}
+                  description="Essa ação não pode ser desfeita. Essa contestação será definitivamente removidas do servidor."
+                  action={() => {
+                    deleteRateio(id);
+                    closeModal();
+                  }}
+                >
+                  <Button variant={"destructive"} disabled={isPending}>
+                    <Trash2 className="me-2" size={18} /> Excluir
+                  </Button>
+                </AlertPopUp>
 
-            <Button onClick={handleSubmit}>
-              <Save className="me-2" />
-              Salvar
-            </Button>
-          </div>
-        </DialogFooter>
+                <span className="flex gap-2">
+                  <Button onClick={handleClickCancel} variant={"secondary"}>
+                    <Ban className="me-2" size={18} />
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleSubmit}>
+                    <Save className="me-2" size={18} />
+                    Salvar
+                  </Button>
+                </span>
+              </div>
+            ) : (
+              <Button onClick={() => editModal(true)} variant={"warning"}>
+                <Pencil className="me-2" size={18} />
+                Editar
+              </Button>
+            )}
+          </DialogFooter>
+        )}
         <ModalMetasAgregadores
           open={modalMetasAgregadoresOpen}
           onOpenChange={setModalMetasAgregadoresOpen}

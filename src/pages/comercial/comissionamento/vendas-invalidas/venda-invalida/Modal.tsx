@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { checkUserPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate, normalizePercentual } from "@/helpers/mask";
 import {
   useVendasInvalidadas,
@@ -100,6 +101,9 @@ const ModalVendaInvalidada = () => {
     0
   );
 
+  const podeGerarVales =
+    newDataVendaInvalidada?.podeGerarVales && checkUserPermission(["GERENCIAR_VALES", "MASTER"]);
+  console.log(newDataVendaInvalidada.rateios);
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
@@ -273,7 +277,7 @@ const ModalVendaInvalidada = () => {
                   <span className="text-lg font-bold ">Rateio</span>
                 </div>
                 <span className="flex gap-2">
-                  {newDataVendaInvalidada.podeGerarVales && (
+                  {podeGerarVales && (
                     <Button
                       disabled={isPending}
                       onClick={() =>
@@ -330,9 +334,10 @@ const ModalVendaInvalidada = () => {
                                   valor: newDataVendaInvalidada.estorno || "",
                                   filial: newDataVendaInvalidada.filial || "",
                                   ref: newDataVendaInvalidada.ref || "",
+                                  edit: !rateio.canEdit,
                                 })
                               }
-                              disabled={isPending}
+                              disabled={isPending || !!rateio.canEdit}
                             >
                               <PencilIcon size={16} />
                             </Button>

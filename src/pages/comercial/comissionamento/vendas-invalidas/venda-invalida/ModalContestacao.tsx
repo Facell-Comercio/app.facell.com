@@ -18,7 +18,7 @@ import {
   ContestacaoVendasInvalidadasProps,
   useVendasInvalidadas,
 } from "@/hooks/comercial/useVendasInvalidadas";
-import { CircleCheck, CircleX, Eye, Save, Trash2 } from "lucide-react";
+import { CircleCheck, CircleX, Eye, Pencil, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useStoreVendaInvalidada } from "./store";
 
@@ -35,15 +35,25 @@ const initialContestacao = {
 };
 
 const ModalContestacao = () => {
-  const [modalOpen, closeModal, isPending, editIsPending, id, id_venda_invalida] =
-    useStoreVendaInvalidada((state) => [
-      state.modalContestacaoOpen,
-      state.closeModalContestacao,
-      state.isPending,
-      state.editIsPending,
-      state.id_contestacao,
-      state.id,
-    ]);
+  const [
+    modalOpen,
+    closeModal,
+    isPending,
+    editIsPending,
+    modalEditing,
+    editModal,
+    id,
+    id_venda_invalida,
+  ] = useStoreVendaInvalidada((state) => [
+    state.modalContestacaoOpen,
+    state.closeModalContestacao,
+    state.isPending,
+    state.editIsPending,
+    state.modalContestacaoEditing,
+    state.editModalContestacao,
+    state.id_contestacao,
+    state.id,
+  ]);
 
   const user = useAuthStore().user;
 
@@ -129,12 +139,18 @@ const ModalContestacao = () => {
             >
               {formData?.status && formData?.status.replaceAll("_", " ")}
             </span>
-            <InputWithLabel label="Usuário da Contestação:" value={formData?.user || ""} readOnly />
+            <InputWithLabel
+              label="Usuário da Contestação:"
+              value={formData?.user || ""}
+              readOnly
+              disabled={!modalEditing}
+            />
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Contestação</label>
               <Textarea
                 value={formData?.contestacao || ""}
                 readOnly={!!id}
+                disabled={!modalEditing}
                 onChange={(e) => setFormData((prev) => ({ ...prev, contestacao: e.target.value }))}
               />
             </div>
@@ -144,12 +160,14 @@ const ModalContestacao = () => {
                   label="Usuário da Resposta:"
                   value={formData?.user_resposta || user?.nome || ""}
                   readOnly
+                  disabled={!modalEditing}
                 />
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium">Resposta:</label>
                   <Textarea
                     value={formData?.resposta || ""}
                     readOnly={formData?.status !== "em_analise"}
+                    disabled={!modalEditing}
                     onChange={(e) => setFormData((prev) => ({ ...prev, resposta: e.target.value }))}
                   />
                 </div>
@@ -158,96 +176,103 @@ const ModalContestacao = () => {
           </section>
         </ScrollArea>
         <DialogFooter>
-          <div className="flex justify-between gap-2 w-full">
-            <AlertPopUp
-              title={"Deseja realmente excluir"}
-              description="Essa ação não pode ser desfeita. Essa contestação será definitivamente removidas do servidor."
-              action={() => {
-                deleteContestacao(id);
-                closeModal();
-              }}
-            >
-              <Button variant={"destructive"} disabled={isPending}>
-                <Trash2 className="me-2" size={18} /> Excluir
-              </Button>
-            </AlertPopUp>
-            {id ? (
-              formData?.status === "em_analise" && (
-                <div className="flex gap-2">
-                  <AlertPopUp
-                    title={"Deseja realmente marcar como procedente"}
-                    description="Essa ação não pode ser desfeita. Essa contestação será definitivamente definida como improcedente do servidor."
-                    action={() =>
-                      updateStatusContestacao({
-                        id: id || "",
-                        status: "ciente",
-                        resposta: formData?.resposta,
-                      })
-                    }
-                  >
-                    <span
-                      title={
-                        !formData?.resposta ? "Primeiro defina a resposta para a contestação" : ""
+          {modalEditing ? (
+            <div className="flex justify-between gap-2 w-full">
+              <AlertPopUp
+                title={"Deseja realmente excluir"}
+                description="Essa ação não pode ser desfeita. Essa contestação será definitivamente removidas do servidor."
+                action={() => {
+                  deleteContestacao(id);
+                  closeModal();
+                }}
+              >
+                <Button variant={"destructive"} disabled={isPending}>
+                  <Trash2 className="me-2" size={18} /> Excluir
+                </Button>
+              </AlertPopUp>
+              {id ? (
+                formData?.status === "em_analise" && (
+                  <div className="flex gap-2">
+                    <AlertPopUp
+                      title={"Deseja realmente marcar como procedente"}
+                      description="Essa ação não pode ser desfeita. Essa contestação será definitivamente definida como improcedente do servidor."
+                      action={() =>
+                        updateStatusContestacao({
+                          id: id || "",
+                          status: "ciente",
+                          resposta: formData?.resposta,
+                        })
                       }
                     >
-                      <Button variant={"warning"} disabled={isPending || !formData?.resposta}>
-                        {/* <CircleAlert className="me-2" size={18} /> */}
-                        <Eye className="me-2" size={18} />
-                        Ciente
-                      </Button>
-                    </span>
-                  </AlertPopUp>
-                  <AlertPopUp
-                    title={"Deseja realmente marcar como procedente"}
-                    description="Essa ação não pode ser desfeita. Essa contestação será definitivamente definida como improcedente do servidor."
-                    action={() =>
-                      updateStatusContestacao({
-                        id: id || "",
-                        status: "improcedente",
-                        resposta: formData?.resposta,
-                      })
-                    }
-                  >
-                    <span
-                      title={
-                        !formData?.resposta ? "Primeiro defina a resposta para a contestação" : ""
+                      <span
+                        title={
+                          !formData?.resposta ? "Primeiro defina a resposta para a contestação" : ""
+                        }
+                      >
+                        <Button variant={"warning"} disabled={isPending || !formData?.resposta}>
+                          {/* <CircleAlert className="me-2" size={18} /> */}
+                          <Eye className="me-2" size={18} />
+                          Ciente
+                        </Button>
+                      </span>
+                    </AlertPopUp>
+                    <AlertPopUp
+                      title={"Deseja realmente marcar como procedente"}
+                      description="Essa ação não pode ser desfeita. Essa contestação será definitivamente definida como improcedente do servidor."
+                      action={() =>
+                        updateStatusContestacao({
+                          id: id || "",
+                          status: "improcedente",
+                          resposta: formData?.resposta,
+                        })
                       }
                     >
-                      <Button variant={"destructive"} disabled={isPending || !formData?.resposta}>
-                        <CircleX className="me-2" size={18} /> Improcedente
-                      </Button>
-                    </span>
-                  </AlertPopUp>
-                  <AlertPopUp
-                    title={"Deseja realmente marcar como procedente"}
-                    description="Essa ação não pode ser desfeita. Essa contestação será definitivamente definida como procedente do servidor."
-                    action={() =>
-                      updateStatusContestacao({
-                        id: id || "",
-                        status: "procedente",
-                        resposta: formData?.resposta,
-                      })
-                    }
-                  >
-                    <span
-                      title={
-                        !formData?.resposta ? "Primeiro defina a resposta para a contestação" : ""
+                      <span
+                        title={
+                          !formData?.resposta ? "Primeiro defina a resposta para a contestação" : ""
+                        }
+                      >
+                        <Button variant={"destructive"} disabled={isPending || !formData?.resposta}>
+                          <CircleX className="me-2" size={18} /> Improcedente
+                        </Button>
+                      </span>
+                    </AlertPopUp>
+                    <AlertPopUp
+                      title={"Deseja realmente marcar como procedente"}
+                      description="Essa ação não pode ser desfeita. Essa contestação será definitivamente definida como procedente do servidor."
+                      action={() =>
+                        updateStatusContestacao({
+                          id: id || "",
+                          status: "procedente",
+                          resposta: formData?.resposta,
+                        })
                       }
                     >
-                      <Button variant={"success"} disabled={isPending || !formData?.resposta}>
-                        <CircleCheck className="me-2" size={18} /> Procedente
-                      </Button>
-                    </span>
-                  </AlertPopUp>
-                </div>
-              )
-            ) : (
-              <Button onClick={handleSubmit}>
-                <Save className="me-2" />
-                Salvar
-              </Button>
-            )}
-          </div>
+                      <span
+                        title={
+                          !formData?.resposta ? "Primeiro defina a resposta para a contestação" : ""
+                        }
+                      >
+                        <Button variant={"success"} disabled={isPending || !formData?.resposta}>
+                          <CircleCheck className="me-2" size={18} /> Procedente
+                        </Button>
+                      </span>
+                    </AlertPopUp>
+                  </div>
+                )
+              ) : (
+                <Button onClick={handleSubmit}>
+                  <Save className="me-2" />
+                  Salvar
+                </Button>
+              )}
+            </div>
+          ) : (
+            <Button onClick={() => editModal(true)} variant={"warning"}>
+              <Pencil className="me-2" />
+              Editar
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
