@@ -39,6 +39,9 @@ export const initialPropsTituloCR: TituloCRSchemaProps = {
   data_emissao: "",
 
   valor: "0",
+  valor_liquido: "0",
+  ir: "0",
+  iss: "0",
   descricao: "",
 
   // Filial
