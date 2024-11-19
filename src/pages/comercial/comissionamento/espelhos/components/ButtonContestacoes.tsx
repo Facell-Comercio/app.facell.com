@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
 // import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import { TriangleAlert } from "lucide-react";
-import { useStoreTableEspelhos } from "../table/store-table";
 
 const ButtonContestacoes = () => {
-  const [filters] = useStoreTableEspelhos(
-    (state) => [state.filters]
-  );
+  // const [filters] = useStoreTableEspelhos(
+  //   (state) => [state.filters]
+  // );
 
   return (
     <Button
@@ -15,8 +14,7 @@ const ButtonContestacoes = () => {
 
       // disabled={isPending}
     >
-      <TriangleAlert className="me-2" size={18} />{" "}
-      Contestações (1)
+      <TriangleAlert className="me-2" size={18} /> Contestações (1)
     </Button>
   );
 };

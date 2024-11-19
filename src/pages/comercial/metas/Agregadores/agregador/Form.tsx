@@ -43,7 +43,7 @@ const cargosPrevistos = [
 
 const tiposAgregacao = ["FILIAL", "VENDEDOR"];
 
-const tags = ["BLUE"];
+// const tags = ["BLUE"];
 
 const FormAgregador = ({
   id,
