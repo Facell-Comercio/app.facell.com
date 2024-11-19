@@ -6,6 +6,10 @@ interface ExtendedTableProps extends React.HTMLAttributes<HTMLTableElement> {
   divClassname?: string;
 }
 
+interface ExtendedTableProps extends React.HTMLAttributes<HTMLTableElement> {
+  divClassname?: string;
+}
+
 const Table = React.forwardRef<HTMLTableElement, ExtendedTableProps>(
   ({ className, divClassname, ...props }, ref) => (
     //^ Foi adicionada a class scroll-thin

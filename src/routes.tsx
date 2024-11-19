@@ -13,8 +13,9 @@ import HomePage from "./pages/Home.tsx";
 import LoginPage from "./pages/Login.tsx";
 import RecuperarSenha from "./pages/RecuperarSenha.tsx";
 import AdminPage from "./pages/admin/Page.tsx";
+import ComercialComissionamento from "./pages/comercial/comissionamento/ComercialMetas.tsx";
 import ComercialMetas from "./pages/comercial/metas/ComercialMetas.tsx";
-import Vales from "./pages/comercial/vales/Vales.tsx";
+import ComercialVales from "./pages/comercial/vales/ComercialVales.tsx";
 import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";
 import CadastrosPage from "./pages/financeiro/cadastros/Cadastros.tsx";
 import ContasPagarPage from "./pages/financeiro/contas-pagar/ContasPagar.tsx";
@@ -60,8 +61,9 @@ const AppRoutes = () => {
 
           {/* Comercial */}
           <Route path="/comercial/">
-            <Route element={<Vales />} path="vales" />
+            <Route element={<ComercialVales />} path="vales" />
             <Route element={<ComercialMetas />} path="metas" />
+            <Route element={<ComercialComissionamento />} path="comissionamento" />
           </Route>
 
           {/* Suprimentos */}

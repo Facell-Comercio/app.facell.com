@@ -88,8 +88,7 @@ const ModalMetas = ({
   const { data, isError, isLoading, refetch } = useQuery({
     queryKey: ["comercial", "metas", "lista", { pagination, filters }],
     staleTime: 0,
-    queryFn: async () =>
-      await fetchApi.comercial.metas.getAll({ pagination, filters }),
+    queryFn: async () => await fetchApi.comercial.metas.getAll({ pagination, filters }),
     enabled: open,
   });
 
@@ -156,9 +155,7 @@ const ModalMetas = ({
 
         setIds([...ids, item.id || ""]);
       } else {
-        setMetas((prevMetas) =>
-          prevMetas.filter((meta) => meta.id !== item.id)
-        );
+        setMetas((prevMetas) => prevMetas.filter((meta) => meta.id !== item.id));
 
         setIds((prevId) =>
           prevId.filter((id) => {
@@ -240,6 +237,11 @@ const ModalMetas = ({
     setFilters({ ...filters, id_filial: filial.id });
     setFilial(filial.nome);
   }
+  useEffect(() => {
+    if (!open) {
+      handleRemoveAll();
+    }
+  }, [open]);
 
   if (isError) return null;
   if (!open) return null;
@@ -262,11 +264,7 @@ const ModalMetas = ({
                 <Button size={"xs"} onClick={() => handleClickFilter()}>
                   Aplicar <FilterIcon size={12} className="ms-2" />
                 </Button>
-                <Button
-                  size={"xs"}
-                  variant="secondary"
-                  onClick={() => handleClickResetFilters()}
-                >
+                <Button size={"xs"} variant="secondary" onClick={() => handleClickResetFilters()}>
                   Limpar <EraserIcon size={12} className="ms-2" />
                 </Button>
               </div>
@@ -344,10 +342,10 @@ const ModalMetas = ({
           handleRemoveAll={handleRemoveAll}
           handleSelectAll={handleSelectAll}
         >
-          <table className="w-full border p-1">
+          <table className="w-full">
             <thead>
               <tr className="text-sm">
-                {/* <th className="py-1 px-1.5">Ação</th> */}
+                <th className="py-1 px-1.5">Ação</th>
                 <th className="py-1 px-1.5 text-nowrap">ID</th>
                 <th className="py-1 px-1.5 text-nowrap">Ref</th>
                 <th className="py-1 px-1.5 text-nowrap">Ciclo</th>
@@ -371,52 +369,36 @@ const ModalMetas = ({
                     key={"metas:" + item.id + index}
                     className={`bg-secondary odd:bg-secondary/70 text-secondary-foreground justify-between mb-1 border rounded-md py-1 px-1. px-2 ${
                       isSelected &&
-                      "bg-primary/80 odd:bg-primary/90 border-transparent text-primary-foreground/40"
+                      "bg-primary/80 odd:bg-primary/90 border-transparent text-primary-foreground/40 opacity-70"
                     }`}
                     onClick={() => {
                       pushSelection(item);
                     }}
                   >
-                    {/* <td className="text-center py-1 px-1.5">
+                    <td className="text-center py-1 px-1.5">
                       <Button
                         size={"xs"}
-                        className={`py-1 px-1. ${
-                          isSelected &&
-                          "bg-secondary hover:bg-secondary hover:opacity-90"
+                        className={`py-1 px-1.5 ${
+                          isSelected && "bg-secondary hover:bg-secondary hover:opacity-90"
                         }`}
                         variant={"outline"}
-                        
                       >
                         {isSelected ? "Desmarcar" : "Selecionar"}
                       </Button>
-                    </td> */}
-                    <td className="text-xs text-nowrap py-1 px-1.5">
-                      {item.id}
                     </td>
+                    <td className="text-xs text-nowrap py-1 px-1.5">{item.id}</td>
                     <td className="text-xs text-nowrap py-1 px-1.5">
                       {normalizeDate(item.ref || "")}
                     </td>
                     <td className="text-xs text-nowrap py-1 px-1.5">
                       {normalizeDate(item.ciclo || "")}
                     </td>
-                    <td className="text-xs text-nowrap py-1 px-1.5">
-                      {item.grupo_economico}
-                    </td>
-                    <td className="text-xs text-nowrap py-1 px-1.5">
-                      {item.filial}
-                    </td>
-                    <td className="text-xs text-nowrap py-1 px-1.5">
-                      {item.cargo}
-                    </td>
-                    <td className="text-xs text-nowrap py-1 px-1.5">
-                      {item.cpf}
-                    </td>
-                    <td className="text-xs text-nowrap py-1 px-1.5">
-                      {item.nome}
-                    </td>
-                    <td className="text-xs text-nowrap py-1 px-1.5">
-                      {item.tags}
-                    </td>
+                    <td className="text-xs text-nowrap py-1 px-1.5">{item.grupo_economico}</td>
+                    <td className="text-xs text-nowrap py-1 px-1.5">{item.filial}</td>
+                    <td className="text-xs text-nowrap py-1 px-1.5">{item.cargo}</td>
+                    <td className="text-xs text-nowrap py-1 px-1.5">{item.cpf}</td>
+                    <td className="text-xs text-nowrap py-1 px-1.5">{item.nome}</td>
+                    <td className="text-xs text-nowrap py-1 px-1.5">{item.tags}</td>
                     <td className="text-xs text-nowrap py-1 px-1.5">
                       {normalizeDate(item.data_inicial || "")}
                     </td>

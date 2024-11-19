@@ -40,14 +40,23 @@ const SelectMes = (props: TSelectMes) => {
       value={props.value}
       disabled={props.disabled}
     >
-      <SelectTrigger className={`min-w-[15ch] ${props.className}`}>
+      <SelectTrigger
+        className={`min-w-[15ch] ${props.className}`}
+      >
         <SelectValue
-          placeholder={props.placeholder ? props.placeholder : `Selecione...`}
+          placeholder={
+            props.placeholder
+              ? props.placeholder
+              : `Selecione...`
+          }
         />
       </SelectTrigger>
       <SelectContent>
         {arrayMes.map((option: Mes) => (
-          <SelectItem key={option.id} value={option.id}>
+          <SelectItem
+            key={option.id}
+            value={option.id}
+          >
             {option.mes}
           </SelectItem>
         ))}
