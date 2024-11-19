@@ -56,7 +56,7 @@ export const ModalItemRateio = ({ form: formTitulo, canEdit }: ModalItemRateioPr
     control: formTitulo.control,
   });
   const valorTotalTitulo = useWatch({
-    name: "valor",
+    name: "valor_liquido",
     control: formTitulo.control,
   });
   const itens_rateio = useWatch({

@@ -74,7 +74,7 @@ export function ModalVencimento({
   // * WATCHES
   const valorTotalTitulo = parseFloat(
     useWatch({
-      name: "valor",
+      name: "valor_liquido",
       control: formTitulo.control,
     })
   );
@@ -139,6 +139,13 @@ export function ModalVencimento({
         toast({
           variant: "destructive",
           title: `O valor do vencimento excede o valor total em ${difFormatada}.`,
+        });
+        return;
+      }
+      if (!form.watch("data_vencimento")) {
+        toast({
+          variant: "warning",
+          title: "Por favor, informe a data de vencimento.",
         });
         return;
       }

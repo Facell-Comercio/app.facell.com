@@ -29,7 +29,7 @@ type SecaoRateioCRProps = {
 
 const SecaoRateioCR = ({ id, form, disabled, canEdit, modalEditing }: SecaoRateioCRProps) => {
   //^ WATCHES
-  const valorTotalTitulo = form.watch("valor");
+  const valorTotalTitulo = form.watch("valor_liquido");
   // const nome_filial = form.watch("filial");
   // const id_filial = form.watch("id_filial");
   const id_grupo_economico = form.watch("id_grupo_economico");

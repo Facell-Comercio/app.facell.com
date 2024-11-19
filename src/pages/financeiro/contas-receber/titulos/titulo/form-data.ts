@@ -59,6 +59,9 @@ export const schemaTituloCR = z
 
     num_doc: z.string().optional(),
     valor: z.coerce.string().min(0.01, "Preencha o valor"),
+    ir: z.coerce.string().default("0"),
+    iss: z.coerce.string().default("0"),
+    valor_liquido: z.coerce.string().min(0.01, "Preencha o valor"),
 
     descricao: z
       .string()
@@ -100,7 +103,7 @@ export const schemaTituloCR = z
         data.vencimentos?.reduce((acc, curr) => {
           return acc + parseFloat(curr.valor);
         }, 0) || 0
-      ).toFixed(2) == parseFloat(data.valor).toFixed(2),
+      ).toFixed(2) == parseFloat(data.valor_liquido).toFixed(2),
     {
       path: ["vencimentos"],
       message: "O valor dos vencimentos precisa bater com o valor total do título.",
@@ -113,10 +116,23 @@ export const schemaTituloCR = z
         data.itens_rateio?.reduce((acc, curr) => {
           return acc + parseFloat(curr.valor);
         }, 0) || 0
-      ).toFixed(2) == parseFloat(data.valor).toFixed(2),
+      ).toFixed(2) == parseFloat(data.valor_liquido).toFixed(2),
     {
       path: ["itens_rateio"],
       message: "O valor total do rateio precisa bater com o valor total do título.",
+    }
+  )
+  //^ Valida se o valor líquido é válido
+  .refine(
+    (data) => {
+      return (
+        parseFloat(data.valor_liquido) ===
+        parseFloat(data.valor) - parseFloat(data.ir || "0") - parseFloat(data.iss || "0")
+      );
+    },
+    {
+      message: "O valor líquido deve ser igual a valor - ir - iss",
+      path: ["valor_liquido"], // Indica o campo relacionado ao erro
     }
   );
 

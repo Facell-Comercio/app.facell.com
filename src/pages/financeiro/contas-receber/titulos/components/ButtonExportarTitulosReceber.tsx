@@ -44,7 +44,7 @@ const ButtonExportTitulosReceber = () => {
         "CRIADO EM": normalizeDate(row.created_at || ""),
         "NUM DOC": row.num_doc,
         DESCRIÇÃO: row.descricao,
-        VALOR: parseFloat(row.valor),
+        "VALOR LÍQUIDO": parseFloat(row.valor),
         FILIAL: row.filial,
         FORNECEDOR: row.nome_fornecedor,
         "CNPJ FORNECEDOR": row.cnpj_fornecedor,

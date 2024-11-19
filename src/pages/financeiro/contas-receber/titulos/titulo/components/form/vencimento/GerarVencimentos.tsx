@@ -31,7 +31,7 @@ export function ModalGerarVencimentos({
   const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   // WATCH TÍTULO:
   const valorTotalTitulo = useWatch({
-    name: "valor",
+    name: "valor_liquido",
     control: formTitulo.control,
   });
   const vencimentos = useWatch({

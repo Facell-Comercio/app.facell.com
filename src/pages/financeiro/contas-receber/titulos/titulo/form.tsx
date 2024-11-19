@@ -98,7 +98,25 @@ const FormTituloReceber = ({
   });
   const valorTotalTitulo = parseFloat(
     useWatch({
+      name: "valor_liquido",
+      control: form.control,
+    }) || "0"
+  );
+  const valorBruto = parseFloat(
+    useWatch({
       name: "valor",
+      control: form.control,
+    }) || "0"
+  );
+  const valorIR = parseFloat(
+    useWatch({
+      name: "ir",
+      control: form.control,
+    }) || "0"
+  );
+  const valorISS = parseFloat(
+    useWatch({
+      name: "iss",
       control: form.control,
     }) || "0"
   );
@@ -310,6 +328,12 @@ const FormTituloReceber = ({
   const showModalFilial = () => {
     setModalFilialOpen(true);
   };
+
+  //&& useEffect()
+  useEffect(() => {
+    form.setValue("valor_liquido", valorBruto - (valorIR + valorISS));
+  }, [valorBruto, valorIR, valorISS]);
+
   return (
     <Form {...form}>
       <form
@@ -495,6 +519,45 @@ const FormTituloReceber = ({
                         iconLeft
                         icon={TbCurrencyReal}
                         label="Valor Total"
+                        disabled={disabled}
+                        min={0}
+                        className="flex-1 min-w-[20ch]"
+                      />
+                    </div>
+                    <div className="max-w-full flex flex-wrap gap-3">
+                      <FormInput
+                        control={form.control}
+                        inputClass="text-left"
+                        name="ir"
+                        type="number"
+                        iconLeft
+                        icon={TbCurrencyReal}
+                        label="IR"
+                        disabled={disabled}
+                        min={0}
+                        className="flex-1 min-w-[20ch]"
+                      />
+                      <FormInput
+                        control={form.control}
+                        inputClass="text-left"
+                        name="iss"
+                        type="number"
+                        iconLeft
+                        icon={TbCurrencyReal}
+                        label="ISS"
+                        disabled={disabled}
+                        min={0}
+                        className="flex-1 min-w-[20ch]"
+                      />
+                      <FormInput
+                        control={form.control}
+                        inputClass="text-left"
+                        name="valor_liquido"
+                        type="number"
+                        iconLeft
+                        readOnly
+                        icon={TbCurrencyReal}
+                        label="Valor Líquido"
                         disabled={disabled}
                         min={0}
                         className="flex-1 min-w-[20ch]"

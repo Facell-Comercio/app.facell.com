@@ -124,7 +124,7 @@ export const columnsTable: ColumnDef<RowTitulo>[] = [
     },
   },
   {
-    header: "Valor",
+    header: "Valor Líquido",
     accessorKey: "valor",
     cell: (info) => (
       <span className="block text-nowrap">
