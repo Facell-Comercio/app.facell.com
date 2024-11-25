@@ -2,7 +2,6 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-<<<<<<<<< Temporary merge branch 1
 interface ExtendedTableProps
   extends React.HTMLAttributes<HTMLTableElement> {
   divClassname?: string;
