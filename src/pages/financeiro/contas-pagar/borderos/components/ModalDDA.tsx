@@ -33,8 +33,9 @@ import { normalizeCnpjNumber, normalizeCurrency, normalizeDate } from "@/helpers
 import { useDDA } from "@/hooks/financeiro/useDDA";
 import ModalFindItemsBordero from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eraser, Filter } from "lucide-react";
+import { Download, Eraser, Filter } from "lucide-react";
 import { useEffect, useState } from "react";
+import { FaSpinner } from "react-icons/fa6";
 import { copyToClipboard } from "../../titulos/titulo/helpers/helper";
 import { useStoreDDA } from "./storeDDA";
 
@@ -83,6 +84,7 @@ export const ModalDDA = () => {
 
   const { mutate: mutateVincularDDA } = useDDA().vincularDDA();
   const { mutate: mutateDesvincularDDA } = useDDA().desvincularDDA();
+  const { mutate: exportDDA, isPending: exportDDAisPending } = useDDA().exportDDA();
 
   const vincularDDA = async ({
     id_dda,
@@ -164,6 +166,9 @@ export const ModalDDA = () => {
     }));
     setDialogDDAopen(true);
   };
+  const handleExportClick = async () => {
+    exportDDA({ filters });
+  };
 
   const handleCopyQrCode = async (qr_code: string) => {
     await copyToClipboard(qr_code);
@@ -181,9 +186,15 @@ export const ModalDDA = () => {
           <div className="items-center flex">
             {id_vencimento || id_fatura ? (
               status_vencimento == "pago" ? (
-                <Button variant={"success"} size={"xs"} disabled title={String(id_vencimento)}>
-                  Vinculado
-                </Button>
+                <span
+                  title={`${id_vencimento ? "ID VENCIMENTO: " : "ID FATURA: "}${
+                    id_vencimento || id_fatura
+                  }`}
+                >
+                  <Button variant={"success"} size={"xs"} disabled title={String(id_vencimento)}>
+                    Vinculado
+                  </Button>
+                </span>
               ) : (
                 <AlertPopUp
                   title="Deseja realmente desvincular o boleto do vencimento?"
@@ -236,7 +247,7 @@ export const ModalDDA = () => {
     },
     {
       accessorKey: "id",
-      header: "ID",
+      header: "BOLETO",
     },
     {
       header: "CNPJ FILIAL",
@@ -377,13 +388,36 @@ export const ModalDDA = () => {
                 onClick={() => {
                   refetch();
                 }}
+                disabled={exportDDAisPending}
               >
                 <Filter size={18} className="me-2" />
                 Filtrar
               </Button>
-              <Button size={"sm"} variant={"secondary"} onClick={resetFilters}>
+              <Button
+                size={"sm"}
+                variant={"secondary"}
+                onClick={resetFilters}
+                disabled={exportDDAisPending}
+              >
                 <Eraser size={18} className="me-2" />
                 Resetar
+              </Button>
+              <Button
+                size={"sm"}
+                variant={"success"}
+                onClick={handleExportClick}
+                disabled={exportDDAisPending}
+              >
+                {exportDDAisPending ? (
+                  <>
+                    <FaSpinner size={18} className="me-2 animate-spin" /> Carregando...
+                  </>
+                ) : (
+                  <>
+                    <Download size={18} className="me-2" />
+                    Exportar
+                  </>
+                )}
               </Button>
             </div>
             <div className="flex w-max space-x-2 overflow-auto scroll-thin">

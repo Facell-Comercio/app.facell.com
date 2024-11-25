@@ -5,54 +5,91 @@ export interface Pagination {
   pageSize: number;
 }
 
-interface useStoreVendaInvalida {
+interface useStoreVendaInvalidada {
   id?: string | null;
-  id_abatimento?: string | null;
-  modalEditing: boolean;
-  modalEditingAbatimento: boolean;
+  id_contestacao?: string | null;
+  id_rateio?: string | null;
   modalOpen: boolean;
-  modalOpenAbatimento: boolean;
+  modalContestacaoOpen: boolean;
+  modalContestacaoEditing: boolean;
+  modalRateioOpen: boolean;
+  modalRateioEditing: boolean;
   isPending: boolean;
+
+  valor_total_rateio: string;
+  filial?: string | null;
+  ref?: string | null;
 
   openModal: (id: string) => void;
   closeModal: () => void;
-  openModalAbatimento: (id: string) => void;
-  closeModalAbatimento: () => void;
-  editModal: (bool: boolean) => void;
-  editModalAbatimento: (bool: boolean) => void;
+
+  openModalContestacao: (id: string) => void;
+  closeModalContestacao: () => void;
+  editModalContestacao: (bool: boolean) => void;
+
+  openModalRateio: ({
+    id,
+    valor,
+    filial,
+    ref,
+    edit,
+  }: {
+    id: string;
+    valor: string;
+    filial: string;
+    ref: string;
+    edit?: boolean;
+  }) => void;
+  closeModalRateio: () => void;
+  editModalRateio: (bool: boolean) => void;
+
   editIsPending: (bool: boolean) => void;
 }
 
-export const useStoreVendaInvalida =
-  create<useStoreVendaInvalida>((set) => ({
-    id: null,
-    id_abatimento: null,
-    modalEditing: false,
-    modalEditingAbatimento: false,
-    modalOpen: false,
-    modalOpenAbatimento: false,
-    isPending: false,
+export const useStoreVendaInvalidada = create<useStoreVendaInvalidada>((set) => ({
+  id: null,
+  id_contestacao: null,
+  id_rateio: null,
+  modalEditing: false,
+  modalOpen: false,
+  modalContestacaoOpen: false,
+  modalContestacaoEditing: false,
+  modalRateioOpen: false,
+  modalRateioEditing: false,
+  isPending: false,
 
-    openModal: (id: string) =>
-      set({ modalOpen: true, id: id }),
-    closeModal: () =>
-      set({ modalOpen: false, id: null }),
-    openModalAbatimento: (id: string) =>
-      set({
-        modalOpenAbatimento: true,
-        id_abatimento: id,
-      }),
-    closeModalAbatimento: () =>
-      set({
-        modalOpenAbatimento: false,
-        id_abatimento: null,
-      }),
-    editModal: (bool) =>
-      set({ modalEditing: bool }),
-    editModalAbatimento: (bool) =>
-      set({ modalEditingAbatimento: bool }),
-    editIsPending: (bool: boolean) =>
-      set({
-        isPending: bool,
-      }),
-  }));
+  valor_total_rateio: "0",
+  filial: null,
+  ref: null,
+
+  openModal: (id: string) => set({ modalOpen: true, id: id }),
+  closeModal: () => set({ modalOpen: false, id: null }),
+
+  openModalContestacao: (id: string) => set({ modalContestacaoOpen: true, id_contestacao: id }),
+  closeModalContestacao: () =>
+    set({ modalContestacaoOpen: false, id_contestacao: null, modalContestacaoEditing: false }),
+  editModalContestacao: (bool) => set({ modalContestacaoEditing: bool }),
+
+  openModalRateio: ({ id, valor, filial, ref, edit }) =>
+    set({
+      modalRateioOpen: true,
+      id_rateio: id,
+      valor_total_rateio: valor,
+      filial,
+      ref,
+      modalRateioEditing: edit !== undefined ? edit : false,
+    }),
+  closeModalRateio: () =>
+    set({
+      modalRateioOpen: false,
+      id_rateio: null,
+      valor_total_rateio: "0",
+      modalContestacaoEditing: false,
+    }),
+  editModalRateio: (bool) => set({ modalRateioEditing: bool }),
+
+  editIsPending: (bool: boolean) =>
+    set({
+      isPending: bool,
+    }),
+}));

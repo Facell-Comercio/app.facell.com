@@ -37,6 +37,7 @@ const ButtonMotivation = ({
   const actionDisabled = equalText
     ? motivo !== String(placeholder).toUpperCase()
     : !motivo || motivo.length < 10;
+
   return (
     <AlertDialog>
       <AlertDialogTrigger type="button" asChild>
@@ -44,18 +45,19 @@ const ButtonMotivation = ({
           {children}
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="min-w-fit">
         <AlertDialogHeader>
-          <AlertDialogTitle>
+          <AlertDialogTitle className="whitespace-pre">
             {headerTitle || "Digite o motivo para poder prosseguir"}
           </AlertDialogTitle>
-          <AlertDialogDescription className={description ? "mb-2" : "hidden"}>
+          <AlertDialogDescription className={description ? "mb-2 whitespace-pre" : "hidden"}>
             {description}
           </AlertDialogDescription>
           <Input
             value={motivo}
             onChange={(e) => setMotivo(e.target.value)}
             placeholder={placeholder || "Ajuste necessário em..."}
+            className="whitespace-pre"
           />
         </AlertDialogHeader>
         <AlertDialogFooter>

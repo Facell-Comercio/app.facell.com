@@ -1,177 +1,385 @@
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import AlertPopUp from "@/components/custom/AlertPopUp";
-import ModalButtons from "@/components/custom/ModalButtons";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
 
+import { InputWithLabel } from "@/components/custom/FormInput";
+import { Button } from "@/components/ui/button";
 import {
-  useVendasInvalidas,
-  VendasInvalidasProps,
-} from "@/hooks/comercial/useVendasInvalidas";
-import { Trash } from "lucide-react";
-import { useEffect, useRef } from "react";
-import FormVendaInvalida from "./Form";
-import { useStoreVendaInvalida } from "./store";
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { normalizeCurrency, normalizeDate, normalizePercentual } from "@/helpers/mask";
+import {
+  useVendasInvalidadas,
+  VendasInvalidadasProps,
+} from "@/hooks/comercial/useVendasInvalidadas";
+import { Divide, HandCoins, Info, OctagonAlert, PencilIcon, Plus } from "lucide-react";
+import { useEffect } from "react";
+import { FaSpinner } from "react-icons/fa6";
+import ModalContestacao from "./ModalContestacao";
+import ModalRateio from "./ModalRateio";
+import { useStoreVendaInvalidada } from "./store";
 
-const initialPropsVendaInvalida: VendasInvalidasProps =
-  {
-    id: "",
-    ref: "",
-    ciclo: "",
-    id_grupo_economico: "",
-    grupo_economico: "",
-    id_filial: "",
-    filial: "",
-    cargo: "",
-    cpf: "",
-    nome: "",
-    tags: "",
-
-    data_inicial: "",
-    data_final: "",
-
-    proporcional: "100",
-
-    controle: "0",
-    pos: "0",
-    upgrade: "0",
-    receita: "0",
-    qtde_aparelho: "0",
-    aparelho: "0",
-    acessorio: "0",
-    pitzi: "0",
-    fixo: "0",
-    wttx: "0",
-    live: "0",
-  };
-
-const ModalVendaInvalida = () => {
+function colorStatus(status: string) {
+  if (status === "procedente") return "bg-green-500";
+  else if (status === "improcedente" || status === "ciente") return "bg-red-500";
+  else return "bg-secondary";
+}
+const ModalVendaInvalidada = () => {
   const [
     modalOpen,
     closeModal,
-    modalEditing,
-    editModal,
     isPending,
     id,
-  ] = useStoreVendaInvalida((state) => [
+    openModalContestacao,
+    openModalRateio,
+    editIsPending,
+  ] = useStoreVendaInvalidada((state) => [
     state.modalOpen,
     state.closeModal,
-    state.modalEditing,
-    state.editModal,
     state.isPending,
     state.id,
+    state.openModalContestacao,
+    state.openModalRateio,
+    state.editIsPending,
   ]);
 
-  const formRef = useRef(null);
-
-  const { data, isLoading } =
-    useVendasInvalidas().getOne(id);
-
+  const { data } = useVendasInvalidadas().getOne(id);
   const {
-    mutate: deleteVendaInvalida,
-    isSuccess,
-  } = useVendasInvalidas().deleteVendaInvalida();
-  const newDataVendaInvalida: VendasInvalidasProps &
-    Record<string, any> =
-    {} as VendasInvalidasProps &
-      Record<string, any>;
+    mutate: gerarVales,
+    isPending: gerarValesIsPending,
+    isSuccess: gerarValesIsSuccess,
+    isError: gerarValesIsError,
+  } = useVendasInvalidadas().gerarVales();
+  const newDataVendaInvalidada: VendasInvalidadasProps & Record<string, any> =
+    {} as VendasInvalidadasProps & Record<string, any>;
 
   for (const key in data) {
     if (typeof data[key] === "number") {
-      newDataVendaInvalida[key] = String(
-        data[key]
-      );
+      newDataVendaInvalidada[key] = String(data[key]);
     } else if (data[key] === null) {
-      newDataVendaInvalida[key] = "";
+      newDataVendaInvalidada[key] = "";
     } else {
-      newDataVendaInvalida[key] = data[key];
+      newDataVendaInvalidada[key] = data[key];
     }
-  }
-
-  function handleClickCancel() {
-    editModal(false);
-    closeModal();
   }
 
   useEffect(() => {
-    if (isSuccess) {
-      editModal(false);
-      closeModal();
+    if (gerarValesIsSuccess) {
+      editIsPending(false);
+    } else if (gerarValesIsError) {
+      editIsPending(false);
+    } else if (gerarValesIsPending) {
+      editIsPending(true);
     }
-  }, [isSuccess]);
+  }, [gerarValesIsPending]);
 
+  function handleClickCancel() {
+    closeModal();
+  }
+
+  const totalRateios = newDataVendaInvalidada?.rateios?.reduce(
+    (acc, rateio) => acc + parseFloat(rateio.valor || "0"),
+    0
+  );
+
+  const totalPercentualRateios = newDataVendaInvalidada?.rateios?.reduce(
+    (acc, rateio) => acc + parseFloat(rateio.percentual || "0"),
+    0
+  );
+
+  const podeGerarVales =
+    newDataVendaInvalidada?.podeGerarVales && checkUserPermission(["GERENCIAR_VALES", "MASTER"]);
+  console.log(newDataVendaInvalidada.rateios);
   return (
-    <Dialog
-      open={modalOpen}
-      onOpenChange={handleClickCancel}
-    >
+    <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {id
-              ? `VendaInvalida: ${id}`
-              : "Novo VendaInvalida"}
-          </DialogTitle>
+          <DialogTitle>{`Venda Invalidada: ${id}`}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
-          {modalOpen && !isLoading ? (
-            <FormVendaInvalida
-              id={id}
-              data={
-                id
-                  ? newDataVendaInvalida
-                  : initialPropsVendaInvalida
-              }
-              formRef={formRef}
-            />
-          ) : (
-            <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
-              <Skeleton className="w-full row-span-1" />
-              <Skeleton className="w-full row-span-3" />
-            </div>
-          )}
-        </ScrollArea>
-        <DialogFooter>
-          <ModalButtons
-            id={id}
-            modalEditing={modalEditing}
-            edit={() => editModal(true)}
-            cancel={handleClickCancel}
-            formRef={formRef}
-            isLoading={isPending}
-          >
-            <AlertPopUp
-              title={"Deseja realmente excluir"}
-              description="Essa ação não pode ser desfeita. A vendaInvalida será excluída definitivamente do servidor."
-              action={() => {
-                deleteVendaInvalida(id);
-              }}
+          <section className="flex gap-3 flex-col">
+            <span
+              className={`uppercase text-center rounded-md p-1 text-sm font-semibold ${colorStatus(
+                newDataVendaInvalidada.status || ""
+              )}`}
             >
-              <Button
-                type={"button"}
-                size="lg"
-                variant={"destructive"}
-                className={`text-white justify-self-start ${
-                  !modalEditing && "hidden"
-                }`}
-              >
-                <Trash className="me-2" />
-                Excluir VendaInvalida
-              </Button>
-            </AlertPopUp>
-          </ModalButtons>
-        </DialogFooter>
+              {newDataVendaInvalidada.status && newDataVendaInvalidada.status.replaceAll("_", " ")}
+            </span>
+            <div className="flex gap-2 flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+              <div className="flex justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <Info />
+                  <span className="text-lg font-bold ">Dados</span>
+                </div>
+              </div>
+              <span className="flex gap-2">
+                <InputWithLabel
+                  value={newDataVendaInvalidada.tipo || ""}
+                  label="Tipo:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                  inputClass="uppercase"
+                />
+                <InputWithLabel
+                  value={newDataVendaInvalidada.segmento || ""}
+                  label="Segmento:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                  inputClass="uppercase"
+                />
+                <InputWithLabel
+                  value={newDataVendaInvalidada.motivo || ""}
+                  label="Motivo:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                  inputClass="uppercase"
+                />
+              </span>
+              <span className="flex gap-2">
+                <InputWithLabel
+                  value={normalizeCurrency(newDataVendaInvalidada.valor) || ""}
+                  label="Valor:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+                <InputWithLabel
+                  value={normalizeCurrency(newDataVendaInvalidada.estorno) || ""}
+                  label="Total:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+                <InputWithLabel
+                  value={normalizeDate(newDataVendaInvalidada.data_venda) || ""}
+                  label="Data Venda:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+              </span>
+              <span className="flex gap-2">
+                <InputWithLabel
+                  value={newDataVendaInvalidada.gsm || ""}
+                  label="GSM:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+                <InputWithLabel
+                  value={newDataVendaInvalidada.gsm_provisorio || ""}
+                  label="GSM Provisório:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+                <InputWithLabel
+                  value={newDataVendaInvalidada.imei || ""}
+                  label="IMEI:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+              </span>
+              <span className="flex gap-2">
+                <InputWithLabel
+                  value={newDataVendaInvalidada.filial || ""}
+                  label="Filial:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+                <InputWithLabel
+                  value={newDataVendaInvalidada.cpf_cliente || ""}
+                  label="CPF Cliente:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+                <InputWithLabel
+                  value={newDataVendaInvalidada.cpf_vendedor || ""}
+                  label="CPF Vendedor:"
+                  readOnly
+                  className="flex-1 min-w-[20ch]"
+                />
+              </span>
+              <span className="flex gap-2 flex-col">
+                <label className="text-sm font-medium">Observação:</label>
+                <Textarea value={newDataVendaInvalidada.observacao || "-"} readOnly />
+              </span>
+            </div>
+            <div className="flex gap-2 flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+              <div className="flex justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <OctagonAlert />
+                  <span className="text-lg font-bold ">Contestações</span>
+                </div>
+                <Button disabled={isPending} onClick={() => openModalContestacao("")}>
+                  <Plus className="me-2" />
+                  Nova Contestação
+                </Button>
+              </div>
+              <Table divClassname="rounded-md">
+                <TableHeader className="bg-secondary">
+                  <TableRow>
+                    <TableHead className="text-white">Ações</TableHead>
+                    <TableHead className="text-white">Status</TableHead>
+                    <TableHead className="text-white">Obs. Gestor</TableHead>
+                    <TableHead className="text-white">Obs. ADM</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="bg-background">
+                  {newDataVendaInvalidada.contestacoes &&
+                    newDataVendaInvalidada.contestacoes.map((contestacao, index) => {
+                      let color = "";
+                      if (contestacao.status === "procedente") {
+                        color = "text-green-500";
+                      } else if (
+                        contestacao.status === "improcedente" ||
+                        contestacao.status === "ciente"
+                      ) {
+                        color = "text-red-500";
+                      }
+                      return (
+                        <TableRow key={`${index} - ${contestacao.id}`} className="uppercase">
+                          <TableCell className="flex gap-2">
+                            <Button
+                              size={"xs"}
+                              variant={"warning"}
+                              onClick={() => openModalContestacao(contestacao.id || "")}
+                              disabled={isPending}
+                            >
+                              <PencilIcon size={16} />
+                            </Button>
+                          </TableCell>
+                          <TableCell className={`${color}`}>
+                            {contestacao.status?.replaceAll("_", " ")}
+                          </TableCell>
+                          <TableCell>{contestacao.contestacao}</TableCell>
+                          <TableCell>{contestacao.resposta || "-"}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="flex gap-2 flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+              <div className="flex justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <Divide />
+                  <span className="text-lg font-bold ">Rateio</span>
+                </div>
+                <span className="flex gap-2">
+                  {podeGerarVales && (
+                    <Button
+                      disabled={isPending}
+                      onClick={() =>
+                        gerarVales({ ref: newDataVendaInvalidada.ref || "", id_venda_invalida: id })
+                      }
+                      variant={"destructive"}
+                    >
+                      {isPending ? (
+                        <FaSpinner size={18} className="me-2 animate-spin" />
+                      ) : (
+                        <HandCoins size={18} className="me-2" />
+                      )}
+                      Gerar Vales
+                    </Button>
+                  )}
+                  <Button
+                    disabled={isPending}
+                    onClick={() =>
+                      openModalRateio({
+                        id: "",
+                        valor: newDataVendaInvalidada.estorno || "",
+                        filial: newDataVendaInvalidada.filial || "",
+                        ref: newDataVendaInvalidada.ref || "",
+                      })
+                    }
+                  >
+                    <Plus className="me-2" />
+                    Novo Rateio
+                  </Button>
+                </span>
+              </div>
+              <Table divClassname="rounded-md">
+                <TableHeader className="bg-secondary">
+                  <TableRow>
+                    <TableHead className="text-white">Ações</TableHead>
+                    <TableHead className="text-white">Nome</TableHead>
+                    <TableHead className="text-white">Cargo</TableHead>
+                    <TableHead className="text-white">Total</TableHead>
+                    <TableHead className="text-white">Percentual</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="bg-background">
+                  {newDataVendaInvalidada.rateios &&
+                    newDataVendaInvalidada.rateios.map((rateio, index) => {
+                      return (
+                        <TableRow key={`${index} - ${rateio.id}`} className="uppercase">
+                          <TableCell className="flex gap-2">
+                            <Button
+                              size={"xs"}
+                              variant={"warning"}
+                              onClick={() =>
+                                openModalRateio({
+                                  id: rateio.id || "",
+                                  valor: newDataVendaInvalidada.estorno || "",
+                                  filial: newDataVendaInvalidada.filial || "",
+                                  ref: newDataVendaInvalidada.ref || "",
+                                  edit: !rateio.canEdit,
+                                })
+                              }
+                              disabled={isPending || !!rateio.canEdit}
+                            >
+                              <PencilIcon size={16} />
+                            </Button>
+                          </TableCell>
+                          <TableCell>{rateio.nome_colaborador}</TableCell>
+                          <TableCell>{rateio.cargo_colaborador}</TableCell>
+                          <TableCell>
+                            {parseFloat(rateio.valor || "0").toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                              minimumFractionDigits: 2,
+                            })}
+                          </TableCell>
+                          <TableCell>{normalizePercentual(rateio.percentual)}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+                <TableFooter className="bg-secondary">
+                  <TableRow className="uppercase">
+                    <TableCell colSpan={3}>Total :</TableCell>
+                    <TableCell>
+                      {totalRateios?.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                        minimumFractionDigits: 2,
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      {normalizePercentual(totalPercentualRateios?.toFixed(6) || "0")}
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </div>
+          </section>
+          <ModalContestacao />
+          <ModalRateio />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ModalVendaInvalida;
+export default ModalVendaInvalidada;
