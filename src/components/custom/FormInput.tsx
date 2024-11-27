@@ -75,6 +75,7 @@ interface InputWithLabelProps {
   iconClass?: string;
   labelClass?: string;
   title?: string;
+  required?: boolean;
 }
 
 const InputWithLabel = ({

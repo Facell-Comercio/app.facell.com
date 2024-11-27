@@ -6,17 +6,17 @@ export interface Pagination {
 }
 
 export interface Filters {
-  status?: string;
-  tipo?: string;
-  segmento?: string;
+  status_list?: string[];
+  tipo_list?: string[];
+  segmento_list?: string[];
   motivo?: string;
   termo?: string;
 }
 
 const initialFilters: Filters = {
-  status: "",
-  tipo: "",
-  segmento: "",
+  status_list: [],
+  tipo_list: [],
+  segmento_list: [],
   motivo: "",
   termo: "",
 };
@@ -26,6 +26,8 @@ export interface State {
   pagination: Pagination;
   isAllSelected: boolean;
   filters: Filters;
+
+  modalAlteracaoLoteOpen: boolean;
 
   mes?: string;
   ano?: string;
@@ -43,6 +45,10 @@ export interface Actions {
 
   setMes: (mes: string) => void;
   setAno: (ano: string) => void;
+
+  // MODAL
+  openModalAlteracaoLote: () => void;
+  closeModalAlteracaoLote: () => void;
 }
 
 export const useStoreTableVendasInvalidadas = create<State & Actions>((set) => ({
@@ -69,10 +75,11 @@ export const useStoreTableVendasInvalidadas = create<State & Actions>((set) => (
 
   setPagination: (pagination) => set({ pagination }),
 
-  setMes: (mes: string) => {
-    set({ mes });
-  },
-  setAno: (ano: string) => {
-    set({ ano });
-  },
+  setMes: (mes: string) => set(() => ({ mes })),
+  setAno: (ano: string) => set(() => ({ ano })),
+
+  // Modal
+  modalAlteracaoLoteOpen: false,
+  openModalAlteracaoLote: () => set({ modalAlteracaoLoteOpen: true }),
+  closeModalAlteracaoLote: () => set({ modalAlteracaoLoteOpen: false }),
 }));

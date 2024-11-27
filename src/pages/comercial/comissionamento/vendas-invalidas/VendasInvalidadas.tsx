@@ -1,8 +1,7 @@
 import { DataTable } from "@/components/custom/DataTable";
 
-import { Input } from "@/components/custom/FormInput";
-import SelectMes from "@/components/custom/SelectMes";
 import { useVendasInvalidadas } from "@/hooks/comercial/useVendasInvalidadas";
+import ButtonAlteracaoLote from "./components/ButtonAlteracaoLote";
 import ButtonExcluir from "./components/ButtonExcluir";
 import ButtonGerarVales from "./components/ButtonGerarVales";
 import ButtonProcessar from "./components/ButtonProcessar";
@@ -12,17 +11,14 @@ import { useStoreTableVendasInvalidadas } from "./table/store-table";
 import ModalVendaInvalidada from "./venda-invalida/Modal";
 
 const VendasInvalidadas = () => {
-  const [pagination, setPagination, filters, mes, setMes, ano, setAno] =
-    useStoreTableVendasInvalidadas((state) => [
-      state.pagination,
-      state.setPagination,
-      state.filters,
+  const [pagination, setPagination, filters, mes, ano] = useStoreTableVendasInvalidadas((state) => [
+    state.pagination,
+    state.setPagination,
+    state.filters,
 
-      state.mes,
-      state.setMes,
-      state.ano,
-      state.setAno,
-    ]);
+    state.mes,
+    state.ano,
+  ]);
 
   const { data, refetch, isLoading } = useVendasInvalidadas().getAll({
     pagination,
@@ -39,22 +35,11 @@ const VendasInvalidadas = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-2 justify-between">
-        <span className="flex gap-2">
-          <SelectMes value={mes} onValueChange={setMes} className="w-[180px]" />
-          <Input
-            value={ano}
-            onChange={(e) => setAno(e.target.value)}
-            className="w-[12ch]"
-            type="number"
-            min={2023}
-          />
-        </span>
-        <span className="flex gap-2">
-          <ButtonProcessar />
-          <ButtonExcluir />
-          <ButtonGerarVales />
-        </span>
+      <div className="flex gap-2 justify-end">
+        <ButtonAlteracaoLote />
+        <ButtonProcessar />
+        <ButtonExcluir />
+        <ButtonGerarVales />
       </div>
       <FiltersVendasInvalidadas refetch={refetch} />
       {/* <div className="flex gap-2 justify-end">

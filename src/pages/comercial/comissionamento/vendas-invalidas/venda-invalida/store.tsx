@@ -9,11 +9,15 @@ interface useStoreVendaInvalidada {
   id?: string | null;
   id_contestacao?: string | null;
   id_rateio?: string | null;
+
   modalOpen: boolean;
+
   modalContestacaoOpen: boolean;
   modalContestacaoEditing: boolean;
+
   modalRateioOpen: boolean;
   modalRateioEditing: boolean;
+
   isPending: boolean;
 
   valor_total_rateio: string;
@@ -50,12 +54,15 @@ export const useStoreVendaInvalidada = create<useStoreVendaInvalidada>((set) => 
   id: null,
   id_contestacao: null,
   id_rateio: null,
-  modalEditing: false,
+
   modalOpen: false,
+
   modalContestacaoOpen: false,
   modalContestacaoEditing: false,
+
   modalRateioOpen: false,
   modalRateioEditing: false,
+
   isPending: false,
 
   valor_total_rateio: "0",
@@ -65,7 +72,8 @@ export const useStoreVendaInvalidada = create<useStoreVendaInvalidada>((set) => 
   openModal: (id: string) => set({ modalOpen: true, id: id }),
   closeModal: () => set({ modalOpen: false, id: null }),
 
-  openModalContestacao: (id: string) => set({ modalContestacaoOpen: true, id_contestacao: id }),
+  openModalContestacao: (id: string) =>
+    set({ modalContestacaoOpen: true, id_contestacao: id, modalContestacaoEditing: !id }),
   closeModalContestacao: () =>
     set({ modalContestacaoOpen: false, id_contestacao: null, modalContestacaoEditing: false }),
   editModalContestacao: (bool) => set({ modalContestacaoEditing: bool }),

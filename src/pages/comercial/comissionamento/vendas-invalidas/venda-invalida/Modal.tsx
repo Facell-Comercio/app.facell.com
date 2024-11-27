@@ -103,12 +103,12 @@ const ModalVendaInvalidada = () => {
 
   const podeGerarVales =
     newDataVendaInvalidada?.podeGerarVales && checkUserPermission(["GERENCIAR_VALES", "MASTER"]);
-  console.log(newDataVendaInvalidada.rateios);
+
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{`Venda Invalidada: ${id}`}</DialogTitle>
+          <DialogTitle>{`Venda invalidada: ${id}`}</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
@@ -230,6 +230,7 @@ const ModalVendaInvalidada = () => {
                 <TableHeader className="bg-secondary">
                   <TableRow>
                     <TableHead className="text-white">Ações</TableHead>
+                    <TableHead className="text-white">Data Criação</TableHead>
                     <TableHead className="text-white">Status</TableHead>
                     <TableHead className="text-white">Obs. Gestor</TableHead>
                     <TableHead className="text-white">Obs. ADM</TableHead>
@@ -259,6 +260,7 @@ const ModalVendaInvalidada = () => {
                               <PencilIcon size={16} />
                             </Button>
                           </TableCell>
+                          <TableCell>{normalizeDate(contestacao.created_at)}</TableCell>
                           <TableCell className={`${color}`}>
                             {contestacao.status?.replaceAll("_", " ")}
                           </TableCell>

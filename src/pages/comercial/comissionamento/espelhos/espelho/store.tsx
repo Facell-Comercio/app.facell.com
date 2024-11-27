@@ -7,52 +7,118 @@ export interface Pagination {
 
 interface useStoreEspelho {
   id?: string | null;
-  id_abatimento?: string | null;
-  modalEditing: boolean;
-  modalEditingAbatimento: boolean;
+  id_contestacao?: string | null;
+  id_item?: string | null;
+  type?: string | null;
+
   modalOpen: boolean;
-  modalOpenAbatimento: boolean;
+
+  modalContestacoesOpen: boolean;
+  modalContestacaoOpen: boolean;
+  modalContestacaoEditing: boolean;
+
+  modalVendasInvalidasOpen: boolean;
+
+  modalItemOpen: boolean;
+  modalItensOpen: boolean;
+
+  modalItemEditing: boolean;
+
   isPending: boolean;
+
+  qtde_contestacoes?: string | null;
+  qtde_vendas_invalidas?: string | null;
+  qtde_itens?: string | null;
 
   openModal: (id: string) => void;
   closeModal: () => void;
-  openModalAbatimento: (id: string) => void;
-  closeModalAbatimento: () => void;
-  editModal: (bool: boolean) => void;
-  editModalAbatimento: (bool: boolean) => void;
+
+  openModalContestacoes: () => void;
+  closeModalContestacoes: () => void;
+
+  openModalVendasInvalidas: () => void;
+  closeModalVendasInvalidas: () => void;
+
+  openModalContestacao: (id: string) => void;
+  closeModalContestacao: () => void;
+  editModalContestacao: (bool: boolean) => void;
+
+  openModalItem: (data: { id: string; type: string }) => void;
+  closeModalItem: () => void;
+  editModalItem: (bool: boolean) => void;
+
+  openModalItens: () => void;
+  closeModalItens: () => void;
+
+  editQtdeContestacoes: (qtde?: string) => void;
+  editQtdeVendasInvalidas: (qtde?: string) => void;
+  editQtdeItens: (qtde?: string) => void;
   editIsPending: (bool: boolean) => void;
 }
 
-export const useStoreEspelho =
-  create<useStoreEspelho>((set) => ({
-    id: null,
-    id_abatimento: null,
-    modalEditing: false,
-    modalEditingAbatimento: false,
-    modalOpen: false,
-    modalOpenAbatimento: false,
-    isPending: false,
+export const useStoreEspelho = create<useStoreEspelho>((set) => ({
+  id: null,
+  id_contestacao: null,
+  modalOpen: false,
 
-    openModal: (id: string) =>
-      set({ modalOpen: true, id: id }),
-    closeModal: () =>
-      set({ modalOpen: false, id: null }),
-    openModalAbatimento: (id: string) =>
-      set({
-        modalOpenAbatimento: true,
-        id_abatimento: id,
-      }),
-    closeModalAbatimento: () =>
-      set({
-        modalOpenAbatimento: false,
-        id_abatimento: null,
-      }),
-    editModal: (bool) =>
-      set({ modalEditing: bool }),
-    editModalAbatimento: (bool) =>
-      set({ modalEditingAbatimento: bool }),
-    editIsPending: (bool: boolean) =>
-      set({
-        isPending: bool,
-      }),
-  }));
+  modalContestacoesOpen: false,
+  modalItensOpen: false,
+
+  modalVendasInvalidasOpen: false,
+
+  modalContestacaoOpen: false,
+  modalContestacaoEditing: false,
+
+  id_item: null,
+  type: null,
+  modalItemOpen: false,
+  modalItemEditing: false,
+
+  qtde_contestacoes: null,
+  qtde_vendas_invalidas: null,
+  qtde_itens: null,
+
+  isPending: false,
+
+  openModal: (id: string) => set({ modalOpen: true, id: id }),
+  closeModal: () => set({ modalOpen: false, id: null }),
+
+  openModalContestacoes: () => set({ modalContestacoesOpen: true }),
+  closeModalContestacoes: () => set({ modalContestacoesOpen: false }),
+
+  openModalVendasInvalidas: () => set({ modalVendasInvalidasOpen: true }),
+  closeModalVendasInvalidas: () => set({ modalVendasInvalidasOpen: false }),
+
+  openModalContestacao: (id: string) =>
+    set({ modalContestacaoOpen: true, id_contestacao: id, modalContestacaoEditing: !id }),
+  closeModalContestacao: () =>
+    set({ modalContestacaoOpen: false, id_contestacao: null, modalContestacaoEditing: false }),
+  editModalContestacao: (bool) => set({ modalContestacaoEditing: bool }),
+
+  openModalItem: ({ id, type }) =>
+    set({ modalItemOpen: true, id_item: id, type, modalItemEditing: !id }),
+  closeModalItem: () =>
+    set({ modalItemOpen: false, id_item: null, modalItemEditing: false, type: null }),
+  editModalItem: (bool) => set({ modalItemEditing: bool }),
+
+  openModalItens: () => set({ modalItensOpen: true }),
+  closeModalItens: () => set({ modalItensOpen: false }),
+
+  editQtdeContestacoes: (qtde) =>
+    set({
+      qtde_contestacoes: qtde,
+    }),
+  editQtdeVendasInvalidas: (qtde) =>
+    set({
+      qtde_vendas_invalidas: qtde,
+    }),
+  editQtdeItens: (qtde) =>
+    set({
+      qtde_itens: qtde,
+    }),
+
+  editIsPending: (bool: boolean) =>
+    set({
+      isPending: bool,
+    }),
+}));

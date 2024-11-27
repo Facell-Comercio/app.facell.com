@@ -1,24 +1,79 @@
 import { InputWithLabel } from "@/components/custom/FormInput";
+import MultiSelectWithLabel from "@/components/custom/MultiSelectWithLabel";
+import SelectMes from "@/components/custom/SelectMes";
 import { AccordionItem } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionTrigger } from "@radix-ui/react-accordion";
 import { EraserIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
 import { useStoreTableVendasInvalidadas } from "./store-table";
+
+type MultiSelectProps = {
+  value: string;
+  label: string;
+};
+
+export const status_list: MultiSelectProps[] = [
+  {
+    value: "em_analise",
+    label: "EM ANÁLISE",
+  },
+  {
+    value: "procedente",
+    label: "PROCEDENTE",
+  },
+  {
+    value: "improcedente",
+    label: "IMPROCEDENTE",
+  },
+  {
+    value: "ciente",
+    label: "CIENTE",
+  },
+];
+
+const tipo_list: MultiSelectProps[] = [
+  {
+    value: "INADIPLÊNCIA",
+    label: "INADIPLÊNCIA",
+  },
+  {
+    value: "PRODUTO",
+    label: "PRODUTO",
+  },
+  {
+    value: "SERVIÇO",
+    label: "SERVIÇO",
+  },
+];
+
+const segmento_list: MultiSelectProps[] = [
+  {
+    value: "controle",
+    label: "CONTROLE",
+  },
+  {
+    value: "aparelho",
+    label: "APARELHO",
+  },
+  {
+    value: "pos_puro",
+    label: "PÓS PURO",
+  },
+];
 
 const FiltersVendasInvalidadas = ({ refetch }: { refetch: () => void }) => {
   const filters = useStoreTableVendasInvalidadas((state) => state.filters);
   const setFilters = useStoreTableVendasInvalidadas((state) => state.setFilters);
   const resetFilters = useStoreTableVendasInvalidadas((state) => state.resetFilters);
   const [itemOpen, setItemOpen] = useState<string>("item-1");
+  const [mes, setMes, ano, setAno] = useStoreTableVendasInvalidadas((state) => [
+    state.mes,
+    state.setMes,
+    state.ano,
+    state.setAno,
+  ]);
 
   const handleClickFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -55,66 +110,60 @@ const FiltersVendasInvalidadas = ({ refetch }: { refetch: () => void }) => {
           <ScrollArea className="w-fill whitespace-nowrap rounded-md sm:pb-3">
             <div className="flex w-max space-x-3 p-1">
               <span className="flex flex-col gap-2">
-                <label className="text-sm font-semibold">Status</label>
-                <Select
-                  value={filters.status}
-                  onValueChange={(status) => {
-                    setFilters({
-                      status: status,
-                    });
-                  }}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="em_analise">EM ANÁLISE</SelectItem>
-                    <SelectItem value="procedente">PROCEDENTE</SelectItem>
-                    <SelectItem value="improcedente">IMPROCEDENTE</SelectItem>
-                    <SelectItem value="ciente">CIENTE</SelectItem>
-                  </SelectContent>
-                </Select>
+                <label className="text-sm font-semibold">Mês Referência</label>
+                <SelectMes value={mes} onValueChange={setMes} className="w-[180px]" />
               </span>
-              <span className="flex flex-col gap-2">
-                <label className="text-sm font-semibold">Tipo</label>
-                <Select
-                  value={filters.tipo}
-                  onValueChange={(tipo) => {
-                    setFilters({
-                      tipo: tipo,
-                    });
-                  }}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="inadiplencia">INADIPLÊNCIA</SelectItem>
-                    <SelectItem value="produto">PRODUTO</SelectItem>
-                    <SelectItem value="servico">SERVIÇO</SelectItem>
-                  </SelectContent>
-                </Select>
-              </span>
-              <span className="flex flex-col gap-2">
-                <label className="text-sm font-semibold">Segmento</label>
-                <Select
-                  value={filters.segmento}
-                  onValueChange={(segmento) => {
-                    setFilters({
-                      segmento: segmento,
-                    });
-                  }}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Segmento" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="controle">CONTROLE</SelectItem>
-                    <SelectItem value="aparelho">APARELHO</SelectItem>
-                    <SelectItem value="pos_puro">PÓS PURO</SelectItem>
-                  </SelectContent>
-                </Select>
-              </span>
+              <InputWithLabel
+                label="Ano"
+                value={ano || ""}
+                onChange={(e) => setAno(e.target.value)}
+                className="w-[12ch]"
+                type="number"
+                min={2023}
+              />
+              <MultiSelectWithLabel
+                label="Status"
+                options={status_list}
+                onValueChange={(status_list) => {
+                  setFilters({ status_list: status_list });
+                }}
+                defaultValue={filters.status_list || []}
+                placeholder="Status"
+                variant="secondary"
+                animation={4}
+                maxCount={2}
+                divClassName="max-w-fit min-w-[20ch]"
+                className={`bg-background hover:bg-background`}
+              />
+              <MultiSelectWithLabel
+                label="Tipos"
+                options={tipo_list}
+                onValueChange={(tipo_list) => {
+                  setFilters({ tipo_list: tipo_list });
+                }}
+                defaultValue={filters.tipo_list || []}
+                placeholder="Tipo"
+                variant="secondary"
+                animation={4}
+                maxCount={2}
+                divClassName="max-w-fit min-w-[20ch]"
+                className={`bg-background hover:bg-background`}
+              />
+              <MultiSelectWithLabel
+                label="Segmentos"
+                options={segmento_list}
+                onValueChange={(segmento_list) => {
+                  setFilters({ segmento_list: segmento_list });
+                }}
+                defaultValue={filters.segmento_list || []}
+                placeholder="Segmento"
+                variant="secondary"
+                animation={4}
+                maxCount={2}
+                divClassName="max-w-fit min-w-[20ch]"
+                className={`bg-background hover:bg-background`}
+              />
+
               <InputWithLabel
                 label="Motivo"
                 value={filters.motivo || ""}
