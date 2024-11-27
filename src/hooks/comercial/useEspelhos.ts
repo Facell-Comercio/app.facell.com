@@ -57,6 +57,12 @@ export type EspelhosProps = {
   bonus_list?: ItemEspelhosProps[];
 };
 
+type CalcularComissionamentoProps = {
+  ciclo: string;
+  metas: any[];
+  agregadores: any[];
+};
+
 export const useEspelhos = () => {
   const queryClient = useQueryClient();
 
@@ -96,6 +102,31 @@ export const useEspelhos = () => {
             variant: "destructive",
           });
         }
+      },
+    });
+
+  const calcularComissionamento = () =>
+    useMutation({
+      mutationFn: async (data: CalcularComissionamentoProps) => {
+        return await api
+          .post(`comercial/comissionamento/espelhos/`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial", "comissionamento", "espelhos"],
+        });
+      },
+      onError(error) {
+        const errorMessage =
+          // @ts-expect-error 'Vai funcionar'
+          error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
       },
     });
 
@@ -330,8 +361,6 @@ export const useEspelhos = () => {
   const getAllItens = (params?: unknown) =>
     useQuery({
       queryKey: ["comercial", "comissionamento", "espelhos", "itens", "lista", [params]],
-      retry: false,
-      staleTime: 5 * 1000 * 60,
       queryFn: async () => {
         try {
           const result = fetchApi.comercial.espelhos.getAllItens(params);
@@ -511,7 +540,7 @@ export const useEspelhos = () => {
   return {
     getAll,
     getOne,
-
+    calcularComissionamento,
     recalcularEspelho,
     deleteEspelho,
 

@@ -1,14 +1,15 @@
-import { useFilial } from "@/hooks/useFilial";
+import { usePoliticas } from "@/hooks/comercial/usePoliticas";
 import { Register } from "@tanstack/react-query";
 import { Control } from "react-hook-form";
 import { MultiSelect } from "../ui/multi-select";
 import FormSelect from "./FormSelect";
 
-type Filial = {
+type Cargos = {
   id: number;
-  nome: string;
+  cargo: string;
+  tipo: string;
 };
-type TSelectFilial = {
+type TSelectComissao = {
   showAll?: boolean;
   name?: string;
   label?: string;
@@ -20,10 +21,10 @@ type TSelectFilial = {
   onChange?: (data: any) => any;
   id_grupo_economico?: string;
   id_matriz?: string;
-  isLojaTim?: boolean;
+  tipo?: "meta" | "agregador";
 };
 
-export const SelectFilial = ({
+export const SelectCargoComissao = ({
   name,
   label,
   control,
@@ -32,21 +33,17 @@ export const SelectFilial = ({
   placeholder,
   value,
   onChange,
-  id_grupo_economico,
-  id_matriz,
   showAll,
-  isLojaTim,
-}: TSelectFilial) => {
+  tipo,
+}: TSelectComissao) => {
   // Use a single state variable for fetching and storing data
 
-  const { data } = useFilial().getAll({
+  const { data } = usePoliticas().getAllCargos({
     filters: {
-      id_grupo_economico: id_grupo_economico,
-      id_matriz: id_matriz,
-      isLojaTim: isLojaTim ? 1 : 0,
+      tipo,
     },
   });
-  const rows = data?.data?.rows || [];
+  const rows = data?.rows || [];
 
   return (
     <FormSelect
@@ -55,28 +52,28 @@ export const SelectFilial = ({
       control={control}
       disabled={disabled}
       className={className}
-      placeholder={placeholder ? placeholder : "Selecione a filial"}
+      placeholder={placeholder ? placeholder : "Selecione o cargo"}
       value={value}
       onChange={onChange}
       options={
         showAll
           ? [
               { value: "all", label: "TODAS" },
-              ...rows.map((filial: Filial) => ({
-                value: String(filial.id),
-                label: filial.nome,
+              ...rows.map((cargos: Cargos) => ({
+                value: cargos.cargo,
+                label: cargos.cargo,
               })),
             ]
-          : rows.map((filial: Filial) => ({
-              value: String(filial.id),
-              label: filial.nome,
+          : rows.map((cargos: Cargos) => ({
+              value: cargos.cargo,
+              label: cargos.cargo,
             }))
       }
     />
   );
 };
 
-type TSelectMultiFilial = {
+type TSelectMultiComissao = {
   showAll?: boolean;
   name?: string;
   label?: string;
@@ -88,35 +85,30 @@ type TSelectMultiFilial = {
   maxCount?: number;
   value: string[];
   onChange: (value: string[]) => any;
-  isLojaTim?: boolean;
   nowrap?: boolean;
-  id_matriz?: string;
-  id_grupo_economico?: string;
-  grupo_economico?: string;
+  tipo?: string;
 };
 
-export const SelectMultiFilial = ({ isLojaTim, ...props }: TSelectMultiFilial) => {
-  const { data } = useFilial().getAll({
+export const SelectMultiCargosComissao = ({ tipo, ...props }: TSelectMultiComissao) => {
+  const { data } = usePoliticas().getAllCargos({
     filters: {
-      isLojaTim: isLojaTim ? 1 : 0,
-      id_matriz: props?.id_matriz,
-      id_grupo_economico: props?.id_grupo_economico,
-      grupo_economico: props?.grupo_economico,
+      tipo,
     },
   });
-  const filiais = data?.data?.rows || [];
+
+  const cargos = data?.rows || [];
 
   return (
     // @ts-ignore
     <MultiSelect
       {...props}
-      options={filiais.map((grupo: Filial) => ({
-        value: grupo.id,
-        label: grupo.nome,
+      options={cargos.map((grupo: Cargos) => ({
+        value: grupo.cargo,
+        label: grupo.cargo,
       }))}
       onValueChange={props.onChange}
       defaultValue={props.value}
-      placeholder="Filial"
+      placeholder="Cargos"
       variant="secondary"
       animation={4}
       maxCount={props.maxCount || 1}

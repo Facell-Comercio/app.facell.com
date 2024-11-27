@@ -22,6 +22,8 @@ interface useStoreEspelho {
   modalItemOpen: boolean;
   modalItensOpen: boolean;
 
+  modalCalculoComissionamentoOpen: boolean;
+
   modalItemEditing: boolean;
 
   isPending: boolean;
@@ -50,6 +52,9 @@ interface useStoreEspelho {
   openModalItens: () => void;
   closeModalItens: () => void;
 
+  openModalCalculoComissionamento: () => void;
+  closeModalCalculoComissionamento: () => void;
+
   editQtdeContestacoes: (qtde?: string) => void;
   editQtdeVendasInvalidas: (qtde?: string) => void;
   editQtdeItens: (qtde?: string) => void;
@@ -68,6 +73,8 @@ export const useStoreEspelho = create<useStoreEspelho>((set) => ({
 
   modalContestacaoOpen: false,
   modalContestacaoEditing: false,
+
+  modalCalculoComissionamentoOpen: false,
 
   id_item: null,
   type: null,
@@ -103,6 +110,9 @@ export const useStoreEspelho = create<useStoreEspelho>((set) => ({
 
   openModalItens: () => set({ modalItensOpen: true }),
   closeModalItens: () => set({ modalItensOpen: false }),
+
+  openModalCalculoComissionamento: () => set({ modalCalculoComissionamentoOpen: true }),
+  closeModalCalculoComissionamento: () => set({ modalCalculoComissionamentoOpen: false }),
 
   editQtdeContestacoes: (qtde) =>
     set({

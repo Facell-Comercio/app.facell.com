@@ -2,7 +2,7 @@ import { DataTable } from "@/components/custom/DataTable";
 
 import { useEspelhos } from "@/hooks/comercial/useEspelhos";
 import { useEffect } from "react";
-import ButtonCalcularEspelho from "./components/ButtonCalcularEspelho";
+import ButtonCalcularEspelho from "./components/ButtonCalculoComissionamento";
 import ButtonContestacoes from "./components/ButtonContestacoes";
 import ButtonExportEspelho from "./components/ButtonExportEspelho";
 import ButtonItens from "./components/ButtonItens";

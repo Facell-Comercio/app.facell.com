@@ -16,13 +16,17 @@ type TableProps = {
   data: any;
   columns: ColumnDef<unknown, any>[];
   className?: string;
+  divClassName?: string;
   isLoading?: boolean;
+  variant?: "default" | "secondary";
 };
 export const DataVirtualTableHeaderFixed = ({
   data,
   columns,
   className,
+  divClassName,
   isLoading,
+  variant,
 }: TableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -57,7 +61,7 @@ export const DataVirtualTableHeaderFixed = ({
 
   return (
     <div className="flex flex-col gap-3 overflow-hidden">
-      <div className="rounded-lg overflow-auto z-40 scroll-thin w-full">
+      <div className={`rounded-lg overflow-auto z-40 scroll-thin w-full ${divClassName}`}>
         <div
           ref={parentRef}
           className={cn(`h-[200px] overflow-auto scroll-thin z-50 relative min-w-full`, className)}
@@ -116,7 +120,9 @@ export const DataVirtualTableHeaderFixed = ({
                     return (
                       <tr
                         key={row.id}
-                        className="flex absolute items-center border-b border-gray-900 transition-all hover:bg-secondary/60 h-[33px]"
+                        className={`flex absolute items-center border-b border-gray-900 transition-all hover:bg-secondary/60 h-[33px] ${
+                          variant === "secondary" && "odd:bg-secondary/60 even:bg-secondary/40"
+                        }`}
                         style={{
                           transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
                           width: "100%",
