@@ -243,6 +243,7 @@ const ModalAjuste = () => {
                     name="valor"
                     label="Valor"
                     control={form.control}
+                    min={0}
                     disabled={isPending || !modalEditing}
                     className="flex-1 min-w-[30ch]"
                     type="number"
