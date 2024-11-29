@@ -1,7 +1,7 @@
 import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
 import { Calendar, Crosshair, Percent, Plus, Trash, UserSearch } from "lucide-react";
@@ -83,7 +83,7 @@ const FormAgregador = ({
   const { form, metas, appendMeta, removeMeta } = useFormAgregadorData(data);
   const metas_agregadas = form.watch("metas_agregadas");
 
-  const readOnly = !checkUserPermission(["GERENCIAR_METAS", "MASTER"]);
+  const readOnly = !hasPermission(["GERENCIAR_METAS", "MASTER"]);
   const disabled = (!modalEditing || isPending) && !readOnly;
 
   const onSubmitData = (data: AgregadoresProps) => {
@@ -307,7 +307,7 @@ const FormAgregador = ({
                       <Crosshair />
                       <span className="text-lg font-bold">Metas</span>
                     </div>
-                    {checkUserPermission(["GERENCIAR_VALES", "MASTER"]) && (
+                    {hasPermission(["GERENCIAR_VALES", "MASTER"]) && (
                       <div className="flex gap-2 flex-wrap">
                         <AlertPopUp
                           title={"Deseja realmente remover todas as metas"}

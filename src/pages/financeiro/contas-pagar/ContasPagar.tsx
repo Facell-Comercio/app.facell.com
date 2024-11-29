@@ -1,10 +1,7 @@
 import fetchApi from "@/api/fetchApi";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation } from "react-router-dom";
 import Borderos from "./borderos/Borderos";
@@ -30,8 +27,7 @@ const ContasPagarPage = () => {
   queryClient.prefetchQuery({
     queryKey: ["financeiro", "contas_pagar", "cartao", "lista", null],
     staleTime: Infinity,
-    queryFn: async () =>
-      await fetchApi.financeiro.contas_pagar.cartoes.getAll({}),
+    queryFn: async () => await fetchApi.financeiro.contas_pagar.cartoes.getAll({}),
   });
 
   return (
@@ -45,8 +41,7 @@ const ContasPagarPage = () => {
             <Link to={`${uri}?tab=titulo`}>
               <TabsTrigger value="titulo">Solicitação</TabsTrigger>
             </Link>
-            {(checkUserPermission("MASTER") ||
-              checkUserDepartments("FINANCEIRO")) && (
+            {(hasPermission("MASTER") || checkUserDepartments("FINANCEIRO")) && (
               <>
                 <Link to={`${uri}?tab=cartoes`}>
                   <TabsTrigger value="cartoes">Cartão</TabsTrigger>
@@ -58,16 +53,11 @@ const ContasPagarPage = () => {
                   <TabsTrigger value="bordero">Borderô</TabsTrigger>
                 </Link>
                 <Link to={`${uri}?tab=movimento-contabil`}>
-                  <TabsTrigger value="movimento-contabil">
-                    Movimento Contábil
-                  </TabsTrigger>
+                  <TabsTrigger value="movimento-contabil">Movimento Contábil</TabsTrigger>
                 </Link>
               </>
             )}
-            <ScrollBar
-              orientation="horizontal"
-              thumbColor="dark:bg-slate-400 bg-gray-450"
-            />
+            <ScrollBar orientation="horizontal" thumbColor="dark:bg-slate-400 bg-gray-450" />
           </ScrollArea>
         </TabsList>
         <TabsContent value="painel">

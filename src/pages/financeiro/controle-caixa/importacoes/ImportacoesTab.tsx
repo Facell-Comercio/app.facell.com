@@ -1,6 +1,7 @@
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import {
   ArrowUpDown,
@@ -14,9 +15,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import ModalLogsMovimentoArquivos from "../../components/ModalLogsMovimentoArquivos";
-import ImportacaoItem from "./components/ImportacaoItem";
 import ImportacaoCaixasLote from "./components/ImportacaoCaixasLote";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import ImportacaoItem from "./components/ImportacaoItem";
 
 const RELATORIOS = [
   "CIELO-VENDAS",
@@ -29,8 +29,8 @@ const RELATORIOS = [
 ];
 
 const ImportacoesTab = () => {
-  const isMaster = checkUserPermission('MASTER');
-  
+  const isMaster = hasPermission("MASTER");
+
   const [modalHistoricoOpen, setModalHistoricoOpen] = useState<boolean>(false);
   const { mutate: cruzarRelatoriosLote, isPending } = useConferenciasCaixa().cruzarRelatoriosLote();
 

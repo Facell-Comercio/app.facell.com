@@ -1,9 +1,6 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import Cadastros from "./components/cadastros/Cadastros";
 import MeuOrcamento from "./components/meu-orcamento/MeuOrcamento";
 
@@ -18,8 +15,7 @@ const OrcamentoPage = () => {
         <TabsList className="w-full justify-start flex h-auto">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md h-auto">
             <TabsTrigger value="meu-orcamento">Acompanhamento</TabsTrigger>
-            {(checkUserDepartments("FINANCEIRO") ||
-              checkUserPermission("MASTER")) && (
+            {(checkUserDepartments("FINANCEIRO") || hasPermission("MASTER")) && (
               <TabsTrigger value="cadastros">Cadastro</TabsTrigger>
             )}
             <ScrollBar orientation="horizontal" />

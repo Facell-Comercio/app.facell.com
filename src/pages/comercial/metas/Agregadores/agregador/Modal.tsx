@@ -11,7 +11,7 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { AgregadoresProps, useAgregadores } from "@/hooks/comercial/useAgregadores";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Trash } from "lucide-react";
@@ -111,7 +111,7 @@ const ModalAgregador = () => {
             cancel={handleClickCancel}
             formRef={formRef}
             isLoading={isPending}
-            blockEdit={!checkUserPermission(["GERENCIAR_AGREGADORES", "MASTER"])}
+            blockEdit={!hasPermission(["GERENCIAR_AGREGADORES", "MASTER"])}
           >
             <AlertPopUp
               title={"Deseja realmente excluir"}

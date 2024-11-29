@@ -10,7 +10,7 @@ import {
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { useConciliacaoCP } from "@/hooks/financeiro/useConciliacaoCP";
 import { HandCoins, X } from "lucide-react";
 import { useEffect, useRef } from "react";
@@ -42,7 +42,7 @@ const ModalConciliarCP = () => {
   const vencimentosSelection = useStoreTableConciliacaoCP().vencimentosSelection;
   const transacoesSelection = useStoreTableConciliacaoCP().transacoesSelection;
   const formRef = useRef(null);
-  const isMaster = checkUserPermission("MASTER");
+  const isMaster = hasPermission("MASTER");
 
   const { data, isLoading } = useConciliacaoCP().getOne(id_conciliacao);
 

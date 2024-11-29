@@ -340,6 +340,8 @@ const ModalCalculoComissionamento = ({
       agregadores: metasMap.get("agregador") || [],
     };
 
+    // console.log(obj);
+
     calcularComissionamento(obj);
   }
 

@@ -11,7 +11,7 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeDate } from "@/helpers/mask";
 import {
   ConferenciasCaixaSchema,
@@ -102,7 +102,7 @@ const ModalCaixa = () => {
   const conferido = newDataCaixa.status === "CONFERIDO";
   const confirmado = newDataCaixa.status === "CONFIRMADO";
 
-  const isMaster = checkUserPermission("MASTER");
+  const isMaster = hasPermission("MASTER");
   const gestorFinanceiro = checkUserDepartments("FINANCEIRO", true);
 
   function handleClickCancel() {

@@ -3,7 +3,7 @@ import * as React from "react";
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Input } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useBordero } from "@/hooks/financeiro/useBordero";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
@@ -26,7 +26,7 @@ const RowVirtualizerFixedProgramado: React.FC<RowVirtualizerFixedProgramadoProps
   modalEditing,
 }) => {
   const { mutate: reversePending } = useBordero().reversePending();
-  const authorized = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+  const authorized = checkUserDepartments("FINANCEIRO") || hasPermission("MASTER");
 
   const parentElement = React.useRef(null);
 

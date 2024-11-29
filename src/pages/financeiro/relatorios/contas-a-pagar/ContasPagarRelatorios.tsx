@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { useState } from "react";
 import DatasysRelatorio from "./datasys/DatasysRelatorio";
 import DespesasRelatorio from "./despesas/DespesasRelatorio";
@@ -14,8 +14,8 @@ import VencimentosRelatorio from "./vencimentos/VencimentosRelatorio";
 
 const ContasPagarRelatorios = () => {
   const [itemOpen, setItemOpen] = useState("");
-  const isMaster = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
-  const canExportDespesas = isMaster || checkUserPermission("FINANCEIRO_EXPORTAR_DESPESAS");
+  const isMaster = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+  const canExportDespesas = isMaster || hasPermission("FINANCEIRO_EXPORTAR_DESPESAS");
   return (
     <Accordion type="single" collapsible className="p-2 border dark:border-slate-800 rounded-lg ">
       <AccordionItem value="item-1" className="relative border-0">

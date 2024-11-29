@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
 import App from "./App.tsx";
 import { useAuthStore } from "./context/auth-store.tsx";
-import { checkUserDepartments, checkUserPermission } from "./helpers/checkAuthorization.ts";
+import { checkUserDepartments, hasPermission } from "./helpers/checkAuthorization.ts";
 
 import NotAuthorizedPage from "./pages/NotAuthorized.tsx";
 import NotFoundPage from "./pages/NotFound.tsx";
@@ -54,7 +54,7 @@ const AppRoutes = () => {
           {/* Pessoal */}
           <Route path="/pessoal/">
             <Route
-              element={checkUserPermission("MASTER") ? <Colaboradores /> : <NotAuthorizedPage />}
+              element={hasPermission("MASTER") ? <Colaboradores /> : <NotAuthorizedPage />}
               path="colaboradores"
             />
           </Route>
@@ -78,7 +78,7 @@ const AppRoutes = () => {
               <Route path="conferencia-de-caixa">
                 <Route
                   element={
-                    checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                    checkUserDepartments("FINANCEIRO") || hasPermission("MASTER") ? (
                       <Caixas />
                     ) : (
                       <NotAuthorizedPage />
@@ -91,7 +91,7 @@ const AppRoutes = () => {
             <Route element={<OrcamentoPage />} path="orcamento" />
             <Route
               element={
-                checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                checkUserDepartments("FINANCEIRO") || hasPermission("MASTER") ? (
                   <ConciliacaoBancariaPage />
                 ) : (
                   <NotAuthorizedPage />
@@ -101,7 +101,7 @@ const AppRoutes = () => {
             />
             <Route
               element={
-                checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER") ? (
+                checkUserDepartments("FINANCEIRO") || hasPermission("MASTER") ? (
                   <TesourariaPage />
                 ) : (
                   <NotAuthorizedPage />
@@ -118,7 +118,7 @@ const AppRoutes = () => {
           <Route path="/marketing/">
             <Route
               element={
-                checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER") ? (
+                checkUserDepartments("MARKETING", true) || hasPermission("MASTER") ? (
                   <MailingPage />
                 ) : (
                   <NotAuthorizedPage />
@@ -128,7 +128,7 @@ const AppRoutes = () => {
             />
             <Route
               element={
-                checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER") ? (
+                checkUserDepartments("MARKETING", true) || hasPermission("MASTER") ? (
                   <CadastrosMarketingPage />
                 ) : (
                   <NotAuthorizedPage />
@@ -140,7 +140,7 @@ const AppRoutes = () => {
 
           {/* Administração */}
           <Route
-            element={checkUserPermission("MASTER") ? <AdminPage /> : <NotAuthorizedPage />}
+            element={hasPermission("MASTER") ? <AdminPage /> : <NotAuthorizedPage />}
             path="administracao"
           />
 

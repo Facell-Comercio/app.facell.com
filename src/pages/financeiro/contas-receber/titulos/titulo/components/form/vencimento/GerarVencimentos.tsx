@@ -15,7 +15,7 @@ import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
 import { addMonths, startOfDay, subDays } from "date-fns";
 import { ListPlus, Play } from "lucide-react";
@@ -28,7 +28,7 @@ export function ModalGerarVencimentos({
 }: {
   form: UseFormReturn<TituloCRSchemaProps>;
 }) {
-  const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+  const isMaster: boolean = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   // WATCH TÍTULO:
   const valorTotalTitulo = useWatch({
     name: "valor",

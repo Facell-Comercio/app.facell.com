@@ -43,11 +43,11 @@ const VendasInvalidadas = () => {
       </div>
       <FiltersVendasInvalidadas refetch={refetch} />
       {/* <div className="flex gap-2 justify-end">
-        {checkUserPermission([
+        {hasPermission([
           "GERENCIAR_VENDASINVALIDadAS",
           "MASTER",
         ]) && <ButtonImportMeta />}
-        {checkUserPermission([
+        {hasPermission([
           "GERENCIAR_VENDASINVALIDadAS",
           "MASTER",
         ]) && <ButtonNovaMeta />}

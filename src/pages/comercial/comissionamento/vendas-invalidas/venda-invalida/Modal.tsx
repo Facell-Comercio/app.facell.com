@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate, normalizePercentual } from "@/helpers/mask";
 import {
   useVendasInvalidadas,
@@ -102,7 +102,7 @@ const ModalVendaInvalidada = () => {
   );
 
   const podeGerarVales =
-    newDataVendaInvalidada?.podeGerarVales && checkUserPermission(["GERENCIAR_VALES", "MASTER"]);
+    newDataVendaInvalidada?.podeGerarVales && hasPermission(["GERENCIAR_VALES", "MASTER"]);
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>

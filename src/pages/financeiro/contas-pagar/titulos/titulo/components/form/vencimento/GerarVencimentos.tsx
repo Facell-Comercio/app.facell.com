@@ -9,21 +9,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  UseFormReturn,
-  useFieldArray,
-  useForm,
-  useWatch,
-} from "react-hook-form";
+import { UseFormReturn, useFieldArray, useForm, useWatch } from "react-hook-form";
 
 import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
 import { addMonths, startOfDay, subDays } from "date-fns";
 import { ListPlus, Play } from "lucide-react";
@@ -42,8 +34,7 @@ export function ModalGerarVencimentos({
 }: {
   form: UseFormReturn<TituloSchemaProps>;
 }) {
-  const isMaster: boolean =
-    checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+  const isMaster: boolean = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   // WATCH TÍTULO:
   const valorTotalTitulo = useWatch({
     name: "valor",
@@ -87,8 +78,7 @@ export function ModalGerarVencimentos({
   // })
 
   const diaVencimentoCartao = parseInt(
-    useWatch({ name: "dia_vencimento_cartao", control: formTitulo.control }) ||
-      "0"
+    useWatch({ name: "dia_vencimento_cartao", control: formTitulo.control }) || "0"
   );
   const diaCorteCartao = parseInt(formTitulo.watch("dia_corte_cartao") || "0");
 
@@ -134,9 +124,7 @@ export function ModalGerarVencimentos({
       toast({
         variant: "destructive",
         title: `Impedimento`,
-        description: `O valor total seria excedido em ${normalizeCurrency(
-          excesso
-        )}`,
+        description: `O valor total seria excedido em ${normalizeCurrency(excesso)}`,
       });
       return;
     }
@@ -156,17 +144,13 @@ export function ModalGerarVencimentos({
         if (!isCartao) {
           obj.data_vencimento = proximoDiaUtil(obj.data_vencimento).toString();
         }
-        obj.data_prevista = calcularDataPrevisaoPagamento(
-          data.data_vencimento
-        ).toDateString();
+        obj.data_prevista = calcularDataPrevisaoPagamento(data.data_vencimento).toDateString();
       } else {
         obj.data_vencimento = addMonths(dataVencimento, parcela).toString();
         if (!isCartao) {
           obj.data_vencimento = proximoDiaUtil(obj.data_vencimento).toString();
         }
-        obj.data_prevista = calcularDataPrevisaoPagamento(
-          obj.data_vencimento
-        ).toDateString();
+        obj.data_prevista = calcularDataPrevisaoPagamento(obj.data_vencimento).toDateString();
       }
 
       // incluir um item ao fieldArray
@@ -195,10 +179,10 @@ export function ModalGerarVencimentos({
             <DialogHeader>
               <DialogTitle>Gerar Vencimentos</DialogTitle>
               <DialogDescription>
-                Defina o primeiro vencimento, quantidade de parcelas e valor da
-                parcela e os vencimentos serão gerados automaticamente. <br />
-                Caso o valor de uma das parcelas seja diferente, você pode gerar
-                essa parcela diferente manualmente.
+                Defina o primeiro vencimento, quantidade de parcelas e valor da parcela e os
+                vencimentos serão gerados automaticamente. <br />
+                Caso o valor de uma das parcelas seja diferente, você pode gerar essa parcela
+                diferente manualmente.
               </DialogDescription>
             </DialogHeader>
 

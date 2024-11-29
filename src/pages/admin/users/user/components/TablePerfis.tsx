@@ -1,6 +1,5 @@
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { DataVirtualTableHeaderFixed } from "@/components/custom/DataVirtualTableHeaderFixed";
-import FormSwitch from "@/components/custom/FormSwitch";
 import { Button } from "@/components/ui/button";
 import { UserFilial } from "@/types/user-type";
 import { ColumnDef } from "@tanstack/react-table";
@@ -13,12 +12,12 @@ type TableProps = {
   modalEditing: boolean;
 };
 
-export const TableUserFiliais = ({ form, modalEditing }: TableProps) => {
-  const { remove: removeFilial } = useFieldArray({
-    name: "filiais",
+export const TableUserPerfis = ({ form, modalEditing }: TableProps) => {
+  const { remove } = useFieldArray({
+    name: "perfis",
     control: form.control,
   });
-  const rows = form.watch("filiais");
+  const rows = form.watch("perfis");
 
   const columns: ColumnDef<UserFilial>[] = [
     {
@@ -29,17 +28,17 @@ export const TableUserFiliais = ({ form, modalEditing }: TableProps) => {
         let index = info.row.index;
         return (
           <AlertPopUp
-            title="Deseja realmente remover a filial do usuário?"
+            title="Deseja realmente remover o perfil do acesso?"
             description="Clique em salvar para persistir."
             action={() => {
-              form.setValue("updateFiliais", true);
-              removeFilial(index);
+              form.setValue("updatePerfis", true);
+              remove(index);
             }}
           >
             <Button
               size={"xs"}
-              className="mx-auto"
               variant={"destructive"}
+              className="mx-auto"
               disabled={!modalEditing}
             >
               <Trash size={18} />
@@ -49,32 +48,10 @@ export const TableUserFiliais = ({ form, modalEditing }: TableProps) => {
       },
     },
     {
-      accessorKey: "grupo_economico",
-      header: "GRUPO ECONÔMICO",
-      size: 200,
-    },
-    {
-      accessorKey: "nome",
-      header: "FILIAL",
+      accessorKey: "perfil",
+      header: "PERFIS",
       size: 300,
-    },
-    {
-      accessorKey: "gestor",
-      header: "GESTOR",
-      cell: (info) => {
-        let index = info.row.index;
-        return (
-          <FormSwitch
-            control={form.control}
-            name={`filiais.${index}.gestor`}
-            disabled={!modalEditing}
-            onChange={() => {
-              form.setValue("updateFiliais", true);
-            }}
-          />
-        );
-      },
-      size: 100,
+      cell: (info) => <div className="w-full text-center uppercase">{info.getValue<string>()}</div>,
     },
   ];
 

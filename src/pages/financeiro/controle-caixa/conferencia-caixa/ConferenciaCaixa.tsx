@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import { FileSearch, Settings2 } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
@@ -53,7 +53,7 @@ const ConferenciaCaixa = () => {
           maxCount={3}
         />
         {/* Botão renderizado somente quando gestor do financeiro ou master */}
-        {(checkUserDepartments("FINANCEIRO", true) || checkUserPermission("MASTER")) && (
+        {(checkUserDepartments("FINANCEIRO", true) || hasPermission("MASTER")) && (
           <Button
             variant={"destructive"}
             className="flex gap-1.5 justify-center items-center"

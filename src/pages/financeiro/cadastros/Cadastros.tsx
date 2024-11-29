@@ -1,9 +1,6 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  checkUserDepartments,
-  checkUserPermission,
-} from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import Bancos from "./bancos/Bancos";
 import CentroCustos from "./centro-de-custos/CentroCustos";
 import ContasBancarias from "./contas-bancarias/ContasBancarias";
@@ -23,38 +20,25 @@ const CadastrosPage = () => {
         <TabsList className="w-full justify-start flex h-auto">
           <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
             <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
-            {(checkUserDepartments("FINANCEIRO") ||
-              checkUserPermission("MASTER")) && (
+            {(checkUserDepartments("FINANCEIRO") || hasPermission("MASTER")) && (
               <TabsTrigger value="plano-contas">Plano de Contas</TabsTrigger>
             )}
-            {(checkUserDepartments("FINANCEIRO") ||
-              checkUserPermission("MASTER")) && (
+            {(checkUserDepartments("FINANCEIRO") || hasPermission("MASTER")) && (
               <TabsTrigger value="centros-custos">Centros de Custo</TabsTrigger>
             )}
-            {(checkUserDepartments("FINANCEIRO") ||
-              checkUserPermission("MASTER")) && (
+            {(checkUserDepartments("FINANCEIRO") || hasPermission("MASTER")) && (
               <TabsTrigger value="bancos">Bancos</TabsTrigger>
             )}
-            {(checkUserDepartments("FINANCEIRO") ||
-              checkUserPermission("MASTER")) && (
-              <TabsTrigger value="contas-bancarias">
-                Contas Bancarias
-              </TabsTrigger>
+            {(checkUserDepartments("FINANCEIRO") || hasPermission("MASTER")) && (
+              <TabsTrigger value="contas-bancarias">Contas Bancarias</TabsTrigger>
             )}
-            {(checkUserDepartments("FINANCEIRO") ||
-              checkUserPermission("MASTER")) && (
-              <TabsTrigger value="equipamentos-cielo">
-                Equipamentos Cielo
-              </TabsTrigger>
+            {(checkUserDepartments("FINANCEIRO") || hasPermission("MASTER")) && (
+              <TabsTrigger value="equipamentos-cielo">Equipamentos Cielo</TabsTrigger>
             )}
-            {(checkUserDepartments("FINANCEIRO") ||
-              checkUserPermission("MASTER")) && (
+            {(checkUserDepartments("FINANCEIRO") || hasPermission("MASTER")) && (
               <TabsTrigger value="rateios">Rateios</TabsTrigger>
             )}
-            <ScrollBar
-              orientation="horizontal"
-              thumbColor="dark:bg-slate-400 bg-gray-450"
-            />
+            <ScrollBar orientation="horizontal" thumbColor="dark:bg-slate-400 bg-gray-450" />
           </ScrollArea>
         </TabsList>
         <TabsContent value="fornecedores">

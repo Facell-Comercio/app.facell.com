@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { formatarDataHora } from "@/helpers/format";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { normalizeCnpjNumber } from "@/helpers/mask";
@@ -23,10 +23,7 @@ import AlertPopUp from "@/components/custom/AlertPopUp";
 import SelectCartao from "@/components/custom/SelectCartao";
 import { SelectFormaPagamento } from "@/components/custom/SelectFormaPagamento";
 import SelectUserDepartamento from "@/components/custom/SelectUserDepartamento";
-import {
-  Alert,
-  AlertTitle,
-} from "@/components/ui/alert";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -49,11 +46,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import {
-  SubmitHandler,
-  UseFormReturn,
-  useWatch,
-} from "react-hook-form";
+import { SubmitHandler, UseFormReturn, useWatch } from "react-hook-form";
 import { FaSpinner } from "react-icons/fa6";
 import { TbCurrencyReal } from "react-icons/tb";
 import SecaoRateio from "./components/form/rateio/SecaoRateio";
@@ -79,8 +72,7 @@ const FormTituloPagar = ({
 }) => {
   const queryClient = useQueryClient();
 
-  const modalEditing =
-    useStoreTituloPagar().modalEditing;
+  const modalEditing = useStoreTituloPagar().modalEditing;
   const editModal = useStoreTituloPagar().editModal;
   const closeModal = useStoreTituloPagar().closeModal;
   const [modalFornecedorOpen, setModalFornecedorOpen] = useState<boolean>(false);
@@ -134,19 +126,15 @@ const FormTituloPagar = ({
 
   // * [ VERIFICAÇÕES ]
   const status = titulo?.status || "Solicitado";
-  const id_status =
-    parseInt(titulo?.id_status) ?? 1;
+  const id_status = parseInt(titulo?.id_status) ?? 1;
 
-  const isMaster = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+  const isMaster = checkUserDepartments("FINANCEIRO") || hasPermission("MASTER");
 
   const canEdit = !id || status === "Solicitado" || (isMaster && id_status > 0 && id_status < 3);
   const readOnly = !canEdit || !modalEditing;
   const disabled = !canEdit || !modalEditing;
 
-  const podeArquivar =
-    id &&
-    (status == "Solicitado" ||
-      status == "Negado");
+  const podeArquivar = id && (status == "Solicitado" || status == "Negado");
 
   const podeResolicitar =
     id &&
@@ -159,8 +147,7 @@ const FormTituloPagar = ({
   const podeAnexarNotaFiscal = id_status < 3 || !(id_status >= 3 && !!url_nota_fiscal);
   const podeExcluirNotaFiscal = id_status < 3 || isMaster;
 
-  const canSelectFilial =
-    id_forma_pagamento == 6 ? !!id_cartao : true;
+  const canSelectFilial = id_forma_pagamento == 6 ? !!id_cartao : true;
 
   // * [ FORNECEDOR ]
   function showModalFornecedor() {
@@ -168,15 +155,10 @@ const FormTituloPagar = ({
   }
 
   async function checkDoc() {
-    const result =
-      await fetchApi.financeiro.contas_pagar.titulos.checkDoc(
-        {
-          id_fornecedor: form.watch(
-            "id_fornecedor"
-          ),
-          num_doc: form.watch("num_doc"),
-        }
-      );
+    const result = await fetchApi.financeiro.contas_pagar.titulos.checkDoc({
+      id_fornecedor: form.watch("id_fornecedor"),
+      num_doc: form.watch("num_doc"),
+    });
     if (result > 0) {
       toast({
         variant: "warning",
@@ -190,53 +172,22 @@ const FormTituloPagar = ({
   }
 
   // Quando escolher um fornecedor:
-  async function handleSelectionFornecedor(
-    item: ItemFornecedor
-  ) {
+  async function handleSelectionFornecedor(item: ItemFornecedor) {
     try {
-      const result = await api.get(
-        `financeiro/fornecedores/${item.id}`
-      );
+      const result = await api.get(`financeiro/fornecedores/${item.id}`);
       const fornecedor = result.data;
       // console.log('FORNECEDOR SELECIONADO', fornecedor)
 
-      setValue(
-        "id_fornecedor",
-        fornecedor.id?.toString() || ""
-      );
-      setValue(
-        "cnpj_fornecedor",
-        normalizeCnpjNumber(fornecedor.cnpj) || ""
-      );
-      setValue(
-        "nome_fornecedor",
-        fornecedor.nome || ""
-      );
-      setValue(
-        "favorecido",
-        fornecedor.favorecido || ""
-      );
-      setValue(
-        "cnpj_favorecido",
-        fornecedor.cnpj_favorecido || ""
-      );
-      setValue(
-        "id_banco",
-        fornecedor.id_banco?.toString() || ""
-      );
+      setValue("id_fornecedor", fornecedor.id?.toString() || "");
+      setValue("cnpj_fornecedor", normalizeCnpjNumber(fornecedor.cnpj) || "");
+      setValue("nome_fornecedor", fornecedor.nome || "");
+      setValue("favorecido", fornecedor.favorecido || "");
+      setValue("cnpj_favorecido", fornecedor.cnpj_favorecido || "");
+      setValue("id_banco", fornecedor.id_banco?.toString() || "");
       setValue("banco", fornecedor.banco || "");
-      setValue(
-        "codigo_banco",
-        fornecedor.codigo_banco || ""
-      );
-      setValue(
-        "agencia",
-        fornecedor.agencia || ""
-      );
-      setValue(
-        "dv_agencia",
-        fornecedor.dv_agencia || ""
-      );
+      setValue("codigo_banco", fornecedor.codigo_banco || "");
+      setValue("agencia", fornecedor.agencia || "");
+      setValue("dv_agencia", fornecedor.dv_agencia || "");
       setValue("conta", fornecedor.conta || "");
       setValue("dv_conta", fornecedor.dv_conta || "");
       setValue("id_forma_pagamento", fornecedor.id_forma_pagamento?.toString() || "");
@@ -259,10 +210,7 @@ const FormTituloPagar = ({
           id,
         });
         // @ts-ignore
-        form.setValue(
-          campo,
-          result.data.fileUrl || ""
-        );
+        form.setValue(campo, result.data.fileUrl || "");
       }
     } catch (error) {
       toast({
@@ -276,17 +224,11 @@ const FormTituloPagar = ({
 
   // * [ FORMA DE PAGAMENTO ]
   const showPix = checkIsPIX(id_forma_pagamento);
-  const showCartao = checkIsCartao(
-    id_forma_pagamento
-  );
-  const showDadosBancarios =
-    checkIsTransferenciaBancaria(
-      id_forma_pagamento
-    );
+  const showCartao = checkIsCartao(id_forma_pagamento);
+  const showDadosBancarios = checkIsTransferenciaBancaria(id_forma_pagamento);
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
-  const [isSubmtting, setIsSubmitting] =
-    useState<boolean>(false);
+  const [isSubmtting, setIsSubmitting] = useState<boolean>(false);
 
   const {
     data: dataInsertOne,
@@ -308,9 +250,7 @@ const FormTituloPagar = ({
     }
   }, [isPendingInsert, isPendingUpdate]);
 
-  const onSubmit: SubmitHandler<
-    TituloSchemaProps
-  > = async (data) => {
+  const onSubmit: SubmitHandler<TituloSchemaProps> = async (data) => {
     if (!id) {
       // console.log("Inserindo Titulo:", data);
       insertOne(data);
@@ -338,11 +278,7 @@ const FormTituloPagar = ({
 
       if (titulo.id_recorrencia) {
         queryClient.invalidateQueries({
-          queryKey: [
-            "financeiro",
-            "contas_pagar",
-            "recorrencia",
-          ],
+          queryKey: ["financeiro", "contas_pagar", "recorrencia"],
         });
       }
     }
@@ -354,14 +290,11 @@ const FormTituloPagar = ({
   };
   const changeStatusTitulo = async ({ id_novo_status, motivo }: changeStatusTituloProps) => {
     try {
-      await api.post(
-        `financeiro/contas-a-pagar/titulo/change-status`,
-        {
-          id_titulo: id,
-          id_novo_status,
-          motivo,
-        }
-      );
+      await api.post(`financeiro/contas-a-pagar/titulo/change-status`, {
+        id_titulo: id,
+        id_novo_status,
+        motivo,
+      });
       queryClient.invalidateQueries({
         queryKey: ["financeiro", "contas_pagar"],
       });
@@ -370,22 +303,18 @@ const FormTituloPagar = ({
         variant: "destructive",
         title: "Erro!",
         // @ts-ignore
-        description:  error?.response?.data?.message || error?.message,
+        description: error?.response?.data?.message || error?.message,
       });
     }
   };
 
-  const handleClickArquivar = (
-    motivo: string
-  ) => {
+  const handleClickArquivar = (motivo: string) => {
     changeStatusTitulo({
       id_novo_status: "0",
       motivo,
     });
   };
-  const handleChangeVoltarSolicitado = (
-    motivo: string
-  ) => {
+  const handleChangeVoltarSolicitado = (motivo: string) => {
     changeStatusTitulo({
       id_novo_status: "1",
       motivo,
@@ -403,11 +332,7 @@ const FormTituloPagar = ({
     });
   };
 
-  async function processarXml({
-    fileUrl,
-  }: {
-    fileUrl: string;
-  }) {
+  async function processarXml({ fileUrl }: { fileUrl: string }) {
     try {
       if (!fileUrl) {
         return;
@@ -415,13 +340,7 @@ const FormTituloPagar = ({
       const data = await fetchApi.financeiro.contas_pagar.titulos.processarXml(fileUrl);
 
       if (data) {
-        const {
-          fornecedor,
-          filial,
-          num_doc,
-          valor,
-          data_emissao,
-        } = data;
+        const { fornecedor, filial, num_doc, valor, data_emissao } = data;
         if (fornecedor) {
           form.setValue("id_fornecedor", String(fornecedor.id));
           form.setValue("id_forma_pagamento", String(fornecedor.id_forma_pagamento));
@@ -438,10 +357,7 @@ const FormTituloPagar = ({
         if (valor) {
           form.setValue("valor", String(valor));
         }
-        form.setValue(
-          "data_emissao",
-          String(data_emissao)
-        );
+        form.setValue("data_emissao", String(data_emissao));
       }
     } catch (error) {
       toast({
@@ -454,16 +370,10 @@ const FormTituloPagar = ({
   }
 
   // ! FIM - ACTIONS //////////////////////////////////////
-  const [modalFilialOpen, setModalFilialOpen] =
-    useState<boolean>(false);
-  const handleSelectionFilial = (
-    item: Filial
-  ) => {
+  const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
+  const handleSelectionFilial = (item: Filial) => {
     setValue("id_filial", String(item.id));
-    setValue(
-      "id_grupo_economico",
-      String(item.id_grupo_economico)
-    );
+    setValue("id_grupo_economico", String(item.id_grupo_economico));
     setValue("id_matriz", String(item.id_matriz));
 
     setValue("filial", String(item.nome));
@@ -510,9 +420,7 @@ const FormTituloPagar = ({
                 <div className="flex flex-col p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex gap-2 mb-3">
                     <Contact />
-                    <span className="text-lg font-bold">
-                      Fornecedor
-                    </span>
+                    <span className="text-lg font-bold">Fornecedor</span>
                     <div>
                       {errors.id_fornecedor?.message && (
                         <Badge variant={"destructive"}>{errors.id_fornecedor?.message || ""}</Badge>
@@ -530,9 +438,7 @@ const FormTituloPagar = ({
                       placeholder="SELECIONE O FORNECEDOR"
                       control={form.control}
                       disabled={disabled}
-                      onClick={
-                        showModalFornecedor
-                      }
+                      onClick={showModalFornecedor}
                     />
                     <FormInput
                       className="flex-1 min-w-[30ch] sm:min-w-[40ch] shrink-0"
@@ -542,9 +448,7 @@ const FormTituloPagar = ({
                       label="Nome do fornecedor"
                       control={form.control}
                       disabled={disabled}
-                      onClick={
-                        showModalFornecedor
-                      }
+                      onClick={showModalFornecedor}
                     />
 
                     <SelectFormaPagamento
@@ -623,9 +527,7 @@ const FormTituloPagar = ({
                           name="cnpj_favorecido"
                           control={form.control}
                           readOnly={readOnly}
-                          fnMask={
-                            normalizeCnpjNumber
-                          }
+                          fnMask={normalizeCnpjNumber}
                           inputClass="min-w-[20ch]"
                           className="flex-1"
                           disabled={disabled}
@@ -712,81 +614,51 @@ const FormTituloPagar = ({
                       <FormSelect
                         disabled={disabled}
                         name="id_tipo_solicitacao"
-                        label={
-                          "Tipo de solicitação"
-                        }
+                        label={"Tipo de solicitação"}
                         control={form.control}
                         className="flex-1 min-w-[32ch]"
                         options={[
                           {
                             value: "1",
-                            label:
-                              "Com nota fiscal",
+                            label: "Com nota fiscal",
                           },
                           {
                             value: "2",
-                            label:
-                              "Antecipado / Nota fiscal futura",
+                            label: "Antecipado / Nota fiscal futura",
                           },
                           {
                             value: "3",
-                            label:
-                              "Sem nota fiscal",
+                            label: "Sem nota fiscal",
                           },
                           {
                             value: "4",
-                            label:
-                              "Impostos / Concessionárias",
+                            label: "Impostos / Concessionárias",
                           },
                         ]}
                       />
 
                       <span className="space-y-2">
                         <span className="flex justify-between gap-2">
-                          <label className="text-sm font-medium">
-                            Filial
-                          </label>
+                          <label className="text-sm font-medium">Filial</label>
                           <AlertPopUp
                             title="Deseja realmente redefinir a filial?"
                             description="Todos os campos relacionados a essa filial serão resetados"
                             action={() => {
-                              form.setValue(
-                                "itens_rateio",
-                                []
-                              );
-                              form.setValue(
-                                "id_filial",
-                                ""
-                              );
-                              form.setValue(
-                                "filial",
-                                ""
-                              );
-                              form.setValue(
-                                "id_matriz",
-                                ""
-                              );
-                              form.setValue(
-                                "id_grupo_economico",
-                                ""
-                              );
-                              form.setValue(
-                                "id_cartao",
-                                ""
-                              );
+                              form.setValue("itens_rateio", []);
+                              form.setValue("id_filial", "");
+                              form.setValue("filial", "");
+                              form.setValue("id_matriz", "");
+                              form.setValue("id_grupo_economico", "");
+                              form.setValue("id_cartao", "");
                             }}
                           >
                             <Button
-                              variant={
-                                "destructive"
-                              }
+                              variant={"destructive"}
                               size={"xss"}
                               title="Redefinir filial"
                               disabled={disabled}
                             >
-                              <RotateCcw
-                                size={13}
-                              />
+                              <RotateCcw size={13} />
                             </Button>
                           </AlertPopUp>
                         </span>
@@ -796,13 +668,8 @@ const FormTituloPagar = ({
                           placeholder="SELECIONE A FILIAL"
                           control={form.control}
                           inputClass="sm:min-w-[100px]"
-                          disabled={
-                            disabled ||
-                            !canSelectFilial
-                          }
-                          onClick={
-                            showModalFilial
-                          }
+                          disabled={disabled || !canSelectFilial}
+                          onClick={showModalFilial}
                         />
                       </span>
                       <span className="lg:col-span-2 min-w-[20ch]">
@@ -829,9 +696,7 @@ const FormTituloPagar = ({
                         readOnly={readOnly}
                         name="num_doc"
                         label="Núm. Doc."
-                        className={
-                          "flex-1 min-w-[15ch]"
-                        }
+                        className={"flex-1 min-w-[15ch]"}
                         control={form.control}
                         onBlur={() => checkDoc()}
                         disabled={disabled}
@@ -863,37 +728,20 @@ const FormTituloPagar = ({
                 </div>
 
                 {/* Abas Vencimentos / Rateio entre filiais */}
-                {valorTotalTitulo > 0 &&
-                !!id_matriz ? (
+                {valorTotalTitulo > 0 && !!id_matriz ? (
                   <div className="overflow-auto">
-                    <Tabs
-                      defaultValue="vencimentos"
-                      className="overflow-auto"
-                    >
+                    <Tabs defaultValue="vencimentos" className="overflow-auto">
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="vencimentos">
                           <div className="flex gap-3">
-                            <span>
-                              Vencimentos
-                            </span>
-                            {errors.vencimentos
-                              ?.message && (
+                            <span>Vencimentos</span>
+                            {errors.vencimentos?.message && (
                               <Popover>
                                 <PopoverTrigger>
-                                  <Badge
-                                    variant={
-                                      "destructive"
-                                    }
-                                  >
-                                    Atenção
-                                  </Badge>
+                                  <Badge variant={"destructive"}>Atenção</Badge>
                                 </PopoverTrigger>
                                 <PopoverContent className="bg-destructive text-destructive-foreground text-wrap">
-                                  {
-                                    errors
-                                      .vencimentos
-                                      .message
-                                  }
+                                  {errors.vencimentos.message}
                                 </PopoverContent>
                               </Popover>
                             )}
@@ -901,28 +749,14 @@ const FormTituloPagar = ({
                         </TabsTrigger>
                         <TabsTrigger value="rateio">
                           <div className="flex gap-3">
-                            <span>
-                              Rateio da
-                              solicitação
-                            </span>
-                            {errors.itens_rateio
-                              ?.message && (
+                            <span>Rateio da solicitação</span>
+                            {errors.itens_rateio?.message && (
                               <Popover>
                                 <PopoverTrigger>
-                                  <Badge
-                                    variant={
-                                      "destructive"
-                                    }
-                                  >
-                                    Atenção
-                                  </Badge>
+                                  <Badge variant={"destructive"}>Atenção</Badge>
                                 </PopoverTrigger>
                                 <PopoverContent className="bg-destructive text-destructive-foreground text-wrap">
-                                  {
-                                    errors
-                                      .itens_rateio
-                                      .message
-                                  }
+                                  {errors.itens_rateio.message}
                                 </PopoverContent>
                               </Popover>
                             )}
@@ -935,26 +769,19 @@ const FormTituloPagar = ({
                           id={id}
                           form={form}
                           canEdit={canEdit}
-                          modalEditing={
-                            modalEditing
-                          }
+                          modalEditing={modalEditing}
                           disabled={disabled}
                           readOnly={readOnly}
                         />
                       </TabsContent>
 
-                      <TabsContent
-                        value="rateio"
-                        className="orverflow-auto"
-                      >
+                      <TabsContent value="rateio" className="orverflow-auto">
                         <SecaoRateio
                           id={id}
                           form={form}
                           disabled={disabled}
                           canEdit={canEdit}
-                          modalEditing={
-                            modalEditing
-                          }
+                          modalEditing={modalEditing}
                         />
                       </TabsContent>
                     </Tabs>
@@ -1013,9 +840,7 @@ const FormTituloPagar = ({
                 <FormFileUpload
                   folderName={"financeiro"}
                   disabled={!podeAnexarNotaFiscal}
-                  canDelete={
-                    podeExcluirNotaFiscal
-                  }
+                  canDelete={podeExcluirNotaFiscal}
                   label="Nota fiscal"
                   name="url_nota_fiscal"
                   mediaType="pdf"
@@ -1093,10 +918,7 @@ const FormTituloPagar = ({
                     size={"lg"}
                     action={handleClickArquivar}
                   >
-                    <Archive
-                      className="me-2"
-                      size={18}
-                    />
+                    <Archive className="me-2" size={18} />
                     Arquivar
                   </ButtonMotivation>
                 )}
@@ -1105,14 +927,9 @@ const FormTituloPagar = ({
                     title="Volta o status da solicitação para 'Solicitado', possibilitando a edição..."
                     variant={"secondary"}
                     size={"lg"}
-                    action={
-                      handleChangeVoltarSolicitado
-                    }
+                    action={handleChangeVoltarSolicitado}
                   >
-                    <Undo2
-                      className="me-2"
-                      size={18}
-                    />
+                    <Undo2 className="me-2" size={18} />
                     Re-Solicitar
                   </ButtonMotivation>
                 )}
@@ -1129,10 +946,7 @@ const FormTituloPagar = ({
                     size={"lg"}
                     onClick={handleChangeAprovar}
                   >
-                    <Check
-                      className="me-2"
-                      size={18}
-                    />
+                    <Check className="me-2" size={18} />
                     Aprovar
                   </Button>
                 )}
@@ -1142,33 +956,16 @@ const FormTituloPagar = ({
                 {canEdit && modalEditing && (
                   <>
                     <Button
-                      onClick={() =>
-                        editModal(false)
-                      }
+                      onClick={() => editModal(false)}
                       size="lg"
                       variant={"secondary"}
-                      className={
-                        !id ? "hidden" : ""
-                      }
+                      className={!id ? "hidden" : ""}
                     >
-                      <Ban
-                        className="me-2"
-                        size={18}
-                      />{" "}
-                      Cancelar
+                      <Ban className="me-2" size={18} /> Cancelar
                     </Button>
-                    <Button
-                      type="submit"
-                      size="lg"
-                      variant={"default"}
-                    >
-                      <Save
-                        className="me-2"
-                        size={18}
-                      />
-                      {id
-                        ? "Salvar"
-                        : "Solicitar"}
+                    <Button type="submit" size="lg" variant={"default"}>
+                      <Save className="me-2" size={18} />
+                      {id ? "Salvar" : "Solicitar"}
                     </Button>
                   </>
                 )}

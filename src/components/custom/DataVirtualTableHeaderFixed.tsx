@@ -19,6 +19,7 @@ type TableProps = {
   divClassName?: string;
   isLoading?: boolean;
   variant?: "default" | "secondary";
+  headerTextPosition?: "left" | "right" | "center";
 };
 export const DataVirtualTableHeaderFixed = ({
   data,
@@ -27,6 +28,7 @@ export const DataVirtualTableHeaderFixed = ({
   divClassName,
   isLoading,
   variant,
+  headerTextPosition = "center",
 }: TableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -72,9 +74,9 @@ export const DataVirtualTableHeaderFixed = ({
             }}
           >
             <table className="grid text-nowrap text-xs w-full">
-              <thead className="grid sticky top-0 z-30 border bg-slate-300 dark:bg-gray-900">
+              <thead className="grid sticky top-0 z-30 border bg-slate-300 dark:bg-gray-900 px-2">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <tr className="flex w-full" key={headerGroup.id}>
+                  <tr className={`flex w-full text-${headerTextPosition}`} key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
                       return (
                         <th

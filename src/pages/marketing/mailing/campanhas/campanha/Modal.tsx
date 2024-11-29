@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { CopyPlus, Plus, Smartphone, Trash, UserPen, X } from "lucide-react";
@@ -92,7 +92,7 @@ const ModalCampanha = () => {
     state.setPaginationSubcampanha,
     state.resetPaginationSubcampanha,
   ]);
-  const canEdit = checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER");
+  const canEdit = checkUserDepartments("MARKETING", true) || hasPermission("MASTER");
 
   const [idSubcampanha, setIdSubcampanha] = useState<string>("");
   const [campanhaData, setCampanhaData] = useState(defaultCampanhaData);

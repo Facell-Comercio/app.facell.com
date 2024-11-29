@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { useStoreTablePagar } from "./table/store-table";
 
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { useTituloPagar } from "@/hooks/financeiro/useTituloPagar";
 import Filters from "./FiltersTitulosPagar";
 import ModalAlteracoesLote from "./alteracao-lote/Modal";
@@ -15,7 +15,7 @@ import { columnsTable } from "./table/columns";
 import ModalTituloPagar from "./titulo/Modal";
 
 const TitulosPagar = () => {
-  const isMaster = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+  const isMaster = checkUserDepartments("FINANCEIRO") || hasPermission("MASTER");
 
   const [pagination, setPagination, filters] = useStoreTablePagar((state) => [
     state.pagination,

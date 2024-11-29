@@ -1,6 +1,6 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 
 import { Link, Navigate, useLocation } from "react-router-dom";
 import MovimentoContabil from "./movimento-contabil/MovimentoContabil";
@@ -13,18 +13,19 @@ const ContasReceberPage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("tab") || "";
-  const isMaster = checkUserPermission("MASTER")
-  const isFinanceiro = checkUserDepartments("FINANCEIRO")
-  const canAccess = checkUserPermission("FINANCEIRO_LANÇAR_RECEITA") || isFinanceiro || isMaster;
-  if(!canAccess){
-    return <Navigate to={'/not-authorized'} />
+  const isMaster = hasPermission("MASTER");
+  const isFinanceiro = checkUserDepartments("FINANCEIRO");
+  const canAccess = hasPermission("FINANCEIRO_LANÇAR_RECEITA") || isFinanceiro || isMaster;
+  if (!canAccess) {
+    return <Navigate to={"/not-authorized"} />;
   }
 
   return (
     <div className="flex p-4">
       <Tabs defaultValue={activeTab || "painel"} className="w-full">
         <TabsList className="w-full justify-start">
-          <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto"><>
+          <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
+            <>
               <Link to={`${uri}?tab=painel`}>
                 <TabsTrigger value="painel">Painel</TabsTrigger>
               </Link>
@@ -42,7 +43,7 @@ const ContasReceberPage = () => {
                   </Link>
                 </>
               )}
-            <ScrollBar orientation="horizontal" thumbColor="dark:bg-slate-400 bg-gray-450" />
+              <ScrollBar orientation="horizontal" thumbColor="dark:bg-slate-400 bg-gray-450" />
             </>
           </ScrollArea>
         </TabsList>

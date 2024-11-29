@@ -3,29 +3,14 @@ import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeDate } from "@/helpers/mask";
-import {
-  useVales,
-  ValeProps,
-} from "@/hooks/comercial/useVales";
+import { useVales, ValeProps } from "@/hooks/comercial/useVales";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
 import { addMonths } from "date-fns";
-import {
-  Edit2,
-  Info,
-  MinusCircle,
-  Plus,
-  Trash,
-} from "lucide-react";
+import { Edit2, Info, MinusCircle, Plus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { CustomCombobox } from "../../../../components/custom/CustomCombobox";
@@ -74,8 +59,7 @@ const FormVale = ({
       - ORIGEM
       - OBSERVAÇÃO
   **/
-  const { mutate: deleteAbatimento } =
-    useVales().deleteAbatimento();
+  const { mutate: deleteAbatimento } = useVales().deleteAbatimento();
 
   const [
     modalEditing,
@@ -94,28 +78,17 @@ const FormVale = ({
     state.openModalAbatimento,
     state.editModalAbatimento,
   ]);
-  const [modalFilialOpen, setModalFilialOpen] =
-    useState<boolean>(false);
+  const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
 
   const { form } = useFormValeData(data);
 
   const rowsAbatimentos = data?.abatimentos || [];
 
-  const readOnly = !checkUserPermission([
-    "GERENCIAR_VALES",
-    "MASTER",
-  ]);
-  const disabled =
-    (!modalEditing || isPending) && !readOnly;
-  const saldo = parseFloat(
-    form.watch("saldo") || "0"
-  );
-  const parcela = parseFloat(
-    form.watch("parcela") || "1"
-  );
-  const parcelas = parseFloat(
-    form.watch("parcelas") || "1"
-  );
+  const readOnly = !hasPermission(["GERENCIAR_VALES", "MASTER"]);
+  const disabled = (!modalEditing || isPending) && !readOnly;
+  const saldo = parseFloat(form.watch("saldo") || "0");
+  const parcela = parseFloat(form.watch("parcela") || "1");
+  const parcelas = parseFloat(form.watch("parcelas") || "1");
 
   const onSubmitData = (data: ValeProps) => {
     if (id) update(data);
@@ -135,17 +108,8 @@ const FormVale = ({
       editIsPending(false);
     } else if (insertIsSuccess) {
       if (parcela !== parcelas) {
-        form.setValue(
-          "parcela",
-          String(parcela + 1)
-        );
-        form.setValue(
-          "data_inicio_cobranca",
-          addMonths(
-            form.watch("data_inicio_cobranca"),
-            1
-          )
-        );
+        form.setValue("parcela", String(parcela + 1));
+        form.setValue("data_inicio_cobranca", addMonths(form.watch("data_inicio_cobranca"), 1));
       } else {
         editModal(false);
         closeModal();
@@ -153,10 +117,7 @@ const FormVale = ({
       editIsPending(false);
     } else if (updateIsError || insertIsError) {
       editIsPending(false);
-    } else if (
-      updateIsPending ||
-      insertIsPending
-    ) {
+    } else if (updateIsPending || insertIsPending) {
       editIsPending(true);
     }
   }, [updateIsPending, insertIsPending]);
@@ -174,9 +135,7 @@ const FormVale = ({
       <Form {...form}>
         <form
           ref={formRef}
-          onSubmit={form.handleSubmit(
-            onSubmitData
-          )}
+          onSubmit={form.handleSubmit(onSubmitData)}
           className="max-w-screen-xl w-full grid grid-cols-1 z-[100]"
         >
           <div className="overflow-auto scroll-thin z-[100] flex flex-col gap-3 max-w-full h-full max-h-[72vh] sm:max-h-[70vh] col-span-2">
@@ -186,9 +145,7 @@ const FormVale = ({
                 <div className="flex justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <Info />
-                    <span className="text-lg font-bold ">
-                      Dados do Vale
-                    </span>
+                    <span className="text-lg font-bold ">Dados do Vale</span>
                   </div>
                 </div>
 
@@ -217,10 +174,7 @@ const FormVale = ({
                     readOnly
                     label="Filial"
                     control={form.control}
-                    onClick={() =>
-                      !readOnly &&
-                      setModalFilialOpen(true)
-                    }
+                    onClick={() => !readOnly && setModalFilialOpen(true)}
                   />
                   <FormDateInput
                     disabled={disabled}
@@ -231,23 +185,14 @@ const FormVale = ({
                     className="flex-1 min-w-[15ch]"
                   />
                   <span className="flex flex-col gap-2">
-                    <label className="text-sm font-medium">
-                      Origem
-                    </label>
+                    <label className="text-sm font-medium">Origem</label>
                     <CustomCombobox
                       value={form.watch("origem")}
-                      onChange={(value) =>
-                        form.setValue(
-                          "origem",
-                          value
-                        )
-                      }
+                      onChange={(value) => form.setValue("origem", value)}
                       hasCustomValue
                       disabled={disabled}
                       readOnly={readOnly}
-                      defaultValues={
-                        defaultValuesOrigem
-                      }
+                      defaultValues={defaultValuesOrigem}
                       placeholder="Selecione a origem..."
                     />
                   </span>
@@ -275,19 +220,11 @@ const FormVale = ({
                     step="1"
                     control={form.control}
                   />
-                  <span
-                    title={
-                      !saldo
-                        ? "Primeiro digite o saldo"
-                        : ""
-                    }
-                  >
+                  <span title={!saldo ? "Primeiro digite o saldo" : ""}>
                     <FormInput
                       className="flex-1 min-w-[30ch]"
                       name="valor_parcela"
-                      disabled={
-                        disabled || !saldo
-                      }
+                      disabled={disabled || !saldo}
                       readOnly
                       label="Valor Parcela"
                       type="number"
@@ -312,11 +249,7 @@ const FormVale = ({
                     iconLeft
                     control={form.control}
                     onChange={(e) => {
-                      if (!id)
-                        form.setValue(
-                          "valor_parcela",
-                          e.target.value
-                        );
+                      if (!id) form.setValue("valor_parcela", e.target.value);
                     }}
                   />
                   <FormInput
@@ -338,21 +271,14 @@ const FormVale = ({
                   <div className="flex justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <MinusCircle />
-                      <span className="text-lg font-bold ">
-                        Abatimentos
-                      </span>
+                      <span className="text-lg font-bold ">Abatimentos</span>
                     </div>
-                    {checkUserPermission([
-                      "GERENCIAR_VALES",
-                      "MASTER",
-                    ]) && (
+                    {hasPermission(["GERENCIAR_VALES", "MASTER"]) && (
                       <Button
                         variant={"tertiary"}
                         disabled={disabled}
                         className="flex gap-2"
-                        onClick={() =>
-                          handleClickNewAbatimento()
-                        }
+                        onClick={() => handleClickNewAbatimento()}
                       >
                         <Plus /> Novo Abatimento
                       </Button>
@@ -361,104 +287,50 @@ const FormVale = ({
 
                   <Table
                     className={`bg-background rounded-sm pb-2 ${
-                      disabled &&
-                      !readOnly &&
-                      "opacity-65"
+                      disabled && !readOnly && "opacity-65"
                     }`}
                   >
                     <TableHeader>
                       <TableRow className="font-medium uppercase">
-                        {!readOnly && (
-                          <TableCell>
-                            Ações
-                          </TableCell>
-                        )}
-                        <TableCell>
-                          Data
-                        </TableCell>
-                        <TableCell>
-                          Observações
-                        </TableCell>
-                        <TableCell>
-                          Valor
-                        </TableCell>
-                        <TableCell>
-                          Abatido Por
-                        </TableCell>
+                        {!readOnly && <TableCell>Ações</TableCell>}
+                        <TableCell>Data</TableCell>
+                        <TableCell>Observações</TableCell>
+                        <TableCell>Valor</TableCell>
+                        <TableCell>Abatido Por</TableCell>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {rowsAbatimentos.map(
-                        (abatimento) => (
-                          <TableRow
-                            key={abatimento.id}
-                          >
-                            {!readOnly && (
-                              <TableCell className="flex gap-1">
-                                <Button
-                                  variant={
-                                    "warning"
-                                  }
-                                  size={"xs"}
-                                  disabled={
-                                    disabled
-                                  }
-                                  onClick={() =>
-                                    openModalAbatimento(
-                                      abatimento.id ||
-                                        ""
-                                    )
-                                  }
-                                >
-                                  <Edit2
-                                    size={16}
-                                  />
+                      {rowsAbatimentos.map((abatimento) => (
+                        <TableRow key={abatimento.id}>
+                          {!readOnly && (
+                            <TableCell className="flex gap-1">
+                              <Button
+                                variant={"warning"}
+                                size={"xs"}
+                                disabled={disabled}
+                                onClick={() => openModalAbatimento(abatimento.id || "")}
+                              >
+                                <Edit2 size={16} />
+                              </Button>
+                              <AlertPopUp
+                                title={"Deseja realmente excluir"}
+                                description="Essa ação não pode ser desfeita. O abatimento será excluído definitivamente do servidor."
+                                action={() => {
+                                  deleteAbatimento(abatimento.id);
+                                }}
+                              >
+                                <Button variant={"destructive"} size={"xs"} disabled={disabled}>
+                                  <Trash size={16} />
                                 </Button>
-                                <AlertPopUp
-                                  title={
-                                    "Deseja realmente excluir"
-                                  }
-                                  description="Essa ação não pode ser desfeita. O abatimento será excluído definitivamente do servidor."
-                                  action={() => {
-                                    deleteAbatimento(
-                                      abatimento.id
-                                    );
-                                  }}
-                                >
-                                  <Button
-                                    variant={
-                                      "destructive"
-                                    }
-                                    size={"xs"}
-                                    disabled={
-                                      disabled
-                                    }
-                                  >
-                                    <Trash
-                                      size={16}
-                                    />
-                                  </Button>
-                                </AlertPopUp>
-                              </TableCell>
-                            )}
-                            <TableCell>
-                              {normalizeDate(
-                                abatimento.created_at ||
-                                  ""
-                              )}
+                              </AlertPopUp>
                             </TableCell>
-                            <TableCell>
-                              {abatimento.obs}
-                            </TableCell>
-                            <TableCell>
-                              {abatimento.valor}
-                            </TableCell>
-                            <TableCell>
-                              {abatimento.criador}
-                            </TableCell>
-                          </TableRow>
-                        )
-                      )}
+                          )}
+                          <TableCell>{normalizeDate(abatimento.created_at || "")}</TableCell>
+                          <TableCell>{abatimento.obs}</TableCell>
+                          <TableCell>{abatimento.valor}</TableCell>
+                          <TableCell>{abatimento.criador}</TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </div>
@@ -473,9 +345,7 @@ const FormVale = ({
         onOpenChange={setModalFilialOpen}
         closeOnSelection
       />
-      <ModalAbatimento
-        saldo={form.watch("saldo")}
-      />
+      <ModalAbatimento saldo={form.watch("saldo")} />
     </div>
   );
 };
