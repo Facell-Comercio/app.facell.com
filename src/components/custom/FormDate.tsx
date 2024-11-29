@@ -48,9 +48,13 @@ const FormDateInput = ({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className={`flex flex-col flex-1 min-w-[18ch] justify-end ${className}`}>
-          {label && <FormLabel>{label}</FormLabel>}
-          <Popover modal>
+        <FormItem
+          className={`flex flex-col flex-1 min-w-[18ch] justify-end ${className}`}
+        >
+          {label && (
+            <FormLabel>{label}</FormLabel>
+          )}
+          <Popover>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
@@ -58,16 +62,27 @@ const FormDateInput = ({
                   variant={"outline"}
                   className={cn(
                     "pl-3 text-left font-normal",
-                    !field.value && "text-muted-foreground"
+                    !field.value &&
+                      "text-muted-foreground"
                   )}
                 >
-                  {field.value ? format(field.value, "dd/MM/yyyy") : <span>Selecione a data</span>}
+                  {field.value ? (
+                    format(
+                      field.value,
+                      "dd/MM/yyyy"
+                    )
+                  ) : (
+                    <span>Selecione a data</span>
+                  )}
                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                 </Button>
               </FormControl>
             </PopoverTrigger>
 
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent
+              className="w-auto p-0"
+              align="start"
+            >
               <Calendar
                 mode="single"
                 selected={field.value}
@@ -75,7 +90,9 @@ const FormDateInput = ({
                 locale={ptBR}
                 onDayClick={(event) => {
                   field.onChange(event);
-                  if (typeof onChange === "function") {
+                  if (
+                    typeof onChange === "function"
+                  ) {
                     onChange(event);
                   }
                 }}
@@ -87,18 +104,27 @@ const FormDateInput = ({
                     return true;
                   }
                   if (
-                    uniqueDayMonth !== undefined &&
-                    parseInt(formatDate(date, "dd")) !== uniqueDayMonth
+                    uniqueDayMonth !==
+                      undefined &&
+                    parseInt(
+                      formatDate(date, "dd")
+                    ) !== uniqueDayMonth
                   ) {
                     return true;
                   }
-                  return date < new Date("1900-01-01");
+                  return (
+                    date < new Date("1900-01-01")
+                  );
                 }}
                 initialFocus
               />
             </PopoverContent>
           </Popover>
-          {description && <FormDescription>{description}</FormDescription>}
+          {description && (
+            <FormDescription>
+              {description}
+            </FormDescription>
+          )}
           <FormMessage />
         </FormItem>
       )}
