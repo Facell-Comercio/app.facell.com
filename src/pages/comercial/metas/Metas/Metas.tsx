@@ -48,9 +48,9 @@ const Metas = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex gap-2 justify-end">
-        {hasPermission(["METAS:METAS_GERAR", "MASTER"]) && <ButtonImportMeta />}
+        {hasPermission(["METAS:METAS_CRIAR", "MASTER"]) && <ButtonImportMeta />}
         <ButtonExportMeta />
-        {hasPermission(["METAS:METAS_GERAR", "MASTER"]) && <ButtonNovaMeta />}
+        {hasPermission(["METAS:METAS_CRIAR", "MASTER"]) && <ButtonNovaMeta />}
       </div>
       <FiltersMeta
         refetch={() => {

@@ -52,9 +52,9 @@ const ComercialVales = () => {
           </p>
         </span>
         <span className="flex flex-wrap gap-2 justify-end">
-          {hasPermission(["VALES:GERAR", "MASTER"]) && <ButtonImportVale />}
+          {hasPermission(["VALES:CRIAR", "MASTER"]) && <ButtonImportVale />}
           <ButtonExportVale />
-          {hasPermission(["VALES:GERAR", "MASTER"]) && <ButtonNovoVale />}
+          {hasPermission(["VALES:CRIAR", "MASTER"]) && <ButtonNovoVale />}
         </span>
       </div>
       <FiltersVale refetch={refetch} />

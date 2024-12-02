@@ -221,11 +221,7 @@ const ModalVendaInvalidada = () => {
                   <OctagonAlert />
                   <span className="text-lg font-bold ">Contestações</span>
                 </div>
-                {hasPermission([
-                  "MASTER",
-                  "COMISSOES:VENDAS_INVALIDAS_EDITAR",
-                  "COMISSOES:VENDAS_INVALIDAS_CONTESTAR",
-                ]) && (
+                {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_CONTESTAR"]) && (
                   <Button disabled={isPending} onClick={() => openModalContestacao("")}>
                     <Plus className="me-2" />
                     Nova Contestação
@@ -235,12 +231,13 @@ const ModalVendaInvalidada = () => {
               <Table divClassname="rounded-md">
                 <TableHeader className="bg-secondary">
                   <TableRow>
-                    {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_CONTESTAR"]) && (
+                    {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_RESPONDER"]) && (
                       <TableHead className="text-white">Ações</TableHead>
                     )}
-                    <TableHead className="text-white">Data Criação</TableHead>
                     <TableHead className="text-white">Status</TableHead>
+                    <TableHead className="text-white">Data Criação</TableHead>
                     <TableHead className="text-white">Obs. Gestor</TableHead>
+                    <TableHead className="text-white">Data Resposta</TableHead>
                     <TableHead className="text-white">Obs. ADM</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -258,7 +255,7 @@ const ModalVendaInvalidada = () => {
                       }
                       return (
                         <TableRow key={`${index} - ${contestacao.id}`} className="uppercase">
-                          {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_CONTESTAR"]) && (
+                          {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_RESPONDER"]) && (
                             <TableCell className="flex gap-2">
                               <Button
                                 size={"xs"}
@@ -270,12 +267,20 @@ const ModalVendaInvalidada = () => {
                               </Button>
                             </TableCell>
                           )}
-                          <TableCell>{normalizeDate(contestacao.created_at)}</TableCell>
                           <TableCell className={`${color}`}>
                             {contestacao.status?.replaceAll("_", " ")}
                           </TableCell>
-                          <TableCell>{contestacao.contestacao}</TableCell>
-                          <TableCell>{contestacao.resposta || "-"}</TableCell>
+                          <TableCell>{normalizeDate(contestacao.created_at)}</TableCell>
+                          <TableCell
+                            className="truncate max-w-[25ch]"
+                            title={contestacao.contestacao}
+                          >
+                            {contestacao.contestacao}
+                          </TableCell>
+                          <TableCell>{normalizeDate(contestacao.data_resposta) || "-"}</TableCell>
+                          <TableCell className="truncate max-w-[25ch]" title={contestacao.resposta}>
+                            {contestacao.resposta || "-"}
+                          </TableCell>
                         </TableRow>
                       );
                     })}

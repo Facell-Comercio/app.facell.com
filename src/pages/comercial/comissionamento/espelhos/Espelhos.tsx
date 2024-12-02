@@ -56,11 +56,7 @@ const Espelhos = () => {
         </span>
         <span className="flex gap-2">
           {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && <ButtonItens />}
-          {hasPermission([
-            "MASTER",
-            "COMISSOES:ESPELHOS_EDITAR",
-            "COMISSOES:ESPELHOS_CONTESTAR",
-          ]) && <ButtonContestacoes />}
+          {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && <ButtonContestacoes />}
         </span>
       </div>
 

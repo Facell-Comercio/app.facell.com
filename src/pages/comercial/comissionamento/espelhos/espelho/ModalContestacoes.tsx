@@ -59,7 +59,7 @@ const ModalContestacoes = () => {
       <DialogContent>
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Contestações de Cálculo ({qtde_contestacoes || 0})</DialogTitle>
-          {hasPermission(["MASTER", "COMISSOES:ESPELHOS_GERAR"]) && (
+          {hasPermission(["MASTER", "COMISSOES:ESPELHOS_CONTESTAR"]) && (
             <Button disabled={isPending} onClick={() => openModalContestacao("")} size={"sm"}>
               <Plus className="me-2" size={18} />
               Nova Contestação
@@ -78,14 +78,13 @@ const ModalContestacoes = () => {
             <Table className="w-full" divClassname="border rounded-md max-h-[40vh] scroll-thin">
               <TableHeader className="bg-secondary">
                 <TableRow className="text-sm">
-                  {hasPermission([
-                    "MASTER",
-                    "COMISSOES:ESPELHOS_EDITAR",
-                    "COMISSOES:ESPELHOS_CONTESTAR",
-                  ]) && <TableHead className=" text-nowrap">Ação</TableHead>}
-                  <TableHead className=" text-nowrap">Data Criação</TableHead>
+                  {hasPermission(["MASTER", "COMISSOES:ESPELHOS_RESPONDER"]) && (
+                    <TableHead className=" text-nowrap">Ação</TableHead>
+                  )}
                   <TableHead className=" text-nowrap">Status</TableHead>
+                  <TableHead className=" text-nowrap">Data Criação</TableHead>
                   <TableHead className=" text-nowrap">Obs. Gestor</TableHead>
+                  <TableHead className=" text-nowrap">Data Resposta</TableHead>
                   <TableHead className=" text-nowrap">Obs. ADM</TableHead>
                 </TableRow>
               </TableHeader>
@@ -103,11 +102,7 @@ const ModalContestacoes = () => {
                         key={`${index} - ${item.id}`}
                         className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
                       >
-                        {hasPermission([
-                          "MASTER",
-                          "COMISSOES:ESPELHOS_EDITAR",
-                          "COMISSOES:ESPELHOS_CONTESTAR",
-                        ]) && (
+                        {hasPermission(["MASTER", "COMISSOES:ESPELHOS_RESPONDER"]) && (
                           <TableCell className="flex gap-2">
                             {!modalEspelhosOpen && (
                               <Button
@@ -133,12 +128,17 @@ const ModalContestacoes = () => {
                             </Button>
                           </TableCell>
                         )}
-                        <TableCell>{normalizeDate(item.created_at || "")}</TableCell>
                         <TableCell className={`${color}`}>
                           {item.status === "em_analise" ? "EM ANÁLISE" : item.status}
                         </TableCell>
-                        <TableCell>{item.contestacao}</TableCell>
-                        <TableCell>{item.resposta || "-"}</TableCell>
+                        <TableCell>{normalizeDate(item.created_at || "")}</TableCell>
+                        <TableCell className="truncate max-w-[25ch]" title={item.contestacao}>
+                          {item.contestacao}
+                        </TableCell>
+                        <TableCell>{normalizeDate(item.data_resposta) || "-"}</TableCell>
+                        <TableCell className="truncate max-w-[25ch]" title={item.resposta}>
+                          {item.resposta || "-"}
+                        </TableCell>
                       </TableRow>
                     );
                   })}

@@ -331,7 +331,7 @@ const FormAgregador = ({
                             </Button>
                           </AlertPopUp>
                         )}
-                        {hasPermission(["METAS:AGREGADORES_GERAR", "MASTER"]) && (
+                        {hasPermission(["METAS:AGREGADORES_CRIAR", "MASTER"]) && (
                           <Button
                             variant={"tertiary"}
                             disabled={disabled}

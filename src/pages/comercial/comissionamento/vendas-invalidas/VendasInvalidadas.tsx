@@ -39,7 +39,7 @@ const VendasInvalidadas = () => {
       <div className="flex gap-2 justify-end">
         {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EDITAR"]) && <ButtonAlteracaoLote />}
         {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_GERAR"]) && <ButtonProcessar />}
-        {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EDITAR"]) && <ButtonExcluir />}
+        {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EXCLUIR"]) && <ButtonExcluir />}
         {hasPermission(["MASTER", "COMISSOES:VALES_GERAR"]) && <ButtonGerarVales />}
       </div>
       <FiltersVendasInvalidadas refetch={refetch} />

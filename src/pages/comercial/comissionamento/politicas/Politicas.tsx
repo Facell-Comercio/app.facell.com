@@ -30,13 +30,13 @@ const Politicas = () => {
     <div className="flex flex-col gap-3">
       <div className="flex gap-2 justify-end flex-wrap">
         <ButtonSelectPolitica refDate={data?.refDate} isLoading={isLoading} disabled={disabled} />
-        {hasPermission(["MASTER", "COMISSOES:POLITICAS_GERAR"]) && (
+        {hasPermission(["MASTER", "COMISSOES:POLITICAS_CRIAR"]) && (
           <ButtonCopyPolitica isLoading={isLoading} disabled={disabled} />
         )}
-        {hasPermission(["MASTER", "COMISSOES:POLITICAS_GERAR"]) && (
+        {hasPermission(["MASTER", "COMISSOES:POLITICAS_CRIAR"]) && (
           <ButtonNovoCargo isLoading={isLoading} disabled={disabled} />
         )}
-        {hasPermission(["MASTER", "COMISSOES:POLITICAS_GERAR"]) && (
+        {hasPermission(["MASTER", "COMISSOES:POLITICAS_CRIAR"]) && (
           <ButtonNovaPolitica isLoading={isLoading} disabled={disabled} />
         )}
       </div>
