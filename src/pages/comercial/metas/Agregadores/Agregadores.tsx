@@ -35,9 +35,9 @@ const Agregadores = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex gap-2 justify-end flex-wrap">
-        {hasPermission(["GERENCIAR_AGREGADORES", "MASTER"]) && <ButtonImportMeta />}
+        {hasPermission(["METAS:AGREGADORES_GERAR", "MASTER"]) && <ButtonImportMeta />}
         <ButtonExportMeta />
-        {hasPermission(["GERENCIAR_AGREGADORES", "MASTER"]) && <ButtonNovoAgregador />}
+        {hasPermission(["METAS:AGREGADORES_GERAR", "MASTER"]) && <ButtonNovoAgregador />}
       </div>
       <FiltersMeta refetch={refetch} />
 

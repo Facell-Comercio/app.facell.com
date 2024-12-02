@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate, normalizePercentual } from "@/helpers/mask";
 import {
   EspelhosProps,
@@ -108,14 +109,16 @@ const ModalEspelho = () => {
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Espelho: {id}</DialogTitle>
           <div className="flex gap-2 ">
-            <Button
-              variant={"outline"}
-              className="border-destructive"
-              onClick={() => openModalVendasInvalidas()}
-            >
-              <List size={18} className="me-2" />
-              Vendas Invalidadas ({qtde_vendas_invalidas || 0})
-            </Button>
+            {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_VER"]) && (
+              <Button
+                variant={"outline"}
+                className="border-destructive"
+                onClick={() => openModalVendasInvalidas()}
+              >
+                <List size={18} className="me-2" />
+                Vendas Invalidadas ({qtde_vendas_invalidas || 0})
+              </Button>
+            )}
             <ButtonContestacoes />
           </div>
         </DialogHeader>
@@ -213,10 +216,12 @@ const ModalEspelho = () => {
                     <h3 className="font-semibold text-md">Comissões</h3>
                     <Badge variant={"info"}>{normalizeCurrency(totalComissoes)}</Badge>
                   </span>
-                  <Button size={"xs"} onClick={() => openModalItem({ id: "", type: "comissao" })}>
-                    <Plus className="me-2" size={18} />
-                    Nova Comissão
-                  </Button>
+                  {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && (
+                    <Button size={"xs"} onClick={() => openModalItem({ id: "", type: "comissao" })}>
+                      <Plus className="me-2" size={18} />
+                      Nova Comissão
+                    </Button>
+                  )}
                 </div>
                 <Table
                   className="w-full"
@@ -224,7 +229,9 @@ const ModalEspelho = () => {
                 >
                   <TableHeader className="bg-secondary">
                     <TableRow className="text-sm">
-                      <TableHead className="text-nowrap">Ações</TableHead>
+                      {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && (
+                        <TableHead className="text-nowrap">Ações</TableHead>
+                      )}
                       <TableHead className="text-nowrap">Segmento</TableHead>
                       <TableHead className="text-nowrap">Descrição</TableHead>
                       <TableHead className="text-nowrap">Meta</TableHead>
@@ -239,32 +246,34 @@ const ModalEspelho = () => {
                         (item: ItemEspelhosProps, index: number) => {
                           return (
                             <TableRow key={"comissao_espelho:" + item.id + index}>
-                              <TableCell className="flex gap-2 text-xs text-nowrap  uppercase">
-                                {item.manual ? (
-                                  <>
-                                    <Button
-                                      size={"xs"}
-                                      variant={"warning"}
-                                      onClick={() =>
-                                        openModalItem({ id: item.id || "", type: "comissao" })
-                                      }
-                                    >
-                                      <Pen size={16} />
-                                    </Button>
-                                    <AlertPopUp
-                                      title="Deseja realmente excluir?"
-                                      description="Essa ação não pode ser desfeita. Esta comissão será excluída definitivamente do servidor."
-                                      action={() => deleteItem(item.id || "")}
-                                    >
-                                      <Button size={"xs"} variant={"destructive"}>
-                                        <Trash size={16} />
+                              {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && (
+                                <TableCell className="flex gap-2 text-xs text-nowrap  uppercase">
+                                  {item.manual ? (
+                                    <>
+                                      <Button
+                                        size={"xs"}
+                                        variant={"warning"}
+                                        onClick={() =>
+                                          openModalItem({ id: item.id || "", type: "comissao" })
+                                        }
+                                      >
+                                        <Pen size={16} />
                                       </Button>
-                                    </AlertPopUp>
-                                  </>
-                                ) : (
-                                  "-"
-                                )}
-                              </TableCell>
+                                      <AlertPopUp
+                                        title="Deseja realmente excluir?"
+                                        description="Essa ação não pode ser desfeita. Esta comissão será excluída definitivamente do servidor."
+                                        action={() => deleteItem(item.id || "")}
+                                      >
+                                        <Button size={"xs"} variant={"destructive"}>
+                                          <Trash size={16} />
+                                        </Button>
+                                      </AlertPopUp>
+                                    </>
+                                  ) : (
+                                    "-"
+                                  )}
+                                </TableCell>
+                              )}
                               <TableCell className="text-xs text-nowrap  uppercase">
                                 {item.segmento}
                               </TableCell>
@@ -294,10 +303,12 @@ const ModalEspelho = () => {
                     <h3 className="font-semibold text-md">Bônus</h3>
                     <Badge variant={"info"}>{normalizeCurrency(totalBonus)}</Badge>
                   </span>
-                  <Button size={"xs"} onClick={() => openModalItem({ id: "", type: "bonus" })}>
-                    <Plus className="me-2" size={18} />
-                    Novo Bônus
-                  </Button>
+                  {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && (
+                    <Button size={"xs"} onClick={() => openModalItem({ id: "", type: "bonus" })}>
+                      <Plus className="me-2" size={18} />
+                      Novo Bônus
+                    </Button>
+                  )}
                 </div>
                 <Table
                   className="w-full"
@@ -305,7 +316,9 @@ const ModalEspelho = () => {
                 >
                   <TableHeader className="bg-secondary">
                     <TableRow className="text-sm">
-                      <TableHead className="text-nowrap">Ações</TableHead>
+                      {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && (
+                        <TableHead className="text-nowrap">Ações</TableHead>
+                      )}
                       <TableHead className="text-nowrap">Segmento</TableHead>
                       <TableHead className="text-nowrap">Descrição</TableHead>
                       <TableHead className="text-nowrap">Meta</TableHead>
@@ -319,32 +332,34 @@ const ModalEspelho = () => {
                       newDataEspelho.bonus_list.map((item: ItemEspelhosProps, index: number) => {
                         return (
                           <TableRow key={"bonus_espelho:" + item.id + index}>
-                            <TableCell className="flex gap-2 text-xs text-nowrap  uppercase">
-                              {item.manual ? (
-                                <>
-                                  <Button
-                                    size={"xs"}
-                                    variant={"warning"}
-                                    onClick={() =>
-                                      openModalItem({ id: item.id || "", type: "bonus" })
-                                    }
-                                  >
-                                    <Pen size={16} />
-                                  </Button>
-                                  <AlertPopUp
-                                    title="Deseja realmente excluir?"
-                                    description="Essa ação não pode ser desfeita. Este bônus será excluído definitivamente do servidor."
-                                    action={() => deleteItem(item.id || "")}
-                                  >
-                                    <Button size={"xs"} variant={"destructive"}>
-                                      <Trash size={16} />
+                            {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && (
+                              <TableCell className="flex gap-2 text-xs text-nowrap  uppercase">
+                                {item.manual ? (
+                                  <>
+                                    <Button
+                                      size={"xs"}
+                                      variant={"warning"}
+                                      onClick={() =>
+                                        openModalItem({ id: item.id || "", type: "bonus" })
+                                      }
+                                    >
+                                      <Pen size={16} />
                                     </Button>
-                                  </AlertPopUp>
-                                </>
-                              ) : (
-                                "-"
-                              )}
-                            </TableCell>
+                                    <AlertPopUp
+                                      title="Deseja realmente excluir?"
+                                      description="Essa ação não pode ser desfeita. Este bônus será excluído definitivamente do servidor."
+                                      action={() => deleteItem(item.id || "")}
+                                    >
+                                      <Button size={"xs"} variant={"destructive"}>
+                                        <Trash size={16} />
+                                      </Button>
+                                    </AlertPopUp>
+                                  </>
+                                ) : (
+                                  "-"
+                                )}
+                              </TableCell>
+                            )}
                             <TableCell className="text-xs text-nowrap  uppercase">
                               {item.segmento}
                             </TableCell>
@@ -391,26 +406,30 @@ const ModalEspelho = () => {
         </ScrollArea>
         <DialogFooter>
           <div className="flex gap-3 w-full">
-            <AlertPopUp
-              title="Deseja realmente esse espelho?"
-              description="Essa ação não pode ser desfeita. O espelho será excluído definitivamente do servidor."
-              action={() => deleteEspelho(id)}
-            >
-              <Button variant={"destructive"} disabled={isPending}>
-                <Trash size={18} className="me-2" />
-                Excluir
-              </Button>
-            </AlertPopUp>
-            <AlertPopUp
-              title="Deseja realmente esse espelho?"
-              description="Essa ação não pode ser desfeita. O espelho será excluído definitivamente do servidor."
-              action={() => recalcularEspelho(id)}
-            >
-              <Button variant={"warning"} disabled={isPending}>
-                <RotateCcw size={18} className="me-2" />
-                Recalcular
-              </Button>
-            </AlertPopUp>
+            {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && (
+              <AlertPopUp
+                title="Deseja realmente esse espelho?"
+                description="Essa ação não pode ser desfeita. O espelho será excluído definitivamente do servidor."
+                action={() => deleteEspelho(id)}
+              >
+                <Button variant={"destructive"} disabled={isPending}>
+                  <Trash size={18} className="me-2" />
+                  Excluir
+                </Button>
+              </AlertPopUp>
+            )}
+            {hasPermission(["MASTER", "COMISSOES:ESPELHOS_CALCULAR"]) && (
+              <AlertPopUp
+                title="Deseja realmente esse espelho?"
+                description="Essa ação não pode ser desfeita. O espelho será excluído definitivamente do servidor."
+                action={() => recalcularEspelho(id)}
+              >
+                <Button variant={"warning"} disabled={isPending}>
+                  <RotateCcw size={18} className="me-2" />
+                  Recalcular
+                </Button>
+              </AlertPopUp>
+            )}
           </div>
         </DialogFooter>
       </DialogContent>

@@ -79,12 +79,7 @@ const ModalContestacao = () => {
     isSuccess: updateStatusContestacaoIsSuccess,
     isError: updateStatusContestacaoIsError,
   } = useVendasInvalidadas().updateStatusContestacao();
-  const {
-    mutate: deleteContestacao,
-    // isPending: deleteContestacaoIsPending,
-    // isSuccess: deleteContestacaoIsSuccess,
-    // isError: deleteContestacaoIsError,
-  } = useVendasInvalidadas().deleteContestacao();
+
   const [formData, setFormData] = useState<ContestacaoVendasInvalidadasProps>(
     id ? data : { ...initialContestacao, user: user?.nome, id_venda_invalida }
   );
@@ -224,18 +219,6 @@ const ModalContestacao = () => {
             <div className={`flex justify-end gap-2 w-full`}>
               {id ? (
                 <>
-                  {/* <AlertPopUp
-                    title={"Deseja realmente excluir"}
-                    description="Essa ação não pode ser desfeita. Essa contestação será definitivamente removidas do servidor."
-                    action={() => {
-                      deleteContestacao(id);
-                      closeModal();
-                    }}
-                  >
-                    <Button variant={"destructive"} disabled={isPending}>
-                      <Trash2 className="me-2" size={18} /> Excluir
-                    </Button>
-                  </AlertPopUp> */}
                   <div className="flex gap-2">
                     <AlertPopUp
                       title={"Deseja realmente marcar como ciente"}

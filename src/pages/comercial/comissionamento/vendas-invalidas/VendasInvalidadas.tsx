@@ -1,5 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { useVendasInvalidadas } from "@/hooks/comercial/useVendasInvalidadas";
 import ButtonAlteracaoLote from "./components/ButtonAlteracaoLote";
 import ButtonExcluir from "./components/ButtonExcluir";
@@ -36,22 +37,12 @@ const VendasInvalidadas = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex gap-2 justify-end">
-        <ButtonAlteracaoLote />
-        <ButtonProcessar />
-        <ButtonExcluir />
-        <ButtonGerarVales />
+        {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EDITAR"]) && <ButtonAlteracaoLote />}
+        {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_GERAR"]) && <ButtonProcessar />}
+        {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EDITAR"]) && <ButtonExcluir />}
+        {hasPermission(["MASTER", "COMISSOES:VALES_GERAR"]) && <ButtonGerarVales />}
       </div>
       <FiltersVendasInvalidadas refetch={refetch} />
-      {/* <div className="flex gap-2 justify-end">
-        {hasPermission([
-          "GERENCIAR_VENDASINVALIDadAS",
-          "MASTER",
-        ]) && <ButtonImportMeta />}
-        {hasPermission([
-          "GERENCIAR_VENDASINVALIDadAS",
-          "MASTER",
-        ]) && <ButtonNovaMeta />}
-      </div> */}
 
       <DataTable
         pagination={pagination}

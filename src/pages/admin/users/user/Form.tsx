@@ -199,6 +199,7 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
         // @ts-ignore
         id_user: id,
         nome: permissao.nome,
+        modulo: permissao.modulo,
       });
     } else {
       const tipo = permissoes[indexPermissao].tipo;
@@ -214,7 +215,7 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
     }
   };
 
-  console.log(form.formState.errors);
+  // console.log(form.formState.errors);
 
   return (
     <div className="max-w-full ">

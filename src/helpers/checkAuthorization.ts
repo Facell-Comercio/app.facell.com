@@ -27,6 +27,19 @@ export const hasPermission = (permission: string | number | string[]) => {
   return false;
 };
 
+export const hasModuleAccess = (permission: string) => {
+  const user = useAuthStore.getState().user;
+  const tipo = typeof permission;
+
+  if (!user) return false;
+
+  if (tipo === "string") {
+    return user.permissoes.some((perm) => perm.modulo === permission);
+  }
+
+  return false;
+};
+
 export const checkUserDepartments = (depart: string | number, gestor?: boolean) => {
   const user = useAuthStore.getState().user;
   const tipo = typeof depart;

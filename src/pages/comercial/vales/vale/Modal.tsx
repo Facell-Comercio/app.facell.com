@@ -103,25 +103,27 @@ const ModalVale = () => {
             cancel={handleClickCancel}
             formRef={formRef}
             isLoading={isPending}
-            blockEdit={!hasPermission(["GERENCIAR_VALES", "MASTER"])}
+            blockEdit={!hasPermission(["VALES:EDITAR", "MASTER"])}
           >
-            <AlertPopUp
-              title={"Deseja realmente excluir"}
-              description="Essa ação não pode ser desfeita. O vale será excluído definitivamente do servidor."
-              action={() => {
-                deleteVale(id);
-              }}
-            >
-              <Button
-                type={"button"}
-                size="lg"
-                variant={"destructive"}
-                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
+            {hasPermission(["VALES:EDITAR", "MASTER"]) && (
+              <AlertPopUp
+                title={"Deseja realmente excluir"}
+                description="Essa ação não pode ser desfeita. O vale será excluído definitivamente do servidor."
+                action={() => {
+                  deleteVale(id);
+                }}
               >
-                <Trash className="me-2" />
-                Excluir Vale
-              </Button>
-            </AlertPopUp>
+                <Button
+                  type={"button"}
+                  size="lg"
+                  variant={"destructive"}
+                  className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
+                >
+                  <Trash className="me-2" />
+                  Excluir Vale
+                </Button>
+              </AlertPopUp>
+            )}
           </ModalButtons>
         </DialogFooter>
       </DialogContent>

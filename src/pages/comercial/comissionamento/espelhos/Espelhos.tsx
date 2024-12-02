@@ -1,5 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { useEspelhos } from "@/hooks/comercial/useEspelhos";
 import { useEffect } from "react";
 import ButtonCalcularEspelho from "./components/ButtonCalculoComissionamento";
@@ -50,12 +51,16 @@ const Espelhos = () => {
 
       <div className="flex gap-2 justify-between">
         <span className="flex gap-2">
-          <ButtonCalcularEspelho />
+          {hasPermission(["MASTER", "COMISSOES:ESPELHOS_CALCULAR"]) && <ButtonCalcularEspelho />}
           <ButtonExportEspelho />
         </span>
         <span className="flex gap-2">
-          <ButtonItens />
-          <ButtonContestacoes />
+          {hasPermission(["MASTER", "COMISSOES:ESPELHOS_EDITAR"]) && <ButtonItens />}
+          {hasPermission([
+            "MASTER",
+            "COMISSOES:ESPELHOS_EDITAR",
+            "COMISSOES:ESPELHOS_CONTESTAR",
+          ]) && <ButtonContestacoes />}
         </span>
       </div>
 

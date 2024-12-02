@@ -102,7 +102,7 @@ const ModalVendaInvalidada = () => {
   );
 
   const podeGerarVales =
-    newDataVendaInvalidada?.podeGerarVales && hasPermission(["GERENCIAR_VALES", "MASTER"]);
+    newDataVendaInvalidada?.podeGerarVales && hasPermission(["COMISSOES:VALES_GERAR", "MASTER"]);
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
@@ -221,15 +221,23 @@ const ModalVendaInvalidada = () => {
                   <OctagonAlert />
                   <span className="text-lg font-bold ">Contestações</span>
                 </div>
-                <Button disabled={isPending} onClick={() => openModalContestacao("")}>
-                  <Plus className="me-2" />
-                  Nova Contestação
-                </Button>
+                {hasPermission([
+                  "MASTER",
+                  "COMISSOES:VENDAS_INVALIDAS_EDITAR",
+                  "COMISSOES:VENDAS_INVALIDAS_CONTESTAR",
+                ]) && (
+                  <Button disabled={isPending} onClick={() => openModalContestacao("")}>
+                    <Plus className="me-2" />
+                    Nova Contestação
+                  </Button>
+                )}
               </div>
               <Table divClassname="rounded-md">
                 <TableHeader className="bg-secondary">
                   <TableRow>
-                    <TableHead className="text-white">Ações</TableHead>
+                    {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_CONTESTAR"]) && (
+                      <TableHead className="text-white">Ações</TableHead>
+                    )}
                     <TableHead className="text-white">Data Criação</TableHead>
                     <TableHead className="text-white">Status</TableHead>
                     <TableHead className="text-white">Obs. Gestor</TableHead>
@@ -250,16 +258,18 @@ const ModalVendaInvalidada = () => {
                       }
                       return (
                         <TableRow key={`${index} - ${contestacao.id}`} className="uppercase">
-                          <TableCell className="flex gap-2">
-                            <Button
-                              size={"xs"}
-                              variant={"warning"}
-                              onClick={() => openModalContestacao(contestacao.id || "")}
-                              disabled={isPending}
-                            >
-                              <PencilIcon size={16} />
-                            </Button>
-                          </TableCell>
+                          {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_CONTESTAR"]) && (
+                            <TableCell className="flex gap-2">
+                              <Button
+                                size={"xs"}
+                                variant={"warning"}
+                                onClick={() => openModalContestacao(contestacao.id || "")}
+                                disabled={isPending}
+                              >
+                                <PencilIcon size={16} />
+                              </Button>
+                            </TableCell>
+                          )}
                           <TableCell>{normalizeDate(contestacao.created_at)}</TableCell>
                           <TableCell className={`${color}`}>
                             {contestacao.status?.replaceAll("_", " ")}
@@ -295,26 +305,30 @@ const ModalVendaInvalidada = () => {
                       Gerar Vales
                     </Button>
                   )}
-                  <Button
-                    disabled={isPending}
-                    onClick={() =>
-                      openModalRateio({
-                        id: "",
-                        valor: newDataVendaInvalidada.estorno || "",
-                        filial: newDataVendaInvalidada.filial || "",
-                        ref: newDataVendaInvalidada.ref || "",
-                      })
-                    }
-                  >
-                    <Plus className="me-2" />
-                    Novo Rateio
-                  </Button>
+                  {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EDITAR"]) && (
+                    <Button
+                      disabled={isPending}
+                      onClick={() =>
+                        openModalRateio({
+                          id: "",
+                          valor: newDataVendaInvalidada.estorno || "",
+                          filial: newDataVendaInvalidada.filial || "",
+                          ref: newDataVendaInvalidada.ref || "",
+                        })
+                      }
+                    >
+                      <Plus className="me-2" />
+                      Novo Rateio
+                    </Button>
+                  )}
                 </span>
               </div>
               <Table divClassname="rounded-md">
                 <TableHeader className="bg-secondary">
                   <TableRow>
-                    <TableHead className="text-white">Ações</TableHead>
+                    {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EDITAR"]) && (
+                      <TableHead className="text-white">Ações</TableHead>
+                    )}
                     <TableHead className="text-white">Nome</TableHead>
                     <TableHead className="text-white">Cargo</TableHead>
                     <TableHead className="text-white">Total</TableHead>
@@ -326,24 +340,26 @@ const ModalVendaInvalidada = () => {
                     newDataVendaInvalidada.rateios.map((rateio, index) => {
                       return (
                         <TableRow key={`${index} - ${rateio.id}`} className="uppercase">
-                          <TableCell className="flex gap-2">
-                            <Button
-                              size={"xs"}
-                              variant={"warning"}
-                              onClick={() =>
-                                openModalRateio({
-                                  id: rateio.id || "",
-                                  valor: newDataVendaInvalidada.estorno || "",
-                                  filial: newDataVendaInvalidada.filial || "",
-                                  ref: newDataVendaInvalidada.ref || "",
-                                  edit: !rateio.canEdit,
-                                })
-                              }
-                              disabled={isPending || !!rateio.canEdit}
-                            >
-                              <PencilIcon size={16} />
-                            </Button>
-                          </TableCell>
+                          {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EDITAR"]) && (
+                            <TableCell className="flex gap-2">
+                              <Button
+                                size={"xs"}
+                                variant={"warning"}
+                                onClick={() =>
+                                  openModalRateio({
+                                    id: rateio.id || "",
+                                    valor: newDataVendaInvalidada.estorno || "",
+                                    filial: newDataVendaInvalidada.filial || "",
+                                    ref: newDataVendaInvalidada.ref || "",
+                                    edit: !rateio.canEdit,
+                                  })
+                                }
+                                disabled={isPending || !rateio.canEdit}
+                              >
+                                <PencilIcon size={16} />
+                              </Button>
+                            </TableCell>
+                          )}
                           <TableCell>{rateio.nome_colaborador}</TableCell>
                           <TableCell>{rateio.cargo_colaborador}</TableCell>
                           <TableCell>
@@ -360,7 +376,13 @@ const ModalVendaInvalidada = () => {
                 </TableBody>
                 <TableFooter className="bg-secondary">
                   <TableRow className="uppercase">
-                    <TableCell colSpan={3}>Total :</TableCell>
+                    <TableCell
+                      colSpan={
+                        hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EDITAR"]) ? 3 : 2
+                      }
+                    >
+                      Total :
+                    </TableCell>
                     <TableCell>
                       {totalRateios?.toLocaleString("pt-BR", {
                         style: "currency",

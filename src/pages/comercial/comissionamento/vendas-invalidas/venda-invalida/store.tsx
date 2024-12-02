@@ -85,7 +85,7 @@ export const useStoreVendaInvalidada = create<useStoreVendaInvalidada>((set) => 
       valor_total_rateio: valor,
       filial,
       ref,
-      modalRateioEditing: edit !== undefined ? edit : false,
+      modalRateioEditing: edit !== undefined ? edit : !id,
     }),
   closeModalRateio: () =>
     set({

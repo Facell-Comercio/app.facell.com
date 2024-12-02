@@ -111,25 +111,27 @@ const ModalAgregador = () => {
             cancel={handleClickCancel}
             formRef={formRef}
             isLoading={isPending}
-            blockEdit={!hasPermission(["GERENCIAR_AGREGADORES", "MASTER"])}
+            blockEdit={!hasPermission(["METAS:AGREGADORES_EDITAR", "MASTER"])}
           >
-            <AlertPopUp
-              title={"Deseja realmente excluir"}
-              description="Essa ação não pode ser desfeita. A agregador será excluída definitivamente do servidor."
-              action={() => {
-                deleteAgregador(id);
-              }}
-            >
-              <Button
-                type={"button"}
-                size="lg"
-                variant={"destructive"}
-                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
+            {hasPermission(["METAS:AGREGADORES_EDITAR", "MASTER"]) && (
+              <AlertPopUp
+                title={"Deseja realmente excluir"}
+                description="Essa ação não pode ser desfeita. A agregador será excluída definitivamente do servidor."
+                action={() => {
+                  deleteAgregador(id);
+                }}
               >
-                <Trash className="me-2" />
-                Excluir Agregador
-              </Button>
-            </AlertPopUp>
+                <Button
+                  type={"button"}
+                  size="lg"
+                  variant={"destructive"}
+                  className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
+                >
+                  <Trash className="me-2" />
+                  Excluir Agregador
+                </Button>
+              </AlertPopUp>
+            )}
           </ModalButtons>
         </DialogFooter>
       </DialogContent>

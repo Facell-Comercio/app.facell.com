@@ -84,7 +84,7 @@ const FormVale = ({
 
   const rowsAbatimentos = data?.abatimentos || [];
 
-  const readOnly = !hasPermission(["GERENCIAR_VALES", "MASTER"]);
+  const readOnly = !hasPermission(["VALES:EDITAR", "MASTER"]);
   const disabled = (!modalEditing || isPending) && !readOnly;
   const saldo = parseFloat(form.watch("saldo") || "0");
   const parcela = parseFloat(form.watch("parcela") || "1");
@@ -273,7 +273,7 @@ const FormVale = ({
                       <MinusCircle />
                       <span className="text-lg font-bold ">Abatimentos</span>
                     </div>
-                    {hasPermission(["GERENCIAR_VALES", "MASTER"]) && (
+                    {hasPermission(["VALES:EDITAR", "MASTER"]) && (
                       <Button
                         variant={"tertiary"}
                         disabled={disabled}

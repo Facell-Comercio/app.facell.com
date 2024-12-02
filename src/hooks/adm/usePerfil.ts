@@ -13,7 +13,6 @@ export const usePerfil = () => {
         queryFn: async () =>
           await api.get("/adm/perfis", { params: params }).then((response) => response.data),
         placeholderData: keepPreviousData,
-        staleTime: Infinity,
       }),
 
     getOne: (id?: string) =>
@@ -21,7 +20,6 @@ export const usePerfil = () => {
         enabled: !!id,
         queryKey: ["adm", "perfil", "detalhe", id],
         queryFn: async () => await api.get(`/adm/perfis/${id}`),
-        staleTime: Infinity,
       }),
 
     insertOne: () =>

@@ -1,4 +1,4 @@
-import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasModuleAccess, hasPermission } from "@/helpers/checkAuthorization";
 import { Play, Settings } from "lucide-react";
 import { ReactNode } from "react";
 import {
@@ -54,28 +54,34 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaRankingStar />,
     uri: "comercial",
-    visible: () => true,
+    visible: () => hasPermission("MASTER") || hasModuleAccess("COMERCIAL"),
     children: [
       {
         name: "Vales",
         type: "link",
         shortName: "V",
         uri: "comercial/vales",
-        visible: () => hasPermission(["GERENCIAR_VALES", "VISUALIZAR_VALES", "MASTER"]),
+        visible: () => hasPermission(["VALES:VER", "MASTER"]),
       },
       {
         name: "Metas",
         type: "link",
         shortName: "M",
         uri: "comercial/metas",
-        visible: () => true,
+        visible: () => hasPermission(["METAS:METAS_VER", "METAS:AGREGADORES_VER", "MASTER"]),
       },
       {
         name: "Comissionamento",
         type: "link",
         shortName: "E",
         uri: "comercial/comissionamento",
-        visible: () => true,
+        visible: () =>
+          hasPermission([
+            "COMISSOES:ESPELHOS_VER",
+            "COMISSOES:VENDAS_INVALIDAS_VER",
+            "COMISSOES:POLITICAS_VER",
+            "MASTER",
+          ]),
       },
     ],
   },
@@ -207,7 +213,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaSackDollar />,
     uri: "financeiro",
-    visible: () => true,
+    visible: () => hasPermission("MASTER") || hasModuleAccess("FINANCEIRO"),
     children: [
       {
         name: "Contas a Pagar",

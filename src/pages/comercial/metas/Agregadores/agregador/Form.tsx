@@ -83,7 +83,7 @@ const FormAgregador = ({
   const { form, metas, appendMeta, removeMeta } = useFormAgregadorData(data);
   const metas_agregadas = form.watch("metas_agregadas");
 
-  const readOnly = !hasPermission(["GERENCIAR_METAS", "MASTER"]);
+  const readOnly = !hasPermission(["METAS:AGREGADORES_EDITAR", "MASTER"]);
   const disabled = (!modalEditing || isPending) && !readOnly;
 
   const onSubmitData = (data: AgregadoresProps) => {
@@ -104,7 +104,7 @@ const FormAgregador = ({
   }, [updateIsPending, insertIsPending]);
 
   // ! Verificar a existênicia de erros
-  console.log(form.formState.errors);
+  // console.log(form.formState.errors);
 
   function handleSelectFilial(filial: Filial) {
     form.setValue("id_filial", filial.id || "");
@@ -184,6 +184,7 @@ const FormAgregador = ({
                     name="proporcional"
                     disabled={disabled}
                     label="Proporcional"
+                    readOnly={readOnly}
                     min={0}
                     control={form.control}
                     icon={Percent}
@@ -208,6 +209,7 @@ const FormAgregador = ({
                     className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
                     name="nome"
                     disabled={disabled}
+                    readOnly={readOnly}
                     label="Nome"
                     control={form.control}
                   />
@@ -215,6 +217,7 @@ const FormAgregador = ({
                     className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
                     name="cpf"
                     disabled={disabled}
+                    readOnly={readOnly}
                     label="CPF"
                     control={form.control}
                   />
@@ -246,6 +249,7 @@ const FormAgregador = ({
                     selectClassName="min-w-full sm:min-w-[20ch]"
                     control={form.control}
                     disabled={disabled}
+                    readOnly={readOnly}
                     placeholder="Selecione o tipo de agregação"
                     options={
                       tiposAgregacao.map((tipo_agregacao: any) => ({
@@ -285,6 +289,7 @@ const FormAgregador = ({
                     selectClassName="min-w-full sm:min-w-[20ch]"
                     control={form.control}
                     disabled={disabled}
+                    readOnly={readOnly}
                     placeholder="Selecione o cargo"
                     options={
                       cargosPrevistos.map((cargo: any) => ({
@@ -309,29 +314,33 @@ const FormAgregador = ({
                     </div>
                     {hasPermission(["GERENCIAR_VALES", "MASTER"]) && (
                       <div className="flex gap-2 flex-wrap">
-                        <AlertPopUp
-                          title={"Deseja realmente remover todas as metas"}
-                          action={() => {
-                            form.setValue("metas_agregadas", "");
-                            form.setValue("metas", []);
-                          }}
-                        >
-                          <Button
-                            variant={"destructive"}
-                            className="flex gap-2"
-                            disabled={disabled}
+                        {hasPermission(["METAS:AGREGADORES_EDITAR", "MASTER"]) && (
+                          <AlertPopUp
+                            title={"Deseja realmente remover todas as metas"}
+                            action={() => {
+                              form.setValue("metas_agregadas", "");
+                              form.setValue("metas", []);
+                            }}
                           >
-                            <Trash size={16} /> Remover Todas
+                            <Button
+                              variant={"destructive"}
+                              className="flex gap-2"
+                              disabled={disabled}
+                            >
+                              <Trash size={16} /> Remover Todas
+                            </Button>
+                          </AlertPopUp>
+                        )}
+                        {hasPermission(["METAS:AGREGADORES_GERAR", "MASTER"]) && (
+                          <Button
+                            variant={"tertiary"}
+                            disabled={disabled}
+                            className="flex gap-2"
+                            onClick={() => setModalMetasOpen(true)}
+                          >
+                            <Plus /> Nova Meta
                           </Button>
-                        </AlertPopUp>
-                        <Button
-                          variant={"tertiary"}
-                          disabled={disabled}
-                          className="flex gap-2"
-                          onClick={() => setModalMetasOpen(true)}
-                        >
-                          <Plus /> Nova Meta
-                        </Button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -362,7 +371,7 @@ const FormAgregador = ({
                     </TableHeader>
                     <TableBody>
                       {metas?.map((meta, index) => (
-                        <TableRow key={`${index} - ${meta.id}`}>
+                        <TableRow key={`AGREGADOR - ${index} - ${meta.id}`}>
                           {!readOnly && (
                             <TableCell className="flex gap-1">
                               <AlertPopUp

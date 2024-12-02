@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeDate } from "@/helpers/mask";
 import { ContestacaoEspelhosProps, useEspelhos } from "@/hooks/comercial/useEspelhos";
 import { Eye, PencilIcon, Plus } from "lucide-react";
@@ -58,10 +59,12 @@ const ModalContestacoes = () => {
       <DialogContent>
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Contestações de Cálculo ({qtde_contestacoes || 0})</DialogTitle>
-          <Button disabled={isPending} onClick={() => openModalContestacao("")} size={"sm"}>
-            <Plus className="me-2" size={18} />
-            Nova Contestação
-          </Button>
+          {hasPermission(["MASTER", "COMISSOES:ESPELHOS_GERAR"]) && (
+            <Button disabled={isPending} onClick={() => openModalContestacao("")} size={"sm"}>
+              <Plus className="me-2" size={18} />
+              Nova Contestação
+            </Button>
+          )}
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           {modalOpen && isLoading && (
@@ -75,7 +78,11 @@ const ModalContestacoes = () => {
             <Table className="w-full" divClassname="border rounded-md max-h-[40vh] scroll-thin">
               <TableHeader className="bg-secondary">
                 <TableRow className="text-sm">
-                  <TableHead className=" text-nowrap">Ação</TableHead>
+                  {hasPermission([
+                    "MASTER",
+                    "COMISSOES:ESPELHOS_EDITAR",
+                    "COMISSOES:ESPELHOS_CONTESTAR",
+                  ]) && <TableHead className=" text-nowrap">Ação</TableHead>}
                   <TableHead className=" text-nowrap">Data Criação</TableHead>
                   <TableHead className=" text-nowrap">Status</TableHead>
                   <TableHead className=" text-nowrap">Obs. Gestor</TableHead>
@@ -96,30 +103,36 @@ const ModalContestacoes = () => {
                         key={`${index} - ${item.id}`}
                         className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
                       >
-                        <TableCell className="flex gap-2">
-                          {!modalEspelhosOpen && (
+                        {hasPermission([
+                          "MASTER",
+                          "COMISSOES:ESPELHOS_EDITAR",
+                          "COMISSOES:ESPELHOS_CONTESTAR",
+                        ]) && (
+                          <TableCell className="flex gap-2">
+                            {!modalEspelhosOpen && (
+                              <Button
+                                size={"xs"}
+                                onClick={() => {
+                                  openModal(item.id_comissao || "");
+                                  closeModal();
+                                }}
+                                disabled={isPending}
+                                title="Ver espelho"
+                              >
+                                <Eye size={16} />
+                              </Button>
+                            )}
                             <Button
                               size={"xs"}
-                              onClick={() => {
-                                openModal(item.id_comissao || "");
-                                closeModal();
-                              }}
+                              variant={"warning"}
+                              onClick={() => openModalContestacao(item.id || "")}
                               disabled={isPending}
-                              title="Ver espelho"
+                              title="Editar contestação"
                             >
-                              <Eye size={16} />
+                              <PencilIcon size={16} />
                             </Button>
-                          )}
-                          <Button
-                            size={"xs"}
-                            variant={"warning"}
-                            onClick={() => openModalContestacao(item.id || "")}
-                            disabled={isPending}
-                            title="Editar contestação"
-                          >
-                            <PencilIcon size={16} />
-                          </Button>
-                        </TableCell>
+                          </TableCell>
+                        )}
                         <TableCell>{normalizeDate(item.created_at || "")}</TableCell>
                         <TableCell className={`${color}`}>
                           {item.status === "em_analise" ? "EM ANÁLISE" : item.status}

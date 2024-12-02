@@ -82,8 +82,6 @@ export const useEspelhos = () => {
   const getOne = (id?: string | null) =>
     useQuery({
       enabled: !!id,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
       queryKey: ["comercial", "comissionamento", "espelhos", "detalhe", id],
       queryFn: async () => {
         try {

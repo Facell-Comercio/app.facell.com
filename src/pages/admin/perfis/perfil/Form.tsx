@@ -71,7 +71,7 @@ const FormUsers = ({
     const indexPermissao = permissoes?.findIndex((f) => f.id_permissao == permissao.id);
     if (indexPermissao === -1) {
       // setar a permissao
-      form.setValue("updatePermissoes", false);
+      form.setValue("updatePermissoes", true);
       // @ts-ignore
       addPermissao({
         id: "",

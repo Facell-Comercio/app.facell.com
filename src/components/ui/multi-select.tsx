@@ -257,11 +257,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
               onKeyDown={handleInputKeyDown}
               onValueChange={(search) => setSearch(search)}
             />
-            <CommandList
-              className="overflow-y scroll-thin w-full"
-              onWheel={() => console.log("SCROLL WHEEL")}
-              onScroll={() => console.log("SCROLL")}
-            >
+            <CommandList className="overflow-y scroll-thin w-full">
               <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
               <CommandGroup role={"group"}>
                 <CommandItem
