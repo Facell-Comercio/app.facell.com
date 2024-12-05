@@ -27,7 +27,7 @@ export const columnsTableEstoques: ColumnDef<RowEstoque>[] = [
         sortDescFirst: true,
     },
     {
-        accessorKey: "id_grupo_economico",
+        accessorKey: "grupo_economico",
         header: "GRUPO"
     },
     {
@@ -39,7 +39,7 @@ export const columnsTableEstoques: ColumnDef<RowEstoque>[] = [
         header: "MODELO"
     },
     {
-        accessorKey: "tmanho",
+        accessorKey: "tamanho",
         header: "TAMANHO"
     },
     {

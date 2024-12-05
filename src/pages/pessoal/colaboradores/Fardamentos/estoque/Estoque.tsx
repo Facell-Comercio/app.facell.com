@@ -22,6 +22,8 @@ import { EraserIcon, FilterIcon } from "lucide-react";
 import { useEstoque } from "./table/fetch-estoque";
 import { useStoreEstoque } from "./table/store-table";
 import { columnsTableEstoques } from "./table/columns-estoque";
+import FiltersEstoque from "./table/FiltersEstoque";
+
 
 
 
@@ -62,68 +64,7 @@ const Estoque = () => {
         </div>
       </div>
       <div>
-        <Accordion
-          type="single"
-          collapsible
-          // value={itemOpen}
-          // onValueChange={(e)=> setItemOpen(e)}
-          className="p-2 border-2 dark:border-slate-800 rounded-lg "
-        >
-          <AccordionItem value="item-1" className="relative border-0 ">
-            <div className="flex gap-3 items-center absolute start-16 top-1">
-              <Button size={"xs"}>
-                Aplicar <FilterIcon size={12} className="ms-2" />
-              </Button>
-              <Button size={"xs"} variant="secondary">
-                Limpar <EraserIcon size={12} className="ms-2" />
-              </Button>
-            </div>
-
-            <AccordionTrigger className={`py-1 hover:no-underline`}>
-              <span className="">Filtros</span>
-            </AccordionTrigger>
-            <AccordionContent className="p-0 pt-3">
-              <ScrollArea className=" w-full whitespace-nowrap rounded-md sm:pb-3">
-                <div className="flex w-max space-x-3">
-                  <Select>
-                    <SelectTrigger className="max-w-[24ch]">
-                      <SelectValue placeholder="Grupo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">FACELL</SelectItem>
-                      <SelectItem value="9">FORTTELECOM</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    placeholder="UF"
-                    className="w-[6ch]"
-                    // value={}
-                    // onChange={}
-                  />
-                  <Input
-                    placeholder="Modelo"
-                    className="max-w-[200ch]"
-                    // value={}
-                    // onChange={}
-                  />
-                  <Input placeholder="Tamanho" className="w-[11ch]" />
-                  <Select>
-                    {/* value={} */}
-                    {/* onValueChange={} */}
-                    <SelectTrigger className="w-[150px]">
-                      <SelectValue placeholder="Sexo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="M">M</SelectItem>
-                      <SelectItem value="F">F</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <FiltersEstoque refetch={refetch}/>
         <DataTable
         pagination={pagination}
         setPagination={setPagination}

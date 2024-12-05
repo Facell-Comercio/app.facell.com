@@ -32,7 +32,6 @@ export interface State {
 export interface SortingItem {
     id: string;
     desc: boolean;
-
 }
 
 export interface Actions {
@@ -46,7 +45,7 @@ export const useStoreEstoque = create<State & Actions>((set) => ({
     rowCount: 0,
     pagination: {pageIndex: 0, pageSize: 15},
     isAllSelected: false,
-
+    rowSelection: {},
     // Filters
     filters: initialFilters,
     setFilters: (novofiltro) => 

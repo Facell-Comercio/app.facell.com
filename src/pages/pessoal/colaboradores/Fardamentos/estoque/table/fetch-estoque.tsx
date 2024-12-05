@@ -10,7 +10,7 @@ export const useEstoque = () => ({
     return useQuery({
       queryKey: ["pessoal", "fardamento", "estoque", "lista", {pagination, filters}],
       queryFn: async () => {
-        const result = await api.get("/pessoal/fardamentos/", {
+        const result = await api.get("/pessoal/fardamentos/estoque/", {
           params: {
             filters: filters,
             pagination,
