@@ -9,10 +9,11 @@ import UploadDropzone, { GoogleFolderName } from "./UploadDropzone";
 interface FileUploadProps {
   onChange: (url?: string) => void;
   value: string;
-  folderName: GoogleFolderName,
+  folderName: GoogleFolderName;
   mediaType: MediaType;
   disabled?: boolean;
   canDelete?: boolean;
+  className?: string;
 }
 
 type ButtonFileDeleteProps = {
@@ -20,10 +21,7 @@ type ButtonFileDeleteProps = {
   handleDelete: () => void;
 };
 
-const ButtonFileDelete = ({
-  isDeleting,
-  handleDelete,
-}: ButtonFileDeleteProps) => {
+const ButtonFileDelete = ({ isDeleting, handleDelete }: ButtonFileDeleteProps) => {
   return (
     <AlertPopUp
       title="Deseja realmente excluir?"
@@ -48,11 +46,12 @@ export const FileUpload = ({
   mediaType,
   disabled,
   canDelete,
+  className,
 }: FileUploadProps) => {
   // const fileType = value?.split(".").pop();
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  const canShowDeleteButton = !disabled || (canDelete !== undefined ? canDelete : false)
+  const canShowDeleteButton = !disabled || (canDelete !== undefined ? canDelete : false);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -75,10 +74,7 @@ export const FileUpload = ({
         <img src={value} alt="Upload" className="w-full h-full object-cover rounded-lg" />
 
         {canShowDeleteButton && (
-          <ButtonFileDelete
-            isDeleting={isDeleting}
-            handleDelete={handleDelete}
-          />
+          <ButtonFileDelete isDeleting={isDeleting} handleDelete={handleDelete} />
         )}
       </div>
     );
@@ -86,7 +82,9 @@ export const FileUpload = ({
 
   if (value && mediaType !== "img") {
     return (
-      <div className="relative flex items-center p-2 mt-2 rounded-md bg-background/10">
+      <div
+        className={`relative flex items-center p-2 mt-2 rounded-md bg-background/10 ${className}`}
+      >
         <a
           href={value}
           target="_blank"
@@ -97,10 +95,7 @@ export const FileUpload = ({
           {value}
         </a>
         {canShowDeleteButton && (
-          <ButtonFileDelete
-            isDeleting={isDeleting}
-            handleDelete={handleDelete}
-          />
+          <ButtonFileDelete isDeleting={isDeleting} handleDelete={handleDelete} />
         )}
       </div>
     );

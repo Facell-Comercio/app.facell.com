@@ -56,8 +56,8 @@ Input.displayName = "Input";
 
 interface InputWithLabelProps {
   type?: string;
-  label: string;
-  value: string;
+  label?: string;
+  value: any;
   placeholder?: string;
   description?: string;
   readOnly?: boolean;
@@ -115,7 +115,89 @@ const InputWithLabel = ({
   );
 };
 
-export { Input, InputWithLabel };
+interface InputFileProps {
+  type?: string;
+  label?: string;
+  value?: any;
+  placeholder?: string;
+  description?: string;
+  readOnly?: boolean;
+  disabled?: boolean;
+  className?: string;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
+  min?: number;
+  max?: number;
+  icon?: React.ElementType;
+  iconLeft?: boolean;
+  step?: string;
+  inputClass?: string;
+  iconClass?: string;
+  labelClass?: string;
+  title?: string;
+  required?: boolean;
+  accept?: string;
+  multiple?: boolean;
+  fileInputRef?: React.LegacyRef<HTMLInputElement>;
+}
+const InputFile = ({
+  label,
+  className,
+  icon: Icon,
+  iconLeft,
+  inputClass,
+  iconClass,
+  labelClass,
+  fileInputRef,
+  onChange,
+  ...props
+}: InputFileProps) => {
+  const [files, setFiles] = React.useState<FileList | null>();
+  const handleChangeImportButton = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFiles(event.target.files);
+    if (onChange) {
+      onChange(event); // Passa o evento para permitir acesso a `event.target.files`
+    }
+  };
+  return (
+    <div className={`flex gap-2 flex-col ${className}`}>
+      {label && <label className={`text-sm font-medium ${labelClass}`}>{label}</label>}
+      <span
+        className={`flex cursor-pointer group`}
+        onClick={() => {
+          //@ts-ignore Funciona
+          fileInputRef.current && fileInputRef.current.click();
+        }}
+      >
+        <div className="flex gap-2 border w-full rounded-md">
+          <Button
+            className="font-medium rounded-none h-full group-hover:opacity-80 transition-all"
+            variant={"secondary"}
+          >
+            {props.multiple && files && files?.length > 0
+              ? `${files.length} Arquivos Selecionados`
+              : "Selecionar Arquivo"}
+          </Button>
+          <span className="flex flex-col gap-1 justify-center p-1">
+            {(files && [...files].map((file) => <p key={`file-${file.name}`}>{file.name}</p>)) ||
+              ""}
+          </span>
+        </div>
+        <input
+          type="file"
+          className="hidden"
+          ref={fileInputRef}
+          multiple={props.multiple}
+          onChange={handleChangeImportButton}
+          accept={props.accept}
+        />
+      </span>
+    </div>
+  );
+};
+
+export { Input, InputFile, InputWithLabel };
 
 const FormInput = ({
   name,

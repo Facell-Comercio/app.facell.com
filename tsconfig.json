@@ -25,6 +25,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/components/custom/.tsx"],
+  "include": ["src", "src/components/custom/.tsx", "src/hooks/comercial/.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -13,7 +13,7 @@ import HomePage from "./pages/Home.tsx";
 import LoginPage from "./pages/Login.tsx";
 import RecuperarSenha from "./pages/RecuperarSenha.tsx";
 import AdminPage from "./pages/admin/Page.tsx";
-import ComercialComissionamento from "./pages/comercial/comissionamento/ComercialMetas.tsx";
+import ComercialComissionamento from "./pages/comercial/comissionamento/ComercialComissionamento.tsx";
 import ComercialMetas from "./pages/comercial/metas/ComercialMetas.tsx";
 import ComercialVales from "./pages/comercial/vales/ComercialVales.tsx";
 import { PageDashboard } from "./pages/dashboard/PageDashboard.tsx";

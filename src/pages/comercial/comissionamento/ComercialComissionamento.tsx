@@ -2,6 +2,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { hasPermission } from "@/helpers/checkAuthorization";
 import { Link, useLocation } from "react-router-dom";
+import ComercialConfiguracoes from "./configuracoes/ComercialConfiguracoes";
 import Espelhos from "./espelhos/Espelhos";
 import Politicas from "./politicas/Politicas";
 import VendasInvalidadas from "./vendas-invalidas/VendasInvalidadas";
@@ -32,7 +33,7 @@ const ComercialComissionamento = () => {
                 <TabsTrigger value="politica">Política</TabsTrigger>
               </Link>
             )}
-            {hasPermission(["MASTER", "COMISSOES:CONFIGURACOES_VER"]) && (
+            {hasPermission(["MASTER", "COMISSOES:CONFIGURACOES"]) && (
               <Link to={`${uri}?tab=configuracao`}>
                 <TabsTrigger value="configuracao">Configuração</TabsTrigger>
               </Link>
@@ -56,8 +57,10 @@ const ComercialComissionamento = () => {
             <Politicas />
           </TabsContent>
         )}
-        {hasPermission(["MASTER", "COMISSOES:CONFIGURACOES_VER"]) && (
-          <TabsContent value="configuracao">{/* Configuração */}</TabsContent>
+        {hasPermission(["MASTER", "COMISSOES:CONFIGURACOES"]) && (
+          <TabsContent value="configuracao">
+            <ComercialConfiguracoes />
+          </TabsContent>
         )}
       </Tabs>
     </div>
