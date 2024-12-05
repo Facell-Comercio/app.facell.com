@@ -47,7 +47,7 @@ export function ModalGerarVencimentos({
     valor: z.coerce.number().min(0.01, "Valor precisa ser >= R$ 0,01"),
   });
   const initialValues = {
-    data_vencimento: startOfDay(new Date()).toDateString(),
+    data_vencimento: startOfDay(new Date()),
     parcelas: "1",
     valor: "0",
   };
@@ -69,7 +69,7 @@ export function ModalGerarVencimentos({
   // })
 
   type GeradorVencimentos = {
-    data_vencimento: string;
+    data_vencimento: Date;
     parcelas: string;
     valor: string;
   };
@@ -97,8 +97,7 @@ export function ModalGerarVencimentos({
     for (let parcela = 0; parcela < qtdeParcelas; parcela++) {
       let obj = {
         id: new Date().getTime().toString(),
-        data_vencimento: "",
-        data_prevista: "",
+        data_vencimento: new Date(),
         valor: valorParcela.toString(),
         cod_barras: "",
         qr_code: "",
@@ -108,7 +107,7 @@ export function ModalGerarVencimentos({
       if (parcela == 0) {
         obj.data_vencimento = data.data_vencimento;
       } else {
-        obj.data_vencimento = addMonths(dataVencimento, parcela).toString();
+        obj.data_vencimento = addMonths(dataVencimento, parcela);
       }
 
       // incluir um item ao fieldArray
