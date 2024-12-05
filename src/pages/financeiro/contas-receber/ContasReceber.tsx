@@ -15,7 +15,7 @@ const ContasReceberPage = () => {
   const activeTab = searchParams.get("tab") || "";
   const isMaster = hasPermission("MASTER");
   const isFinanceiro = checkUserDepartments("FINANCEIRO");
-  const canAccess = hasPermission("FINANCEIRO_LANÇAR_RECEITA") || isFinanceiro || isMaster;
+  const canAccess = hasPermission("RECEITAS:VER") || isFinanceiro || isMaster;
   if (!canAccess) {
     return <Navigate to={"/not-authorized"} />;
   }

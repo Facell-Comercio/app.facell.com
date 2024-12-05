@@ -12,6 +12,10 @@ import { formatDate } from "date-fns";
 import { History, Save } from "lucide-react";
 import { useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
+import ButtonExportPadrao from "../components/ButtonExportPadrao";
+
+const hrefPlanilhaPadrao =
+  "https://docs.google.com/spreadsheets/d/1mSjvLtOf6zhk8L1oCo4O-VnvhqafyKKE/export?format=xlsx";
 
 const initialFormData = {
   mes: "",
@@ -92,10 +96,13 @@ const TimTrafegoZeroDep = () => {
     <section className="flex flex-col gap-3">
       <div className="flex justify-between items-center font-medium">
         <span>TIM Tráfego Zero Dependentes</span>
-        <Button variant={"outline"} onClick={() => setModalHistoricoOpen(true)}>
-          <History size={18} className="me-2" />
-          Histórico
-        </Button>
+        <span className="flex gap-2">
+          <ButtonExportPadrao href={hrefPlanilhaPadrao} />
+          <Button variant={"outline"} onClick={() => setModalHistoricoOpen(true)}>
+            <History size={18} className="me-2" />
+            Histórico
+          </Button>
+        </span>
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-2">

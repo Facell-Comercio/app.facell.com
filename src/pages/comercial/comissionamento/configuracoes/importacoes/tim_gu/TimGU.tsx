@@ -18,7 +18,10 @@ import { formatDate } from "date-fns";
 import { History, Save } from "lucide-react";
 import { useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
-import ButtonExportManual from "./ButtonExportManual";
+import ButtonExportPadrao from "../components/ButtonExportPadrao";
+
+const hrefPlanilhaPadrao =
+  "https://docs.google.com/spreadsheets/d/10kQwEx4oAAPJFkGgZHQLUWC7cwzpQqXu/export?format=xlsx";
 
 const TimGU = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -103,7 +106,7 @@ const TimGU = () => {
       <div className="flex justify-between items-center font-medium">
         <span>TIM GU</span>
         <span className="flex gap-2">
-          <ButtonExportManual />
+          <ButtonExportPadrao href={hrefPlanilhaPadrao} />
           <Button variant={"outline"} onClick={() => setModalHistoricoOpen(true)}>
             <History size={18} className="me-2" />
             Histórico

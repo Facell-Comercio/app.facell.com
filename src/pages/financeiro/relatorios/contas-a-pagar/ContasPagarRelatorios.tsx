@@ -15,7 +15,7 @@ import VencimentosRelatorio from "./vencimentos/VencimentosRelatorio";
 const ContasPagarRelatorios = () => {
   const [itemOpen, setItemOpen] = useState("");
   const isMaster = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO");
-  const canExportDespesas = isMaster || hasPermission("FINANCEIRO_EXPORTAR_DESPESAS");
+  const canExportDespesas = isMaster || hasPermission("DESPESAS:EXPORTA_LAYOUT_DESPESAS");
   return (
     <Accordion type="single" collapsible className="p-2 border dark:border-slate-800 rounded-lg ">
       <AccordionItem value="item-1" className="relative border-0">

@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Download } from "lucide-react";
 
-const ButtonExportManual = () => {
+const ButtonExportPadrao = ({ href }: { href: string }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -19,7 +19,7 @@ const ButtonExportManual = () => {
         <DropdownMenuItem className="flex gap-2">
           <a
             target="_blank"
-            // href="https://docs.google.com/spreadsheets/d/1xQXNc7i27msUu3W72tBmdniDZMa_82Hr/export?format=xlsx"
+            href="https://docs.google.com/spreadsheets/d/1xQXNc7i27msUu3W72tBmdniDZMa_82Hr/export?format=xlsx"
           >
             Baixar Planilha Padrão
           </a>
@@ -29,4 +29,4 @@ const ButtonExportManual = () => {
   );
 };
 
-export default ButtonExportManual;
+export default ButtonExportPadrao;
