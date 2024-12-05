@@ -31,6 +31,7 @@ import Perfil from "./pages/perfil/index.tsx";
 import Colaboradores from "./pages/pessoal/colaboradores/Colaboradores.tsx";
 import { VideoAulaPage } from "./pages/treinamento/videoaula/Page.tsx";
 import ComercialVales from "./pages/comercial/vales/ComercialVales.tsx";
+import FardamentoPage from "./pages/pessoal/colaboradores/Fardamentos/FardamentoPage.tsx";
 
 const AppRoutes = () => {
   const user = useAuthStore(
@@ -70,6 +71,10 @@ const AppRoutes = () => {
             <Route
               element={checkUserPermission("MASTER") ? <Colaboradores /> : <NotAuthorizedPage />}
               path="colaboradores"
+            />
+            <Route
+            element={checkUserPermission("MASTER") ? <FardamentoPage /> : <NotAuthorizedPage />}
+            path= 'fardamentos'
             />
           </Route>
 

@@ -45,10 +45,6 @@ export const columnsTableUsers: ColumnDef<RowUsers>[] = [
   },
   {
     header: "NOME",
-    accessorKey: "nome",
-    cell: (info) => {
-      const nome = info.getValue<string>();
-      return <span>{nome}</span>;
-    },
+    accessorKey: "email",
   },
 ];

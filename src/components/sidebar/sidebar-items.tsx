@@ -54,7 +54,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaRankingStar />,
     uri: "comercial",
-    visible: true,
+    visible: () =>true,
     children: [
       {
         name: "Vales",
@@ -84,7 +84,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaUsers />,
     uri: "pessoal",
-    visible: () => false,
+    visible: () => true,
     children: [
       {
         name: "Colaboradores",
@@ -105,7 +105,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "F",
         uri: "pessoal/fardamentos",
-        visible: () => false,
+        visible: () => true,
       },
       {
         name: "Admissões",
@@ -228,7 +228,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CC",
         uri: "/financeiro/controle-de-caixa",
-        visible:
+        visible: () =>
           checkUserDepartments("FINANCEIRO") ||
           checkUserPermission("MASTER"),
       },
@@ -244,7 +244,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CBK",
         uri: "/financeiro/conciliacao-bancaria",
-        visible:
+        visible: () =>
           checkUserDepartments("FINANCEIRO") ||
           checkUserPermission("MASTER"),
       },

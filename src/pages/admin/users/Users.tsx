@@ -31,7 +31,10 @@ const Users = () => {
     </div>
     <Filters refetch={refetch} />
     <ModalUser />
-    <DataTable pagination={pagination} setPagination={setPagination} data={rows} rowCount={rowCount} columns={columnsTableUsers} />
+    <DataTable 
+    pagination={pagination} 
+    setPagination={setPagination} 
+    data={rows} rowCount={rowCount} columns={columnsTableUsers} />
   </div>);
 }
 
