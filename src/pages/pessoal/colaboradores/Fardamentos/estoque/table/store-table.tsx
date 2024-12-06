@@ -7,7 +7,7 @@ export interface Pagination {
 
 
 export interface Filters {
-    grupo_economico?: string;
+    id_grupo_economico?: string;
     uf?: string;
     modelo?: string;
     tamanho?: string;
@@ -15,7 +15,7 @@ export interface Filters {
 }
 
 const initialFilters: Filters = {
-    grupo_economico: "",
+    id_grupo_economico: "",
     uf: "",
     modelo: "",
     tamanho: "",

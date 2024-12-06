@@ -1,7 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ReactNode } from "react";
-import { Ellipsis } from "lucide-react";
-import { Button } from "@/components/ui/button"
+import { Dropdown } from "../components/DropdownMenu";
 
 
 export type RowEstoque = {
@@ -20,9 +19,7 @@ export const columnsTableEstoques: ColumnDef<RowEstoque>[] = [
         header: "AÇÕES",
         enableSorting: false,
         cell: () => (
-        <Button size={"xs"}>
-            <Ellipsis/>
-        </Button>   
+           <Dropdown/>
         ),
         sortDescFirst: true,
     },

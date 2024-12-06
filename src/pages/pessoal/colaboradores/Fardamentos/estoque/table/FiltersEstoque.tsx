@@ -42,7 +42,7 @@ const FiltersEstoque = ({refetch}: {refetch: () => void}) => {
           collapsible
           value={itemOpen}
           onValueChange={(e)=> setItemOpen(e)}
-          className="p-2 border-2 dark:border-slate-800 rounded-lg "
+          className="p-2 border-2 dark:border-slate-800 rounded-lg mb-2"
         >
           <AccordionItem value="item-1" className="relative border-0 ">
             <div className="flex gap-3 items-center absolute start-16 top-1">
@@ -61,10 +61,10 @@ const FiltersEstoque = ({refetch}: {refetch: () => void}) => {
               <ScrollArea className=" w-full whitespace-nowrap rounded-md sm:pb-3">
                 <div className="flex w-max space-x-3">
                   <Select
-                  value={filters.grupo_economico}
-                  onValueChange={(grupo_economico) => {
+                  value={filters.id_grupo_economico}
+                  onValueChange={(id_grupo_economico) => {
                     setFilters({
-                      grupo_economico: grupo_economico
+                      id_grupo_economico: id_grupo_economico
                     });
                   }}
                   >
@@ -73,7 +73,13 @@ const FiltersEstoque = ({refetch}: {refetch: () => void}) => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1">FACELL</SelectItem>
-                      <SelectItem value="9">FORTTELECOM</SelectItem>
+                      <SelectItem value="3">AM EMPREENDIMENTOS</SelectItem>
+                      <SelectItem value="4">FLOR DE LIZ</SelectItem>
+                      <SelectItem value="5">MRH</SelectItem>
+                      <SelectItem value="6">POMPEIA</SelectItem>
+                      <SelectItem value="7">JARDINS HELENA</SelectItem>
+                      <SelectItem value="8">DÍON</SelectItem>
+                      <SelectItem value="9">FORT</SelectItem>
                     </SelectContent>
                   </Select>
                   <Input
@@ -118,4 +124,4 @@ const FiltersEstoque = ({refetch}: {refetch: () => void}) => {
     )
 };
 
-export default FiltersEstoque
+export default FiltersEstoque;
