@@ -28,11 +28,9 @@ const ComercialComissionamento = () => {
                 <TabsTrigger value="vendas-invalidadas">Vendas Inválidas</TabsTrigger>
               </Link>
             )}
-            {hasPermission(["MASTER", "COMISSOES:POLITICAS_VER"]) && (
-              <Link to={`${uri}?tab=politica`}>
-                <TabsTrigger value="politica">Política</TabsTrigger>
-              </Link>
-            )}
+            <Link to={`${uri}?tab=politica`}>
+              <TabsTrigger value="politica">Política</TabsTrigger>
+            </Link>
             {hasPermission(["MASTER", "COMISSOES:CONFIGURACOES"]) && (
               <Link to={`${uri}?tab=configuracao`}>
                 <TabsTrigger value="configuracao">Configuração</TabsTrigger>
@@ -52,11 +50,9 @@ const ComercialComissionamento = () => {
             <VendasInvalidadas />
           </TabsContent>
         )}
-        {hasPermission(["MASTER", "COMISSOES:POLITICAS_VER"]) && (
-          <TabsContent value="politica">
-            <Politicas />
-          </TabsContent>
-        )}
+        <TabsContent value="politica">
+          <Politicas />
+        </TabsContent>
         {hasPermission(["MASTER", "COMISSOES:CONFIGURACOES"]) && (
           <TabsContent value="configuracao">
             <ComercialConfiguracoes />

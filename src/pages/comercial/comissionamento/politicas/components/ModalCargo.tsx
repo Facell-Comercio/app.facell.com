@@ -6,61 +6,34 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { CustomCombobox } from "@/components/custom/CustomCombobox";
+import SelectCargo from "@/components/custom/SelectCargo";
 import SelectEscalonamento from "@/components/custom/SelectEscalonamento";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { useConfiguracoes } from "@/hooks/comercial/useConfiguracoes";
 import { usePoliticas } from "@/hooks/comercial/usePoliticas";
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 import { useStorePoliticas } from "../politicas/store-politicas";
 import { useStoreComissionamentoPoliticas } from "../store";
 
 const ModalCargo = () => {
-  const [modalOpen, closeModal] =
-    useStoreComissionamentoPoliticas((state) => [
-      state.modalCargoOpen,
-      state.closeModalCargo,
-    ]);
+  const [modalOpen, closeModal] = useStoreComissionamentoPoliticas((state) => [
+    state.modalCargoOpen,
+    state.closeModalCargo,
+  ]);
   const id_politica = useStorePoliticas().id;
   const [cargo, setCargo] = useState({
     id_cargo: "",
     id_escalonamento: "1",
   });
 
-  const { data } = useConfiguracoes().getCargos();
-  const {
-    mutate: insertCargoPolitica,
-    isSuccess,
-  } = usePoliticas().insertCargoPolitica();
-
-  const defaultValuesCargos =
-    data?.map((value: any) => ({
-      value: value.id,
-      label: value.cargo,
-    })) || [];
-  const cargoName = useMemo(
-    () =>
-      defaultValuesCargos.filter(
-        (curr: any) =>
-          curr.value == cargo.id_cargo
-      )[0]?.label,
-    [cargo.id_cargo]
-  );
+  const { mutate: insertCargoPolitica, isSuccess } = usePoliticas().insertCargoPolitica();
 
   function handleClickCancel() {
     closeModal();
   }
 
   function handleSubmit() {
-    if (
-      !cargo.id_cargo ||
-      !cargo.id_escalonamento
-    ) {
+    if (!cargo.id_cargo || !cargo.id_escalonamento) {
       toast({
         title: "Dados insuficientes!",
         variant: "warning",
@@ -68,6 +41,7 @@ const ModalCargo = () => {
       });
       return;
     }
+
     insertCargoPolitica({
       ...cargo,
       id_politica: id_politica || "",
@@ -85,40 +59,24 @@ const ModalCargo = () => {
   }, [modalOpen]);
 
   return (
-    <Dialog
-      open={modalOpen}
-      onOpenChange={handleClickCancel}
-    >
+    <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
       <DialogContent className="max-w-fit">
         <DialogHeader>
-          <DialogTitle>
-            Inclusão de Cargo na Política
-          </DialogTitle>
+          <DialogTitle>Inclusão de Cargo na Política</DialogTitle>
         </DialogHeader>
         <div className="flex gap-3">
-          <span className="flex flex-col gap-2">
-            <label className="text-sm font-medium">
-              Origem
-            </label>
-            <CustomCombobox
-              className="w-[38ch]"
-              value={cargoName}
-              onChange={(id) =>
-                setCargo({
-                  ...cargo,
-                  id_cargo: id || "",
-                })
-              }
-              defaultValues={defaultValuesCargos}
-              placeholder="Selecione o cargo..."
-            />
-          </span>
+          <SelectCargo
+            label="Cargo"
+            onChange={(cargo) => setCargo((prev) => ({ ...prev, id_cargo: cargo.id }))}
+            value={cargo.id_cargo}
+            className="flex-1"
+            tipoValue="id"
+            tipo_list={["meta", "agregador"]}
+          />
           <SelectEscalonamento
             value={cargo.id_escalonamento}
             label={"Escalonamento"}
-            placeholder={
-              "Selecione o escalonamento"
-            }
+            placeholder={"Selecione o escalonamento"}
             className="min-w-fit"
             onChange={(id) =>
               setCargo({
@@ -129,15 +87,10 @@ const ModalCargo = () => {
           />
         </div>
         <DialogFooter>
-          <Button
-            variant={"secondary"}
-            onClick={handleClickCancel}
-          >
+          <Button variant={"secondary"} onClick={handleClickCancel}>
             Cancelar
           </Button>
-          <Button onClick={handleSubmit}>
-            Salvar
-          </Button>
+          <Button onClick={handleSubmit}>Salvar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -42,11 +42,9 @@ const ComercialMetas = () => {
       <Tabs defaultValue={activeTab || "metas"} className="w-full">
         <TabsList className="w-full justify-start">
           <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
-            {hasPermission(["METAS:METAS_VER", "MASTER"]) && (
-              <Link to={`${uri}?tab=metas`}>
-                <TabsTrigger value="metas">Metas</TabsTrigger>
-              </Link>
-            )}
+            <Link to={`${uri}?tab=metas`}>
+              <TabsTrigger value="metas">Metas</TabsTrigger>
+            </Link>
             {hasPermission(["METAS:AGREGADORES_VER", "MASTER"]) && (
               <Link to={`${uri}?tab=agregadores`}>
                 <TabsTrigger value="agregadores">Agregadores</TabsTrigger>
@@ -55,11 +53,9 @@ const ComercialMetas = () => {
             <ScrollBar orientation="horizontal" thumbColor="dark:bg-slate-400 bg-gray-450" />
           </ScrollArea>
         </TabsList>
-        {hasPermission(["METAS:METAS_VER", "MASTER"]) && (
-          <TabsContent value="metas">
-            <Metas />
-          </TabsContent>
-        )}
+        <TabsContent value="metas">
+          <Metas />
+        </TabsContent>
         {hasPermission(["METAS:AGREGADORES_VER", "MASTER"]) && (
           <TabsContent value="agregadores">
             <Agregadores />

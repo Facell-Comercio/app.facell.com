@@ -54,7 +54,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaRankingStar />,
     uri: "comercial",
-    visible: () => hasPermission("MASTER") || hasModuleAccess("COMERCIAL"),
+    visible: () => true,
     children: [
       {
         name: "Vales",
@@ -68,20 +68,14 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "M",
         uri: "comercial/metas",
-        visible: () => hasPermission(["METAS:METAS_VER", "METAS:AGREGADORES_VER", "MASTER"]),
+        visible: () => true,
       },
       {
         name: "Comissionamento",
         type: "link",
         shortName: "E",
         uri: "comercial/comissionamento",
-        visible: () =>
-          hasPermission([
-            "COMISSOES:ESPELHOS_VER",
-            "COMISSOES:VENDAS_INVALIDAS_VER",
-            "COMISSOES:POLITICAS_VER",
-            "MASTER",
-          ]),
+        visible: () => true,
       },
     ],
   },

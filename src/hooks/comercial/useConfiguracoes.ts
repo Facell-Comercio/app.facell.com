@@ -67,12 +67,12 @@ export const useConfiguracoes = () => {
       placeholderData: keepPreviousData,
     });
 
-  const getCargos = () =>
+  const getCargos = (params?: { filters: any }) =>
     useQuery({
-      queryKey: ["comercial", "comissionamento", "configuracoes", "cargos", "lista"],
+      queryKey: ["comercial", "comissionamento", "configuracoes", "cargos", "lista", [params]],
       queryFn: async () =>
         await api
-          .get("/comercial/comissionamento/configuracoes/cargos")
+          .get("/comercial/comissionamento/configuracoes/cargos", { params })
           .then((response) => response.data),
       placeholderData: keepPreviousData,
     });
