@@ -1,6 +1,6 @@
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import { Button } from "@/components/ui/button";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { useVendasInvalidadas } from "@/hooks/comercial/useVendasInvalidadas";
 import { HandCoins } from "lucide-react";
 import { useEffect } from "react";
@@ -32,7 +32,7 @@ const ButtonGerarVales = () => {
       editIsPending(true);
     }
   }, [gerarValesIsPending]);
-  const canSee = checkUserPermission(["GERENCIAR_VALES", "MASTER"]);
+  const canSee = hasPermission(["GERENCIAR_VALES", "MASTER"]);
 
   return (
     canSee && (

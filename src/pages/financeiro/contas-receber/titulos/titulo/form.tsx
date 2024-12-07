@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { formatarDataHora } from "@/helpers/format";
 import { generateStatusColor } from "@/helpers/generateColorStatus";
 import { normalizeCnpjNumber } from "@/helpers/mask";
@@ -107,7 +107,7 @@ const FormTituloReceber = ({
   const status = titulo?.status || "Criado";
   const id_status = parseInt(titulo?.id_status) ?? 10;
 
-  const isMaster = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+  const isMaster = checkUserDepartments("FINANCEIRO") || hasPermission("MASTER");
 
   const canEdit = !id || status === "Criado" || (isMaster && id_status > 0 && id_status < 30);
   // const canEditRecebimento = !id || status === "Criado" || (isMaster && id_status > 0 && id_status < 50);

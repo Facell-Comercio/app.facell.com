@@ -1,7 +1,7 @@
 import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
 import { Calendar, Crosshair, Percent, Plus, Trash, UserSearch } from "lucide-react";
@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
 import FormSelect from "@/components/custom/FormSelect";
+import SelectCargo, { CargoProps } from "@/components/custom/SelectCargo";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -28,19 +29,6 @@ import { useFormAgregadorData } from "./form-data-agregador";
 import { useStoreAgregador } from "./store-agregador";
 
 //* Cargos Agregadores
-const cargosPrevistos = [
-  "CAIXA",
-  "PROMOTOR DE ACESSORIO E PITZI",
-  "GERENTE DE LOJA",
-  "GERENTE GERAL DE LOJA",
-  "SUPERVISOR DE PROCESSOS",
-  "SUPERVISOR DE RELACIONAMENTO",
-  "COORDENADOR COMERCIAL",
-  "COORDENADOR DE COMPRAS",
-  "GERENTE REGIONAL",
-  "GERENTE DE VENDAS DIGITAIS",
-];
-
 const tiposAgregacao = ["FILIAL", "VENDEDOR"];
 
 // const tags = ["BLUE"];
@@ -79,11 +67,12 @@ const FormAgregador = ({
     ]
   );
   const [modalFilialOpen, setModalFilialOpen] = useState<boolean>(false);
+  const [cargo, setCargo] = useState("");
 
   const { form, metas, appendMeta, removeMeta } = useFormAgregadorData(data);
   const metas_agregadas = form.watch("metas_agregadas");
 
-  const readOnly = !checkUserPermission(["GERENCIAR_METAS", "MASTER"]);
+  const readOnly = !hasPermission(["METAS:AGREGADORES_EDITAR", "MASTER"]);
   const disabled = (!modalEditing || isPending) && !readOnly;
 
   const onSubmitData = (data: AgregadoresProps) => {
@@ -104,7 +93,7 @@ const FormAgregador = ({
   }, [updateIsPending, insertIsPending]);
 
   // ! Verificar a existênicia de erros
-  console.log(form.formState.errors);
+  // console.log(form.formState.errors);
 
   function handleSelectFilial(filial: Filial) {
     form.setValue("id_filial", filial.id || "");
@@ -125,6 +114,15 @@ const FormAgregador = ({
       appendMeta(metas);
     }
   }
+
+  function handleSelectCargo(cargo: CargoProps) {
+    form.setValue("cargo", cargo.cargo);
+    setCargo(cargo.cargo);
+  }
+
+  useEffect(() => {
+    setCargo(data.cargo || "");
+  }, [id]);
 
   return (
     <div className="max-w-full overflow-x-hidden">
@@ -184,6 +182,7 @@ const FormAgregador = ({
                     name="proporcional"
                     disabled={disabled}
                     label="Proporcional"
+                    readOnly={readOnly}
                     min={0}
                     control={form.control}
                     icon={Percent}
@@ -208,6 +207,7 @@ const FormAgregador = ({
                     className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
                     name="nome"
                     disabled={disabled}
+                    readOnly={readOnly}
                     label="Nome"
                     control={form.control}
                   />
@@ -215,10 +215,10 @@ const FormAgregador = ({
                     className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
                     name="cpf"
                     disabled={disabled}
+                    readOnly={readOnly}
                     label="CPF"
                     control={form.control}
                   />
-
                   <FormInput
                     className="flex-1 shrink-0 min-w-full sm:min-w-[20ch]"
                     name="filial"
@@ -246,6 +246,7 @@ const FormAgregador = ({
                     selectClassName="min-w-full sm:min-w-[20ch]"
                     control={form.control}
                     disabled={disabled}
+                    readOnly={readOnly}
                     placeholder="Selecione o tipo de agregação"
                     options={
                       tiposAgregacao.map((tipo_agregacao: any) => ({
@@ -278,210 +279,188 @@ const FormAgregador = ({
                       className={`bg-background hover:bg-background`}
                     />
                   </span> */}
-
-                  <FormSelect
-                    name="cargo"
+                  <SelectCargo
                     label="Cargo"
-                    selectClassName="min-w-full sm:min-w-[20ch]"
-                    control={form.control}
-                    disabled={disabled}
-                    placeholder="Selecione o cargo"
-                    options={
-                      cargosPrevistos.map((cargo: any) => ({
-                        value: cargo,
-                        label: cargo,
-                      })) || []
-                    }
+                    onChange={handleSelectCargo}
+                    value={cargo}
+                    className="flex-1"
+                    tipoValue="nome"
+                    tipo_list={["agregador"]}
+                    disabled={disabled || readOnly}
                   />
                 </div>
               </div>
             </div>
           </div>
-          {id && (
-            <div className="flex flex-col gap-3 max-w-full h-full col-span-2">
-              {/* Terceira seção */}
-              <div className="flex flex-1 flex-col gap-3 shrink-0">
-                <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
-                  <div className="flex justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <Crosshair />
-                      <span className="text-lg font-bold">Metas</span>
-                    </div>
-                    {checkUserPermission(["GERENCIAR_VALES", "MASTER"]) && (
-                      <div className="flex gap-2 flex-wrap">
-                        <AlertPopUp
-                          title={"Deseja realmente remover todas as metas"}
-                          action={() => {
-                            form.setValue("metas_agregadas", "");
-                            form.setValue("metas", []);
-                          }}
-                        >
-                          <Button
-                            variant={"destructive"}
-                            className="flex gap-2"
-                            disabled={disabled}
-                          >
-                            <Trash size={16} /> Remover Todas
-                          </Button>
-                        </AlertPopUp>
-                        <Button
-                          variant={"tertiary"}
-                          disabled={disabled}
-                          className="flex gap-2"
-                          onClick={() => setModalMetasOpen(true)}
-                        >
-                          <Plus /> Nova Meta
+          <div className="flex flex-col gap-3 max-w-full h-full col-span-2">
+            {/* Terceira seção */}
+            <div className="flex flex-1 flex-col gap-3 shrink-0">
+              <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
+                <div className="flex justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <Crosshair />
+                    <span className="text-lg font-bold">Metas</span>
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    {hasPermission(["METAS:AGREGADORES_EDITAR", "MASTER"]) && (
+                      <AlertPopUp
+                        title={"Deseja realmente remover todas as metas"}
+                        action={() => {
+                          form.setValue("metas_agregadas", "");
+                          form.setValue("metas", []);
+                        }}
+                      >
+                        <Button variant={"destructive"} className="flex gap-2" disabled={disabled}>
+                          <Trash size={16} /> Remover Todas
                         </Button>
-                      </div>
+                      </AlertPopUp>
+                    )}
+                    {hasPermission(["METAS:AGREGADORES_CRIAR", "MASTER"]) && (
+                      <Button
+                        variant={"tertiary"}
+                        disabled={disabled}
+                        className="flex gap-2"
+                        onClick={() => setModalMetasOpen(true)}
+                      >
+                        <Plus /> Nova Meta
+                      </Button>
                     )}
                   </div>
-
-                  <Table
-                    className={`bg-background rounded-sm pb-2 ${
-                      disabled && !readOnly && "opacity-65"
-                    }`}
-                  >
-                    <TableHeader>
-                      <TableRow>
-                        {!readOnly && <TableHead>Ação</TableHead>}
-                        <TableHead className="text-nowrap">Filial</TableHead>
-                        <TableHead className="text-nowrap">Cargo</TableHead>
-                        <TableHead className="text-nowrap">Nome</TableHead>
-                        <TableHead className="text-nowrap">Controle</TableHead>
-                        <TableHead className="text-nowrap">Pos</TableHead>
-                        <TableHead className="text-nowrap">Upgrade</TableHead>
-                        <TableHead className="text-nowrap">Receita</TableHead>
-                        <TableHead className="text-nowrap">Qtde. Aparelho</TableHead>
-                        <TableHead className="text-nowrap">Aparelho</TableHead>
-                        <TableHead className="text-nowrap">Acessório</TableHead>
-                        <TableHead className="text-nowrap">Pitzi</TableHead>
-                        <TableHead className="text-nowrap">Fixo</TableHead>
-                        <TableHead className="text-nowrap">WTTX</TableHead>
-                        <TableHead className="text-nowrap">Live</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {metas?.map((meta, index) => (
-                        <TableRow key={`${index} - ${meta.id}`}>
-                          {!readOnly && (
-                            <TableCell className="flex gap-1">
-                              <AlertPopUp
-                                title={"Deseja realmente remover"}
-                                description="Essa ação não pode ser desfeita. A meta será removida do agregador."
-                                action={() => {
-                                  removeMeta(index);
-                                  const filteredMetasAgregadas = metas_agregadas
-                                    ?.split(";")
-                                    .filter((meta_agregada) => meta_agregada !== meta.cpf);
-
-                                  form.setValue(
-                                    "metas_agregadas",
-                                    filteredMetasAgregadas?.join(";")
-                                  );
-                                }}
-                              >
-                                <Button
-                                  className="flex-1"
-                                  variant={"destructive"}
-                                  size={"xs"}
-                                  disabled={disabled}
-                                >
-                                  <Trash size={16} />
-                                </Button>
-                              </AlertPopUp>
-                            </TableCell>
-                          )}
-                          <TableCell className="text-nowrap">{meta.filial}</TableCell>
-                          <TableCell className="text-nowrap">{meta.cargo}</TableCell>
-                          <TableCell className="text-nowrap">{meta.nome}</TableCell>
-                          <TableCell className="text-nowrap">{meta.controle}</TableCell>
-                          <TableCell className="text-nowrap">{meta.pos}</TableCell>
-                          <TableCell className="text-nowrap">{meta.upgrade}</TableCell>
-                          <TableCell className="text-nowrap">
-                            {normalizeCurrency(meta.receita)}
-                          </TableCell>
-                          <TableCell className="text-nowrap">{meta.qtde_aparelho}</TableCell>
-                          <TableCell className="text-nowrap">
-                            {normalizeCurrency(meta.aparelho)}
-                          </TableCell>
-                          <TableCell className="text-nowrap">
-                            {normalizeCurrency(meta.acessorio)}
-                          </TableCell>
-                          <TableCell className="text-nowrap">
-                            {normalizeCurrency(meta.pitzi)}
-                          </TableCell>
-                          <TableCell className="text-nowrap">{meta.fixo}</TableCell>
-                          <TableCell className="text-nowrap">{meta.wttx}</TableCell>
-                          <TableCell className="text-nowrap">{meta.live}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                    <TableFooter>
-                      <TableRow>
-                        <TableCell>-</TableCell>
-                        <TableCell>-</TableCell>
-                        <TableCell>-</TableCell>
-                        <TableCell>-</TableCell>
-                        <TableCell className="text-nowrap">
-                          {metas?.reduce(
-                            (prev, meta) => prev + parseFloat(meta.controle || "0"),
-                            0
-                          )}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {metas?.reduce((prev, meta) => prev + parseFloat(meta.pos || "0"), 0)}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {metas?.reduce((prev, meta) => prev + parseFloat(meta.upgrade || "0"), 0)}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {normalizeCurrency(
-                            metas?.reduce((prev, meta) => prev + parseFloat(meta.receita || "0"), 0)
-                          )}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {metas?.reduce(
-                            (prev, meta) => prev + parseFloat(meta.qtde_aparelho || "0"),
-                            0
-                          )}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {normalizeCurrency(
-                            metas?.reduce(
-                              (prev, meta) => prev + parseFloat(meta.aparelho || "0"),
-                              0
-                            )
-                          )}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {normalizeCurrency(
-                            metas?.reduce(
-                              (prev, meta) => prev + parseFloat(meta.acessorio || "0"),
-                              0
-                            )
-                          )}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {normalizeCurrency(
-                            metas?.reduce((prev, meta) => prev + parseFloat(meta.pitzi || "0"), 0)
-                          )}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {metas?.reduce((prev, meta) => prev + parseFloat(meta.fixo || "0"), 0)}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {metas?.reduce((prev, meta) => prev + parseFloat(meta.wttx || "0"), 0)}
-                        </TableCell>
-                        <TableCell className="text-nowrap">
-                          {metas?.reduce((prev, meta) => prev + parseFloat(meta.live || "0"), 0)}
-                        </TableCell>
-                      </TableRow>
-                    </TableFooter>
-                  </Table>
                 </div>
+
+                <Table
+                  className={`bg-background rounded-sm pb-2 ${
+                    disabled && !readOnly && "opacity-65"
+                  }`}
+                >
+                  <TableHeader>
+                    <TableRow>
+                      {!readOnly && <TableHead>Ação</TableHead>}
+                      <TableHead className="text-nowrap">Filial</TableHead>
+                      <TableHead className="text-nowrap">Cargo</TableHead>
+                      <TableHead className="text-nowrap">Nome</TableHead>
+                      <TableHead className="text-nowrap">Controle</TableHead>
+                      <TableHead className="text-nowrap">Pos</TableHead>
+                      <TableHead className="text-nowrap">Upgrade</TableHead>
+                      <TableHead className="text-nowrap">Receita</TableHead>
+                      <TableHead className="text-nowrap">Qtde. Aparelho</TableHead>
+                      <TableHead className="text-nowrap">Aparelho</TableHead>
+                      <TableHead className="text-nowrap">Acessório</TableHead>
+                      <TableHead className="text-nowrap">Pitzi</TableHead>
+                      <TableHead className="text-nowrap">Fixo</TableHead>
+                      <TableHead className="text-nowrap">WTTX</TableHead>
+                      <TableHead className="text-nowrap">Live</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {metas?.map((meta, index) => (
+                      <TableRow key={`AGREGADOR - ${index} - ${meta.id}`}>
+                        {!readOnly && (
+                          <TableCell className="flex gap-1">
+                            <AlertPopUp
+                              title={"Deseja realmente remover"}
+                              description="Essa ação não pode ser desfeita. A meta será removida do agregador."
+                              action={() => {
+                                removeMeta(index);
+                                const filteredMetasAgregadas = metas_agregadas
+                                  ?.split(";")
+                                  .filter((meta_agregada) => meta_agregada !== meta.cpf);
+
+                                form.setValue("metas_agregadas", filteredMetasAgregadas?.join(";"));
+                              }}
+                            >
+                              <Button
+                                className="flex-1"
+                                variant={"destructive"}
+                                size={"xs"}
+                                disabled={disabled}
+                              >
+                                <Trash size={16} />
+                              </Button>
+                            </AlertPopUp>
+                          </TableCell>
+                        )}
+                        <TableCell className="text-nowrap">{meta.filial}</TableCell>
+                        <TableCell className="text-nowrap">{meta.cargo}</TableCell>
+                        <TableCell className="text-nowrap">{meta.nome}</TableCell>
+                        <TableCell className="text-nowrap">{meta.controle}</TableCell>
+                        <TableCell className="text-nowrap">{meta.pos}</TableCell>
+                        <TableCell className="text-nowrap">{meta.upgrade}</TableCell>
+                        <TableCell className="text-nowrap">
+                          {normalizeCurrency(meta.receita)}
+                        </TableCell>
+                        <TableCell className="text-nowrap">{meta.qtde_aparelho}</TableCell>
+                        <TableCell className="text-nowrap">
+                          {normalizeCurrency(meta.aparelho)}
+                        </TableCell>
+                        <TableCell className="text-nowrap">
+                          {normalizeCurrency(meta.acessorio)}
+                        </TableCell>
+                        <TableCell className="text-nowrap">
+                          {normalizeCurrency(meta.pitzi)}
+                        </TableCell>
+                        <TableCell className="text-nowrap">{meta.fixo}</TableCell>
+                        <TableCell className="text-nowrap">{meta.wttx}</TableCell>
+                        <TableCell className="text-nowrap">{meta.live}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell>-</TableCell>
+                      <TableCell>-</TableCell>
+                      <TableCell>-</TableCell>
+                      <TableCell>-</TableCell>
+                      <TableCell className="text-nowrap">
+                        {metas?.reduce((prev, meta) => prev + parseFloat(meta.controle || "0"), 0)}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {metas?.reduce((prev, meta) => prev + parseFloat(meta.pos || "0"), 0)}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {metas?.reduce((prev, meta) => prev + parseFloat(meta.upgrade || "0"), 0)}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {normalizeCurrency(
+                          metas?.reduce((prev, meta) => prev + parseFloat(meta.receita || "0"), 0)
+                        )}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {metas?.reduce(
+                          (prev, meta) => prev + parseFloat(meta.qtde_aparelho || "0"),
+                          0
+                        )}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {normalizeCurrency(
+                          metas?.reduce((prev, meta) => prev + parseFloat(meta.aparelho || "0"), 0)
+                        )}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {normalizeCurrency(
+                          metas?.reduce((prev, meta) => prev + parseFloat(meta.acessorio || "0"), 0)
+                        )}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {normalizeCurrency(
+                          metas?.reduce((prev, meta) => prev + parseFloat(meta.pitzi || "0"), 0)
+                        )}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {metas?.reduce((prev, meta) => prev + parseFloat(meta.fixo || "0"), 0)}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {metas?.reduce((prev, meta) => prev + parseFloat(meta.wttx || "0"), 0)}
+                      </TableCell>
+                      <TableCell className="text-nowrap">
+                        {metas?.reduce((prev, meta) => prev + parseFloat(meta.live || "0"), 0)}
+                      </TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
               </div>
             </div>
-          )}
+          </div>
         </form>
       </Form>
       <ModalFiliais

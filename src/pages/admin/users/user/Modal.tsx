@@ -30,6 +30,8 @@ const initialProps: UserFormData = {
   departamentos: [],
   updateCentrosCusto: false,
   centros_custo: [],
+  updatePerfis: false,
+  perfis: [],
   updatePermissoes: false,
   permissoes: [],
 };
@@ -57,6 +59,7 @@ const ModalUser = () => {
   userData?.filiais?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
   userData?.departamentos?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
   userData?.centros_custo?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
+  userData?.perfis?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
   userData?.permissoes?.forEach((e: Filial) => (e.id = e?.id?.toString() || ""));
 
   function handleClickCancel() {

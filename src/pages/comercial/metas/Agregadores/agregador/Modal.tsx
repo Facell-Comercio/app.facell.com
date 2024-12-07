@@ -11,7 +11,7 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { AgregadoresProps, useAgregadores } from "@/hooks/comercial/useAgregadores";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Trash } from "lucide-react";
@@ -111,25 +111,27 @@ const ModalAgregador = () => {
             cancel={handleClickCancel}
             formRef={formRef}
             isLoading={isPending}
-            blockEdit={!checkUserPermission(["GERENCIAR_AGREGADORES", "MASTER"])}
+            blockEdit={!hasPermission(["METAS:AGREGADORES_EDITAR", "MASTER"])}
           >
-            <AlertPopUp
-              title={"Deseja realmente excluir"}
-              description="Essa ação não pode ser desfeita. A agregador será excluída definitivamente do servidor."
-              action={() => {
-                deleteAgregador(id);
-              }}
-            >
-              <Button
-                type={"button"}
-                size="lg"
-                variant={"destructive"}
-                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
+            {hasPermission(["METAS:AGREGADORES_EDITAR", "MASTER"]) && (
+              <AlertPopUp
+                title={"Deseja realmente excluir"}
+                description="Essa ação não pode ser desfeita. A agregador será excluída definitivamente do servidor."
+                action={() => {
+                  deleteAgregador(id);
+                }}
               >
-                <Trash className="me-2" />
-                Excluir Agregador
-              </Button>
-            </AlertPopUp>
+                <Button
+                  type={"button"}
+                  size="lg"
+                  variant={"destructive"}
+                  className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
+                >
+                  <Trash className="me-2" />
+                  Excluir Agregador
+                </Button>
+              </AlertPopUp>
+            )}
           </ModalButtons>
         </DialogFooter>
       </DialogContent>

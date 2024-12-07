@@ -149,7 +149,7 @@ const ModalRateio = () => {
     }));
   }
 
-  const canEdit = !!formData?.canEdit;
+  const canEdit = !!formData?.canEdit || 0;
 
   return (
     <Dialog open={modalOpen} onOpenChange={handleClickCancel}>
@@ -218,22 +218,24 @@ const ModalRateio = () => {
             </span>
           </section>
         </ScrollArea>
-        {!!formData.canEdit && (
+        {!!canEdit && (
           <DialogFooter>
             {modalEditing ? (
-              <div className="flex justify-between gap-2 w-full">
-                <AlertPopUp
-                  title={"Deseja realmente excluir"}
-                  description="Essa ação não pode ser desfeita. Essa contestação será definitivamente removidas do servidor."
-                  action={() => {
-                    deleteRateio(id);
-                    closeModal();
-                  }}
-                >
-                  <Button variant={"destructive"} disabled={isPending}>
-                    <Trash2 className="me-2" size={18} /> Excluir
-                  </Button>
-                </AlertPopUp>
+              <div className={`flex ${id ? "justify-between" : "justify-end"} gap-2 w-full`}>
+                {id && (
+                  <AlertPopUp
+                    title={"Deseja realmente excluir"}
+                    description="Essa ação não pode ser desfeita. Essa contestação será definitivamente removidas do servidor."
+                    action={() => {
+                      deleteRateio(id);
+                      closeModal();
+                    }}
+                  >
+                    <Button variant={"destructive"} disabled={isPending}>
+                      <Trash2 className="me-2" size={18} /> Excluir
+                    </Button>
+                  </AlertPopUp>
+                )}
 
                 <span className="flex gap-2">
                   <Button onClick={handleClickCancel} variant={"secondary"}>

@@ -2,12 +2,7 @@ import fetchApi from "@/api/fetchApi";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { GetAllParams } from "@/types/query-params-type";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type ValeProps = {
   id?: string;
@@ -48,8 +43,6 @@ export const useVales = () => {
   const getAll = ({ pagination, filters }: GetAllParams) =>
     useQuery({
       queryKey: ["comercial", "vales", "lista", { pagination, filters }],
-      staleTime: 5 * 1000 * 60,
-      retry: false,
       queryFn: async () =>
         await fetchApi.comercial.vales.getAll({
           pagination,
@@ -61,8 +54,6 @@ export const useVales = () => {
   const getOne = (id?: string | null) =>
     useQuery({
       enabled: !!id,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
       queryKey: ["comercial", "vales", "detalhe", id],
       queryFn: async () => {
         try {
@@ -84,8 +75,6 @@ export const useVales = () => {
   const getOneAbatimento = (id?: string | null) =>
     useQuery({
       enabled: !!id,
-      retry: false,
-      staleTime: 5 * 1000 * 60,
       queryKey: ["comercial", "vales", "vale", "detalhe", id],
       queryFn: async () => {
         try {
@@ -109,9 +98,7 @@ export const useVales = () => {
   const insertOne = () =>
     useMutation({
       mutationFn: async (data: ValeProps) => {
-        return await api
-          .post(`comercial/vales`, data)
-          .then((response) => response.data);
+        return await api.post(`comercial/vales`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -193,9 +180,7 @@ export const useVales = () => {
   const update = () =>
     useMutation({
       mutationFn: async (data: ValeProps) => {
-        return await api
-          .put(`comercial/vales`, data)
-          .then((response) => response.data);
+        return await api.put(`comercial/vales`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -223,9 +208,7 @@ export const useVales = () => {
   const updateAbatimento = () =>
     useMutation({
       mutationFn: async (data: AbatimentosProps) => {
-        return await api
-          .put(`comercial/vales/abatimentos`, data)
-          .then((response) => response.data);
+        return await api.put(`comercial/vales/abatimentos`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -253,9 +236,7 @@ export const useVales = () => {
   const deleteVale = () =>
     useMutation({
       mutationFn: async (id: string | null | undefined) => {
-        return await api
-          .delete(`comercial/vales/${id}`)
-          .then((response) => response.data);
+        return await api.delete(`comercial/vales/${id}`).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({

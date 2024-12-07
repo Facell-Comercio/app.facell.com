@@ -1,6 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import ConciliacaoCP from "./conciliacao/cp/ConciliacaoPagamentos";
 import ConciliacaoCR from "./conciliacao/cr/ConciliacaoRecebimentos";
@@ -14,7 +14,7 @@ const ConciliacaoBancaria = () => {
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("tab") || "";
 
-  const authorized = checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER");
+  const authorized = checkUserDepartments("FINANCEIRO") || hasPermission("MASTER");
   if (!authorized) {
     return <Navigate to={"/not-authorized"} />;
   }

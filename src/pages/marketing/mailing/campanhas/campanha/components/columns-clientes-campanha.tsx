@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate, normalizeFirstAndLastName } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pen } from "lucide-react";
@@ -45,7 +45,7 @@ export const columnsTableClientesSubcampanha: ColumnDef<ClienteProps>[] = [
     // size: 80,
     cell: (info) => {
       const id = info.getValue<string>();
-      const canEdit = checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER");
+      const canEdit = checkUserDepartments("MARKETING", true) || hasPermission("MASTER");
       return (
         <div className="flex gap-2 uppercase">
           {canEdit && (

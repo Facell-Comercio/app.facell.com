@@ -22,14 +22,12 @@ const openModal = useStoreEspelho.getState().openModal;
 
 export const columnsTable: ColumnDef<RowEspelho>[] = [
   {
-    accessorKey: "acoes",
+    accessorKey: "id",
     header: "AÇÕES",
     cell: (info) => (
       <div
         className="font-semibold cursor-pointer text-blue-500 rounded-lg"
-        onClick={() => {
-          openModal(info.getValue<string>());
-        }}
+        onClick={() => openModal(info.getValue<string>())}
       >
         <FileSearch2 />
       </div>
@@ -50,10 +48,7 @@ export const columnsTable: ColumnDef<RowEspelho>[] = [
     },
     header: "att",
   },
-  {
-    header: "ID",
-    accessorKey: "id",
-  },
+
   {
     id: "ref",
     accessorKey: "ref",
@@ -74,8 +69,8 @@ export const columnsTable: ColumnDef<RowEspelho>[] = [
     cell: (info) => {
       const label = info.getValue<string>();
       return (
-        <div title={label || ""} className="block max-w-96 truncate uppercase">
-          {label || ""}
+        <div title={label} className="block max-w-96 truncate uppercase">
+          {label}
         </div>
       );
     },

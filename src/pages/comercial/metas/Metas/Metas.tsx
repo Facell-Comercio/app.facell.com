@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 
 import { useMetas } from "@/hooks/comercial/useMetas";
 import { useStoreMetasAgregadores } from "../store-metas-agregadores";
@@ -19,10 +19,7 @@ const Metas = () => {
     state.setPagination,
     state.filters,
   ]);
-  const [mes, ano] = useStoreMetasAgregadores((state) => [
-    state.mes,
-    state.ano,
-  ]);
+  const [mes, ano] = useStoreMetasAgregadores((state) => [state.mes, state.ano]);
   const { data, refetch, isLoading } = useMetas().getAll({
     pagination,
     filters: {
@@ -51,13 +48,9 @@ const Metas = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex gap-2 justify-end">
-        {checkUserPermission(["GERENCIAR_METAS", "MASTER"]) && (
-          <ButtonImportMeta />
-        )}
+        {hasPermission(["METAS:METAS_CRIAR", "MASTER"]) && <ButtonImportMeta />}
         <ButtonExportMeta />
-        {checkUserPermission(["GERENCIAR_METAS", "MASTER"]) && (
-          <ButtonNovaMeta />
-        )}
+        {hasPermission(["METAS:METAS_CRIAR", "MASTER"]) && <ButtonNovaMeta />}
       </div>
       <FiltersMeta
         refetch={() => {
@@ -76,8 +69,7 @@ const Metas = () => {
       {!comparisonIsLoading && data?.canView && (
         <>
           <h1 className="font-medium text-lg mt-4">
-            Comparativo Meta Filiais X Metas Consultores {mes.padStart(2, "0")}/
-            {ano}
+            Comparativo Meta Filiais X Metas Consultores {mes.padStart(2, "0")}/{ano}
           </h1>
           <ComparisonTable data={comparisonData} />
         </>

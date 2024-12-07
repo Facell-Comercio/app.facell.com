@@ -14,11 +14,20 @@ import { InputWithLabel } from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuthStore } from "@/context/auth-store";
+import { normalizeDate } from "@/helpers/mask";
 import {
   ContestacaoVendasInvalidadasProps,
   useVendasInvalidadas,
 } from "@/hooks/comercial/useVendasInvalidadas";
-import { CircleCheck, CircleX, Eye, Pencil, Save, Trash2 } from "lucide-react";
+import {
+  CircleCheck,
+  CircleX,
+  Eye,
+  MessageSquareMore,
+  MessageSquareText,
+  Pencil,
+  Save,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useStoreVendaInvalidada } from "./store";
 
@@ -70,12 +79,7 @@ const ModalContestacao = () => {
     isSuccess: updateStatusContestacaoIsSuccess,
     isError: updateStatusContestacaoIsError,
   } = useVendasInvalidadas().updateStatusContestacao();
-  const {
-    mutate: deleteContestacao,
-    // isPending: deleteContestacaoIsPending,
-    // isSuccess: deleteContestacaoIsSuccess,
-    // isError: deleteContestacaoIsError,
-  } = useVendasInvalidadas().deleteContestacao();
+
   const [formData, setFormData] = useState<ContestacaoVendasInvalidadasProps>(
     id ? data : { ...initialContestacao, user: user?.nome, id_venda_invalida }
   );
@@ -139,62 +143,85 @@ const ModalContestacao = () => {
             >
               {formData?.status && formData?.status.replaceAll("_", " ")}
             </span>
-            <InputWithLabel
-              label="Usuário da Contestação:"
-              value={formData?.user || ""}
-              readOnly
-              disabled={!modalEditing}
-            />
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Contestação</label>
-              <Textarea
-                value={formData?.contestacao || ""}
-                readOnly={!!id}
-                disabled={!modalEditing}
-                onChange={(e) => setFormData((prev) => ({ ...prev, contestacao: e.target.value }))}
-              />
-            </div>
-            {id && (
-              <>
+            <section className="flex flex-col gap-2 bg-slate-200 dark:bg-blue-950 p-2 rounded-md">
+              <span className="flex items-center">
+                <MessageSquareMore className="me-2" size={20} />
+                <h3 className="font-semibold text-md">Contestação</h3>
+              </span>
+              <div className="flex gap-3 flex-wrap">
                 <InputWithLabel
-                  label="Usuário da Resposta:"
-                  value={formData?.user_resposta || user?.nome || ""}
+                  label="Usuário:"
+                  value={formData?.user || ""}
                   readOnly
+                  className="flex-1"
                   disabled={!modalEditing}
                 />
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium">Resposta:</label>
+                <InputWithLabel
+                  label="Data:"
+                  value={normalizeDate(formData?.created_at || new Date()) || ""}
+                  readOnly
+                  className="flex-1"
+                  disabled={!modalEditing}
+                />
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-sm font-medium">Contestação</label>
                   <Textarea
-                    value={formData?.resposta || ""}
-                    readOnly={formData?.status !== "em_analise"}
+                    value={formData?.contestacao || ""}
+                    readOnly={!!id}
                     disabled={!modalEditing}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, resposta: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, contestacao: e.target.value }))
+                    }
                   />
                 </div>
-              </>
+              </div>
+            </section>
+
+            {id && (
+              <section className="flex flex-col gap-2 bg-slate-200 dark:bg-blue-950 p-2 rounded-md">
+                <span className="flex items-center">
+                  <MessageSquareText className="me-2" size={20} />
+                  <h3 className="font-semibold text-md">Resposta</h3>
+                </span>
+
+                <div className="flex gap-2 flex-wrap">
+                  <InputWithLabel
+                    label="Usuário:"
+                    value={formData?.user_resposta || user?.nome || ""}
+                    readOnly
+                    className="flex-1"
+                    disabled={!modalEditing}
+                  />
+                  <InputWithLabel
+                    label="Data:"
+                    value={normalizeDate(formData?.data_resposta || new Date()) || ""}
+                    readOnly
+                    className="flex-1"
+                    disabled={!modalEditing}
+                  />
+                  <div className="flex flex-col gap-2 w-full">
+                    <label className="text-sm font-medium">Resposta:</label>
+                    <Textarea
+                      value={formData?.resposta || ""}
+                      disabled={!modalEditing}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, resposta: e.target.value }))
+                      }
+                    />
+                  </div>
+                </div>
+              </section>
             )}
           </section>
         </ScrollArea>
         <DialogFooter>
           {modalEditing ? (
-            <div className="flex justify-between gap-2 w-full">
-              <AlertPopUp
-                title={"Deseja realmente excluir"}
-                description="Essa ação não pode ser desfeita. Essa contestação será definitivamente removidas do servidor."
-                action={() => {
-                  deleteContestacao(id);
-                  closeModal();
-                }}
-              >
-                <Button variant={"destructive"} disabled={isPending}>
-                  <Trash2 className="me-2" size={18} /> Excluir
-                </Button>
-              </AlertPopUp>
+            <div className={`flex justify-end gap-2 w-full`}>
               {id ? (
-                formData?.status === "em_analise" && (
+                <>
                   <div className="flex gap-2">
                     <AlertPopUp
-                      title={"Deseja realmente marcar como procedente"}
+                      title={"Deseja realmente marcar como ciente"}
                       description="Essa ação não pode ser desfeita. Essa contestação será definitivamente definida como improcedente do servidor."
                       action={() =>
                         updateStatusContestacao({
@@ -209,7 +236,7 @@ const ModalContestacao = () => {
                           !formData?.resposta ? "Primeiro defina a resposta para a contestação" : ""
                         }
                       >
-                        <Button variant={"warning"} disabled={isPending || !formData?.resposta}>
+                        <Button variant={"destructive"} disabled={isPending || !formData?.resposta}>
                           {/* <CircleAlert className="me-2" size={18} /> */}
                           <Eye className="me-2" size={18} />
                           Ciente
@@ -217,7 +244,7 @@ const ModalContestacao = () => {
                       </span>
                     </AlertPopUp>
                     <AlertPopUp
-                      title={"Deseja realmente marcar como procedente"}
+                      title={"Deseja realmente marcar como improcedente"}
                       description="Essa ação não pode ser desfeita. Essa contestação será definitivamente definida como improcedente do servidor."
                       action={() =>
                         updateStatusContestacao({
@@ -259,7 +286,7 @@ const ModalContestacao = () => {
                       </span>
                     </AlertPopUp>
                   </div>
-                )
+                </>
               ) : (
                 <Button onClick={handleSubmit}>
                   <Save className="me-2" />

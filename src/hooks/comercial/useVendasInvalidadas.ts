@@ -10,6 +10,7 @@ export type ContestacaoVendasInvalidadasProps = {
   id?: string;
   id_venda_invalida?: string;
   status?: string;
+  created_at?: string;
   contestacao?: string;
   user?: string;
   resposta?: string;
@@ -138,6 +139,37 @@ export const useVendasInvalidadas = () => {
       mutationFn: async (data: VendasInvalidadasProps) => {
         return await api
           .put(`comercial/comissionamento/vendas-invalidadas`, data)
+          .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        const errorMessage =
+          // @ts-expect-error 'Vai funcionar'
+          error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const updateLote = () =>
+    useMutation({
+      mutationFn: async (data: { status: string; filters: unknown }) => {
+        return await api
+          .put(`comercial/comissionamento/vendas-invalidadas/lote`, data)
           .then((response) => response.data);
       },
       onSuccess() {
@@ -548,6 +580,7 @@ export const useVendasInvalidadas = () => {
     getOne,
     insertOne,
     update,
+    updateLote,
     excluirVendasInvalidadas,
     importVendasInvalidadas,
     processarVendasInvalidadas,
