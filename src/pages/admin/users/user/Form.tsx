@@ -309,6 +309,14 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
                       label="Email"
                       control={form.control}
                     />
+
+                    <FormInput
+                      className="flex-1 min-w-32"
+                      name="cpf"
+                      readOnly={!modalEditing}
+                      label="CPF"
+                      control={form.control}
+                    />
                   </div>
                 </div>
               </div>

@@ -1,3 +1,4 @@
+import { isValidCPF } from "@/helpers/isValidCPF";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -6,6 +7,7 @@ const schemaUser = z.object({
   id: z.coerce.number().optional(),
   active: z.coerce.boolean(),
   email: z.string().toLowerCase().trim().email(),
+  cpf: z.string().trim().transform((val) => val.replace(/[^\d]/g, "").padStart(11, "0")).refine(isValidCPF, { message: "CPF inválido" }),
   nome: z.string().trim().min(12, "A nome deve ter no mínimo 12 caracteres").toUpperCase(),
   img_url: z.string().optional(),
 
