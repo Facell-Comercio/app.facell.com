@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Download } from "lucide-react";
 
+// @ts-ignore
 const ButtonExportPadrao = ({ href }: { href: string }) => {
   return (
     <DropdownMenu>

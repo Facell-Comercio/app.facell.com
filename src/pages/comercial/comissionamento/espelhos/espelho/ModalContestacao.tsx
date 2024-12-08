@@ -77,12 +77,12 @@ const ModalContestacao = () => {
     isSuccess: updateStatusContestacaoIsSuccess,
     isError: updateStatusContestacaoIsError,
   } = useEspelhos().updateStatusContestacao();
-  const {
-    mutate: deleteContestacao,
-    // isPending: deleteContestacaoIsPending,
-    // isSuccess: deleteContestacaoIsSuccess,
-    // isError: deleteContestacaoIsError,
-  } = useEspelhos().deleteContestacao();
+  // const {
+  //   mutate: deleteContestacao,
+  //   // isPending: deleteContestacaoIsPending,
+  //   // isSuccess: deleteContestacaoIsSuccess,
+  //   // isError: deleteContestacaoIsError,
+  // } = useEspelhos().deleteContestacao();
   const [formData, setFormData] = useState<ContestacaoEspelhosProps>(
     id ? data : { ...initialContestacao, user: user?.nome, id_comissao }
   );

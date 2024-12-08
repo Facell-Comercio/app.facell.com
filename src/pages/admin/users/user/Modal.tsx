@@ -22,6 +22,7 @@ const initialProps: UserFormData = {
   active: true,
   nome: "",
   email: "",
+  cpf: "",
   img_url: "",
 
   updateFiliais: false,
