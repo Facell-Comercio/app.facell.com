@@ -1,4 +1,4 @@
-import { checkUserDepartments, hasModuleAccess, hasPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { Play, Settings } from "lucide-react";
 import { ReactNode } from "react";
 import {
@@ -207,7 +207,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaSackDollar />,
     uri: "financeiro",
-    visible: () => hasPermission("MASTER") || hasModuleAccess("FINANCEIRO"),
+    visible: () => hasPermission(["MASTER", "FINANCEIRO:ACESSO"]) || checkUserDepartments('FINANCEIRO'),
     children: [
       {
         name: "Contas a Pagar",
@@ -221,7 +221,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CR",
         uri: "/financeiro/contas-a-receber",
-        visible: () => true,
+        visible: () => hasPermission('RECEITAS:VER'),
       },
       {
         name: "Controle de Caixa",
