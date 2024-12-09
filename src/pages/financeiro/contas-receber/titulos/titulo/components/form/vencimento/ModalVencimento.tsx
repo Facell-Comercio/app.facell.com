@@ -144,7 +144,7 @@ export function ModalVencimento({
       }
       addVencimento({
         id: new Date().getTime().toString(),
-        data_vencimento: String(data.data_vencimento),
+        data_vencimento: data.data_vencimento,
         valor: data.valor,
       });
     }

@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useStoreCampanha } from "../../store";
 
-const ModalDefinirAparelho = () => {
+const ModalDefinirAparelho = ({ reset }: { reset: () => void }) => {
   const [qtde_clientes, modalOpen, closeModal, isPending, setIsPending, filters_lote] =
     useStoreCampanha((state) => [
       state.qtde_clientes,
@@ -103,9 +103,10 @@ const ModalDefinirAparelho = () => {
             Fechar
           </Button>
           <Button
-            onClick={() =>
-              updateClienteLote({ data: { produto_ofertado: aparelho }, filters: filters_lote })
-            }
+            onClick={() => {
+              updateClienteLote({ data: { produto_ofertado: aparelho }, filters: filters_lote });
+              reset();
+            }}
             disabled={isPending}
           >
             {isPending ? (

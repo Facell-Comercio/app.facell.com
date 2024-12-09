@@ -31,7 +31,6 @@ const ModalVendasInvalidas = () => {
   const [
     modalOpen,
     closeModal,
-    openModalContestacao,
     isPending,
     id_comissao,
     qtde_vendas_invalidas,
@@ -39,7 +38,6 @@ const ModalVendasInvalidas = () => {
   ] = useStoreEspelho((state) => [
     state.modalVendasInvalidasOpen,
     state.closeModalVendasInvalidas,
-    state.openModalContestacao,
     state.isPending,
 
     state.id,

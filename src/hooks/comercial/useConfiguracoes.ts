@@ -1,6 +1,6 @@
 import { api } from "@/lib/axios";
 import { GetAllParams } from "@/types/query-params-type";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export type ConfiguracoesProps = {
   id?: string;
@@ -45,7 +45,6 @@ export interface SegmentoProps {
 }
 
 export const useConfiguracoes = () => {
-  const queryClient = useQueryClient();
 
   const getEscalonamentos = () =>
     useQuery({
