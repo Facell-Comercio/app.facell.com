@@ -79,16 +79,14 @@ const ModalBoleto = () => {
   const handleCopyLink = async () => {
     try {
       await copyToClipboard(`${baseURL}/visualizar.boleto.caixa?id=${data?.id}`);
-      setLinkCopiado(true)
+      setLinkCopiado(true);
     } catch (error) {
-
     } finally {
       setTimeout(() => {
-        setLinkCopiado(false)
-      }, 3000)
+        setLinkCopiado(false);
+      }, 3000);
     }
-
-  }
+  };
 
   async function handleSelectionContaBancaria(conta_bancaria: ItemContaBancariaProps) {
     try {
@@ -148,16 +146,17 @@ const ModalBoleto = () => {
                 size={"xs"}
                 variant={linkCopiado ? "success" : "secondary"}
               >
-                {linkCopiado ? <>
-                  <CopyCheck size={14} className="me-1" />
-                  Copiado!
-                </>
-                  :
+                {linkCopiado ? (
+                  <>
+                    <CopyCheck size={14} className="me-1" />
+                    Copiado!
+                  </>
+                ) : (
                   <>
                     <Copy size={14} className="me-1" />
                     Copiar Link
                   </>
-                }
+                )}
               </Button>
               <Button
                 onClick={() => {
@@ -273,7 +272,7 @@ const ModalBoleto = () => {
                 cancelar(id || "");
               }}
             >
-              {data && (data.status === "aguardando_emissao" || data.status === "emitido") && (
+              {data && ["aguardando_emissao", "emitido", "atrasado"].includes(data.status) && (
                 <Button variant={"destructive"}>
                   <CircleX size={18} className="me-2" />
                   Cancelar Boleto

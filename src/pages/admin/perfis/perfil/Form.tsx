@@ -171,12 +171,12 @@ const FormUsers = ({
               </Button>
             </div>
             <div className="flex w-full items-end gap-3 ">
-              <Table divClassname="bg-background rounded-md">
+              <Table divClassname="bg-background text-foreground rounded-md">
                 <TableHeader className="bg-secondary">
                   <TableRow>
-                    <TableHead className="text-white">Ação</TableHead>
-                    <TableHead className="text-white">Módulo</TableHead>
-                    <TableHead className="text-white">Permissão</TableHead>
+                    <TableHead className="text-foreground">Ação</TableHead>
+                    <TableHead className="text-foreground">Módulo</TableHead>
+                    <TableHead className="text-foreground">Permissão</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

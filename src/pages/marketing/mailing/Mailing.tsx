@@ -17,21 +17,23 @@ const MailingPage = () => {
       <Tabs defaultValue={activeTab || "clientes"} className="w-full">
         <TabsList className="w-full justify-start flex h-auto">
           <ScrollArea className="w-fill whitespace-nowrap rounded-md h-auto">
-            <Link to={`${uri}?tab=clientes`}>
-              <TabsTrigger value="clientes">Clientes</TabsTrigger>
-            </Link>
             {isGestor && (
-              <Link to={`${uri}?tab=campanhas`}>
-                <TabsTrigger value="campanhas">Campanhas</TabsTrigger>
+              <Link to={`${uri}?tab=clientes`}>
+                <TabsTrigger value="clientes">Clientes</TabsTrigger>
               </Link>
             )}
+            <Link to={`${uri}?tab=campanhas`}>
+              <TabsTrigger value="campanhas">Campanhas</TabsTrigger>
+            </Link>
 
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </TabsList>
-        <TabsContent value="clientes">
-          <Clientes />
-        </TabsContent>
+        {isGestor && (
+          <TabsContent value="clientes">
+            <Clientes />
+          </TabsContent>
+        )}
         <TabsContent value="campanhas">
           <Campanhas />
         </TabsContent>

@@ -232,13 +232,13 @@ const ModalVendaInvalidada = () => {
                 <TableHeader className="bg-secondary">
                   <TableRow>
                     {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_RESPONDER"]) && (
-                      <TableHead className="text-white">Ações</TableHead>
+                      <TableHead className="text-foreground">Ações</TableHead>
                     )}
-                    <TableHead className="text-white">Status</TableHead>
-                    <TableHead className="text-white">Data Criação</TableHead>
-                    <TableHead className="text-white">Obs. Gestor</TableHead>
-                    <TableHead className="text-white">Data Resposta</TableHead>
-                    <TableHead className="text-white">Obs. ADM</TableHead>
+                    <TableHead className="text-foreground">Status</TableHead>
+                    <TableHead className="text-foreground">Data Criação</TableHead>
+                    <TableHead className="text-foreground">Obs. Gestor</TableHead>
+                    <TableHead className="text-foreground">Data Resposta</TableHead>
+                    <TableHead className="text-foreground">Obs. ADM</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="bg-background">
@@ -332,12 +332,12 @@ const ModalVendaInvalidada = () => {
                 <TableHeader className="bg-secondary">
                   <TableRow>
                     {hasPermission(["MASTER", "COMISSOES:VENDAS_INVALIDAS_EDITAR"]) && (
-                      <TableHead className="text-white">Ações</TableHead>
+                      <TableHead className="text-foreground">Ações</TableHead>
                     )}
-                    <TableHead className="text-white">Nome</TableHead>
-                    <TableHead className="text-white">Cargo</TableHead>
-                    <TableHead className="text-white">Total</TableHead>
-                    <TableHead className="text-white">Percentual</TableHead>
+                    <TableHead className="text-foreground">Nome</TableHead>
+                    <TableHead className="text-foreground">Cargo</TableHead>
+                    <TableHead className="text-foreground">Total</TableHead>
+                    <TableHead className="text-foreground">Percentual</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="bg-background">

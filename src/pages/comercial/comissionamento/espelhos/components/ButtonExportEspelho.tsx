@@ -5,17 +5,14 @@ import { Download } from "lucide-react";
 import { useStoreTableEspelhos } from "../table/store-table";
 
 const ButtonExportEspelho = () => {
-  const [filters] = useStoreTableEspelhos(
-    (state) => [state.filters]
-  );
+  const [filters] = useStoreTableEspelhos((state) => [state.filters]);
 
-  const { mutate: exportEspelhos, isPending } =
-    useEspelhos().exportEspelhos();
+  const { mutate: exportEspelhos, isPending } = useEspelhos().exportEspelhos();
 
   return (
     <Button
       variant={"outline"}
-      className="border-blue-200 dark:border-success"
+      className="border-success"
       onClick={() =>
         exportEspelhos({
           filters,
@@ -23,8 +20,7 @@ const ButtonExportEspelho = () => {
       }
       disabled={isPending}
     >
-      <Download className="me-2" size={18} />{" "}
-      Exportar
+      <Download className="me-2" size={18} /> Exportar
     </Button>
   );
 };

@@ -30,7 +30,7 @@ const ButtonAlteracaoLote = () => {
     <>
       <Button
         variant={"outline"}
-        className="border border-orange-200 dark:border-orange-600"
+        className="border border-warning"
         onClick={() => openModalAlteracoesLote()}
       >
         <Edit className="me-2" size={18} /> Alterar em lote

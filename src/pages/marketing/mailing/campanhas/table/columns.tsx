@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { normalizeDate } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch } from "lucide-react";
@@ -24,14 +25,20 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     accessorKey: "id",
     header: "AÇÃO",
     enableSorting: false,
-    cell: (info) => (
-      <span
-        className="font-semibold cursor-pointer text-blue-500"
-        onClick={() => openModal(info.getValue<number>().toString())}
-      >
-        {<FileSearch />}
-      </span>
-    ),
+    cell: (info) => {
+      const original = info.row.original;
+      return (
+        <Button
+          className="font-semibold cursor-pointer text-blue-500"
+          disabled={parseInt(original.qtde_clientes) < 1}
+          size={"xs"}
+          variant={"ghost"}
+          onClick={() => openModal(info.getValue<number>().toString())}
+        >
+          {<FileSearch />}
+        </Button>
+      );
+    },
     sortDescFirst: true,
   },
   {
@@ -39,9 +46,12 @@ export const columnsTable: ColumnDef<RowClientes>[] = [
     accessorKey: "nome",
     cell: (info) => {
       const label = info.getValue<string>();
-      const id = info.row.original.id;
+      const { id, qtde_clientes } = info.row.original;
       return (
-        <span className="uppercase cursor-pointer" onClick={() => openModal(id)}>
+        <span
+          className="uppercase cursor-pointer"
+          onClick={() => parseInt(qtde_clientes) > 0 && openModal(id)}
+        >
           {label}
         </span>
       );

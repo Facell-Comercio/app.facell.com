@@ -6,6 +6,7 @@ import { VendedorSchema } from "./Modal";
 const schemaVendedor = z.object({
   // Dados Vendedor
   id: z.string().optional(),
+  id_user: z.string().optional(),
   nome: z
     .string()
     .refine((v) => v.trim() !== "", { message: "Nome inválido" })
