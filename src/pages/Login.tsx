@@ -33,13 +33,7 @@ const useLogin = () => {
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
 
-  const handleSubmit = async ({
-    email,
-    senha,
-  }: {
-    email: string;
-    senha: string;
-  }) => {
+  const handleSubmit = async ({ email, senha }: { email: string; senha: string }) => {
     setLoginLoading(true);
     setLoginError("");
 
@@ -96,11 +90,7 @@ const Login = () => {
               <FormItem className="text-left w-60">
                 <FormLabel>E-mail</FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Seu email facell"
-                    {...field}
-                  />
+                  <Input type="email" placeholder="Seu email facell" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -131,12 +121,7 @@ const Login = () => {
 
           {loginError && <ErrorAlert message={loginError} />}
 
-          <Button
-            type="submit"
-            variant="destructive"
-            className="w-60"
-            disabled={loginLoading}
-          >
+          <Button type="submit" variant="destructive" className="w-60" disabled={loginLoading}>
             {loginLoading ? (
               <span className="flex gap-2">
                 <FaSpinner size={18} className="animate-spin" /> Entrando

@@ -1,4 +1,4 @@
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { Play, Settings } from "lucide-react";
 import { ReactNode } from "react";
 import {
@@ -61,7 +61,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "V",
         uri: "comercial/vales",
-        visible: () => checkUserPermission(["GERENCIAR_VALES", "VISUALIZAR_VALES", "MASTER"]),
+        visible: () => hasPermission(["VALES:VER", "MASTER"]),
       },
       {
         name: "Metas",
@@ -91,7 +91,7 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "C",
         uri: "pessoal/colaboradores",
-        visible: () => checkUserPermission(["MASTER"]),
+        visible: () => hasPermission(["MASTER"]),
       },
       {
         name: "Quadro",
@@ -207,7 +207,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaSackDollar />,
     uri: "financeiro",
-    visible: () => true,
+    visible: () => hasPermission(["MASTER", "FINANCEIRO:ACESSO"]) || checkUserDepartments('FINANCEIRO'),
     children: [
       {
         name: "Contas a Pagar",
@@ -221,14 +221,14 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CR",
         uri: "/financeiro/contas-a-receber",
-        visible: () => true,
+        visible: () => hasPermission(["MASTER", "FINANCEIRO:ACESSO", "RECEITAS:VER"]),
       },
       {
         name: "Controle de Caixa",
         type: "link",
         shortName: "CC",
         uri: "/financeiro/controle-de-caixa",
-        visible: () => checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
+        visible: () => checkUserDepartments("FINANCEIRO") || hasPermission("MASTER"),
       },
       {
         name: "Orçamento",
@@ -242,14 +242,14 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "CBK",
         uri: "/financeiro/conciliacao-bancaria",
-        visible: () => checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
+        visible: () => checkUserDepartments("FINANCEIRO") || hasPermission("MASTER"),
       },
       {
         name: "Tesouraria",
         type: "link",
         shortName: "T",
         uri: "/financeiro/tesouraria",
-        visible: () => checkUserDepartments("FINANCEIRO") || checkUserPermission("MASTER"),
+        visible: () => checkUserDepartments("FINANCEIRO") || hasPermission("MASTER"),
       },
       {
         name: "Cadastros",
@@ -279,7 +279,7 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaBullhorn />,
     uri: "marketing",
-    visible: () => checkUserDepartments("MARKETING") || checkUserPermission("MASTER"),
+    visible: () => checkUserDepartments("MARKETING") || hasPermission("MASTER"),
     children: [
       {
         name: "Patrocinado",
@@ -307,14 +307,14 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "M",
         uri: "marketing/mailing",
-        visible: () => checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER"),
+        visible: () => checkUserDepartments("MARKETING", true) || hasPermission("MASTER"),
       },
       {
         name: "Cadastros",
         type: "link",
         shortName: "C",
         uri: "marketing/cadastros",
-        visible: () => checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER"),
+        visible: () => checkUserDepartments("MARKETING", true) || hasPermission("MASTER"),
       },
     ],
   },
@@ -324,6 +324,6 @@ export const sidebarItems: SidebarItem[] = [
     type: "link",
     icon: <Settings size={16} />,
     uri: "/administracao",
-    visible: () => checkUserPermission("MASTER"),
+    visible: () => hasPermission("MASTER"),
   },
 ];

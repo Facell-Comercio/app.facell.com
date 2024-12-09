@@ -47,7 +47,9 @@ const schemaAgregador = z.object({
     .min(3, "Campo Obrigatório")
     .transform((n) => String(n).toUpperCase()),
   metas_agregadas: z
-    .string().optional(),
+    .string()
+    .trim()
+    .transform((n) => String(n).toUpperCase()),
   metas: z.array(
     z.object({
       id: z.coerce.string().optional(),

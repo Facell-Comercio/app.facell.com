@@ -6,7 +6,7 @@ import { initialPropsTituloCR } from "./store";
 export const vencimentoSchema = z.object({
   id: z.string().optional(),
   status: z.string().optional(),
-  data_vencimento: z.coerce.string({ required_error: "Campo obrigatório" }),
+  data_vencimento: z.coerce.date({ required_error: "Campo obrigatório" }),
   valor: z.string().min(0),
 });
 

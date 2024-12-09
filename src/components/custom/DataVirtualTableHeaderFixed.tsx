@@ -16,13 +16,19 @@ type TableProps = {
   data: any;
   columns: ColumnDef<unknown, any>[];
   className?: string;
+  divClassName?: string;
   isLoading?: boolean;
+  variant?: "default" | "secondary";
+  headerTextPosition?: "left" | "right" | "center";
 };
 export const DataVirtualTableHeaderFixed = ({
   data,
   columns,
   className,
+  divClassName,
   isLoading,
+  variant,
+  headerTextPosition = "center",
 }: TableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -57,7 +63,7 @@ export const DataVirtualTableHeaderFixed = ({
 
   return (
     <div className="flex flex-col gap-3 overflow-hidden">
-      <div className="rounded-lg overflow-auto z-40 scroll-thin w-full">
+      <div className={`rounded-lg overflow-auto z-40 scroll-thin w-full ${divClassName}`}>
         <div
           ref={parentRef}
           className={cn(`h-[200px] overflow-auto scroll-thin z-50 relative min-w-full`, className)}
@@ -68,9 +74,9 @@ export const DataVirtualTableHeaderFixed = ({
             }}
           >
             <table className="grid text-nowrap text-xs w-full">
-              <thead className="grid sticky top-0 z-30 border bg-slate-300 dark:bg-gray-900">
+              <thead className="grid sticky top-0 z-30 border bg-slate-300 dark:bg-gray-900 px-2">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <tr className="flex w-full" key={headerGroup.id}>
+                  <tr className={`flex w-full text-${headerTextPosition}`} key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
                       return (
                         <th
@@ -116,7 +122,9 @@ export const DataVirtualTableHeaderFixed = ({
                     return (
                       <tr
                         key={row.id}
-                        className="flex absolute items-center border-b border-gray-900 transition-all hover:bg-secondary/60 h-[33px]"
+                        className={`flex absolute items-center border-b border-gray-900 transition-all hover:bg-secondary/60 h-[33px] ${
+                          variant === "secondary" && "odd:bg-secondary/60 even:bg-secondary/40"
+                        }`}
                         style={{
                           transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
                           width: "100%",

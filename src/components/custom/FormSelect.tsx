@@ -7,13 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 type Toption = {
   value: string;
@@ -49,6 +43,7 @@ const FormSelect = ({
   selectClassName,
   showAll,
   disabled,
+  readOnly,
   placeholder,
 
   value,
@@ -60,14 +55,10 @@ const FormSelect = ({
         control={control}
         name={name}
         render={({ field }) => (
-          <FormItem
-            className={`flex-1 ${
-              type === "hidden" && "hidden"
-            } ${selectClassName}`}
-          >
+          <FormItem className={`flex-1 ${type === "hidden" && "hidden"} ${selectClassName}`}>
             {label && <FormLabel>{label}</FormLabel>}
             <Select
-              disabled={disabled}
+              disabled={disabled || readOnly}
               value={field.value}
               name={field.name}
               onValueChange={(event) => {
@@ -113,11 +104,7 @@ const FormSelect = ({
         <SelectContent>
           {showAll && <SelectItem value="all">TODOS</SelectItem>}
           {options?.map((item: Toption) => (
-            <SelectItem
-              className="text-left"
-              key={item.value}
-              value={item.value}
-            >
+            <SelectItem className="text-left" key={item.value} value={item.value}>
               {item.label}
             </SelectItem>
           ))}

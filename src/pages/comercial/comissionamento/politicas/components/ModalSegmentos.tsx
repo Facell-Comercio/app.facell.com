@@ -14,14 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-} from "@/components/ui/popover";
-import {
-  ScrollArea,
-  ScrollBar,
-} from "@/components/ui/scroll-area";
+import { Popover, PopoverContent } from "@/components/ui/popover";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -30,16 +24,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  SegmentoProps,
-  useConfiguracoes,
-} from "@/hooks/comercial/useConfiguracoes";
+import { SegmentoProps, useConfiguracoes } from "@/hooks/comercial/useConfiguracoes";
 import { PopoverTrigger } from "@radix-ui/react-popover";
-import {
-  EraserIcon,
-  FilterIcon,
-  Info,
-} from "lucide-react";
+import { EraserIcon, FilterIcon, Info } from "lucide-react";
 import { useState } from "react";
 
 interface IModalSegmentos {
@@ -60,14 +47,11 @@ const ModalSegmentos = ({
   onOpenChange,
   closeOnSelection,
 }: IModalSegmentos) => {
-  const [filters, setFilters] = useState(
-    defaultFilters
-  );
+  const [filters, setFilters] = useState(defaultFilters);
 
-  const { data, isLoading, isError, refetch } =
-    useConfiguracoes().getSegmentos({
-      filters,
-    });
+  const { data, isError, refetch } = useConfiguracoes().getSegmentos({
+    filters,
+  });
 
   async function handleClickFilter() {
     await new Promise((resolve) => {
@@ -94,26 +78,17 @@ const ModalSegmentos = ({
     }
     handleSelection(item);
   }
-  const [itemOpen, setItemOpen] =
-    useState<string>("item-1");
+  const [itemOpen, setItemOpen] = useState<string>("item-1");
 
   if (isError) return null;
   if (!open) return null;
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>
-            Lista de Segmentos
-          </DialogTitle>
-          <DialogDescription>
-            Selecione uma ao clicar no botão à
-            direita.
-          </DialogDescription>
+          <DialogTitle>Lista de Segmentos</DialogTitle>
+          <DialogDescription>Selecione uma ao clicar no botão à direita.</DialogDescription>
 
           <Accordion
             type="single"
@@ -122,41 +97,19 @@ const ModalSegmentos = ({
             onValueChange={(e) => setItemOpen(e)}
             className="p-2 border dark:border-slate-800 rounded-lg flex-1"
           >
-            <AccordionItem
-              value="item-1"
-              className="relative border-0"
-            >
+            <AccordionItem value="item-1" className="relative border-0">
               <div className="flex gap-3 items-center absolute start-16 topy-1 px-1.">
-                <Button
-                  size={"xs"}
-                  onClick={() =>
-                    handleClickFilter()
-                  }
-                >
+                <Button size={"xs"} onClick={() => handleClickFilter()}>
                   Aplicar
-                  <FilterIcon
-                    size={12}
-                    className="ms-2"
-                  />
+                  <FilterIcon size={12} className="ms-2" />
                 </Button>
-                <Button
-                  size={"xs"}
-                  variant="secondary"
-                  onClick={() =>
-                    handleClickResetFilters()
-                  }
-                >
+                <Button size={"xs"} variant="secondary" onClick={() => handleClickResetFilters()}>
                   Limpar
-                  <EraserIcon
-                    size={12}
-                    className="ms-2"
-                  />
+                  <EraserIcon size={12} className="ms-2" />
                 </Button>
               </div>
 
-              <AccordionTrigger
-                className={`py-1 hover:no-underline`}
-              >
+              <AccordionTrigger className={`py-1 hover:no-underline`}>
                 <span className="">Filtros</span>
               </AccordionTrigger>
               <AccordionContent className="p-0 pt-3">
@@ -165,28 +118,22 @@ const ModalSegmentos = ({
                     <Input
                       placeholder="Segmento"
                       className="max-w-[200px]"
-                      value={
-                        filters?.categoria || ""
-                      }
+                      value={filters?.categoria || ""}
                       onChange={(e) => {
                         setFilters((prev) => ({
                           ...prev,
-                          categoria:
-                            e.target.value,
+                          categoria: e.target.value,
                         }));
                       }}
                     />
                     <Input
                       placeholder="Descrição"
                       className="max-w-[200px]"
-                      value={
-                        filters?.segmento || ""
-                      }
+                      value={filters?.segmento || ""}
                       onChange={(e) => {
                         setFilters((prev) => ({
                           ...prev,
-                          segmento:
-                            e.target.value,
+                          segmento: e.target.value,
                         }));
                       }}
                     />
@@ -236,10 +183,7 @@ const ModalSegmentos = ({
                   {item.segmento}
                   <Popover>
                     <PopoverTrigger>
-                      <Badge
-                        variant={"outline"}
-                        className="ml-2 border-none"
-                      >
+                      <Badge variant={"outline"} className="ml-2 border-none">
                         <Info size={14} />
                       </Badge>
                     </PopoverTrigger>

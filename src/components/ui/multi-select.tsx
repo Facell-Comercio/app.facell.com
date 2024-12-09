@@ -78,6 +78,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
     const [selectedValues, setSelectedValues] = React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [search, setSearch] = React.useState("");
+    const [toggleModal, setToggleModal] = React.useState(false);
 
     React.useEffect(() => {
       setSelectedValues(defaultValue);
@@ -104,6 +105,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
 
     const handleTogglePopover = () => {
       setIsPopoverOpen((prev) => !prev);
+      setToggleModal((prev) => !prev);
     };
 
     const clearExtraOptions = () => {
@@ -144,6 +146,14 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       () => selectedValuesWithoutAll.length === filteredValues.length,
       [filteredValues, search]
     );
+
+    React.useEffect(() => {
+      const resetPointerEvents = () => {
+        document.body.style.pointerEvents = "";
+      };
+      // Remover o pointer-events quando o modal é fechado
+      return resetPointerEvents;
+    }, [toggleModal]);
 
     return (
       <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen} modal={modalPopover}>
@@ -228,7 +238,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0 z-[60]"
+          className="w-auto p-0 z-[600]"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >

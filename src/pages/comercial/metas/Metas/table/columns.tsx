@@ -1,9 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import {
-  normalizeCurrency,
-  normalizeDate,
-  normalizePercentual,
-} from "@/helpers/mask";
+import { normalizeCurrency, normalizeDate, normalizePercentual } from "@/helpers/mask";
 import { ColumnDef } from "@tanstack/react-table";
 import { FileSearch2 } from "lucide-react";
 import { ReactNode } from "react";
@@ -103,7 +99,9 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
       return (
         <div
           // @ts-ignore
-          title={label} className="block truncate max-w-96 uppercase">
+          title={label}
+          className="block truncate max-w-96 uppercase"
+        >
           {label}
         </div>
       );
@@ -180,7 +178,9 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
           title={label?.join(" & ")}
           className="flex gap-1 flex-wrap truncate max-w-52 uppercase"
         >
-          {label?.map((value) => value && <Badge>{value}</Badge>)}
+          {label?.map(
+            (value, index) => value && <Badge key={`${index}-TAG-${value}`}>{value}</Badge>
+          )}
         </div>
       );
     },
@@ -193,7 +193,9 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
       return (
         <div
           // @ts-ignore
-          title={label} className="block truncate max-w-96 uppercase">
+          title={label}
+          className="block truncate max-w-96 uppercase"
+        >
           {label}
         </div>
       );
@@ -208,7 +210,9 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
       return (
         <div
           // @ts-ignore
-          title={label} className="block truncate max-w-96 uppercase">
+          title={label}
+          className="block truncate max-w-96 uppercase"
+        >
           {label}
         </div>
       );
@@ -301,9 +305,7 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
     accessorKey: "fixo",
     cell: (info) => {
       const label = info.getValue<string>();
-      return (
-        <div className="block truncate max-w-96 uppercase">{label || 0}</div>
-      );
+      return <div className="block truncate max-w-96 uppercase">{label || 0}</div>;
     },
   },
   {
@@ -311,9 +313,7 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
     accessorKey: "wttx",
     cell: (info) => {
       const label = info.getValue<string>();
-      return (
-        <div className="block truncate max-w-96 uppercase">{label || 0}</div>
-      );
+      return <div className="block truncate max-w-96 uppercase">{label || 0}</div>;
     },
   },
   {
@@ -321,9 +321,7 @@ export const columnsTable: ColumnDef<RowMeta>[] = [
     accessorKey: "live",
     cell: (info) => {
       const label = info.getValue<string>();
-      return (
-        <div className="block truncate max-w-96 uppercase">{label || 0}</div>
-      );
+      return <div className="block truncate max-w-96 uppercase">{label || 0}</div>;
     },
   },
 ];

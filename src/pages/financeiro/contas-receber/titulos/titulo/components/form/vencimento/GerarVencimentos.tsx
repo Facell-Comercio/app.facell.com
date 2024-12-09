@@ -15,7 +15,7 @@ import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
 import { addMonths, startOfDay, subDays } from "date-fns";
 import { ListPlus, Play } from "lucide-react";
@@ -28,7 +28,7 @@ export function ModalGerarVencimentos({
 }: {
   form: UseFormReturn<TituloCRSchemaProps>;
 }) {
-  const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+  const isMaster: boolean = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   // WATCH TÍTULO:
   const valorTotalTitulo = useWatch({
     name: "valor",
@@ -47,7 +47,7 @@ export function ModalGerarVencimentos({
     valor: z.coerce.number().min(0.01, "Valor precisa ser >= R$ 0,01"),
   });
   const initialValues = {
-    data_vencimento: startOfDay(new Date()).toDateString(),
+    data_vencimento: startOfDay(new Date()),
     parcelas: "1",
     valor: "0",
   };
@@ -69,7 +69,7 @@ export function ModalGerarVencimentos({
   // })
 
   type GeradorVencimentos = {
-    data_vencimento: string;
+    data_vencimento: Date;
     parcelas: string;
     valor: string;
   };
@@ -97,8 +97,7 @@ export function ModalGerarVencimentos({
     for (let parcela = 0; parcela < qtdeParcelas; parcela++) {
       let obj = {
         id: new Date().getTime().toString(),
-        data_vencimento: "",
-        data_prevista: "",
+        data_vencimento: new Date(),
         valor: valorParcela.toString(),
         cod_barras: "",
         qr_code: "",
@@ -108,7 +107,7 @@ export function ModalGerarVencimentos({
       if (parcela == 0) {
         obj.data_vencimento = data.data_vencimento;
       } else {
-        obj.data_vencimento = addMonths(dataVencimento, parcela).toString();
+        obj.data_vencimento = addMonths(dataVencimento, parcela);
       }
 
       // incluir um item ao fieldArray

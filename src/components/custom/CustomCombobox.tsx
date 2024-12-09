@@ -81,9 +81,9 @@ export function CustomCombobox({
           <CommandEmpty>Nenhum resultado encontrado</CommandEmpty>
           <CommandList className="scroll-thin max-h-[38vh]">
             <CommandGroup>
-              {defaultValues.map((obj) => (
+              {defaultValues.map((obj, index) => (
                 <CommandItem
-                  key={obj.value}
+                  key={`${index}-${obj.value}`}
                   value={obj.value}
                   onSelect={() => !readOnly && handleSelect(obj.value)}
                   className={`${
@@ -101,7 +101,7 @@ export function CustomCombobox({
                 </CommandItem>
               ))}
             </CommandGroup>
-            {inputValue.length > 0 && (
+            {/* {inputValue.length > 0 && (
               <CommandItem
                 key="custom"
                 value={inputValue}
@@ -116,10 +116,10 @@ export function CustomCombobox({
                 />
                 {String(inputValue).toUpperCase()}
               </CommandItem>
-            )}
+            )} */}
             {hasCustomValue && inputValue.length > 0 && (
               <CommandItem
-                key="custom"
+                key={`custom-${inputValue}`}
                 value={inputValue}
                 onSelect={handleCustomValue}
                 className={`${

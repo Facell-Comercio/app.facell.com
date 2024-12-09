@@ -4,6 +4,7 @@ import Logs from "./adm-logs/Logs";
 import Departamentos from "./departamentos/Departamentos";
 import Filiais from "./filiais/Filiais";
 import GruposEconomicos from "./grupos-economicos/GruposEconomicos";
+import Perfis from "./perfis/Perfis";
 import Users from "./users/Users";
 
 const AdminPage = () => {
@@ -15,14 +16,10 @@ const AdminPage = () => {
             <TabsTrigger value="users">Usuários</TabsTrigger>
             <TabsTrigger value="departamentos">Departamentos</TabsTrigger>
             <TabsTrigger value="filiais">Filiais</TabsTrigger>
-            <TabsTrigger value="gruposEconomicos">
-              Grupos econômicos
-            </TabsTrigger>
+            <TabsTrigger value="gruposEconomicos">Grupos econômicos</TabsTrigger>
+            <TabsTrigger value="perfis">Perfis</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
-            <ScrollBar
-              orientation="horizontal"
-              thumbColor="dark:bg-slate-400 bg-gray-450"
-            />
+            <ScrollBar orientation="horizontal" thumbColor="dark:bg-slate-400 bg-gray-450" />
           </ScrollArea>
         </TabsList>
         <TabsContent value="users">
@@ -37,6 +34,10 @@ const AdminPage = () => {
         <TabsContent value="gruposEconomicos">
           <GruposEconomicos />
         </TabsContent>
+        <TabsContent value="perfis">
+          <Perfis />
+        </TabsContent>
+
         <TabsContent value="logs">
           <Logs />
         </TabsContent>

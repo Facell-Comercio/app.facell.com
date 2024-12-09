@@ -12,6 +12,7 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { MetasProps, useMetas } from "@/hooks/comercial/useMetas";
 import { Trash } from "lucide-react";
 import { useEffect, useRef } from "react";
@@ -75,7 +76,7 @@ const ModalMeta = () => {
       newDataMeta[key] = data[key];
     }
   }
-  const readOnly = newDataMeta.canEdit;
+  const readOnly = newDataMeta.canEdit || hasPermission(["METAS:METAS_EDITAR", "MASTER"]);
 
   function handleClickCancel() {
     editModal(false);
@@ -116,23 +117,25 @@ const ModalMeta = () => {
             isLoading={isPending}
             blockEdit={!readOnly}
           >
-            <AlertPopUp
-              title={"Deseja realmente excluir"}
-              description="Essa ação não pode ser desfeita. A meta será excluída definitivamente do servidor."
-              action={() => {
-                deleteMeta(id);
-              }}
-            >
-              <Button
-                type={"button"}
-                size="lg"
-                variant={"destructive"}
-                className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
+            {hasPermission(["METAS:METAS_EDITAR", "MASTER"]) && (
+              <AlertPopUp
+                title={"Deseja realmente excluir"}
+                description="Essa ação não pode ser desfeita. A meta será excluída definitivamente do servidor."
+                action={() => {
+                  deleteMeta(id);
+                }}
               >
-                <Trash className="me-2" />
-                Excluir Meta
-              </Button>
-            </AlertPopUp>
+                <Button
+                  type={"button"}
+                  size="lg"
+                  variant={"destructive"}
+                  className={`text-white justify-self-start ${!modalEditing && "hidden"}`}
+                >
+                  <Trash className="me-2" />
+                  Excluir Meta
+                </Button>
+              </AlertPopUp>
+            )}
           </ModalButtons>
         </DialogFooter>
       </DialogContent>

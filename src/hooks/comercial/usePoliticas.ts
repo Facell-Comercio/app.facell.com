@@ -4,12 +4,7 @@ import { api } from "@/lib/axios";
 import { ModeloItemFormData } from "@/pages/comercial/comissionamento/politicas/modelos/item/form-data";
 import { ModeloFormData } from "@/pages/comercial/comissionamento/politicas/modelos/modelo/form-data";
 import { GetAllParams } from "@/types/query-params-type";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type PoliticasProps = {
   descricao: string;
@@ -29,21 +24,13 @@ export const usePoliticas = () => {
 
   const getAll = ({ pagination }: GetAllParams) =>
     useQuery({
-      queryKey: [
-        "comercial",
-        "comissionamento",
-        "politicas",
-        "lista",
-        { pagination },
-      ],
+      queryKey: ["comercial", "comissionamento", "politicas", "lista", { pagination }],
       staleTime: 5 * 1000 * 60,
       retry: false,
       queryFn: async () =>
-        await fetchApi.comercial.politicas.getAll(
-          {
-            pagination,
-          }
-        ),
+        await fetchApi.comercial.politicas.getAll({
+          pagination,
+        }),
       placeholderData: keepPreviousData,
     });
 
@@ -51,19 +38,10 @@ export const usePoliticas = () => {
     useQuery({
       retry: false,
       staleTime: 5 * 1000 * 60,
-      queryKey: [
-        "comercial",
-        "comissionamento",
-        "politicas",
-        "detalhe",
-        id,
-      ],
+      queryKey: ["comercial", "comissionamento", "politicas", "detalhe", id],
       queryFn: async () => {
         try {
-          const result =
-            fetchApi.comercial.politicas.getOne(
-              id
-            );
+          const result = fetchApi.comercial.politicas.getOne(id);
           return result;
         } catch (error) {
           const errorMessage =
@@ -86,20 +64,10 @@ export const usePoliticas = () => {
       enabled: !!id,
       retry: false,
       staleTime: 5 * 1000 * 60,
-      queryKey: [
-        "comercial",
-        "comissionamento",
-        "politicas",
-        "modelo",
-        "detalhe",
-        id,
-      ],
+      queryKey: ["comercial", "comissionamento", "politicas", "modelo", "detalhe", id],
       queryFn: async () => {
         try {
-          const result =
-            fetchApi.comercial.politicas.getOneModelo(
-              id
-            );
+          const result = fetchApi.comercial.politicas.getOneModelo(id);
           return result;
         } catch (error) {
           const errorMessage =
@@ -122,21 +90,10 @@ export const usePoliticas = () => {
       enabled: !!id,
       retry: false,
       staleTime: 5 * 1000 * 60,
-      queryKey: [
-        "comercial",
-        "comissionamento",
-        "politicas",
-        "modelo",
-        "item",
-        "detalhe",
-        id,
-      ],
+      queryKey: ["comercial", "comissionamento", "politicas", "modelo", "item", "detalhe", id],
       queryFn: async () => {
         try {
-          const result =
-            fetchApi.comercial.politicas.getOneModeloItem(
-              id
-            );
+          const result = fetchApi.comercial.politicas.getOneModeloItem(id);
           return result;
         } catch (error) {
           const errorMessage =
@@ -156,37 +113,26 @@ export const usePoliticas = () => {
 
   const insertOne = () =>
     useMutation({
-      mutationFn: async (
-        data: PoliticasProps
-      ) => {
+      mutationFn: async (data: PoliticasProps) => {
         return await api
-          .post(
-            `comercial/comissionamento/politicas`,
-            data
-          )
+          .post(`comercial/comissionamento/politicas`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: [
-            "comercial",
-            "comissionamento",
-            "politicas",
-          ],
+          queryKey: ["comercial", "comissionamento", "politicas"],
         });
         toast({
           variant: "success",
           title: "Sucesso",
-          description:
-            "Atualização realizada com sucesso",
+          description: "Atualização realizada com sucesso",
           duration: 3500,
         });
       },
       onError(error) {
         const errorMessage =
           // @ts-expect-error 'Vai funcionar'
-          error.response?.data.message ||
-          error.message;
+          error.response?.data.message || error.message;
         toast({
           title: "Erro",
           description: errorMessage,
@@ -198,37 +144,26 @@ export const usePoliticas = () => {
 
   const copyPolitica = () =>
     useMutation({
-      mutationFn: async (
-        data: PoliticasProps
-      ) => {
+      mutationFn: async (data: PoliticasProps) => {
         return await api
-          .post(
-            `comercial/comissionamento/politicas/copy`,
-            data
-          )
+          .post(`comercial/comissionamento/politicas/copy`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: [
-            "comercial",
-            "comissionamento",
-            "politicas",
-          ],
+          queryKey: ["comercial", "comissionamento", "politicas"],
         });
         toast({
           variant: "success",
           title: "Sucesso",
-          description:
-            "Atualização realizada com sucesso",
+          description: "Atualização realizada com sucesso",
           duration: 3500,
         });
       },
       onError(error) {
         const errorMessage =
           // @ts-expect-error 'Vai funcionar'
-          error.response?.data.message ||
-          error.message;
+          error.response?.data.message || error.message;
         toast({
           title: "Erro",
           description: errorMessage,
@@ -240,37 +175,26 @@ export const usePoliticas = () => {
 
   const insertCargoPolitica = () =>
     useMutation({
-      mutationFn: async (
-        data: CargoPoliticasProps
-      ) => {
+      mutationFn: async (data: CargoPoliticasProps) => {
         return await api
-          .post(
-            `comercial/comissionamento/politicas/cargos`,
-            data
-          )
+          .post(`comercial/comissionamento/politicas/cargos`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: [
-            "comercial",
-            "comissionamento",
-            "politicas",
-          ],
+          queryKey: ["comercial", "comissionamento", "politicas"],
         });
         toast({
           variant: "success",
           title: "Sucesso",
-          description:
-            "Atualização realizada com sucesso",
+          description: "Atualização realizada com sucesso",
           duration: 3500,
         });
       },
       onError(error) {
         const errorMessage =
           // @ts-expect-error 'Vai funcionar'
-          error.response?.data.message ||
-          error.message;
+          error.response?.data.message || error.message;
         toast({
           title: "Erro",
           description: errorMessage,
@@ -282,37 +206,26 @@ export const usePoliticas = () => {
 
   const insertModelo = () =>
     useMutation({
-      mutationFn: async (
-        data: ModeloFormData
-      ) => {
+      mutationFn: async (data: ModeloFormData) => {
         return await api
-          .post(
-            `comercial/comissionamento/politicas/modelos`,
-            data
-          )
+          .post(`comercial/comissionamento/politicas/modelos`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: [
-            "comercial",
-            "comissionamento",
-            "politicas",
-          ],
+          queryKey: ["comercial", "comissionamento", "politicas"],
         });
         toast({
           variant: "success",
           title: "Sucesso",
-          description:
-            "Atualização realizada com sucesso",
+          description: "Atualização realizada com sucesso",
           duration: 3500,
         });
       },
       onError(error) {
         const errorMessage =
           // @ts-expect-error 'Vai funcionar'
-          error.response?.data.message ||
-          error.message;
+          error.response?.data.message || error.message;
         toast({
           title: "Erro",
           description: errorMessage,
@@ -324,37 +237,26 @@ export const usePoliticas = () => {
 
   const insertModeloItem = () =>
     useMutation({
-      mutationFn: async (
-        data: ModeloItemFormData
-      ) => {
+      mutationFn: async (data: ModeloItemFormData) => {
         return await api
-          .post(
-            `comercial/comissionamento/politicas/modelos/itens`,
-            data
-          )
+          .post(`comercial/comissionamento/politicas/modelos/itens`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: [
-            "comercial",
-            "comissionamento",
-            "politicas",
-          ],
+          queryKey: ["comercial", "comissionamento", "politicas"],
         });
         toast({
           variant: "success",
           title: "Sucesso",
-          description:
-            "Atualização realizada com sucesso",
+          description: "Atualização realizada com sucesso",
           duration: 3500,
         });
       },
       onError(error) {
         const errorMessage =
           // @ts-expect-error 'Vai funcionar'
-          error.response?.data.message ||
-          error.message;
+          error.response?.data.message || error.message;
         toast({
           title: "Erro",
           description: errorMessage,
@@ -366,37 +268,26 @@ export const usePoliticas = () => {
 
   const updateModelo = () =>
     useMutation({
-      mutationFn: async (
-        data: ModeloFormData
-      ) => {
+      mutationFn: async (data: ModeloFormData) => {
         return await api
-          .put(
-            `comercial/comissionamento/politicas/modelos`,
-            data
-          )
+          .put(`comercial/comissionamento/politicas/modelos`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: [
-            "comercial",
-            "comissionamento",
-            "politicas",
-          ],
+          queryKey: ["comercial", "comissionamento", "politicas"],
         });
         toast({
           variant: "success",
           title: "Sucesso",
-          description:
-            "Atualização realizada com sucesso",
+          description: "Atualização realizada com sucesso",
           duration: 3500,
         });
       },
       onError(error) {
         const errorMessage =
           // @ts-expect-error 'Vai funcionar'
-          error.response?.data.message ||
-          error.message;
+          error.response?.data.message || error.message;
         toast({
           title: "Erro",
           description: errorMessage,
@@ -408,37 +299,26 @@ export const usePoliticas = () => {
 
   const updateModeloItem = () =>
     useMutation({
-      mutationFn: async (
-        data: ModeloItemFormData
-      ) => {
+      mutationFn: async (data: ModeloItemFormData) => {
         return await api
-          .put(
-            `comercial/comissionamento/politicas/modelos/itens`,
-            data
-          )
+          .put(`comercial/comissionamento/politicas/modelos/itens`, data)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: [
-            "comercial",
-            "comissionamento",
-            "politicas",
-          ],
+          queryKey: ["comercial", "comissionamento", "politicas"],
         });
         toast({
           variant: "success",
           title: "Sucesso",
-          description:
-            "Atualização realizada com sucesso",
+          description: "Atualização realizada com sucesso",
           duration: 3500,
         });
       },
       onError(error) {
         const errorMessage =
           // @ts-expect-error 'Vai funcionar'
-          error.response?.data.message ||
-          error.message;
+          error.response?.data.message || error.message;
         toast({
           title: "Erro",
           description: errorMessage,
@@ -450,36 +330,26 @@ export const usePoliticas = () => {
 
   const removeCargoPolitica = () =>
     useMutation({
-      mutationFn: async (
-        id: string | null | undefined
-      ) => {
+      mutationFn: async (id: string | null | undefined) => {
         return await api
-          .delete(
-            `comercial/comissionamento/politicas/cargos/${id}`
-          )
+          .delete(`comercial/comissionamento/politicas/cargos/${id}`)
           .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: [
-            "comercial",
-            "comissionamento",
-            "politicas",
-          ],
+          queryKey: ["comercial", "comissionamento", "politicas"],
         });
         toast({
           variant: "success",
           title: "Sucesso",
-          description:
-            "Atualização realizada com sucesso",
+          description: "Atualização realizada com sucesso",
           duration: 3500,
         });
       },
       onError(error) {
         const errorMessage =
           // @ts-expect-error 'Vai funcionar'
-          error.response?.data.message ||
-          error.message;
+          error.response?.data.message || error.message;
         toast({
           title: "Erro",
           description: errorMessage,
@@ -487,6 +357,15 @@ export const usePoliticas = () => {
           variant: "destructive",
         });
       },
+    });
+
+  const getAllCargos = (params: GetAllParams) =>
+    useQuery({
+      queryKey: ["comercial", "comissionamento", "cargos", "lista", { params }],
+      staleTime: 5 * 1000 * 60,
+      retry: false,
+      queryFn: async () => await fetchApi.comercial.politicas.getAllCargos(params),
+      placeholderData: keepPreviousData,
     });
 
   return {
@@ -505,5 +384,7 @@ export const usePoliticas = () => {
     updateModeloItem,
 
     removeCargoPolitica,
+
+    getAllCargos,
   };
 };

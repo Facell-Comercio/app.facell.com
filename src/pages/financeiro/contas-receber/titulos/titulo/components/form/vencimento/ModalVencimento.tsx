@@ -23,7 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate, normalizeFirstAndLastName } from "@/helpers/mask";
 import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
 import { subDays } from "date-fns";
@@ -44,7 +44,7 @@ export function ModalVencimento({
   const id_status = parseInt(formTitulo.watch("id_status") || "0");
   const emitido = id_status === 30;
   const canEdit = id_status < 30 && id_status !== 20;
-  const isMaster: boolean = checkUserPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+  const isMaster: boolean = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const canEditRecebimento = id_status >= 30 && isMaster;
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
@@ -144,7 +144,7 @@ export function ModalVencimento({
       }
       addVencimento({
         id: new Date().getTime().toString(),
-        data_vencimento: String(data.data_vencimento),
+        data_vencimento: data.data_vencimento,
         valor: data.valor,
       });
     }

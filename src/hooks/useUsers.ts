@@ -29,6 +29,7 @@ export const useUsers = () => {
     getOne: (id: number | null) =>
       useQuery({
         enabled: !!id,
+        staleTime: 10,
         queryKey: ["user", "detalhe", id],
         queryFn: async () => await fetchApi.user.getOne(id),
       }),

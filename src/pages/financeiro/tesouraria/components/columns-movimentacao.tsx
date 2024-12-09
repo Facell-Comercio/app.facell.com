@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { useTesouraria } from "@/hooks/financeiro/useTesouraria";
 import { ColumnDef } from "@tanstack/react-table";
@@ -70,8 +70,7 @@ export const columnsTableMovimentacao: ColumnDef<RowConferenciaCaixa>[] = [
       const id_extrato_bancario = info.row.original.id;
       const valor = info.row.original.valor;
       const allowAction = !!info.row.original.allowAction;
-      const gestorOuMaster =
-        checkUserDepartments("FINANCEIRO", true) || checkUserPermission("MASTER");
+      const gestorOuMaster = checkUserDepartments("FINANCEIRO", true) || hasPermission("MASTER");
 
       function handleClickUpdate(id: string) {
         //! ATUALIZAR SALDO DA CONTA NO BACK-END

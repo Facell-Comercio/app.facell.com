@@ -3,13 +3,13 @@ import { useTituloReceber } from "@/hooks/financeiro/useTituloReceber";
 import Filters from "./table/Filters";
 import { useStoreTableReceber } from "./table/store-table";
 
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import ButtonExportTitulosReceber from "./components/ButtonExportarTitulosReceber";
 import ButtonImportTitulosReceber from "./components/ButtonImportarTituloReceber";
 import ButtonNovoTituloReceber from "./components/ButtonNovoTituloReceber";
 import HistoricoLogs from "./components/HistoricoLogs";
 import { columnsTable } from "./table/columns";
 import ModalTituloReceber from "./titulo/ModalTituloReceber";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
 
 const TitulosReceber = () => {
   const [pagination, setPagination, filters] = useStoreTableReceber((state) => [
@@ -17,12 +17,10 @@ const TitulosReceber = () => {
     state.setPagination,
     state.filters,
   ]);
-  const isMaster = checkUserPermission('MASTER');
-  const isFinanceiro = checkUserDepartments('FINANCEIRO')
+  const isMaster = hasPermission("MASTER");
+  const isFinanceiro = checkUserDepartments("FINANCEIRO");
 
-  const [handleRowSelection] = useStoreTableReceber((state) => [
-    state.handleRowSelection,
-  ]);
+  const [handleRowSelection] = useStoreTableReceber((state) => [state.handleRowSelection]);
 
   const { data, refetch, isLoading } = useTituloReceber().getAll({
     pagination,

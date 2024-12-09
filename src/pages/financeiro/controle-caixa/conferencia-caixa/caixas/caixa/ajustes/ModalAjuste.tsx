@@ -16,7 +16,7 @@ import { Form } from "@/components/ui/form";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/context/auth-store";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { AjustesProps, useConferenciasCaixa } from "@/hooks/financeiro/useConferenciasCaixa";
 import { Check, Settings2, Trash2 } from "lucide-react";
 import { useEffect, useRef } from "react";
@@ -134,7 +134,7 @@ const ModalAjuste = () => {
   const podeAprovar =
     (tipoAjuste === "transferencia" && checkUserDepartments("FINANCEIRO")) ||
     checkUserDepartments("FINANCEIRO", true) ||
-    checkUserPermission("MASTER");
+    hasPermission("MASTER");
 
   function onSubmitData(data: AjustesProps) {
     if (id) update(data);
@@ -243,6 +243,7 @@ const ModalAjuste = () => {
                     name="valor"
                     label="Valor"
                     control={form.control}
+                    min={0}
                     disabled={isPending || !modalEditing}
                     className="flex-1 min-w-[30ch]"
                     type="number"

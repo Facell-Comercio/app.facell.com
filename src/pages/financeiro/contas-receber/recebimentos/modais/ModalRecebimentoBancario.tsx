@@ -151,8 +151,15 @@ export function ModalRecebimentoBancario() {
   }, [insertIsPending]);
 
   function onSubmit() {
+    const vencimentos = rowVencimentos.filter(
+      (vencimento) => parseFloat(vencimento.valor_pagar || "0") > 0
+    );
     if (!filters.id_extrato) {
       toast({ title: "Selecione uma transação", variant: "warning" });
+      return;
+    }
+    if (vencimentos.length < 1) {
+      toast({ title: "Nenhum vencimento selecionado", variant: "warning" });
       return;
     }
     const valorDiferenca = Math.abs(totalPagoTransacoes - totalReceberVencimentos);
@@ -171,9 +178,7 @@ export function ModalRecebimentoBancario() {
     insertOne({
       id_extrato: filters.id_extrato,
       id_conta_bancaria: contaBancaria?.id || "",
-      vencimentos: rowVencimentos.filter(
-        (vencimento) => parseFloat(vencimento.valor_pagar || "0") > 0
-      ),
+      vencimentos,
     });
   }
 
