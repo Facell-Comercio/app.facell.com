@@ -2,7 +2,9 @@ import FormInput from "@/components/custom/FormInput";
 import { Form } from "@/components/ui/form";
 import { Toggle } from "@/components/ui/toggle";
 import { useCadastros } from "@/hooks/marketing/useCadastros";
-import { useEffect } from "react";
+import { UserProps } from "@/hooks/useUsers";
+import ModalUsers from "@/pages/financeiro/components/ModalUsers";
+import { useEffect, useState } from "react";
 import { useFormVendedorData } from "./form-data";
 import { VendedorSchema } from "./Modal";
 import { useStoreVendedor } from "./store";
@@ -36,6 +38,7 @@ const FormVendedor = ({
     state.isPending,
   ]);
   const { form } = useFormVendedorData(data);
+  const [modalUsersOpen, setModalUsersOpen] = useState<boolean>(false);
 
   const onSubmitData = (data: VendedorSchema) => {
     if (id) update(data);
@@ -55,6 +58,10 @@ const FormVendedor = ({
     }
   }, [updateIsPending, insertIsPending]);
 
+  async function handleSelectionUser(user: UserProps) {
+    form.setValue("id_user", String(user.id) || "");
+    form.setValue("nome", user?.nome || "");
+  }
   // ! Verificar a existênicia de erros
   // console.log(form.formState.errors);
   const isActive = !!+(form.watch("active") || 0);
@@ -69,6 +76,8 @@ const FormVendedor = ({
               className="flex-1 min-w-[20ch]"
               name="nome"
               disabled={!modalEditing}
+              readOnly
+              onClick={() => setModalUsersOpen(true)}
               label="Nome"
               control={form.control}
             />
@@ -86,6 +95,11 @@ const FormVendedor = ({
             </div>
           </div>
         </form>
+        <ModalUsers
+          open={modalUsersOpen}
+          onOpenChange={() => setModalUsersOpen(false)}
+          handleSelection={handleSelectionUser}
+        />
       </Form>
     </div>
   );

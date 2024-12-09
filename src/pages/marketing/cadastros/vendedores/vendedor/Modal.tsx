@@ -17,12 +17,14 @@ import { useStoreVendedor } from "./store";
 export type VendedorSchema = {
   id: string;
   nome: string;
+  id_user: string;
   active?: number;
 };
 
 const initialPropsVendedor: VendedorSchema = {
   id: "",
   nome: "",
+  id_user: "",
   active: 1,
 };
 
