@@ -1,10 +1,5 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Logs from "../../../admin/adm-logs/Logs";
-import Departamentos from "../../../admin/departamentos/Departamentos"; 
-import Filiais from "../../../admin/filiais/Filiais"; 
-import GruposEconomicos from "../../../admin/grupos-economicos/GruposEconomicos";
-import Users from "../../../admin/users/Users";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/context/auth-store";
 import { Navigate } from 'react-router-dom';

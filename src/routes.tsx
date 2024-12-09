@@ -31,7 +31,7 @@ import Perfil from "./pages/perfil/index.tsx";
 import Colaboradores from "./pages/pessoal/colaboradores/Colaboradores.tsx";
 import { VideoAulaPage } from "./pages/treinamento/videoaula/Page.tsx";
 import ComercialVales from "./pages/comercial/vales/ComercialVales.tsx";
-import FardamentoPage from "./pages/pessoal/colaboradores/Fardamentos/FardamentoPage.tsx";
+import FardamentoPage from "./pages/pessoal/fardamentos/FardamentoPage.tsx";
 
 const AppRoutes = () => {
   const user = useAuthStore(

@@ -27,7 +27,7 @@ export const useFardamentos = () => {
               pagination,
             },
           });
-          return result;
+          return result.data;
         },
       });
     },
@@ -52,7 +52,7 @@ export const useFardamentos = () => {
         enabled: !!id,
         queryKey: ['pessoal','fardamento', id],
         queryFn: async () => await api.get(`/pessoal/fardamentos/estoque/${id}`),
-        staleTime: Infinity,
+        // staleTime: Infinity,
       }),
     
     update: () =>

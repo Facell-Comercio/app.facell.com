@@ -6,6 +6,7 @@ import { useStoreEstoque } from "./table/store-table";
 import { useFardamentos } from "@/hooks/useFardamentos";
 import FiltersEstoque from "./table/FiltersEstoque";
 import { columnsTableEstoques } from "./table/columns-estoque";
+import FormEstoqueFardamento from "./components/Form";
 
 
 
@@ -40,6 +41,7 @@ const Estoque = () => {
         setPagination={setPagination}
         data={rows} rowCount={rowCount} columns={columnsTableEstoques} />
       </div>
+      <FormEstoqueFardamento/>
     </div>
   );
 };
