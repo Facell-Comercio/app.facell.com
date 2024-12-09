@@ -1,35 +1,18 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ModalComponent } from "@/components/custom/ModalComponent";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"; // diferença entre importar daqui e do @radix-ui
-import { Table } from "@/components/ui/table";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionContent,
-  AccordionTrigger,
-} from "@radix-ui/react-accordion";
 import {} from "@radix-ui/react-select";
 import { Shirt, Upload, Download, Handshake, HandCoins } from "lucide-react";
-import { useEstoque } from "./table/fetch-estoque";
 import { useStoreEstoque } from "./table/store-table";
-import { columnsTableEstoques } from "./table/columns-estoque";
+import { useFardamentos } from "@/hooks/useFardamentos";
 import FiltersEstoque from "./table/FiltersEstoque";
+import { columnsTableEstoques } from "./table/columns-estoque";
 
 
 
 
 
 const Estoque = () => {
-  const { data, refetch } = useEstoque().getAll();
+  const { data, refetch } = useFardamentos().getAll();
   const [pagination, setPagination] = useStoreEstoque((state) => [
     state.pagination,
     state.setPagination,
