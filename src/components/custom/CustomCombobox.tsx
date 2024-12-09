@@ -10,8 +10,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 
 type DefaultValueProps = {
   value: string;
@@ -41,6 +41,7 @@ export function CustomCombobox({
 }: CustomComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
+  const [toggleModal, setToggleModal] = React.useState(false);
 
   const handleSelect = (currentValue: any) => {
     onChange(String(currentValue).toUpperCase());
@@ -52,8 +53,21 @@ export function CustomCombobox({
     setOpen(false);
   };
 
+  const handleTogglePopover = () => {
+    setOpen((prev) => !prev);
+    setToggleModal((prev) => !prev);
+  };
+
+  React.useEffect(() => {
+    const resetPointerEvents = () => {
+      document.body.style.pointerEvents = "";
+    };
+    // Remover o pointer-events quando o modal é fechado
+    return resetPointerEvents;
+  }, [toggleModal]);
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -61,6 +75,7 @@ export function CustomCombobox({
           aria-expanded={open}
           disabled={disabled || readOnly}
           className={`w-[28ch] justify-between ${className}`}
+          onClick={handleTogglePopover}
         >
           {value
             ? defaultValues.find((obj: DefaultValueProps) => obj.value === value)?.label || value
@@ -79,8 +94,8 @@ export function CustomCombobox({
               setInputValue(e.target?.value);
             }}
           />
-          <CommandEmpty>Nenhum resultado encontrado</CommandEmpty>
           <CommandList className="scroll-thin max-h-[38vh]">
+            <CommandEmpty>Nenhum resultado encontrado</CommandEmpty>
             <CommandGroup>
               {defaultValues.map((obj, index) => (
                 <CommandItem
