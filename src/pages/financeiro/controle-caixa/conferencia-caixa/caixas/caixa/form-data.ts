@@ -88,7 +88,7 @@ const schemaAjuste = z
     id: z.string().optional(),
     id_caixa: z.coerce.string().optional(),
     user: z.coerce.string().optional(),
-    valor: z.coerce.number().min(1, "Campo obrigatório"),
+    valor: z.coerce.number().min(0, "Campo obrigatório"),
     entrada: z.coerce.string().optional(),
     saida: z.coerce.string().optional(),
     obs: z.string().trim().min(1, "Campo obrigatório"),

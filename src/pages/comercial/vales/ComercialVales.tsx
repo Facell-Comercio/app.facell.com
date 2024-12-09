@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/custom/DataTable";
 
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
 import { useVales } from "@/hooks/comercial/useVales";
 import ButtonExportVale from "./components/ButtonExportVale";
@@ -11,15 +11,16 @@ import { columnsTable } from "./table/columns";
 import { useStoreTableVale } from "./table/store-table";
 import ModalVale from "./vale/Modal";
 
-const Vales = () => {
-  const [pagination, setPagination, filters, rowSelection, handleRowSelection] =
-    useStoreTableVale((state) => [
+const ComercialVales = () => {
+  const [pagination, setPagination, filters, rowSelection, handleRowSelection] = useStoreTableVale(
+    (state) => [
       state.pagination,
       state.setPagination,
       state.filters,
       state.rowSelection,
       state.handleRowSelection,
-    ]);
+    ]
+  );
   const { data, refetch, isLoading } = useVales().getAll({
     pagination,
     filters,
@@ -51,13 +52,9 @@ const Vales = () => {
           </p>
         </span>
         <span className="flex flex-wrap gap-2 justify-end">
-          {checkUserPermission(["GERENCIAR_VALES", "MASTER"]) && (
-            <ButtonImportVale />
-          )}
+          {hasPermission(["VALES:CRIAR", "MASTER"]) && <ButtonImportVale />}
           <ButtonExportVale />
-          {checkUserPermission(["GERENCIAR_VALES", "MASTER"]) && (
-            <ButtonNovoVale />
-          )}
+          {hasPermission(["VALES:CRIAR", "MASTER"]) && <ButtonNovoVale />}
         </span>
       </div>
       <FiltersVale refetch={refetch} />
@@ -78,4 +75,4 @@ const Vales = () => {
   );
 };
 
-export default Vales;
+export default ComercialVales;

@@ -48,10 +48,8 @@ const ComparisonTable = ({ data }: { data: ComparisonTableDataProps[] }) => {
         {data.length > 0 && (
           <TableBody>
             {data.map((filialData, index) => (
-              <TableRow key={`filial.${index}`}>
-                <TableCell className="text-nowrap text-xs uppercase">
-                  {filialData.filial}
-                </TableCell>
+              <TableRow key={`filial.${index}.${filialData.filial}`}>
+                <TableCell className="text-nowrap text-xs uppercase">{filialData.filial}</TableCell>
                 <TableCell>
                   <span className="flex items-center justify-center">
                     {filialData.controle ? (

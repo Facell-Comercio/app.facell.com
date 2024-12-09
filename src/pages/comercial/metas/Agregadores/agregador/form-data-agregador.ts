@@ -40,9 +40,7 @@ const schemaAgregador = z.object({
     required_error: "Campo obrigatório",
   }),
 
-  proporcional: z.coerce
-    .string()
-    .transform((value) => String(parseFloat(value) / 100)),
+  proporcional: z.coerce.string().transform((value) => String(parseFloat(value) / 100)),
   tipo_agregacao: z
     .string()
     .trim()
@@ -51,7 +49,6 @@ const schemaAgregador = z.object({
   metas_agregadas: z
     .string()
     .trim()
-    .min(3, "Campo Obrigatório")
     .transform((n) => String(n).toUpperCase()),
   metas: z.array(
     z.object({

@@ -16,7 +16,7 @@ const ButtonNovoAgregador = () => {
     <span>
       <Button
         variant={"outline"}
-        className="border-blue-200 dark:border-primary"
+        className="border-primary"
         onClick={() => handleClickNewAgregador()}
         // disabled={qtdPendencias > 0}
       >

@@ -225,7 +225,7 @@ export function BtnPadronizarAlocacao({ form, canEdit }: PadronizarAlocacaoProps
             <ModalPlanosContas
               open={modalPlanoContasOpen && !!id_grupo_economico}
               id_grupo_economico={id_grupo_economico}
-              tipo="Despesa"
+              tipo="Receita"
               //@ts-ignore
               onOpenChange={setModalPlanoContasOpen}
               handleSelection={handleSelectionPlanoContas}

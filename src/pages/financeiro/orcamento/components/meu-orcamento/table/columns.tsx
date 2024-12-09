@@ -1,5 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowLeftRight } from "lucide-react";
 import { ReactNode } from "react";
@@ -22,9 +22,7 @@ const openModal = useStoreMeuOrcamento.getState().openModal;
 
 // ^ Realizar a filtragem dinâmica para a apresentação do grupo econômico ++ Liberar ou não a visualização para o usuário dependendo da quantidade de centro de custos dele
 
-export const columnsTable: ColumnDef<RowMeuOrcamento>[] = checkUserPermission(
-  "MASTER"
-)
+export const columnsTable: ColumnDef<RowMeuOrcamento>[] = hasPermission("MASTER")
   ? [
       {
         header: "AÇÃO",
@@ -84,11 +82,7 @@ export const columnsTable: ColumnDef<RowMeuOrcamento>[] = checkUserPermission(
         accessorKey: "realizado_percentual",
         cell: (info) => {
           const percentual = info.getValue<number>();
-          return (
-            <span>
-              {percentual && parseFloat((+percentual * 100).toFixed(2))}%
-            </span>
-          );
+          return <span>{percentual && parseFloat((+percentual * 100).toFixed(2))}%</span>;
         },
       },
     ]
@@ -102,9 +96,7 @@ export const columnsTable: ColumnDef<RowMeuOrcamento>[] = checkUserPermission(
                 table.getIsAllPageRowsSelected() ||
                 (table.getIsSomePageRowsSelected() && "indeterminate")
               }
-              onCheckedChange={(value) =>
-                table.toggleAllPageRowsSelected(!!value)
-              }
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             />
           </div>
         ),
@@ -168,11 +160,7 @@ export const columnsTable: ColumnDef<RowMeuOrcamento>[] = checkUserPermission(
         accessorKey: "realizado_percentual",
         cell: (info) => {
           const percentual = info.getValue<number>();
-          return (
-            <span>
-              {percentual && parseFloat((+percentual * 100).toFixed(2))}%
-            </span>
-          );
+          return <span>{percentual && parseFloat((+percentual * 100).toFixed(2))}%</span>;
         },
       },
     ];

@@ -7,19 +7,15 @@ import { useStoreTableAgregadores } from "../table/store-table";
 
 const ButtonExportAgregadores = () => {
   const [filters] = useStoreTableAgregadores((state) => [state.filters]);
-  const [mes, ano] = useStoreMetasAgregadores((state) => [
-    state.mes,
-    state.ano,
-  ]);
+  const [mes, ano] = useStoreMetasAgregadores((state) => [state.mes, state.ano]);
 
-  const { mutate: exportAgregadores, isPending } =
-    useAgregadores().exportAgregadores();
+  const { mutate: exportAgregadores, isPending } = useAgregadores().exportAgregadores();
 
   return (
     <span>
       <Button
         variant={"outline"}
-        className="border-blue-200 dark:border-success"
+        className="border-success"
         onClick={() =>
           exportAgregadores({
             filters: {

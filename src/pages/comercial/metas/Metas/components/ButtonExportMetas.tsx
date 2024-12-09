@@ -7,17 +7,14 @@ import { useStoreTableMetas } from "../table/store-table";
 
 const ButtonExportMeta = () => {
   const [filters] = useStoreTableMetas((state) => [state.filters]);
-  const [mes, ano] = useStoreMetasAgregadores((state) => [
-    state.mes,
-    state.ano,
-  ]);
+  const [mes, ano] = useStoreMetasAgregadores((state) => [state.mes, state.ano]);
   const { mutate: exportMetas, isPending } = useMetas().exportMetas();
 
   return (
     <span>
       <Button
         variant={"outline"}
-        className="border-blue-200 dark:border-success"
+        className="border-success"
         onClick={() =>
           exportMetas({
             filters: {

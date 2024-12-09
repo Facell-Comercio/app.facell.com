@@ -3,20 +3,14 @@ import FormDateInput from "@/components/custom/FormDate";
 import FormInput from "@/components/custom/FormInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { checkUserPermission } from "@/helpers/checkAuthorization";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeDate } from "@/helpers/mask";
 import { useVales, ValeProps } from "@/hooks/comercial/useVales";
 import ModalFiliais from "@/pages/admin/components/ModalFiliais";
 import { Filial } from "@/types/filial-type";
 import { addMonths } from "date-fns";
-import { Edit2, Info, Plus, Trash } from "lucide-react";
+import { Edit2, Info, MinusCircle, Plus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { CustomCombobox } from "../../../../components/custom/CustomCombobox";
@@ -90,7 +84,7 @@ const FormVale = ({
 
   const rowsAbatimentos = data?.abatimentos || [];
 
-  const readOnly = !checkUserPermission(["GERENCIAR_VALES", "MASTER"]);
+  const readOnly = !hasPermission(["VALES:EDITAR", "MASTER"]);
   const disabled = (!modalEditing || isPending) && !readOnly;
   const saldo = parseFloat(form.watch("saldo") || "0");
   const parcela = parseFloat(form.watch("parcela") || "1");
@@ -115,10 +109,7 @@ const FormVale = ({
     } else if (insertIsSuccess) {
       if (parcela !== parcelas) {
         form.setValue("parcela", String(parcela + 1));
-        form.setValue(
-          "data_inicio_cobranca",
-          addMonths(form.watch("data_inicio_cobranca"), 1)
-        );
+        form.setValue("data_inicio_cobranca", addMonths(form.watch("data_inicio_cobranca"), 1));
       } else {
         editModal(false);
         closeModal();
@@ -198,6 +189,7 @@ const FormVale = ({
                     <CustomCombobox
                       value={form.watch("origem")}
                       onChange={(value) => form.setValue("origem", value)}
+                      hasCustomValue
                       disabled={disabled}
                       readOnly={readOnly}
                       defaultValues={defaultValuesOrigem}
@@ -278,10 +270,10 @@ const FormVale = ({
                 <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                   <div className="flex justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <Info />
+                      <MinusCircle />
                       <span className="text-lg font-bold ">Abatimentos</span>
                     </div>
-                    {checkUserPermission(["GERENCIAR_VALES", "MASTER"]) && (
+                    {hasPermission(["VALES:EDITAR", "MASTER"]) && (
                       <Button
                         variant={"tertiary"}
                         disabled={disabled}
@@ -316,9 +308,7 @@ const FormVale = ({
                                 variant={"warning"}
                                 size={"xs"}
                                 disabled={disabled}
-                                onClick={() =>
-                                  openModalAbatimento(abatimento.id || "")
-                                }
+                                onClick={() => openModalAbatimento(abatimento.id || "")}
                               >
                                 <Edit2 size={16} />
                               </Button>
@@ -329,19 +319,13 @@ const FormVale = ({
                                   deleteAbatimento(abatimento.id);
                                 }}
                               >
-                                <Button
-                                  variant={"destructive"}
-                                  size={"xs"}
-                                  disabled={disabled}
-                                >
+                                <Button variant={"destructive"} size={"xs"} disabled={disabled}>
                                   <Trash size={16} />
                                 </Button>
                               </AlertPopUp>
                             </TableCell>
                           )}
-                          <TableCell>
-                            {normalizeDate(abatimento.created_at || "")}
-                          </TableCell>
+                          <TableCell>{normalizeDate(abatimento.created_at || "")}</TableCell>
                           <TableCell>{abatimento.obs}</TableCell>
                           <TableCell>{abatimento.valor}</TableCell>
                           <TableCell>{abatimento.criador}</TableCell>

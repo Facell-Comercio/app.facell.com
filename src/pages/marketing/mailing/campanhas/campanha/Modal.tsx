@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { checkUserDepartments, checkUserPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { CopyPlus, Plus, Smartphone, Trash, UserPen, X } from "lucide-react";
@@ -92,7 +92,8 @@ const ModalCampanha = () => {
     state.setPaginationSubcampanha,
     state.resetPaginationSubcampanha,
   ]);
-  const canEdit = checkUserDepartments("MARKETING", true) || checkUserPermission("MASTER");
+  const canEdit =
+    checkUserDepartments("MARKETING", true) || hasPermission(["MASTER", "MAILING:EDITAR"]);
 
   const [idSubcampanha, setIdSubcampanha] = useState<string>("");
   const [campanhaData, setCampanhaData] = useState(defaultCampanhaData);
@@ -285,96 +286,98 @@ const ModalCampanha = () => {
         </DialogHeader>
         <ScrollArea className="flex flex-col gap-3 max-h-[80vh] sm:max-h-[70vh]">
           <div className="grid gap-3 w-full overflow-auto scroll-thin p-3 bg-slate-200 dark:bg-blue-950 rounded-md">
-            <Accordion
-              type="single"
-              collapsible
-              value={itemOpen}
-              onValueChange={(e) => setItemOpen(e)}
-              className="grid border rounded-md bg-background"
-            >
-              <AccordionItem value="clientes" className="border-0">
-                <AccordionTrigger className="p-3 border-0 rounded-md py-1 hover:no-underline">
-                  Clientes
-                </AccordionTrigger>
-                <AccordionContent className="flex gap-2 flex-col p-2">
-                  <div className="grid gap-2 max-w-full">
-                    <span className="flex gap-2 w-full justify-between">
-                      <FiltersClientesCampanha
-                        filters={filters}
-                        defaultFilters={defaultFilters}
-                        refetch={refetch}
-                        setFilters={setFilters}
-                        resetFilters={resetFilters}
-                        qtde_clientes={qtdeClientes}
-                        isPending={isLoading || isFetching}
-                        disabled={disabledCampanha}
-                        resetPagination={resetPagination}
-                      />
-                      {qtdeClientes > 0 && canEdit && (
-                        <span className="flex flex-wrap justify-end gap-2 w-full">
-                          <ButtonMotivation
-                            title="Exclui os clientes que foram filtrados..."
-                            variant={"destructive"}
-                            action={() => {
-                              if (qtde_all_clientes === qtdeClientes) {
-                                resetId();
-                                closeModal();
-                              }
-                              deleteClientesLote({ id_campanha: id || "", filters });
-                              setCampanhaData({
-                                qtde_all_clientes: qtde_all_clientes,
-                                qtde_clientes: qtdeClientes,
-                              });
-                            }}
-                            headerTitle="Excluir clientes filtrados"
-                            description={`Digite "${String(data?.nome)
-                              .trim()
-                              .toUpperCase()}" para poder remover os clientes`}
-                            placeholder={data?.nome.trim().toUpperCase()}
-                            disabled={disabledCampanha}
-                            equalText
-                          >
-                            <X className="me-2" size={18} /> Excluir Clientes
-                          </ButtonMotivation>
+            {hasPermission(["MASTER", "MAILING:EDITAR"]) && (
+              <Accordion
+                type="single"
+                collapsible
+                value={itemOpen}
+                onValueChange={(e) => setItemOpen(e)}
+                className="grid border rounded-md bg-background"
+              >
+                <AccordionItem value="clientes" className="border-0">
+                  <AccordionTrigger className="p-3 border-0 rounded-md py-1 hover:no-underline">
+                    Clientes
+                  </AccordionTrigger>
+                  <AccordionContent className="flex gap-2 flex-col p-2">
+                    <div className="grid gap-2 max-w-full">
+                      <span className="flex gap-2 w-full justify-between">
+                        <FiltersClientesCampanha
+                          filters={filters}
+                          defaultFilters={defaultFilters}
+                          refetch={refetch}
+                          setFilters={setFilters}
+                          resetFilters={resetFilters}
+                          qtde_clientes={qtdeClientes}
+                          isPending={isLoading || isFetching}
+                          disabled={disabledCampanha}
+                          resetPagination={resetPagination}
+                        />
+                        {qtdeClientes > 0 && canEdit && (
+                          <span className="flex flex-wrap justify-end gap-2 w-full">
+                            <ButtonMotivation
+                              title="Exclui os clientes que foram filtrados..."
+                              variant={"destructive"}
+                              action={() => {
+                                if (qtde_all_clientes === qtdeClientes) {
+                                  resetId();
+                                  closeModal();
+                                }
+                                deleteClientesLote({ id_campanha: id || "", filters });
+                                setCampanhaData({
+                                  qtde_all_clientes: qtde_all_clientes,
+                                  qtde_clientes: qtdeClientes,
+                                });
+                              }}
+                              headerTitle="Excluir clientes filtrados"
+                              description={`Digite "${String(data?.nome)
+                                .trim()
+                                .toUpperCase()}" para poder remover os clientes`}
+                              placeholder={data?.nome.trim().toUpperCase()}
+                              disabled={disabledCampanha}
+                              equalText
+                            >
+                              <X className="me-2" size={18} /> Excluir Clientes
+                            </ButtonMotivation>
 
-                          <Button
-                            onClick={() => openModalDuplicarCampanha(qtdeClientes)}
-                            disabled={disabledCampanha}
-                            variant={"tertiary"}
-                          >
-                            <CopyPlus className="me-2" size={18} /> Duplicar Campanha
-                          </Button>
-                          <Button
-                            onClick={() => openModalNovaSubcampanha(qtdeClientes)}
-                            disabled={disabledCampanha}
-                          >
-                            <Plus className="me-2" size={18} /> Nova Subcampanha
-                          </Button>
-                        </span>
-                      )}
-                    </span>
-                    <div className="overflow-auto bg-background rounded-lg">
-                      <DataTable
-                        pagination={pagination}
-                        setPagination={setPagination}
-                        data={clientes}
-                        rowCount={rowCount}
-                        columns={columnsTableClientes}
-                        isLoading={isLoading || isFetching}
-                        variant="secondary"
-                        fixed
-                        maxHeight={50}
-                      />
+                            <Button
+                              onClick={() => openModalDuplicarCampanha(qtdeClientes)}
+                              disabled={disabledCampanha}
+                              variant={"tertiary"}
+                            >
+                              <CopyPlus className="me-2" size={18} /> Duplicar Campanha
+                            </Button>
+                            <Button
+                              onClick={() => openModalNovaSubcampanha(qtdeClientes)}
+                              disabled={disabledCampanha}
+                            >
+                              <Plus className="me-2" size={18} /> Nova Subcampanha
+                            </Button>
+                          </span>
+                        )}
+                      </span>
+                      <div className="overflow-auto bg-background rounded-lg">
+                        <DataTable
+                          pagination={pagination}
+                          setPagination={setPagination}
+                          data={clientes}
+                          rowCount={rowCount}
+                          columns={columnsTableClientes}
+                          isLoading={isLoading || isFetching}
+                          variant="secondary"
+                          fixed
+                          maxHeight={50}
+                        />
+                      </div>
+                      <span className="flex justify-end">
+                        <Badge variant={"secondary"}>
+                          Quantidade Total de Clientes: {qtdeClientes}
+                        </Badge>
+                      </span>
                     </div>
-                    <span className="flex justify-end">
-                      <Badge variant={"secondary"}>
-                        Quantidade Total de Clientes: {qtdeClientes}
-                      </Badge>
-                    </span>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            )}
             {subcampanhas.length > 0 && (
               <Tabs defaultValue={defaultIdSubcampanha} className="w-full">
                 <TabsList

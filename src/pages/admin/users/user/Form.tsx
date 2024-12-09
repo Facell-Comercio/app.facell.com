@@ -16,10 +16,13 @@ import { useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import ModalCentrosCustos from "../../../financeiro/components/ModalCentrosCustos";
 import ModalDepartamentos from "../../components/ModalDepartamentos";
+import ModalPerfil from "../../components/ModalPerfil";
 import ModalPermissoes from "../../components/ModalPermissoes";
+import { PerfilFormData } from "../../perfis/perfil/form-data";
 import { TableUserCentrosCustos } from "./components/TableCentrosCustos";
 import { TableUserDepartamentos } from "./components/TableDepartamentos";
 import { TableUserFiliais } from "./components/TableFiliais";
+import { TableUserPerfis } from "./components/TablePerfis";
 import { TableUserPermissoes } from "./components/TablePermissoes";
 import { UserFormData, useFormUserData } from "./form-data";
 import { useStoreUser } from "./store";
@@ -42,25 +45,35 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
   // const { errors } = form.formState
   // console.log({errors})
 
-  const { fields: filiais, append: addFilial } = useFieldArray({
+  const { append: addFilial } = useFieldArray({
     name: "filiais",
     control: form.control,
   });
+  const filiais = form.watch("filiais");
 
-  const { fields: departamentos, append: addDepartamento } = useFieldArray({
+  const { append: addDepartamento } = useFieldArray({
     name: "departamentos",
     control: form.control,
   });
+  const departamentos = form.watch("departamentos");
 
-  const { fields: permissoes, append: addPermissao } = useFieldArray({
-    name: "permissoes",
-    control: form.control,
-  });
-
-  const { fields: centros_custo, append: addCentroCusto } = useFieldArray({
+  const { append: addCentroCusto } = useFieldArray({
     name: "centros_custo",
     control: form.control,
   });
+  const centros_custo = form.watch("centros_custo");
+
+  const { append: addPermissao } = useFieldArray({
+    name: "permissoes",
+    control: form.control,
+  });
+  const permissoes = form.watch("permissoes");
+
+  const { append: addPerfil } = useFieldArray({
+    name: "perfis",
+    control: form.control,
+  });
+  const perfis = form.watch("perfis");
 
   const onSubmitData = (newData: UserFormData) => {
     // console.log({newData})
@@ -71,12 +84,10 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
   };
 
   const [openModalFiliais, setOpenModalFiliais] = useState<boolean>(false);
-  const [openModalDepartamentos, setOpenModalDepartamentos] =
-    useState<boolean>(false);
-  const [openModalCentrosCusto, setOpenModalCentrosCusto] =
-    useState<boolean>(false);
-  const [openModalPermissoes, setOpenModalPermissoes] =
-    useState<boolean>(false);
+  const [openModalDepartamentos, setOpenModalDepartamentos] = useState<boolean>(false);
+  const [openModalCentrosCusto, setOpenModalCentrosCusto] = useState<boolean>(false);
+  const [openModalPerfis, setOpenModalPerfis] = useState<boolean>(false);
+  const [openModalPermissoes, setOpenModalPermissoes] = useState<boolean>(false);
 
   const handleSelectFilial = (selectedFiliais: Filial[]) => {
     // verifica se o cara já possui
@@ -97,6 +108,7 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
         toast({
           title: "Não foi possível adicionar!",
           description: "A filial já consta na lista",
+          variant: "warning",
         });
       }
     });
@@ -105,9 +117,7 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
 
   const handleSelectDepartamento = (departamento: Departamento) => {
     // verifica se o cara já possui
-    const indexDepartamento = departamentos?.findIndex(
-      (f) => f.id_departamento == departamento.id
-    );
+    const indexDepartamento = departamentos?.findIndex((f) => f.id_departamento == departamento.id);
     if (indexDepartamento === -1) {
       // setar a departamento
       form.setValue("updateDepartamentos", true);
@@ -123,15 +133,14 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
       toast({
         title: "Não foi possível adicionar!",
         description: "O departamento já consta na lista",
+        variant: "warning",
       });
     }
   };
 
   const handleSelectCentroCusto = (centro_custo: CentroCustos) => {
     // verifica se o cara já possui
-    const indexCentroCusto = centros_custo?.findIndex(
-      (f) => f.id_centro_custo == centro_custo.id
-    );
+    const indexCentroCusto = centros_custo?.findIndex((f) => f.id_centro_custo == centro_custo.id);
     if (indexCentroCusto === -1) {
       // setar a centro_custos
       form.setValue("updateCentrosCusto", true);
@@ -148,15 +157,38 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
       toast({
         title: "Não foi possível adicionar!",
         description: "O centro de custos já consta na lista",
+        variant: "warning",
+      });
+    }
+  };
+
+  const handleSelectPerfil = (perfil: PerfilFormData) => {
+    // verifica se o cara já possui
+    const indexPerfil = perfis?.findIndex((f) => f.id_perfil == perfil.id);
+    if (indexPerfil === -1) {
+      // setar a perfil
+      form.setValue("updatePerfis", true);
+      // @ts-ignore
+      addPerfil({
+        id: "",
+        id_perfil: perfil.id || "",
+        // @ts-ignore
+        id_user: id,
+        perfil: perfil.perfil,
+      });
+    } else {
+      toast({
+        title: "Não foi possível adicionar!",
+        description: "O perfil já consta na lista",
+        variant: "warning",
       });
     }
   };
 
   const handleSelectPermissao = (permissao: Permissao) => {
     // verifica se o cara já possui
-    const indexPermissao = permissoes?.findIndex(
-      (f) => f.id_permissao == permissao.id
-    );
+
+    const indexPermissao = permissoes?.findIndex((f) => f.id_permissao == permissao.id);
     if (indexPermissao === -1) {
       // setar a permissao
       form.setValue("updatePermissoes", true);
@@ -167,14 +199,23 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
         // @ts-ignore
         id_user: id,
         nome: permissao.nome,
+        modulo: permissao.modulo,
       });
     } else {
+      const tipo = permissoes[indexPermissao].tipo;
+
       toast({
         title: "Não foi possível adicionar!",
-        description: "A permissao já consta na lista",
+        description:
+          tipo === "perfil"
+            ? "A permissão já consta em um perfil"
+            : "A permissão já consta na lista",
+        variant: "warning",
       });
     }
   };
+
+  // console.log(form.formState.errors);
 
   return (
     <div className="max-w-full ">
@@ -205,9 +246,15 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
 
       <ModalPermissoes
         handleSelection={handleSelectPermissao}
-        // @ts-expect-error 'Ignore, vai funcionar...'
         onOpenChange={setOpenModalPermissoes}
         open={openModalPermissoes}
+        closeOnSelection={false}
+      />
+
+      <ModalPerfil
+        handleSelection={handleSelectPerfil}
+        onOpenChange={setOpenModalPerfis}
+        open={openModalPerfis}
         closeOnSelection={false}
       />
 
@@ -220,8 +267,7 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
-                    <Fingerprint />{" "}
-                    <span className="text-lg font-bold ">Dados do usuário</span>
+                    <Fingerprint /> <span className="text-lg font-bold ">Dados do usuário</span>
                   </div>
                   <span className="flex gap-4">
                     <FormSwitch
@@ -237,11 +283,11 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
                   <div className="flex flex-wrap gap-3 items-end">
                     <div className="flex flex-col justify-end gap-2 overflow-hidden">
                       <FormLabel>Foto</FormLabel>
-                      <div className="w-24 h-24 rounded-lg overflow-hidden">
+                      <div className="w-24 max-h-24 rounded-lg overflow-hidden">
                         <FormFileUpload
                           name="img_url"
                           mediaType="img"
-                          folderName='pessoal'
+                          folderName="pessoal"
                           control={form.control}
                           disabled={!modalEditing}
                         />
@@ -263,6 +309,14 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
                       label="Email"
                       control={form.control}
                     />
+
+                    <FormInput
+                      className="flex-1 min-w-32"
+                      name="cpf"
+                      readOnly={!modalEditing}
+                      label="CPF"
+                      control={form.control}
+                    />
                   </div>
                 </div>
               </div>
@@ -273,84 +327,69 @@ const FormUsers = ({ id, data, formRef }: FormUsersProps) => {
                 <Tabs defaultValue="filiais" className="w-full">
                   <TabsList className="w-full justify-start">
                     <TabsTrigger value="filiais">Filiais</TabsTrigger>
-                    <TabsTrigger value="departamentos">
-                      Departamentos
-                    </TabsTrigger>
-                    <TabsTrigger value="centros-custo">
-                      Centros-custo
-                    </TabsTrigger>
-                    <TabsTrigger value="permissoes">Permissoes</TabsTrigger>
+                    <TabsTrigger value="departamentos">Departamentos</TabsTrigger>
+                    <TabsTrigger value="centros-custo">Centros-custo</TabsTrigger>
+                    <TabsTrigger value="perfis">Perfis</TabsTrigger>
+                    <TabsTrigger value="permissoes">Permissões</TabsTrigger>
                   </TabsList>
                   <TabsContent value="filiais">
                     <div>
                       {modalEditing && (
                         <div className="flex justify-end mb-2">
-                          <Button
-                            size={"sm"}
-                            onClick={() => setOpenModalFiliais(true)}
-                          >
+                          <Button size={"sm"} onClick={() => setOpenModalFiliais(true)}>
                             Adicionar
                           </Button>
                         </div>
                       )}
-                      <TableUserFiliais
-                        form={form}
-                        modalEditing={modalEditing}
-                      />
+                      <TableUserFiliais form={form} modalEditing={modalEditing} />
                     </div>
                   </TabsContent>
                   <TabsContent value="centros-custo">
                     <div>
                       {modalEditing && (
                         <div className="flex justify-end mb-2">
-                          <Button
-                            size={"sm"}
-                            onClick={() => setOpenModalCentrosCusto(true)}
-                          >
+                          <Button size={"sm"} onClick={() => setOpenModalCentrosCusto(true)}>
                             Adicionar
                           </Button>
                         </div>
                       )}
-                      <TableUserCentrosCustos
-                        form={form}
-                        modalEditing={modalEditing}
-                      />
+                      <TableUserCentrosCustos form={form} modalEditing={modalEditing} />
                     </div>
                   </TabsContent>
                   <TabsContent value="departamentos">
                     <div>
                       {modalEditing && (
                         <div className="flex justify-end mb-2">
-                          <Button
-                            size={"sm"}
-                            onClick={() => setOpenModalDepartamentos(true)}
-                          >
+                          <Button size={"sm"} onClick={() => setOpenModalDepartamentos(true)}>
                             Adicionar
                           </Button>
                         </div>
                       )}
-                      <TableUserDepartamentos
-                        form={form}
-                        modalEditing={modalEditing}
-                      />
+                      <TableUserDepartamentos form={form} modalEditing={modalEditing} />
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="perfis">
+                    <div>
+                      {modalEditing && (
+                        <div className="flex justify-end mb-2">
+                          <Button size={"sm"} onClick={() => setOpenModalPerfis(true)}>
+                            Adicionar
+                          </Button>
+                        </div>
+                      )}
+                      <TableUserPerfis form={form} modalEditing={modalEditing} />
                     </div>
                   </TabsContent>
                   <TabsContent value="permissoes">
                     <div>
                       {modalEditing && (
                         <div className="flex justify-end mb-2">
-                          <Button
-                            size={"sm"}
-                            onClick={() => setOpenModalPermissoes(true)}
-                          >
+                          <Button size={"sm"} onClick={() => setOpenModalPermissoes(true)}>
                             Adicionar
                           </Button>
                         </div>
                       )}
-                      <TableUserPermissoes
-                        form={form}
-                        modalEditing={modalEditing}
-                      />
+                      <TableUserPermissoes form={form} modalEditing={modalEditing} />
                     </div>
                   </TabsContent>
                 </Tabs>

@@ -2,6 +2,7 @@ import { Input } from "@/components/custom/FormInput";
 import SelectMes from "@/components/custom/SelectMes";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { Link, useLocation } from "react-router-dom";
 import Agregadores from "./Agregadores/Agregadores";
 import Metas from "./Metas/Metas";
@@ -44,21 +45,22 @@ const ComercialMetas = () => {
             <Link to={`${uri}?tab=metas`}>
               <TabsTrigger value="metas">Metas</TabsTrigger>
             </Link>
-            <Link to={`${uri}?tab=agregadores`}>
-              <TabsTrigger value="agregadores">Agregadores</TabsTrigger>
-            </Link>
-            <ScrollBar
-              orientation="horizontal"
-              thumbColor="dark:bg-slate-400 bg-gray-450"
-            />
+            {hasPermission(["METAS:AGREGADORES_VER", "MASTER"]) && (
+              <Link to={`${uri}?tab=agregadores`}>
+                <TabsTrigger value="agregadores">Agregadores</TabsTrigger>
+              </Link>
+            )}
+            <ScrollBar orientation="horizontal" thumbColor="dark:bg-slate-400 bg-gray-450" />
           </ScrollArea>
         </TabsList>
         <TabsContent value="metas">
           <Metas />
         </TabsContent>
-        <TabsContent value="agregadores">
-          <Agregadores />
-        </TabsContent>
+        {hasPermission(["METAS:AGREGADORES_VER", "MASTER"]) && (
+          <TabsContent value="agregadores">
+            <Agregadores />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
