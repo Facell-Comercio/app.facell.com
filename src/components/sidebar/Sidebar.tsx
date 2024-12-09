@@ -122,7 +122,6 @@ export function Sidebar() {
                     const active =
                       itemActive?.parentIndex === itemIndex ||
                       (itemActive?.index === itemIndex && itemActive.sub === false);
-                    console.log(active, item.type);
 
                     if (active && item.type !== "title") {
                       setItemActive({ sub: false, index: null, parentIndex: null });
