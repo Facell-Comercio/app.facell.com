@@ -16,7 +16,7 @@ const ButtonNovaMeta = () => {
     <span>
       <Button
         variant={"outline"}
-        className="border-blue-200 dark:border-primary"
+        className="border-primary"
         onClick={() => handleClickNewMeta()}
         // disabled={qtdPendencias > 0}
       >
