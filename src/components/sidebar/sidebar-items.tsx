@@ -1,4 +1,4 @@
-import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
+import { checkUserDepartments, hasModuleAccess, hasPermission } from "@/helpers/checkAuthorization";
 import { Play, Settings } from "lucide-react";
 import { ReactNode } from "react";
 import {
@@ -280,7 +280,8 @@ export const sidebarItems: SidebarItem[] = [
     type: "label",
     icon: <FaBullhorn />,
     uri: "/marketing",
-    visible: () => hasModuleAccess("MARKETING") || hasPermission("MASTER"),
+    visible: () =>
+      checkUserDepartments("MARKETING") || hasModuleAccess("MARKETING") || hasPermission("MASTER"),
     children: [
       {
         name: "Patrocinado",
