@@ -3,6 +3,7 @@ import { Input } from "@/components/custom/FormInput";
 import SearchComponent from "@/components/custom/SearchComponent";
 import SelectMes from "@/components/custom/SelectMes";
 import { Button } from "@/components/ui/button";
+import { hasPermission } from "@/helpers/checkAuthorization";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { RefreshCcw } from "lucide-react";
 import ModalCampanha from "./campanha/Modal";
@@ -38,24 +39,26 @@ const Campanhas = () => {
             onChange={(e) => setFilters({ ano: e.target.value })}
           />
         </span>
-        <Button
-          onClick={() => {
-            reimportarEvolux({ from: new Date(), to: new Date() });
-          }}
-          disabled={reimportarEvoluxIsPending}
-          title="Importa as ligações realizadas no dia atual"
-        >
-          {reimportarEvoluxIsPending ? (
-            <>
-              <RefreshCcw size={18} className="me-2 animate-spin" />
-              Importando...
-            </>
-          ) : (
-            <>
-              <RefreshCcw className="me-2" size={18} /> Importar Evolux
-            </>
-          )}
-        </Button>
+        {hasPermission(["MASTER", "MAILING:EDITAR"]) && (
+          <Button
+            onClick={() => {
+              reimportarEvolux({ from: new Date(), to: new Date() });
+            }}
+            disabled={reimportarEvoluxIsPending}
+            title="Importa as ligações realizadas no dia atual"
+          >
+            {reimportarEvoluxIsPending ? (
+              <>
+                <RefreshCcw size={18} className="me-2 animate-spin" />
+                Importando...
+              </>
+            ) : (
+              <>
+                <RefreshCcw className="me-2" size={18} /> Importar Evolux
+              </>
+            )}
+          </Button>
+        )}
       </span>
       <SearchComponent handleSearch={(search) => setFilters({ nome: search })} />
       {isSuccess && (

@@ -309,7 +309,8 @@ export const sidebarItems: SidebarItem[] = [
         type: "link",
         shortName: "M",
         uri: "/marketing/mailing",
-        visible: () => hasPermission("MARKETING:MAILING_VER") || hasPermission("MASTER"),
+        visible: () =>
+          checkUserDepartments("MARKETING") || hasPermission(["MASTER", "MARKETING:MAILING_VER"]),
       },
       {
         name: "Cadastros",

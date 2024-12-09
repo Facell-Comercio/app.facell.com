@@ -118,7 +118,8 @@ const AppRoutes = () => {
           <Route path="/marketing/">
             <Route
               element={
-                checkUserDepartments("MARKETING", true) || hasPermission("MASTER") ? (
+                checkUserDepartments("MARKETING") ||
+                hasPermission(["MASTER", "MARKETING:MAILING_VER"]) ? (
                   <MailingPage />
                 ) : (
                   <NotAuthorizedPage />
