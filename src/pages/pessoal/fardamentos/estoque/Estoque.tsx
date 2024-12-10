@@ -7,6 +7,7 @@ import { useFardamentos } from "@/hooks/useFardamentos";
 import FiltersEstoque from "./table/FiltersEstoque";
 import { columnsTableEstoques } from "./table/columns-estoque";
 import FormEstoqueFardamento from "./components/Form";
+import ModalEstoque from "./components/Modal";
 
 
 
@@ -36,12 +37,14 @@ const Estoque = () => {
       </div>
       <div>
         <FiltersEstoque refetch={refetch}/>
+        <FormEstoqueFardamento/>
+        <ModalEstoque/>
         <DataTable
         pagination={pagination}
         setPagination={setPagination}
         data={rows} rowCount={rowCount} columns={columnsTableEstoques} />
       </div>
-      <FormEstoqueFardamento/>
+      {/* <FormEstoqueFardamento/> */}
     </div>
   );
 };

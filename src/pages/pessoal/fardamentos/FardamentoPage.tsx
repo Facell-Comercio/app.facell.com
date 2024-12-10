@@ -4,6 +4,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/context/auth-store";
 import { Navigate } from 'react-router-dom';
 import Estoque from "./estoque/Estoque";
+import Departamentos from "@/pages/admin/departamentos/Departamentos";
+import Filiais from "@/pages/admin/filiais/Filiais";
 
 
 const Perfil = () => {

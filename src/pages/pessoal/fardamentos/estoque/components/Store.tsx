@@ -1,10 +1,10 @@
 import { create } from "zustand";
  interface useStoreEstoque {
-    id: number | null;
+    id: number| null;
     modalEditing: boolean;
     modalOpen: boolean;
   
-    openModal: (id: number | null) => void;
+    openModal: (id: number| null) => void;
     closeModal: () => void;
     editModal: (bool: boolean) => void;
  }
@@ -14,7 +14,7 @@ import { create } from "zustand";
     modalEditing: false,
     modalOpen: false,
   
-    openModal: (id: number | null) => set({ modalOpen: true, id: id }),
+    openModal: (id: number| null) => set({ modalOpen: true, id: id }),
     closeModal: () => set({ modalOpen: false }),
     editModal: (bool) => set({ modalEditing: bool }),
   }));

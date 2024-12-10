@@ -27,10 +27,16 @@ export const useFardamentos = () => {
               pagination,
             },
           });
-          return result.data;
+          return result; //por que não funciona return result.data ?
         },
       });
     },
+    getOne: (id: number | null) =>
+      useQuery({
+        enabled: !!id,
+        queryKey: ['pessoal','fardamento', id],
+        queryFn: async () => await api.get(`/pessoal/fardamentos/estoque/${id}`),
+      }),
 
     abastecer: () =>
       useMutation({
@@ -47,13 +53,6 @@ export const useFardamentos = () => {
         },
       }),
     
-    getOne: (id?: string) =>
-      useQuery({
-        enabled: !!id,
-        queryKey: ['pessoal','fardamento', id],
-        queryFn: async () => await api.get(`/pessoal/fardamentos/estoque/${id}`),
-        // staleTime: Infinity,
-      }),
     
     update: () =>
       useMutation({

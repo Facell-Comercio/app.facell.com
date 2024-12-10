@@ -1,6 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ReactNode } from "react";
 import { Dropdown } from "../components/DropdownMenu";
+import { Ellipsis } from "lucide-react";
+import { useStoreEstoque } from "../components/Store";
+
 
 
 export type RowEstoque = {
@@ -12,14 +15,17 @@ export type RowEstoque = {
     tamanho: string;
     sexo: string;
 }
-
+const openModal = useStoreEstoque.getState().openModal;
 export const columnsTableEstoques: ColumnDef<RowEstoque>[] = [
     {
         accessorKey: "id",
         header: "AÇÕES",
         enableSorting: false,
-        cell: () => (
-           <Dropdown/>
+        cell: (info) => (
+           <span
+           onClick={() => openModal(info.getValue<number>())}>
+              <Ellipsis/>
+           </span>
         ),
         sortDescFirst: true,
     },
