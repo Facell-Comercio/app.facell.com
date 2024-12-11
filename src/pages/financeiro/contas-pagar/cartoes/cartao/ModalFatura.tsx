@@ -62,7 +62,8 @@ const ModalFatura = () => {
   const formRef = useRef(null);
 
   const { data, isLoading } = useCartoes().getFatura(id);
-  const dados: FaturaSchema = data?.data.dados;
+  const dados: FaturaSchema = data?.data.dados || {};
+
   const { form } = useFormFaturaData(dados);
 
   //~ Compras Aprovadas
@@ -117,8 +118,13 @@ const ModalFatura = () => {
     color = "bg-red-500";
   }
 
+  useEffect(()=>{
+    form.setValue('valor', String(parseFloat(form.getValues('valor_inicial') || '0') - parseFloat(form.getValues('estorno') || '0')))
+  }, [form.watch('estorno')])
+
   function handleSubmit() {
     const valor = parseFloat(form.watch("valor") || "0");
+    const estorno = parseFloat(form.watch("estorno") || "0");
 
     const cod_barras = normalizeNumberOnly(form.watch("cod_barras")) || undefined;
     if (cod_barras && cod_barras.length < 44) {
@@ -130,13 +136,14 @@ const ModalFatura = () => {
       data_prevista: form.watch("data_prevista"),
       cod_barras,
       valor: String(valor),
+      estorno: String(estorno),
     });
   }
 
   const [isOpenCloseLoading, setIsOpenCloseLoading] = useState<boolean>(false);
 
   async function handleCloseFatura() {
-    const valor = parseFloat(form.watch("valor") || "0");
+    const valor = parseFloat(form.watch("valor") || "0") + parseFloat(form.watch("estorno") || "0");
 
     if (!form.watch("cod_barras")) {
       toast({ title: "Código de barras obrigatório", variant: "warning" });
@@ -276,7 +283,7 @@ const ModalFatura = () => {
                 </div>
                 <Form {...form}>
                   <form
-                    className="flex gap-2 flex-wrap"
+                    className="flex flex-col gap-2 flex-wrap"
                     ref={formRef}
                     onSubmit={(e) => {
                       e.preventDefault();
@@ -284,43 +291,74 @@ const ModalFatura = () => {
                       handleSubmit();
                     }}
                   >
-                    <span className="flex flex-1 flex-col gap-2 min-w-[15ch]">
-                      <label className="text-sm font-medium">Data Vencimento</label>
-                      <Input
-                        disabled={disabled}
-                        // @ts-ignore
-                        value={normalizeDate(dados?.data_vencimento || "")}
-                        readOnly
-                      />
-                    </span>
-                    <span className="flex flex-col gap-2">
-                      <label className="text-sm font-medium">Data Previsão</label>
-                      <InputDate
-                        disabled={disabled || !modalEditing || isPending}
-                        value={form.watch(`data_prevista`)}
-                        onChange={(e: Date) => form.setValue(`data_prevista`, e)}
-                      />
-                    </span>
-                    <span className="flex flex-1 flex-col gap-2 min-w-[20ch]">
-                      <label className="text-sm font-medium">Valor da Fatura</label>
-                      <FormInput
-                        type="number"
-                        name={`valor`}
-                        control={form.control}
-                        min={0}
-                        icon={TbCurrencyReal}
-                        iconLeft
-                        disabled={disabled || !modalEditing || isPending}
-                      />
-                    </span>
-                    <span className="flex flex-1 flex-col gap-2 min-w-[20ch]">
-                      <label className="text-sm font-medium">Cod. Barras</label>
-                      <FormInput
-                        disabled={disabled || !modalEditing || isPending}
-                        name={`cod_barras`}
-                        control={form.control}
-                      />
-                    </span>
+                    <div className="flex gap-2">
+                      <span className="flex flex-1 flex-col gap-2 min-w-[15ch]">
+                        <label className="text-sm font-medium">Data Vencimento</label>
+                        <Input
+                          disabled={disabled}
+                          // @ts-ignore
+                          value={normalizeDate(dados?.data_vencimento || "")}
+                          readOnly
+                        />
+                      </span>
+                      <span className="flex flex-col gap-2">
+                        <label className="text-sm font-medium">Data Previsão</label>
+                        <InputDate
+                          disabled={disabled || !modalEditing || isPending}
+                          value={form.watch(`data_prevista`)}
+                          onChange={(e: Date) => form.setValue(`data_prevista`, e)}
+                        />
+                      </span>
+                      <span className="flex flex-1 flex-col gap-2 min-w-[20ch]">
+                        <label className="text-sm font-medium">Valor da Fatura</label>
+                        <FormInput
+                          type="number"
+                          name={`valor_inicial`}
+                          control={form.control}
+                          min={0}
+                          icon={TbCurrencyReal}
+                          iconLeft
+                          disabled={disabled || !modalEditing || isPending}
+                        />
+                      </span>
+                      <span className="flex flex-1 flex-col gap-2 min-w-[20ch]">
+                        <label className="text-sm font-medium">Estorno</label>
+                        <FormInput
+                          type="number"
+                          name={`estorno`}
+                          control={form.control}
+                          min={0}
+                          icon={TbCurrencyReal}
+                          iconLeft
+                          disabled={disabled || !modalEditing || isPending}
+                        />
+                      </span>
+                      <span className="flex flex-1 flex-col gap-2 min-w-[20ch]">
+                        <label className="text-sm font-medium">Valor Final</label>
+                        <FormInput
+                          type="number"
+                          name={`valor`}
+                          control={form.control}
+                          min={0}
+                          icon={TbCurrencyReal}
+                          iconLeft
+                          disabled={disabled || !modalEditing || isPending}
+                        />
+                      </span>
+
+
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="flex flex-1 flex-col gap-2 min-w-[20ch]">
+                        <label className="text-sm font-medium">Cod. Barras</label>
+                        <FormInput
+                          disabled={disabled || !modalEditing || isPending}
+                          name={`cod_barras`}
+                          control={form.control}
+                        />
+                      </span>
+                    </div>
+
                   </form>
                 </Form>
               </div>

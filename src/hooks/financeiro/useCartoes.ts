@@ -34,7 +34,9 @@ export type FaturaSchema = {
   data_vencimento?: Date;
   data_prevista?: Date;
   cod_barras?: string;
+  valor_inicial?: string;
   valor?: string;
+  estorno?: string;
   status?: string;
   closed?: boolean;
   id_cartao?: string;
