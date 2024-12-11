@@ -87,12 +87,13 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
           position: "relative",
         }}
       >
-        {virtualizer.getVirtualItems().map((item, index) => {
+        {virtualizer.getVirtualItems().map((item) => {
+          const dataItem = data[item.index]; // Pegando o item correto no array data
           return (
             <div
               // ref={virtualizer.measureElement}
-              key={item.index}
-              data-index={index}
+              key={`item-fatura:${item.index}`}
+              data-index={item.index}
               className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
                 virtualizer.getVirtualItems().length == 0 && "hidden"
               }`}
@@ -107,43 +108,43 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({
             >
               {modalEditing && (
                 <Checkbox
-                  checked={ids.includes(data[index].id)}
+                  checked={ids.includes(dataItem.id)}
                   onCheckedChange={() => {
-                    handleChangeIds(data[index].id || "");
+                    handleChangeIds(dataItem.id || "");
                   }}
                   className="me-1"
                 />
               )}
               <Input
                 className="w-16 h-8 text-xs p-2 text-center"
-                value={data[index].id || ""}
+                value={dataItem.id || ""}
                 readOnly
               />
               <Input
                 className="w-[72px] h-8 text-xs p-2 text-center cursor-pointer"
-                value={data[index].id_titulo || ""}
-                onClick={() => openModal({ id: data[index].id_titulo })}
+                value={dataItem.id_titulo || ""}
+                onClick={() => openModal({ id: dataItem.id_titulo })}
                 readOnly
               />
               <Input
                 className="flex-1 min-w-44 h-8 text-xs p-2"
-                value={data[index].fornecedor || ""}
+                value={dataItem.fornecedor || ""}
                 readOnly
               />
               <Input
                 className="w-32 h-8 text-xs p-2"
-                value={data[index].filial || ""}
+                value={dataItem.filial || ""}
                 readOnly
               />
               <Input
                 className="w-24 h-8 text-xs p-2 text-center"
-                value={data[index].num_doc || ""}
+                value={dataItem.num_doc || ""}
                 readOnly
               />
               <Input
                 className="w-32 h-8 text-xs p-2 text-end"
                 value={
-                  data[index].valor && normalizeCurrency(data[index].valor)
+                  dataItem.valor && normalizeCurrency(dataItem.valor)
                 }
                 readOnly
               />
