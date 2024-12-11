@@ -150,19 +150,12 @@ const ModalFatura = () => {
       return;
     }
     const diferenca = Math.abs(valor - parseFloat(totalAprovadas));
-    if (valor !== parseFloat(totalAprovadas)) {
-      if (parseFloat(totalAprovadas) < valor) {
+
+    if (valor.toFixed(2) !== totalAprovadas.toFixed(2)) {
         toast({
-          title: `Valor da fatura ultrapassa o esperado em ${normalizeCurrency(diferenca)}`,
+          title: `Valor da fatura + estorno diverge do valor de contas aprovadas em ${normalizeCurrency(diferenca)}`,
           variant: "warning",
         });
-      }
-      if (parseFloat(totalAprovadas) > valor) {
-        toast({
-          title: `Valor da fatura é inferior ao valor esperado em ${normalizeCurrency(diferenca)}`,
-          variant: "warning",
-        });
-      }
       return;
     }
     const cod_barras = normalizeNumberOnly(form.watch("cod_barras")) || undefined;
