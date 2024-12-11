@@ -1,6 +1,6 @@
 import { api } from "@/lib/axios";
 import { EstoqueFormdata } from "@/pages/pessoal/fardamentos/estoque/components/form-data";
-import { useStoreEstoque } from "@/pages/pessoal/fardamentos/estoque/table/store-table";
+import { useStoreTableEstoque } from "@/pages/pessoal/fardamentos/estoque/table/store-table";
 import { Permissao } from "@/types/permissao-type";
 import { GetAllParams } from "@/types/query-params-type";
 import {
@@ -15,8 +15,8 @@ export const useFardamentos = () => {
   const queryClient = useQueryClient();
   return {
     getAll: () => {
-      const pagination = useStoreEstoque().pagination;
-      const filters = useStoreEstoque().filters;
+      const pagination = useStoreTableEstoque().pagination;
+      const filters = useStoreTableEstoque().filters;
   
       return useQuery({
         queryKey: ["pessoal", "fardamento", "estoque", "lista", {pagination, filters}],

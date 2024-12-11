@@ -4,21 +4,27 @@ import { Ellipsis } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Shirt, Handshake, HandCoins, ArrowRightLeft } from "lucide-react";
 import { useStoreEstoque } from './Store';
+import FormEstoqueFardamento from './Form';
 
 
 const openModal = useStoreEstoque.getState().openModal;
+interface DropdownProps {
+    id: number; // A propriedade 'id' recebida do componente pai
+}
 
 
-
-export const Dropdown = () => {
+export const Dropdown  = ({ id }: DropdownProps) => {
+    const handleOpenModal = () => {
+        openModal(id);
+      };
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
             <DropdownMenuTrigger >
                 <span> <Ellipsis/> </span>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                     <DropdownMenuItem> 
-                        <Button className="mx-auto w-full" variant={'default'} size={'sm'}>
+                        <Button className="mx-auto w-full" variant={'default'} size={'sm'} onClick={handleOpenModal}>
                             <Shirt size={12}
                              className="mr-2"
                             />Abastecer</Button>

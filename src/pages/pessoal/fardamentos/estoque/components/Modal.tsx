@@ -1,12 +1,12 @@
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { DialogDescription } from "@radix-ui/react-dialog";
 import { useStoreEstoque } from "./Store";
 import { Form } from "react-router-dom";
 import FormEstoqueFardamento from "./Form";
@@ -14,6 +14,7 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { useEffect, useRef } from "react";
 import { useFardamentos } from "@/hooks/useFardamentos";
 import { Skeleton } from "@/components/ui/skeleton";
+import { grupo_economico } from "@/api/modules/grupo_economico";
 
 
 
@@ -27,10 +28,17 @@ const ModalEstoque = () => {
     const formRef = useRef(null);
 
     const { data, isLoading } = useFardamentos().getOne(id);
-    const fardamentoData = data;
-
+    const fardamentoData = data?.data || {
+        saldo: "0",
+        grupo_economico: "selecione",
+        
+    };
+    Object.keys(fardamentoData).forEach((key)=> {
+        fardamentoData[key] = String(fardamentoData[key])
+    });
     function handleClickCancel() {
         editModal(false);
+        closeModal();
     }
 
     return (
@@ -42,7 +50,7 @@ const ModalEstoque = () => {
                 </DialogHeader>
                 <ScrollArea className="max-h-[70vh]">
                     {modalOpen && !isLoading ? (
-                        <FormEstoqueFardamento/>
+                        <FormEstoqueFardamento data={fardamentoData}/>
                     ) : (
                         <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
                             <Skeleton className="w-full row-span-1" />

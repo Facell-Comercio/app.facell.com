@@ -15,7 +15,7 @@ import { create } from "zustand";
     modalOpen: false,
   
     openModal: (id: number| null) => set({ modalOpen: true, id: id }),
-    closeModal: () => set({ modalOpen: false }),
+    closeModal: () => set({ modalOpen: false, id: null }),
     editModal: (bool) => set({ modalEditing: bool }),
   }));
   

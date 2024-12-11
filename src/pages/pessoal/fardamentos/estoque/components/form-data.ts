@@ -29,7 +29,7 @@ const schemaEstoque = z.object({
     .string().
     min(1, "Campo obrigatório")
     .transform((value) => parseInt(value)),
-    saldo_futuro: z.string().min(1, "Campo obrigatório")
+    saldo_futuro: z.string()
 });
 
 export type EstoqueFormdata =  z.infer<typeof schemaEstoque>
@@ -37,7 +37,8 @@ export type EstoqueFormdata =  z.infer<typeof schemaEstoque>
 export const useFormEstoqueFardamentoData = (data: EstoqueFormdata) =>{
     
     const form = useForm <EstoqueFormdata>({
-        resolver: zodResolver(schemaEstoque)  
+        resolver: zodResolver(schemaEstoque),
+        values: data  
     });
     return{
         form,

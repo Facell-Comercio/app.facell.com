@@ -15,14 +15,14 @@ import {
     AccordionContent,
     AccordionTrigger,
   } from "@radix-ui/react-accordion";
-import { useStoreEstoque} from "./store-table";
+import { useStoreTableEstoque} from "./store-table";
 import { EraserIcon, FilterIcon, Target } from "lucide-react";
 
 const FiltersEstoque = ({refetch}: {refetch: () => void}) => {
 
-        const filters =  useStoreEstoque((state) => state.filters);
-        const setFilters = useStoreEstoque((state) => state.setFilters);
-        const resetFilters = useStoreEstoque((state) => state.resetFilters)
+        const filters =  useStoreTableEstoque((state) => state.filters);
+        const setFilters = useStoreTableEstoque((state) => state.setFilters);
+        const resetFilters = useStoreTableEstoque((state) => state.resetFilters)
         const [itemOpen, setItemOpen] = useState<string>("item-1");
 
 

@@ -1,13 +1,13 @@
 import { DataTable } from "@/components/custom/DataTable";
 import { Button } from "@/components/ui/button";
-import {} from "@radix-ui/react-select";
 import { Shirt, Upload, Download, Handshake, HandCoins } from "lucide-react";
-import { useStoreEstoque } from "./table/store-table";
 import { useFardamentos } from "@/hooks/useFardamentos";
 import FiltersEstoque from "./table/FiltersEstoque";
 import { columnsTableEstoques } from "./table/columns-estoque";
 import FormEstoqueFardamento from "./components/Form";
 import ModalEstoque from "./components/Modal";
+import { useStoreTableEstoque } from "./table/store-table";
+import { useStoreEstoque } from "./components/Store";
 
 
 
@@ -15,12 +15,15 @@ import ModalEstoque from "./components/Modal";
 
 const Estoque = () => {
   const { data, refetch } = useFardamentos().getAll();
-  const [pagination, setPagination] = useStoreEstoque((state) => [
+  const [pagination, setPagination] = useStoreTableEstoque((state) => [
     state.pagination,
     state.setPagination,
   ]);
   const rows = data?.data?.rows || 0;
   const rowCount = data?.data?.rowCount || 0;
+  const openModal = useStoreEstoque(state=> state.openModal);
+
+
 
   return (
     <div className="flex-col p-4 rounded-lg">
@@ -30,14 +33,13 @@ const Estoque = () => {
           <Button variant={"default"}><Upload size={16} className="mr-2"/>Importar</Button>
         </div>
         <div className="flex justify-end gap-3 ">
-          <Button variant={"default"}><Shirt size={16} className="mr-2"/>Abastecer</Button>
+          <Button variant={"default"}><Shirt size={16} className="mr-2" onClick={() => openModal(null)}/>Abastecer</Button>
           <Button variant={"destructive"}><Handshake size={16} className="mr-2"/>Conceder</Button>
           <Button variant={"success"}><HandCoins size={16} className="mr-2"/>Vender</Button>
         </div>
       </div>
       <div>
         <FiltersEstoque refetch={refetch}/>
-        <FormEstoqueFardamento/>
         <ModalEstoque/>
         <DataTable
         pagination={pagination}
