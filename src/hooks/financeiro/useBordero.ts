@@ -27,6 +27,7 @@ type reversePaymentProps = {
 type ImportRetornoRemessaProps = {
   files: FileList | null;
   id_bordero?: string | null;
+  cod_banco: string;
 };
 
 export const useBordero = () => {
@@ -293,7 +294,7 @@ export const useBordero = () => {
         },
       }),
 
-    importRemessa: ({ files, id_bordero }: ImportRetornoRemessaProps) => {
+    importRemessa: ({ files, id_bordero, cod_banco }: ImportRetornoRemessaProps) => {
       return new Promise(async (resolve, reject) => {
         try {
           const form = new FormData();
@@ -302,6 +303,7 @@ export const useBordero = () => {
               form.append("files", files[i]);
               form.append("files", files[i]);
             }
+            form.append("cod_banco", cod_banco);
           }
           const result = await api.postForm(
             `/financeiro/contas-a-pagar/bordero/${id_bordero}/import-retorno-remessa`,
