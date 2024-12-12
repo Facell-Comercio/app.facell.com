@@ -35,9 +35,7 @@ const ItemBorderoSchema = z
   })
   .refine(
     (data) =>
-      data.tipo_baixa === "PARCIAL" && data.can_remove
-        ? !!data.data_prevista_parcial
-        : true,
+      data.tipo_baixa === "PARCIAL" && data.can_remove ? !!data.data_prevista_parcial : true,
     {
       path: ["data_prevista_parcial"],
       message: "Data prevista parcial é obrigatória",
@@ -50,6 +48,7 @@ const schemaBorderos = z.object({
   conta_bancaria: z.string().trim().toUpperCase().optional(),
   id_conta_bancaria: z.coerce.string(),
   banco: z.string().optional(),
+  codigo_banco: z.string().optional(),
   data_pagamento: z.coerce.date({ message: "Data Obrigatória" }),
   id_matriz: z.coerce.string().trim().optional(),
   itens: z.array(ItemBorderoSchema),

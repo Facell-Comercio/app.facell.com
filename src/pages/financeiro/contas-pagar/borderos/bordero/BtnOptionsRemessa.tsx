@@ -12,6 +12,7 @@ import { exportToExcel } from "@/helpers/importExportXLS";
 import { useBordero } from "@/hooks/financeiro/useBordero";
 import { api } from "@/lib/axios";
 import { useQueryClient } from "@tanstack/react-query";
+import { formatDate } from "date-fns";
 import { Download, FileText, Upload } from "lucide-react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
@@ -22,8 +23,9 @@ export type ExportAnexosProps = {
 };
 type OptionsRemessaProps = {
   id: string;
+  cod_banco: string;
 };
-const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
+const BtnOptionsRemessa = ({ id, cod_banco }: OptionsRemessaProps) => {
   const queryClient = useQueryClient();
   const {
     mutate: exportRemessa,
@@ -48,7 +50,7 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
   }, [remessaIsSuccess]);
 
   //* Funçao Importação
-  function importRemessa(files: FileList | null) {
+  function importRemessa(files: FileList | null, cod_banco: string) {
     return new Promise(async (resolve, reject) => {
       try {
         const form = new FormData();
@@ -56,7 +58,9 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
           for (let i = 0; i < files.length; i++) {
             form.append("files", files[i]);
           }
+          form.append("cod_banco", cod_banco);
         }
+
         const result = await api.postForm(
           `/financeiro/contas-a-pagar/bordero/${id}/import-retorno-remessa`,
           form
@@ -78,17 +82,18 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
       fileRef.current.click();
     }
   };
-  const handleFileImportChange = async (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileImportChange = async (event: ChangeEvent<HTMLInputElement>) => {
     setProcessing((prev) => ({ ...prev, import: true }));
     const target = event.target;
     try {
       if (!target.files) {
         return;
       }
-      const result = await importRemessa(target.files);
-      exportToExcel(result, "RESULTADO IMPORTAÇÃO DE REMESSA");
+      const result = await importRemessa(target.files, cod_banco);
+      exportToExcel(
+        result,
+        `RESULTADO IMPORTAÇÃO DE REMESSA ${formatDate(new Date(), "dd_MM_yyyy_HH_mm")}`
+      );
 
       toast({
         variant: "success",
@@ -101,7 +106,6 @@ const BtnOptionsRemessa = ({ id }: OptionsRemessaProps) => {
         // @ts-ignore
         description: error?.response?.data?.message || error?.message,
       });
-      console.log(error);
     } finally {
       setProcessing((prev) => ({ ...prev, import: false }));
       target.value = "";

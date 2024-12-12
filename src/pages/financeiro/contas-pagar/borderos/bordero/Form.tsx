@@ -426,7 +426,7 @@ const FormBordero = ({
                 {/* Exportação */}
                 {id && (
                   <div className="flex gap-3 items-center">
-                    <BtnOptionsRemessa id={id} />
+                    <BtnOptionsRemessa id={id} cod_banco={form.watch("codigo_banco") || ""} />
 
                     <Button
                       disabled={!!exporting}
