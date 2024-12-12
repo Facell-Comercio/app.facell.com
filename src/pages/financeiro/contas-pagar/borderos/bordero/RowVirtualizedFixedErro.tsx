@@ -1,17 +1,17 @@
 import * as React from "react";
 
 import AlertPopUp from "@/components/custom/AlertPopUp";
-import FormInput, { Input } from "@/components/custom/FormInput";
-import FormSelect from "@/components/custom/FormSelect";
+import { Input } from "@/components/custom/FormInput";
 import { InputDate } from "@/components/custom/InputDate";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Toggle } from "@/components/ui/toggle";
+import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
+import { useBordero } from "@/hooks/financeiro/useBordero";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
-import { TbCurrencyReal } from "react-icons/tb";
+import { Banknote, CreditCard, Landmark, Undo2 } from "lucide-react";
 import { useStoreCartao } from "../../cartoes/cartao/store";
 import { RemoveItemVencimentosProps } from "./Form";
 
@@ -27,9 +27,10 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
   data,
   filteredData,
   form,
-  removeItem,
   modalEditing,
 }) => {
+  const { mutate: reversePending } = useBordero().reversePending();
+  const authorized = checkUserDepartments("FINANCEIRO") || hasPermission("MASTER");
   const parentElement = React.useRef(null);
 
   const count = filteredData.length;
@@ -43,20 +44,20 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
 
   const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
 
-  type TipoBaixaProps = {
-    id: number | string;
-    label: string;
-  };
+  // type TipoBaixaProps = {
+  //   id: number | string;
+  //   label: string;
+  // };
 
-  const tipoBaixa: TipoBaixaProps[] = [
-    { id: "PADRÃO", label: "Total" },
-    { id: "PARCIAL", label: "Parcial" },
-    { id: "COM DESCONTO", label: "Com Desconto" },
-    {
-      id: "COM ACRÉSCIMO",
-      label: "Com Acréscimo",
-    },
-  ];
+  // const tipoBaixa: TipoBaixaProps[] = [
+  //   { id: "PADRÃO", label: "Total" },
+  //   { id: "PARCIAL", label: "Parcial" },
+  //   { id: "COM DESCONTO", label: "Com Desconto" },
+  //   {
+  //     id: "COM ACRÉSCIMO",
+  //     label: "Com Acréscimo",
+  //   },
+  // ];
 
   const allChecked = filteredData.length === filteredData.filter((item) => item.checked).length;
   const someChecked = filteredData.some((item) => item.checked);
@@ -102,8 +103,6 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
         <p className="min-w-24 text-center bg-slate-200 dark:bg-blue-950">Nº Doc</p>
 
         <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">Valor</p>
-        <p className="min-w-[132px] text-center bg-slate-200 dark:bg-blue-950">Valor Pago</p>
-        <p className="min-w-32 text-center bg-slate-200 dark:bg-blue-950">Tipo Baixa</p>
         {modalEditing && (
           <p className="min-w-44 text-center bg-slate-200 dark:bg-blue-950">
             Data Prevista Parcial
@@ -131,7 +130,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
 
           const disabled = !data[indexData].can_remove ? true : false;
           const tipo = form.watch(`itens.${indexData}.tipo_baixa`);
-          const valor = parseFloat(data[indexData].valor_total);
+          // const valor = parseFloat(data[indexData].valor_total);
           const emRemessa = data[indexData].remessa;
 
           function IconeFormaPagamento() {
@@ -247,36 +246,6 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                 }
                 readOnly
               />
-              <FormInput
-                type="number"
-                inputClass="text-xs flex-1 min-w-24 h-8"
-                readOnly={tipo == "PADRÃO" || !modalEditing}
-                name={`itens.${indexData}.valor_pago`}
-                control={form.control}
-                min={tipo === "COM ACRÉSCIMO" ? valor : 0}
-                max={tipo !== "COM ACRÉSCIMO" ? valor : valor * 1000}
-                icon={TbCurrencyReal}
-                iconLeft
-                iconClass="h-8"
-                disabled={!modalEditing || disabled || !tipo}
-                onBlur={() => {
-                  form.setValue(`itens.${indexData}.updated`, true);
-                }}
-              />
-              <FormSelect
-                name={`itens.${indexData}.tipo_baixa`}
-                className="text-xs w-32 h-8"
-                control={form.control}
-                disabled={!modalEditing || disabled}
-                options={tipoBaixa.map((tipo_baixa: TipoBaixaProps) => ({
-                  value: tipo_baixa.id.toString(),
-                  label: tipo_baixa.label,
-                }))}
-                onChange={() => {
-                  form.setValue(`itens.${indexData}.valor_pago`, valor);
-                  form.setValue(`itens.${indexData}.updated`, true);
-                }}
-              />
               {modalEditing && !disabled && tipo === "PARCIAL" ? (
                 <InputDate
                   disabled={tipo !== "PARCIAL"}
@@ -323,7 +292,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                   <span className="text-xs min-w-16 uppercase">{!!emRemessa ? "SIM" : "NÃO"}</span>
                 </Toggle>
               </AlertPopUp>
-              <AlertPopUp
+              {/* <AlertPopUp
                 title="Deseja realmente remover?"
                 description="O vencimento será removido definitivamente deste borderô, podendo ser incluido novamente."
                 action={() =>
@@ -343,6 +312,30 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                     variant={"destructive"}
                   >
                     <Minus size={20} />
+                  </Button>
+                ) : (
+                  <></>
+                )}
+              </AlertPopUp> */}
+              <AlertPopUp
+                title="Deseja realmente retornar para pendente?"
+                description="O vencimento retornará para o status pendente."
+                action={() =>
+                  reversePending({
+                    id: data[indexData].id_vencimento,
+                    tipo: data[indexData].tipo || "",
+                  })
+                }
+              >
+                {modalEditing && authorized ? (
+                  <Button
+                    disabled={!authorized}
+                    type="button"
+                    className="h-8 text-xs"
+                    variant={"destructive"}
+                    title="Retornar para pendente"
+                  >
+                    <Undo2 size={20} />
                   </Button>
                 ) : (
                   <></>

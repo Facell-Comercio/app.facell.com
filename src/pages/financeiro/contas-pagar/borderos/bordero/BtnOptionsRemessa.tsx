@@ -12,6 +12,7 @@ import { exportToExcel } from "@/helpers/importExportXLS";
 import { useBordero } from "@/hooks/financeiro/useBordero";
 import { api } from "@/lib/axios";
 import { useQueryClient } from "@tanstack/react-query";
+import { formatDate } from "date-fns";
 import { Download, FileText, Upload } from "lucide-react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
@@ -89,7 +90,10 @@ const BtnOptionsRemessa = ({ id, cod_banco }: OptionsRemessaProps) => {
         return;
       }
       const result = await importRemessa(target.files, cod_banco);
-      exportToExcel(result, "RESULTADO IMPORTAÇÃO DE REMESSA");
+      exportToExcel(
+        result,
+        `RESULTADO IMPORTAÇÃO DE REMESSA ${formatDate(new Date(), "dd_MM_yyyy_HH_mm")}`
+      );
 
       toast({
         variant: "success",
@@ -102,7 +106,6 @@ const BtnOptionsRemessa = ({ id, cod_banco }: OptionsRemessaProps) => {
         // @ts-ignore
         description: error?.response?.data?.message || error?.message,
       });
-      console.log(error);
     } finally {
       setProcessing((prev) => ({ ...prev, import: false }));
       target.value = "";
