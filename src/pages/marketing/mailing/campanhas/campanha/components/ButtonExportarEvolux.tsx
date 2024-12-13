@@ -1,4 +1,5 @@
 import { Spinner } from "@/components/custom/Spinner";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,21 +24,24 @@ const ButtonExportarEvolux = ({ disabled }: { disabled: boolean }) => {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal>
       <DropdownMenuTrigger
         type="button"
-        className="py-2 px-4 bg-success   text-white text-sm  text-nowrap flex font-medium gap-2 items-center rounded-md disabled:opacity-50"
+        className="w-full"
+        // className="py-2 px-4 bg-success w-full text-white text-sm  text-nowrap flex font-medium gap-2 items-center rounded-md disabled:opacity-50"
         disabled={isPending || disabled}
       >
-        {isPending ? (
-          <>
-            <Spinner /> Exportando...
-          </>
-        ) : (
-          <>
-            <Download className="me-2" size={18} /> Exportação Evolux
-          </>
-        )}
+        <Button variant={"success"} className="w-full">
+          {isPending ? (
+            <>
+              <Spinner /> Exportando...
+            </>
+          ) : (
+            <>
+              <Download className="me-2" size={18} /> Exportação Evolux
+            </>
+          )}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem onClick={() => handleExportSubcampanha("csv")}>

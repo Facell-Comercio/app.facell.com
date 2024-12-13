@@ -19,6 +19,7 @@ type ButtonMotivationProps = ButtonProps & {
   placeholder?: string;
   description?: string;
   equalText?: boolean;
+  stopPropagation?: boolean;
 };
 
 const ButtonMotivation = ({
@@ -32,6 +33,8 @@ const ButtonMotivation = ({
   description,
   equalText,
   disabled,
+  className,
+  stopPropagation,
 }: ButtonMotivationProps) => {
   const [motivo, setMotivo] = useState<string>("");
   const actionDisabled = equalText
@@ -41,7 +44,15 @@ const ButtonMotivation = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger type="button" asChild>
-        <Button title={title} type="button" variant={variant} size={size} disabled={disabled}>
+        <Button
+          title={title}
+          type="button"
+          variant={variant}
+          size={size}
+          disabled={disabled}
+          className={className}
+          onClick={(e) => stopPropagation && e.stopPropagation()}
+        >
           {children}
         </Button>
       </AlertDialogTrigger>

@@ -147,8 +147,8 @@ export const FiltersClientesCampanha = ({
                 <MultiSelectWithLabel
                   label="Status Contato"
                   options={defaultFilters.status_contato_list.map((contato_atual: any) => ({
-                    value: contato_atual.value,
-                    label: contato_atual.value || "NULL",
+                    value: contato_atual.value || "NULL",
+                    label: contato_atual.value || "SEM CONTATO",
                   }))}
                   onValueChange={(status_contato_list) => {
                     setFilters({ status_contato_list: status_contato_list });

@@ -22,10 +22,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { useMailing } from "@/hooks/marketing/useMailing";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { CopyPlus, Plus, Smartphone, Trash, UserPen, X } from "lucide-react";
+import { CopyPlus, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FaSpinner } from "react-icons/fa6";
-import ButtonExportSubcampanhas from "./components/ButtonExportarEvolux";
+import ButtonAcoesSubcampanha from "./components/ButtonAcoesSubcampanha";
 import { ClienteProps, columnsTableClientes } from "./components/columns-clientes";
 import { columnsTableClientesSubcampanha } from "./components/columns-clientes-campanha";
 import { FiltersClientesCampanha } from "./components/FiltersClientesCampanha";
@@ -427,7 +426,7 @@ const ModalCampanha = () => {
                           resetPagination={resetPaginationSubcampanha}
                         />
                         <span className="flex flex-wrap justify-end gap-2">
-                          {canEdit && (
+                          {/* {canEdit && (
                             <>
                               <ButtonMotivation
                                 title="Retorna os clintes para fora da subcampanha..."
@@ -495,26 +494,24 @@ const ModalCampanha = () => {
                                 )}
                               </ButtonMotivation>
                             </>
-                          )}
-                          <ButtonExportSubcampanhas disabled={disabledSubcampanha} />
-                          {canEdit && (
-                            <>
-                              <Button
-                                variant={"warning"}
-                                onClick={() => openModalDefinirAparelho(qtdeClientesSubcampanha)}
-                                disabled={disabledSubcampanha}
-                              >
-                                <Smartphone className="me-2" size={18} /> Definir Aparelhos
-                              </Button>
-                              <Button
-                                variant={"tertiary"}
-                                onClick={() => openModalDefinirVendedores(qtdeClientesSubcampanha)}
-                                disabled={disabledSubcampanha}
-                              >
-                                <UserPen className="me-2" size={18} /> Definir Vendedores
-                              </Button>
-                            </>
-                          )}
+                          )} */}
+
+                          <ButtonAcoesSubcampanha
+                            canEdit={canEdit}
+                            disabledSubcampanha={disabledSubcampanha}
+                            qtdeClientesSubcampanha={qtdeClientesSubcampanha}
+                            idSubcampanha={data_subcampanha?.id || ""}
+                            nomeSubcampanha={data_subcampanha?.nome || ""}
+                            qtdeAllClientesSubcampanha={qtde_all_clientes_subcampanha}
+                            setIdSubcampanha={setIdSubcampanha}
+                            setCampanhaData={setCampanhaData}
+                            deleteSubcampanha={deleteSubcampanha}
+                            deleteClientesSubcampanhaLote={deleteClientesSubcampanhaLote}
+                            deleteClientesSubcampanhaLoteIsPending={
+                              deleteClientesSubcampanhaLoteIsPending
+                            }
+                            deleteSubcampanhaIsPending={deleteSubcampanhaIsPending}
+                          />
                         </span>
                       </span>
                       <div className="overflow-auto bg-background rounded-lg">
@@ -544,12 +541,16 @@ const ModalCampanha = () => {
         </ScrollArea>
 
         {/* Modais */}
-        <ModalNovaSubcampanha refetch={refetch} />
+        <ModalNovaSubcampanha
+          refetch={handleResetFilterCampanha}
+          refetchSubcampanha={handleResetFilterSubcampanha}
+          idSubcampanha={idSubcampanha}
+        />
         <ModalEditarCliente />
         <ModalVerCliente />
         <ModalDefinirAparelho reset={handleResetFilterSubcampanha} />
         <ModalDefinirVendedores />
-        <ModalDuplicarCampanha refetch={refetch} />
+        <ModalDuplicarCampanha refetch={handleResetFilterCampanha} />
 
         <DialogFooter className="flex gap-2 items-end flex-wrap">
           <Button variant={"secondary"} onClick={handleClickCancel}>
