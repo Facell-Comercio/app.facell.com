@@ -4,7 +4,6 @@ import { Shirt, Upload, Download, Handshake, HandCoins } from "lucide-react";
 import { useFardamentos } from "@/hooks/useFardamentos";
 import FiltersEstoque from "./table/FiltersEstoque";
 import { columnsTableEstoques } from "./table/columns-estoque";
-import FormEstoqueFardamento from "./components/Form";
 import ModalEstoque from "./components/Modal";
 import { useStoreTableEstoque } from "./table/store-table";
 import { useStoreEstoque } from "./components/Store";
@@ -33,7 +32,7 @@ const Estoque = () => {
           <Button variant={"default"}><Upload size={16} className="mr-2"/>Importar</Button>
         </div>
         <div className="flex justify-end gap-3 ">
-          <Button variant={"default"}><Shirt size={16} className="mr-2" onClick={() => openModal(null)}/>Abastecer</Button>
+          <Button variant={"default"} onClick={() => openModal(null)}><Shirt size={16} className="mr-2"/>Abastecer</Button>
           <Button variant={"destructive"}><Handshake size={16} className="mr-2"/>Conceder</Button>
           <Button variant={"success"}><HandCoins size={16} className="mr-2"/>Vender</Button>
         </div>
