@@ -17,18 +17,38 @@ import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useStoreCampanha } from "../../store";
 
-const ModalNovaSubcampanha = ({ refetch }: { refetch: () => void }) => {
-  const [id, qtde_clientes, modalOpen, closeModal, filters, isPending, setIsPending, resetFilters] =
-    useStoreCampanha((state) => [
-      state.id,
-      state.qtde_clientes,
-      state.modalNovaSubcampanhaOpen,
-      state.closeModalNovaSubcampanha,
-      state.filters,
-      state.isPending,
-      state.setIsPending,
-      state.resetFilters,
-    ]);
+const ModalNovaSubcampanha = ({
+  refetch,
+  refetchSubcampanha,
+  idSubcampanha,
+}: {
+  refetch: () => void;
+  refetchSubcampanha: () => void;
+  idSubcampanha: string | undefined;
+}) => {
+  const [
+    id,
+    qtde_clientes,
+    modalOpen,
+    closeModal,
+    filters,
+    filters_lote,
+    isPending,
+    setIsPending,
+    resetFilters,
+    tipo_campanha,
+  ] = useStoreCampanha((state) => [
+    state.id,
+    state.qtde_clientes,
+    state.modalNovaSubcampanhaOpen,
+    state.closeModalNovaSubcampanha,
+    state.filters,
+    state.filters_lote,
+    state.isPending,
+    state.setIsPending,
+    state.resetFilters,
+    state.tipo_campanha,
+  ]);
   const [nomeSubcampanha, setNomeSubcampanha] = useState("");
 
   const {
@@ -62,12 +82,17 @@ const ModalNovaSubcampanha = ({ refetch }: { refetch: () => void }) => {
       });
       return;
     }
-    insertOneSubcampanha({ nome: nomeSubcampanha, filters, id_parent: id || "" });
+    const id_campanha = tipo_campanha === "subcampanha" ? idSubcampanha : id;
+    insertOneSubcampanha({
+      nome: nomeSubcampanha,
+      filters: { ...(tipo_campanha === "subcampanha" ? filters_lote : filters), id_campanha },
+      id_parent: id || "",
+    });
   }
 
   async function resetModal() {
     await new Promise((resolve) => resolve(resetFilters()));
-    refetch();
+    tipo_campanha === "subcampanha" ? refetchSubcampanha() : refetch();
     setNomeSubcampanha("");
   }
   useEffect(() => {

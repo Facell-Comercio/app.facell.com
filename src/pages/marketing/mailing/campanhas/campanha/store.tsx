@@ -42,6 +42,7 @@ interface useStoreCampanha {
   qtde_clientes: string | null;
   pagination: Pagination;
   paginationSubcampanha: Pagination;
+  tipo_campanha?: "subcampanha" | null;
 
   openModal: (id: string) => void;
   closeModal: () => void;
@@ -67,7 +68,7 @@ interface useStoreCampanha {
 
   //NOVA SUBCAMPANHA
   modalNovaSubcampanhaOpen: boolean;
-  openModalNovaSubcampanha: (qtde_clientes: string) => void;
+  openModalNovaSubcampanha: (qtde_clientes: string, type?: "subcampanha") => void;
   closeModalNovaSubcampanha: () => void;
 
   //DUPLICAR CAMPANHA
@@ -96,6 +97,11 @@ interface useStoreCampanha {
   modalDefinirVendedoresOpen: boolean;
   openModalDefinirVendedores: (qtde_clientes: string) => void;
   closeModalDefinirVendedores: () => void;
+
+  //TRANSFERIR CLIENTES
+  modalTransferirClientesOpen: boolean;
+  openModalTransferirClientes: (qtde_clientes: string) => void;
+  closeModalTransferirClientes: () => void;
 }
 
 export const useStoreCampanha = create<useStoreCampanha>((set) => ({
@@ -105,6 +111,7 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
   qtde_clientes: null,
   pagination: initialPagination,
   paginationSubcampanha: initialPagination,
+  tipo_campanha: null,
 
   openModal: (id: string) => set({ modalOpen: true, id }),
   closeModal: () =>
@@ -150,9 +157,10 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
 
   // NOVA SUBCAMPANHA
   modalNovaSubcampanhaOpen: false,
-  openModalNovaSubcampanha: (qtde_clientes) =>
-    set({ modalNovaSubcampanhaOpen: true, qtde_clientes }),
-  closeModalNovaSubcampanha: () => set({ modalNovaSubcampanhaOpen: false, qtde_clientes: null }),
+  openModalNovaSubcampanha: (qtde_clientes, type) =>
+    set({ modalNovaSubcampanhaOpen: true, qtde_clientes, tipo_campanha: type }),
+  closeModalNovaSubcampanha: () =>
+    set({ modalNovaSubcampanhaOpen: false, qtde_clientes: null, tipo_campanha: null }),
 
   // DUPLICAR CAMPANHA
   modalDuplicarCampanhaOpen: false,
@@ -183,4 +191,10 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
   openModalDefinirVendedores: (qtde_clientes: string) =>
     set({ modalDefinirVendedoresOpen: true, qtde_clientes }),
   closeModalDefinirVendedores: () => set({ modalDefinirVendedoresOpen: false, id_cliente: null }),
+
+  //TRANSFERIR CLIENTES
+  modalTransferirClientesOpen: false,
+  openModalTransferirClientes: (qtde_clientes: string) =>
+    set({ modalTransferirClientesOpen: true, qtde_clientes }),
+  closeModalTransferirClientes: () => set({ modalTransferirClientesOpen: false, id_cliente: null }),
 }));
