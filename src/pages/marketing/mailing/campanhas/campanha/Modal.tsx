@@ -50,8 +50,6 @@ const ModalCampanha = () => {
 
     openModalNovaSubcampanha,
     openModalDuplicarCampanha,
-    openModalDefinirAparelho,
-    openModalDefinirVendedores,
 
     filters,
     setFilters,
@@ -74,8 +72,6 @@ const ModalCampanha = () => {
 
     state.openModalNovaSubcampanha,
     state.openModalDuplicarCampanha,
-    state.openModalDefinirAparelho,
-    state.openModalDefinirVendedores,
 
     state.filters,
     state.setFilters,
