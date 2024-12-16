@@ -5,24 +5,37 @@ import FormSelectGrupoEconomico from "@/components/custom/FormSelectGrupoEconomi
 import { useEffect } from "react";
 import { Shirt } from "lucide-react";
 import { useStoreEstoque } from "./Store";
+import FormSelectModeloFardamento from "@/components/custom/FormSelectModeloFardamento";
+import FormSelectTamanhoFardamento from "@/components/custom/FormSelectTamanhoFardamento";
+import { useFardamentos } from "@/hooks/useFardamentos";
 
-const FormEstoqueFardamento = ({data}: {data: EstoqueFormdata}) => {
-  console.log(data);
+const FormEstoqueFardamento = ({data, formRef}: {data: EstoqueFormdata, formRef: React.MutableRefObject<null>}) => {
   const { form } = useFormEstoqueFardamentoData(data);
+  const { mutate,  } = useFardamentos().abastecer();
   
   const id = useStoreEstoque().id;
   const saldo = form.watch("saldo", "0")
-  const abastecer = form.watch("abastecer", 0);
+  const abastecer = form.watch("qtde", 0);
   useEffect(() => {
     const saldoFuturo = Number(saldo) + Number(abastecer);
     form.setValue("saldo_futuro", saldoFuturo.toString());
   },[saldo, abastecer, form]);
 
 
+
+
+const onSubmit = (dadosForm: EstoqueFormdata) => {
+  mutate(dadosForm)
+  console.log(dadosForm)
+
+};
+const { errors } = form.formState;
+console.log(errors);
+
   return (
     <div className="max-w-full overflow-x-hidden">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(() => {})}>
+      <Form {...form}> 
+        <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
@@ -30,7 +43,7 @@ const FormEstoqueFardamento = ({data}: {data: EstoqueFormdata}) => {
                   <div className="flex items-center gap-3">
                     <Shirt/>
                     <span className="text-lg font-bold ">
-                      Abastecer Faradmento
+                      Abastecer Fardamento
                     </span>
                   </div>
                 </div>
@@ -41,24 +54,24 @@ const FormEstoqueFardamento = ({data}: {data: EstoqueFormdata}) => {
                     disabled={!!id}
                     control={form.control}
                     />
+                     <FormSelectModeloFardamento
+                    name="id_modelo"
+                    label="Modelo"
+                    disabled={!!id}
+                    control={form.control}
+                    />
+                    <FormSelectTamanhoFardamento
+                    name="id_tamanho"
+                    label="Tamanho"
+                    disabled={!!id}
+                    control={form.control}
+                    />
                     <FormInput 
                       name="uf"
                       label="UF"
                       disabled={!!id}
                       control={form.control}
                       />
-                  <FormInput //transformar em select
-                    name="modelo"
-                    label="Modelo"
-                    control={form.control}
-                    disabled={!!id}
-                  />
-                  <FormInput
-                    name="tamanho"
-                    label="Tamanho"
-                    disabled={!!id}
-                    control={form.control}
-                  />
                   <FormInput
                     className="flex-min-w-[40ch] shrink-0"
                     name="sexo"
@@ -72,14 +85,14 @@ const FormEstoqueFardamento = ({data}: {data: EstoqueFormdata}) => {
                     className="flex-1-min-w-[40ch] shrink-0"
                     name="saldo"
                     label="Saldo"
-                    disabled={!!id}
+                    disabled={true}
                     control={form.control}
                     // disabled={disabled}
                     // readOnly={readOnly}
                   />
                   <FormInput
                     className="flex-1-min-w-[40ch] shrink-0"
-                    name="abastecer"
+                    name="qtde"
                     label="Abastecer"
                     control={form.control}
                   />

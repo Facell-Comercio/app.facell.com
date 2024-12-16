@@ -1,14 +1,14 @@
+import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { EstoqueFormdata } from "@/pages/pessoal/fardamentos/estoque/components/form-data";
 import { useStoreTableEstoque } from "@/pages/pessoal/fardamentos/estoque/table/store-table";
 import { Permissao } from "@/types/permissao-type";
-import { GetAllParams } from "@/types/query-params-type";
 import {
-  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 
 export const useFardamentos = () => {
@@ -49,7 +49,13 @@ export const useFardamentos = () => {
           queryClient.invalidateQueries({ queryKey: ['pessoal','fardamento'] });
         },
         onError(error) {
-          console.log(error);
+          toast({
+            title: 'Ocorreu um erro',
+            variant: 'destructive',
+            // @ts-ignore
+            description: error?.response?.data?.message || error.message,
+          })
+          
         },
       }),
     

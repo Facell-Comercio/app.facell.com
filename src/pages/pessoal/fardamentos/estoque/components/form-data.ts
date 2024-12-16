@@ -24,7 +24,7 @@ const schemaEstoque = z.object({
     .min(1, "Campo obrigatório")
     .transform((n) => String(n).toUpperCase()),
     saldo: z.coerce.string(),
-    abastecer: z
+    qtde: z
     .coerce
     .string().
     min(1, "Campo obrigatório")

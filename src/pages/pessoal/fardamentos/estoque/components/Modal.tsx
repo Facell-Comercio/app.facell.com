@@ -26,13 +26,6 @@ const ModalEstoque = () => {
     const { data, isLoading } = useFardamentos().getOne(id);
     const fardamentoData = data?.data || {
         saldo: "0",
-        grupo_economico: "selecione",
-        uf: "selecione",
-        modelo: "selecione",
-        tamanho: "selecione",
-        sexo: "selecione"
-
-        
     };
     Object.keys(fardamentoData).forEach((key)=> {
         fardamentoData[key] = String(fardamentoData[key])
@@ -51,7 +44,7 @@ const ModalEstoque = () => {
                 </DialogHeader>
                 <ScrollArea className="max-h-[70vh]">
                     { modalOpen && !isLoading ? (
-                        <FormEstoqueFardamento data={fardamentoData}/>
+                        <FormEstoqueFardamento formRef={formRef} data={fardamentoData}/>
                     ) : (
                         <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
                             <Skeleton className="w-full row-span-1" />
