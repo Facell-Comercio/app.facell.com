@@ -41,7 +41,9 @@ export const initialPropsTituloCR: TituloCRSchemaProps = {
   valor: "0",
   valor_liquido: "0",
   ir: "0",
+  ir_percent: "0",
   iss: "0",
+  iss_percent: "0",
   descricao: "",
 
   // Filial

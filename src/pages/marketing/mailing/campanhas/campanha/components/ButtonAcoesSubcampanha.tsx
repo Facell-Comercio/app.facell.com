@@ -53,7 +53,7 @@ const ButtonAcoesSubcampanha = ({
 
   return (
     <DropdownMenu modal>
-      <DropdownMenuTrigger type="button">
+      <DropdownMenuTrigger type="button" asChild>
         <Button disabled={disabledSubcampanha}>
           <Menu className="me-2" size={18} /> Ações
         </Button>

@@ -108,7 +108,7 @@ export const FiltersClientesCampanha = ({
                   label="Produtos"
                   options={defaultFilters.produto_list.map((plano_atual: any) => ({
                     value: plano_atual.value,
-                    label: plano_atual.label || "NULL",
+                    label: plano_atual.value || "NULL",
                   }))}
                   onValueChange={(produto_list) => {
                     setFilters({ produto_list: produto_list });
@@ -128,7 +128,7 @@ export const FiltersClientesCampanha = ({
                   label="Status"
                   options={defaultFilters.status_plano_list.map((plano_atual: any) => ({
                     value: plano_atual.value,
-                    label: plano_atual.label || "NULL",
+                    label: plano_atual.value || "NULL",
                   }))}
                   onValueChange={(status_plano_list) => {
                     setFilters({ status_plano_list: status_plano_list });

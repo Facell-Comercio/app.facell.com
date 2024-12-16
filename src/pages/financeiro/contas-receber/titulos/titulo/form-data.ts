@@ -59,7 +59,9 @@ export const schemaTituloCR = z
 
     num_doc: z.string().optional(),
     valor: z.coerce.string().min(0.01, "Preencha o valor"),
+    ir_percent: z.coerce.string().default("0"),
     ir: z.coerce.string().default("0"),
+    iss_percent: z.coerce.string().default("0"),
     iss: z.coerce.string().default("0"),
     valor_liquido: z.coerce.string().min(0.01, "Preencha o valor"),
 

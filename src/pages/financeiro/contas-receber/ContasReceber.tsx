@@ -22,7 +22,7 @@ const ContasReceberPage = () => {
 
   return (
     <div className="flex p-4">
-      <Tabs defaultValue={activeTab || "painel"} className="w-full">
+      <Tabs defaultValue={activeTab || "titulo"} className="w-full">
         <TabsList className="w-full justify-start">
           <ScrollArea className="w-full whitespace-nowrap rounded-md h-auto">
             <>
