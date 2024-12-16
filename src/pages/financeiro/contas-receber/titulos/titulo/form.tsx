@@ -34,6 +34,7 @@ import {
   FileText,
   History,
   Pen,
+  Percent,
   RotateCcw,
   Save,
   Undo2,
@@ -108,9 +109,22 @@ const FormTituloReceber = ({
       control: form.control,
     }) || "0"
   );
+
+  const percentualIR = parseFloat(
+    useWatch({
+      name: "ir_percent",
+      control: form.control,
+    }) || "0"
+  );
   const valorIR = parseFloat(
     useWatch({
       name: "ir",
+      control: form.control,
+    }) || "0"
+  );
+  const percentualISS = parseFloat(
+    useWatch({
+      name: "iss_percent",
       control: form.control,
     }) || "0"
   );
@@ -120,6 +134,21 @@ const FormTituloReceber = ({
       control: form.control,
     }) || "0"
   );
+
+  useEffect(()=>{
+    let novoValorIR = (percentualIR / 100) * valorBruto
+    let novoValor = valorBruto - (valorISS + novoValorIR)
+    setValue('valor_liquido', String(novoValor))
+    setValue('ir', String(novoValorIR))
+  }, [percentualIR])
+
+  useEffect(()=>{
+    let novoValorISS = (percentualISS / 100) * valorBruto
+    let novoValor = valorBruto - (valorIR + novoValorISS)
+    setValue('valor_liquido', String(novoValor))
+    setValue('iss', String(novoValorISS))
+  }, [percentualISS])
+
 
   // * [ VERIFICAÇÕES ]
   const status = titulo?.status || "Criado";
@@ -524,7 +553,20 @@ const FormTituloReceber = ({
                         className="flex-1 min-w-[20ch]"
                       />
                     </div>
+
                     <div className="max-w-full flex flex-wrap gap-3">
+                    <FormInput
+                        control={form.control}
+                        inputClass="text-left"
+                        name="ir_percent"
+                        type="number"
+                        iconLeft
+                        icon={Percent}
+                        label="IR"
+                        disabled={disabled}
+                        min={0}
+                        className="w-32"
+                      />
                       <FormInput
                         control={form.control}
                         inputClass="text-left"
@@ -533,9 +575,22 @@ const FormTituloReceber = ({
                         iconLeft
                         icon={TbCurrencyReal}
                         label="IR"
+                        disabled={true}
+                        min={0}
+                        className="w-32"
+                      />
+                      
+                      <FormInput
+                        control={form.control}
+                        inputClass="text-left"
+                        name="iss_percent"
+                        type="number"
+                        iconLeft
+                        icon={Percent}
+                        label="ISS"
                         disabled={disabled}
                         min={0}
-                        className="flex-1 min-w-[20ch]"
+                        className="w-32"
                       />
                       <FormInput
                         control={form.control}
@@ -545,10 +600,11 @@ const FormTituloReceber = ({
                         iconLeft
                         icon={TbCurrencyReal}
                         label="ISS"
-                        disabled={disabled}
+                        disabled={true}
                         min={0}
-                        className="flex-1 min-w-[20ch]"
+                        className="w-32"
                       />
+                      
                       <FormInput
                         control={form.control}
                         inputClass="text-left"
@@ -560,7 +616,7 @@ const FormTituloReceber = ({
                         label="Valor Líquido"
                         disabled={disabled}
                         min={0}
-                        className="flex-1 min-w-[20ch]"
+                        className="flex-1 min-w-[30ch]"
                       />
                     </div>
 
