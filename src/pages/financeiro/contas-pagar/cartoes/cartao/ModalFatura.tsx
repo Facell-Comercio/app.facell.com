@@ -69,12 +69,12 @@ const ModalFatura = () => {
   //~ Compras Aprovadas
   const comprasAprovadas = data?.data?.comprasAprovadas || [];
   const qntdAprovadas = (data?.data?.comprasAprovadas && data?.data?.comprasAprovadas.length) || 0;
-  const totalAprovadas = data?.data?.totalAprovadas || 0;
+  const totalAprovadas = parseFloat(data?.data?.totalAprovadas || '0');
 
   //~ Compras Pendentes
   const comprasPendentes = data?.data?.comprasPendentes || [];
   const qntdPendentes = (data?.data?.comprasPendentes && data?.data?.comprasPendentes.length) || 0;
-  const totalPendentes = data?.data.totalPendentes;
+  const totalPendentes = parseFloat(data?.data.totalPendentes || '0');
 
   const faturaFechada = !!dados?.closed;
   const disabled = faturaFechada || dados?.status === "pago" || dados?.status === "programado";
@@ -145,11 +145,7 @@ const ModalFatura = () => {
   async function handleCloseFatura() {
     const valor = parseFloat(form.watch("valor") || "0") + parseFloat(form.watch("estorno") || "0");
 
-    if (!form.watch("cod_barras")) {
-      toast({ title: "Código de barras obrigatório", variant: "warning" });
-      return;
-    }
-    const diferenca = Math.abs(valor - parseFloat(totalAprovadas));
+    const diferenca = Math.abs(valor - totalAprovadas);
 
     if (valor.toFixed(2) !== totalAprovadas.toFixed(2)) {
         toast({
@@ -369,7 +365,7 @@ const ModalFatura = () => {
                     className="flex-col"
                     icon={ShoppingCart}
                     qtde={qntdAprovadas}
-                    valorTotal={parseFloat(totalAprovadas)}
+                    valorTotal={totalAprovadas}
                   >
                     <div className="flex justify-end mb-3 flex-wrap">
                       {!dados?.closed && (
