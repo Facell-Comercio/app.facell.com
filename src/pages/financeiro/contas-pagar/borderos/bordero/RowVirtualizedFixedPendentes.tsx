@@ -68,7 +68,10 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
 
   const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
 
-  const allChecked = filteredData.length === filteredData.filter((item) => item.checked).length;
+  const allChecked =
+    filteredData.filter((item) => item.tipo === "vencimento").length ===
+    filteredData.filter((item) => item.checked).length;
+
   const someChecked = filteredData.some((item) => item.checked);
   // console.log(filteredData);
 
@@ -86,8 +89,9 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
                     vencimento.id_item == filteredVencimento.id_item &&
                     vencimento.tipo == filteredVencimento.tipo
                 );
-
-                form.setValue(`itens.${indexData}.checked`, !!e.valueOf());
+                if (filteredVencimento.tipo == "vencimento") {
+                  form.setValue(`itens.${indexData}.checked`, !!e.valueOf());
+                }
               });
             }}
           />

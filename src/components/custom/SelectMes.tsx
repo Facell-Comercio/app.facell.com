@@ -35,28 +35,13 @@ const SelectMes = (props: TSelectMes) => {
     { id: "12", mes: "Dezembro" },
   ];
   return (
-    <Select
-      onValueChange={props.onValueChange}
-      value={props.value}
-      disabled={props.disabled}
-    >
-      <SelectTrigger
-        className={`min-w-[15ch] ${props.className}`}
-      >
-        <SelectValue
-          placeholder={
-            props.placeholder
-              ? props.placeholder
-              : `Selecione...`
-          }
-        />
+    <Select onValueChange={props.onValueChange} value={props.value} disabled={props.disabled}>
+      <SelectTrigger className={`min-w-[15ch] ${props.className}`}>
+        <SelectValue placeholder={props.placeholder ? props.placeholder : `Selecione...`} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent scroll="scrollarea" className="">
         {arrayMes.map((option: Mes) => (
-          <SelectItem
-            key={option.id}
-            value={option.id}
-          >
+          <SelectItem key={option.id} value={option.id}>
             {option.mes}
           </SelectItem>
         ))}
