@@ -562,7 +562,7 @@ const FormTituloReceber = ({
                         type="number"
                         iconLeft
                         icon={Percent}
-                        label="IR"
+                        label="% IR"
                         disabled={disabled}
                         min={0}
                         className="w-32"
@@ -587,7 +587,7 @@ const FormTituloReceber = ({
                         type="number"
                         iconLeft
                         icon={Percent}
-                        label="ISS"
+                        label="% ISS"
                         disabled={disabled}
                         min={0}
                         className="w-32"
