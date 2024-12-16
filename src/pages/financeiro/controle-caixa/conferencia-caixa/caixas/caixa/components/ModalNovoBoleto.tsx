@@ -140,6 +140,7 @@ const ModalNewBoleto = () => {
 
       //* Retorna o objeto com os valores ajustados
       return {
+        id: row.id,
         data: row.data,
         saldo: row.saldo, //* O saldo original
         saldo_no_boleto: saldo_no_boleto, //* Quanto foi debitado desse caixa
@@ -217,7 +218,7 @@ const ModalNewBoleto = () => {
                 <TableBody>
                   {caixas.map((row: any) => (
                     <TableRow
-                      key={"novo-boleto-caixa:" + row.id}
+                      key={`novo-boleto-caixa:${row.id}`}
                       className="uppercase odd:bg-secondary/60 even:bg-secondary/40"
                     >
                       <TableCell>
