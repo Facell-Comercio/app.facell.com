@@ -51,12 +51,20 @@ const ButtonMotivation = ({
           size={size}
           disabled={disabled}
           className={className}
-          onClick={(e) => stopPropagation && e.stopPropagation()}
+          onClick={(e) => {
+            if (stopPropagation) {
+              e.stopPropagation();
+            }
+          }}
         >
           {children}
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="min-w-fit">
+      <AlertDialogContent
+        className="min-w-fit"
+        onClick={(e) => stopPropagation && e.stopPropagation()}
+        onCloseAutoFocus={(e) => stopPropagation && e.stopPropagation()}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle className="whitespace-pre">
             {headerTitle || "Digite o motivo para poder prosseguir"}
@@ -69,6 +77,11 @@ const ButtonMotivation = ({
             onChange={(e) => setMotivo(e.target.value)}
             placeholder={placeholder || "Ajuste necessário em..."}
             className="whitespace-pre"
+            onKeyDown={(e) => {
+              if (stopPropagation) {
+                e.stopPropagation();
+              }
+            }}
           />
         </AlertDialogHeader>
         <AlertDialogFooter>

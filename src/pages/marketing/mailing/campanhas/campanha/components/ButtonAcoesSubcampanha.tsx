@@ -52,13 +52,13 @@ const ButtonAcoesSubcampanha = ({
   ]);
 
   return (
-    <DropdownMenu modal>
+    <DropdownMenu modal={true}>
       <DropdownMenuTrigger type="button" asChild>
         <Button disabled={disabledSubcampanha}>
           <Menu className="me-2" size={18} /> Ações
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex flex-col">
+      <DropdownMenuContent className="flex flex-col" onCloseAutoFocus={(e) => e.stopPropagation()}>
         {canEdit && (
           <>
             <DropdownMenuItem className="flex gap-2 p-1">

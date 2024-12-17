@@ -138,9 +138,9 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
       filters: { ...state.filters, ...novoFiltro },
     })),
   resetFilters: () => {
-    set({
-      filters: initialFilters,
-    });
+    set((state) => ({
+      filters: { ...initialFilters, id_campanha: state.filters.id_campanha || "" },
+    }));
   },
 
   // FILTERS LOTE
@@ -150,9 +150,9 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
       filters_lote: { ...state.filters_lote, ...novoFiltro },
     })),
   resetFiltersLote: () => {
-    set({
-      filters_lote: initialFilters,
-    });
+    set((state) => ({
+      filters: { ...initialFilters, id_campanha: state.filters_lote.id_campanha || "" },
+    }));
   },
 
   // NOVA SUBCAMPANHA

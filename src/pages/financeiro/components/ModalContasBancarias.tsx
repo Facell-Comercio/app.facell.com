@@ -33,6 +33,7 @@ export type ItemContaBancariaProps = {
   grupo_economico: string;
   descricao: string;
   banco: string;
+  codigo_banco: string;
   id_matriz: string;
   id_grupo_economico?: string;
   saldo?: string;
