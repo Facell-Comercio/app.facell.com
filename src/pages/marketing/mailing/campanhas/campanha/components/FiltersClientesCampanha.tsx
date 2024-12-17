@@ -108,7 +108,7 @@ export const FiltersClientesCampanha = ({
                   label="Produtos"
                   options={defaultFilters.produto_list.map((plano_atual: any) => ({
                     value: plano_atual.value,
-                    label: plano_atual.value || "NULL",
+                    label: plano_atual.label || "NULL",
                   }))}
                   onValueChange={(produto_list) => {
                     setFilters({ produto_list: produto_list });
