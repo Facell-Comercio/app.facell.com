@@ -104,7 +104,7 @@ const SelectContent = React.forwardRef<
         </>
       ) : (
         <ScrollAreaPrimitive.Root type="auto">
-          <ScrollAreaPrimitive.Viewport>{children}</ScrollAreaPrimitive.Viewport>
+          <ScrollAreaPrimitive.Viewport asChild>{children}</ScrollAreaPrimitive.Viewport>
           <ScrollAreaPrimitive.Scrollbar orientation="vertical">
             <ScrollAreaPrimitive.Thumb />
           </ScrollAreaPrimitive.Scrollbar>
