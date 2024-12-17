@@ -221,7 +221,7 @@ export const FiltersClientesCampanha = ({
                 </Select>
               </div>
               <div className="flex flex-col w-full gap-2">
-                <label className="text-sm font-medium">Apenas Fidelizáveis</label>
+                <label className="text-sm font-medium">Apenas Planos Fidelizáveis</label>
                 <Select
                   value={filters.planos_fidelizaveis}
                   onValueChange={(e) => setFilters({ planos_fidelizaveis: e })}
