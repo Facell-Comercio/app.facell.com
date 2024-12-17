@@ -892,16 +892,18 @@ export const useConferenciasCaixa = () => {
 
     importRemessaBoleto: () =>
       useMutation({
-        mutationFn: (files: FileList | null) => {
+        mutationFn: (params: { files: FileList | null; codigo_banco: string }) => {
           return new Promise(async (resolve, reject) => {
             try {
               const form = new FormData();
+              const { files, codigo_banco } = params;
               if (files) {
                 for (let i = 0; i < files.length; i++) {
                   form.append("files", files[i]);
                   form.append("files", files[i]);
                 }
               }
+              form.append("cod_banco", codigo_banco);
               const result = await api.postForm(
                 `/financeiro/controle-de-caixa/boletos/import-retorno-remessa`,
                 form

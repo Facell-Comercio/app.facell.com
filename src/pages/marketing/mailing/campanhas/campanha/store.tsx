@@ -151,7 +151,7 @@ export const useStoreCampanha = create<useStoreCampanha>((set) => ({
     })),
   resetFiltersLote: () => {
     set((state) => ({
-      filters_lote: { ...initialFilters, id_campanha: state.filters_lote.id_campanha || "" },
+      filters: { ...initialFilters, id_campanha: state.filters_lote.id_campanha || "" },
     }));
   },
 
