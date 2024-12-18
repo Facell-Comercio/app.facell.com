@@ -59,9 +59,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
   //   },
   // ];
 
-  const allChecked =
-    filteredData.filter((item) => item.tipo === "vencimento").length ===
-    filteredData.filter((item) => item.checked).length;
+  const allChecked = filteredData.length === filteredData.filter((item) => item.checked).length;
   const someChecked = filteredData.some((item) => item.checked);
 
   return (
@@ -86,8 +84,7 @@ const RowVirtualizerFixedErro: React.FC<RowVirtualizerFixedErroProps> = ({
                     vencimento.id_item == filteredVencimento.id_item &&
                     vencimento.tipo == filteredVencimento.tipo
                 );
-
-                if (filteredVencimento.tipo == "vencimento") {
+                if (filteredVencimento.can_remove) {
                   form.setValue(`itens.${indexData}.checked`, !!e.valueOf());
                 }
               });

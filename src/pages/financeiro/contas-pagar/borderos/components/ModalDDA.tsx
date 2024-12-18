@@ -86,45 +86,16 @@ export const ModalDDA = () => {
   const { mutate: mutateDesvincularDDA } = useDDA().desvincularDDA();
   const { mutate: exportDDA, isPending: exportDDAisPending } = useDDA().exportDDA();
 
-  const vincularDDA = async ({
-    id_dda,
-    id_vencimento: idVencimento,
-    id_forma_pagamento: idFormaPagamento,
-  }: VinculoDDA) => {
-    if (!id_dda) {
-      throw new Error("ID DDA não informado!");
-    }
-    if (!idVencimento) {
-      throw new Error("ID Vencimento não informado!");
-    }
-    if (!idFormaPagamento) {
-      throw new Error("ID Forma Pagamento não informado!");
-    }
-
+  const handleClickVincular = ({ id_dda, id_vencimento, id_forma_pagamento }: VinculoDDA) => {
     mutateVincularDDA({
-      id_dda,
-      id_vencimento: idVencimento,
-      id_forma_pagamento: idFormaPagamento || "",
-    });
-    // toast({
-    //   variant: "success",
-    //   title: `Vínculo do DDA com ${
-    //     idFormaPagamento === 6
-    //       ? "a fatura"
-    //       : "o vencimento"
-    //   } realizado!`,
-    // });
-    if (id_dda && idVencimento && idFormaPagamento) {
-      toggleModal(false);
-    }
-  };
-
-  const handleClickVincular = async ({ id_dda, id_vencimento, id_forma_pagamento }: VinculoDDA) => {
-    await vincularDDA({
       id_dda,
       id_vencimento,
       id_forma_pagamento,
     });
+
+    // if (id_dda && id_vencimento && id_forma_pagamento) {
+    //   toggleModal(false);
+    // }
   };
 
   const handleClickDesvincular = async ({ id_dda }: { id_dda: number }) => {
@@ -133,9 +104,9 @@ export const ModalDDA = () => {
     }
     mutateDesvincularDDA({ id_dda });
 
-    if (id_vencimento) {
-      toggleModal(false);
-    }
+    // if (id_vencimento) {
+    //   toggleModal(false);
+    // }
   };
 
   const [modalVencimentosOpen, setModalVencimentosOpen] = useState<boolean>(false);
@@ -364,7 +335,7 @@ export const ModalDDA = () => {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => {
-                  vincularDDA(preVinculoDDA);
+                  handleClickVincular(preVinculoDDA);
                 }}
               >
                 Continue
