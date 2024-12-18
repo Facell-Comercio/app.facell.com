@@ -89,17 +89,19 @@ type TSelectMultiFilial = {
   value: string[];
   onChange: (value: string[]) => any;
   isLojaTim?: boolean;
+  uf_list?: string[];
   nowrap?: boolean;
   id_matriz?: string;
   id_grupo_economico?: string;
   grupo_economico?: string;
 };
 
-export const SelectMultiFilial = ({ isLojaTim, ...props }: TSelectMultiFilial) => {
+export const SelectMultiFilial = ({ isLojaTim, uf_list, ...props }: TSelectMultiFilial) => {
   const { data } = useFilial().getAll({
     filters: {
       isLojaTim: isLojaTim ? 1 : 0,
       id_matriz: props?.id_matriz,
+      uf_list,
       id_grupo_economico: props?.id_grupo_economico,
       grupo_economico: props?.grupo_economico,
     },

@@ -33,6 +33,12 @@ interface InsertClientesSubcampanhaProps extends NovaCampanhaSchema {
   id_parent: string;
 }
 
+interface TransferirClientesSubcampanhaProps extends NovaCampanhaSchema {
+  filters: any;
+  id_parent: string;
+  id_subcampanha: string;
+}
+
 interface DuplicateCampanhaProps extends NovaCampanhaSchema {
   filters: any;
   id_campanha: string;
@@ -176,6 +182,36 @@ export const useMailing = () => {
     useMutation({
       mutationFn: async (data: DuplicateCampanhaProps) => {
         return await api.post(`${uri}/campanhas/duplicar`, data).then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["marketing"],
+        });
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Atualização realizada com sucesso",
+          duration: 3500,
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const transferirClientesSubcampanha = () =>
+    useMutation({
+      mutationFn: async (data: TransferirClientesSubcampanhaProps) => {
+        return await api
+          .post(`${uri}/campanhas/transferir`, data)
+          .then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -444,6 +480,7 @@ export const useMailing = () => {
     insertOneCampanha,
     insertOneSubcampanha,
     duplicateCampanha,
+    transferirClientesSubcampanha,
 
     updateCampanha,
     updateOneCliente,
