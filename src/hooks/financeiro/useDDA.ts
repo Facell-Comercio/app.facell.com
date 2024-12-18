@@ -14,9 +14,9 @@ export interface GetDDAProps {
 }
 
 export type VinculoDDAparams = {
-  id_vencimento: number | string;
-  id_dda: number | string;
-  id_forma_pagamento: number | string;
+  id_vencimento?: number | string | null;
+  id_dda?: number | string | null;
+  id_forma_pagamento?: number | string | null;
 };
 
 export const useDDA = () => {
@@ -111,6 +111,9 @@ export const useDDA = () => {
           variant: "success",
           title: "Limpeza concluída!",
         });
+        queryClient.invalidateQueries({
+          queryKey: ["financeiro", "contas_pagar"],
+        });
       },
       onError(error) {
         toast({
@@ -141,6 +144,9 @@ export const useDDA = () => {
           variant: "success",
           title: "Autovinculção concluída!",
         });
+        queryClient.invalidateQueries({
+          queryKey: ["financeiro", "contas_pagar", "dda"],
+        });
       },
       onError(error) {
         toast({
@@ -164,7 +170,7 @@ export const useDDA = () => {
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: ["financeiro", "contas_pagar"],
+          queryKey: ["financeiro", "contas_pagar", "dda"],
         });
         toast({
           variant: "success",
@@ -195,9 +201,8 @@ export const useDDA = () => {
       },
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: ["financeiro", "contas_pagar"],
+          queryKey: ["financeiro", "contas_pagar", "dda"],
         });
-
         toast({
           variant: "success",
           title: "Sucesso",

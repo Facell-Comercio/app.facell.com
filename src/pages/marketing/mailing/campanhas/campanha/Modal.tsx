@@ -214,6 +214,7 @@ const ModalCampanha = () => {
       setFiltersLote({ id_campanha: idSubcampanha });
     }
   }, [idSubcampanha]);
+
   const [itemOpen, setItemOpen] = useState<string>("clientes");
   const disabledCampanha = isLoading || deleteClientesLoteIsPending;
   const disabledSubcampanha =
@@ -414,7 +415,7 @@ const ModalCampanha = () => {
                           defaultFilters={defaultFiltersSubcampanha}
                           refetch={refetchSubcampanha}
                           setFilters={setFiltersLote}
-                          resetFilters={resetFiltersLote}
+                          resetFilters={handleResetFilterSubcampanha}
                           qtde_clientes={qtdeClientesSubcampanha}
                           isPending={isLoadingSubcampanha || isFetchingSubcampanha || isFetching}
                           isSubcampanha

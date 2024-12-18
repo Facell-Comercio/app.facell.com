@@ -11,9 +11,9 @@ import { useBordero } from "@/hooks/financeiro/useBordero";
 import ModalContasBancarias, {
   ItemContaBancariaProps,
 } from "@/pages/financeiro/components/ModalContasBancarias";
+import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { useState } from "react";
 import { useStoreBordero } from "./store";
-import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 
 interface ModalTransferProps {
   data: VencimentosProps[];
@@ -29,8 +29,7 @@ function ModalTransfer({ data, id_matriz }: ModalTransferProps) {
   const modalContasBancariasOpen = useStoreBordero().modalContasBancariasOpen;
   const modalTransferOpen = useStoreBordero().modalTransferOpen;
   const toggleModalTransfer = useStoreBordero().toggleModalTransfer;
-  const toggleModalContasBancarias =
-    useStoreBordero().toggleModalContasBancarias;
+  const toggleModalContasBancarias = useStoreBordero().toggleModalContasBancarias;
   const toggleModal = useStoreBordero().toggleModal;
   const id = useStoreBordero().id;
 
@@ -43,16 +42,9 @@ function ModalTransfer({ data, id_matriz }: ModalTransferProps) {
 
   function onSubmitData() {
     if (idContaBancaria && pagamento) {
-      // console.log({
-      //   id_conta_bancaria: idContaBancaria,
-      //   date: pagamento,
-      //   titulos: data.map((titulo) => {
-      //     titulo.id_titulo, titulo.id_status;
-      //   }),
-      // });
-
       toggleModalTransfer();
       toggleModal();
+
       transferVencimentos({
         id_conta_bancaria: idContaBancaria,
         date: pagamento,
@@ -60,24 +52,21 @@ function ModalTransfer({ data, id_matriz }: ModalTransferProps) {
           return {
             id_vencimento: vencimento.id_vencimento,
             id_status: vencimento.id_status,
+            tipo: vencimento.tipo,
           };
         }),
       });
     } else {
       toast({
         title: "Dados Insuficientes",
-        description:
-          "Por favor selecione a conta bancária e a data de pagamento",
+        description: "Por favor selecione a conta bancária e a data de pagamento",
       });
     }
   }
 
   return (
     <div>
-      <Dialog
-        open={modalTransferOpen}
-        onOpenChange={() => toggleModalTransfer()}
-      >
+      <Dialog open={modalTransferOpen} onOpenChange={() => toggleModalTransfer()}>
         <DialogContent className="max-w-xl">
           <ScrollArea className="flex flex-col gap-2 max-h-[80vh]">
             <div className="flex justify-between text-lg font-medium">
@@ -97,9 +86,7 @@ function ModalTransfer({ data, id_matriz }: ModalTransferProps) {
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="text-sm font-medium">
-                    Data de Pagamento
-                  </label>
+                  <label className="text-sm font-medium">Data de Pagamento</label>
                   <InputDate
                     className="mt-2 flex-1"
                     value={pagamento}
