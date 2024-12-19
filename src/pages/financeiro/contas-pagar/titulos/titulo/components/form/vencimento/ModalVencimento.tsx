@@ -16,6 +16,7 @@ import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
+import { useRealTime } from "@/hooks/useRealTime";
 import { addMonths, isBefore, setDate, subDays } from "date-fns";
 import { Plus, Save } from "lucide-react";
 import { useEffect } from "react";
@@ -25,7 +26,9 @@ import { calcularDataPrevisaoPagamento } from "../../../helpers/helper";
 import { initialStateVencimento, useStoreVencimento } from "./context";
 
 export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<TituloSchemaProps> }) {
-  const isMaster: boolean = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO");
+  const { realTime } = useRealTime();
+
+  const isMaster: boolean = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO", true);
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
 
@@ -68,10 +71,12 @@ export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<Titu
 
   const uniqueDayMonth = isCartao ? dia_vencimento_cartao : undefined;
 
+  const dataAtual = realTime || new Date();
+  form.setValue("data_vencimento", dataAtual.toISOString());
+
   // * Lógica de cartões:
   useEffect(() => {
     if (isCartao) {
-      const dataAtual = new Date();
       const corteCartaoDate = setDate(dataAtual, Number(dia_corte_cartao));
       const vencimentoCartaoDate = setDate(dataAtual, Number(dia_vencimento_cartao));
 
@@ -148,7 +153,7 @@ export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<Titu
         return;
       }
       addVencimento({
-        id: new Date().getTime().toString(),
+        id: dataAtual.getTime().toString(),
         data_vencimento: String(data.data_vencimento),
         data_prevista: String(data.data_prevista),
         valor: data.valor,
@@ -185,7 +190,7 @@ export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<Titu
                   name="data_vencimento"
                   label="Vencimento"
                   uniqueDayMonth={uniqueDayMonth}
-                  min={!isMaster ? subDays(new Date(), 1) : undefined}
+                  min={!isMaster ? subDays(dataAtual, 1) : undefined}
                   control={form.control}
                   onChange={(val) => handleChangeVencimento(val)}
                 />

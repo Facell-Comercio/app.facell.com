@@ -3,10 +3,12 @@ import { persist } from "zustand/middleware";
 
 export interface Filters {
   filiais_list?: string[];
+  uf_list?: string[];
 }
 
 const initialFilters: Filters = {
   filiais_list: [],
+  uf_list: [],
 };
 
 export interface State {

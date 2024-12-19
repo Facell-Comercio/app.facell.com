@@ -1,6 +1,7 @@
 // import { useAuthStore } from "@/context/auth-store";
 
 import { SelectMultiFilial } from "@/components/custom/SelectFilial";
+import { SelectMultiUF } from "@/components/custom/SelectUF";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,13 +45,22 @@ const ConferenciaCaixa = () => {
     <section className="flex flex-col gap-3 max-w-full">
       <span className="flex gap-2">
         <SelectMultiFilial
-          className="max-w-full w-full"
+          className="max-w-full flex-1"
           value={filters.filiais_list || []}
           onChange={(value) => {
             setFilters({ filiais_list: value });
             refetch();
           }}
-          maxCount={3}
+          maxCount={2}
+          uf_list={filters.uf_list}
+        />
+        <SelectMultiUF
+          value={filters.uf_list || []}
+          onChange={(ufs) => {
+            setFilters({ filiais_list: [], uf_list: ufs });
+            refetch();
+          }}
+          className="w-fit"
         />
         {/* Botão renderizado somente quando gestor do financeiro ou master */}
         {(checkUserDepartments("FINANCEIRO", true) || hasPermission("MASTER")) && (

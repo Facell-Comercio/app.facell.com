@@ -17,6 +17,7 @@ import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { checkUserDepartments, hasPermission } from "@/helpers/checkAuthorization";
 import { normalizeCurrency } from "@/helpers/mask";
+import { useRealTime } from "@/hooks/useRealTime";
 import { addMonths, startOfDay, subDays } from "date-fns";
 import { ListPlus, Play } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -34,6 +35,9 @@ export function ModalGerarVencimentos({
 }: {
   form: UseFormReturn<TituloSchemaProps>;
 }) {
+  const { realTime } = useRealTime();
+  const dataAtual = realTime || new Date();
+
   const isMaster: boolean = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   // WATCH TÍTULO:
   const valorTotalTitulo = useWatch({
@@ -108,7 +112,7 @@ export function ModalGerarVencimentos({
   };
 
   const onSubmit = (data: GeradorVencimentos) => {
-    let dataVencimento = data.data_vencimento || new Date();
+    let dataVencimento = data.data_vencimento || dataAtual || new Date();
     let valorParcela = parseFloat(data.valor) || 0;
     let qtdeParcelas = parseFloat(data.parcelas) || 0;
 
@@ -130,7 +134,7 @@ export function ModalGerarVencimentos({
     }
     for (let parcela = 0; parcela < qtdeParcelas; parcela++) {
       let obj = {
-        id: new Date().getTime().toString(),
+        id: dataAtual.getTime().toString(),
         data_vencimento: "",
         data_prevista: "",
         valor: valorParcela.toString(),
@@ -160,6 +164,7 @@ export function ModalGerarVencimentos({
     setModalOpen(false);
     form.reset();
   };
+  form.setValue("data_vencimento", dataAtual.toISOString());
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -191,7 +196,7 @@ export function ModalGerarVencimentos({
                 name="data_vencimento"
                 label="Primeiro Vencimento"
                 control={form.control}
-                min={!isMaster ? subDays(new Date(), 1) : undefined}
+                min={!isMaster ? subDays(dataAtual, 1) : undefined}
                 disabled={checkIsCartao(id_forma_pagamento)}
               />
 

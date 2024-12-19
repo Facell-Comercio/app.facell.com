@@ -30,12 +30,7 @@ type UpdateVencimentoProps = {
   index?: number;
   vencimento: Pick<
     State["vencimento"],
-    | "data_prevista"
-    | "data_vencimento"
-    | "id"
-    | "cod_barras"
-    | "qr_code"
-    | "valor"
+    "data_prevista" | "data_vencimento" | "id" | "cod_barras" | "qr_code" | "valor"
   >;
 };
 export interface Actions {

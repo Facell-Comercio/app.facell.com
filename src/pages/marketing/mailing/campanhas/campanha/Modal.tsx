@@ -33,6 +33,7 @@ import ModalDefinirVendedores from "./components/modais/ModalDefinirVendedores";
 import ModalDuplicarCampanha from "./components/modais/ModalDuplicarCampanha";
 import ModalEditarCliente from "./components/modais/ModalEditarCliente";
 import ModalNovaSubcampanha from "./components/modais/ModalNovaSubcampanha";
+import ModalTransferirClientes from "./components/modais/ModalTransferirClientes";
 import ModalVerCliente from "./components/modais/ModalVerCliente";
 import { useStoreCampanha } from "./store";
 
@@ -538,11 +539,13 @@ const ModalCampanha = () => {
         </ScrollArea>
 
         {/* Modais */}
-        <ModalNovaSubcampanha
-          refetch={handleResetFilterCampanha}
-          refetchSubcampanha={handleResetFilterSubcampanha}
+        <ModalNovaSubcampanha refetch={handleResetFilterCampanha} />
+        <ModalTransferirClientes
+          refetch={handleResetFilterSubcampanha}
           idSubcampanha={idSubcampanha}
+          subcampanhas={subcampanhas.filter((subcampanha: any) => subcampanha.id != idSubcampanha)}
         />
+
         <ModalEditarCliente />
         <ModalVerCliente />
         <ModalDefinirAparelho reset={handleResetFilterSubcampanha} />
