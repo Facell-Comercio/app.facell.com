@@ -160,6 +160,7 @@ const FilterClientes = ({
               toYear={subYears(new Date(), 1).getFullYear()}
               toMonth={subMonths(new Date(), 10)}
               disabled={isLoading}
+              type="beforeDays"
             />
           </div>
 

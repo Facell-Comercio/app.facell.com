@@ -23,6 +23,7 @@ interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> 
   min?: Date;
   max?: Date;
   uniqueDayMonth?: string | number;
+  type?: "beforeDays";
 }
 
 export function DatePickerWithRange({
@@ -39,6 +40,7 @@ export function DatePickerWithRange({
   min,
   max,
   uniqueDayMonth,
+  type,
 }: DatePickerWithRangeProps) {
   // Não é necessário definir date e setDate no estado interno.
   // O código já recebe date e setDate das propriedades.
@@ -64,7 +66,10 @@ export function DatePickerWithRange({
                   {format(date.from, "dd/MM/yyyy")} - {format(date.to, "dd/MM/yyyy")}
                 </>
               ) : (
-                format(date.from, "dd/MM/yyyy")
+                <>
+                  {type == undefined && format(date.from, "dd/MM/yyyy")}
+                  {type == "beforeDays" && `ANTES - ${format(date.from, "dd/MM/yyyy")}`}
+                </>
               )
             ) : (
               <span>{description ? description : "Selecione o período"}</span>
