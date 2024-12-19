@@ -206,7 +206,7 @@ const RowVirtualizerFixed: React.FC<RowVirtualizerFixedProps> = ({ data, pushSel
                   <PopoverEstoque title={data[item.index].descricao_comercial} />
                   {/*{data[item.index].descricao_comercial}*/}
                 </div>
-                <Button size={"xs"} onClick={() => pushSelection(data[index])}>
+                <Button size={"xs"} onClick={() => pushSelection(data[item.index])}>
                   Selecionar
                 </Button>
               </div>
