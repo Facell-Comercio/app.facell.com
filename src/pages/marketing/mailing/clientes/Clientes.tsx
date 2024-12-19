@@ -88,7 +88,7 @@ const Clientes = () => {
             showRowCount
             rowCount={rowCount}
             columns={columnsTable}
-            isLoading={isLoading}
+            isLoading={isLoading || isFetching}
           />
         </div>
       </section>

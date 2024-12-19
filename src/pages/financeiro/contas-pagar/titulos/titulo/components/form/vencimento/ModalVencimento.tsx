@@ -28,7 +28,7 @@ import { initialStateVencimento, useStoreVencimento } from "./context";
 export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<TituloSchemaProps> }) {
   const { realTime } = useRealTime();
 
-  const isMaster: boolean = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO", true);
+  const isMaster: boolean = hasPermission("MASTER") || checkUserDepartments("FINANCEIRO");
   const vencimento = useStoreVencimento().vencimento;
   const indexFieldArray = useStoreVencimento().indexFieldArray;
 
