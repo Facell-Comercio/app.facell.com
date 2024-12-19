@@ -10,6 +10,7 @@ import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBo
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Banknote, CreditCard, Landmark } from "lucide-react";
 import { useStoreCartao } from "../../cartoes/cartao/store";
+import { useStoreTituloPagar } from "../../titulos/titulo/store";
 import { RemoveItemVencimentosProps } from "./Form";
 
 interface RowVirtualizerFixedPagosProps {
@@ -40,6 +41,7 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
   });
 
   const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
+  const [openModalTitulo] = useStoreTituloPagar((state) => [state.openModal]);
 
   return (
     <section
@@ -90,6 +92,7 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
                 <Button
                   className="py-1.5 max-h-8 text-xs text-center border-none bg-green-600 hover:bg-green-600/90 dark:bg-green-700 dark:hover:bg-green-700/90 cursor-default"
                   size={"xs"}
+                  onClick={() => openModalTitulo({ id: data[indexData].id_titulo || "" })}
                 >
                   <Banknote size={18} />
                 </Button>
@@ -109,6 +112,7 @@ const RowVirtualizerFixedPagos: React.FC<RowVirtualizerFixedPagosProps> = ({
                 <Button
                   className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-600 hover:bg-zinc-600/90 dark:bg-zinc-700 dark:hover:bg-zinc-700/90 cursor-default"
                   size={"xs"}
+                  onClick={() => openModalTitulo({ id: data[indexData].id_titulo || "" })}
                 >
                   <Landmark size={18} />
                 </Button>

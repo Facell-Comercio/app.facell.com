@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Toggle } from "@/components/ui/toggle";
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { normalizeCurrency, normalizeDate } from "@/helpers/mask";
 import { VencimentosProps } from "@/pages/financeiro/components/ModalFindItemsBordero";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
+import { AlertCircleIcon, Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreCartao } from "../../cartoes/cartao/store";
 import { useStoreTituloPagar } from "../../titulos/titulo/store";
@@ -137,14 +138,45 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
               vencimento.id_forma_pagamento === filteredData[item.index].id_forma_pagamento
           );
 
-          const id_vencimento = data[indexData].id_vencimento;
-          const disabled = !data[indexData].can_remove ? true : false;
+          const vencimento = data[indexData];
+          const id_vencimento = vencimento.id_vencimento;
+          const id_forma_pagamento = vencimento.id_forma_pagamento;
+          const disabled = !vencimento.can_remove ? true : false;
           const tipo = form.watch(`itens.${indexData}.tipo_baixa`);
-          const valor = parseFloat(data[indexData].valor_total);
-          const vinculoDDA = !!data[indexData].id_dda;
-          const isBoleto = (data[indexData]?.id_forma_pagamento || null) == 1;
-          const isFatura = (data[indexData]?.id_forma_pagamento || null) == 6;
-          const emRemessa = data[indexData].remessa;
+          const valor = parseFloat(vencimento.valor_total);
+          const vinculoDDA = !!vencimento.id_dda;
+          const isBoleto = (id_forma_pagamento || null) == 1;
+          const isPix = (id_forma_pagamento || null) == 4;
+          const isFatura = (id_forma_pagamento || null) == 6;
+          const isPIXQRCode = (id_forma_pagamento || null) == 8;
+          const emRemessa = vencimento.remessa;
+
+          function TooltipAlert() {
+            let error = "";
+            if ([1, 10, 11].includes(id_forma_pagamento || 0) && !vencimento.cod_barras) {
+              error = "Código de barras não informado";
+            }
+            if (isPix && !vencimento.chave_pix) {
+              error = "Chave PIX não informada";
+            }
+            if (isPIXQRCode && !vencimento?.qr_code) {
+              error = "QR Code não informado";
+            }
+            return (
+              error && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="absolute right-[-5px] top-[-5px] z-[20] bg-destructive rounded-full p-1 text-xs">
+                      <AlertCircleIcon size={12} />
+                    </TooltipTrigger>
+                    <TooltipContent className="mt-2.5 p-2 absolute bg-destructive text-xs z-[30]">
+                      <p>{error}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )
+            );
+          }
 
           function IconeFormaPagamento() {
             if (data[indexData]?.id_forma_pagamento === 3) {
@@ -170,10 +202,11 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
             } else {
               return (
                 <Button
-                  className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-600 hover:bg-zinc-600/90 dark:bg-zinc-700 dark:hover:bg-zinc-700/90 cursor-default"
+                  className="relative py-1.5 max-h-8 text-xs text-center border-none bg-zinc-600 hover:bg-zinc-600/90 dark:bg-zinc-700 dark:hover:bg-zinc-700/90 cursor-default"
                   size={"xs"}
                   onClick={() => openModalTitulo({ id: data[indexData].id_titulo || "" })}
                 >
+                  <TooltipAlert />
                   <Landmark size={18} />
                 </Button>
               );
@@ -186,7 +219,7 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
               // ref={virtualizer.measureElement}
               key={key}
               data-index={`${index} ${key}`}
-              className={`flex w-full gap-1 py-1 px-1 items-center text-xs ${
+              className={`flex w-full gap-1 py-1 px-1 items-center pt-2 text-xs ${
                 virtualizer.getVirtualItems().length == 0 && "hidden"
               }`}
               style={{

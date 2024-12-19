@@ -57,6 +57,9 @@ export type VencimentosProps = {
   valor_total: string;
   valor_pago?: string;
   data_prevista_pagamento?: string;
+  cod_barras?: string;
+  qr_code?: string;
+  chave_pix?: string;
   num_doc: string;
   descricao: string;
   filial: string;
