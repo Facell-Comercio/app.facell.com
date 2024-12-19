@@ -36,6 +36,7 @@ import ModalFindItemsBordero, {
 import { useQueryClient } from "@tanstack/react-query";
 import { useFieldArray } from "react-hook-form";
 import ModalFatura from "../../cartoes/cartao/ModalFatura";
+import ModalTituloPagar from "../../titulos/titulo/Modal";
 import BtnOptionsRemessa from "./BtnOptionsRemessa";
 import { ItemVencimento } from "./ItemVencimento";
 import { BorderoSchemaProps } from "./Modal";
@@ -791,6 +792,7 @@ const FormBordero = ({
         <ModalTransfer data={itensChecked} id_matriz={id_matriz || ""} />
       </Form>
       <ModalFatura />
+      <ModalTituloPagar />
     </div>
   );
 };

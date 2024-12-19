@@ -14,6 +14,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { Banknote, CreditCard, Landmark, Minus } from "lucide-react";
 import { TbCurrencyReal } from "react-icons/tb";
 import { useStoreCartao } from "../../cartoes/cartao/store";
+import { useStoreTituloPagar } from "../../titulos/titulo/store";
 import { useStoreDDA } from "../components/storeDDA";
 import { RemoveItemVencimentosProps } from "./Form";
 
@@ -67,6 +68,7 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
   };
 
   const [openModalFatura] = useStoreCartao((state) => [state.openModalFatura]);
+  const [openModalTitulo] = useStoreTituloPagar((state) => [state.openModal]);
 
   const allChecked = filteredData.length === filteredData.filter((item) => item.checked).length;
 
@@ -150,6 +152,7 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
                 <Button
                   className="py-1.5 max-h-8 text-xs text-center border-none bg-green-600 hover:bg-green-600/90 dark:bg-green-700 dark:hover:bg-green-700/90 cursor-default"
                   size={"xs"}
+                  onClick={() => openModalTitulo({ id: data[indexData].id_titulo || "" })}
                 >
                   <Banknote size={18} />
                 </Button>
@@ -169,6 +172,7 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
                 <Button
                   className="py-1.5 max-h-8 text-xs text-center border-none bg-zinc-600 hover:bg-zinc-600/90 dark:bg-zinc-700 dark:hover:bg-zinc-700/90 cursor-default"
                   size={"xs"}
+                  onClick={() => openModalTitulo({ id: data[indexData].id_titulo || "" })}
                 >
                   <Landmark size={18} />
                 </Button>
