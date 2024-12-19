@@ -103,7 +103,7 @@ const ModalCampanha = () => {
   //* EVITANDO RE-RENDERIZAÇÃO DESNCECESSÁRIA
   const [qtdeClientes, setQtdeClientes] = useState(data?.qtde_clientes);
   useEffect(() => {
-    if (data?.qtde_clientes && data?.qtde_clientes !== qtdeClientes) {
+    if (data?.qtde_clientes !== undefined && data?.qtde_clientes !== qtdeClientes) {
       setQtdeClientes(data?.qtde_clientes);
     }
   }, [data?.qtde_clientes]);
