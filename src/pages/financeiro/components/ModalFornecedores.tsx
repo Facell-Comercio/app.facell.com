@@ -12,7 +12,10 @@ import {
 import { normalizeCnpjNumber } from "@/helpers/mask";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
 import { useState } from "react";
+import ModalFornecedor from "../cadastros/fornecedores/fornecedor/Modal";
+import { useStoreFornecedor } from "../cadastros/fornecedores/fornecedor/store";
 
 interface IModalFornecedores {
   open: boolean;
@@ -51,6 +54,7 @@ const ModalFornecedores = ({
   onOpenChange,
   closeOnSelection,
 }: IModalFornecedores) => {
+  const [openModalFornecedor] = useStoreFornecedor((state) => [state.openModal]);
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationProps>({
     pageSize: 15,
@@ -92,8 +96,15 @@ const ModalFornecedores = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Lista de Fornecedores/Clientes</DialogTitle>
-          <DialogDescription>Selecione um ao clicar no botão à direita.</DialogDescription>
+          <div className="flex justify-between">
+            <span className="flex flex-col gap-1">
+              <DialogTitle>Lista de Fornecedores/Clientes</DialogTitle>
+              <DialogDescription>Selecione um ao clicar no botão à direita.</DialogDescription>
+            </span>
+            <Button onClick={() => openModalFornecedor("")}>
+              <Plus className="me-2" size={18} /> Novo Fornecedor
+            </Button>
+          </div>
 
           <SearchComponent handleSearch={handleSearch} />
         </DialogHeader>
@@ -126,6 +137,7 @@ const ModalFornecedores = ({
           ))}
         </ModalComponent>
       </DialogContent>
+      <ModalFornecedor onInsert={pushSelection} />
     </Dialog>
   );
 };

@@ -2,12 +2,7 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/axios";
 import { FornecedorSchema } from "@/pages/financeiro/cadastros/fornecedores/fornecedor/Modal";
 import { GetAllParams } from "@/types/query-params-type";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useFornecedores = () => {
   const queryClient = useQueryClient();
@@ -16,8 +11,7 @@ export const useFornecedores = () => {
     getAll: (params?: GetAllParams) =>
       useQuery({
         queryKey: ["financeiro", "fornecedor", "lista", params],
-        queryFn: async () =>
-          await api.get(`/financeiro/fornecedores`, { params: params }),
+        queryFn: async () => await api.get(`/financeiro/fornecedores`, { params: params }),
         placeholderData: keepPreviousData,
       }),
 
@@ -33,9 +27,7 @@ export const useFornecedores = () => {
     insertOne: () =>
       useMutation({
         mutationFn: async (data: FornecedorSchema) => {
-          return await api
-            .post("financeiro/fornecedores", data)
-            .then((response) => response.data);
+          return await api.post("/financeiro/fornecedores", data).then((response) => response.data);
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["financeiro", "fornecedor"] });

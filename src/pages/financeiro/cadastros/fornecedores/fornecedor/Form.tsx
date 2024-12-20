@@ -5,14 +5,11 @@ import SelectTipoChavePix from "@/components/custom/SelectTipoChavePix";
 import SelectTipoContaBancaria from "@/components/custom/SelectTipoContaBancaria";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-import {
-  normalizeCepNumber,
-  normalizeCnpjNumber,
-  normalizePhoneNumber,
-} from "@/helpers/mask";
+import { normalizeCepNumber, normalizeCnpjNumber, normalizePhoneNumber } from "@/helpers/mask";
 import { useFornecedores } from "@/hooks/financeiro/useFornecedores";
 import { api } from "@/lib/axios";
 import ModalBancos from "@/pages/financeiro/components/ModalBancos";
+import { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
 import { Contact, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useWatch } from "react-hook-form";
@@ -25,12 +22,15 @@ const FormFornecedor = ({
   id,
   data,
   formRef,
+  onInsert,
 }: {
   id: string | null | undefined;
   data: FornecedorSchema;
   formRef: React.MutableRefObject<HTMLFormElement | null>;
+  onInsert?: (item: ItemFornecedor) => void;
 }) => {
   const {
+    data: resultInsert,
     mutate: insertOne,
     isPending: insertIsPending,
     isSuccess: insertIsSuccess,
@@ -42,14 +42,15 @@ const FormFornecedor = ({
     isSuccess: updateIsSuccess,
     isError: updateIsError,
   } = useFornecedores().update();
-  const [modalEditing, editModal, closeModal, editIsPending, isPending] =
-    useStoreFornecedor((state) => [
+  const [modalEditing, editModal, closeModal, editIsPending, isPending] = useStoreFornecedor(
+    (state) => [
       state.modalEditing,
       state.editModal,
       state.closeModal,
       state.editIsPending,
       state.isPending,
-    ]);
+    ]
+  );
   const [cnpj, setCnpj] = useState<string>();
   const { form } = useFormFornecedorData(data);
   // const { errors } = form.formState;
@@ -70,9 +71,7 @@ const FormFornecedor = ({
       if (!cnpj || cnpj?.length < 14) {
         return;
       }
-      const { data: cnpjData } = await api.get(
-        `/financeiro/fornecedores/consulta-cnpj/${cnpj}`
-      );
+      const { data: cnpjData } = await api.get(`/financeiro/fornecedores/consulta-cnpj/${cnpj}`);
 
       form.setValue("nome", cnpjData.fantasia);
       form.setValue("telefone", cnpjData.telefone);
@@ -118,10 +117,7 @@ const FormFornecedor = ({
     }
   }
 
-  const handleChangeCnpj = (
-    value: string,
-    type: "cnpj" | "cnpj_favorecido"
-  ) => {
+  const handleChangeCnpj = (value: string, type: "cnpj" | "cnpj_favorecido") => {
     form.setValue(type, normalizeCnpjNumber(value));
   };
   // const handleChangePhoneNumber = (value: string) => {
@@ -177,6 +173,13 @@ const FormFornecedor = ({
     }
   }, [updateIsPending, insertIsPending]);
 
+  //* USE EFFECT DO ON INSERT
+  useEffect(() => {
+    if (insertIsSuccess && onInsert) {
+      onInsert(resultInsert);
+    }
+  }, [insertIsPending]);
+
   const [openModalBanco, setOpenModalBanco] = useState<boolean>(false);
   const handleSelectionBanco = (banco: BancoSchema) => {
     form.setValue("id_banco", banco.id);
@@ -196,17 +199,21 @@ const FormFornecedor = ({
       />
 
       <Form {...form}>
-        <form ref={formRef} onSubmit={form.handleSubmit(onSubmitData)}>
+        <form
+          ref={formRef}
+          onSubmit={(e) => {
+            // @ts-ignore
+            form.handleSubmit(onSubmitData)(e);
+            e.stopPropagation();
+          }}
+        >
           <div className="max-w-full flex flex-col lg:flex-row gap-5">
             {/* Primeira coluna */}
             <div className="flex flex-1 flex-col gap-3 shrink-0">
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
-                    <Contact />{" "}
-                    <span className="text-lg font-bold ">
-                      Dados do Fornecedor
-                    </span>
+                    <Contact /> <span className="text-lg font-bold ">Dados do Fornecedor</span>
                   </div>
                   <FormSwitch
                     name="active"
@@ -312,8 +319,7 @@ const FormFornecedor = ({
 
               <div className="p-3 bg-slate-200 dark:bg-blue-950 rounded-lg">
                 <div className="flex gap-2 mb-3">
-                  <DollarSign />{" "}
-                  <span className="text-lg font-bold ">Dados Bancários</span>
+                  <DollarSign /> <span className="text-lg font-bold ">Dados Bancários</span>
                 </div>
                 <div className="flex gap-3 flex-wrap ">
                   <SelectFormaPagamento
@@ -329,9 +335,7 @@ const FormFornecedor = ({
                     name="cnpj_favorecido"
                     label="CPF/CNPJ Favorecido"
                     control={form.control}
-                    onChange={(e) =>
-                      handleChangeCnpj(e.target.value, "cnpj_favorecido")
-                    }
+                    onChange={(e) => handleChangeCnpj(e.target.value, "cnpj_favorecido")}
                     onBlur={(e) => onBlurCnpj(e.target.value)}
                     fnMask={normalizeCnpjNumber}
                   />
@@ -342,8 +346,7 @@ const FormFornecedor = ({
                     label="Favorecido"
                     control={form.control}
                   />
-                  {(watchFormaPagamento === "4" ||
-                    watchFormaPagamento === "5") && (
+                  {(watchFormaPagamento === "4" || watchFormaPagamento === "5") && (
                     <>
                       <div onClick={() => setOpenModalBanco(true)}>
                         <FormInput

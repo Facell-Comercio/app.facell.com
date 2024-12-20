@@ -18,7 +18,7 @@ export const useStoreFornecedor = create<useStoreFornecedor>((set) => ({
   modalOpen: false,
   isPending: false,
 
-  openModal: (id: string) => set({ modalOpen: true, id: id }),
+  openModal: (id: string) => set({ modalOpen: true, id: id, modalEditing: !id }),
   closeModal: () => set({ modalOpen: false }),
   editModal: (bool) => set({ modalEditing: bool }),
   editIsPending: (bool: boolean) =>
