@@ -1,21 +1,23 @@
 import { create } from "zustand";
- interface useStoreEstoque {
-    id: number| null;
-    modalEditing: boolean;
-    modalOpen: boolean;
+import { ItemEstoqueFardamento } from "../types";
+interface useStoreEstoque {
+  id: ItemEstoqueFardamento["id"];
   
-    openModal: (id: number| null) => void;
-    closeModal: () => void;
-    editModal: (bool: boolean) => void;
- }
+  modalEditing: boolean;
+  modalOpen: boolean;
 
- export const useStoreEstoque = create<useStoreEstoque>((set) => ({
-    id: null,
-    modalEditing: false,
-    modalOpen: false,
+  openModal: (id: ItemEstoqueFardamento["id"]) => void;
+  closeModal: () => void;
+  editModal: (bool: boolean) => void;
+}
+
+export const useStoreEstoque = create<useStoreEstoque>((set) => ({
+  id: null,
   
-    openModal: (id: number| null) => set({ modalOpen: true, id: id }),
-    closeModal: () => set({ modalOpen: false, id: null }),
-    editModal: (bool) => set({ modalEditing: bool }),
-  }));
-  
+  modalEditing: false,
+  modalOpen: false,
+
+  openModal: (id) => set({ modalOpen: true, id }),
+  closeModal: () => set({ modalOpen: false, id: null }),
+  editModal: (bool) => set({ modalEditing: bool }),
+}));

@@ -1,5 +1,5 @@
 import { api } from "@/lib/axios";
-import { useStoreTableEstoque } from "@/pages/pessoal/fardamentos/estoque/table/store-table";
+import { GetAllParams } from "@/types/query-params-type";
 import {
   useQuery,
 } from "@tanstack/react-query";
@@ -7,19 +7,11 @@ import {
 
 export const useModeloFardamento = () => {
   return {
-    getAll: () => {
-      const pagination = useStoreTableEstoque().pagination;
-      const filters = useStoreTableEstoque().filters;
-  
+    getAll: (params?: GetAllParams) => {
       return useQuery({
-        queryKey: ["pessoal", "fardamento", "modelo", "lista", {pagination, filters}],
+        queryKey: ["pessoal", "fardamento", "modelo", "lista", params ],
         queryFn: async () => {
-          const result = await api.get("/pessoal/fardamentos/modelos", {
-            params: {
-              filters: filters,
-              pagination,
-            },
-          });
+          const result = await api.get("/pessoal/fardamentos/modelos", {params: params});
           return result; //por que não funciona return result.data ?
         },
       });
