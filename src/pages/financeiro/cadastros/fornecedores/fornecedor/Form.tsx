@@ -342,7 +342,7 @@ const FormFornecedor = ({
                     label="Favorecido"
                     control={form.control}
                   />
-                  {(watchFormaPagamento === "4" ||
+                  {(watchFormaPagamento === "3" || watchFormaPagamento === "4" ||
                     watchFormaPagamento === "5") && (
                     <>
                       <div onClick={() => setOpenModalBanco(true)}>

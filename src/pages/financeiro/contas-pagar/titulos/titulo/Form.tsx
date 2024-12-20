@@ -225,7 +225,8 @@ const FormTituloPagar = ({
   // * [ FORMA DE PAGAMENTO ]
   const showPix = checkIsPIX(id_forma_pagamento);
   const showCartao = checkIsCartao(id_forma_pagamento);
-  const showDadosBancarios = checkIsTransferenciaBancaria(id_forma_pagamento);
+  // Liberada a visualização de dados bancários caso forma de pagamento = Dinheiro ou Transferência:
+  const showDadosBancarios = checkIsTransferenciaBancaria(id_forma_pagamento) || id_forma_pagamento == 3;
 
   // ! [ ACTIONS ] //////////////////////////////////////////////
   const [isSubmtting, setIsSubmitting] = useState<boolean>(false);
