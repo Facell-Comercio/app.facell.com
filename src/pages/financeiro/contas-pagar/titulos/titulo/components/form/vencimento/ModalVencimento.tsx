@@ -72,7 +72,10 @@ export function ModalVencimento({ form: formTitulo }: { form: UseFormReturn<Titu
   const uniqueDayMonth = isCartao ? dia_vencimento_cartao : undefined;
 
   const dataAtual = realTime || new Date();
-  form.setValue("data_vencimento", dataAtual.toISOString());
+  const dataVencimento = form.watch("data_vencimento");
+  if (!dataVencimento) {
+    form.setValue("data_vencimento", dataAtual.toISOString());
+  }
 
   // * Lógica de cartões:
   useEffect(() => {
