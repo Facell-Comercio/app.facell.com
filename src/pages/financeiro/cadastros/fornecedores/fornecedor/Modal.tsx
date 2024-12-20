@@ -11,6 +11,7 @@ import ModalButtons from "@/components/custom/ModalButtons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFornecedores } from "@/hooks/financeiro/useFornecedores";
+import { ItemFornecedor } from "@/pages/financeiro/components/ModalFornecedores";
 import { useRef } from "react";
 import FormFornecedor from "./Form";
 import { useStoreFornecedor } from "./store";
@@ -76,7 +77,7 @@ const initialPropsFornecedor: FornecedorSchema = {
   favorecido: "",
 };
 
-const ModalFornecedor = () => {
+const ModalFornecedor = ({ onInsert }: { onInsert?: (item: ItemFornecedor) => void }) => {
   const [modalOpen, closeModal, modalEditing, editModal, isPending, id] = useStoreFornecedor(
     (state) => [
       state.modalOpen,
@@ -121,6 +122,7 @@ const ModalFornecedor = () => {
               id={id}
               data={newData.id ? newData : initialPropsFornecedor}
               formRef={formRef}
+              onInsert={onInsert}
             />
           ) : (
             <div className="w-full min-h-full p-2 grid grid-rows-4 gap-3">
