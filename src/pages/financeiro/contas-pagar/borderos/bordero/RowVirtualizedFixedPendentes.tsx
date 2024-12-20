@@ -169,8 +169,8 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
                     <TooltipTrigger className="absolute right-[-5px] top-[-5px] z-[20] bg-destructive rounded-full p-1 text-xs">
                       <AlertCircleIcon size={12} />
                     </TooltipTrigger>
-                    <TooltipContent className="mt-2.5 p-2 absolute bg-destructive text-xs z-[30]">
-                      <p>{error}</p>
+                    <TooltipContent className="mt-2.5 p-2 absolute bg-destructive text-white text-xs z-[30]">
+                      {error}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -182,7 +182,7 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
             if (data[indexData]?.id_forma_pagamento === 3) {
               return (
                 <Button
-                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-600 hover:bg-green-600/90 dark:bg-green-700 dark:hover:bg-green-700/90 cursor-default"
+                  className="py-1.5 max-h-8 text-xs text-center border-none bg-green-600 hover:bg-green-600/90 dark:bg-green-700 dark:hover:bg-green-700/90"
                   size={"xs"}
                   onClick={() => openModalTitulo({ id: data[indexData].id_titulo || "" })}
                 >
@@ -202,12 +202,15 @@ const RowVirtualizerFixedPendentes: React.FC<RowVirtualizerFixedPendentesProps> 
             } else {
               return (
                 <Button
-                  className="relative py-1.5 max-h-8 text-xs text-center border-none bg-zinc-600 hover:bg-zinc-600/90 dark:bg-zinc-700 dark:hover:bg-zinc-700/90 cursor-default"
+                  className="relative py-1.5 max-h-8 text-xs text-center border-none bg-zinc-600 hover:bg-zinc-600/90 dark:bg-zinc-700 dark:hover:bg-zinc-700/90"
                   size={"xs"}
                   onClick={() => openModalTitulo({ id: data[indexData].id_titulo || "" })}
+                  asChild
                 >
-                  <TooltipAlert />
-                  <Landmark size={18} />
+                  <div>
+                    <TooltipAlert />
+                    <Landmark size={18} />
+                  </div>
                 </Button>
               );
             }
