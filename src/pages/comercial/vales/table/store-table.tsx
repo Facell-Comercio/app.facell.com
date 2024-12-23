@@ -51,6 +51,7 @@ export interface Actions {
   resetFilters: () => void;
   setPagination: (pagination: Pagination) => void;
   handleRowSelection: (data: HandleRowSelectionProps) => void;
+  resetRowSelection: () => void;
 }
 
 export const useStoreTableVale = create<State & Actions>((set) => ({
@@ -75,4 +76,5 @@ export const useStoreTableVale = create<State & Actions>((set) => ({
 
   handleRowSelection: (data: HandleRowSelectionProps) =>
     set({ rowSelection: data.rowSelection, idSelection: data.idSelection }),
+  resetRowSelection: () => set({ rowSelection: {}, idSelection: [] }),
 }));

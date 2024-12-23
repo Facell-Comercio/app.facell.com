@@ -37,6 +37,14 @@ export type AbatimentosProps = {
   criador?: string;
 };
 
+type AbonoLoteProps = {
+  id_vales_list?: number[];
+  motivo?: string;
+  id_abonador?: string;
+  abonador?: string;
+  email_abonador?: string;
+};
+
 export const useVales = () => {
   const queryClient = useQueryClient();
 
@@ -129,6 +137,28 @@ export const useVales = () => {
         return await api
           .post(`comercial/vales/lancamento-lote`, data)
           .then((response) => response.data);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: ["comercial", "vales"],
+        });
+      },
+      onError(error) {
+        // @ts-expect-error 'Vai funcionar'
+        const errorMessage = error.response?.data.message || error.message;
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          duration: 3500,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const abonoLote = () =>
+    useMutation({
+      mutationFn: async (data: AbonoLoteProps) => {
+        return await api.put(`comercial/vales/abonos-lote`, data).then((response) => response.data);
       },
       onSuccess() {
         queryClient.invalidateQueries({
@@ -297,6 +327,7 @@ export const useVales = () => {
     getOneAbatimento,
     insertOne,
     lancamentoLote,
+    abonoLote,
     insertAbatimento,
     update,
     updateAbatimento,
