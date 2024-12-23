@@ -25,7 +25,8 @@ const RELATORIOS = [
   "RECARGA-RVCELLCARD",
   "PITZI-VENDAS",
   "RENOV-TRADEIN",
-  "CREDIARIO",
+  "CREDIARIO-PAYJOY",
+  "CREDIARIO-DIMO"
 ];
 
 const ImportacoesTab = () => {
@@ -91,7 +92,8 @@ const ImportacoesTab = () => {
             label="Renov Tradein"
             uri="/import-renov-tradein"
           />
-          <ImportacaoItem icon={<Receipt />} label="Crediario" uri="/import-crediario" />
+          <ImportacaoItem icon={<Receipt />} label="Crediario - PAYJOY" uri="/import-crediario-payjoy" />
+          <ImportacaoItem icon={<Receipt />} label="Crediario - DIMO" uri="/import-crediario-dimo" />
 
           {isMaster && <ImportacaoCaixasLote />}
         </Accordion>
