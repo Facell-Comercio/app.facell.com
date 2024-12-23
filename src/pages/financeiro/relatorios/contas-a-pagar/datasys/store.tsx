@@ -6,11 +6,11 @@ export interface State {
 
 export interface Filters {
   data_pagamento?: Date;
-  id_grupo_economico?: string;
+  grupo_economico_list?: string[];
 }
 
 const initialFilters: Filters = {
-  id_grupo_economico: "",
+  grupo_economico_list: [],
   data_pagamento: undefined,
 };
 
