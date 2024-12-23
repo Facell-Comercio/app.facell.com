@@ -6,14 +6,14 @@ export interface State {
 }
 
 export interface Filters {
-  id_grupo_economico?: string;
+  grupo_economico_list?: string[];
   tipo_data?: string;
   em_aberto?: string;
   range_data?: DateRange;
 }
 
 const initialFilters: Filters = {
-  id_grupo_economico: "",
+  grupo_economico_list: [],
   em_aberto: "",
   tipo_data: "data_prevista",
   range_data: { from: undefined, to: undefined },

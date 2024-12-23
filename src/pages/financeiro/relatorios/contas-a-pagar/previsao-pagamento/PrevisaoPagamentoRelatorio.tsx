@@ -1,4 +1,4 @@
-import { SelectGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
+import { SelectMultiGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
 import {
   Accordion,
   AccordionContent,
@@ -86,11 +86,12 @@ const PrevisaoPagamentoRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordio
                 }}
               />
 
-              <SelectGrupoEconomico
-                value={filters.id_grupo_economico}
-                onChange={(id_grupo_economico) => {
-                  setFilters({ id_grupo_economico: id_grupo_economico });
+              <SelectMultiGrupoEconomico
+                value={filters.grupo_economico_list || []}
+                onChange={(grupo_economico_list) => {
+                  setFilters({ grupo_economico_list: grupo_economico_list });
                 }}
+                maxCount={4}
               />
             </div>
             <ScrollBar orientation="horizontal" />

@@ -1,5 +1,5 @@
 import { InputDate } from "@/components/custom/InputDate";
-import { SelectGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
+import { SelectMultiGrupoEconomico } from "@/components/custom/SelectGrupoEconomico";
 import {
   Accordion,
   AccordionContent,
@@ -27,7 +27,7 @@ const DatasysRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProps) =>
   ]);
   const { mutate: exportLayoutDatasysCR, isPending } = useRelatorios().exportLayoutDatasysCR();
   function handleExportLaexportLayoutDatasysCR() {
-    if (!filters.id_grupo_economico || !filters.data_pagamento) {
+    if (!filters.grupo_economico_list?.length || !filters.data_pagamento) {
       toast({
         title: "Ops!",
         description: "Preencha o grupo econômico e a data de pagamento",
@@ -55,11 +55,12 @@ const DatasysRelatorio = ({ itemOpen, setItemOpen }: RelatorioAccordionProps) =>
                 onChange={(date) => setFilters({ data_pagamento: date })}
               />
 
-              <SelectGrupoEconomico
-                value={filters.id_grupo_economico}
-                onChange={(id_grupo_economico) => {
-                  setFilters({ id_grupo_economico: id_grupo_economico });
+              <SelectMultiGrupoEconomico
+                value={filters.grupo_economico_list || []}
+                onChange={(grupo_economico_list) => {
+                  setFilters({ grupo_economico_list: grupo_economico_list });
                 }}
+                maxCount={4}
               />
             </div>
             <ScrollBar orientation="horizontal" />

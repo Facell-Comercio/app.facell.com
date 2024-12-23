@@ -5,13 +5,13 @@ export interface State {
 }
 
 export interface Filters {
-  id_grupo_economico?: string;
+  grupo_economico_list?: string[];
   mes?: string;
   ano?: string;
 }
 
 const initialFilters: Filters = {
-  id_grupo_economico: "",
+  grupo_economico_list: [],
   ano: String(new Date().getFullYear()),
   mes: String(new Date().getMonth() + 1),
 };
