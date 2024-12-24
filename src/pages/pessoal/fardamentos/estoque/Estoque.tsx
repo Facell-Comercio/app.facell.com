@@ -7,6 +7,9 @@ import { columnsTableEstoques } from "./table/columns-estoque";
 import ModalEstoque from "./components/Modal";
 import { useStoreTableEstoque } from "./table/store-table";
 import { useStoreEstoque } from "./components/Store";
+import { useStoreConcederVenderFardamento } from "./components/conceder-fardamento/Store";
+import { columnsTableConcederVenderFardamento } from "./components/conceder-fardamento/table-conceder/columns-estoque";
+import { ModalConcederVenderFardamento } from "./components/conceder-fardamento/Modal";
 
 const Estoque = () => {
   const { data, refetch } = useFardamentos().getAll();
@@ -16,8 +19,9 @@ const Estoque = () => {
   ]);
   const rows = data?.data?.rows || 0;
   const rowCount = data?.data?.rowCount || 0;
-  const openModal = useStoreEstoque((state) => state.openModal);
-
+  const openModalAbastecer = useStoreEstoque((state) => state.openModal);
+  const openModalConcederVender = useStoreConcederVenderFardamento((state) => state.openModal);
+  const items = useStoreConcederVenderFardamento((state) => state.items);
   return (
     <div className="flex-col p-4 rounded-lg">
       <div className="flex justify-between space-x-2 p-3">
@@ -32,11 +36,11 @@ const Estoque = () => {
           </Button>
         </div>
         <div className="flex justify-end gap-3 ">
-          <Button variant={"default"} onClick={() => openModal(null)}>
+          <Button variant={"default"} onClick={() => openModalAbastecer(null)}>
             <Shirt size={16} className="mr-2" />
             Abastecer
           </Button>
-          <Button variant={"destructive"}>
+          <Button variant={"destructive"} onClick={() => openModalConcederVender()}>
             <Handshake size={16} className="mr-2" />
             Conceder
           </Button>
@@ -49,7 +53,7 @@ const Estoque = () => {
       <div>
         <FiltersEstoque refetch={refetch} />
         <ModalEstoque />
-        
+        <ModalConcederVenderFardamento />
         <DataTable
           pagination={pagination}
           setPagination={setPagination}
@@ -58,7 +62,6 @@ const Estoque = () => {
           columns={columnsTableEstoques}
         />
       </div>
-      {/* <FormEstoqueFardamento/> */}
     </div>
   );
 };

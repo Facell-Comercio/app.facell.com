@@ -2,7 +2,7 @@ import { User } from "@/types/user-type";
 import { create } from "zustand";
 import { ItemEstoqueFardamento } from "../../types";
 
-type ItemConcessaoVendaFardamento = ItemEstoqueFardamento & { qtde: number };
+export type ItemConcessaoVendaFardamento = ItemEstoqueFardamento & { qtde: number };
 interface useStoreConcederVenderFardamento {
   modalEditing: boolean;
   modalOpen: boolean;
@@ -17,6 +17,8 @@ interface useStoreConcederVenderFardamento {
 
   addItem: (item: ItemConcessaoVendaFardamento) => void;
   deletItem: (id: ItemConcessaoVendaFardamento["id"]) => void;
+  incrementQtde: (id: ItemConcessaoVendaFardamento["id"]) => void;
+  decrementQtde: (id: ItemConcessaoVendaFardamento["id"]) => void;
 }
 
 export const useStoreConcederVenderFardamento = 
@@ -42,6 +44,8 @@ export const useStoreConcederVenderFardamento =
           return {
             items: state.items.map((i) => (i.id == findItem.id ? findItem : i)),
           };
+        } else if(findItem && findItem.saldo === findItem.qtde) {
+          return { items: state.items };
         } else {
           return { items: [...state.items, item] };
         }
@@ -49,5 +53,17 @@ export const useStoreConcederVenderFardamento =
     deletItem: (id) =>
       set((state) => ({
         items: state.items.filter((item) => item.id !== id),
+      })),
+    incrementQtde: (id) =>
+      set((state) => ({
+        items: state.items.map((item) =>
+        (item.id == id && item.qtde < item.saldo) ? {...item, qtde: item.qtde + 1} : item
+        )
+      })),
+    decrementQtde: (id) =>
+      set((state) => ({
+        items: state.items.map((item) =>
+        (item.id == id && item.qtde > 1) ? {...item, qtde: item.qtde - 1} : item
+        )
       })),
   }));

@@ -7,6 +7,5 @@ export type ItemEstoqueFardamento = {
   sexo: string;
   permite_concessao: boolean;
   preco: number;
-  saldo: number;
-  
+  saldo: number;  
 };

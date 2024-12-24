@@ -15,7 +15,7 @@ import { useFardamentos } from "@/hooks/useFardamentos";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // initials
-const ModalEstoque = () => {
+const ModalAbastecerFardamento = () => {
   const modalOpen = useStoreEstoque().modalOpen;
   const closeModal = useStoreEstoque().closeModal;
   const id = useStoreEstoque().id;
@@ -39,7 +39,6 @@ const ModalEstoque = () => {
     <Dialog open={modalOpen} onOpenChange={closeModal}>
       <DialogContent className="  w-full">
         <DialogHeader>
-          <DialogTitle>{"Abastecimento"}</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
@@ -65,4 +64,4 @@ const ModalEstoque = () => {
   );
 };
 
-export default ModalEstoque;
+export default ModalAbastecerFardamento;

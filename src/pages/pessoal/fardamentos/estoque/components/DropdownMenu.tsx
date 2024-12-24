@@ -22,8 +22,9 @@ export const Dropdown = ({ data }: DropdownProps) => {
     openModal(data.id);
   };
   const handleConceder = () => {
-    addItem({ ...data, qtde: 0 });
-    console.log('foi');
+    addItem({ ...data, qtde: 1 });
+
+    console.log('concededido');
   };
 
   return (

@@ -142,6 +142,7 @@ const FormEstoqueFardamento = ({
                     control={form.control}
                     disabled={true}
                   />
+                  
                 </div>
               </div>
             </div>

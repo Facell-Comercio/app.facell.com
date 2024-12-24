@@ -4,10 +4,10 @@ import { Dropdown } from "../components/DropdownMenu";
 import { ItemEstoqueFardamento } from "../types";
 
 
-export type RowEstoque = {
+export type RowEstoqueFardamento = {
   select: ReactNode;
 }&ItemEstoqueFardamento;
-export const columnsTableEstoques: ColumnDef<RowEstoque>[] = [
+export const columnsTableEstoques: ColumnDef<RowEstoqueFardamento>[] = [
   {
     accessorKey: "id",
     header: "AÇÕES",
